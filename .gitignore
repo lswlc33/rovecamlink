@@ -1,0 +1,40 @@
+# Gradle
+.gradle/
+build/
+*/build/
+!**/src/**/build/
+local.properties
+
+# Kotlin / IDE
+.kotlin/
+*.log
+.idea/
+*.iml
+captures/
+
+# Android
+.DS_Store
+*.apk.idsig
+.externalNativeBuild/
+.cxx/
+
+# Node (if any tooling)
+node_modules/
+
+# Project-local toolchain & scratch (never commit)
+_tools/
+_work/
+cupx/
+*.aar
+*.zip
+cc.module
+dl.log
+
+# iOS
+iosApp/Pods/
+iosApp/*.xcworkspace/xcuserdata/
+*.xcuserstate
+DerivedData/
+
+# Original vendor APKs (proprietary binaries, analysis inputs only)
+相机 app/

@@ -1,0 +1,72 @@
+package com.rovecamlink.app.core.protocol
+
+import com.rovecamlink.app.core.model.CameraSession
+import com.rovecamlink.app.core.model.CameraSetting
+import com.rovecamlink.app.core.model.CmdResult
+import com.rovecamlink.app.core.model.DevicePlatform
+import com.rovecamlink.app.core.model.DeviceStatus
+import com.rovecamlink.app.core.model.RemoteFile
+import com.rovecamlink.app.core.model.WorkMode
+import com.rovecamlink.app.core.transport.CameraHttp
+import kotlinx.coroutines.flow.Flow
+import okio.Path
+
+/**
+ * A protocol plugin. One implementation per [DevicePlatform]. Adding support for
+ * a new camera family = implement this interface + register it in
+ * [CameraProtocolRegistry]; nothing else in the app needs to change.
+ */
+interface CameraProtocol {
+    val platform: DevicePlatform
+
+    /**
+     * Cheap probe: returns true when the device at host:port speaks this
+     * protocol. Used by auto-detection to pick the right plugin at runtime.
+     */
+    suspend fun probe(host: String, port: Int): Boolean
+
+    /** Establish a session (auth handshake where required). */
+    suspend fun connect(host: String, port: Int): CameraSession
+
+    suspend fun getStatus(session: CameraSession): DeviceStatus
+    suspend fun getSettings(session: CameraSession): List<CameraSetting>
+    suspend fun setSetting(session: CameraSession, id: String, value: String): CmdResult
+    suspend fun setMode(session: CameraSession, mode: WorkMode): CmdResult
+    suspend fun capture(session: CameraSession): CmdResult
+    suspend fun record(session: CameraSession, start: Boolean): CmdResult
+
+    suspend fun listFiles(session: CameraSession, start: Int, end: Int): List<RemoteFile>
+    suspend fun deleteFile(session: CameraSession, file: RemoteFile): CmdResult
+    suspend fun thumbnail(session: CameraSession, file: RemoteFile): ByteArray?
+    suspend fun download(session: CameraSession, file: RemoteFile, dest: Path, onProgress: (Float) -> Unit): Long
+
+    /** Absolute RTSP (or fallback) URL for live preview. */
+    fun previewUrl(session: CameraSession): String
+
+    /** Optional event stream. */
+    val events: Flow<com.rovecamlink.app.core.model.DeviceEvent>
+}
+
+/**
+ * Static metadata describing how to reach/identify a device family before a
+ * protocol is chosen: candidate ports, probe paths, expected model strings.
+ */
+data class CameraProfile(
+    val platform: DevicePlatform,
+    val brand: com.rovecamlink.app.core.model.Brand,
+    val candidatePorts: List<Int>,
+    val probePaths: List<String>,
+    val previewPort: Int,
+    val previewPath: String,
+    val expectedModels: Set<String> = emptySet(),
+)
+
+/** Registry of available protocol plugins, keyed by platform. */
+class CameraProtocolRegistry(protocols: List<CameraProtocol>) {
+    private val byPlatform: Map<DevicePlatform, CameraProtocol> =
+        protocols.associateBy { it.platform }
+
+    fun protocolFor(platform: DevicePlatform): CameraProtocol? = byPlatform[platform]
+    fun all(): Collection<CameraProtocol> = byPlatform.values
+    fun platforms(): Set<DevicePlatform> = byPlatform.keys
+}

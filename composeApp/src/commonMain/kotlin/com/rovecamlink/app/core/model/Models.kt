@@ -1,0 +1,115 @@
+package com.rovecamlink.app.core.model
+
+/**
+ * Camera SoC / firmware platform families discovered while reverse-engineering
+ * the official XTU GO and TUWIN apps. Each platform speaks a different wire
+ * protocol, so the protocol layer is keyed on this enum. New platforms are added
+ * here and paired with a [com.rovecamlink.app.core.protocol.CameraProtocol]
+ * implementation + registration in the protocol registry.
+ */
+enum class DevicePlatform(val displayName: String) {
+    /** Hisilicon Hi35xx – HTTP CGI at /cgi-bin/hi3510/<cmd>.cgi (XTU X7 Pro and most XTU/TUWIN Hi-based cams). */
+    HISILICON("Hisilicon CGI"),
+
+    /** Ambarella – JSON-over-TCP/HTTP with {msg_id, rval} envelope. */
+    AMBARELLA("Ambarella"),
+
+    /** SigmaStar – proprietary socket protocol + BT heartbeat. */
+    SIGMASTAR("SigmaStar"),
+
+    /** TUWIN REST – `/api/...` JSON endpoints (Ride3Pro / Ride6). */
+    TUWIN_REST("TUWIN REST"),
+
+    /** TUWIN M3 – `/app/...` HTTP + delimiter-framed TCP socket. */
+    TUWIN_M3("TUWIN M3"),
+
+    UNKNOWN("Unknown"),
+}
+
+enum class Brand(val displayName: String) {
+    XTU("XTU"),
+    TUWIN("TUWIN"),
+    GENERIC("Generic"),
+}
+
+/** Work / capture mode. Hisilicon cams expose this via getcurworkmode / setworkmode. */
+enum class WorkMode(val code: Int, val displayName: String) {
+    VIDEO(0, "Video"),
+    PHOTO(1, "Photo"),
+    PLAYBACK(2, "Playback"),
+    ;
+
+    companion object {
+        fun fromCode(code: Int): WorkMode? = entries.firstOrNull { it.code == code }
+    }
+}
+
+enum class FileType { VIDEO, PHOTO, UNKNOWN }
+
+/**
+ * An established connection to a camera. Produced by
+ * [com.rovecamlink.app.core.protocol.CameraProtocol.connect].
+ */
+data class CameraSession(
+    val host: String,
+    val port: Int,
+    val platform: DevicePlatform,
+    val brand: Brand,
+    val model: String,
+    /** Opaque auth token / seed where the protocol requires one (TUWIN REST). */
+    val authToken: String? = null,
+    val baseUrl: String = "http://$host:$port",
+    /** Protocol-specific carried state (e.g. Hisilicon string work-mode, NewAPP flag). */
+    val extras: Map<String, String> = emptyMap(),
+)
+
+/** Live device state polled from the camera. */
+data class DeviceStatus(
+    val battery: Int? = null,
+    val charging: Boolean? = null,
+    val recording: Boolean = false,
+    val mode: WorkMode? = null,
+    val sdTotalMb: Long? = null,
+    val sdFreeMb: Long? = null,
+    val videoTimeSec: Int? = null,
+    val photoCount: Int? = null,
+    val videoCount: Int? = null,
+    /** Raw key/value pairs straight from the firmware for forward-compat. */
+    val raw: Map<String, String> = emptyMap(),
+)
+
+/** A setting the user can change (resolution, bitrate, exposure, ...). */
+data class CameraSetting(
+    val id: String,
+    val title: String,
+    val value: String,
+    val options: List<Option> = emptyList(),
+) {
+    data class Option(val value: String, val label: String)
+}
+
+data class RemoteFile(
+    val name: String,
+    val type: FileType,
+    val sizeBytes: Long,
+    val downloadUrl: String,
+    val thumbnailUrl: String? = null,
+    val dateMillis: Long? = null,
+)
+
+sealed interface CmdResult {
+    data object Ok : CmdResult
+    data class Failure(val message: String, val code: Int? = null) : CmdResult
+
+    val isOk: Boolean get() = this is Ok
+}
+
+/** Push-style events from the device (recording started, file created, disconnected...). */
+sealed interface DeviceEvent {
+    data class RecordingChanged(val recording: Boolean) : DeviceEvent
+    data class Disconnected(val reason: String) : DeviceEvent
+    data class BatteryChanged(val percent: Int) : DeviceEvent
+}
+
+/** Page request for file listing. */
+data class FilePage(val start: Int, val end: Int)
