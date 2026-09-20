@@ -48,7 +48,7 @@ class CameraHttp(
     /** GET returning the body as text, or null on any transport/HTTP failure. */
     suspend fun getText(url: String): String? = try {
         val resp: HttpResponse = client.get { url(url) }
-        if (resp.status.isSuccess()) String(resp.readBytes()) else null
+        if (resp.status.isSuccess()) resp.readText() else null
     } catch (_: Throwable) {
         null
     }
