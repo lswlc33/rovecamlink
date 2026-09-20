@@ -1,0 +1,135 @@
+name: Release Test
+
+# release.yml 的发布链路验证：同一套 verify 闸（放宽版本号核对）+ 同一套签名
+# assembleRelease + 同一条 gh release create（改 --prerelease --latest=false）。
+# 用 `test-vX.Y.Z` tag 触发——与 release.yml 的 `v*.*.*` 触发模式天然互斥。
+# 产物标预发布且不吃 latest，不会污染正式发布。
+on:
+  push:
+    tags:
+      - 'test-v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要重跑的 test tag（如 test-v0.1.0）'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-test-${{ github.event_name == 'push' && github.ref_name || inputs.tag || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.resolve.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: 解析 tag
+        id: resolve
+        run: |
+          echo "tag=${{ github.event_name == 'push' && github.ref_name || inputs.tag }}" >> "$GITHUB_OUTPUT"
+
+      - name: 校验 test tag
+        run: |
+          set -eu
+          tag='${{ steps.resolve.outputs.tag }}'
+          if ! echo "$tag" | grep -qE '^test-v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::必须形如 test-vX.Y.Z：$tag"; exit 1
+          fi
+          # 与 release.yml 唯一放宽：版本号允许带 test- 前缀（test-v0.1.0 ↔ 0.1.0-test）。
+          name=$(sed -nE 's/.*versionName\s*=\s*"([^"]+)".*/\1/p' composeApp/build.gradle.kts | head -1)
+          if [ "test-v$name" != "$tag" ] && [ "test-v${name%%-test}" != "$tag" ]; then
+            echo "::error::tag $tag 与 composeApp 的 versionName=$name 不一致"; exit 1
+          fi
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "$tag" FETCH_HEAD; then
+            echo "::error::tag $tag 不在 main 历史里"; exit 1
+          fi
+
+  android:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.verify.outputs.tag }}
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-35 build-tools;34.0.0'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: 单测 + 构建签名 release
+        env:
+          ROVECAMLINK_RELEASE_KEYSTORE_BASE64: ${{ secrets.ROVECAMLINK_RELEASE_KEYSTORE_BASE64 }}
+          ROVECAMLINK_RELEASE_STORE_PASSWORD: ${{ secrets.ROVECAMLINK_RELEASE_STORE_PASSWORD }}
+          ROVECAMLINK_RELEASE_KEY_ALIAS: ${{ secrets.ROVECAMLINK_RELEASE_KEY_ALIAS }}
+          ROVECAMLINK_RELEASE_KEY_PASSWORD: ${{ secrets.ROVECAMLINK_RELEASE_KEY_PASSWORD }}
+        run: |
+          set -eu
+          if [ -z "${ROVECAMLINK_RELEASE_KEYSTORE_BASE64:-}" ]; then
+            echo "::error::缺少 ROVECAMLINK_RELEASE_KEYSTORE_BASE64，拒绝产出未签名包"; exit 1
+          fi
+          printf '%s' "$ROVECAMLINK_RELEASE_KEYSTORE_BASE64" | base64 -d > release.keystore
+          export ROVECAMLINK_RELEASE_STORE_FILE=release.keystore
+          ./gradlew :composeApp:testDebugUnitTest :composeApp:assembleRelease --console=plain
+          apk=$(find composeApp/build/outputs/apk/release -maxdepth 1 -type f -name '*-release.apk' | head -n 1)
+          if [ -z "$apk" ]; then
+            echo "::error::找不到已签名的 release APK 产物"; exit 1
+          fi
+          BT=$(ls -d "$ANDROID_HOME/build-tools"/* | sort -V | tail -1)
+          "$BT/apksigner" verify --print-certs "$apk" || {
+            echo "::error::APK 未签名或验签失败，检查 ROVECAMLINK_RELEASE_* 四项 secret"
+            exit 1
+          }
+          rm -f release.keystore
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: test-apk-${{ github.run_id }}
+          path: composeApp/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
+  release:
+    needs: [verify, android]
+    runs-on: ubuntu-latest
+    steps:
+      # gh release create --verify-tag 会在本地仓库解析 tag，必须先 checkout 且取全 refs。
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: 创建测试预发布 Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.verify.outputs.tag }}
+        run: |
+          set -eu
+          apk=$(find "artifacts/test-apk-$GITHUB_RUN_ID" -name '*.apk' | head -n 1)
+          if [ -z "$apk" ]; then
+            echo "::error::本次 run 的 APK 产物缺失"; exit 1
+          fi
+          # --verify-tag：tag 必须已存在，防 gh 静默在默认分支补建 tag。
+          # --latest=false：别把测试预发布顶成"最新版本"。
+          gh release create "$TAG" "$apk" \
+            --verify-tag \
+            --prerelease \
+            --latest=false \
+            --title "$TAG（发布链路验证，非正式版）" \
+            --notes "验证 release.yml 的构建与签名链路（$GITHUB_SHA）。不构成正式发布。"

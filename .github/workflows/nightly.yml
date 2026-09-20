@@ -1,0 +1,101 @@
+name: Nightly
+
+# 每日构建：定时 / 手动 / 推 main 三种触发。
+# Android 出 debug APK；macOS 上仅编译 iOS 目标，守住「壳工程可编译」这条线
+# （iOS 未做功能验证，不产 IPA、不跑模拟器）。
+# 只有定时 / 手动才发布 nightly 预发布——普通 push 只留 artifact，
+# 避免每次提交都在 Releases 页刷一条。
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-35 build-tools;34.0.0'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: 构建 debug APK + 单测
+        run: ./gradlew :composeApp:assembleDebug :composeApp:testDebugUnitTest --console=plain
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nightly-apk
+          path: composeApp/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+  # iOS 只编译 klib/framework，不做任何设备验证（项目现状：壳工程可编译、未功能验证）。
+  # K/N 首次要拉 ~1GB 编译器，~/.konan 缓存后快一大截。
+  ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            konan-${{ runner.os }}-
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: 编译 iOS 目标（真机 arm64 + 模拟器 arm64）
+        run: ./gradlew :composeApp:compileKotlinIosArm64 :composeApp:compileKotlinIosSimulatorArm64 --console=plain
+
+  # nightly 预发布：tag 带秒级时间戳，每次唯一（固定名会被仓库 ref 保护锁死，
+  # 纯日期同一天多次构建会撞 tag）。只挂 prerelease，不占 latest。
+  nightly-release:
+    needs: [android]
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: nightly-apk
+          path: nightly
+
+      - name: 发布 nightly 预发布
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          apk=$(find nightly -name '*.apk' | head -n 1)
+          if [ -z "$apk" ]; then
+            echo "::error::nightly APK 产物缺失"; exit 1
+          fi
+          tag="nightly-$(date -u '+%Y%m%d-%H%M%S')"
+          gh release create "$tag" "$apk" \
+            --prerelease \
+            --title "$tag" \
+            --notes "自动构建于 $GITHUB_SHA（$(date -u '+%Y-%m-%d %H:%M UTC')）"

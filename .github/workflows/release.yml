@@ -1,0 +1,143 @@
+name: Release
+
+# 正式版发布：推 `vX.Y.Z` tag 即自动构建签名 APK 并创建正式 Release。
+# 三道闸：tag 格式 / 版本号一致 / tag 在 main 历史里（确保已跑过 CI）。
+# test-release.yml 用 `test-v*` tag 走同一套链路做预演，与这里的 `v*.*.*` 互斥。
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要重发的既有 tag（如 v0.1.0；Release 被误删时用于重建）'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  # 同一 tag 只跑一条；发布中途取消比慢更危险（可能留下半截 Release）。
+  group: release-${{ github.event_name == 'push' && github.ref_name || inputs.tag || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.resolve.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: 解析 tag
+        id: resolve
+        run: |
+          echo "tag=${{ github.event_name == 'push' && github.ref_name || inputs.tag }}" >> "$GITHUB_OUTPUT"
+
+      - name: 校验 tag 与版本号、与 main 的关系
+        run: |
+          set -eu
+          tag='${{ steps.resolve.outputs.tag }}'
+          # 1. tag 必须带 v 前缀且是 X.Y.Z 三段数字（可带 -suffix）。
+          if ! echo "$tag" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::tag 格式不合规：$tag（要求 vX.Y.Z 或 vX.Y.Z-suffix）"; exit 1
+          fi
+          # 2. tag 必须与 composeApp/build.gradle.kts 的 versionName 一致（版本号唯一声明处）。
+          name=$(sed -nE 's/.*versionName\s*=\s*"([^"]+)".*/\1/p' composeApp/build.gradle.kts | head -1)
+          if [ "v$name" != "$tag" ]; then
+            echo "::error::tag $tag 与 composeApp 的 versionName=$name 不一致"; exit 1
+          fi
+          # 3. tag 必须打在 main 历史上：意味着这个 commit 已完整跑过 nightly CI。
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "$tag" FETCH_HEAD; then
+            echo "::error::tag $tag 不在 main 历史里，发布未过 CI 的代码是禁止的"; exit 1
+          fi
+
+  android:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.verify.outputs.tag }}
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-35 build-tools;34.0.0'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: 单测 + 构建签名 release
+        env:
+          ROVECAMLINK_RELEASE_KEYSTORE_BASE64: ${{ secrets.ROVECAMLINK_RELEASE_KEYSTORE_BASE64 }}
+          ROVECAMLINK_RELEASE_STORE_PASSWORD: ${{ secrets.ROVECAMLINK_RELEASE_STORE_PASSWORD }}
+          ROVECAMLINK_RELEASE_KEY_ALIAS: ${{ secrets.ROVECAMLINK_RELEASE_KEY_ALIAS }}
+          ROVECAMLINK_RELEASE_KEY_PASSWORD: ${{ secrets.ROVECAMLINK_RELEASE_KEY_PASSWORD }}
+        run: |
+          set -eu
+          # 与 nightly 相反：正式版绝不允许未签名产物。未签名的 release APK 对已装
+          # 用户的表现是覆盖安装失败，静默发出去比构建失败糟得多。
+          if [ -z "${ROVECAMLINK_RELEASE_KEYSTORE_BASE64:-}" ]; then
+            echo "::error::缺少 ROVECAMLINK_RELEASE_KEYSTORE_BASE64，正式版拒绝发布未签名包"; exit 1
+          fi
+          printf '%s' "$ROVECAMLINK_RELEASE_KEYSTORE_BASE64" | base64 -d > release.keystore
+          export ROVECAMLINK_RELEASE_STORE_FILE=release.keystore
+          ./gradlew :composeApp:testDebugUnitTest :composeApp:assembleRelease --console=plain
+          # `-name` 全词匹配 `*-release.apk`，既避开 unsigned 中间产物，也不会被
+          # 子串误伤；再用 apksigner 硬校验（AGP 默认 v2/v3 方案，grep META-INF 会假阴性）。
+          apk=$(find composeApp/build/outputs/apk/release -maxdepth 1 -type f -name '*-release.apk' | head -n 1)
+          if [ -z "$apk" ]; then
+            echo "::error::找不到已签名的 release APK 产物"; exit 1
+          fi
+          BT=$(ls -d "$ANDROID_HOME/build-tools"/* | sort -V | tail -1)
+          "$BT/apksigner" verify --print-certs "$apk" || {
+            echo "::error::APK 未签名或验签失败，检查 ROVECAMLINK_RELEASE_* 四项 secret"
+            exit 1
+          }
+          rm -f release.keystore
+
+      - uses: actions/upload-artifact@v4
+        with:
+          # 名字带 run_id：同一 tag 重跑（dispatch 重建）时新旧 artifact 不撞名。
+          name: release-apk-${{ github.run_id }}
+          path: composeApp/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
+  release:
+    needs: [verify, android]
+    runs-on: ubuntu-latest
+    steps:
+      # --verify-tag 会在本地解析 tag，必须先 checkout。
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: 创建正式版 Release（签名 APK）
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.verify.outputs.tag }}
+        run: |
+          set -eu
+          apk=$(find "artifacts/release-apk-$GITHUB_RUN_ID" -name '*.apk' | head -n 1)
+          if [ -z "$apk" ]; then
+            echo "::error::本次 run 的 APK 产物缺失"; exit 1
+          fi
+          # --verify-tag：tag 必须已存在——gh 默认行为是"tag 不存在就在默认分支最新
+          # 状态补建 tag"，dispatch 传错名字时会静默建错 tag，绝不能发生在正式版上。
+          gh release create "$TAG" "$apk" \
+            --verify-tag \
+            --latest \
+            --title "$TAG" \
+            --generate-notes

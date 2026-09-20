@@ -85,12 +85,29 @@ android {
         versionName = "0.1.0"
     }
 
+    // 发布签名由环境变量驱动：CI 里解码 keystore 后导出这四项即可。本地没配就
+    // 跳过签名配置，release 产出未签名包——本地验证 R8/打包链路不需要密钥。
+    val releaseStorePath = System.getenv("ROVECAMLINK_RELEASE_STORE_FILE")
+    signingConfigs {
+        if (releaseStorePath != null) {
+            create("release") {
+                storeFile = file(releaseStorePath)
+                storePassword = System.getenv("ROVECAMLINK_RELEASE_STORE_PASSWORD")
+                keyAlias = System.getenv("ROVECAMLINK_RELEASE_KEY_ALIAS")
+                keyPassword = System.getenv("ROVECAMLINK_RELEASE_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
         }
         getByName("release") {
             isMinifyEnabled = false
+            if (releaseStorePath != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
