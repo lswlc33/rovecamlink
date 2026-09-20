@@ -28,6 +28,8 @@
     <application
         android:name=".RoveCamApp"
         android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="RoveCamLink"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
