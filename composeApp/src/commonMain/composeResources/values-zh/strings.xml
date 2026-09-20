@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App-level -->
+    <string name="app_name">RoveCamLink</string>
+
+    <!-- Tabs -->
+    <string name="tab_devices">设备</string>
+    <string name="tab_live">实时</string>
+    <string name="tab_files">文件</string>
+    <string name="tab_settings">设置</string>
+
+    <!-- Connection pill (top bar) -->
+    <string name="pill_connected">已连接</string>
+    <string name="pill_error">错误</string>
+    <string name="pill_offline">离线</string>
+    <string name="pill_busy">处理中</string>
+
+    <!-- Phase labels (Devices status section) -->
+    <string name="phase_idle">空闲</string>
+    <string name="phase_scanning_wifi">扫描 Wi-Fi</string>
+    <string name="phase_joining_wifi">正在加入 Wi-Fi</string>
+    <string name="phase_detecting_device">检测相机</string>
+    <string name="phase_connecting">连接中</string>
+    <string name="phase_connected">已连接</string>
+    <string name="phase_error">错误</string>
+
+    <!-- Generic buttons -->
+    <string name="cancel">取消</string>
+    <string name="save">保存</string>
+    <string name="delete">删除</string>
+
+    <!-- NotConnected widget -->
+    <string name="not_connected_title">未连接</string>
+    <string name="not_connected_note">请先在「设备」页连接相机。</string>
+
+    <!-- Status section labels -->
+    <string name="section_status">状态</string>
+    <string name="label_phase">阶段</string>
+    <string name="label_info">信息</string>
+    <string name="label_model">型号</string>
+    <string name="label_platform">平台</string>
+    <string name="label_host">主机</string>
+
+    <!-- Devices screen -->
+    <string name="action_disconnect">断开连接</string>
+    <string name="section_camera_wifi">相机 Wi-Fi</string>
+    <string name="action_scan_qr">扫描相机二维码</string>
+    <string name="action_scan_cameras">扫描相机</string>
+    <string name="label_nearby_cameras">附近的相机</string>
+    <string name="nearby_cameras_none">尚未发现</string>
+    <string name="wifi_secured">加密</string>
+    <string name="wifi_open">开放</string>
+    <string name="label_password">密码</string>
+    <string name="action_join_connect">加入并连接</string>
+    <string name="section_manual_connect">手动连接</string>
+    <string name="action_connect_to_ip">连接到 IP</string>
+    <string name="placeholder_ip">192.168.0.1</string>
+
+    <!-- Live screen -->
+    <string name="label_battery">电量</string>
+    <string name="label_mode">模式</string>
+    <string name="label_rec">录制</string>
+    <string name="rec_idle">空闲</string>
+    <string name="label_sd_free">SD 可用</string>
+    <string name="section_mode">模式</string>
+    <string name="section_capture">拍摄</string>
+    <string name="action_photo">拍照</string>
+    <string name="action_record">录像</string>
+    <string name="action_stop">停止</string>
+
+    <!-- Files screen -->
+    <string name="action_refresh_files">刷新文件列表</string>
+    <string name="section_downloads">下载</string>
+    <string name="section_on_camera">相机内 · %1$d</string>
+    <string name="files_none_refresh">无 — 点击刷新</string>
+    <string name="label_files">文件</string>
+    <string name="title_delete_file">删除文件?</string>
+    <string name="message_delete_file">\"%1$s\" 将从相机中删除,此操作不可撤销。</string>
+    <string name="download_done">完成</string>
+    <string name="download_failed">失败</string>
+    <string name="file_type_video">视频</string>
+    <string name="file_type_photo">照片</string>
+    <string name="action_download_file">下载 %1$s</string>
+    <string name="action_retry_file">重试 %1$s</string>
+    <string name="action_delete_file">删除 %1$s</string>
+
+    <!-- Settings screen -->
+    <string name="action_reload_settings">重新加载设置</string>
+    <string name="section_camera_settings">相机设置</string>
+    <string name="settings_none_reload">无 — 点击重新加载</string>
+    <string name="label_settings">设置</string>
+
+    <!-- WorkMode display names -->
+    <string name="workmode_video">视频</string>
+    <string name="workmode_photo">照片</string>
+    <string name="workmode_playback">回放</string>
+
+    <!-- QR scan (Android) -->
+    <string name="qr_hint_point">将镜头对准相机的 Wi-Fi 二维码</string>
+    <string name="qr_hint_camera_permission">需要相机权限才能扫码</string>
+    <string name="qr_hint_no_wifi">二维码中没有 Wi-Fi 信息(%1$s)</string>
+    <string name="qr_hint_parsing">已识别二维码,正在解析…</string>
+
+    <!-- QR scan (Desktop) -->
+    <string name="qr_unavailable_desktop">桌面版暂不支持二维码扫描 — 请使用手动连接。</string>
+
+    <!-- QR scan (iOS) -->
+    <string name="qr_unavailable_ios">iOS 端二维码扫描尚未实现。</string>
+
+    <!-- AppState status messages -->
+    <string name="status_joining_wifi">正在加入 %1$s…</string>
+    <string name="status_wifi_joined_locating">已加入 Wi-Fi,正在定位相机…</string>
+    <string name="status_already_on_wifi">已连接 %1$s,正在定位相机…</string>
+    <string name="status_detecting_model">正在检测相机型号…</string>
+    <string name="status_connecting_to_camera">正在连接相机…</string>
+    <string name="status_connected_platform">已连接 · %1$s</string>
+
+    <!-- AppState error messages -->
+    <string name="err_permission_ask_failed">无法请求定位权限:%1$s</string>
+    <string name="err_scan_needs_location">扫描需要定位权限 — 请授权后重试。</string>
+    <string name="err_scan_failed">扫描失败:%1$s</string>
+    <string name="err_wifi_permissions_denied">Wi-Fi 权限被拒绝</string>
+    <string name="err_wifi_failed">Wi-Fi:%1$s</string>
+    <string name="err_wifi_cancelled">Wi-Fi 连接已取消</string>
+    <string name="err_no_camera_found">此网络未发现相机</string>
+    <string name="err_no_host_resolved">未能解析相机主机地址</string>
+    <string name="err_unsupported_camera">%1$s:%2$d 处的相机不受支持</string>
+    <string name="err_no_plugin">无 %1$s 的协议插件</string>
+    <string name="err_connection_error">连接出错</string>
+    <string name="err_camera_stopped">相机无响应 — 请确认已开机且在范围内。</string>
+    <string name="err_storage_permission">保存文件需要存储权限 — 请授权后重试。</string>
+    <string name="err_download_interrupted">已中断 — 点击恢复。</string>
+    <string name="err_download_incomplete">不完整:%1$d / %2$d 字节。</string>
+    <string name="err_gallery_rejected">已下载,但相册拒绝接收 — 已保留在应用存储中。</string>
+    <string name="err_download_failed">下载失败</string>
+    <string name="err_command_failed">命令执行失败</string>
+</resources>

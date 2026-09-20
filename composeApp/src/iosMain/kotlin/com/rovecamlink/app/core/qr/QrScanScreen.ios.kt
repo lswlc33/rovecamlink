@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.rovecamlink.app.Res
+import com.rovecamlink.app.qr_unavailable_ios
 import com.robinpcrd.cupertino.CupertinoText
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * iOS QR scanning is not wired up yet (AVFoundation + Vision pipeline). The iOS
@@ -14,6 +17,6 @@ import com.robinpcrd.cupertino.CupertinoText
 @Composable
 actual fun QrScanScreen(onResult: (QrWifiCredentials?) -> Unit, onClose: () -> Unit) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CupertinoText("QR scanning is not implemented on iOS yet.")
+        CupertinoText(stringResource(Res.string.qr_unavailable_ios))
     }
 }
