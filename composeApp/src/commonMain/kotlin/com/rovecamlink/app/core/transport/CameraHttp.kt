@@ -96,7 +96,7 @@ class CameraHttp(
         destination: Path,
         alreadyHaveBytes: Long = 0,
         onProgress: (Float) -> Unit = {},
-    ): Long = withContext(Dispatchers.IO) {
+    ): Long = withContext(Dispatchers.Default) {
         try {
             streamClient.prepareGet {
                 url(url)
