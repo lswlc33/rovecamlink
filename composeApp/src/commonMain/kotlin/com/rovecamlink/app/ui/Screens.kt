@@ -82,6 +82,7 @@ import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.FileType
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.WorkMode
+import com.rovecamlink.app.core.qr.QrScanScreen
 import com.rovecamlink.app.core.wifi.CameraNetwork
 
 /** Section rows follow the library's own minimum row height. */
@@ -237,6 +238,18 @@ fun DevicesScreen(state: AppState) {
     var manualIp by remember { mutableStateOf("") }
     var selected by remember { mutableStateOf<CameraNetwork?>(null) }
     var password by remember { mutableStateOf("") }
+    var scanning by remember { mutableStateOf(false) }
+
+    if (scanning) {
+        QrScanScreen(
+            onResult = { creds ->
+                scanning = false
+                if (creds != null) state.connect(creds.ssid, creds.password)
+            },
+            onClose = { scanning = false },
+        )
+        return
+    }
 
     LazyColumn(Modifier.fillMaxSize()) {
         section(title = { CupertinoText("Status".sectionTitle()) }) {
@@ -264,6 +277,10 @@ fun DevicesScreen(state: AppState) {
             }
         } else {
             section(title = { CupertinoText("Camera Wi-Fi".sectionTitle()) }) {
+                actionItem(
+                    title = "Scan camera QR code",
+                    onClick = { scanning = true },
+                )
                 actionItem(
                     title = "Scan for cameras",
                     busy = state.phase == Phase.ScanningWifi,

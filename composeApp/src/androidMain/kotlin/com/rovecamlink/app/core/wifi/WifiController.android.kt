@@ -38,11 +38,22 @@ private class AndroidWifiController : WifiController {
     }
 
     override fun gateway(): String? {
-        val lp = linkProps ?: return null
-        // Prefer the default route's gateway; fall back to the link subnet's .1
-        lp.routes?.firstOrNull { it.isDefaultRoute }?.gateway?.hostAddress?.let { return it }
-        val addr = lp.linkAddresses?.firstOrNull()?.address?.hostAddress ?: return null
-        return addr.substringBeforeLast('.') + ".1"
+        // 1. Link properties captured when we joined the camera network ourselves.
+        linkProps?.let { lp ->
+            lp.routes?.firstOrNull { it.isDefaultRoute }?.gateway?.hostAddress?.let { return it }
+            lp.linkAddresses?.firstOrNull()?.address?.hostAddress?.let { addr ->
+                return addr.substringBeforeLast('.') + ".1"
+            }
+        }
+        // 2. Fallback for manually-joined networks: read the active network's
+        //    link properties directly (works without our own requestNetwork).
+        val active = boundNetwork ?: cm.activeNetwork ?: return null
+        return runCatching {
+            val lp = cm.getLinkProperties(active) ?: return null
+            lp.routes?.firstOrNull { it.isDefaultRoute }?.gateway?.hostAddress
+                ?: lp.linkAddresses?.firstOrNull()?.address?.hostAddress
+                    ?.substringBeforeLast('.')?.plus(".1")
+        }.getOrNull()
     }
 
     override suspend fun connect(ssid: String, password: String?): WifiResult {
@@ -79,9 +90,17 @@ private class AndroidWifiController : WifiController {
                         if (lp != null) linkProps = lp
                     }
                     override fun onLost(network: Network) {
-                        if (network == boundNetwork) { boundNetwork = null; linkProps = null }
+                        if (network == boundNetwork) {
+                            boundNetwork = null
+                            linkProps = null
+                            // Stop routing process sockets through the dead network, and
+                            // unregister so the specifier request doesn't linger/reprompt.
+                            runCatching { cm.bindProcessToNetwork(null) }
+                            runCatching { cm.unregisterNetworkCallback(this) }
+                        }
                     }
                     override fun onUnavailable() {
+                        runCatching { cm.unregisterNetworkCallback(this) }
                         if (cont.isActive) cont.resume(WifiResult.Failed("Camera network unavailable"))
                     }
                 }
@@ -147,6 +166,35 @@ private class AndroidWifiController : WifiController {
             runCatching { wm.disconnect() }
             legacyNetId = -1
         }
+    }
+
+    @Volatile private var wifiWatchCallback: ConnectivityManager.NetworkCallback? = null
+
+    override fun watchWifiChanges(listener: ((ssid: String?) -> Unit)?) {
+        val previous = wifiWatchCallback
+        if (previous != null) {
+            runCatching { cm.unregisterNetworkCallback(previous) }
+            wifiWatchCallback = null
+        }
+        if (listener == null) return
+
+        val cb = object : ConnectivityManager.NetworkCallback() {
+            private var lastSsid: String? = null
+            override fun onCapabilitiesChanged(network: Network, caps: NetworkCapabilities) {
+                if (!caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return
+                val ssid = wm.connectionInfo?.ssid?.trim('"')
+                    ?.takeIf { it.isNotEmpty() && it != "<unknown ssid>" }
+                if (ssid != null && ssid != lastSsid) {
+                    lastSsid = ssid
+                    listener(ssid)
+                }
+            }
+            override fun onLost(network: Network) {
+                listener(null)
+            }
+        }
+        wifiWatchCallback = cb
+        runCatching { cm.registerDefaultNetworkCallback(cb) }
     }
 }
 

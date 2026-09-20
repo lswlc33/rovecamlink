@@ -15,6 +15,7 @@ import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.WorkMode
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.wifi.CameraNetwork
+import com.rovecamlink.app.core.wifi.DEFAULT_PREFIXES
 import com.rovecamlink.app.core.wifi.WifiResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -89,6 +90,17 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     private val protocol: CameraProtocol?
         get() = session?.let { graph.registry.protocolFor(it.platform) }
 
+    init {
+        // A hotspot the user joined from system settings never passes through
+        // connect(), so watch the default network and auto-discover camera SSIDs.
+        graph.wifi.watchWifiChanges { ssid ->
+            if (ssid == null || session != null) return@watchWifiChanges
+            if (phase != Phase.Idle && phase != Phase.Error) return@watchWifiChanges
+            if (DEFAULT_PREFIXES.none { ssid.startsWith(it, ignoreCase = true) }) return@watchWifiChanges
+            connect()
+        }
+    }
+
     /** Public accessor for the UI (e.g. to build the preview URL). */
     fun protocolOrNull(): CameraProtocol? = protocol
 
@@ -129,7 +141,11 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 port = parts[1].toIntOrNull() ?: 80
             }
             if (host == null) {
-                if (ssid != null) {
+                // Joining a network we're already on is a no-op the OS rejects (or
+                // re-prompts for), so skip it when the user joined in system settings.
+                val alreadyOnTarget = ssid != null &&
+                    graph.wifi.currentCameraSsid().equals(ssid, ignoreCase = true)
+                if (ssid != null && !alreadyOnTarget) {
                     phase = Phase.ConnectingWifi
                     statusMessage = "Joining $ssid…"
                     val ok = graph.permissions.ensureWifiPermissions()
@@ -141,6 +157,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                         is WifiResult.Failed -> { fail("WiFi: ${r.message}"); return@launch }
                         WifiResult.Cancelled -> { fail("WiFi connect cancelled"); return@launch }
                     }
+                } else if (alreadyOnTarget) {
+                    statusMessage = "Already on $ssid. Locating camera…"
                 }
                 phase = Phase.IdentifyingDevice
                 statusMessage = "Detecting camera model…"

@@ -16,6 +16,7 @@ private class IosWifiController : WifiController {
     override suspend fun connect(ssid: String, password: String?): WifiResult =
         WifiResult.Failed("iOS WiFi-direct not implemented (needs NEHotspotConfiguration entitlement). Join the camera network in Settings, then use Manual connect.")
     override suspend fun disconnect() {}
+    override fun watchWifiChanges(listener: ((ssid: String?) -> Unit)?) {}
 }
 
 private class IosWifiScanner : WifiScanner {

@@ -10,6 +10,7 @@ private class DesktopWifiController : WifiController {
     override suspend fun connect(ssid: String, password: String?): WifiResult =
         WifiResult.Failed("WiFi-direct is not available on desktop. Use Manual connect (e.g. 127.0.0.1).")
     override suspend fun disconnect() {}
+    override fun watchWifiChanges(listener: ((ssid: String?) -> Unit)?) {}
 }
 
 private class DesktopWifiScanner : WifiScanner {

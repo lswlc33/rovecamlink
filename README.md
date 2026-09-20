@@ -70,6 +70,8 @@ cd iosApp && xcodegen generate && open RoveCamLink.xcodeproj
 - [x] 可扩展的协议插件架构
 - [x] XTU X7 Pro（海思 CGI）+ 运行时自动探测
 - [x] Wi-Fi 直连（Android API 24+ / 29+ 两条路径）
+- [x] 扫码连接（识别相机屏幕上的 Wi-Fi 二维码，CameraX + zxing）
+- [x] 手动连上相机热点后自动发现并连接
 - [x] RTSP 实时图传（Media3，Android）
 - [x] 文件传输（列表 / 缩略图 / 断点续传下载 / 发布到相册）
 - [x] 文件缩略图应用内解码，删除前二次确认

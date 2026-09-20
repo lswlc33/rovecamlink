@@ -20,6 +20,14 @@ interface WifiController {
     fun gateway(): String?
     suspend fun connect(ssid: String, password: String?): WifiResult
     suspend fun disconnect()
+
+    /**
+     * Observe WiFi networks the phone joins. Called with the SSID whenever the
+     * active WiFi network changes (including networks the user joined manually
+     * in system settings), so the app can auto-discover a camera on it.
+     * Passing null unregisters the previous listener.
+     */
+    fun watchWifiChanges(listener: ((ssid: String?) -> Unit)?)
 }
 
 /**
