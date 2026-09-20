@@ -28,7 +28,11 @@ jobs:
     outputs:
       tag: ${{ steps.resolve.outputs.tag }}
     steps:
+      # fetch-depth: 0 是必须的：默认浅克隆不带 tag，verify 里的 merge-base
+      # 会因找不到 tag 对象而误判成「tag 不在 main 历史里」。
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: 解析 tag
         id: resolve
