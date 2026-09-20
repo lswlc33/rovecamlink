@@ -48,7 +48,7 @@ data class DownloadItem(
     val progress: Float = 0f,
     val state: State = State.Queued,
     val localPath: String? = null,
-    val error: String? = null,
+    val error: LocalizedString? = null,
 ) {
     enum class State { Queued, Running, Done, Failed }
 }
@@ -61,9 +61,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     var phase by mutableStateOf(Phase.Idle)
         private set
-    var statusMessage by mutableStateOf("")
+    var statusMessage by mutableStateOf<LocalizedString?>(null)
         private set
-    var errorMessage by mutableStateOf<String?>(null)
+    var errorMessage by mutableStateOf<LocalizedString?>(null)
 
     var networks by mutableStateOf<List<CameraNetwork>>(emptyList())
         private set
@@ -134,17 +134,17 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val granted = runCatching { graph.permissions.ensureWifiPermissions() }
             .getOrElse {
                 phase = Phase.Idle
-                errorMessage = "Couldn't ask for the location permission: ${it.message}"
+                errorMessage = localized(Res.string.err_permission_ask_failed, it.message ?: "")
                 return@launch
             }
         if (!granted) {
             phase = Phase.Idle
-            errorMessage = "Scanning needs the location permission — grant it and retry."
+            errorMessage = localized(Res.string.err_scan_needs_location)
             return@launch
         }
         runCatching { graph.scanner.scan() }
             .onSuccess { networks = it }
-            .onFailure { errorMessage = "Scan failed: ${it.message}" }
+            .onFailure { errorMessage = localized(Res.string.err_scan_failed, it.message ?: "") }
         if (phase == Phase.ScanningWifi) phase = Phase.Idle
     }
 
@@ -166,43 +166,43 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     graph.wifi.currentCameraSsid().equals(ssid, ignoreCase = true)
                 if (ssid != null && !alreadyOnTarget) {
                     phase = Phase.ConnectingWifi
-                    statusMessage = "Joining $ssid…"
+                    statusMessage = localized(Res.string.status_joining_wifi, ssid)
                     val ok = graph.permissions.ensureWifiPermissions()
-                    if (!ok) { fail("WiFi permissions denied"); return@launch }
+                    if (!ok) { fail(localized(Res.string.err_wifi_permissions_denied)); return@launch }
                     when (val r = graph.wifi.connect(ssid, password)) {
                         is WifiResult.Connected -> {
-                            statusMessage = "WiFi joined. Locating camera…"
+                            statusMessage = localized(Res.string.status_wifi_joined_locating)
                         }
-                        is WifiResult.Failed -> { fail("WiFi: ${r.message}"); return@launch }
-                        WifiResult.Cancelled -> { fail("WiFi connect cancelled"); return@launch }
+                        is WifiResult.Failed -> { fail(localized(Res.string.err_wifi_failed, r.message)); return@launch }
+                        WifiResult.Cancelled -> { fail(localized(Res.string.err_wifi_cancelled)); return@launch }
                     }
                 } else if (alreadyOnTarget) {
-                    statusMessage = "Already on $ssid. Locating camera…"
+                    statusMessage = localized(Res.string.status_already_on_wifi, ssid)
                 }
                 phase = Phase.IdentifyingDevice
-                statusMessage = "Detecting camera model…"
+                statusMessage = localized(Res.string.status_detecting_model)
                 val found = graph.discovery.discover(graph.wifi.gateway())
-                if (found == null) { fail("No camera found on this network"); return@launch }
+                if (found == null) { fail(localized(Res.string.err_no_camera_found)); return@launch }
                 host = found.first
             }
 
             phase = Phase.ConnectingProtocol
-            statusMessage = "Connecting to camera…"
-            val h = host ?: run { fail("No camera host resolved"); return@launch }
+            statusMessage = localized(Res.string.status_connecting_to_camera)
+            val h = host ?: run { fail(localized(Res.string.err_no_host_resolved)); return@launch }
             val platform: DevicePlatform = graph.discovery.identify(h, port)
-                ?: run { fail("Unsupported camera at $h:$port"); return@launch }
-            val proto = graph.registry.protocolFor(platform) ?: run { fail("No plugin for $platform"); return@launch }
+                ?: run { fail(localized(Res.string.err_unsupported_camera, h, port)); return@launch }
+            val proto = graph.registry.protocolFor(platform) ?: run { fail(localized(Res.string.err_no_plugin, platform.displayName)); return@launch }
             val s = proto.connect(h, port)
             session = s
             sessionScope = CoroutineScope(scope.coroutineContext + Job())
             consecutivePollFailures = 0
             phase = Phase.Connected
-            statusMessage = "Connected · ${platform.displayName}"
+            statusMessage = localized(Res.string.status_connected_platform, platform.displayName)
             startPolling()
             loadSettings()
             refreshFiles()
         } catch (t: Throwable) {
-            fail(t.message ?: "Connection error")
+            fail(t.message?.let(::raw) ?: localized(Res.string.err_connection_error))
         }
     }
 
@@ -223,7 +223,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         downloads.clear()
         busy.clear()
         phase = Phase.Idle
-        statusMessage = ""
+        statusMessage = null
         runCatching { graph.wifi.disconnect() }
     }
 
@@ -243,7 +243,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                         // One hiccup is normal on a congested hotspot; a run of them
                         // means the camera is gone, and the pill must say so.
                         if (++consecutivePollFailures == POLL_FAILURES_BEFORE_LOST) {
-                            errorMessage = "Camera stopped responding — is it still on and in range?"
+                            errorMessage = localized(Res.string.err_camera_stopped)
                             disconnect()
                         }
                     }
@@ -346,7 +346,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 // Pre-API-29 saving goes through public external storage and needs
                 // WRITE_EXTERNAL_STORAGE; on 29+ this is a no-op returning true.
                 if (!graph.permissions.ensureStoragePermissions()) {
-                    markFailed(file, "Saving needs the storage permission — grant it and retry.")
+                    markFailed(file, localized(Res.string.err_storage_permission))
                     return@launch
                 }
                 val dir = graph.fileSaver.downloadsDir()
@@ -362,11 +362,11 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     if (i >= 0) downloads[i] = downloads[i].copy(progress = p)
                 }
                 if (written < 0L) {
-                    markFailed(file, "Interrupted — tap to resume.")
+                    markFailed(file, localized(Res.string.err_download_interrupted))
                     return@launch
                 }
                 if (file.sizeBytes > 0L && written != file.sizeBytes) {
-                    markFailed(file, "Incomplete: $written of ${file.sizeBytes} bytes.")
+                    markFailed(file, localized(Res.string.err_download_incomplete, written, file.sizeBytes))
                     return@launch
                 }
                 val mime = if (file.type == com.rovecamlink.app.core.model.FileType.PHOTO) "image/jpeg" else "video/mp4"
@@ -376,10 +376,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     state = DownloadItem.State.Done, progress = 1f, localPath = published ?: dest.toString(),
                 )
                 if (published == null) {
-                    errorMessage = "Downloaded, but the gallery rejected it — kept in app storage."
+                    errorMessage = localized(Res.string.err_gallery_rejected)
                 }
             } catch (t: Throwable) {
-                markFailed(file, t.message ?: "Download failed")
+                markFailed(file, t.message?.let(::raw) ?: localized(Res.string.err_download_failed))
             }
         }
     }
@@ -388,10 +388,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     fun downloadState(name: String): DownloadItem.State? =
         downloads.firstOrNull { it.file.name == name }?.state
 
-    fun downloadError(name: String): String? =
+    fun downloadError(name: String): LocalizedString? =
         downloads.firstOrNull { it.file.name == name }?.error
 
-    private fun markFailed(file: RemoteFile, reason: String) {
+    private fun markFailed(file: RemoteFile, reason: LocalizedString) {
         val i = downloads.indexOfFirst { it.file.name == file.name }
         if (i >= 0) downloads[i] = downloads[i].copy(state = DownloadItem.State.Failed, error = reason)
         errorMessage = reason
@@ -403,20 +403,20 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         setBusy(op, true)
         try {
             val r = block(proto, s)
-            if (r is CmdResult.Failure) errorMessage = r.message
+            if (r is CmdResult.Failure) errorMessage = raw(r.message)
             // refresh status promptly after a control action
             runCatching { deviceStatus = proto.getStatus(s) }
         } catch (t: Throwable) {
-            errorMessage = t.message ?: "Command failed"
+            errorMessage = t.message?.let(::raw) ?: localized(Res.string.err_command_failed)
         } finally {
             setBusy(op, false)
         }
     }
 
-    private fun fail(msg: String) {
+    private fun fail(msg: LocalizedString) {
         errorMessage = msg
         phase = Phase.Error
-        statusMessage = ""
+        statusMessage = null
     }
 }
 

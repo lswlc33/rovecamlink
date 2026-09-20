@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App-level -->
+    <string name="app_name">RoveCamLink</string>
+
+    <!-- Tabs -->
+    <string name="tab_devices">Devices</string>
+    <string name="tab_live">Live</string>
+    <string name="tab_files">Files</string>
+    <string name="tab_settings">Settings</string>
+
+    <!-- Connection pill (top bar) -->
+    <string name="pill_connected">Connected</string>
+    <string name="pill_error">Error</string>
+    <string name="pill_offline">Offline</string>
+    <string name="pill_busy">Busy</string>
+
+    <!-- Phase labels (Devices status section) -->
+    <string name="phase_idle">Idle</string>
+    <string name="phase_scanning_wifi">Scanning Wi-Fi</string>
+    <string name="phase_joining_wifi">Joining Wi-Fi</string>
+    <string name="phase_detecting_device">Detecting camera</string>
+    <string name="phase_connecting">Connecting</string>
+    <string name="phase_connected">Connected</string>
+    <string name="phase_error">Error</string>
+
+    <!-- Generic buttons -->
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+
+    <!-- NotConnected widget -->
+    <string name="not_connected_title">Not connected</string>
+    <string name="not_connected_note">Connect a camera on the Devices tab first.</string>
+
+    <!-- Status section labels -->
+    <string name="section_status">Status</string>
+    <string name="label_phase">Phase</string>
+    <string name="label_info">Info</string>
+    <string name="label_model">Model</string>
+    <string name="label_platform">Platform</string>
+    <string name="label_host">Host</string>
+
+    <!-- Devices screen -->
+    <string name="action_disconnect">Disconnect</string>
+    <string name="section_camera_wifi">Camera Wi-Fi</string>
+    <string name="action_scan_qr">Scan camera QR code</string>
+    <string name="action_scan_cameras">Scan for cameras</string>
+    <string name="label_nearby_cameras">Nearby cameras</string>
+    <string name="nearby_cameras_none">none found yet</string>
+    <string name="wifi_secured">Secured</string>
+    <string name="wifi_open">Open</string>
+    <string name="label_password">Password</string>
+    <string name="action_join_connect">Join &amp; connect</string>
+    <string name="section_manual_connect">Manual connect</string>
+    <string name="action_connect_to_ip">Connect to IP</string>
+    <string name="placeholder_ip">192.168.0.1</string>
+
+    <!-- Live screen -->
+    <string name="label_battery">Battery</string>
+    <string name="label_mode">Mode</string>
+    <string name="label_rec">REC</string>
+    <string name="rec_idle">idle</string>
+    <string name="label_sd_free">SD free</string>
+    <string name="section_mode">Mode</string>
+    <string name="section_capture">Capture</string>
+    <string name="action_photo">Photo</string>
+    <string name="action_record">Record</string>
+    <string name="action_stop">Stop</string>
+
+    <!-- Files screen -->
+    <string name="action_refresh_files">Refresh file list</string>
+    <string name="section_downloads">Downloads</string>
+    <string name="section_on_camera">On camera · %1$d</string>
+    <string name="files_none_refresh">none — tap refresh</string>
+    <string name="label_files">Files</string>
+    <string name="title_delete_file">Delete file?</string>
+    <string name="message_delete_file">\"%1$s\" will be removed from the camera. This cannot be undone.</string>
+    <string name="download_done">Done</string>
+    <string name="download_failed">Failed</string>
+    <string name="file_type_video">Video</string>
+    <string name="file_type_photo">Photo</string>
+    <string name="action_download_file">Download %1$s</string>
+    <string name="action_retry_file">Retry %1$s</string>
+    <string name="action_delete_file">Delete %1$s</string>
+
+    <!-- Settings screen -->
+    <string name="action_reload_settings">Reload settings</string>
+    <string name="section_camera_settings">Camera settings</string>
+    <string name="settings_none_reload">none — tap reload</string>
+    <string name="label_settings">Settings</string>
+
+    <!-- WorkMode display names -->
+    <string name="workmode_video">Video</string>
+    <string name="workmode_photo">Photo</string>
+    <string name="workmode_playback">Playback</string>
+
+    <!-- QR scan (Android) -->
+    <string name="qr_hint_point">Point at the camera\'s Wi-Fi QR code</string>
+    <string name="qr_hint_camera_permission">Camera permission is needed to scan</string>
+    <string name="qr_hint_no_wifi">QR code has no Wi-Fi info (%1$s)</string>
+    <string name="qr_hint_parsing">QR detected, parsing…</string>
+
+    <!-- QR scan (Desktop) -->
+    <string name="qr_unavailable_desktop">QR scanning is not available on desktop — use Manual connect.</string>
+
+    <!-- QR scan (iOS) -->
+    <string name="qr_unavailable_ios">QR scanning is not implemented on iOS yet.</string>
+
+    <!-- AppState status messages -->
+    <string name="status_joining_wifi">Joining %1$s…</string>
+    <string name="status_wifi_joined_locating">WiFi joined. Locating camera…</string>
+    <string name="status_already_on_wifi">Already on %1$s. Locating camera…</string>
+    <string name="status_detecting_model">Detecting camera model…</string>
+    <string name="status_connecting_to_camera">Connecting to camera…</string>
+    <string name="status_connected_platform">Connected · %1$s</string>
+
+    <!-- AppState error messages -->
+    <string name="err_permission_ask_failed">Couldn\'t ask for the location permission: %1$s</string>
+    <string name="err_scan_needs_location">Scanning needs the location permission — grant it and retry.</string>
+    <string name="err_scan_failed">Scan failed: %1$s</string>
+    <string name="err_wifi_permissions_denied">WiFi permissions denied</string>
+    <string name="err_wifi_failed">WiFi: %1$s</string>
+    <string name="err_wifi_cancelled">WiFi connect cancelled</string>
+    <string name="err_no_camera_found">No camera found on this network</string>
+    <string name="err_no_host_resolved">No camera host resolved</string>
+    <string name="err_unsupported_camera">Unsupported camera at %1$s:%2$d</string>
+    <string name="err_no_plugin">No plugin for %1$s</string>
+    <string name="err_connection_error">Connection error</string>
+    <string name="err_camera_stopped">Camera stopped responding — is it still on and in range?</string>
+    <string name="err_storage_permission">Saving needs the storage permission — grant it and retry.</string>
+    <string name="err_download_interrupted">Interrupted — tap to resume.</string>
+    <string name="err_download_incomplete">Incomplete: %1$d of %2$d bytes.</string>
+    <string name="err_gallery_rejected">Downloaded, but the gallery rejected it — kept in app storage.</string>
+    <string name="err_download_failed">Download failed</string>
+    <string name="err_command_failed">Command failed</string>
+</resources>

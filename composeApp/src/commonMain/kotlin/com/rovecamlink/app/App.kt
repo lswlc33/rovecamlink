@@ -49,12 +49,14 @@ import com.rovecamlink.app.ui.DevicesScreen
 import com.rovecamlink.app.ui.FilesScreen
 import com.rovecamlink.app.ui.LiveScreen
 import com.rovecamlink.app.ui.SettingsScreen
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
-enum class Tab(val label: String, val icon: ImageVector) {
-    Devices("Devices", CupertinoIcons.Filled.WifiRouter),
-    Live("Live", CupertinoIcons.Filled.Video),
-    Files("Files", CupertinoIcons.Filled.Folder),
-    Settings("Settings", CupertinoIcons.Filled.Gearshape2),
+enum class Tab(val labelRes: StringResource, val icon: ImageVector) {
+    Devices(Res.string.tab_devices, CupertinoIcons.Filled.WifiRouter),
+    Live(Res.string.tab_live, CupertinoIcons.Filled.Video),
+    Files(Res.string.tab_files, CupertinoIcons.Filled.Folder),
+    Settings(Res.string.tab_settings, CupertinoIcons.Filled.Gearshape2),
 }
 
 @Composable
@@ -71,7 +73,7 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                 CupertinoTopAppBar(
                     title = {
                         CupertinoText(
-                            text = "RoveCamLink",
+                            text = stringResource(Res.string.app_name),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 17.sp,
                         )
@@ -82,13 +84,14 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
             bottomBar = {
                 CupertinoNavigationBar {
                     Tab.entries.forEach { t ->
+                        val label = stringResource(t.labelRes)
                         CupertinoNavigationBarItem(
                             selected = t == tab,
                             onClick = { tab = t },
                             icon = {
-                                CupertinoIcon(t.icon, contentDescription = t.label)
+                                CupertinoIcon(t.icon, contentDescription = label)
                             },
-                            label = { CupertinoText(t.label) },
+                            label = { CupertinoText(label) },
                         )
                     }
                 }
@@ -122,12 +125,14 @@ private fun ConnectionPill(state: AppState) {
         Phase.Idle -> scheme.secondaryLabel
         else -> CupertinoColors.systemOrange
     }
-    val label = when (state.phase) {
-        Phase.Connected -> "Connected"
-        Phase.Error -> "Error"
-        Phase.Idle -> "Offline"
-        else -> "Busy"
-    }
+    val label = stringResource(
+        when (state.phase) {
+            Phase.Connected -> Res.string.pill_connected
+            Phase.Error -> Res.string.pill_error
+            Phase.Idle -> Res.string.pill_offline
+            else -> Res.string.pill_busy
+        },
+    )
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -151,7 +156,7 @@ private fun ConnectionPill(state: AppState) {
 
 /** Dismissible error toast pinned to the bottom of the content area. */
 @Composable
-private fun ErrorBanner(msg: String, onDismiss: () -> Unit) {
+private fun ErrorBanner(msg: LocalizedString, onDismiss: () -> Unit) {
     Box(
         Modifier.fillMaxSize().padding(16.dp),
         contentAlignment = Alignment.BottomCenter,
@@ -173,7 +178,7 @@ private fun ErrorBanner(msg: String, onDismiss: () -> Unit) {
             )
             Spacer(Modifier.width(8.dp))
             CupertinoText(
-                text = msg,
+                text = msg.resolve(),
                 color = Color.White,
                 fontSize = 13.sp,
                 modifier = Modifier.weight(1f),

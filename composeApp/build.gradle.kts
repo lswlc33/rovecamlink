@@ -142,3 +142,9 @@ compose.desktop {
         }
     }
 }
+
+// 把生成的 Res 类固定在 com.rovecamlink.app 包下,UI/状态层可直接 import。
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.rovecamlink.app"
+}

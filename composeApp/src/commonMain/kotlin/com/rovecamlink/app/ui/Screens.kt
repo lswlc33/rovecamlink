@@ -77,6 +77,7 @@ import com.rovecamlink.app.AppState
 import com.rovecamlink.app.DownloadItem
 import com.rovecamlink.app.Op
 import com.rovecamlink.app.Phase
+import com.rovecamlink.app.Res
 import com.rovecamlink.app.core.media.CameraPreviewView
 import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.FileType
@@ -84,6 +85,67 @@ import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.WorkMode
 import com.rovecamlink.app.core.qr.QrScanScreen
 import com.rovecamlink.app.core.wifi.CameraNetwork
+import com.rovecamlink.app.action_connect_to_ip
+import com.rovecamlink.app.action_delete_file
+import com.rovecamlink.app.action_disconnect
+import com.rovecamlink.app.action_download_file
+import com.rovecamlink.app.action_join_connect
+import com.rovecamlink.app.action_photo
+import com.rovecamlink.app.action_record
+import com.rovecamlink.app.action_refresh_files
+import com.rovecamlink.app.action_reload_settings
+import com.rovecamlink.app.action_retry_file
+import com.rovecamlink.app.action_scan_cameras
+import com.rovecamlink.app.action_scan_qr
+import com.rovecamlink.app.action_stop
+import com.rovecamlink.app.cancel
+import com.rovecamlink.app.delete
+import com.rovecamlink.app.download_done
+import com.rovecamlink.app.download_failed
+import com.rovecamlink.app.file_type_photo
+import com.rovecamlink.app.file_type_video
+import com.rovecamlink.app.files_none_refresh
+import com.rovecamlink.app.label_battery
+import com.rovecamlink.app.label_files
+import com.rovecamlink.app.label_host
+import com.rovecamlink.app.label_info
+import com.rovecamlink.app.label_mode
+import com.rovecamlink.app.label_model
+import com.rovecamlink.app.label_nearby_cameras
+import com.rovecamlink.app.label_password
+import com.rovecamlink.app.label_phase
+import com.rovecamlink.app.label_platform
+import com.rovecamlink.app.label_rec
+import com.rovecamlink.app.label_sd_free
+import com.rovecamlink.app.label_settings
+import com.rovecamlink.app.message_delete_file
+import com.rovecamlink.app.nearby_cameras_none
+import com.rovecamlink.app.not_connected_note
+import com.rovecamlink.app.not_connected_title
+import com.rovecamlink.app.phase_connected
+import com.rovecamlink.app.phase_connecting
+import com.rovecamlink.app.phase_detecting_device
+import com.rovecamlink.app.phase_error
+import com.rovecamlink.app.phase_idle
+import com.rovecamlink.app.phase_joining_wifi
+import com.rovecamlink.app.phase_scanning_wifi
+import com.rovecamlink.app.placeholder_ip
+import com.rovecamlink.app.rec_idle
+import com.rovecamlink.app.save
+import com.rovecamlink.app.section_camera_settings
+import com.rovecamlink.app.section_camera_wifi
+import com.rovecamlink.app.section_capture
+import com.rovecamlink.app.section_downloads
+import com.rovecamlink.app.section_manual_connect
+import com.rovecamlink.app.section_mode
+import com.rovecamlink.app.section_on_camera
+import com.rovecamlink.app.section_status
+import com.rovecamlink.app.settings_none_reload
+import com.rovecamlink.app.title_delete_file
+import com.rovecamlink.app.wifi_open
+import com.rovecamlink.app.wifi_secured
+import com.rovecamlink.app.resolve
+import org.jetbrains.compose.resources.stringResource
 
 /** Section rows follow the library's own minimum row height. */
 private val RowMinHeight = 45.dp
@@ -102,20 +164,23 @@ private fun formatTime(sec: Int): String {
     return "${if (m < 10) "0$m" else "$m"}:${if (s < 10) "0$s" else "$s"}"
 }
 
-private fun phaseLabel(p: Phase): String = when (p) {
-    Phase.Idle -> "Idle"
-    Phase.ScanningWifi -> "Scanning Wi-Fi"
-    Phase.ConnectingWifi -> "Joining Wi-Fi"
-    Phase.IdentifyingDevice -> "Detecting camera"
-    Phase.ConnectingProtocol -> "Connecting"
-    Phase.Connected -> "Connected"
-    Phase.Error -> "Error"
-}
+@Composable
+private fun phaseLabel(p: Phase): String = stringResource(
+    when (p) {
+        Phase.Idle -> Res.string.phase_idle
+        Phase.ScanningWifi -> Res.string.phase_scanning_wifi
+        Phase.ConnectingWifi -> Res.string.phase_joining_wifi
+        Phase.IdentifyingDevice -> Res.string.phase_detecting_device
+        Phase.ConnectingProtocol -> Res.string.phase_connecting
+        Phase.Connected -> Res.string.phase_connected
+        Phase.Error -> Res.string.phase_error
+    },
+)
 
 // ============================ shared widgets ============================
 
 @Composable
-private fun NotConnected(note: String = "Connect a camera on the Devices tab first.") {
+private fun NotConnected(note: String = stringResource(Res.string.not_connected_note)) {
     Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -127,7 +192,11 @@ private fun NotConnected(note: String = "Connect a camera on the Devices tab fir
                 tint = CupertinoTheme.colorScheme.tertiaryLabel,
                 modifier = Modifier.size(40.dp),
             )
-            CupertinoText("Not connected", fontWeight = FontWeight.SemiBold, fontSize = 17.sp)
+            CupertinoText(
+                text = stringResource(Res.string.not_connected_title),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 17.sp,
+            )
             CupertinoText(
                 note,
                 color = CupertinoTheme.colorScheme.secondaryLabel,
@@ -251,14 +320,39 @@ fun DevicesScreen(state: AppState) {
         return
     }
 
+    // Composable 上下文里一次性解析所有静态文案;section 的 body 非 Composable,
+    // 故不能在 valueItem/actionItem 调用点直接 stringResource(...)。
+    val statusTitle = stringResource(Res.string.section_status)
+    val phaseLbl = stringResource(Res.string.label_phase)
+    val infoLbl = stringResource(Res.string.label_info)
+    val modelLbl = stringResource(Res.string.label_model)
+    val platformLbl = stringResource(Res.string.label_platform)
+    val hostLbl = stringResource(Res.string.label_host)
+    val phaseLabelStr = phaseLabel(state.phase)
+    val statusMsg = state.statusMessage?.resolve() ?: ""
+    val disconnectLabel = stringResource(Res.string.action_disconnect)
+    val cameraWifiTitle = stringResource(Res.string.section_camera_wifi)
+    val scanQrLabel = stringResource(Res.string.action_scan_qr)
+    val scanCamerasLabel = stringResource(Res.string.action_scan_cameras)
+    val nearbyLabel = stringResource(Res.string.label_nearby_cameras)
+    val nearbyNone = stringResource(Res.string.nearby_cameras_none)
+    val securedLabel = stringResource(Res.string.wifi_secured)
+    val openLabel = stringResource(Res.string.wifi_open)
+    val passwordLabel = stringResource(Res.string.label_password)
+    val joinConnectLabel = stringResource(Res.string.action_join_connect)
+    val cancelLabel = stringResource(Res.string.cancel)
+    val manualConnectTitle = stringResource(Res.string.section_manual_connect)
+    val ipPlaceholder = stringResource(Res.string.placeholder_ip)
+    val connectToIpLabel = stringResource(Res.string.action_connect_to_ip)
+
     LazyColumn(Modifier.fillMaxSize()) {
-        section(title = { CupertinoText("Status".sectionTitle()) }) {
-            valueItem("Phase", phaseLabel(state.phase))
-            if (state.statusMessage.isNotEmpty()) valueItem("Info", state.statusMessage)
+        section(title = { CupertinoText(statusTitle.sectionTitle()) }) {
+            valueItem(phaseLbl, phaseLabelStr)
+            if (statusMsg.isNotEmpty()) valueItem(infoLbl, statusMsg)
             state.session?.let { s ->
-                valueItem("Model", s.model)
-                valueItem("Platform", s.platform.displayName)
-                valueItem("Host", "${s.host}:${s.port}")
+                valueItem(modelLbl, s.model)
+                valueItem(platformLbl, s.platform.displayName)
+                valueItem(hostLbl, "${s.host}:${s.port}")
             }
         }
 
@@ -267,7 +361,7 @@ fun DevicesScreen(state: AppState) {
                 item {
                     Row(Modifier.fillMaxWidth().padding(it)) {
                         FilledButton(
-                            label = "Disconnect",
+                            label = disconnectLabel,
                             modifier = Modifier.weight(1f),
                             containerColor = CupertinoColors.systemRed,
                             onClick = { state.disconnect() },
@@ -276,18 +370,18 @@ fun DevicesScreen(state: AppState) {
                 }
             }
         } else {
-            section(title = { CupertinoText("Camera Wi-Fi".sectionTitle()) }) {
+            section(title = { CupertinoText(cameraWifiTitle.sectionTitle()) }) {
                 actionItem(
-                    title = "Scan camera QR code",
+                    title = scanQrLabel,
                     onClick = { scanning = true },
                 )
                 actionItem(
-                    title = "Scan for cameras",
+                    title = scanCamerasLabel,
                     busy = state.phase == Phase.ScanningWifi,
                     onClick = { state.scanWifi() },
                 )
                 if (state.networks.isEmpty() && state.phase != Phase.ScanningWifi) {
-                    valueItem("Nearby cameras", "none found yet")
+                    valueItem(nearbyLabel, nearbyNone)
                 }
                 state.networks.forEach { n ->
                     link(
@@ -301,7 +395,11 @@ fun DevicesScreen(state: AppState) {
                         },
                         title = { CupertinoText(n.ssid) },
                         caption = {
-                            CupertinoText("${if (n.secured) "Secured" else "Open"} · ${n.rssi} dBm")
+                            CupertinoText(
+                                "${
+                                    if (n.secured) securedLabel else openLabel
+                                } · ${n.rssi} dBm",
+                            )
                         },
                         trailingIcon = {},
                     )
@@ -313,7 +411,7 @@ fun DevicesScreen(state: AppState) {
                     textField(
                         value = password,
                         onValueChange = { password = it },
-                        placeholder = { CupertinoText("Password") },
+                        placeholder = { CupertinoText(passwordLabel) },
                         singleLine = true,
                     )
                     item {
@@ -323,7 +421,7 @@ fun DevicesScreen(state: AppState) {
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             FilledButton(
-                                label = "Join & connect",
+                                label = joinConnectLabel,
                                 modifier = Modifier.weight(1f),
                                 busy = state.phase == Phase.ConnectingWifi,
                                 onClick = {
@@ -334,23 +432,23 @@ fun DevicesScreen(state: AppState) {
                             CupertinoButton(
                                 onClick = { selected = null },
                                 colors = CupertinoButtonDefaults.grayButtonColors(),
-                            ) { CupertinoText("Cancel") }
+                            ) { CupertinoText(cancelLabel) }
                         }
                     }
                 }
             }
 
-            section(title = { CupertinoText("Manual connect".sectionTitle()) }) {
+            section(title = { CupertinoText(manualConnectTitle.sectionTitle()) }) {
                 textField(
                     value = manualIp,
                     onValueChange = { manualIp = it },
-                    placeholder = { CupertinoText("192.168.0.1") },
+                    placeholder = { CupertinoText(ipPlaceholder) },
                     singleLine = true,
                 )
                 item {
                     Row(Modifier.fillMaxWidth().padding(it)) {
                         FilledButton(
-                            label = "Connect to IP",
+                            label = connectToIpLabel,
                             modifier = Modifier.weight(1f),
                             busy = state.phase == Phase.IdentifyingDevice ||
                                 state.phase == Phase.ConnectingProtocol,
@@ -380,6 +478,19 @@ fun LiveScreen(state: AppState) {
     val recording = st?.recording == true
     val mode = st?.mode ?: WorkMode.VIDEO
 
+    // 一次性解析,section body 非 Composable,故不能在调用点直接 stringResource。
+    val statusTitle = stringResource(Res.string.section_status)
+    val batteryLbl = stringResource(Res.string.label_battery)
+    val modeLbl = stringResource(Res.string.label_mode)
+    val recLbl = stringResource(Res.string.label_rec)
+    val recIdleLbl = stringResource(Res.string.rec_idle)
+    val sdFreeLbl = stringResource(Res.string.label_sd_free)
+    val modeTitle = stringResource(Res.string.section_mode)
+    val captureTitle = stringResource(Res.string.section_capture)
+    val photoLbl = stringResource(Res.string.action_photo)
+    val recordLbl = stringResource(Res.string.action_record)
+    val stopLbl = stringResource(Res.string.action_stop)
+
     LazyColumn(Modifier.fillMaxSize()) {
         item {
             Box(
@@ -390,7 +501,7 @@ fun LiveScreen(state: AppState) {
             }
         }
 
-        section(title = { CupertinoText("Status".sectionTitle()) }) {
+        section(title = { CupertinoText(statusTitle.sectionTitle()) }) {
             item {
                 Row(
                     Modifier.fillMaxWidth().padding(it),
@@ -398,25 +509,25 @@ fun LiveScreen(state: AppState) {
                 ) {
                     StatTile(
                         CupertinoIcons.Filled.Bolt,
-                        "Battery",
+                        batteryLbl,
                         st?.battery?.let { "$it%" } ?: "—",
                         CupertinoColors.systemGreen,
                     )
                     StatTile(
                         CupertinoIcons.Filled.Video,
-                        "Mode",
-                        mode.displayName,
+                        modeLbl,
+                        stringResource(mode.displayNameRes),
                         CupertinoTheme.colorScheme.accent,
                     )
                     StatTile(
                         CupertinoIcons.Filled.RecordCircle,
-                        "REC",
-                        if (recording) formatTime(st?.videoTimeSec ?: 0) else "idle",
+                        recLbl,
+                        if (recording) formatTime(st?.videoTimeSec ?: 0) else recIdleLbl,
                         if (recording) CupertinoColors.systemRed else CupertinoTheme.colorScheme.tertiaryLabel,
                     )
                     StatTile(
                         CupertinoIcons.Filled.Externaldrive,
-                        "SD free",
+                        sdFreeLbl,
                         st?.sdFreeMb?.let { humanBytes(it * 1024 * 1024) } ?: "—",
                         CupertinoTheme.colorScheme.secondaryLabel,
                     )
@@ -424,7 +535,7 @@ fun LiveScreen(state: AppState) {
             }
         }
 
-        section(title = { CupertinoText("Mode".sectionTitle()) }) {
+        section(title = { CupertinoText(modeTitle.sectionTitle()) }) {
             item {
                 CupertinoSegmentedControl(
                     selectedTabIndex = WorkMode.entries.indexOf(mode).coerceAtLeast(0),
@@ -435,27 +546,27 @@ fun LiveScreen(state: AppState) {
                         CupertinoSegmentedControlTab(
                             onClick = { state.setMode(m) },
                             isSelected = m == mode,
-                        ) { CupertinoText(m.displayName) }
+                        ) { CupertinoText(stringResource(m.displayNameRes)) }
                     }
                 }
             }
         }
 
-        section(title = { CupertinoText("Capture".sectionTitle()) }) {
+        section(title = { CupertinoText(captureTitle.sectionTitle()) }) {
             item {
                 Row(
                     Modifier.fillMaxWidth().padding(it),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     FilledButton(
-                        label = "Photo",
+                        label = photoLbl,
                         leadingIcon = CupertinoIcons.Filled.Camera,
                         modifier = Modifier.weight(1f),
                         busy = state.isBusy(Op.Capture),
                         onClick = { state.capture() },
                     )
                     FilledButton(
-                        label = if (recording) "Stop" else "Record",
+                        label = if (recording) stopLbl else recordLbl,
                         leadingIcon = if (recording) {
                             CupertinoIcons.Filled.StopCircle
                         } else {
@@ -500,30 +611,44 @@ fun FilesScreen(state: AppState) {
     // Deleting is irreversible on the camera, so it goes through a confirm dialog.
     var pendingDelete by remember { mutableStateOf<RemoteFile?>(null) }
 
+    // Composable 上下文一次性解析,section body 非 Composable。
+    val refreshLabel = stringResource(Res.string.action_refresh_files)
+    val downloadsTitle = stringResource(Res.string.section_downloads)
+    val onCameraTitle = stringResource(Res.string.section_on_camera, state.files.size)
+    val filesLabel = stringResource(Res.string.label_files)
+    val filesNone = stringResource(Res.string.files_none_refresh)
+    val deleteTitle = stringResource(Res.string.title_delete_file)
+    val cancelLabel = stringResource(Res.string.cancel)
+    val deleteLabel = stringResource(Res.string.delete)
+    val doneLabel = stringResource(Res.string.download_done)
+    val failedLabel = stringResource(Res.string.download_failed)
+    val videoLbl = stringResource(Res.string.file_type_video)
+    val photoLbl = stringResource(Res.string.file_type_photo)
+
     LazyColumn(Modifier.fillMaxSize()) {
         section {
             actionItem(
-                title = "Refresh file list",
+                title = refreshLabel,
                 busy = state.isBusy(Op.Refresh),
                 onClick = { state.refreshFiles() },
             )
         }
 
         if (state.downloads.isNotEmpty()) {
-            section(title = { CupertinoText("Downloads".sectionTitle()) }) {
-                state.downloads.forEach { d -> downloadItem(d) }
+            section(title = { CupertinoText(downloadsTitle.sectionTitle()) }) {
+                state.downloads.forEach { d -> downloadItem(d, doneLabel, failedLabel) }
             }
         }
 
-        section(title = { CupertinoText("On camera · ${state.files.size}".sectionTitle()) }) {
+        section(title = { CupertinoText(onCameraTitle.sectionTitle()) }) {
             if (state.files.isEmpty()) {
-                valueItem("Files", "none — tap refresh")
+                valueItem(filesLabel, filesNone)
             }
             state.files.forEach { f ->
                 val thumb = state.thumbnails[f.name]
                 // Ask for the preview once we're actually showing the row.
                 if (!state.thumbnails.containsKey(f.name)) state.loadThumbnail(f)
-                fileItem(state, f, thumb) { pendingDelete = f }
+                fileItem(state, f, thumb, videoLbl, photoLbl, { pendingDelete = f })
             }
         }
     }
@@ -531,21 +656,23 @@ fun FilesScreen(state: AppState) {
     pendingDelete?.let { target ->
         CupertinoAlertDialog(
             onDismissRequest = { pendingDelete = null },
-            title = { CupertinoText("Delete file?") },
+            title = { CupertinoText(deleteTitle) },
             message = {
                 CupertinoText(
-                    "\"${target.name.substringAfterLast('/')}\" will be removed from the " +
-                        "camera. This cannot be undone.",
+                    stringResource(
+                        Res.string.message_delete_file,
+                        target.name.substringAfterLast('/'),
+                    ),
                 )
             },
             buttons = {
-                cancel(onClick = { pendingDelete = null }) { CupertinoText("Cancel") }
+                cancel(onClick = { pendingDelete = null }) { CupertinoText(cancelLabel) }
                 destructive(
                     onClick = {
                         state.deleteFile(target)
                         pendingDelete = null
                     },
-                    title = { CupertinoText("Delete") },
+                    title = { CupertinoText(deleteLabel) },
                 )
             },
         )
@@ -582,7 +709,11 @@ private fun FileThumbnail(bitmap: ImageBitmap?, isVideo: Boolean) {
     }
 }
 
-private fun LazySectionScope.downloadItem(d: DownloadItem) {
+private fun LazySectionScope.downloadItem(
+    d: DownloadItem,
+    doneLabel: String,
+    failedLabel: String,
+) {
     item {
         Column(Modifier.fillMaxWidth().padding(it)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -596,9 +727,9 @@ private fun LazySectionScope.downloadItem(d: DownloadItem) {
                     DownloadItem.State.Running, DownloadItem.State.Queued ->
                         CupertinoActivityIndicator(size = 16.dp)
                     DownloadItem.State.Done ->
-                        CupertinoText("Done", color = CupertinoColors.systemGreen, fontSize = 13.sp)
+                        CupertinoText(doneLabel, color = CupertinoColors.systemGreen, fontSize = 13.sp)
                     DownloadItem.State.Failed ->
-                        CupertinoText("Failed", color = CupertinoColors.systemRed, fontSize = 13.sp)
+                        CupertinoText(failedLabel, color = CupertinoColors.systemRed, fontSize = 13.sp)
                 }
             }
             if (d.state == DownloadItem.State.Running || d.state == DownloadItem.State.Queued) {
@@ -613,6 +744,8 @@ private fun LazySectionScope.fileItem(
     state: AppState,
     f: RemoteFile,
     thumbnail: ImageBitmap?,
+    videoLabel: String,
+    photoLabel: String,
     onDelete: () -> Unit,
 ) {
     item {
@@ -632,7 +765,7 @@ private fun LazySectionScope.fileItem(
                 val failure = state.downloadError(f.name)
                 if (failure != null) {
                     CupertinoText(
-                        text = failure,
+                        text = failure.resolve(),
                         color = CupertinoColors.systemRed,
                         fontSize = 12.sp,
                         maxLines = 1,
@@ -640,7 +773,7 @@ private fun LazySectionScope.fileItem(
                     )
                 } else {
                     CupertinoText(
-                        text = "${if (isVideo) "Video" else "Photo"} · ${humanBytes(f.sizeBytes)}",
+                        text = "${if (isVideo) videoLabel else photoLabel} · ${humanBytes(f.sizeBytes)}",
                         color = CupertinoTheme.colorScheme.secondaryLabel,
                         fontSize = 12.sp,
                     )
@@ -653,6 +786,11 @@ private fun LazySectionScope.fileItem(
                 CupertinoActivityIndicator(size = 20.dp)
                 Spacer(Modifier.width(16.dp))
             } else {
+                val cd = if (transfer == DownloadItem.State.Failed) {
+                    stringResource(Res.string.action_retry_file, f.name)
+                } else {
+                    stringResource(Res.string.action_download_file, f.name)
+                }
                 CupertinoIconButton(
                     onClick = { state.download(f) },
                     colors = if (transfer == DownloadItem.State.Failed) {
@@ -663,11 +801,7 @@ private fun LazySectionScope.fileItem(
                 ) {
                     CupertinoIcon(
                         CupertinoIcons.Filled.TrayAndArrowDown,
-                        contentDescription = if (transfer == DownloadItem.State.Failed) {
-                            "Retry ${f.name}"
-                        } else {
-                            "Download ${f.name}"
-                        },
+                        contentDescription = cd,
                         modifier = Modifier.size(20.dp),
                     )
                 }
@@ -681,7 +815,7 @@ private fun LazySectionScope.fileItem(
             ) {
                 CupertinoIcon(
                     CupertinoIcons.Filled.TrashSlash,
-                    contentDescription = "Delete ${f.name}",
+                    contentDescription = stringResource(Res.string.action_delete_file, f.name),
                     modifier = Modifier.size(20.dp),
                 )
             }
@@ -700,18 +834,24 @@ fun SettingsScreen(state: AppState) {
     // Hoisted so the dropdown rows can be declared inside the lazy section builder.
     var expandedId by remember { mutableStateOf<String?>(null) }
 
+    val reloadLabel = stringResource(Res.string.action_reload_settings)
+    val cameraSettingsTitle = stringResource(Res.string.section_camera_settings)
+    val settingsLabel = stringResource(Res.string.label_settings)
+    val settingsNone = stringResource(Res.string.settings_none_reload)
+    val saveLabel = stringResource(Res.string.save)
+
     LazyColumn(Modifier.fillMaxSize()) {
         section {
             actionItem(
-                title = "Reload settings",
+                title = reloadLabel,
                 busy = state.isBusy(Op.Settings),
                 onClick = { state.loadSettings() },
             )
         }
 
-        section(title = { CupertinoText("Camera settings".sectionTitle()) }) {
+        section(title = { CupertinoText(cameraSettingsTitle.sectionTitle()) }) {
             if (state.settings.isEmpty()) {
-                valueItem("Settings", "none — tap reload")
+                valueItem(settingsLabel, settingsNone)
             }
             state.settings.forEach { s ->
                 settingRow(
@@ -720,6 +860,7 @@ fun SettingsScreen(state: AppState) {
                     expanded = expandedId == s.id,
                     onOpen = { expandedId = s.id },
                     onClose = { if (expandedId == s.id) expandedId = null },
+                    saveLabel = saveLabel,
                 )
             }
         }
@@ -732,6 +873,7 @@ private fun LazySectionScope.settingRow(
     expanded: Boolean,
     onOpen: () -> Unit,
     onClose: () -> Unit,
+    saveLabel: String,
 ) {
     val options = s.options
     val isBool = options.size == 2 && options.map { it.value }.toSet() == setOf("0", "1")
@@ -785,7 +927,7 @@ private fun LazySectionScope.settingRow(
                         onClick = { state.setSetting(s.id, draft) },
                         enabled = enabled && draft != s.value,
                         size = CupertinoButtonSize.Small,
-                    ) { CupertinoText("Save") }
+                    ) { CupertinoText(saveLabel) }
                 }
             }
         }

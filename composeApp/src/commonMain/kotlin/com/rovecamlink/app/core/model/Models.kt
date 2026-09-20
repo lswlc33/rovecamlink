@@ -1,11 +1,20 @@
 package com.rovecamlink.app.core.model
 
+import com.rovecamlink.app.Res
+import com.rovecamlink.app.workmode_photo
+import com.rovecamlink.app.workmode_playback
+import com.rovecamlink.app.workmode_video
+import org.jetbrains.compose.resources.StringResource
+
 /**
  * Camera SoC / firmware platform families discovered while reverse-engineering
  * the official XTU GO and TUWIN apps. Each platform speaks a different wire
  * protocol, so the protocol layer is keyed on this enum. New platforms are added
  * here and paired with a [com.rovecamlink.app.core.protocol.CameraProtocol]
  * implementation + registration in the protocol registry.
+ *
+ * [displayName] 是技术/品牌标识(如 "Hisilicon CGI"),不随 UI 语言变化;
+ * 它会作为参数注入到本地化的状态消息(如 "Connected · %1$s")。
  */
 enum class DevicePlatform(val displayName: String) {
     /** Hisilicon Hi35xx – HTTP CGI at /cgi-bin/hi3510/<cmd>.cgi (XTU X7 Pro and most XTU/TUWIN Hi-based cams). */
@@ -32,11 +41,16 @@ enum class Brand(val displayName: String) {
     GENERIC("Generic"),
 }
 
-/** Work / capture mode. Hisilicon cams expose this via getcurworkmode / setworkmode. */
-enum class WorkMode(val code: Int, val displayName: String) {
-    VIDEO(0, "Video"),
-    PHOTO(1, "Photo"),
-    PLAYBACK(2, "Playback"),
+/**
+ * Work / capture mode. Hisilicon cams expose this via getcurworkmode / setworkmode.
+ *
+ * [displayNameRes] 指向本地化字符串资源(Video / 视频、Photo / 照片 等),
+ * 在 Composable 中通过 `stringResource(mode.displayNameRes)` 解析。
+ */
+enum class WorkMode(val code: Int, val displayNameRes: StringResource) {
+    VIDEO(0, Res.string.workmode_video),
+    PHOTO(1, Res.string.workmode_photo),
+    PLAYBACK(2, Res.string.workmode_playback),
     ;
 
     companion object {
