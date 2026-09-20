@@ -5,18 +5,21 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kotlinCompose)
 }
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
         }
     }
 
-    jvm("desktop")
+    jvm("desktop") {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        }
+    }
 
     listOf(
         iosX64(),
@@ -39,7 +42,6 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
 
             implementation(libs.cupertino)
-            implementation(libs.cupertino.adaptive)
             implementation(libs.cupertino.icons.extended)
 
             implementation(libs.kotlinx.coroutines.core)
@@ -73,12 +75,12 @@ kotlin {
 
 android {
     namespace = "com.rovecamlink.app"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.rovecamlink.app"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "0.1.0"
     }
@@ -93,8 +95,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     packaging {

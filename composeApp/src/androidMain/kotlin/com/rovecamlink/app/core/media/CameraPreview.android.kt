@@ -17,7 +17,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
-import io.github.alexzhirkevich.cupertino.CupertinoText
+import com.robinpcrd.cupertino.CupertinoText
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable

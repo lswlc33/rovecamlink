@@ -1,17 +1,17 @@
 [versions]
-kotlin = "1.9.24"
-compose = "1.6.11"
-agp = "8.2.2"
-cupertino = "0.1.0-alpha04"
+kotlin = "2.2.0"
+compose = "1.9.0"
+agp = "8.6.0"
+cupertino = "3.0.0"
 ktor = "2.3.12"
-coroutines = "1.8.1"
-serialization = "1.6.3"
+coroutines = "1.9.0"
+serialization = "1.9.0"
 okio = "3.9.0"
-datetime = "0.6.0"
+datetime = "0.7.1-0.6.x-compat"
 activityCompose = "1.9.0"
 coreKtx = "1.13.1"
-media3 = "1.3.1"
-lifecycle = "2.8.3"
+media3 = "1.4.0"
+lifecycle = "2.8.4"
 
 [libraries]
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -28,9 +28,8 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", 
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
 
-cupertino = { module = "io.github.alexzhirkevich:cupertino", version.ref = "cupertino" }
-cupertino-adaptive = { module = "io.github.alexzhirkevich:cupertino-adaptive", version.ref = "cupertino" }
-cupertino-icons-extended = { module = "io.github.alexzhirkevich:cupertino-icons-extended", version.ref = "cupertino" }
+cupertino = { module = "io.github.robinpcrd:cupertino", version.ref = "cupertino" }
+cupertino-icons-extended = { module = "io.github.robinpcrd:cupertino-icons-extended", version.ref = "cupertino" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -44,6 +43,7 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlinCompose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }

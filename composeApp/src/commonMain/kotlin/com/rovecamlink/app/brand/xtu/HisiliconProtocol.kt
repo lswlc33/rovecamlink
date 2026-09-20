@@ -282,6 +282,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     }
 
     /** create format yyyyMMddHHmmss -> epoch millis (best effort, UTC). */
+    @OptIn(kotlin.time.ExperimentalTime::class)
     private fun parseCreateDate(create: String?): Long? {
         if (create == null || create.length < 14) return null
         return runCatching {

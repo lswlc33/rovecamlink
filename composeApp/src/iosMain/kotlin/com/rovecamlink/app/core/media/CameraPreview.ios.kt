@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import io.github.alexzhirkevich.cupertino.CupertinoText
+import com.robinpcrd.cupertino.CupertinoText
 
 /**
  * iOS preview scaffold. A real implementation would wrap AVPlayer in a

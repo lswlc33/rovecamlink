@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.ui.graphics.ImageBitmap
 import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.CmdResult
@@ -15,10 +17,13 @@ import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.wifi.CameraNetwork
 import com.rovecamlink.app.core.wifi.WifiResult
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okio.Path
+import org.jetbrains.compose.resources.decodeToImageBitmap
 
 /** High-level connection lifecycle phase, surfaced in the UI. */
 enum class Phase {
@@ -73,6 +78,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     val downloads = mutableStateListOf<DownloadItem>()
 
+    /**
+     * Decoded preview thumbnails keyed by [RemoteFile.name]. A present-but-null
+     * entry means "fetched and failed" so we don't retry it every recomposition.
+     */
+    val thumbnails = mutableStateMapOf<String, ImageBitmap?>()
+    private val thumbsInFlight = mutableSetOf<String>()
+
     private var pollJob: Job? = null
     private val protocol: CameraProtocol?
         get() = session?.let { graph.registry.protocolFor(it.platform) }
@@ -91,6 +103,14 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     fun scanWifi() = scope.launch {
         phase = Phase.ScanningWifi
         errorMessage = null
+        // Scanning needs ACCESS_FINE_LOCATION on every API level (NEARBY_WIFI_DEVICES
+        // alone is not enough for scan results). Without this the platform denies the
+        // scan and we would silently report "no cameras".
+        if (!graph.permissions.ensureWifiPermissions()) {
+            phase = Phase.Idle
+            errorMessage = "Scanning needs the location permission — grant it and retry."
+            return@launch
+        }
         runCatching { graph.scanner.scan() }
             .onSuccess { networks = it }
             .onFailure { errorMessage = "Scan failed: ${it.message}" }
@@ -153,6 +173,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         deviceStatus = null
         files = emptyList()
         settings = emptyList()
+        thumbnails.clear()
+        thumbsInFlight.clear()
         phase = Phase.Idle
         statusMessage = ""
         runCatching { graph.wifi.disconnect() }
@@ -194,8 +216,37 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     }
 
     fun refreshFiles() = runOp(Op.Refresh) { proto, s ->
-        files = proto.listFiles(s, 0, 999)
+        val listed = proto.listFiles(s, 0, 999)
+        // Forget thumbnails for files that no longer exist; keep the rest so a
+        // refresh doesn't re-download images we already have.
+        val present = listed.mapTo(mutableSetOf()) { it.name }
+        thumbnails.keys.retainAll(present)
+        files = listed
         CmdResult.Ok
+    }
+
+    /**
+     * Fetches and decodes the preview image for [file] once. Safe to call from a
+     * composition: repeat calls for the same file are ignored while one is in
+     * flight or already resolved.
+     */
+    fun loadThumbnail(file: RemoteFile) {
+        val proto = protocol ?: return
+        val s = session ?: return
+        if (thumbnails.containsKey(file.name) || !thumbsInFlight.add(file.name)) return
+        scope.launch {
+            try {
+                val bytes = runCatching { proto.thumbnail(s, file) }.getOrNull()
+                val bitmap = bytes?.let {
+                    withContext(Dispatchers.Default) {
+                        runCatching { it.decodeToImageBitmap() }.getOrNull()
+                    }
+                }
+                thumbnails[file.name] = bitmap
+            } finally {
+                thumbsInFlight.remove(file.name)
+            }
+        }
     }
 
     fun deleteFile(file: RemoteFile) = runOp(Op.Delete) { proto, s ->
@@ -213,6 +264,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         scope.launch {
             setBusy(Op.Download, true)
             try {
+                // Pre-API-29 saving goes through public external storage and needs
+                // WRITE_EXTERNAL_STORAGE; on 29+ this is a no-op returning true.
+                if (!graph.permissions.ensureStoragePermissions()) {
+                    markFailed(file)
+                    errorMessage = "Saving needs the storage permission — grant it and retry."
+                    return@launch
+                }
                 val idx = downloads.indexOfFirst { it.file.name == file.name }
                 downloads[idx] = downloads[idx].copy(state = DownloadItem.State.Running)
                 val dir = graph.fileSaver.downloadsDir()
