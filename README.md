@@ -4,7 +4,7 @@
 
 > 官方 App 臃肿卡顿。RoveCamLink 的目标是精简、快速、可扩展。
 
-[官网](https://lswlc33.github.io/rovecamlink/) · [逆向分析报告](docs/01-APK逆向分析报告.md) · [架构与开发计划](docs/02-KMP架构与开发计划.md)
+[官网](https://lswlc33.github.io/rovecamlink/) · [逆向分析报告](docs/01-APK逆向分析报告.md) · [架构与开发计划](docs/02-KMP架构与开发计划.md) · [品牌型号与协议矩阵](docs/03-品牌型号与协议矩阵.md)
 
 ## 首个支持的设备
 
