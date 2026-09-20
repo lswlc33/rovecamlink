@@ -91,7 +91,7 @@ android {
     signingConfigs {
         if (releaseStorePath != null) {
             create("release") {
-                storeFile = file(releaseStorePath)
+                storeFile = rootProject.file(releaseStorePath)
                 storePassword = System.getenv("ROVECAMLINK_RELEASE_STORE_PASSWORD")
                 keyAlias = System.getenv("ROVECAMLINK_RELEASE_KEY_ALIAS")
                 keyPassword = System.getenv("ROVECAMLINK_RELEASE_KEY_PASSWORD")
