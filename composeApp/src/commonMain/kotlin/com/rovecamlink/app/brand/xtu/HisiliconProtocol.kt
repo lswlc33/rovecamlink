@@ -305,8 +305,13 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     override suspend fun thumbnail(session: CameraSession, file: RemoteFile): ByteArray? =
         http.getBytes(file.thumbnailUrl ?: file.downloadUrl)
 
-    override suspend fun download(session: CameraSession, file: RemoteFile, dest: Path, onProgress: (Float) -> Unit): Long =
-        http.download(file.downloadUrl, dest, 0, onProgress)
+    override suspend fun download(
+        session: CameraSession,
+        file: RemoteFile,
+        dest: Path,
+        alreadyHaveBytes: Long,
+        onProgress: (Float) -> Unit,
+    ): Long = http.download(file.downloadUrl, dest, alreadyHaveBytes, onProgress)
 
     override fun previewUrl(session: CameraSession): String =
         "rtsp://${session.host}:554/livestream/12"

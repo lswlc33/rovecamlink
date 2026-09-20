@@ -14,12 +14,14 @@ import com.rovecamlink.app.core.model.DeviceStatus
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.WorkMode
 import com.rovecamlink.app.core.protocol.CameraProtocol
+import com.rovecamlink.app.core.storage.sanitizeFileName
 import com.rovecamlink.app.core.wifi.CameraNetwork
 import com.rovecamlink.app.core.wifi.DEFAULT_PREFIXES
 import com.rovecamlink.app.core.wifi.WifiResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,7 +40,7 @@ enum class Phase {
 }
 
 /** A discrete user/system operation so the UI can grey out only the relevant control. */
-enum class Op { Capture, Record, Mode, Refresh, Download, Delete, Settings }
+enum class Op { Capture, Record, Mode, Refresh, Delete, Settings }
 
 /** Download queue entry. */
 data class DownloadItem(
@@ -46,6 +48,7 @@ data class DownloadItem(
     val progress: Float = 0f,
     val state: State = State.Queued,
     val localPath: String? = null,
+    val error: String? = null,
 ) {
     enum class State { Queued, Running, Done, Failed }
 }
@@ -86,7 +89,17 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     val thumbnails = mutableStateMapOf<String, ImageBitmap?>()
     private val thumbsInFlight = mutableSetOf<String>()
 
+    /** Files whose thumbnail already failed once, so we stop retrying per refresh. */
+    private val thumbFailed = mutableSetOf<String>()
+
     private var pollJob: Job? = null
+
+    /**
+     * Bound to the live connection and cancelled on disconnect, so a refresh or
+     * download started against a dead session can never write back into the UI.
+     */
+    private var sessionScope: CoroutineScope? = null
+    private var consecutivePollFailures = 0
     private val protocol: CameraProtocol?
         get() = session?.let { graph.registry.protocolFor(it.platform) }
 
@@ -118,7 +131,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         // Scanning needs ACCESS_FINE_LOCATION on every API level (NEARBY_WIFI_DEVICES
         // alone is not enough for scan results). Without this the platform denies the
         // scan and we would silently report "no cameras".
-        if (!graph.permissions.ensureWifiPermissions()) {
+        val granted = runCatching { graph.permissions.ensureWifiPermissions() }
+            .getOrElse {
+                phase = Phase.Idle
+                errorMessage = "Couldn't ask for the location permission: ${it.message}"
+                return@launch
+            }
+        if (!granted) {
             phase = Phase.Idle
             errorMessage = "Scanning needs the location permission — grant it and retry."
             return@launch
@@ -175,6 +194,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             val proto = graph.registry.protocolFor(platform) ?: run { fail("No plugin for $platform"); return@launch }
             val s = proto.connect(h, port)
             session = s
+            sessionScope = CoroutineScope(scope.coroutineContext + Job())
+            consecutivePollFailures = 0
             phase = Phase.Connected
             statusMessage = "Connected · ${platform.displayName}"
             startPolling()
@@ -186,27 +207,46 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     }
 
     fun disconnect() = scope.launch {
+        // Kill everything bound to the session first: an in-flight refresh or
+        // download would otherwise repopulate state for a session that's gone.
+        sessionScope?.cancel()
+        sessionScope = null
         pollJob?.cancel()
+        pollJob = null
         session = null
         deviceStatus = null
         files = emptyList()
         settings = emptyList()
         thumbnails.clear()
         thumbsInFlight.clear()
+        thumbFailed.clear()
+        downloads.clear()
+        busy.clear()
         phase = Phase.Idle
         statusMessage = ""
         runCatching { graph.wifi.disconnect() }
     }
 
     private fun startPolling() {
+        val owner = sessionScope ?: return
         pollJob?.cancel()
-        pollJob = scope.launch {
+        pollJob = owner.launch {
             val proto = protocol ?: return@launch
             val s = session ?: return@launch
             while (true) {
                 runCatching { proto.getStatus(s) }
-                    .onSuccess { deviceStatus = it }
-                    .onFailure { /* transient; keep last status */ }
+                    .onSuccess {
+                        deviceStatus = it
+                        consecutivePollFailures = 0
+                    }
+                    .onFailure {
+                        // One hiccup is normal on a congested hotspot; a run of them
+                        // means the camera is gone, and the pill must say so.
+                        if (++consecutivePollFailures == POLL_FAILURES_BEFORE_LOST) {
+                            errorMessage = "Camera stopped responding — is it still on and in range?"
+                            disconnect()
+                        }
+                    }
                 delay(1500)
             }
         }
@@ -239,6 +279,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         // refresh doesn't re-download images we already have.
         val present = listed.mapTo(mutableSetOf()) { it.name }
         thumbnails.keys.retainAll(present)
+        thumbFailed.retainAll(present)
         files = listed
         CmdResult.Ok
     }
@@ -251,8 +292,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     fun loadThumbnail(file: RemoteFile) {
         val proto = protocol ?: return
         val s = session ?: return
-        if (thumbnails.containsKey(file.name) || !thumbsInFlight.add(file.name)) return
-        scope.launch {
+        val owner = sessionScope ?: return
+        if (thumbnails.containsKey(file.name) || thumbFailed.contains(file.name)) return
+        if (!thumbsInFlight.add(file.name)) return
+        owner.launch {
             try {
                 val bytes = runCatching { proto.thumbnail(s, file) }.getOrNull()
                 val bitmap = bytes?.let {
@@ -260,68 +303,101 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                         runCatching { it.decodeToImageBitmap() }.getOrNull()
                     }
                 }
-                thumbnails[file.name] = bitmap
+                if (bitmap != null) {
+                    thumbnails[file.name] = bitmap
+                    trimThumbnails()
+                } else {
+                    // Don't cache a permanent null: a transient hotspot failure would
+                    // otherwise blank this thumbnail for the rest of the session.
+                    thumbFailed.add(file.name)
+                }
             } finally {
                 thumbsInFlight.remove(file.name)
             }
         }
     }
 
+    private fun trimThumbnails() {
+        while (thumbnails.size > MAX_CACHED_THUMBNAILS) {
+            thumbnails.remove(thumbnails.keys.first())
+        }
+    }
+
     fun deleteFile(file: RemoteFile) = runOp(Op.Delete) { proto, s ->
         val r = proto.deleteFile(s, file)
-        if (r.isOk) files = files.filterNot { it.name == file.name }
+        if (r.isOk) {
+            files = files.filterNot { it.name == file.name }
+            thumbnails.remove(file.name)
+            thumbFailed.remove(file.name)
+        }
         r
     }
 
     fun download(file: RemoteFile) {
         val proto = protocol ?: return
         val s = session ?: return
-        if (downloads.any { it.file.name == file.name && it.state != State_Done }) return
-        val item = DownloadItem(file)
-        downloads.add(item)
-        scope.launch {
-            setBusy(Op.Download, true)
+        val owner = sessionScope ?: return
+        val current = downloads.firstOrNull { it.file.name == file.name }
+        if (current != null && current.state != DownloadItem.State.Failed) return
+        if (current != null) downloads.remove(current)
+        downloads.add(DownloadItem(file, state = DownloadItem.State.Running))
+        owner.launch {
             try {
                 // Pre-API-29 saving goes through public external storage and needs
                 // WRITE_EXTERNAL_STORAGE; on 29+ this is a no-op returning true.
                 if (!graph.permissions.ensureStoragePermissions()) {
-                    markFailed(file)
-                    errorMessage = "Saving needs the storage permission — grant it and retry."
+                    markFailed(file, "Saving needs the storage permission — grant it and retry.")
                     return@launch
                 }
-                val idx = downloads.indexOfFirst { it.file.name == file.name }
-                downloads[idx] = downloads[idx].copy(state = DownloadItem.State.Running)
                 val dir = graph.fileSaver.downloadsDir()
-                val dest: Path = dir / file.name
-                val existing = runCatching { okio.FileSystem.SYSTEM.metadata(dest).size ?: 0L }.getOrDefault(0L)
-                val written = proto.download(s, file, dest) { p ->
+                // The name came from the device's own listing; never let it escape
+                // the staging directory.
+                val dest: Path = dir / sanitizeFileName(file.name)
+                val have = runCatching { okio.FileSystem.SYSTEM.metadata(dest).size }.getOrNull() ?: 0L
+                // Resume only into a genuinely partial file; a complete or oversized
+                // leftover has to be re-fetched from zero.
+                val resumeFrom = if (have > 0L && (file.sizeBytes <= 0L || have < file.sizeBytes)) have else 0L
+                val written = proto.download(s, file, dest, resumeFrom) { p ->
                     val i = downloads.indexOfFirst { it.file.name == file.name }
                     if (i >= 0) downloads[i] = downloads[i].copy(progress = p)
                 }
-                if (written > 0) {
-                    val mime = if (file.type == com.rovecamlink.app.core.model.FileType.PHOTO) "image/jpeg" else "video/mp4"
-                    val published = runCatching { graph.fileSaver.publishToGallery(dest, file.name, mime) }.getOrNull()
-                    val i = downloads.indexOfFirst { it.file.name == file.name }
-                    if (i >= 0) downloads[i] = downloads[i].copy(
-                        state = DownloadItem.State.Done, progress = 1f, localPath = published ?: dest.toString(),
-                    )
-                } else {
-                    markFailed(file)
+                if (written < 0L) {
+                    markFailed(file, "Interrupted — tap to resume.")
+                    return@launch
                 }
-            } catch (_: Throwable) {
-                markFailed(file)
-            } finally {
-                setBusy(Op.Download, false)
+                if (file.sizeBytes > 0L && written != file.sizeBytes) {
+                    markFailed(file, "Incomplete: $written of ${file.sizeBytes} bytes.")
+                    return@launch
+                }
+                val mime = if (file.type == com.rovecamlink.app.core.model.FileType.PHOTO) "image/jpeg" else "video/mp4"
+                val published = runCatching { graph.fileSaver.publishToGallery(dest, file.name, mime) }.getOrNull()
+                val i = downloads.indexOfFirst { it.file.name == file.name }
+                if (i >= 0) downloads[i] = downloads[i].copy(
+                    state = DownloadItem.State.Done, progress = 1f, localPath = published ?: dest.toString(),
+                )
+                if (published == null) {
+                    errorMessage = "Downloaded, but the gallery rejected it — kept in app storage."
+                }
+            } catch (t: Throwable) {
+                markFailed(file, t.message ?: "Download failed")
             }
         }
     }
 
-    private fun markFailed(file: RemoteFile) {
+    /** True while this file has a queued/running transfer. */
+    fun downloadState(name: String): DownloadItem.State? =
+        downloads.firstOrNull { it.file.name == name }?.state
+
+    fun downloadError(name: String): String? =
+        downloads.firstOrNull { it.file.name == name }?.error
+
+    private fun markFailed(file: RemoteFile, reason: String) {
         val i = downloads.indexOfFirst { it.file.name == file.name }
-        if (i >= 0) downloads[i] = downloads[i].copy(state = DownloadItem.State.Failed)
+        if (i >= 0) downloads[i] = downloads[i].copy(state = DownloadItem.State.Failed, error = reason)
+        errorMessage = reason
     }
 
-    private inline fun runOp(op: Op, crossinline block: suspend (CameraProtocol, CameraSession) -> CmdResult) = scope.launch {
+    private inline fun runOp(op: Op, crossinline block: suspend (CameraProtocol, CameraSession) -> CmdResult) = (sessionScope ?: scope).launch {
         val proto = protocol ?: return@launch
         val s = session ?: return@launch
         setBusy(op, true)
@@ -344,4 +420,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     }
 }
 
-private val State_Done = DownloadItem.State.Done
+private const val POLL_FAILURES_BEFORE_LOST = 3
+
+/** Decoded thumbnails held at once; beyond this the oldest are evicted. */
+private const val MAX_CACHED_THUMBNAILS = 120

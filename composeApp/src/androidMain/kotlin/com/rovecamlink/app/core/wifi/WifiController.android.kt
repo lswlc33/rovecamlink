@@ -139,8 +139,9 @@ private class AndroidWifiController : WifiController {
             wm.reconnect()
             if (!ok) return WifiResult.Failed("enableNetwork failed")
             legacyNetId = netId
-            // Give association a moment, then read link properties for the gateway.
-            withTimeoutOrNull(8_000) {
+            // Association is asynchronous; without a real COMPLETED state we have no
+            // gateway and no route, so report failure instead of pretending.
+            val associated = withTimeoutOrNull(8_000) {
                 while (true) {
                     val info = wm.connectionInfo
                     if (info != null && info.supplicantState == SupplicantState.COMPLETED && info.networkId == netId) {
@@ -148,6 +149,16 @@ private class AndroidWifiController : WifiController {
                     }
                     kotlinx.coroutines.delay(300)
                 }
+                true
+            } ?: false
+            if (!associated) {
+                runCatching { wm.removeNetwork(netId) }
+                legacyNetId = -1
+                return WifiResult.Failed("Timed out joining $ssid")
+            }
+            // Pick up link properties for gateway() even though we didn't bind a socket.
+            runCatching {
+                cm.getLinkProperties(cm.activeNetwork)?.let { linkProps = it }
             }
             WifiResult.Connected(ssid)
         } catch (t: Throwable) {
@@ -163,6 +174,8 @@ private class AndroidWifiController : WifiController {
         linkProps = null
         if (legacyNetId != -1) {
             runCatching { wm.disableNetwork(legacyNetId) }
+            // disableNetwork alone leaves the saved configuration behind forever.
+            runCatching { wm.removeNetwork(legacyNetId) }
             runCatching { wm.disconnect() }
             legacyNetId = -1
         }

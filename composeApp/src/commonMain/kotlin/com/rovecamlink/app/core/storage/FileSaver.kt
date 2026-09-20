@@ -16,6 +16,17 @@ interface FileSaver {
 
 expect fun createFileSaver(): FileSaver
 
+/**
+ * Reduces a device-supplied file name to a safe basename. A camera's file listing
+ * is attacker-controllable — any hotspot we happen to join can answer it — so
+ * separators and `..` must never reach the filesystem.
+ */
+fun sanitizeFileName(name: String): String {
+    val base = name.substringAfterLast('/').substringAfterLast('\\').trim()
+    val cleaned = base.replace("..", "_").replace(Regex("""[<>:"/\\|?*\x00-\x1F]"""), "_")
+    return cleaned.ifEmpty { "download" }.take(120)
+}
+
 /** Runtime permission broker (location/nearby-wifi for connecting, storage for saving). */
 interface PermissionController {
     suspend fun ensureWifiPermissions(): Boolean

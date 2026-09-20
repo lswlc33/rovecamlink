@@ -22,34 +22,46 @@ private class AndroidFileSaver : FileSaver {
     override suspend fun publishToGallery(localFile: Path, displayName: String, mime: String): String? {
         val src = File(localFile.toString())
         if (!src.exists()) return null
-        return try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val resolver = androidContext.contentResolver
-                val isVideo = mime.startsWith("video")
-                val collection = if (isVideo) MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                val values = ContentValues().apply {
-                    put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
-                    put(MediaStore.MediaColumns.MIME_TYPE, mime)
-                    put(
-                        MediaStore.MediaColumns.RELATIVE_PATH,
-                        (if (isVideo) Environment.DIRECTORY_MOVIES else Environment.DIRECTORY_PICTURES) + "/RoveCamLink",
-                    )
-                    put(MediaStore.MediaColumns.IS_PENDING, 1)
-                }
-                val uri = resolver.insert(collection, values) ?: return null
-                resolver.openOutputStream(uri)?.use { out -> src.inputStream().use { it.copyTo(out) } }
+        val safeName = sanitizeFileName(displayName)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver = androidContext.contentResolver
+            val isVideo = mime.startsWith("video")
+            val collection = if (isVideo) MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+            else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            val values = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, safeName)
+                put(MediaStore.MediaColumns.MIME_TYPE, mime)
+                put(
+                    MediaStore.MediaColumns.RELATIVE_PATH,
+                    (if (isVideo) Environment.DIRECTORY_MOVIES else Environment.DIRECTORY_PICTURES) + "/RoveCamLink",
+                )
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
+            }
+            val uri = resolver.insert(collection, values) ?: return null
+            try {
+                // A null stream used to be skipped silently, publishing a 0-byte
+                // entry that looked like a successful save.
+                val out = resolver.openOutputStream(uri)
+                    ?: throw java.io.IOException("gallery refused the stream")
+                out.use { dst -> src.inputStream().use { it.copyTo(dst) } }
                 values.clear()
                 values.put(MediaStore.MediaColumns.IS_PENDING, 0)
                 resolver.update(uri, values, null, null)
                 uri.toString()
-            } else {
+            } catch (t: Throwable) {
+                // Otherwise the half-written row stays IS_PENDING=1 forever, invisible
+                // to the user but squatting on the file name.
+                runCatching { resolver.delete(uri, null, null) }
+                null
+            }
+        } else {
+            try {
                 val publicDir = File(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                     "RoveCamLink",
                 )
                 if (!publicDir.exists()) publicDir.mkdirs()
-                val out = File(publicDir, displayName)
+                val out = File(publicDir, safeName)
                 src.copyTo(out, overwrite = true)
                 // Make it visible to the media scanner.
                 runCatching {
@@ -58,9 +70,9 @@ private class AndroidFileSaver : FileSaver {
                     )
                 }
                 out.absolutePath
+            } catch (t: Throwable) {
+                null
             }
-        } catch (t: Throwable) {
-            null
         }
     }
 }

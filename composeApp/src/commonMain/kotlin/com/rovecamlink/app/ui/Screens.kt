@@ -629,22 +629,48 @@ private fun LazySectionScope.fileItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                CupertinoText(
-                    text = "${if (isVideo) "Video" else "Photo"} · ${humanBytes(f.sizeBytes)}",
-                    color = CupertinoTheme.colorScheme.secondaryLabel,
-                    fontSize = 12.sp,
-                )
+                val failure = state.downloadError(f.name)
+                if (failure != null) {
+                    CupertinoText(
+                        text = failure,
+                        color = CupertinoColors.systemRed,
+                        fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                } else {
+                    CupertinoText(
+                        text = "${if (isVideo) "Video" else "Photo"} · ${humanBytes(f.sizeBytes)}",
+                        color = CupertinoTheme.colorScheme.secondaryLabel,
+                        fontSize = 12.sp,
+                    )
+                }
             }
             Spacer(Modifier.width(8.dp))
-            CupertinoIconButton(
-                onClick = { state.download(f) },
-                enabled = !state.isBusy(Op.Download),
-            ) {
-                CupertinoIcon(
-                    CupertinoIcons.Filled.TrayAndArrowDown,
-                    contentDescription = "Download ${f.name}",
-                    modifier = Modifier.size(20.dp),
-                )
+            // Per-file progress: one transfer running must not grey out the other rows.
+            val transfer = state.downloadState(f.name)
+            if (transfer == DownloadItem.State.Running || transfer == DownloadItem.State.Queued) {
+                CupertinoActivityIndicator(size = 20.dp)
+                Spacer(Modifier.width(16.dp))
+            } else {
+                CupertinoIconButton(
+                    onClick = { state.download(f) },
+                    colors = if (transfer == DownloadItem.State.Failed) {
+                        CupertinoButtonDefaults.plainButtonColors(contentColor = CupertinoColors.systemRed)
+                    } else {
+                        CupertinoButtonDefaults.plainButtonColors()
+                    },
+                ) {
+                    CupertinoIcon(
+                        CupertinoIcons.Filled.TrayAndArrowDown,
+                        contentDescription = if (transfer == DownloadItem.State.Failed) {
+                            "Retry ${f.name}"
+                        } else {
+                            "Download ${f.name}"
+                        },
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
             }
             CupertinoIconButton(
                 onClick = onDelete,

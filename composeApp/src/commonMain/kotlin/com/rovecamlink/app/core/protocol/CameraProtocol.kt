@@ -38,7 +38,19 @@ interface CameraProtocol {
     suspend fun listFiles(session: CameraSession, start: Int, end: Int): List<RemoteFile>
     suspend fun deleteFile(session: CameraSession, file: RemoteFile): CmdResult
     suspend fun thumbnail(session: CameraSession, file: RemoteFile): ByteArray?
-    suspend fun download(session: CameraSession, file: RemoteFile, dest: Path, onProgress: (Float) -> Unit): Long
+
+    /**
+     * Streams [file] into [dest]. Pass the size of an existing partial file as
+     * [alreadyHaveBytes] to resume it; pass 0 to start over. Returns bytes on
+     * disk, or -1 if the transfer failed or was truncated.
+     */
+    suspend fun download(
+        session: CameraSession,
+        file: RemoteFile,
+        dest: Path,
+        alreadyHaveBytes: Long,
+        onProgress: (Float) -> Unit,
+    ): Long
 
     /** Absolute RTSP (or fallback) URL for live preview. */
     fun previewUrl(session: CameraSession): String

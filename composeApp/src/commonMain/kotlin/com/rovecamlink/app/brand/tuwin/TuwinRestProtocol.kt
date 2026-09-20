@@ -144,8 +144,13 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
     override suspend fun thumbnail(session: CameraSession, file: RemoteFile): ByteArray? =
         http.getBytes(file.thumbnailUrl ?: "${session.baseUrl}/api/playback/thumbnail?file=${file.name}")
 
-    override suspend fun download(session: CameraSession, file: RemoteFile, dest: Path, onProgress: (Float) -> Unit): Long =
-        http.download(file.downloadUrl, dest, 0, onProgress)
+    override suspend fun download(
+        session: CameraSession,
+        file: RemoteFile,
+        dest: Path,
+        alreadyHaveBytes: Long,
+        onProgress: (Float) -> Unit,
+    ): Long = http.download(file.downloadUrl, dest, alreadyHaveBytes, onProgress)
 
     override fun previewUrl(session: CameraSession): String =
         "rtsp://${session.host}:8080/?action=stream"

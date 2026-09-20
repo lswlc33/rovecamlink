@@ -35,11 +35,31 @@ class CameraHttp(
     private val client: HttpClient = defaultClient(),
 ) {
     companion object {
+        /** Media transfers are bounded by socket inactivity, not this cap (24h). */
+        private const val STREAM_TIMEOUT_MS = 24 * 60 * 60 * 1000L
+
         fun defaultClient(): HttpClient = HttpClient(CIO) {
             expectSuccess = false
             engine { requestTimeout = 20_000 }
             install(HttpTimeout) {
                 requestTimeoutMillis = 20_000
+                connectTimeoutMillis = 8_000
+                socketTimeoutMillis = 60_000
+            }
+        }
+    }
+
+    /**
+     * Media transfers legitimately outlive the 20s budget that keeps discovery
+     * probes snappy, so they get a client whose reads are bounded by socket
+     * inactivity instead of a whole-request cap.
+     */
+    private val streamClient: HttpClient by lazy {
+        HttpClient(CIO) {
+            expectSuccess = false
+            engine { requestTimeout = STREAM_TIMEOUT_MS }
+            install(HttpTimeout) {
+                requestTimeoutMillis = STREAM_TIMEOUT_MS
                 connectTimeoutMillis = 8_000
                 socketTimeoutMillis = 60_000
             }
@@ -64,34 +84,47 @@ class CameraHttp(
 
     /**
      * Streamed download to an okio [Path], reporting progress 0f..1f.
-     * Returns total bytes on disk, or -1 on failure. Supports HTTP range resume
-     * via [alreadyHaveBytes] (server must honor Range; otherwise it is ignored).
+     *
+     * Returns bytes on disk, or -1 when the transfer failed **or ended short**.
+     * A truncated body is deliberately a failure rather than a success: cameras
+     * drop connections under load, and a silently half-written video is far
+     * worse than a retry. The partial file is left in place so the caller can
+     * resume it by passing its size as [alreadyHaveBytes].
      */
     suspend fun download(
         url: String,
         destination: Path,
         alreadyHaveBytes: Long = 0,
         onProgress: (Float) -> Unit = {},
-    ): Long = withContext(Dispatchers.Default) {
+    ): Long = withContext(Dispatchers.IO) {
         try {
-            client.prepareGet {
+            streamClient.prepareGet {
                 url(url)
                 if (alreadyHaveBytes > 0) header("Range", "bytes=$alreadyHaveBytes-")
             }.execute { resp ->
                 if (!resp.status.isSuccess()) return@execute -1L
                 val reported = resp.contentLength() ?: -1L
-                val expectedTotal = if (reported > 0) reported + alreadyHaveBytes else -1L
-                val append = alreadyHaveBytes > 0
+                // Only 206 proves the Range was honoured; a plain 200 sends the whole
+                // file and appending it to the partial copy would corrupt it.
+                val resumed = alreadyHaveBytes > 0 && resp.status.value == 206
+                val have = if (resumed) alreadyHaveBytes else 0L
+                val expectedTotal = if (reported > 0) reported + have else -1L
                 val fs = FileSystem.SYSTEM
                 destination.parent?.let { fs.createDirectories(it) }
-                var written = if (append) alreadyHaveBytes else 0L
-                val sink: Sink = if (append) fs.appendingSink(destination) else fs.sink(destination)
+                var written = have
+                val sink: Sink = if (resumed) fs.appendingSink(destination) else fs.sink(destination)
                 sink.buffer().use { out ->
                     val channel: ByteReadChannel = resp.bodyAsChannel()
                     val buf = ByteArray(64 * 1024)
                     while (true) {
                         val n = channel.readAvailable(buf, 0, buf.size)
-                        if (n <= 0) break
+                        if (n < 0) break
+                        if (n == 0) {
+                            // Nothing buffered *yet* — suspend until more arrives or the
+                            // channel closes; only -1 from readAvailable means EOF.
+                            channel.awaitContent()
+                            continue
+                        }
                         out.write(buf, 0, n)
                         written += n
                         if (expectedTotal > 0) {
@@ -99,6 +132,7 @@ class CameraHttp(
                         }
                     }
                 }
+                if (expectedTotal > 0 && written != expectedTotal) return@execute -1L
                 onProgress(1f)
                 written
             }
