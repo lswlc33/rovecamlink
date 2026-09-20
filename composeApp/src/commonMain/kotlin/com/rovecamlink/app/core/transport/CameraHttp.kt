@@ -9,6 +9,7 @@ import io.ktor.client.request.prepareGet
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
+import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.readBytes
 import io.ktor.http.contentLength
 import io.ktor.http.isSuccess
@@ -48,7 +49,7 @@ class CameraHttp(
     /** GET returning the body as text, or null on any transport/HTTP failure. */
     suspend fun getText(url: String): String? = try {
         val resp: HttpResponse = client.get { url(url) }
-        if (resp.status.isSuccess()) resp.readText() else null
+        if (resp.status.isSuccess()) resp.bodyAsText() else null
     } catch (_: Throwable) {
         null
     }
