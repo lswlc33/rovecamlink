@@ -28,6 +28,33 @@ interface WifiController {
      * Passing null unregisters the previous listener.
      */
     fun watchWifiChanges(listener: ((ssid: String?) -> Unit)?)
+
+    /**
+     * Take over the Wi-Fi network the phone is **already** on, without asking the
+     * system for a new connection.
+     *
+     * This exists because a hotspot the user joined from Settings never passes
+     * through [connect], so nothing ever pinned our sockets to it — and a running
+     * VPN owns the default route with `0.0.0.0/0`, which then swallows every
+     * request to the camera. Adopting binds the process to the real Wi-Fi network
+     * (the tunnel is a different network, so it stops intercepting) and gives us
+     * the link properties needed for [gateway].
+     *
+     * Best-effort: a failure here must not abort a connection attempt, because on
+     * many devices the default network already *is* the camera's Wi-Fi.
+     *
+     * [force] adopts even when the SSID does not look like a camera network and
+     * the network claims internet — used by the manual-IP flow, where the user
+     * told us the host so we do not need the hotspot to identify itself.
+     */
+    suspend fun adoptCurrentNetwork(force: Boolean = false): WifiResult
+
+    /**
+     * True when the phone's default network is a VPN tunnel. Camera traffic then
+     * depends on [adoptCurrentNetwork] having worked, so the UI can warn the user
+     * instead of reporting a mysterious "no camera found".
+     */
+    fun isVpnActive(): Boolean
 }
 
 /**

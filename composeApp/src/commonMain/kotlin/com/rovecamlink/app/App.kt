@@ -48,7 +48,7 @@ import com.robinpcrd.cupertino.theme.CupertinoTheme
 import com.robinpcrd.cupertino.theme.systemGreen
 import com.robinpcrd.cupertino.theme.systemOrange
 import com.robinpcrd.cupertino.theme.systemRed
-import com.rovecamlink.app.ui.DevicesScreen
+import com.rovecamlink.app.ui.ConnectScreen
 import com.rovecamlink.app.ui.FilesScreen
 import com.rovecamlink.app.ui.LiveScreen
 import com.rovecamlink.app.ui.LogScreen
@@ -120,7 +120,7 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                     LogScreen(state, onClose = { state.closeDiagnostics() })
                 } else {
                     when (tab) {
-                        Tab.Devices -> DevicesScreen(state)
+                        Tab.Devices -> ConnectScreen(state)
                         Tab.Live -> LiveScreen(state)
                         Tab.Files -> FilesScreen(state)
                         Tab.Settings -> SettingsScreen(state)

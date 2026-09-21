@@ -25,6 +25,7 @@ import com.rovecamlink.app.core.log.LogLevel
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.OpContext
 import com.rovecamlink.app.core.protocol.CameraProtocol
+import com.rovecamlink.app.core.provision.ProvisioningController
 import com.rovecamlink.app.core.storage.sanitizeFileName
 import com.rovecamlink.app.core.wifi.CameraNetwork
 import com.rovecamlink.app.core.wifi.DEFAULT_PREFIXES
@@ -43,6 +44,12 @@ import org.jetbrains.compose.resources.decodeToImageBitmap
 enum class Phase {
     Idle,
     ScanningWifi,
+
+    /** Looking for cameras over Bluetooth LE. */
+    ScanningBle,
+
+    /** Connected over BLE; waiting for the camera to open its hotspot. */
+    WakingAp,
     ConnectingWifi,
     IdentifyingDevice,
     ConnectingProtocol,
@@ -110,6 +117,18 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     var networks by mutableStateOf<List<CameraNetwork>>(emptyList())
         private set
 
+    /** SSID the phone is joined to right now, when the platform will tell us. */
+    val currentWifiSsid: String? get() = graph.wifi.currentCameraSsid()
+
+    /**
+     * Whether the phone's default network is a VPN tunnel while we talk to the
+     * camera. Camera traffic then survives only because sockets are pinned to the
+     * Wi-Fi network (see core.wifi.adoptCurrentNetwork / requestNetwork), so the UI
+     * can say that out loud instead of letting "no camera found" look like a bug.
+     */
+    var vpnActive by mutableStateOf(false)
+        private set
+
     var session by mutableStateOf<CameraSession?>(null)
         private set
     var deviceStatus by mutableStateOf<DeviceStatus?>(null)
@@ -160,11 +179,21 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         // connect(), so watch the default network and auto-discover camera SSIDs.
         graph.wifi.watchWifiChanges { ssid ->
             Diag.at(LogLevel.INFO, LogTag.WIFI, "default-network ssid changed to ${ssid ?: "(none)"}")
+            refreshVpnState()
             if (ssid == null || session != null) return@watchWifiChanges
             if (phase != Phase.Idle && phase != Phase.Error) return@watchWifiChanges
             if (DEFAULT_PREFIXES.none { ssid.startsWith(it, ignoreCase = true) }) return@watchWifiChanges
             Diag.at(LogLevel.INFO, LogTag.APP, "AUTO-CONNECT on camera-like SSID $ssid")
             connect()
+        }
+    }
+
+    /** Re-read whether a VPN owns the default route; cheap, called on wifi changes + connect. */
+    private fun refreshVpnState() {
+        val now = graph.wifi.isVpnActive()
+        if (now != vpnActive) {
+            vpnActive = now
+            Diag.at(LogLevel.INFO, LogTag.NET, "VPN default route ${if (now) "ACTIVE (camera sockets stay pinned to Wi-Fi)" else "gone"}")
         }
     }
 
@@ -212,6 +241,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         add("wifi.bound" to graph.wifi.isConnectedToCamera.toString())
         add("wifi.current_ssid" to (graph.wifi.currentCameraSsid() ?: "-"))
         add("wifi.gateway" to (graph.wifi.gateway() ?: "-"))
+        add("net.vpn" to graph.wifi.isVpnActive().toString())
         add("files" to "${files.size} listed, ${downloads.size} queued transfers, ${thumbnails.size} thumbs")
         add("ota" to otaState.toString())
     }
@@ -226,6 +256,38 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     }
 
     // ---------- WiFi + discovery ----------
+
+    /**
+     * Bluetooth provisioning: find the camera, wake its hotspot, get the
+     * credentials. It owns its own observable state so the connection screen can
+     * show what Bluetooth is doing without the session state machine having to
+     * learn about GATT. When it succeeds it feeds the same [connect] entry point
+     * the Wi-Fi list uses — one join path, two ways to learn what to join.
+     */
+    val provisioning = ProvisioningController(
+        graph = graph,
+        scope = scope,
+        onCredentials = { ssid, password -> connect(ssid, password) },
+        onFallback = { scanWifi() },
+        onStage = { stage ->
+            when (stage) {
+                "ble-scan" -> {
+                    goPhase(Phase.ScanningBle)
+                    statusMessage = localized(Res.string.phase_scanning_bluetooth)
+                }
+                "ble-wake" -> {
+                    goPhase(Phase.WakingAp)
+                    statusMessage = localized(Res.string.status_waking_camera)
+                }
+                else -> if (phase == Phase.ScanningBle || phase == Phase.WakingAp) {
+                    // The Bluetooth step is over (often because it could not start);
+                    // leaving "正在搜索相机" on screen would read as still working.
+                    goPhase(Phase.Idle)
+                    statusMessage = null
+                }
+            }
+        },
+    )
 
     fun scanWifi() = scope.launch {
         goPhase(Phase.ScanningWifi)
@@ -263,18 +325,48 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         if (phase == Phase.ScanningWifi) goPhase(Phase.Idle)
     }
 
+    /**
+     * The one connect that is allowed to run. Starting a second connect must cancel
+     * the first: `discover()` walks eight candidate gateways and each dead probe
+     * costs two 8s timeouts, so the 2026-09-21 S7PRO session kept a stale walk
+     * running for two whole minutes after the camera had already answered — it
+     * threw 15 connect timeouts at the network while the live view was trying to
+     * deliver frames.
+     */
+    private var connectJob: Job? = null
+
+    /** When a control last changed the recording state locally; see [startPolling]. */
+    private var localRecordFlipAt = 0L
+
     /** Full auto-connect: join WiFi (or use current), find device, pick protocol, connect. */
-    fun connect(ssid: String? = null, password: String? = null, manualHost: String? = null) = scope.launch {
-        val op = "c${Diag.nextId()}:connect"
-        withContext(OpContext(op)) {
-            connectBlocking(ssid, password, manualHost)
+    fun connect(ssid: String? = null, password: String? = null, manualHost: String? = null) {
+        connectJob?.cancel()
+        val job = scope.launch {
+            val op = "c${Diag.nextId()}:connect"
+            withContext(OpContext(op)) { connectBlocking(ssid, password, manualHost) }
         }
+        connectJob = job
+        job.invokeOnCompletion { if (connectJob === job) connectJob = null }
     }
 
     private suspend fun connectBlocking(ssid: String?, password: String?, manualHost: String?) {
         errorMessage = null
         Diag.i { "CONNECT begin ssid=${ssid ?: "-"} manual_host=${manualHost ?: "-"} already_bound=${graph.wifi.isConnectedToCamera}" }
         try {
+            // Pin our sockets to the Wi-Fi the phone is on *before* touching the
+            // network. A hotspot joined from Settings never passed through
+            // connect(), so without this every request follows the default route —
+            // and when a VPN owns that route the camera simply stops existing.
+            refreshVpnState()
+            if (!graph.wifi.isConnectedToCamera) {
+                when (val adopt = graph.wifi.adoptCurrentNetwork(force = manualHost != null)) {
+                    is WifiResult.Connected ->
+                        Diag.i(LogTag.WIFI) { "adopted the already-joined Wi-Fi (${adopt.ssid.ifEmpty { "unknown" }})" }
+                    is WifiResult.Failed ->
+                        Diag.d(LogTag.WIFI) { "no Wi-Fi adopted: ${adopt.message} (continuing on the default network)" }
+                    WifiResult.Cancelled -> Unit
+                }
+            }
             var host = manualHost
             var port = 80
             if (host != null && host.contains(":")) {
@@ -380,8 +472,12 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             proto.events.collect { ev ->
                 Diag.i(LogTag.STATE) { "PUSH event ${ev::class.simpleName} $ev" }
                 when (ev) {
-                    is DeviceEvent.RecordingChanged ->
+                    is DeviceEvent.RecordingChanged -> {
+                        // Stamp it: a status poll issued *before* this command still
+                        // carries the pre-command answer and must not undo the change.
+                        localRecordFlipAt = Diag.uptimeMillis()
                         deviceStatus = deviceStatus?.copy(recording = ev.recording)
+                    }
                     is DeviceEvent.BatteryChanged ->
                         deviceStatus = deviceStatus?.copy(battery = ev.percent)
                     is DeviceEvent.Disconnected -> {
@@ -406,6 +502,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         sessionScope = null
         pollJob?.cancel()
         pollJob = null
+        connectJob?.cancel()
+        connectJob = null
+        localRecordFlipAt = 0L
+        // Let the plugin forget firmware facts it cached for this host, so swapping
+        // cameras on the same 192.168.0.1 cannot serve the previous model's tables.
+        val closing = session
+        if (closing != null) runCatching { protocol?.onSessionClosed(closing) }
         session = null
         deviceStatus = null
         deviceInfo = null
@@ -440,8 +543,19 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                             Diag.i(LogTag.STATE) { "poll recovered after $consecutivePollFailures failure(s)" }
                         }
                         consecutivePollFailures = 0
+                        // A poll that left the phone before the record button was pressed
+                        // describes the old state. Trusting it is what made the button
+                        // snap back to "录像" a moment after recording had started.
+                        val stale = t0 < localRecordFlipAt
+                        if (stale) {
+                            Diag.d(LogTag.STATE) { "ignoring recording=${it.recording} from a poll issued before the record command" }
+                        }
                         logStatusChange(deviceStatus, it, Diag.uptimeMillis() - t0)
-                        deviceStatus = it
+                        deviceStatus = if (stale) {
+                            it.copy(recording = deviceStatus?.recording == true)
+                        } else {
+                            it
+                        }
                     }
                     .onFailure { err ->
                         // One hiccup is normal on a congested hotspot; a run of them
@@ -475,7 +589,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val diff = buildList {
             if (prev.battery != next.battery) add("battery ${prev.battery}=>${next.battery}")
             if (prev.recording != next.recording) add("recording ${prev.recording}=>${next.recording}")
-            if (prev.mode != next.mode) add("mode ${prev.mode}=>${next.mode}")
+            if (prev.busy != next.busy) add("busy ${prev.busy}=>${next.busy}")
+            if (prev.mode != next.mode) add("mode ${prev.mode}=>${next.mode}${next.modeName?.let { " (\"$it\")" } ?: ""}")
+            if (prev.workState != next.workState) add("work_state ${prev.workState}=>${next.workState}")
             if (prev.sdState != next.sdState) add("sd ${prev.sdState}=>${next.sdState}")
             if (prev.sdFreeMb != next.sdFreeMb) add("sd_free ${prev.sdFreeMb}=>${next.sdFreeMb}MB")
             if (prev.videoTimeSec != next.videoTimeSec) add("rec_time ${prev.videoTimeSec}=>${next.videoTimeSec}s")
@@ -490,15 +606,26 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     }
 
     private fun describeStatus(s: DeviceStatus): String =
-        "battery=${s.battery} rec=${s.recording} mode=${s.mode} sd=${s.sdState} " +
-            "free=${s.sdFreeMb}MB time=${s.videoTimeSec}s photos=${s.photoCount}"
+        "battery=${s.battery} rec=${s.recording} mode=${s.mode}${s.modeName?.let { "(\"$it\")" } ?: ""} " +
+            "state=${s.workState} sd=${s.sdState} free=${s.sdFreeMb}MB time=${s.videoTimeSec}s photos=${s.photoCount}"
 
 
     // ---------- Controls ----------
 
     fun capture() = runOp(Op.Capture) { proto, s -> proto.capture(s) }
+
     fun record(start: Boolean) = runOp(Op.Record) { proto, s -> proto.record(s, start) }
-    fun setMode(mode: WorkMode) = runOp(Op.Mode) { proto, s -> proto.setMode(s, mode) }
+
+    /**
+     * Change the camera's work mode, then re-read the settings menu: which items
+     * exist is a function of the mode, so a stale menu would keep offering
+     * video-only settings after the camera moved into a photo mode.
+     */
+    fun setMode(mode: WorkMode) = runOp(Op.Mode) { proto, s ->
+        val r = proto.setMode(s, mode)
+        if (r.isOk) reloadSettingsForMode(proto, s)
+        r
+    }
 
     fun loadSettings() = runOp(Op.Settings) { proto, s ->
         settings = proto.getSettings(s)
@@ -510,14 +637,33 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val before = settings.firstOrNull { it.id == id }?.value
         Diag.i(LogTag.PROTO) { "SET $id ${before ?: "?"} -> ${LogFormat.settingValue(id, value, Diag.config.captureSecrets)}" }
         val r = proto.setSetting(s, id, value)
-        if (r.isOk) loadSettingsBlocking(proto, s)
+        if (r.isOk) {
+            // Show the firmware's answer, not our request. A full getSettings() costs
+            // one request per menu item; see HisiliconProtocol.readBack for why that
+            // is the wrong thing to do after every tap.
+            settings = settings.map { if (it.id == id) it.copy(value = value) else it }
+            val read = runCatching { proto.readBack(s, id) }
+                .onFailure { Diag.d(LogTag.PROTO) { "read-back of $id failed ${Diag.causeChain(it)}" } }
+                .getOrNull()
+            if (read != null) {
+                settings = settings.map { if (it.id == id) read else it }
+                if (read.value != value) {
+                    Diag.w(LogTag.PROTO) { "SET $id accepted but camera reports ${read.value}; asked $value" }
+                }
+            }
+        }
         if (r is CmdResult.Failure) Diag.at(LogLevel.ERROR, LogTag.PROTO, "SET $id refused: ${LogFormat.field(r.message)}")
         r
     }
 
-    private suspend fun loadSettingsBlocking(proto: CameraProtocol, s: CameraSession) {
-        runCatching { settings = proto.getSettings(s) }
-            .onFailure { Diag.at(LogLevel.WARN, LogTag.PROTO, "settings readback failed ${Diag.causeChain(it)}") }
+    /** Re-read the settings menu, which is a function of the camera's work mode. */
+    private suspend fun reloadSettingsForMode(proto: CameraProtocol, s: CameraSession) {
+        runCatching { proto.getSettings(s) }
+            .onSuccess { loaded ->
+                settings = loaded
+                Diag.i(LogTag.PROTO) { "settings re-read after mode change: n=${loaded.size}" }
+            }
+            .onFailure { Diag.at(LogLevel.WARN, LogTag.PROTO, "settings re-read failed ${Diag.causeChain(it)}") }
     }
 
     fun refreshFiles() = runOp(Op.Refresh) { proto, s ->

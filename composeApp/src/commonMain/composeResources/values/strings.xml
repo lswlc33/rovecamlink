@@ -61,12 +61,19 @@
     <string name="label_mode">Mode</string>
     <string name="label_rec">REC</string>
     <string name="rec_idle">idle</string>
+    <string name="rec_busy">busy</string>
     <string name="label_sd_free">SD free</string>
     <string name="section_mode">Mode</string>
     <string name="section_capture">Capture</string>
     <string name="action_photo">Photo</string>
     <string name="action_record">Record</string>
     <string name="action_stop">Stop</string>
+    <string name="label_locked">Locked</string>
+    <string name="label_hint">Hint</string>
+    <string name="hint_locked_mode">Stop recording before switching mode.</string>
+    <string name="hint_locked_capture">Stop recording to take a photo or change mode.</string>
+    <string name="hint_photo_needs_photo_mode">Switch to Photo mode first — this camera cannot take a still while it is in video mode.</string>
+    <string name="preview_none">No preview</string>
 
     <!-- Files screen -->
     <string name="action_refresh_files">Refresh file list</string>
@@ -86,9 +93,53 @@
 
     <!-- Settings screen -->
     <string name="action_reload_settings">Reload settings</string>
+    <string name="section_about">About</string>
     <string name="section_camera_settings">Camera settings</string>
     <string name="settings_none_reload">none — tap reload</string>
     <string name="label_settings">Settings</string>
+    <string name="label_name">Name</string>
+    <string name="label_firmware">Firmware</string>
+    <string name="label_hardware">Hardware</string>
+    <string name="label_serial">Serial number</string>
+    <string name="label_region">Region</string>
+    <string name="label_mac">MAC</string>
+    <string name="label_wifi_name">Wi-Fi</string>
+    <string name="action_refresh_device_info">Refresh device info</string>
+    <string name="label_status">Status</string>
+    <string name="label_note">Note</string>
+    <string name="label_total">Total</string>
+    <string name="label_free">Free</string>
+    <string name="section_firmware_update">Firmware update</string>
+    <string name="label_installed">Installed</string>
+    <string name="action_select_firmware">Select &amp; update firmware</string>
+    <string name="firmware_unsupported">Firmware update unsupported</string>
+    <string name="status_update_applied">Update applied</string>
+    <string name="action_done">Done</string>
+    <string name="action_dismiss">Dismiss</string>
+    <string name="action_cancelled">Cancelled</string>
+    <string name="action_cancel_short">Cancel</string>
+    <string name="section_sd_card">SD card</string>
+    <string name="sd_ok">OK</string>
+    <string name="sd_missing">Missing</string>
+    <string name="sd_error">Error</string>
+    <string name="sd_unknown">Unknown</string>
+    <string name="action_format_sd">Format SD card</string>
+    <string name="hint_new_ssid">New SSID</string>
+    <string name="hint_new_password">New password</string>
+    <string name="note_wifi_restarts">The camera will restart its Wi-Fi — you\'ll need to reconnect to the new network.</string>
+    <string name="section_danger">Danger zone</string>
+    <string name="action_reboot_camera">Reboot camera</string>
+    <string name="action_factory_reset">Factory reset</string>
+    <string name="title_format_sd">Format SD card?</string>
+    <string name="msg_format_sd">All files on the card will be erased. This cannot be undone.</string>
+    <string name="title_factory_reset">Factory reset?</string>
+    <string name="msg_factory_reset">All camera settings will be restored to factory defaults. This cannot be undone.</string>
+    <string name="title_reboot">Reboot camera?</string>
+    <string name="msg_reboot">The camera will restart and the connection will drop briefly.</string>
+    <string name="confirm_format">Format</string>
+    <string name="confirm_reset">Reset</string>
+    <string name="confirm_reboot">Reboot</string>
+    <string name="menu_for_mode">Menu follows the camera\'s current mode: %1$s</string>
 
     <!-- WorkMode display names -->
     <string name="workmode_video">Video</string>
@@ -137,4 +188,24 @@
     <string name="notice_factory_reset">Camera reset — it may reboot and drop the connection.</string>
     <string name="notice_reboot">Camera rebooting — the connection will drop momentarily.</string>
     <string name="status_syncing_time">Syncing camera clock…</string>
+
+    <!-- One-tap connect: Bluetooth discovery, waking the camera hotspot, pairing code -->
+    <string name="action_auto_connect">Connect camera</string>
+    <string name="phase_scanning_bluetooth">Looking for cameras</string>
+    <string name="phase_waking_camera">Waking the camera</string>
+    <string name="label_bluetooth_cameras">Cameras nearby (Bluetooth)</string>
+    <string name="label_wifi_cameras">Camera hotspots in range</string>
+    <string name="label_bluetooth_none">none found — is the camera on and nearby?</string>
+    <string name="status_waking_camera">Asking the camera to open its hotspot…</string>
+    <string name="status_credentials_received">Camera reported %1$s, joining…</string>
+    <string name="status_adopting_wifi">Using the Wi-Fi you already joined…</string>
+    <string name="err_bluetooth_off">Bluetooth is off on this phone — turn it on to wake the camera.</string>
+    <string name="err_bluetooth_denied">Bluetooth permission was denied — allow it to use one-tap connect.</string>
+    <string name="err_bluetooth_unsupported">This device has no Bluetooth — join the camera\'s Wi-Fi and use the list below.</string>
+    <string name="notice_vpn_active">A VPN is running. Camera traffic stays pinned to Wi-Fi, so it still works.</string>
+    <string name="label_other_ways">Other ways</string>
+    <string name="label_current_camera_wifi">Already on %1$s</string>
+    <string name="action_use_this_network">Use this network</string>
+    <string name="label_bluetooth_idle">Tap "Connect camera" to search over Bluetooth.</string>
+    <string name="hint_auto_connect">Finds the camera over Bluetooth, wakes its hotspot and joins it — nothing to type.</string>
 </resources>

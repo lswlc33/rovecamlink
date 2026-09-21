@@ -2,6 +2,10 @@ package com.rovecamlink.app
 
 import com.rovecamlink.app.brand.tuwin.TuwinRestProtocol
 import com.rovecamlink.app.brand.xtu.HisiliconProtocol
+import com.rovecamlink.app.core.ble.BleCameraProfile
+import com.rovecamlink.app.core.ble.XtuBleProfile
+import com.rovecamlink.app.core.ble.createBleCentral
+import com.rovecamlink.app.core.ble.createPairingKeyStore
 import com.rovecamlink.app.core.net.DeviceDiscovery
 import com.rovecamlink.app.core.protocol.CameraProtocolRegistry
 import com.rovecamlink.app.core.storage.createFileSaver
@@ -30,4 +34,16 @@ class AppGraph {
     val scanner = createWifiScanner()
     val fileSaver = createFileSaver()
     val permissions = createPermissionController()
+
+    /**
+     * Bluetooth side of connecting: find the camera before any Wi-Fi exists, wake
+     * its hotspot and get the credentials back. A brand joins by adding a
+     * [BleCameraProfile] here — the UI and the connection flow do not change.
+     */
+    val pairingKeys = createPairingKeyStore()
+    val ble = createBleCentral()
+    val bleProfiles: List<BleCameraProfile> = listOf(XtuBleProfile(pairingKeys))
+
+    fun bleProfileFor(profileId: String): BleCameraProfile? =
+        bleProfiles.firstOrNull { it.id == profileId }
 }

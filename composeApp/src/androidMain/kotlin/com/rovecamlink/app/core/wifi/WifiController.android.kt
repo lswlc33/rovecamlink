@@ -32,6 +32,14 @@ private class AndroidWifiController : WifiController {
 
     override val isConnectedToCamera: Boolean get() = boundNetwork != null || legacyNetId != -1
 
+    /**
+     * The network we adopted (as opposed to one we requested via specifier). Kept
+     * separate so [disconnect] only tears down the watch we registered, never a
+     * request the modern join path owns.
+     */
+    @Volatile private var adoptedNetwork: Network? = null
+    @Volatile private var adoptWatch: ConnectivityManager.NetworkCallback? = null
+
     override fun currentCameraSsid(): String? {
         return runCatching {
             val info = wm.connectionInfo ?: return null
@@ -196,10 +204,80 @@ private class AndroidWifiController : WifiController {
         }
     }
 
+    /**
+     * A Wi-Fi network we can actually talk to the camera through. The *default*
+     * network is often a VPN tunnel while the camera's hotspot is still attached,
+     * so this deliberately looks past the default and rejects TRANSPORT_VPN.
+     */
+    private fun findWifiNetwork(): Network? {
+        fun isPlainWifi(n: Network?): Boolean = runCatching {
+            val caps = n?.let { cm.getNetworkCapabilities(it) } ?: return false
+            caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) &&
+                !caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN)
+        }.getOrDefault(false)
+        if (isPlainWifi(cm.activeNetwork)) return cm.activeNetwork
+        return runCatching { cm.allNetworks?.firstOrNull { isPlainWifi(it) } }.getOrNull()
+    }
+
+    override suspend fun adoptCurrentNetwork(force: Boolean): WifiResult {
+        val target = findWifiNetwork()
+            ?: return WifiResult.Failed("phone is not on a Wi-Fi network").also {
+                Diag.warn(LogTag.WIFI, "adopt refused: no plain Wi-Fi network (cellular only, or Wi-Fi off)")
+            }
+        val ssid = currentCameraSsid()
+        val cameraLike = ssid != null && DEFAULT_PREFIXES.any { ssid.startsWith(it, ignoreCase = true) }
+        val isolatedAp = runCatching {
+            val caps = cm.getNetworkCapabilities(target)
+            caps != null && !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        }.getOrDefault(false)
+        if (!cameraLike && !isolatedAp && !force) {
+            Diag.debug(LogTag.WIFI, "adopt skipped: $ssid looks like a normal network (camera_like=false internet=true), pass force for manual-IP flows")
+            return WifiResult.Failed("Current Wi-Fi (${"${ssid ?: "unknown"}"}) is not a camera network")
+        }
+        adoptedNetwork = target
+        boundNetwork = target
+        runCatching { cm.bindProcessToNetwork(target) }
+            .onFailure { Diag.error(LogTag.WIFI, "adopt bindProcessToNetwork threw ${Diag.causeChain(it)}") }
+        linkProps = runCatching { cm.getLinkProperties(target) }.getOrNull()
+        // If the user walks off this network we must stop routing through it,
+        // otherwise every socket dies with the tunnel that replaced it.
+        runCatching {
+            val cb = object : ConnectivityManager.NetworkCallback() {
+                override fun onLost(network: Network) {
+                    if (network != adoptedNetwork) return
+                    Diag.warn(LogTag.WIFI, "adopted Wi-Fi network LOST — unbinding process")
+                    adoptedNetwork = null
+                    if (boundNetwork === network) boundNetwork = null
+                    runCatching { cm.bindProcessToNetwork(null) }
+                    runCatching { cm.unregisterNetworkCallback(this) }
+                    adoptWatch = null
+                }
+            }
+            cm.registerNetworkCallback(
+                NetworkRequest.Builder()
+                    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                    .removeCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    .build(),
+                cb,
+            )
+            adoptWatch = cb
+        }.onFailure { Diag.error(LogTag.WIFI, "adopt watch registration threw ${Diag.causeChain(it)}") }
+        Diag.info(LogTag.WIFI, "adopted current Wi-Fi ssid=${ssid ?: "-"} camera_like=$cameraLike isolated_ap=$isolatedAp gateway=${linkProps?.summary()}")
+        return WifiResult.Connected(ssid ?: "")
+    }
+
+    override fun isVpnActive(): Boolean = runCatching {
+        val n = cm.activeNetwork ?: return false
+        cm.getNetworkCapabilities(n)?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true
+    }.getOrDefault(false)
+
     override suspend fun disconnect() {
-        Diag.debug(LogTag.WIFI, "disconnect (bound=${boundNetwork != null} legacyNetId=$legacyNetId)")
+        Diag.debug(LogTag.WIFI, "disconnect (bound=${boundNetwork != null} adopted=${adoptedNetwork != null} legacyNetId=$legacyNetId)")
         runCatching { callback?.let { cm.unregisterNetworkCallback(it) } }
         callback = null
+        runCatching { adoptWatch?.let { cm.unregisterNetworkCallback(it) } }
+        adoptWatch = null
+        adoptedNetwork = null
         runCatching { cm.bindProcessToNetwork(null) }
         boundNetwork = null
         linkProps = null

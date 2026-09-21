@@ -61,12 +61,19 @@
     <string name="label_mode">模式</string>
     <string name="label_rec">录制</string>
     <string name="rec_idle">空闲</string>
+    <string name="rec_busy">忙</string>
     <string name="label_sd_free">SD 可用</string>
     <string name="section_mode">模式</string>
     <string name="section_capture">拍摄</string>
     <string name="action_photo">拍照</string>
     <string name="action_record">录像</string>
     <string name="action_stop">停止</string>
+    <string name="label_locked">已锁定</string>
+    <string name="label_hint">提示</string>
+    <string name="hint_locked_mode">录像结束后才能切换模式。</string>
+    <string name="hint_locked_capture">录像中不能拍照或改模式，请先停止录像。</string>
+    <string name="hint_photo_needs_photo_mode">请先切到「照片」模式——这台相机在视频模式下不能拍静态照片。</string>
+    <string name="preview_none">暂无画面</string>
 
     <!-- Files screen -->
     <string name="action_refresh_files">刷新文件列表</string>
@@ -86,9 +93,53 @@
 
     <!-- Settings screen -->
     <string name="action_reload_settings">重新加载设置</string>
+    <string name="section_about">关于</string>
     <string name="section_camera_settings">相机设置</string>
     <string name="settings_none_reload">无 — 点击重新加载</string>
     <string name="label_settings">设置</string>
+    <string name="label_name">名称</string>
+    <string name="label_firmware">固件版本</string>
+    <string name="label_hardware">硬件版本</string>
+    <string name="label_serial">序列号</string>
+    <string name="label_region">区域</string>
+    <string name="label_mac">MAC 地址</string>
+    <string name="label_wifi_name">Wi-Fi</string>
+    <string name="action_refresh_device_info">重新读取相机信息</string>
+    <string name="label_status">状态</string>
+    <string name="label_note">说明</string>
+    <string name="label_total">总容量</string>
+    <string name="label_free">可用容量</string>
+    <string name="section_firmware_update">固件更新</string>
+    <string name="label_installed">当前版本</string>
+    <string name="action_select_firmware">选择并更新固件</string>
+    <string name="firmware_unsupported">该相机暂不支持固件更新</string>
+    <string name="status_update_applied">更新已应用</string>
+    <string name="action_done">完成</string>
+    <string name="action_dismiss">忽略</string>
+    <string name="action_cancelled">已取消</string>
+    <string name="action_cancel_short">取消</string>
+    <string name="section_sd_card">存储卡</string>
+    <string name="sd_ok">正常</string>
+    <string name="sd_missing">未插入</string>
+    <string name="sd_error">异常</string>
+    <string name="sd_unknown">未知</string>
+    <string name="action_format_sd">格式化存储卡</string>
+    <string name="hint_new_ssid">新网络名称</string>
+    <string name="hint_new_password">新密码</string>
+    <string name="note_wifi_restarts">相机会重启它自己的 Wi-Fi，你需要重新连接新的网络。</string>
+    <string name="section_danger">危险操作</string>
+    <string name="action_reboot_camera">重启相机</string>
+    <string name="action_factory_reset">恢复出厂设置</string>
+    <string name="title_format_sd">格式化存储卡？</string>
+    <string name="msg_format_sd">卡内所有文件都会被抹掉，此操作不可撤销。</string>
+    <string name="title_factory_reset">恢复出厂设置？</string>
+    <string name="msg_factory_reset">相机的所有设置都会回到出厂状态，此操作不可撤销。</string>
+    <string name="title_reboot">重启相机？</string>
+    <string name="msg_reboot">相机会重新启动，连接会短暂中断。</string>
+    <string name="confirm_format">格式化</string>
+    <string name="confirm_reset">重置</string>
+    <string name="confirm_reboot">重启</string>
+    <string name="menu_for_mode">菜单跟随相机当前模式：%1$s</string>
 
     <!-- WorkMode display names -->
     <string name="workmode_video">视频</string>
@@ -137,4 +188,24 @@
     <string name="notice_factory_reset">相机已恢复出厂设置 — 可能会重启并断开连接。</string>
     <string name="notice_reboot">相机正在重启 — 连接会短暂中断。</string>
     <string name="status_syncing_time">正在同步相机时间…</string>
+
+    <!-- 一键连接：蓝牙发现、唤醒相机热点、配对码 -->
+    <string name="action_auto_connect">连接相机</string>
+    <string name="phase_scanning_bluetooth">正在搜索相机</string>
+    <string name="phase_waking_camera">正在唤醒相机</string>
+    <string name="label_bluetooth_cameras">附近的相机（蓝牙）</string>
+    <string name="label_wifi_cameras">范围内的相机热点</string>
+    <string name="label_bluetooth_none">没有找到——相机是否已开机并在附近？</string>
+    <string name="status_waking_camera">正在让相机打开热点…</string>
+    <string name="status_credentials_received">相机已报出 %1$s，正在连接…</string>
+    <string name="status_adopting_wifi">正在使用你已连上的 WiFi…</string>
+    <string name="err_bluetooth_off">手机蓝牙未开启——打开后才能唤醒相机。</string>
+    <string name="err_bluetooth_denied">蓝牙权限被拒绝——允许后才能使用一键连接。</string>
+    <string name="err_bluetooth_unsupported">这台设备没有蓝牙——请先在系统设置连上相机 WiFi，再用下面的列表。</string>
+    <string name="notice_vpn_active">检测到 VPN/代理在运行。相机流量已绑定到 WiFi，不会被代理抢走。</string>
+    <string name="label_other_ways">其他方式</string>
+    <string name="label_current_camera_wifi">已连在 %1$s 上</string>
+    <string name="action_use_this_network">直接用它</string>
+    <string name="label_bluetooth_idle">点上面的「连接相机」，用蓝牙搜索。</string>
+    <string name="hint_auto_connect">用蓝牙找到相机、让它打开热点并自动连上，全程不用输入任何东西。</string>
 </resources>

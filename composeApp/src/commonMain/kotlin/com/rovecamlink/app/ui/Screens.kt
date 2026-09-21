@@ -92,43 +92,76 @@ import com.rovecamlink.app.core.model.groupFilesByDay
 import com.rovecamlink.app.core.ota.OtaState
 import com.rovecamlink.app.core.qr.QrScanScreen
 import com.rovecamlink.app.core.wifi.CameraNetwork
+import com.rovecamlink.app.action_cancel_short
+import com.rovecamlink.app.action_cancelled
 import com.rovecamlink.app.action_connect_to_ip
 import com.rovecamlink.app.action_delete_file
 import com.rovecamlink.app.action_disconnect
+import com.rovecamlink.app.action_dismiss
+import com.rovecamlink.app.action_done
 import com.rovecamlink.app.action_download_file
+import com.rovecamlink.app.action_factory_reset
+import com.rovecamlink.app.action_format_sd
 import com.rovecamlink.app.action_join_connect
 import com.rovecamlink.app.action_photo
+import com.rovecamlink.app.action_reboot_camera
 import com.rovecamlink.app.action_record
+import com.rovecamlink.app.action_refresh_device_info
 import com.rovecamlink.app.action_refresh_files
 import com.rovecamlink.app.action_reload_settings
 import com.rovecamlink.app.action_retry_file
 import com.rovecamlink.app.action_scan_cameras
 import com.rovecamlink.app.action_scan_qr
+import com.rovecamlink.app.action_select_firmware
 import com.rovecamlink.app.action_stop
 import com.rovecamlink.app.cancel
+import com.rovecamlink.app.confirm_format
+import com.rovecamlink.app.confirm_reboot
+import com.rovecamlink.app.confirm_reset
 import com.rovecamlink.app.delete
 import com.rovecamlink.app.download_done
 import com.rovecamlink.app.download_failed
 import com.rovecamlink.app.file_type_photo
 import com.rovecamlink.app.file_type_video
 import com.rovecamlink.app.files_none_refresh
+import com.rovecamlink.app.firmware_unsupported
+import com.rovecamlink.app.hint_locked_capture
+import com.rovecamlink.app.hint_new_password
+import com.rovecamlink.app.hint_new_ssid
 import com.rovecamlink.app.label_battery
 import com.rovecamlink.app.label_files
+import com.rovecamlink.app.label_firmware
+import com.rovecamlink.app.label_free
+import com.rovecamlink.app.label_hardware
 import com.rovecamlink.app.label_host
 import com.rovecamlink.app.label_info
+import com.rovecamlink.app.label_installed
+import com.rovecamlink.app.label_mac
 import com.rovecamlink.app.label_mode
 import com.rovecamlink.app.label_model
+import com.rovecamlink.app.label_name
 import com.rovecamlink.app.label_nearby_cameras
+import com.rovecamlink.app.label_note
 import com.rovecamlink.app.label_password
 import com.rovecamlink.app.label_phase
 import com.rovecamlink.app.label_platform
 import com.rovecamlink.app.label_rec
+import com.rovecamlink.app.label_region
 import com.rovecamlink.app.label_sd_free
+import com.rovecamlink.app.label_serial
 import com.rovecamlink.app.label_settings
+import com.rovecamlink.app.label_status
+import com.rovecamlink.app.label_total
+import com.rovecamlink.app.label_wifi_name
+import com.rovecamlink.app.menu_for_mode
 import com.rovecamlink.app.message_delete_file
+import com.rovecamlink.app.msg_factory_reset
+import com.rovecamlink.app.msg_format_sd
+import com.rovecamlink.app.msg_reboot
 import com.rovecamlink.app.nearby_cameras_none
 import com.rovecamlink.app.not_connected_note
 import com.rovecamlink.app.not_connected_title
+import com.rovecamlink.app.note_wifi_restarts
 import com.rovecamlink.app.phase_connected
 import com.rovecamlink.app.phase_connecting
 import com.rovecamlink.app.phase_detecting_device
@@ -137,21 +170,38 @@ import com.rovecamlink.app.phase_idle
 import com.rovecamlink.app.phase_joining_wifi
 import com.rovecamlink.app.phase_scanning_wifi
 import com.rovecamlink.app.placeholder_ip
+import com.rovecamlink.app.hint_locked_mode
+import com.rovecamlink.app.hint_photo_needs_photo_mode
+import com.rovecamlink.app.label_hint
+import com.rovecamlink.app.label_locked
 import com.rovecamlink.app.rec_idle
+import com.rovecamlink.app.rec_busy
+import com.rovecamlink.app.resolve
 import com.rovecamlink.app.save
+import com.rovecamlink.app.sd_error
+import com.rovecamlink.app.sd_missing
+import com.rovecamlink.app.sd_ok
+import com.rovecamlink.app.sd_unknown
+import com.rovecamlink.app.section_about
 import com.rovecamlink.app.section_camera_settings
 import com.rovecamlink.app.section_camera_wifi
 import com.rovecamlink.app.section_capture
+import com.rovecamlink.app.section_danger
 import com.rovecamlink.app.section_downloads
+import com.rovecamlink.app.section_firmware_update
 import com.rovecamlink.app.section_manual_connect
 import com.rovecamlink.app.section_mode
 import com.rovecamlink.app.section_on_camera
+import com.rovecamlink.app.section_sd_card
 import com.rovecamlink.app.section_status
 import com.rovecamlink.app.settings_none_reload
+import com.rovecamlink.app.status_update_applied
 import com.rovecamlink.app.title_delete_file
+import com.rovecamlink.app.title_factory_reset
+import com.rovecamlink.app.title_format_sd
+import com.rovecamlink.app.title_reboot
 import com.rovecamlink.app.wifi_open
 import com.rovecamlink.app.wifi_secured
-import com.rovecamlink.app.resolve
 import org.jetbrains.compose.resources.stringResource
 
 /** Section rows follow the library's own minimum row height. */
@@ -178,6 +228,10 @@ private fun phaseLabel(p: Phase): String = stringResource(
         Phase.ScanningWifi -> Res.string.phase_scanning_wifi
         Phase.ConnectingWifi -> Res.string.phase_joining_wifi
         Phase.IdentifyingDevice -> Res.string.phase_detecting_device
+        // BLE discovery and waiting for the camera to raise its hotspot are both steps
+        // of getting a connection up; they reuse the connecting label rather than
+        // inventing wording the BLE pass has not settled yet.
+        Phase.ScanningBle, Phase.WakingAp -> Res.string.phase_connecting
         // Clock sync is a step of connecting; it has no separate label yet.
         Phase.ConnectingProtocol, Phase.SyncingTime -> Res.string.phase_connecting
         Phase.Connected -> Res.string.phase_connected
@@ -499,6 +553,7 @@ fun LiveScreen(state: AppState) {
     val previewUrl = state.protocolOrNull()?.previewUrl(session)
     val st = state.deviceStatus
     val recording = st?.recording == true
+    val busy = st?.busy == true
     val mode = st?.mode ?: WorkMode.VIDEO
 
     // 一次性解析,section body 非 Composable,故不能在调用点直接 stringResource。
@@ -507,12 +562,26 @@ fun LiveScreen(state: AppState) {
     val modeLbl = stringResource(Res.string.label_mode)
     val recLbl = stringResource(Res.string.label_rec)
     val recIdleLbl = stringResource(Res.string.rec_idle)
+    val recBusyLbl = stringResource(Res.string.rec_busy)
     val sdFreeLbl = stringResource(Res.string.label_sd_free)
     val modeTitle = stringResource(Res.string.section_mode)
     val captureTitle = stringResource(Res.string.section_capture)
     val photoLbl = stringResource(Res.string.action_photo)
     val recordLbl = stringResource(Res.string.action_record)
     val stopLbl = stringResource(Res.string.action_stop)
+    val lockedLbl = stringResource(Res.string.label_locked)
+    val hintLbl = stringResource(Res.string.label_hint)
+    val lockedModeMsg = stringResource(Res.string.hint_locked_mode)
+    val lockedCaptureMsg = stringResource(Res.string.hint_locked_capture)
+    val working = recording || busy
+    // One reason, whichever it is, for the shutter being unavailable — a greyed-out
+    // control with no explanation reads as a broken app rather than a busy camera.
+    val captureHint = when {
+        recording -> lockedCaptureMsg
+        busy -> recBusyLbl
+        mode != WorkMode.PHOTO -> stringResource(Res.string.hint_photo_needs_photo_mode)
+        else -> null
+    }
 
     LazyColumn(Modifier.fillMaxSize()) {
         item {
@@ -545,8 +614,16 @@ fun LiveScreen(state: AppState) {
                     StatTile(
                         CupertinoIcons.Filled.RecordCircle,
                         recLbl,
-                        if (recording) formatTime(st?.videoTimeSec ?: 0) else recIdleLbl,
-                        if (recording) CupertinoColors.systemRed else CupertinoTheme.colorScheme.tertiaryLabel,
+                        when {
+                            recording -> formatTime(st?.videoTimeSec ?: 0)
+                            busy -> recBusyLbl
+                            else -> recIdleLbl
+                        },
+                        when {
+                            recording -> CupertinoColors.systemRed
+                            busy -> CupertinoColors.systemOrange
+                            else -> CupertinoTheme.colorScheme.tertiaryLabel
+                        },
                     )
                     StatTile(
                         CupertinoIcons.Filled.Externaldrive,
@@ -560,23 +637,25 @@ fun LiveScreen(state: AppState) {
 
         section(title = { CupertinoText(modeTitle.sectionTitle()) }) {
             item {
-                // A14/A15: switching modes mid-recording can drop a partial file, so
-                // gate it and explain why instead of silently failing.
+                // Only the two families this camera can actually be switched into.
+                // `WorkMode.PLAYBACK` is deliberately absent: these firmwares have no
+                // app-selectable playback work mode, and offering it sent a photo-mode
+                // command the camera then refused.
                 CupertinoSegmentedControl(
-                    selectedTabIndex = WorkMode.entries.indexOf(mode).coerceAtLeast(0),
+                    selectedTabIndex = captureModes.indexOf(mode).coerceAtLeast(0),
                     modifier = Modifier.fillMaxWidth().padding(it),
                     paddingValues = PaddingValues(0.dp),
                 ) {
-                    WorkMode.entries.forEach { m ->
+                    captureModes.forEach { m ->
                         CupertinoSegmentedControlTab(
-                            onClick = { if (!recording) state.setMode(m) },
+                            onClick = { if (m != mode && !working) state.setMode(m) },
                             isSelected = m == mode,
                         ) { CupertinoText(stringResource(m.displayNameRes)) }
                     }
                 }
             }
-            if (recording) {
-                valueItem("Locked", "Stop recording to switch mode")
+            if (working) {
+                valueItem(lockedLbl, lockedModeMsg)
             }
         }
 
@@ -591,7 +670,9 @@ fun LiveScreen(state: AppState) {
                         leadingIcon = CupertinoIcons.Filled.Camera,
                         modifier = Modifier.weight(1f),
                         busy = state.isBusy(Op.Capture),
-                        enabled = !recording,
+                        // A photo needs a photo mode and an idle camera: in video mode
+                        // this camera's photo.cgi started a recording instead.
+                        enabled = !working && mode == WorkMode.PHOTO,
                         onClick = { state.capture() },
                     )
                     FilledButton(
@@ -603,17 +684,19 @@ fun LiveScreen(state: AppState) {
                         },
                         modifier = Modifier.weight(1f),
                         busy = state.isBusy(Op.Record),
+                        enabled = !busy,
                         containerColor = CupertinoColors.systemRed,
                         onClick = { state.record(!recording) },
                     )
                 }
             }
-            if (recording) {
-                valueItem("Hint", "Stop recording to take a photo or change modes")
-            }
+            captureHint?.let { valueItem(hintLbl, it) }
         }
     }
 }
+
+/** Work modes the live screen can switch between. */
+private val captureModes = listOf(WorkMode.VIDEO, WorkMode.PHOTO)
 
 @Composable
 private fun StatTile(icon: ImageVector, label: String, value: String, tint: Color) {
@@ -1024,14 +1107,101 @@ fun SettingsScreen(state: AppState) {
     val st = state.deviceStatus
 
     val reloadLabel = stringResource(Res.string.action_reload_settings)
+    val aboutTitle = stringResource(Res.string.section_about)
     val cameraSettingsTitle = stringResource(Res.string.section_camera_settings)
     val settingsLabel = stringResource(Res.string.label_settings)
     val settingsNone = stringResource(Res.string.settings_none_reload)
     val saveLabel = stringResource(Res.string.save)
+    val statusLbl = stringResource(Res.string.label_status)
+    val noteLbl = stringResource(Res.string.label_note)
+    val totalLbl = stringResource(Res.string.label_total)
+    val freeLbl = stringResource(Res.string.label_free)
+    val menuForMode = stringResource(
+        Res.string.menu_for_mode,
+        state.deviceStatus?.modeName?.ifBlank { null } ?: "—",
+    )
+    // section() bodies are not composable scope functions in this UI kit, so every
+    // label a row needs is resolved here once.
+    val nameLbl = stringResource(Res.string.label_name)
+    val modelLbl = stringResource(Res.string.label_model)
+    val firmwareLbl = stringResource(Res.string.label_firmware)
+    val hardwareLbl = stringResource(Res.string.label_hardware)
+    val serialLbl = stringResource(Res.string.label_serial)
+    val regionLbl = stringResource(Res.string.label_region)
+    val macLbl = stringResource(Res.string.label_mac)
+    val wifiLbl = stringResource(Res.string.label_wifi_name)
+    val refreshInfoLbl = stringResource(Res.string.action_refresh_device_info)
+    val firmwareUpdateTitle = stringResource(Res.string.section_firmware_update)
+    val installedLbl = stringResource(Res.string.label_installed)
+    val selectFirmwareLbl = stringResource(Res.string.action_select_firmware)
+    val firmwareUnsupportedLbl = stringResource(Res.string.firmware_unsupported)
+    val updateAppliedLbl = stringResource(Res.string.status_update_applied)
+    val doneLbl = stringResource(Res.string.action_done)
+    val dismissLbl = stringResource(Res.string.action_dismiss)
+    val cancelledLbl = stringResource(Res.string.action_cancelled)
+    val cancelLbl = stringResource(Res.string.cancel)
+    val sdCardTitle = stringResource(Res.string.section_sd_card)
+    val formatSdLbl = stringResource(Res.string.action_format_sd)
+    val sdStateLbl = when (st?.sdState) {
+        SdCardState.OK -> stringResource(Res.string.sd_ok)
+        SdCardState.MISSING -> stringResource(Res.string.sd_missing)
+        SdCardState.ERROR -> stringResource(Res.string.sd_error)
+        SdCardState.UNKNOWN, null -> stringResource(Res.string.sd_unknown)
+    }
+    val cameraWifiTitle = stringResource(Res.string.section_camera_wifi)
+    val newSsidHint = stringResource(Res.string.hint_new_ssid)
+    val newPassHint = stringResource(Res.string.hint_new_password)
+    val wifiRestartNote = stringResource(Res.string.note_wifi_restarts)
+    val dangerTitle = stringResource(Res.string.section_danger)
+    val rebootLbl = stringResource(Res.string.action_reboot_camera)
+    val factoryResetLbl = stringResource(Res.string.action_factory_reset)
+    val recordingNote = stringResource(Res.string.hint_locked_capture)
 
+    // The camera's menu is grouped for display, but grouping must never decide what
+    // is *shown*: an item this app has never seen still has to appear, under 其他.
+    val menuGroups = groupSettingsForDisplay(state.settings)
 
     LazyColumn(Modifier.fillMaxSize()) {
-        section {
+        section(title = { CupertinoText(cameraSettingsTitle.sectionTitle()) }) {
+            item {
+                Column(Modifier.fillMaxWidth().padding(it)) {
+                    CupertinoText(
+                        menuForMode,
+                        fontSize = 12.sp,
+                        color = CupertinoTheme.colorScheme.secondaryLabel,
+                    )
+                }
+            }
+            // The firmware refuses parameter writes while it is working, so say so up
+            // front instead of letting twenty rows fail one by one.
+            if (state.deviceStatus?.recording == true) {
+                valueItem(noteLbl, recordingNote)
+            }
+            if (state.settings.isEmpty()) {
+                valueItem(settingsLabel, settingsNone)
+            }
+            menuGroups.forEach { (group, rows) ->
+                item {
+                    Column(Modifier.fillMaxWidth().padding(top = 10.dp).padding(it)) {
+                        CupertinoText(
+                            group.zhTitle,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = CupertinoTheme.colorScheme.accent,
+                        )
+                    }
+                }
+                rows.forEach { s ->
+                    settingRow(
+                        state = state,
+                        s = s,
+                        expanded = expandedId == s.id,
+                        onOpen = { expandedId = s.id },
+                        onClose = { if (expandedId == s.id) expandedId = null },
+                        saveLabel = saveLabel,
+                    )
+                }
+            }
             actionItem(
                 title = reloadLabel,
                 busy = state.isBusy(Op.Settings),
@@ -1040,98 +1210,89 @@ fun SettingsScreen(state: AppState) {
         }
 
 
-        section(title = { CupertinoText("About".sectionTitle()) }) {
-            valueItem("Name", info?.name ?: "—")
-            valueItem("Model", info?.model ?: state.session?.model ?: "—")
-            valueItem("Firmware", info?.softVersion ?: "—")
-            valueItem("Hardware", info?.hardVersion ?: "—")
-            valueItem("Serial number", info?.serialNumber ?: "—")
-            valueItem("Region", info?.region ?: "—")
-            valueItem("MAC", info?.mac ?: "—")
-            valueItem("Wi-Fi", info?.ssid ?: "—")
+        section(title = { CupertinoText(aboutTitle.sectionTitle()) }) {
+            valueItem(nameLbl, info?.name.orDash().let { if (it == "—") state.session?.model ?: "—" else it })
+            // This firmware answers `model="0"` and `serialnum="1"` — placeholders, not
+            // identity. Showing them as if they were real makes the page lie.
+            valueItem(
+                modelLbl,
+                info?.model?.takeUnless { it.isBlank() || it.all { c -> c.isDigit() } }
+                    ?: state.session?.model ?: "—",
+            )
+            valueItem(firmwareLbl, info?.softVersion.orDash())
+            valueItem(hardwareLbl, info?.hardVersion.orDash())
+            valueItem(
+                serialLbl,
+                info?.serialNumber
+                    ?.takeUnless { it.isBlank() || (it.all { c -> c.isDigit() } && it.length <= 2) } ?: "—",
+            )
+            valueItem(regionLbl, info?.region.orDash())
+            valueItem(macLbl, info?.mac.orDash())
+            valueItem(wifiLbl, info?.ssid.orDash())
             actionItem(
-                title = "Refresh device info",
-
+                title = refreshInfoLbl,
                 busy = state.isBusy(Op.DeviceInfo),
                 onClick = { state.loadDeviceInfo() },
             )
         }
 
 
-        section(title = { CupertinoText("Firmware update".sectionTitle()) }) {
-            valueItem("Installed", info?.softVersion ?: "—")
+
+        section(title = { CupertinoText(firmwareUpdateTitle.sectionTitle()) }) {
+            valueItem(installedLbl, info?.softVersion ?: "—")
 
             when (val ota = state.otaState) {
                 OtaState.Idle -> actionItem(
-
-                    title = if (state.firmwareUpdateSupported()) {
-                        "Select & update firmware"
-                    } else {
-                        "Firmware update unsupported"
-                    },
-
+                    title = if (state.firmwareUpdateSupported()) selectFirmwareLbl else firmwareUnsupportedLbl,
                     enabled = state.firmwareUpdateSupported(),
                     onClick = { state.installFirmwareUpdate() },
                 )
 
                 OtaState.Completed -> {
-                    valueItem("Status", "Update applied")
-                    actionItem("Done", onClick = { state.resetOtaState() })
+                    valueItem(statusLbl, updateAppliedLbl)
+                    actionItem(doneLbl, onClick = { state.resetOtaState() })
                 }
-                OtaState.Cancelled -> actionItem("Cancelled", onClick = { state.resetOtaState() })
+                OtaState.Cancelled -> {
+                    actionItem(cancelledLbl, onClick = { state.resetOtaState() })
+                }
                 is OtaState.Failed -> {
                     // The reason comes straight off the transport, so it stays raw text.
-                    valueItem("Status", ota.message)
-                    actionItem("Dismiss", onClick = { state.resetOtaState() })
+                    valueItem(statusLbl, ota.message)
+                    actionItem(dismissLbl, onClick = { state.resetOtaState() })
                 }
                 else -> {
-                    valueItem("Status", otaLabel(ota))
-                    actionItem("Cancel", onClick = { state.cancelFirmwareUpdate() })
+                    valueItem(statusLbl, otaLabel(ota))
+                    actionItem(cancelLbl, onClick = { state.cancelFirmwareUpdate() })
                 }
 
             }
         }
 
 
-        section(title = { CupertinoText("SD card".sectionTitle()) }) {
-            valueItem(
-                "Status",
-                st?.sdState?.let {
-                    when (it) {
-                        SdCardState.OK -> "OK"
-                        SdCardState.MISSING -> "Missing"
-                        SdCardState.ERROR -> "Error"
-                        SdCardState.UNKNOWN -> "Unknown"
-                    }
-                } ?: "—",
-            )
-            valueItem("Total", st?.sdTotalMb?.let { humanBytes(it * 1024 * 1024) } ?: "—")
-            valueItem("Free", st?.sdFreeMb?.let { humanBytes(it * 1024 * 1024) } ?: "—")
+        section(title = { CupertinoText(sdCardTitle.sectionTitle()) }) {
+            valueItem(statusLbl, if (st?.sdState == null) "—" else sdStateLbl)
+            valueItem(totalLbl, st?.sdTotalMb?.let { humanBytes(it * 1024 * 1024) } ?: "—")
+            valueItem(freeLbl, st?.sdFreeMb?.let { humanBytes(it * 1024 * 1024) } ?: "—")
             actionItem(
-                title = "Format SD card",
-
+                title = formatSdLbl,
                 busy = state.isBusy(Op.FormatSd),
                 onClick = { pending = DangerOp.FormatSd },
             )
         }
 
 
-        section(title = { CupertinoText("Camera Wi-Fi".sectionTitle()) }) {
-            textField(
 
+        section(title = { CupertinoText(cameraWifiTitle.sectionTitle()) }) {
+            textField(
                 value = wifiSsid,
                 onValueChange = { wifiSsid = it; wifiSubmit = false },
-                
-placeholder = { CupertinoText(info?.ssid?.ifBlank { "New SSID" } ?: "New SSID") }
-,
+                placeholder = { CupertinoText(info?.ssid?.ifBlank { null } ?: newSsidHint) },
                 singleLine = true,
             )
             textField(
                 value = wifiPass,
                 onValueChange = { wifiPass = it; wifiSubmit = false },
-                
-placeholder = { CupertinoText("New password") }
-,
+                placeholder = { CupertinoText(newPassHint) },
                 singleLine = true,
             )
             item {
@@ -1156,76 +1317,56 @@ placeholder = { CupertinoText("New password") }
                 }
             }
             if (wifiSubmit) {
-
-                valueItem(
-                    "Note",
-                    "The camera will restart its Wi-Fi — you'll need to reconnect to the new network.",
-                )
-
+                valueItem(noteLbl, wifiRestartNote)
             }
         }
 
 
-        section(title = { CupertinoText("Danger zone".sectionTitle()) }) {
-
+        section(title = { CupertinoText(dangerTitle.sectionTitle()) }) {
             // Reboot is a TUWIN REST command; Hisilicon cameras have no such CGI.
             if (state.session?.platform == DevicePlatform.TUWIN_REST) {
                 actionItem(
-
-                    title = "Reboot camera",
-
+                    title = rebootLbl,
                     busy = state.isBusy(Op.Reboot),
                     onClick = { pending = DangerOp.Reboot },
                 )
             }
             actionItem(
-
-                title = "Factory reset",
-
+                title = factoryResetLbl,
                 busy = state.isBusy(Op.FactoryReset),
                 onClick = { pending = DangerOp.FactoryReset },
             )
         }
-
-        section(title = { CupertinoText(cameraSettingsTitle.sectionTitle()) }) {
-            if (state.settings.isEmpty()) {
-                valueItem(settingsLabel, settingsNone)
-            }
-            state.settings.forEach { s ->
-                settingRow(
-                    state = state,
-                    s = s,
-                    expanded = expandedId == s.id,
-                    onOpen = { expandedId = s.id },
-                    onClose = { if (expandedId == s.id) expandedId = null },
-                    saveLabel = saveLabel,
-                )
-            }
-        }
     }
 
     pending?.let { op ->
-        val title = when (op) {
-            DangerOp.FormatSd -> "Format SD card?"
-            DangerOp.FactoryReset -> "Factory reset?"
-            DangerOp.Reboot -> "Reboot camera?"
-        }
-        val message = when (op) {
-            DangerOp.FormatSd -> "All files on the card will be erased. This cannot be undone."
-            DangerOp.FactoryReset -> "All camera settings will be restored to factory defaults. This cannot be undone."
-            DangerOp.Reboot -> "The camera will restart and the connection will drop briefly."
-        }
-        val confirmLabel = when (op) {
-            DangerOp.FormatSd -> "Format"
-            DangerOp.FactoryReset -> "Reset"
-            DangerOp.Reboot -> "Reboot"
-        }
+        val title = stringResource(
+            when (op) {
+                DangerOp.FormatSd -> Res.string.title_format_sd
+                DangerOp.FactoryReset -> Res.string.title_factory_reset
+                DangerOp.Reboot -> Res.string.title_reboot
+            },
+        )
+        val message = stringResource(
+            when (op) {
+                DangerOp.FormatSd -> Res.string.msg_format_sd
+                DangerOp.FactoryReset -> Res.string.msg_factory_reset
+                DangerOp.Reboot -> Res.string.msg_reboot
+            },
+        )
+        val confirmLabel = stringResource(
+            when (op) {
+                DangerOp.FormatSd -> Res.string.confirm_format
+                DangerOp.FactoryReset -> Res.string.confirm_reset
+                DangerOp.Reboot -> Res.string.confirm_reboot
+            },
+        )
         CupertinoAlertDialog(
             onDismissRequest = { pending = null },
             title = { CupertinoText(title) },
             message = { CupertinoText(message) },
             buttons = {
-                cancel(onClick = { pending = null }) { CupertinoText("Cancel") }
+                cancel(onClick = { pending = null }) { CupertinoText(stringResource(Res.string.action_cancel_short)) }
                 destructive(
                     onClick = {
                         when (op) {
@@ -1242,6 +1383,16 @@ placeholder = { CupertinoText("New password") }
     }
 }
 
+/**
+ * One camera menu item, labelled from [MenuCatalog].
+ *
+ * The row leads with the Chinese name and carries the firmware's own string beside
+ * it: every diagnostic line this app writes names a setting by that firmware string,
+ * so keeping it visible is what lets a row be traced back to `logs/`.
+ *
+ * Not `@Composable` — like the rest of the section scope helpers, it only emits
+ * through the composable slots it passes in.
+ */
 private fun LazySectionScope.settingRow(
     state: AppState,
     s: CameraSetting,
@@ -1251,15 +1402,17 @@ private fun LazySectionScope.settingRow(
     saveLabel: String,
 ) {
     val options = s.options
-    val isBool = options.size == 2 && options.map { it.value }.toSet() == setOf("0", "1")
-    val enabled = !state.isBusy(Op.Settings)
+    val enabled = !state.isBusy(Op.Settings) && !state.isBusy(Op.Mode)
+    val zhTitle = MenuCatalog.titleOf(s.id, s.title)
+    val firmwareName = s.title.takeIf { it != zhTitle }
+    val help = MenuCatalog.helpOf(s.id)
 
     when {
-        isBool -> switch(
-            checked = s.value == "1",
-            onCheckedChange = { state.setSetting(s.id, if (it) "1" else "0") },
+        s.isToggle -> switch(
+            checked = s.value.equals("1", true) || s.value.equals("ON", true),
+            onCheckedChange = { state.setSetting(s.id, s.toggleValue(it)) },
             enabled = enabled,
-            title = { CupertinoText(s.title) },
+            title = { SettingLabel(zhTitle, firmwareName, help) },
         )
 
         options.isNotEmpty() -> dropdownMenu(
@@ -1268,9 +1421,9 @@ private fun LazySectionScope.settingRow(
             onClick = if (expanded) onClose else onOpen,
             enabled = enabled,
             selectedLabel = {
-                CupertinoText(options.firstOrNull { it.value == s.value }?.label ?: s.value)
+                CupertinoText(MenuCatalog.valueLabel(s.id, s.value), fontSize = 14.sp)
             },
-            title = { CupertinoText(s.title) },
+            title = { SettingLabel(zhTitle, firmwareName, help) },
         ) {
             options.forEach { o ->
                 MenuPickerAction(
@@ -1279,7 +1432,7 @@ private fun LazySectionScope.settingRow(
                         onClose()
                         state.setSetting(s.id, o.value)
                     },
-                    title = { CupertinoText(o.label) },
+                    title = { CupertinoText(MenuCatalog.valueLabel(s.id, o.value)) },
                 )
             }
         }
@@ -1288,7 +1441,7 @@ private fun LazySectionScope.settingRow(
             var draft by remember(s.value) { mutableStateOf(s.value) }
             val textSaveBusy = enabled && state.isBusy(Op.Settings)
             Column(Modifier.fillMaxWidth().padding(it)) {
-                CupertinoText(s.title)
+                SettingLabel(zhTitle, firmwareName, help)
                 Spacer(Modifier.size(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     CupertinoTextField(
@@ -1315,3 +1468,50 @@ private fun LazySectionScope.settingRow(
         }
     }
 }
+
+/** Chinese name, the firmware's own name beside it, and one line of explanation. */
+@Composable
+private fun SettingLabel(zhTitle: String, firmwareName: String?, help: String?) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Row(
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            CupertinoText(zhTitle)
+            if (firmwareName != null) {
+                CupertinoText(
+                    firmwareName,
+                    fontSize = 11.sp,
+                    color = CupertinoTheme.colorScheme.tertiaryLabel,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+        if (help != null) {
+            CupertinoText(
+                help,
+                fontSize = 11.sp,
+                color = CupertinoTheme.colorScheme.secondaryLabel,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+/**
+ * Bucket the camera's menu into display groups, in [MenuCatalog.groupOrder].
+ * Items we have never seen land in [SettingGroup.Other] rather than disappearing.
+ */
+private fun groupSettingsForDisplay(
+    settings: List<CameraSetting>,
+): List<Pair<SettingGroup, List<CameraSetting>>> =
+    MenuCatalog.groupOrder.mapNotNull { group ->
+        val rows = settings.filter { MenuCatalog.groupOf(it.id) == group }
+        if (rows.isEmpty()) null else group to rows
+    }
+
+/** Blank or missing firmware fields render as an em dash rather than an empty row. */
+private fun String?.orDash(): String = this?.takeIf { it.isNotBlank() } ?: "—"
+
