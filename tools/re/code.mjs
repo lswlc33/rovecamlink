@@ -225,15 +225,18 @@ function scanFile(file, relPath, rootPkg) {
     }
 
     const mm = METHOD_RE.exec(line);
-    if (mm && current !== null && !line.startsWith('new ') && !line.startsWith('return ')) {
-      const [, mods, generics, ret, name, params] = mm;
+    if (mm && current !== null && !/^(new|return|else|throw|case|do|try|synchronized|if|for|while|switch|catch)\b/.test(line)
+      && !/(^|\s)(new|=)\s/.test(line.slice(0, mm.index + (mm[1]?.length ?? 0) + 40))) {
+      const [, mods, , ret, name, params] = mm;
+      if (!/\bnew\b/.test(ret) && !/[=;]/.test(ret)) {
       const idx = res.methods.length;
       res.methods.push({
         type: res.types[current].fqn, name, file: relPath,
-        sig: `${ret.trim()} ${name}(${params.replace(/\s+/g, ' ').trim()})`,
+        sig: `${resolve(ret, literals).trim()} ${name}(${resolve(params, literals).replace(/\s+/g, ' ').trim()})`,
         modifiers: mods.trim(), returns: ret.trim(), params: params.replace(/\s+/g, ' ').trim(),
         line: lineNo, annotations: pendingAnnots.splice(0), literals: lits.slice(),
       });
+      }
     } else if (current !== null && !line.includes('(') && FIELD_RE.test(line) && !/^(return|else|case|break|continue|throw)\b/.test(line)) {
       const fm = FIELD_RE.exec(line);
       const [, mods, type, name, value] = fm;

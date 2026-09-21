@@ -48,6 +48,9 @@ const out = text.replace(RE, (whole, name, line, offset) => {
     cands = [...byName.entries()].filter(([k]) => k.endsWith(name)).flatMap(([, v]) => v);
   }
   if (!cands.length) { stats.notfound.push(`${name}:${line}`); return whole; }
+  // the fallback trees (xtu_bad) duplicate names; prefer the app's own primary tree
+  const inPrimary = cands.filter((c) => c.startsWith(app.sources));
+  if (inPrimary.length) cands = inPrimary;
   // same-line package hint: `com.gku.xtugo.Foo` in the surrounding text pins the tree
   const eol = text.indexOf('\n', offset);
   const lineStart = text.lastIndexOf('\n', offset) + 1;

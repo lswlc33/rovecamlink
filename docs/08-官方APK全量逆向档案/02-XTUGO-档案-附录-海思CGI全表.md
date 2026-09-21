@@ -65,7 +65,7 @@
 5. body 不含 `SvrFuncResult`：200 → `returnCode=0,errorCode=0`；非 200 → `returnCode=-1`
 6. 异常 → `errorCode=-1`；`cmd` 越界 → 返回初始值 `returnCode=-1, errorCode=-1`
 
-`Common.Result` 初始 `returnCode=-1, errorCode=-1`（`Common.java:187-190`）。
+`Common.Result` 初始 `returnCode=-1, errorCode=-1`（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Common.java:187-190`）。
 
 NewAPP 下 `DV.executeCommand` 会把命令索引折叠：`IsNewAPP && cmd>=10 && cmd!=10` → `cmd = cmd%2==0 ? 1 : 0`（即 start/stop 归一到 `/record.cgi?&-cmd=start|stop`）；`cmd==10`（退出快录）保持（`…/dv/biz/DV.java:347-355`；同款在 `…/sigmastar/HaisiCommandUtil.java:53-58`）。
 
@@ -79,7 +79,7 @@ URL 模板固定为 `http://%s%s/<cmd>`，第 2 个 `%s` = `Common.CGI_PATH`；�
 | `getVideoInfo(ip,map)` | `getvideoinfo.cgi?` | — | `doForMap` | `:33-35` |
 | `setVideoInfo(ip,res,fps)` | `setvideoinfo.cgi?&-resolution=%s&-fps=%d` | `resolution` ∈ `@array/video_resolution_values_{ntsc,pal}`（见主文档 §4.3）；`fps` int | `doForSuccess`（只看 200） | `:37-39` |
 | `getBatteryInfo(ip)` | `getbatterycapacity.cgi?` | — | 键 `capacity`（int，**>100 才当有效**，≤100 归 0）、`charge`（`"1"`→充电中）、`ac`（`"1"`→外接电源）；`charge==null` 时走另一分支 | `:43-85` |
-| `getSdState(ip)` | `getsdstate.cgi?` | — | `sdstate` ∈ {`SDOK`→0,`SDFULL`→1,`SDNONE`→2,`SDERROR`→3}（对应 `SD_STATE_OK/FULL/NONE/ERROR`）；`total`/`used` 去掉 `" MB"` 后 parseInt，缺失=-1 | `:87-119`；枚举 `Common.java:140-143` |
+| `getSdState(ip)` | `getsdstate.cgi?` | — | `sdstate` ∈ {`SDOK`→0,`SDFULL`→1,`SDNONE`→2,`SDERROR`→3}（对应 `SD_STATE_OK/FULL/NONE/ERROR`）；`total`/`used` 去掉 `" MB"` 后 parseInt，缺失=-1 | `:87-119`；枚举 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Common.java:140-143` |
 | `getViewField(ip)` | `getviewfield.cgi?` | — | 键 `fov`，**只接受 150 或 170**，否则 -1 | `:121-127` |
 | `setViewField(ip,fov)` | `setviewfield.cgi?&-fov=%d` | `fov ∈ {150,170}`（其它本地直接返回 -1） | `doForSuccess` | `:129-134` |
 | `getLoopRecord` / `setLoopRecord` | `getlooprecord.cgi?` / `setlooprecord.cgi?&-enable=%d` | `enable ∈ {0,1}` | `doForBoolean`（键 `enable`） | `:136-142` |
@@ -89,9 +89,9 @@ URL 模板固定为 `http://%s%s/<cmd>`，第 2 个 `%s` = `Common.CGI_PATH`；�
 | `getTimelapseInfo` / `setTimelapseInfo` | `gettimelapseinfo.cgi?` / `settimelapseinfo.cgi?&-time=%d` | `time` 秒 | `doForIntByKey(键 "time")` | `:186-192` |
 | `getTimerInfo` / `setTimerInfo` | `gettimerinfo.cgi?` / `settimerinfo.cgi?&-time=%d` | `time` 秒 | 同上 | `:194-200` |
 | `getRecordTimelapseInfo` / `set…` | `getrecordtimelapse.cgi?` / `setrecordtimelapse.cgi?&-time=%d` | 秒 | 同上 | `:202-208` |
-| `getBootAction` / `setBootAction` | `getbootaction.cgi?` / `setbootaction.cgi?&-action=%s` | `action ∈ {idle, record, timelapse}`（`Common.java:8-10`）；数组另有 `recordlapse/recordloop/recordslow` | `doForStringByKey(键 "action")` | `:210-216` |
+| `getBootAction` / `setBootAction` | `getbootaction.cgi?` / `setbootaction.cgi?&-action=%s` | `action ∈ {idle, record, timelapse}`（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Common.java:8-10`）；数组另有 `recordlapse/recordloop/recordslow` | `doForStringByKey(键 "action")` | `:210-216` |
 | `getAudioEncode` / `setAudioEncode` | `getaudioencode.cgi?` / `setaudioencode.cgi?&-enable=%d` | 0/1 | `doForBoolean` | `:218-224` |
-| `getVideoMode` / `setVideoMode` | `getvideonorm.cgi?` / `setvideonorm.cgi?&-videonorm=%s` | `videonorm ∈ {NTSC, PAL}`（`Common.java:147-148`）；读时**非此二值即返回 null** | `doForStringByKey(键 "videonorm")` | `:226-239` |
+| `getVideoMode` / `setVideoMode` | `getvideonorm.cgi?` / `setvideonorm.cgi?&-videonorm=%s` | `videonorm ∈ {NTSC, PAL}`（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Common.java:147-148`）；读时**非此二值即返回 null** | `doForStringByKey(键 "videonorm")` | `:226-239` |
 | `getDeviceAttr(ip,map)` | `getdeviceattr.cgi`（**无 `?`**） | — | `doForMap` 进 map（键见 §1.4） | `:241-246` |
 | `setSystemTime(ip,calendar)` | `setsystime.cgi?&-time=%04d%02d%02d%02d%02d%02d` | `yyyy MM dd HH mm ss`，**月是 `Calendar.MONTH+1`** | `doForSuccess` | `:248-253` |
 | `getSpotMeter` / `setSpotMeter` | `getspotmeter.cgi?` / `setspotmeter.cgi?&-enable=%d` | 0/1 | `doForBoolean` | `:255-261` |
@@ -100,7 +100,7 @@ URL 模板固定为 `http://%s%s/<cmd>`，第 2 个 `%s` = `Common.CGI_PATH`；�
 | `getBuzzerState` / `setBuzzerState` | `getbuzzer.cgi?` / `setbuzzer.cgi?&-enable=%d` | 0/1 | 同上 | `:283-289` |
 | `restoreFactorySettings(ip)` | `/reset.cgi?` | — | **socket 直发、不读响应** | `:291-293` → `:375-398` |
 | `setWifi(ip,ssid,pwd)` | `/setwifi.cgi?` + 可选 `&-wifissid=%s` + `&-wifikey=%s`（null 参数则**整段不拼**） | 任意字符串，空格会先被 `HttpProxy` 删掉 | **socket 直发、不读响应** | `:295-308` |
-| `setWifiToSta(ip,ssid,pwd)` | `http://<ip>/cgi-bin/setwifista.cgi?&-ssid=%s&-key=%s`（**注意是 `/cgi-bin`，不是 `/cgi-bin/hi3510`**） | 目标路由器的 SSID/密码 | `doForSuccess` | `:310-323`；`ICGI_PATH` 常量 `Common.java:61` |
+| `setWifiToSta(ip,ssid,pwd)` | `http://<ip>/cgi-bin/setwifista.cgi?&-ssid=%s&-key=%s`（**注意是 `/cgi-bin`，不是 `/cgi-bin/hi3510`**） | 目标路由器的 SSID/密码 | `doForSuccess` | `:310-323`；`ICGI_PATH` 常量 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Common.java:61` |
 | `setWifiToAp(ip)` | `http://<ip>/cgi-bin/setwifista.cgi?`（无参数） | — | `doForSuccess` | `:325-327` |
 | `getAutoShutdown` / `set…` | `getautoshutdown.cgi?` / `setautoshutdown.cgi?&-time=%d` | 分钟（UI 由数组决定） | `doForIntByKey("time")` | `:329-335` |
 | `getScreenAutoSleep` / `set…` | `getscreenautosleep.cgi?` / `setscreenautosleep.cgi?&-time=%d` | `time ∈ {0,1,3,5}`（`@array/screen_auto_sleep_values`） | 同上 | `:337-343` |
@@ -136,10 +136,10 @@ URL 模板固定为 `http://%s%s/<cmd>`，第 2 个 `%s` = `Common.CGI_PATH`；�
 | 键 | 类型 | 处理 | file:line |
 |---|---|---|---|
 | `name` | String | 型号名；`.split("-")[0]` 后写 SP | `…/dv/net/HttpRequest.java:118-121`、`_work/xtu_src/sources/com/gku/HomeActivity.java:1765` |
-| `region` | String | 缺省 `"G"`（`e.e` 是混淆的 `"H"`） | `HttpRequest.java:112,122-125` |
+| `region` | String | 缺省 `"G"`（`e.e` 是混淆的 `"H"`） | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpRequest.java:112,122-125` |
 | `pcbrevision` | String | 缺省 `"V1.0"` | `:126-129` |
 | `serialnum` | int（`Integer.parseInt`，缺失→0） | | `:130` |
-| `type` | String | 平台分派键（`SSC8838`/`SSC8826`/`SSC8838C`/`H75N`/`CV75`/`Hi3519DV500`/`Hi3518EV300`…）；缺省 `""`；`DeviceAttr` 的默认值是 `"117"`（`Common.java:144,203`） | `:131-134` |
+| `type` | String | 平台分派键（`SSC8838`/`SSC8826`/`SSC8838C`/`H75N`/`CV75`/`Hi3519DV500`/`Hi3518EV300`…）；缺省 `""`；`DeviceAttr` 的默认值是 `"117"`（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Common.java:144,203`） | `:131-134` |
 | `networkstatus` | int，缺失→0；**若该键不存在走另一分支**（`:135-189` vs `:190-233`，两条分支的兜底逻辑不同且其中一条引用了未初始化变量） | | `:135-189` |
 | `softversion` | String | **若含 `H`/`G` 且含 `.`，截断到最后一个 `.`**（`20.8.6.1.20260710` 这类会被削成 `20.8.6.1`） | `:107-117` |
 | `hardversion` | String，缺失→`""`；**`"NewAPP"` 决定方言** | | `:141-146`；`_work/xtu_src/sources/com/gku/HomeActivity.java:1746-1750` |
@@ -149,13 +149,13 @@ URL 模板固定为 `http://%s%s/<cmd>`，第 2 个 `%s` = `Common.CGI_PATH`；�
 | `model` | int | | `:175-179` |
 | `timeout` | int | | `:180-182` |
 
-组装成 `CameraInfors(name, region, pcbrevision, serialnum, type, networkstatus, softversion, hardversion, btRx, btTxOne, btTxTwo, startdate, runtimes, model, timeout)`（`HttpRequest.java:183`）。
+组装成 `CameraInfors(name, region, pcbrevision, serialnum, type, networkstatus, softversion, hardversion, btRx, btTxOne, btTxTwo, startdate, runtimes, model, timeout)`（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpRequest.java:183`）。
 
 ### 1.5 激活/试用（仅 `name ∈ {"XTU S7PRO","XTU S7PRO MAX"}` 触发）
 
 | 命令 | CGI（相对 BaseUrl `http://<ip>/cgi-bin/hi3510/`） | 参数 | 响应 | file:line |
 |---|---|---|---|---|
-| 读激活状态 | `getactivateinfo.cgi` | — | `status`(int，缺省 `"0"`)、`version`(String)、`number`(int，**缺省 5** = 试用次数)、`macaddr`(String，缺省 `""`) | `HttpRequest.java:53,242-279` |
+| 读激活状态 | `getactivateinfo.cgi` | — | `status`(int，缺省 `"0"`)、`version`(String)、`number`(int，**缺省 5** = 试用次数)、`macaddr`(String，缺省 `""`) | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpRequest.java:53,242-279` |
 | 写激活 | `setactivateinfo.cgi?-status=%d&-version=%s` | `status` 恒传 **1**，`version` 取上一步的 `version` | 只记日志，返回 true | `:54,281-305` |
 | 进入试用 | `settrial.cgi?-status=%d&-version=%s` | `status` 取设备返回值 | 只记日志 | `:55,307-329` |
 
@@ -187,12 +187,12 @@ URL 模板固定为 `http://%s%s/<cmd>`，第 2 个 `%s` = `Common.CGI_PATH`；�
 | 恢复出厂 | `reset.cgi` | — | 同上（type=2）；另有 `SetDataUtils.resetCamera()` 版本，失败 Toast `R.string.reset_fail` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpProxy.java:279`；`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/data/SetDataUtils.java:191-195` |
 | 格式化 | `sdcommand.cgi?-format&-partition=1` | — | `doForSuccess`（type=3） | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpProxy.java:283` |
 | 慢动作/快动作直控 | `record.cgi?-cmd=<DV.Strmode>` | 模式串直接当 cmd（含空格→`%20`） | 只判 200 | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/data/SetDataUtils.java:232-238` |
-| 相机状态（读） | `/cgi-bin/hi3510/getcamerastatus.cgi` | — | 按 `[;\n]|Var` 切，找 `count=` / `status=`；**任一缺失返回 null**（真机 200 空 body ⇒ null） | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpProxy.java:142-169` |
+| 相机状态（读） | `/cgi-bin/hi3510/getcamerastatus.cgi` | — | 按 `[;\n]\|Var` 切，找 `count=` / `status=`；**任一缺失返回 null**（真机 200 空 body ⇒ null） | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpProxy.java:142-169` |
 | 相机状态（写） | `/cgi-bin/hi3510/setcamerastatus.cgi?-status=<int>`（**`?` 而非 `?&-`**） | — | 200 且 body 含 `SSResponseParse.SS_SUCCESS`(=`"Success"`) 才算成功，成功后再读一次 status | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpProxy.java:171-195`；`…/sigmastar/data/SSResponseParse.java:41` |
 | 当前全量状态 | `getcurallinfo.cgi`（`VERSION==1`）或 `getallinfo.cgi`（`VERSION==2`） | — | `getMap` → `mode`,`state`,`event`,`pasttime`；`VERSION==2` 时 `mode` 是数字要经 `replaceMode()` 映射；最后拼成**伪 JSON 广播** `{"mode":"X";"state":"Y";"event":"Z";"pasttime":"W"}` 发 `com.gku.xtugo.MESSAGE_ACTION` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpProxy.java:305-317` |
 | WiFi 信息 | `getwifi.cgi` | — | `getMap2` → 回调 `getWifiIsFinish(treeMap)`；键集合由设备决定 | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/data/SetDataUtils.java:318-332` |
 
-`replaceMode(int)` 的完整映射（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpProxy.java:319-346`）：`0→NormalPhoto("NormalPhoto")`、`1→TimerPhoto`、`10→Burst`、`11→TimerPhoto`（**与 1 重复，11 在 `Common.java:151` 是 `WORK_MODE_MULTI_TIMELAPSE`，映射到 TimerPhoto 是老代码错误**）、`20→NormalVideo("NormalVideo")`、`21→CarMode`、`22→VideoLapse`、`23→VideoPhoto`、`24→SlowRec`、其余→`""`。
+`replaceMode(int)` 的完整映射（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpProxy.java:319-346`）：`0→NormalPhoto("NormalPhoto")`、`1→TimerPhoto`、`10→Burst`、`11→TimerPhoto`（**与 1 重复，11 在 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Common.java:151` 是 `WORK_MODE_MULTI_TIMELAPSE`，映射到 TimerPhoto 是老代码错误**）、`20→NormalVideo("NormalVideo")`、`21→CarMode`、`22→VideoLapse`、`23→VideoPhoto`、`24→SlowRec`、其余→`""`。
 
 ### 2.2 `SSCommandUtil`（SigmaStar 机型的规范路径，`/cgi-bin/hi3510/<cmd>.cgi`）
 
@@ -250,7 +250,7 @@ URL 模板固定为 `http://%s%s/<cmd>`，第 2 个 `%s` = `Common.CGI_PATH`；�
 | 旋转角 | `rotation` 字段，只有匹配 `0\|90\|180\|270` 才用于 Glide 旋转 | 同 | `_work/xtu_src/sources/com/gku/hisi/Hisi_CameraPicFragment.java:156` |
 | 删除 | `/cgi-bin/hi3510/deletefile.cgi` + `-name=<path>`（逐条，倒序） | 同 | `com/gku/module_camera/hisi/dialog/DialogHisiSDMediaDelete.java:106` |
 | 下载 | 8080 socket（`SocketHisiFile`，见附录 C） | 同 | `com/gku/module_camera/hisi/HisiDownloader.java:75,341` |
-| DCIM 落位 | `<外置>/DCIM/<DCIM|DCIM/Camera>/<video\|photo>/<displayName>`，Android 9 以下走 `_9_down` 分支 | 同 | `_work/xtu_src/sources/com/gku/module_camera/hisi/HisiDownloader.java:103-131` |
+| DCIM 落位 | `<外置>/DCIM/<DCIM\|DCIM/Camera>/<video\|photo>/<displayName>`，Android 9 以下走 `_9_down` 分支 | 同 | `_work/xtu_src/sources/com/gku/module_camera/hisi/HisiDownloader.java:103-131` |
 
 **判定函数（第 4 个平台分派点）**：`HisiApiUtils.isHisi()` = `!("Hi3518EV300".equals(device_name) || device_type=="SSC8838" || device_type=="SSC8826")`（`com/gku/module_base_xtugo/HisiApiUtils.java:25-27`）。注意：① 用 `name` 而非 `type` 去比 `Hi3518EV300`（该串其实是芯片名被塞进了 name）；② **不含 `SSC8838C`**，所以 8838C 机型会被判成「海思」；③ `device_name/device_type` 由 `_work/xtu_src/sources/com/gku/HomeActivity.java:1761-1762` 在连接成功时写入，未连接时是空串 → `isHisi()==true`。
 

@@ -20,6 +20,7 @@
 6. [FileProvider / authorities / 共享路径](#6-fileprovider--authorities--共享路径)
 7. [native 与 assets 里的域名、证书](#7-native-与-assets-里的域名与证书)
 8. [对主文档 §1/§8 的补充与纠正](#8-对主文档-1-8-的补充与纠正)
+9. [本附录未确认的点](#9-本附录未确认的点)
 
 ---
 
@@ -52,41 +53,42 @@
 | 2 | `INTERNET` | — | 0（正常：无需字符串） | 全量 socket/OkHttp；`com/gku/actioncam/hisilicon/dv/net/HttpProxy.java`、`com/gku/HomeActivity.java:859`（OSS） | 所有网络访问 | **在用**（安装即授） |
 | 3 | `READ_PRIVILEGED_PHONE_STATE` | — | **0** | `getImei/getDeviceId` 在 `com/gku/base/utils/DeviceInfoUtils.java:86,90,93` 与 `com/gku/actioncam/sigmastar/util/SystemUtil.java:49`，但这些只需 `READ_PHONE_STATE` | 无 | **死声明**（`signature\|privileged`，普通应用永远拿不到） |
 | 4 | `READ_EXTERNAL_STORAGE` | — | `com/gku/actioncam/hisilicon/dv/localimage/LocalAlbumActivity.java:32,33`；`com/gku/actioncam/hisilicon/dv/ui/fragment/FragmentConnectedCamera.java:192,255`；`com/gku/loginmodule/utils/PermissionUtils.java:22`；申请点 A/B/C | 相册读取 | 打开本机相册 / 下载前后 | **在用** |
-| 5 | `WRITE_EXTERNAL_STORAGE` | **29** | `com/gku/actioncam/hisilicon/dv/devicemanage/DeviceManageActivity.java:221,222`；`com/gku/actioncam/hisilicon/dv/ui/data/FileUtils.java:42,47`；`FragmentConnectedCamera.java:192,255` | 直写 `/DCIM/...` 绝对路径 | 固件/媒体下载落盘 | **在用（≤29）**，清单已用 `maxSdkVersion=29` 收口 |
+| 5 | `WRITE_EXTERNAL_STORAGE` | **29** | `com/gku/actioncam/hisilicon/dv/devicemanage/DeviceManageActivity.java:221,222`；`com/gku/actioncam/hisilicon/dv/ui/data/FileUtils.java:42,47`；`com/gku/actioncam/hisilicon/dv/ui/fragment/FragmentConnectedCamera.java:192,255` | 直写 `/DCIM/...` 绝对路径 | 固件/媒体下载落盘 | **在用（≤29）**，清单已用 `maxSdkVersion=29` 收口 |
 | 6 | `MANAGE_MEDIA` | — | 0 字符串；但有 4 处跳授权入口：`com/gku/HomeActivity.java:1049`、`com/gku/actioncam/hisilicon/dv/ui/WelcomeActivity.java:195`、`com/gku/actioncam/hisilicon/dv/ui/weight/MyBottomSheetDialog.java:312`、`com/gku/loginmodule/utils/PermissionUtils.java:118`（`Intent("android.settings.REQUEST_MANAGE_MEDIA")`） | **0**：全树没有任何受 `MANAGE_MEDIA` 保护的 `MediaStore` 批量写/删调用 | 只把用户送到「允许管理所有文件」设置页 | **半死**：入口在、消费者无（见 §8 C-02） |
 | 7 | `ACCESS_MEDIA_LOCATION` | — | 唯一命中在库：`com/bumptech/glide/load/model/stream/QMediaStoreUriLoader.java:159`（`checkSelfPermission`） | 厂商侧 0 | Glide 加载带 GPS 的媒体 URI 时自检 | **只被库检查** |
-| 8 | `ACCESS_WIFI_STATE` | — | 申请点 A/B/C（`PermissionActivity.java:31-33`、`WelcomeActivity.java:53`、`MyBottomSheetDialog.java:83`） | `HiWifiManager`、`com/gku/base/utils/WifiUtils.java`；Ambarella `msg_id=261` 取本机 IP 用（`com/gku/actioncam/amba/model/AmbaCmdModel.java:279`） | 连接前取手机 IP、扫/切 AP | **在用** |
+| 8 | `ACCESS_WIFI_STATE` | — | 申请点 A/B/C（`com/gku/actioncam/hisilicon/dv/ui/PermissionActivity.java:31-33`、`com/gku/actioncam/hisilicon/dv/ui/WelcomeActivity.java:53`、`com/gku/actioncam/hisilicon/dv/ui/weight/MyBottomSheetDialog.java:83`） | `HiWifiManager`、`com/gku/base/utils/WifiUtils.java`；Ambarella `msg_id=261` 取本机 IP 用（`com/gku/actioncam/amba/model/AmbaCmdModel.java:279`） | 连接前取手机 IP、扫/切 AP | **在用** |
 | 9 | `CHANGE_WIFI_STATE` | — | 同上申请点 | `com/gku/actioncam/sigmastar/newUi/deviceAdd/Fragment/DeviceAddWaveFragment.java:493-500` 主动 `disconnectWifi()` 再连相机 AP | 配网切 AP | **在用** |
 | 10 | `CHANGE_NETWORK_STATE` | — | 同上申请点 | `com/gku/base/device/NetworkDeviceUtils.java:332-358`（`bindProcessToNetwork` 路径） | 把进程绑到相机网卡 | **在用** |
-| 11 | `READ_PHONE_STATE` | — | `com/gku/base/utils/DeviceInfoUtils.java:80,112`；`com/gku/HomeActivity.java:950`（`shouldShowRequestPermissionRationale`） | `telephonyManager.getImei()/getDeviceId()`：`DeviceInfoUtils.java:86,90,93`、`com/gku/actioncam/sigmastar/util/SystemUtil.java:49` | 取设备标识（崩溃上报/反馈） | **在用（弱）**：仅设备标识，功能不依赖 |
-| 12 | `ACCESS_COARSE_LOCATION` | — | 申请点 A/B/C（`PermissionActivity.java:31-33`、`MyBottomSheetDialog.java:67`） | `com/gku/base/utils/LocationUtil.java`（`FusedLocationProviderClient`）；高德坐标转换 `com/gku/actioncam/hisilicon/dv/localimage/TrackActivity.java:23-32` | GPS 轨迹水印/轨迹页 | **在用** |
+| 11 | `READ_PHONE_STATE` | — | `com/gku/base/utils/DeviceInfoUtils.java:80,112`；`com/gku/HomeActivity.java:950`（`shouldShowRequestPermissionRationale`） | `telephonyManager.getImei()/getDeviceId()`：`com/gku/base/utils/DeviceInfoUtils.java:86,90,93`、`com/gku/actioncam/sigmastar/util/SystemUtil.java:49` | 取设备标识（崩溃上报/反馈） | **在用（弱）**：仅设备标识，功能不依赖 |
+| 12 | `ACCESS_COARSE_LOCATION` | — | 申请点 A/B/C（`com/gku/actioncam/hisilicon/dv/ui/PermissionActivity.java:31-33`、`com/gku/actioncam/hisilicon/dv/ui/weight/MyBottomSheetDialog.java:67`） | `com/gku/base/utils/LocationUtil.java`（`FusedLocationProviderClient`）；高德坐标转换 `com/gku/actioncam/hisilicon/dv/localimage/TrackActivity.java:23-32` | GPS 轨迹水印/轨迹页 | **在用** |
 | 13 | `ACCESS_FINE_LOCATION` | — | `com/gku/loginmodule/utils/PermissionUtils.java:21`（常量 `LOCATION`）、`:129`；被 A/B/C 三处数组引用 | 同上 | 同上 | **在用** |
 | 14 | `GET_ACCOUNTS` | — | **0**（厂商侧）。`AccountManager` 只出现在库：`androidx/core/content/ContextCompat.java`、`ca/da/ca/ha/a.java`、`ca/da/ca/ha/b.java`、`ca/da/ca/ia/a.java`、`com/apm/applog/AppLog.java` | 厂商 0 | 无 | **死声明**（见 §8 C-01） |
 | 15 | `FOREGROUND_SERVICE` | — | 字符串仅库命中：`com/amap/api/col/p0003l/d.java:1873`（高德反射 `checkSelfPermission`） | **厂商实调**：`com/gku/actioncam/hisilicon/dv/net/MessageService.java:59` `startForeground(10121, …)`；`com/gku/actioncam/sigmastar/OldUi/playback/model/service/DownloadIntentService.java:46` | 5678 回拨常驻监听、回放下载通知 | **在用**（无需字符串，API 即触发） |
 | 16 | `WAKE_LOCK` | — | 0 字符串 | `com/gku/actioncam/hisilicon/camplayer/HiCamPlayer.java:391` `mWakeLock.acquire()`；`com/gku/actioncam/hisilicon/dv/LogService.java:84` `newWakeLock(1,…)` + `:135` `acquire()`；`com/gku/actioncam/sigmastar/upgrade/firm/Presenter/UpgradePresenter.java:301-302` `newWakeLock(268435466,…)`+`acquire()` | 播放器保屏、日志落盘、固件传输 | **在用** |
-| 17 | `BLUETOOTH_CONNECT` | — | 申请点 A/B/C（`PermissionActivity.java:32,33`、`MyBottomSheetDialog.java:76,78`） | `com/gku/actioncam/sigmastar/newUi/deviceAdd/Fragment/connect/BLEConnectUtils.java:910-918`（`checkBlePermission`，所有 `writeCharacteristic` 前） | BLE 连接/GATT 读写 | **在用** |
-| 18 | `BLUETOOTH_SCAN` | — | 同上 | `BLEConnectUtils.java:912`；扫描过滤 `com/gku/actioncam/sigmastar/newUi/deviceAdd/Activity/DeviceAddActivity.java:125` | 配网扫描 | **在用** |
-| 19 | `BLUETOOTH` | **30** | 申请点 A（`PermissionActivity.java:31`）、B、D（`BasePermissionActivity.java:18`）、`MyBottomSheetDialog.java:73,84` | 旧版 `BluetoothAdapter` 路径 | ≤30 的蓝牙 | **在用（≤30）** |
+| 17 | `BLUETOOTH_CONNECT` | — | 申请点 A/B/C（`com/gku/actioncam/hisilicon/dv/ui/PermissionActivity.java:32,33`、`com/gku/actioncam/hisilicon/dv/ui/weight/MyBottomSheetDialog.java:76,78`） | `com/gku/actioncam/sigmastar/newUi/deviceAdd/Fragment/connect/BLEConnectUtils.java:910-918`（`checkBlePermission`，所有 `writeCharacteristic` 前） | BLE 连接/GATT 读写 | **在用** |
+| 18 | `BLUETOOTH_SCAN` | — | 同上 | `com/gku/actioncam/sigmastar/newUi/deviceAdd/Fragment/connect/BLEConnectUtils.java:912`；扫描过滤 `com/gku/actioncam/sigmastar/newUi/deviceAdd/Activity/DeviceAddActivity.java:125` | 配网扫描 | **在用** |
+| 19 | `BLUETOOTH` | **30** | 申请点 A（`com/gku/actioncam/hisilicon/dv/ui/PermissionActivity.java:31`）、B、D（`com/gku/actioncam/sigmastar/newUi/deviceAdd/base/BasePermissionActivity.java:18`）、`com/gku/actioncam/hisilicon/dv/ui/weight/MyBottomSheetDialog.java:73,84` | 旧版 `BluetoothAdapter` 路径 | ≤30 的蓝牙 | **在用（≤30）** |
 | 20 | `BLUETOOTH_ADMIN` | **30** | 唯一命中 `com/gku/actioncam/sigmastar/newUi/deviceAdd/base/BasePermissionActivity.java:18` | 厂商树内**未见** `startDiscovery()`/`cancelDiscovery()`（grep 0 命中） | 声明在配网页权限数组里，实际走 BLE 而非经典 discovery | **在用（名义）**：仅被申请，无 ADMIN 专属 API（见 §8 C-04） |
-| 21 | `BLUETOOTH_ADVERTISE` | — | 申请点 A/B/C（`PermissionActivity.java:32,33`、`MyBottomSheetDialog.java:76,78`） | **0**：全树无 `startAdvertising`/`BluetoothLeAdvertiser` | 只是被一起弹窗申请 | **申请了但未用** |
+| 21 | `BLUETOOTH_ADVERTISE` | — | 申请点 A/B/C（`com/gku/actioncam/hisilicon/dv/ui/PermissionActivity.java:32,33`、`com/gku/actioncam/hisilicon/dv/ui/weight/MyBottomSheetDialog.java:76,78`） | **0**：全树无 `startAdvertising`/`BluetoothLeAdvertiser` | 只是被一起弹窗申请 | **申请了但未用** |
 | 22 | `READ_MEDIA_IMAGES` | — | 常量 `com/luck/picture/lib/permissions/PermissionConfig.java:12`，被厂商数组引用：`com/gku/actioncam/hisilicon/dv/ui/PermissionActivity.java:33` | 相册选择 | ≥33 首启 | **在用（≥33）** |
-| 23 | `READ_MEDIA_AUDIO` | — | `PermissionConfig.java:11`；`PermissionActivity.java:33` | 视频编辑选配乐 | ≥33 | **在用（≥33）** |
-| 24 | `READ_MEDIA_VIDEO` | — | `PermissionConfig.java:13`；`PermissionActivity.java:33` | 本机相册回放/剪辑 | ≥33 | **在用（≥33）** |
+| 23 | `READ_MEDIA_AUDIO` | — | `com/luck/picture/lib/permissions/PermissionConfig.java:11`；`com/gku/actioncam/hisilicon/dv/ui/PermissionActivity.java:33` | 视频编辑选配乐 | ≥33 | **在用（≥33）** |
+| 24 | `READ_MEDIA_VIDEO` | — | `com/luck/picture/lib/permissions/PermissionConfig.java:13`；`com/gku/actioncam/hisilicon/dv/ui/PermissionActivity.java:33` | 本机相册回放/剪辑 | ≥33 | **在用（≥33）** |
 | 25 | `WRITE_MEDIA_STORAGE` | — | **0** | **0** | 无 | **死声明**（`signature`，OS 分区权限） |
-| 26 | `WRITE_SETTINGS` | — | 0 字符串 | `com/gku/actioncam/sigmastar/OldUi/preview/ui/activity/AmbaActionCameraPreviewActivity.java:1215`（`Settings.System.canWrite`）+ `:1222`（`putInt("accelerometer_rotation", …)`）；`HisiActionCameraPreviewActivity.java:1226,1233`；`com/gku/base/permission/PermissionUtils.java:183`、`com/gku/base/permission/PermissionActivity.java:60,120` | 预览页「自动旋转」开关 | **在用**（特殊权限，走 `MANAGE_WRITE_SETTINGS` 设置页） |
+| 26 | `WRITE_SETTINGS` | — | 0 字符串 | `com/gku/actioncam/sigmastar/OldUi/preview/ui/activity/AmbaActionCameraPreviewActivity.java:1215`（`Settings.System.canWrite`）+ `:1222`（`putInt("accelerometer_rotation", …)`）；`com/gku/actioncam/sigmastar/OldUi/preview/ui/activity/HisiActionCameraPreviewActivity.java:1226,1233`；`com/gku/base/permission/PermissionUtils.java:183`、`com/gku/base/permission/PermissionActivity.java:60,120` | 预览页「自动旋转」开关 | **在用**（特殊权限，走 `MANAGE_WRITE_SETTINGS` 设置页） |
 | 27 | `MODIFY_AUDIO_SETTINGS` | — | 0 字符串 | `com/gku/actioncam/sigmastar/widget/controller/SSMediaController.java:124,167,214,257` 与 `com/gku/actioncam/widget/MediaController.java:123`（`AudioManager.setStreamMute(3,…)`）；`com/gku/actioncam/hisilicon/dv/player/HiDVRemoteFilePlayer.java:217`、`com/gku/ffm/zqvideo/video/base/GSYVideoControlView.java:863`（`setStreamVolume`） | 回放播放器静音/音量手势 | **在用**（正常权限，装即授；见 §8 C-01） |
 | 28 | `RECORD_AUDIO` | — | `com/gku/loginmodule/ui/fragment/ReportFeedbackFragment.java:788,854,859,899` | 语音反馈录制、视频编辑配音 `com/gku/actioncam/sigmastar/videoedit/AudioCollectActivity.java` | 反馈页录音 | **在用** |
 | 29 | `CAMERA` | — | `com/gku/loginmodule/utils/PermissionUtils.java:20,134` | 扫码/拍照反馈（预览画面是相机流，不用本机相机） | 扫一扫配网 | **在用（弱）** |
 | 30 | `VIBRATE` | — | 0 字符串 | `com/gku/base/utils/VibratorUtils.java:11` `vibrator.vibrate(50L)` | 按键/扫码反馈 | **在用** |
-| 31 | `CALL_PHONE` | — | `com/gku/actioncam/hisilicon/dv/ui/PermissionActivity.java:31,32,33`（三套数组都带）；`com/gku/actioncam/hisilicon/dv/ui/weight/MyBottomSheetDialog.java` 与 `WelcomeActivity.java:53` **均不含** | **0**：`com/gku` 树内无 `ACTION_CALL`、无 `"tel:` | 只在首启授权页弹窗里出现 | **申请了但未用**（危险权限，白要） |
+| 31 | `CALL_PHONE` | — | `com/gku/actioncam/hisilicon/dv/ui/PermissionActivity.java:31,32,33`（三套数组都带）；`com/gku/actioncam/hisilicon/dv/ui/weight/MyBottomSheetDialog.java` 与 `com/gku/actioncam/hisilicon/dv/ui/WelcomeActivity.java:53` **均不含** | **0**：`com/gku` 树内无 `ACTION_CALL`、无 `"tel:` | 只在首启授权页弹窗里出现 | **申请了但未用**（危险权限，白要） |
 | 32 | `CHANGE_CONFIGURATION` | — | **0** | `com/gku/base/utils/LanguageUtils.java:101` 是 `Resources.updateConfiguration`（**不需要该权限**）；全树无 `ActivityManager.updateConfiguration` | 无 | **死声明**（签名权限） |
 | 33 | `READ_LOGS` | — | 0 字符串 | **有真实消费者**：`com/gku/actioncam/hisilicon/dv/LogService.java:152,277`（`logcat` 子进程）、`com/gku/base/utils/LogSwitchUtils.java:31,32`（`logcat -c`、`logcat --pid=<myPid> -v time -f <file>`） | 诊断日志落盘/上传 | **名义在用**：Android 4.1+ 读**自己进程**的日志不需要此权限，故声明是冗余（见 §8 C-01） |
 | 34 | `SYSTEM_ALERT_WINDOW` | — | **0** | **0**：全树无 `TYPE_APPLICATION_OVERLAY`/`canDrawOverlays` | 无 | **死声明** |
 | 35 | `GET_TASKS` | — | **0**（厂商）；`getRunningTasks(1)` 只在库：`com/apm/insight/l/a.java:207`、`com/volcengine/zeus/download/h.java:59` | 厂商侧仅 `getRunningAppProcesses`（`com/gku/dashcam/icatch/appinfo/AppInfo.java:52`，不需要此权限） | 无（厂商功能） | **只被库检查**；且该权限 Android 5.0 起已失效 |
-| 36 | `FLASHLIGHT` | — | **0** | **0**：全树无 `FEATURE_FLASHLIGHT`、无 `setTorchMode` | 无 | **死声明** |
-| 37 | `com.asus.msa.SupplementaryDID.ACCESS` | — | 由 MSA/OAID SDK 使用：`ca/da/da/a.java:13,25,45`（`ComponentName("com.asus.msa.SupplementaryDID", …SupplementaryDIDService")`、AIDL token `"com.asus.msa.SupplementaryDID.IDidAidlInterface"`）、`ca/da/da/ca/c.java:33` | 华硕机型上跨进程取 OAID | 隐私/崩溃上报取广告标识 | **只被库检查**（非华硕机型无效果） |
+| 36 | `FLASHLIGHT` | — | **0** | **0**：全树无 `FEATURE_FLASHLIGHT`、无 `setTorchMode`；`res/` 里也无 | 无 | **死声明** |
+| 37 | `com.gku.xtugo.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`（**自定义**，`protectionLevel=signature`） | — | `androidx/core/content/ContextCompat.java:86`（后缀常量）、`:278`（`packageName + 后缀`） | 由 `ContextCompat.registerReceiver(...)` 在 API 33+ 自动 `sendBroadcast(..., 该权限)` | 与 §5.3(a) 的 `registerReceiver(r, f, 2)` 是同一套机制 | **框架自带**（AndroidX 生成，厂商未手写） |
+| 38 | `com.asus.msa.SupplementaryDID.ACCESS` | — | `ca/da/da/a.java:13,25,45`、`ca/da/da/ca/c.java:33` | 绑 `com.asus.msa.SupplementaryDID/.SupplementaryDIDService` 取 OAID（AIDL token 同文件 `:45`） | 隐私/崩溃上报取广告标识，仅华硕机型 | **只被库检查** |
 
-> 表中的行：38 条 `uses-permission` 全部列出（第 37/38 行分别是 AndroidX 自签权限与华硕 MSA 权限，自签权限见 §1.2）。
+（表内 #1–#36 为 36 条 `android.permission.*`，#37/#38 为两条非 `android.permission.*` 的 `uses-permission` → 合计 **38 条**，与 `_work/re/xtugo/manifest.md:49-86` 的 38 行逐一对应。）
 
 ### 1.2 自定义 permission（1 条）
 
@@ -202,7 +204,7 @@ awk -F'\t' 'NR>1 && $2 ~ /^(com\.gku|cn\.rxt|com\.example|m\.mifan|com\.my)\./{p
 |---|---|---|---|
 | `com.gku.base.BaseFileProvider` | `exported=false; authorities=com.gku.xtugo.FileProvider; grantUriPermissions=true` | `android.support.FILE_PROVIDER_PATHS=@xml/paths_base` | 分享照片/视频、以及**安装下载的 APK**（`UpgradeViewManager` 发 `INSTALL_PACKAGE`/`VIEW`）时给外部 App 一个 content URI；详见 §6 |
 
-### 2.4 厂商 activity（100 条，逐个一行）
+### 2.4 activity 逐个一行（111 行 = 100 个 `com.gku.*` + `com.my` 1 + `cn.rxt` 8 + `com.example` 1 + `m.mifan` 1）
 
 `exported` 全为 `false`（**未写 = false**，见 §2.6 说明），除 `WelcomeActivity`（LAUNCHER）与 `GKUCamPlayer`。以下「属性」列从 `_work/re/xtugo/components.tsv` 第 4 列原样摘（去掉 `theme=@style/` 前缀）。
 
@@ -211,7 +213,7 @@ awk -F'\t' 'NR>1 && $2 ~ /^(com\.gku|cn\.rxt|com\.example|m\.mifan|com\.my)\./{p
 | `SendSoftActivity` | activity | Theme.AppCompat.Light.NoActionBar; exported=false; launchMode=singleTop; screenOrientation=portrait | ✅ | 把手机侧下载到的固件包经 `FwUpload`/`RegisterDeviceToServer` 推到 8080 二进制口 |
 | `actioncam.hisilicon.dv.ui.WelcomeActivity` | activity | welcomeTheme_XTU; **exported=true**; screenOrientation=portrait | ✅ | 唯一 LAUNCHER 入口 + 隐私弹窗 + Bugly 初始化（`com/gku/crashhandle/CrashReportManager.java:14-45`）+ 首启权限申请（`:53-55`） |
 | `HomeActivity` | activity | CustomActionBar; launchMode=singleTask; screenOrientation=portrait | ✅ | 连接编排中枢：CGI 探测→平台分派（`com/gku/HomeActivity.java:1707-1783`）、OSS STS 上传（`:859`） |
-| `gkucamplayer.GKUCamPlayer` | activity | **exported=true**; screenOrientation=fullSensor | ✅ | 全 App 除启动器外**唯一被导出的厂商组件**；相机流播放器，无 intent-filter（只能显式组件名拉起） |
+| `gkucamplayer.GKUCamPlayer` | activity | **exported=true**; screenOrientation=fullSensor | ✅ | 全 App 除启动器外**唯一被导出的厂商组件**；GSY/ExoPlayer 通用播放页，**`onCreate` 直接读外部 `kPlayFilePath` 并 `setUrl` 播放**（`_work/xtu_src/sources/com/gku/gkucamplayer/GKUCamPlayer.java:38,47`）→ 可注入 URL，详见 §5.4 |
 | `amba.AmbaPicPreviewActivity` | activity | Theme.AppCompat.Light.NoActionBar; exported=false; singleTop; portrait | ✅ | Ambarella 拍照结果预览 |
 | `amba.AmbaCameraFileActivity` | activity | 同上 | ✅ | Ambarella 相机端文件选择，回调 `CALLBACK_CHOOSE_CLICK` |
 | `hisi.Hisi_PicPreviewActivity` | activity | 同上 | ✅ | 海思侧拍照结果预览 |
@@ -297,7 +299,6 @@ awk -F'\t' 'NR>1 && $2 ~ /^(com\.gku|cn\.rxt|com\.example|m\.mifan|com\.my)\./{p
 | `actioncam.sigmastar.newUi.album.Ui.Activity.ActivityNewPreview` | activity | CustomActionBar; singleTop; portrait | ✅ | 新相册预览（`ACTION_SEND` `:327`） |
 | `actioncam.sigmastar.newUi.userCenter.ui.activity.QuestionSelect` | activity | CustomActionBar | ✅ | 常见问题选择 |
 | `actioncam.sigmastar.newUi.userCenter.ui.activity.QuestionDescription` | activity | CustomActionBar; portrait | ✅ | 问题详情+反馈（`ACTION_SEND` `:170`；客服邮箱 `:177-230`） |
-| `actioncam.sigmastar.OldUi.preview.ui.activity.*`（已在上） | — | — | — | — |
 | `dashcam.icatch.ui.activity.PreviewActivity` | activity | CustomActionBar; portrait | ✅ | **iCatch 行车记录仪**预览 |
 | `dashcam.icatch.ui.activity.RemoteMultiPbActivity` | activity | CustomActionBar; portrait | ✅ | 记录仪多路回放 |
 | `dashcam.icatch.ui.activity.VideoPb2Activity` | activity | CustomActionBar; portrait | ✅ | 记录仪视频回放 2 |
@@ -309,7 +310,6 @@ awk -F'\t' 'NR>1 && $2 ~ /^(com\.gku|cn\.rxt|com\.example|m\.mifan|com\.my)\./{p
 | `loginmodule.ui.activity.WebViewActivity` | activity | CustomActionBar; exported=false; portrait | ✅ | 通用 WebView（协议/活动页） |
 | `base.permission.PermissionActivity` | activity | PermissionNiubility_TranslucentTheme; **launchMode=singleInstance** | ✅ | 权限框架的中转页（Yanzhenjie Permission 的 shadow activity）；`ACTION_MANAGE_WRITE_SETTINGS` 分支 `com/gku/base/permission/PermissionActivity.java:60,120` |
 | `base.webview.WebViewActivity` | activity | ThemeNoActionBar; exported=false; singleTop; portrait | ✅ | xWebView 容器（`file:///android_asset/` 前缀 `com/gku/base/webview/WebViewUtils.java:201`） |
-| `actioncam.hisilicon.dv.ui.data.connect.HWScaningActivity`（已在上） | — | — | — | — |
 | `com.my.AppSettingActivity`（包 `com.my`，非 `com.gku`） | activity | ThemeNoActionBar; exported=false; singleTop; portrait | ✅ | iCatch 记录仪侧的设置页（独立包，不在主文档 117 口径内） |
 | `cn.rxt.qscase.MainActivity` | activity | IcatchAppTheme; exported=false; portrait | ✅ | XTU Mini1 记录仪主页（iCatch PTP） |
 | `cn.rxt.qscase.Main2Activity` | activity | （无属性） | ✅ | 记录仪备用入口 |
@@ -326,22 +326,40 @@ awk -F'\t' 'NR>1 && $2 ~ /^(com\.gku|cn\.rxt|com\.example|m\.mifan|com\.my)\./{p
 
 ### 2.5 第三方/库注册组件：按库分组统计（不逐个展开）
 
-| 库家族 | 组件数 | 类型分布 | 进程 | 备注 |
-|---|---|---|---|---|
-| 抖音 OpenLive / bytedance（`com.bytedance.android.dy.sdk.stub.*`、`com.bytedance.android.openlive.broadcast.stub.activity.*`、`com.bytedance.android.openliveplugin.stub.activity.*`、`com.bytedance.bdinstall.migrate`） | **68** | 全 activity | `:bytelive` | 大量 stub 是插件化占位坑位，**不可被业务语义理解** |
-| 字节 zeus/broadcast-lite（`com.byted.live.lite.*`、`com.byted.broadcast.lite.*`、`com.volcengine.zeus.*`） | **22** | 18 activity + 4 provider | `:bytelive`/`:push`/`:downloader` | 见 §3.2 的 authorities 命名 |
-| 字节 socialbase downloader（`com.ss.android.socialbase.downloader.*`） | **6** | 5 service + 1 activity | `:downloader` | 唯一带 intent-filter 的 service：action `com.ss.android.socialbase.downloader.remote`（`_work/re/xtugo/components.tsv` service 行，`exported=false`） |
-| LuckPicture（`com.luck.picture.lib.*`） | **5** | 2 activity + 1 service + 1 provider + 1 | — | `PictureFileProvider`，`foregroundServiceType=location` |
-| Huawei（HMS ScanKit / MLKit / AGConnect） | **4** | 1 activity + 1 service + 2 provider | — | `MLInitializerProvider`、`AGConnectInitializeProvider`、`ServiceDiscovery` |
-| AndroidX（startup / room / camera / car / profileinstaller / car.app） | **8** | 3 activity + 2 service + 2 receiver + 1 provider | — | `ProfileInstallReceiver` 是**全 App 唯一 exported=true 的库组件**，但受 `android.permission.DUMP` 保护 |
-| Google Play services（`com.google.android.gms.common.api.*`） | **1** | activity | — | 授权中转坑位 |
+| 库家族 | 组件数 | 类型分布 | 精确构成（`_work/re/xtugo/components.tsv` 逐条计数） | 进程 | 备注 |
+|---|---|---|---|---|---|
+| 抖音 OpenLive / bytedance | **43** | 42 activity + 1 provider | `com.bytedance.android.dy.sdk.stub.*` 27、`com.bytedance.android.openliveplugin.stub.activity.*` 7、`com.bytedance.android.openlive.broadcast.stub.activity.*` 7、`com.bytedance.android.openliveplugin.process.server.LiveServerManager` 1 provider、`com.bytedance.bdinstall.migrate.*` 1 | 主 + `:bytelive` | 绝大多数是**插件化占位坑位**（stub），不可按业务语义理解；但其中 **3 个是 exported 的抖音授权回调页**（见 §2.6） |
+| 字节 lite（live/broadcast） | **35** | 30 activity + 5 provider | `com.byted.live.lite.*` 26 activity + 2 provider、`com.byted.broadcast.lite.*` 4 activity + 3 provider | `:bytelive`/`:push`/`:downloader` | provider 的 authority 命名见 §6.1 |
+| 字节 zeus（volcengine） | **3** | 3 provider | `com.volcengine.zeus.servermanager.MainServerManager`、`com.volcengine.zeus.provider.MainProcessProviderProxy`、`com.volcengine.zeus.FileProvider` | 主 | zeus 插件框架的跨进程通道（配置端点见 §4.2） |
+| 字节 socialbase downloader | **5** | 5 service | `…downloader.downloader.{IndependentProcessDownloadService,DownloadService,SqlDownloadCacheService}` 3、`…impls.DownloadHandleService` 1、`…notification.DownloadNotificationService` 1 | 主 + `:downloader` | 唯一带 intent-filter 的 service：action `com.ss.android.socialbase.downloader.remote`（`exported=false`） |
+| LuckPicture | **4** | 2 activity + 1 service + 1 provider | `com.luck.picture.lib.basic.*` 2 activity、`…basic.PictureFileProvider`、`…service.ForegroundService` | 主 | `ForegroundService` 声明 `foregroundServiceType=location` → 也是 `FOREGROUND_SERVICE` 的一个使用点 |
+| Huawei | **4** | 1 activity + 1 service + 2 provider | `com.huawei.hms.hmsscankit.*` 1 activity、`com.huawei.agconnect.core.ServiceDiscovery`、`MLInitializerProvider`、`AGConnectInitializeProvider` | 主 | 与 §3.3 M13–M19 的 scanplus 版本 meta-data 配套 |
+| AndroidX | **6** | 1 activity + 2 service + 2 receiver + 1 provider | `androidx.car.app.*` 1 activity、`androidx.camera.core.impl.MetadataHolderService`、`androidx.room.MultiInstanceInvalidationService`、`androidx.car.app.notification.CarAppNotificationBroadcastReceiver`、`androidx.profileinstaller.ProfileInstallReceiver`、`androidx.startup.InitializationProvider` | 主 | `ProfileInstallReceiver` 是**唯一带 `permission` 的导出组件**（`android.permission.DUMP`） |
+| Google Play services | **1** | 1 activity | `com.google.android.gms.common.api.*`（授权中转坑位） | 主 | 配合 §3.3 M2 的 Google Maps ke |
+| `com.my` | **1** | 1 activity | `com.my.AppSettingActivity` | 主 | **实际是应用自己的页面**，只是包名不在 `com.gku.*` 下：被 `_work/xtu_src/sources/com/gku/HomeActivity.java:136,819` import 并按类名判定栈顶。所以「117 个厂商组件」是下限，按代码归属算应为 118 |
 
-合计 101，与 §2.0 表格一致。
+合计 **102**（43+35+3+5+4+4+6+1+1）= 219 总组件 − 117 厂商侧组件（`com.gku.*` 107 + `cn.rxt.*`/`com.example.*`/`m.mifan.*` 10）。分桶规则：按清单里的类名前缀归族，`com.bytedance.*` 与 `com.byted.*` 分列（前者是 OpenLive 插件桩，后者是 live/broadcast lite 宿主桩）。y 与 M12 的 `com.google.android.gms.version` |
 
-### 2.6 关于「exported 未写」的口径
+合计 **101**（43+35+3+5+4+4+6+1），与 §2.0 表格一致。
 
-manifest 里**未写 `android:exported` 的组件**：所有 `<activity>` 除 `WelcomeActivity`、`GKUCamPlayer` 外都没有 intent-filter，按 Android 12+（targetSdk=35）**默认 false**。`com.gku.CameraSocketService`（G1）无任何属性 → 同样默认 false。
-→ **全 219 个组件里 exported=true 的只有 3 个**：`com.gku.actioncam.hisilicon.dv.ui.WelcomeActivity`、`com.gku.gkucamplayer.GKUCamPlayer`、`androidx.profileinstaller.ProfileInstallReceiver`（后者有 `DUMP` 权限保护）。
+### 2.6 exported 组件：**7 个**（不是 3 个）
+
+对 `_work/re/xtugo/components.tsv` 第 4 列 grep `exported=true`，命中 **7 行**：
+
+| # | 组件 | 类型 | 归属 | intent-filter | 权限保护 | 外部可否触发 |
+|---|---|---|---|---|---|---|
+| E1 | `com.gku.actioncam.hisilicon.dv.ui.WelcomeActivity` | activity | **厂商** | `MAIN` + `LAUNCHER` | 无 | ✅ |
+| E2 | `com.gku.gkucamplayer.GKUCamPlayer` | activity | **厂商** | **无** | 无 | ✅（显式组件名） |
+| E3 | `com.bytedance.android.dy.sdk.stub.VideoAuthorizeActivityProxy` | activity | 抖音 | **无** | 无 | ✅（显式组件名） |
+| E4 | `com.bytedance.android.openliveplugin.stub.activity.DouyinAuthorizeActivityProxy` | activity | 抖音 | **无** | 无 | ✅ |
+| E5 | `com.bytedance.android.openliveplugin.stub.activity.DouyinAuthorizeActivityLiveProcessProxy`（`process=:bytelive`） | activity | 抖音 | **无** | 无 | ✅ |
+| E6 | `com.bytedance.android.openlive.broadcast.stub.activity.DouyinAuthorizeActivityProxy` | activity | 抖音 | **无** | 无 | ✅ |
+| E7 | `androidx.profileinstaller.ProfileInstallReceiver` | receiver | AndroidX | 4 个 `androidx.profileinstaller.action.*` | **`android.permission.DUMP`** | ❌ |
+
+→ 3 个结论：
+1. **厂商导出的确实只有 2 个**（E1 启动器、E2 播放器）——主文档 §1.4 的说法在**厂商范围内正确**。
+2. 但「全 App exported=true 只有 3 个」**错**：还有 4 个**抖音 OAuth 授权回调页**（E3–E6）也是导出的、且**无权限保护** —— 这是抖音登录回跳必需的，属于设计如此。
+3. **未写 `android:exported` 的组件**（`GKUCamPlayer` 之外的所有无 filter activity/service，含幽灵 G1 `com.gku.CameraSocketService`）在 targetSdk=35 下默认 **false**（Android 12 起若真有 filter 而未声明 exported 会安装失败，本包能装说明清单是自洽的）。
 
 ---
 
@@ -387,7 +405,7 @@ manifest 里**未写 `android:exported` 的组件**：所有 `<activity>` 除 `W
 | trust-anchors | **未声明** → 系统默认（user + system CA 的 system 部分） | 用户 CA 默认**不放行**（release 包） |
 | debug-overrides | **无** | — |
 
-旁边还有一个**未被清单引用**的 `network_config_base.xml`（`_work/xtu_res/resources/res/xml/network_config_base.xml`，6 行）：
+旁边还有一个**未被清单引用**的 `network_config_base.xml`（`_work/xtu_res/resources/res/xml/network_config_base.xml`，共 9 行）：
 
 ```xml
 <network-security-config>
@@ -402,7 +420,7 @@ manifest 里**未写 `android:exported` 的组件**：所有 `<activity>` 除 `W
 
 ### 3.3 `<application>` 级 meta-data：**19 条（主文档与 manifest.md 都记成「没有」）**
 
-⚠️ **取证工具缺陷**：`_work/re/xtugo/manifest.md:418-425` 的「全应用 meta-data」表只收了 **7 条组件级**（CameraX、两个 FileProvider 的 `FILE_PROVIDER_PATHS`、4 条 `androidx.startup`），**把全部 19 条 `<application>` 直接子 `<meta-data>` 漏掉了**（原始文件 `_work/xtu_res/resources/AndroidManifest.xml`，8 空格缩进项）。表观现象就是主文档 §8 写下「manifest 里没有任何 meta-data」。**下表按原始 XML 行号逐条列出**：
+⚠️ **取证工具缺陷**：`_work/re/xtugo/manifest.md:418-428` 的「全应用 meta-data」表只收了 **7 条组件级**（CameraX、两个 FileProvider 的 `FILE_PROVIDER_PATHS`、4 条 `androidx.startup`），**把全部 19 条 `<application>` 直接子 `<meta-data>` 漏掉了**（原始文件 `_work/xtu_res/resources/AndroidManifest.xml`，8 空格缩进项）。表观现象就是主文档 §8 写下「manifest 里没有任何 meta-data」。**下表按原始 XML 行号逐条列出**：
 
 | # | name | value（原样） | 行号（`_work/xtu_res/resources/AndroidManifest.xml`） | 判定 |
 |---|---|---|---|---|
@@ -429,7 +447,7 @@ manifest 里**未写 `android:exported` 的组件**：所有 `<activity>` 除 `W
 **关键负面事实（这些才是主文档结论的正确部分）**：清单里**确实没有** `com.amap.api.v2.apikey`（高德）、**没有** `com.huawei.hms.client.appid`（HMS 应用 ID）、**没有** 任何 QQ/微信 AppID、**没有** Bugly 以外的上报配置。
 四个 `ZEUS_PLUGIN_*` 的 `signature` 值完全相同（同一张 2048-bit RSA 证书，主体字段全是占位的 `1111`），是**插件签名校验材料**，不是厂商自己的签名。
 
-### 3.4 组件级 meta-data（7 条，`_work/re/xtugo/manifest.md:418-425` 唯一记全的部分）
+### 3.4 组件级 meta-data（7 条，`_work/re/xtugo/manifest.md:418-428` 唯一记全的部分）
 
 | 挂载点 | name | value |
 |---|---|---|
@@ -470,30 +488,30 @@ manifest 里**未写 `android:exported` 的组件**：所有 `<activity>` 除 `W
 
 | URL / 主机 | 出现在（全路径:行） | 归属 | 判定与依据 |
 |---|---|---|---|
-| `https://server4.gkuvision.com` | `_work/xtu_src/sources/com/gku/module_base_xtugo/BuildConfig.java:8`（`URL_SERVER`）；`com/gku/module_base_xtugo/api/ApiUtils.java:12`；`com/gku/loginmodule/network/NetworkApi.java:44` | 厂商主后端 | **A**：`NetworkApi` 在 `BaseApplication.java:53` 的 `NetworkApi.init(new NetworkRequiredInfo(this))` 链上，Retrofit base url |
+| `https://server4.gkuvision.com` | `_work/xtu_src/sources/com/gku/module_base_xtugo/BuildConfig.java:8`（`URL_SERVER`）；`com/gku/module_base_xtugo/api/ApiUtils.java:12`；`com/gku/loginmodule/network/NetworkApi.java:44` | 厂商主后端 | **A**：`NetworkApi` 在 `com/gku/BaseApplication.java:53` 的 `NetworkApi.init(new NetworkRequiredInfo(this))` 链上，Retrofit base url |
 | `https://server4.gkuvision.com/push/api/getNewestVersion?firmWareModel=XTUGO_Android` | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/upgrade/app/UpgradeViewManager.java:648` | 厂商 App 升级 | **A**：升级弹窗路径，`ACTION_VIEW`(`:639`)/`INSTALL_PACKAGE`(`:634`) 紧随其后 |
 | `https://server4.gkuvision.com/push/api/getNewestVersion?firmWareModel=` | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/upgrade/firm/Presenter/UpgradePresenter.java:165` | 厂商**固件**版本查询 | **A**：`UpgradePresenter` 由 `…/firm/Ui/*` 页面驱动 |
 | `http://121.40.107.215:8041/firmware/` | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/upgrade/app/UpgradeTaskManager.java:35`；`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/updateapp/UpgradeManager.java:35` | 厂商固件目录（**裸 IP + 明文**） | **A**：两处都是 `getMatchedFirmware`/`serverHaveLatestAPK` 的基址（调用者 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/setting/AboutCameraActivity.java:41`、`…/dv/updateapp/DownloadActivity.java:89,128,180,184`） |
-| `http://121.40.107.215:8041/firmware/info.json` | `…/sigmastar/upgrade/app/UpgradeTaskManager.java:843`；`…/dv/updateapp/UpgradeManager.java:843` | 固件清单 | **A**：`DownloadActivity.java:89` 把返回串交给 `UpgradeManager.parseServerFileList(string)` |
-| `http://www.gkuvision.com:8882/upload/update.xml` | `_work/xtu_src/sources/com/gku/rxt/net/AppService.java:22`（`API_APP_SERVICE_HOST_IP`）；消费者 `AppService.java:101` | iCatch/记录仪线的 App 更新 | **A（条件）**：仅 `com.gku.rxt`（iCatch 记录仪）流程；协议是明文 XML |
-| `http://api.shhc-yh.com/api/` | `_work/xtu_src/sources/com/gku/rxt/net/AppService.java:23`（`API_FW_SERVICE_HOST_IP`） | 第三方托管（上海环创？） | **D 死常量**：除 `AppService.java:40` 的 Kotlin `@Metadata` 反射元数据外，**全树零消费者**（`grep -rn API_FW_SERVICE_HOST_IP` 只有声明行） |
+| `http://121.40.107.215:8041/firmware/info.json` | `com/gku/actioncam/sigmastar/upgrade/app/UpgradeTaskManager.java:843`；`…/dv/updateapp/UpgradeManager.java:843` | 固件清单 | **A**：`com/gku/actioncam/hisilicon/dv/updateapp/DownloadActivity.java:89` 把返回串交给 `UpgradeManager.parseServerFileList(string)` |
+| `http://www.gkuvision.com:8882/upload/update.xml` | `_work/xtu_src/sources/com/gku/rxt/net/AppService.java:22`（`API_APP_SERVICE_HOST_IP`）；消费者 `com/gku/rxt/net/AppService.java:101` | iCatch/记录仪线的 App 更新 | **A（条件）**：仅 `com.gku.rxt`（iCatch 记录仪）流程；协议是明文 XML |
+| `http://api.shhc-yh.com/api/` | `_work/xtu_src/sources/com/gku/rxt/net/AppService.java:23`（`API_FW_SERVICE_HOST_IP`） | 第三方托管（上海环创？） | **D 死常量**：除 `com/gku/rxt/net/AppService.java:40` 的 Kotlin `@Metadata` 反射元数据外，**全树零消费者**（`grep -rn API_FW_SERVICE_HOST_IP` 只有声明行） |
 | `http://api.shhc-yh.com/` | `_work/xtu_src/sources/com/gku/rxt/net/AppService.java:24`（`API_SERVICE_HOST_IP`） | 同上 | **D 死常量**：同上，无消费者 |
 | `http://api.dashcamplayer.net/api/aliyun/uptoken` | `_work/xtu_src/sources/com/gku/rxt/net/AppService.java:97`（`postJson`） | **阿里云 STS 下发口** | **A**：`ossPost` 的唯一调用者是 `_work/xtu_src/sources/com/gku/HomeActivity.java:843` `AppService.INSTANCE.getInstance().ossPost(...)`，回调 `:859` 建 `OSSClient` |
 | `https://device.gkuvision.com/static/xtugo_privacy_cn.html` | `_work/xtu_src/sources/com/gku/module_my/ConstantsMy.java:10` | 隐私政策 | **A**：`com/gku/actioncam/hisilicon/dv/setting/PrivacyAgreementActivity.java:58`、`com/gku/actioncam/amba/ui/stream/BroadcastDouyinFragment2.java:675` |
-| `https://device.gkuvision.com/static/xtugo_privacy_en.html` | `ConstantsMy.java:12` | 同上（英文） | **A**：`PrivacyAgreementActivity.java:63`、`BroadcastDouyinFragment2.java:677` |
-| `https://device.gkuvision.com/static/xtugo_useragreement_cn.html` | `ConstantsMy.java:14` | 用户协议 | **A**：`PrivacyAgreementActivity.java:56` |
-| `https://device.gkuvision.com/static/xtugo_useragreement_en.html` | `ConstantsMy.java:16` | 同上 | **A**：`PrivacyAgreementActivity.java:61` |
+| `https://device.gkuvision.com/static/xtugo_privacy_en.html` | `com/gku/module_my/ConstantsMy.java:12` | 同上（英文） | **A**：`com/gku/actioncam/hisilicon/dv/setting/PrivacyAgreementActivity.java:63`、`com/gku/actioncam/amba/ui/stream/BroadcastDouyinFragment2.java:677` |
+| `https://device.gkuvision.com/static/xtugo_useragreement_cn.html` | `com/gku/module_my/ConstantsMy.java:14` | 用户协议 | **A**：`com/gku/actioncam/hisilicon/dv/setting/PrivacyAgreementActivity.java:56` |
+| `https://device.gkuvision.com/static/xtugo_useragreement_en.html` | `com/gku/module_my/ConstantsMy.java:16` | 同上 | **A**：`com/gku/actioncam/hisilicon/dv/setting/PrivacyAgreementActivity.java:61` |
 | `https://play.google.com/store/apps/details?id=com.gku.yutupro` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/setting/AboutClientActivity.java:164` | 跳**另一品牌** App | **A**：与 `queries{com.gku.yutupro}`（`_work/re/xtugo/manifest.md:113-120`）配套 |
 | `http://www.xtucam.com/index.php?r=article/Category/index&class_id=19` | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/newUi/userCenter/ui/fragment/UserCenter.java:212` | 官网（**明文 HTTP**） | **A**：用户中心列表项，点击走 WebView |
-| `https://www.xtucam.com/index.php?r=article/Category/index&class_id=19` | `…/UserCenter.java:224` | 官网（社交区？HTTPS 版） | **A**：同列表另一项 |
-| `https://m.weibo.cn/p/1005055290451249` | `…/UserCenter.java:208` | 微博主页 | **A（仅外链）** |
-| `https://www.facebook.com/` | `…/UserCenter.java:219`；`_work/xtu_src/sources/com/gku/loginmodule/ui/fragment/UserCenterNewFragment.java:203` | 社媒 | **A（仅外链）**，无具体账号 |
-| `https://www.youtube.com/` | `…/UserCenter.java:221`；`UserCenterNewFragment.java:204` | 社媒 | **A（仅外链）** |
-| `https://shop183741064.m.taobao.com` | `…/UserCenter.java:204` | 淘宝店 | **A（仅外链）** |
-| `https://xtucp.tmall.com/?spm=a1z10.3-b-s.w20166435-22198852064.1.35dc182aeGhCvE&scene=taobao_shop` | `…/UserCenter.java:205`；`UserCenterNewFragment.java:198` | 天猫店 | **A（仅外链）** |
-| `https://h5.m.jd.com/dev/RLVegkgjdNJoM4Y1WsvAnKLD7Qw/index.html?appurl=https%3A%2F%2Fshop.m.jd.com%3FshopId%3D807701%26utm_source%3Dpdappwakeupup_20170002` | `…/UserCenter.java:206`；`UserCenterNewFragment.java:199` | 京东店（shopId 807701） | **A（仅外链）** |
-| `https://z.douyin.com/p53t?scheme=snssdk1128%3A%2F%2Fgoods%2Fstore%3Fsec_shop_id%3DQMnJSSw%26entrance_location%3Ddou_shop_ad_101_2%26tab_id%3D16%26url_maker%3Dshop_sdk` | `UserCenterNewFragment.java:200` | 抖音店（`sec_shop_id=QMnJSSw`）；含 **`snssdk1128://` 深链** | **A（仅外链）** |
-| `http://mobile.yangkeduo.com/mall_page.html?mall_id=640975089 ` | `UserCenterNewFragment.java:201` | 拼多多店（**注意原串尾部有一个空格**） | **A（仅外链）** |
+| `https://www.xtucam.com/index.php?r=article/Category/index&class_id=19` | `com/gku/actioncam/sigmastar/newUi/userCenter/ui/fragment/UserCenter.java:224` | 官网（社交区？HTTPS 版） | **A**：同列表另一项 |
+| `https://m.weibo.cn/p/1005055290451249` | `com/gku/actioncam/sigmastar/newUi/userCenter/ui/fragment/UserCenter.java:208` | 微博主页 | **A（仅外链）** |
+| `https://www.facebook.com/` | `com/gku/actioncam/sigmastar/newUi/userCenter/ui/fragment/UserCenter.java:219`；`_work/xtu_src/sources/com/gku/loginmodule/ui/fragment/UserCenterNewFragment.java:203` | 社媒 | **A（仅外链）**，无具体账号 |
+| `https://www.youtube.com/` | `com/gku/actioncam/sigmastar/newUi/userCenter/ui/fragment/UserCenter.java:221`；`com/gku/loginmodule/ui/fragment/UserCenterNewFragment.java:204` | 社媒 | **A（仅外链）** |
+| `https://shop183741064.m.taobao.com` | `com/gku/actioncam/sigmastar/newUi/userCenter/ui/fragment/UserCenter.java:204` | 淘宝店 | **A（仅外链）** |
+| `https://xtucp.tmall.com/?spm=a1z10.3-b-s.w20166435-22198852064.1.35dc182aeGhCvE&scene=taobao_shop` | `com/gku/actioncam/sigmastar/newUi/userCenter/ui/fragment/UserCenter.java:205`；`com/gku/loginmodule/ui/fragment/UserCenterNewFragment.java:198` | 天猫店 | **A（仅外链）** |
+| `https://h5.m.jd.com/dev/RLVegkgjdNJoM4Y1WsvAnKLD7Qw/index.html?appurl=https%3A%2F%2Fshop.m.jd.com%3FshopId%3D807701%26utm_source%3Dpdappwakeupup_20170002` | `com/gku/actioncam/sigmastar/newUi/userCenter/ui/fragment/UserCenter.java:206`；`com/gku/loginmodule/ui/fragment/UserCenterNewFragment.java:199` | 京东店（shopId 807701） | **A（仅外链）** |
+| `https://z.douyin.com/p53t?scheme=snssdk1128%3A%2F%2Fgoods%2Fstore%3Fsec_shop_id%3DQMnJSSw%26entrance_location%3Ddou_shop_ad_101_2%26tab_id%3D16%26url_maker%3Dshop_sdk` | `com/gku/loginmodule/ui/fragment/UserCenterNewFragment.java:200` | 抖音店（`sec_shop_id=QMnJSSw`）；含 **`snssdk1128://` 深链** | **A（仅外链）** |
+| `http://mobile.yangkeduo.com/mall_page.html?mall_id=640975089 ` | `com/gku/loginmodule/ui/fragment/UserCenterNewFragment.java:201` | 拼多多店（**注意原串尾部有一个空格**） | **A（仅外链）** |
 | `https://www.baidu.com` | `_work/xtu_src/sources/com/gku/HomeActivity.java:2077` | 兜底外链 | **A**：WebView 兜底 |
 | `http://www.google.com/` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/UserCenterWebView.java:37` | 默认首页 | **A（国内不可达）**：作为该 WebView 的初始 url 常量 |
 | `http://i2.hdslb.com/bfs/archive/1808cdd9100aebc15b3c889d71755072dc475bdf.jpg` | `_work/xtu_src/sources/m/mifan/acase/core/EmptyCase.java:103` | B 站图床 | **C**：出现在 `EmptyCase`（空实现占位类）里，非业务图 |
@@ -524,7 +542,7 @@ manifest 里**未写 `android:exported` 的组件**：所有 `<activity>` 除 `W
 
 **高德 AMap（地图 v10.0.600）** —— **B（会发请求，但因无 key 必然鉴权失败）**：
 Java 侧真实使用 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/localimage/TrackActivity.java:389,497,667`（`addMarker`/`animateCamera`/`addPolyline`）；
-`ServiceSettings`/`MapsInitializer.setApiKey` **全树 0 命中**，清单 meta-data 表（`_work/re/xtugo/manifest.md:418-425`）**无 `com.amap.api.v2.apikey`** → 鉴权必失败。
+`ServiceSettings`/`MapsInitializer.setApiKey` **全树 0 命中**，19 条 `<application>` 级 meta-data 全表（§3.3）里**无 `com.amap.api.v2.apikey`** → 鉴权必失败。
 
 | 端点 | 出现处（包） | 判定 |
 |---|---|---|
@@ -547,7 +565,7 @@ Java 侧真实使用 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/local
 |---|---|---|
 | `https://apmplus.volces.com/settings/get`、`https://apmplus.volces.com/monitor/collect/c/performance/`、`http://apmplus.volces.com/apm/device_register`、`http://apmplus.volces.com/monitor/collect/c/session` | `com/volcengine/zeus/**` | **B**：zeus 配置+性能上报，随直播插件进程启动 |
 | `https://dispatch-api-online.vemarsdev.com/settings/get`、`https://dispatch-api-online.vemarsdev.com/monitor/collect/c/performance/`、`https://zeus-api.vemarsdev.com/zeus/client/v2/query` | `com/volcengine/zeus/**` | **B（备用域，海外构建）** |
-| `snssdk1128://goods/store?sec_shop_id=QMnJSSw&…` | `UserCenterNewFragment.java:200`（URL 编码在 https 短链里） | **A（外链）**：拉起抖音 App |
+| `snssdk1128://goods/store?sec_shop_id=QMnJSSw&…` | `com/gku/loginmodule/ui/fragment/UserCenterNewFragment.java:200`（URL 编码在 https 短链里） | **A（外链）**：拉起抖音 App |
 
 **APM Insight（`libapminsighta.so`/`libapminsightb.so`）** —— **B（条件）**：Java 侧只有文件路径自举，`_work/xtu_src/sources/com/apm/insight/h/b.java:16,20,76,96`（`filesDir/apminsight/selflib/lib<name>.so`）、`com/apm/insight/c/a.java:10`、`c/b.java:26`（`apminsight/crashCommand`）、`com/apm/insight/k/o.java:30,92`（`apminsight/configCrash/configFile`）、`com/apm/insight/l/a.java:207`（`getRunningTasks(1)` 判前台）。
 → **厂商代码里没有任何 `ApmInsight.init`**（grep 0 命中），因此它只有在抖音/zeus 插件被拉起时才可能由 dex 自举加载；**主进程单独使用相机功能时不会访问**。这与主文档 §8「未见 Java 初始化」一致，可判定为 **C（本 App 场景下）**。
@@ -572,18 +590,18 @@ Java 侧真实使用 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/local
 |---|---|---|
 | `http://%s%s%s` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Command.java:36`、`…/dv/biz/RemoteFileManager.java:14` | 海思 CGI 总模板（ip + `/cgi-bin/hi3510/` + cmd） |
 | `http://%s%s/<cgi>?` ×39 | `com/gku/actioncam/hisilicon/dv/biz/Setting.java:30,34,38,45,89,122,131,137,141,145,149,153,183,187,191,195,199,203,207,211,215,219,223,227,238,245,252,256,260,264,268,276,280,284,288,326,330,334,338,342,346,350,354,358,464,514,518,522,526,530,534,538,542,546,550`、`…/biz/RemoteFileManager.java:20,33,46,50,54,58,62` | 全部海思/ SigmaStar CGI（见 CGI 全表） |
-| `http://%s%s` | `com/gku/actioncam/amba/ui/playback/AmbaPlaybackActivity.java:275`、`…/amba/ui/playback/remote/video/AmbaRemoteVideoActivity.java:178`、`com/gku/actioncam/sigmastar/bean/SSFileInfoBean.java:115`、`com/gku/amba/AmbaCameraRecordFragment$AnonymousClass1.java:220`、`com/gku/hisi/Hisi_CameraRecordFragment$AnonymousClass1.java:189` | 文件下载直链 |
-| `http://%s/%s` | `com/gku/actioncam/sigmastar/bean/SSFileInfoBean.java:87`、`com/gku/amba/AmbaCameraRecordFragment$AnonymousClass1.java:222`、`com/gku/hisi/Hisi_CameraFileActivity 系列同文件:191`、`com/gku/module_camera/hisi/HisiDownloader.java:200` | 海思「去扩展名 + `.THM`」缩略图/文件 |
+| `http://%s%s` | `com/gku/actioncam/amba/ui/playback/AmbaPlaybackActivity.java:275`、`…/amba/ui/playback/remote/video/AmbaRemoteVideoActivity.java:178`、`com/gku/actioncam/sigmastar/bean/SSFileInfoBean.java:115`、`_work/xtu_src/sources/com/gku/amba/AmbaCameraRecordFragment.java:220`、`_work/xtu_src/sources/com/gku/hisi/Hisi_CameraRecordFragment.java:189` | 文件下载/在线播放直链（RecordFragment 两处取自 `getPlayPath`，MP4→LRV 预览流） |
+| `http://%s/%s` | `com/gku/actioncam/sigmastar/bean/SSFileInfoBean.java:87`、`_work/xtu_src/sources/com/gku/amba/AmbaCameraRecordFragment.java:222`、`_work/xtu_src/sources/com/gku/hisi/Hisi_CameraRecordFragment.java:191`、`com/gku/module_camera/hisi/HisiDownloader.java:200` | 海思「去扩展名 + `.THM`」缩略图/文件；RecordFragment 两处在 `getPlayPath` 中把 MP4→LRV 预览播放 |
 | `http://%s/thumb%s` | `com/gku/actioncam/sigmastar/bean/SSFileInfoBean.java:83` | SigmaStar 缩略图 |
 | `http://%s/` | `com/gku/actioncam/hisilicon/dv/biz/DV.java:556` | 根 |
 | `http://192.168.0.1/` | `com/gku/actioncam/hisilicon/dv/ui/data/connect/DownLoadFileUtils.java:61`、`com/gku/actioncam/sigmastar/data/connect/DownLoadFileUtils.java:58` | **硬编码基址**（主文档 §11 已列） |
 | `http://` | `com/gku/actioncam/sigmastar/HaisiCommandUtil.java:34`、`com/gku/actioncam/sigmastar/SSCommandUtil.java:34`、`com/gku/base/device/DeviceHttpUtils.java:12`、`com/gku/module_base_xtugo/HisiApiUtils.java:9` | 前缀常量 |
 | `rtsp://%s:554/livestream/12` | `com/gku/actioncam/amba/ui/preview/AmbaPreviewActivity.java:972` | Ambarella 预览取流 |
-| `rtsp://` | `com/gku/actioncam/hisilicon/dv/biz/DV.java:320`、`com/gku/actioncam/sigmastar/HaisiCommandUtil.java:35`、`SSCommandUtil.java:35` | 前缀常量 |
+| `rtsp://` | `com/gku/actioncam/hisilicon/dv/biz/DV.java:320`、`com/gku/actioncam/sigmastar/HaisiCommandUtil.java:35`、`com/gku/actioncam/sigmastar/SSCommandUtil.java:35` | 前缀常量 |
 | `http://%s:%d/%s` | `com/gku/videocache/HttpProxyCacheServer.java:140`、`com/gku/videocache/Pinger.java:97` | 本地代理回环 |
-| `file:///storage/emulated/0/DCIM/ActionCam/download/{a_aba,b_longji,c_mabuer,d_dive}.mp4` | `com/gku/actioncam/hisilicon/dv/live/TelevisionActivity$ThumbClickListener.java:367` | 内置演示视频（4 条硬编码） |
+| `file:///storage/emulated/0/DCIM/ActionCam/download/{a_aba,b_longji,c_mabuer,d_dive}.mp4` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/live/TelevisionActivity.java:367` | 4 条硬编码 `file://` 演示视频路径（缩略图点击→VIEW 跳外部播放器，非内置于 APK） |
 | `file:///android_asset/` | `com/gku/base/webview/WebViewUtils.java:201` | 本地 H5 |
-| `file:///system/media/audio/ui/{camera_click,VideoRecord,VideoRecordEnd}.ogg` | `com/gku/actioncam/amba/ui/preview/AmbaPreviewPresenter.java:371,375,379`、`com/gku/actioncam/hisilicon/dv/biz/Utility$AnonymousClass1.java:56` | 系统快门音 |
+| `file:///system/media/audio/ui/{camera_click,VideoRecord,VideoRecordEnd}.ogg` | `com/gku/actioncam/amba/ui/preview/AmbaPreviewPresenter.java:371,375,379`、`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Utility.java:56` | 系统快门音 |
 | `file://` | `com/gku/actioncam/sigmastar/videoedit/CutActivity.java:455`、`com/gku/dashcam/icatch/utils/imageloader/ImageLoaderUtil.java:58`、`com/icatchtek/reliant/customer/type/ICatchFileStreamParam.java:47` | 前缀 |
 | `file:///storage/…` 之外的 `http://schemas.android.com/apk/res/android` | 见 §4.1 | 非网络 |
 
@@ -593,7 +611,7 @@ Java 侧真实使用 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/local
 |---|---|---|
 | `192.168.0.1` | `com/gku/actioncam/amba/ui/preview/AmbaPreviewActivity.java:972`、`…/amba/ui/stream/TCPClient.java:63`、`com/gku/actioncam/hisilicon/dv/biz/DV.java:66`、`…/dv/ui/config/CameraParameters.java:37`、`…/dv/ui/config/CameraParmeras.java:37`、`…/dv/ui/data/connect/ConnectDevice.java:44`、`…/dv/ui/data/connect/DownLoadFileUtils.java:34`、`…/dv/ui/data/connect/FirmwareClientThread.java:64`、`com/gku/actioncam/sigmastar/data/connect/DownLoadFileUtils.java:31`、`…/sigmastar/data/connect/FirmwareClientThread.java:64`、`…/sigmastar/data/connect/SSConnectDevice.java:57`、`com/gku/actioncam/sigmastar/SSConstant.java:13`、`…/sigmastar/newUi/deviceAdd/Activity/DeviceAddNewActivity.java:187`、`…/newUi/deviceAdd/Activity/UserGuideActivity.java:162`、`…/newUi/deviceAdd/Fragment/connect/DeviceAddConnectFragment.java:151`、`…/sigmastar/upgrade/firm/Presenter/UpgradePresenter.java:228`、`…/upgrade/firm/Ui/UpgradeVersionReadyActivity.java:71`、`com/gku/HomeActivity.java:562`、`com/gku/rxt/FwUpload2.java:18`、`com/hisi/hisiFW/FwUpload.java:16` | **A（本地）**：相机默认地址，6 个独立常量位（主文档 §11 已纠正） |
 | `192.168.1.1` | `_work/xtu_src/sources/m/mifan/acase/icatch/IcatchCaseKt.java:9`（`API_HOST_ICATCH`） | **A（本地）**：iCatch 记录仪不同网段 |
-| `234.168.168.168` | `_work/xtu_src/sources/com/icatchtek/control/core/CoreMulticast.java:15`（`MULTI_CAST_ADDR`）；组播名 `multicast.test`（`:21`）、`multicast.receive`（`com/icatchtek/control/core/feature/ICatchCameraAssistImpl$MulticastReceiver.java:320`） | **B（iCatch 设备发现）**：D 类组播，需 `CHANGE_WIFI_STATE` + 组播锁 |
+| `234.168.168.168` | `_work/xtu_src/sources/com/icatchtek/control/core/CoreMulticast.java:15`（`MULTI_CAST_ADDR`）；标签串 `multicast.test`（`:21`）、`multicast.receive`（`_work/xtu_src/sources/com/icatchtek/control/core/feature/ICatchCameraAssistImpl.java:320`） | **B（iCatch 设备发现）**：D 类组播，需 `CHANGE_WIFI_STATE` + 组播锁 |
 | `127.0.0.1` | `com/gku/videocache/HttpProxyCacheServer.java:32`（`PROXY_HOST`）、`com/gku/ffm/zqvideo/cache/ProxyCacheManager.java:56`、`com/gku/ffm/zqvideo/video/base/GSYVideoView.java:721` | **A（本地）**：AndroidVideoCache 代理 |
 | `8.8.8.8` | `com/gku/loginmodule/utils/NetworkUtils.java:23`：`Runtime.getRuntime().exec("/system/bin/ping -c 1 8.8.8.8")` | **A（真会发包）**：网络连通性判定的**唯一外网探测点**，国内网络下常超时 → 该判定实际不可靠（值得我们在 §10 记录） |
 | `172.18.1.19` | `com/gku/base/utils/NetWorkInfoUtils.java:83` | **C 死字符串**：作者内网调试地址残留 |
@@ -610,28 +628,35 @@ Java 侧真实使用 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/local
 | `gkucamplayer` 模块 BuildConfig | `BUILD_TYPE="debug"`、`DEBUG=true`、`LIBRARY_VERSION=". Version: 8.1.2"` | `_work/xtu_src/sources/com/gku/gkucamplayer/BuildConfig.java:5,6,8` → **release 包里嵌了 debug 构建的子模块** |
 | iCatch 三个 SDK 模块 BuildConfig | `BUILD_TYPE="debug"`、`DEBUG=true`、`VERSION_CODE=1`、`VERSION_NAME="1.0"` | `_work/xtu_src/sources/com/icatchtek/control/BuildConfig.java:5-9`、`com/icatchtek/pancam/BuildConfig.java:5-9`、`com/icatchtek/reliant/BuildConfig.java:5-9` |
 | `API_HOST_ICATCH` | `192.168.1.1` | `_work/xtu_src/sources/m/mifan/acase/icatch/IcatchCaseKt.java:9` |
-| 固件目录基址 | `http://121.40.107.215:8041/firmware/` | `…/sigmastar/upgrade/app/UpgradeTaskManager.java:35`、`…/dv/updateapp/UpgradeManager.java:35` |
-| 更新 XML | `http://www.gkuvision.com:8882/upload/update.xml` | `…/rxt/net/AppService.java:22` |
-| STS 口 | `http://api.dashcamplayer.net/api/aliyun/uptoken` | `…/rxt/net/AppService.java:97` |
+| 固件目录基址 | `http://121.40.107.215:8041/firmware/` | `com/gku/actioncam/sigmastar/upgrade/app/UpgradeTaskManager.java:35`、`…/dv/updateapp/UpgradeManager.java:35` |
+| 更新 XML | `http://www.gkuvision.com:8882/upload/update.xml` | `com/gku/rxt/net/AppService.java:22` |
+| STS 口 | `http://api.dashcamplayer.net/api/aliyun/uptoken` | `com/gku/rxt/net/AppService.java:97` |
 | OSS 三元组 | **无硬编码**：`data.getEndpoint()` / `getAccess_key()` / `getAccess_secret()` / `getSecurity_token()` 全部运行期下发 | `_work/xtu_src/sources/com/gku/HomeActivity.java:859` |
 | 渠道号 `UMENG_CHANNEL` | `product_GooglePlay` | `_work/xtu_res/resources/AndroidManifest.xml:123`（清单级 meta-data），读取方 `_work/xtu_src/sources/com/gku/crashhandle/CrashReportManager.java:40` → `:45 setAppChannel(...)` |
 | **Google Maps API key** | `AIzaSyAu4dYAjvpBVwWJtUKB19MEnQ5MsKn2bPE` | `_work/xtu_res/resources/AndroidManifest.xml:272`（`com.google.android.geo.API_KEY`）；配合 `:1123` 的 `com.google.android.gms.version` |
 | 字节 zeus 插件 appKey/appSecretKey（**4 组，清单里明文**） | video（`com.byted.saas.video`）：`14adbdb906c0a8c1601ecb546737bc80` / `a337bb0a0445d2b6cb75c0c86427ab2a`<br>ttm.player：`b759a5c22d90020d40d5450cf6abee55` / `3298eca929aa69b7104aac236f54abde`<br>live.lite：`edc32eaa174b15a7a3771c37b451c080` / `2f906bdb2f32468a63c2fed4afd1e82e`<br>broadcast.lite：`63fed49bd0bad946b0886802de2fe8a4` / `50011b4cf949a84aa9c6d3e11093a6aa` | `_work/xtu_res/resources/AndroidManifest.xml:646, 785, 788, 1010`（详见 §3.3 M4/M6/M7/M9，含版本码 `:649, :791, :1013`） |
-| 高德 key | **不存在**（无 `com.amap.api.v2.apikey`，全树无 `setApiKey`）→ 与上面的 Google key 是**两回事** | `_work/re/xtugo/manifest.md:418-425` + `_work/xtu_res/resources/AndroidManifest.xml`（19 条 app 级 meta-data 全列于 §3.3，其中无 amap） |
+| 高德 key | **不存在**（无 `com.amap.api.v2.apikey`，全树无 `setApiKey`）→ 与上面的 Google key 是**两回事** | `_work/xtu_res/resources/AndroidManifest.xml`：19 条 `<application>` 级 meta-data 全列于 §3.3，其中无 amap（`_work/re/xtugo/manifest.md:418-428` 把这一整段漏采了，只留 7 条组件级） |
 | 华为 appId | **不存在**（只有 `com.huawei.hms.client.service.name:scanplus` 等服务名，`:1190`） | 同上 |
 | 相机 WiFi 口令 | **无硬编码**：运行期由 CGI 取（键名 `wifi_password` @ `com/gku/actioncam/hisilicon/dv/biz/Common.java:134`，取法 `…/dv/biz/HiWifiManager.java:127,152,154`、`…/dv/wifi/WifiUtils.java:138,163,165`、`com/gku/actioncam/sigmastar/bean/SSWiFiInfo.java:22`） | §7.4 |
 | Bugly `setUserId` | `Settings.Secure "android_id"` 同时当 `userId` 与 `deviceID` | `_work/xtu_src/sources/com/gku/crashhandle/CrashReportManager.java:27,28,29`；真正的 `CrashReport.initCrashReport(context, BuildConfig.BuglyId, isDebuggable, userStrategy)` 在 **`:48`** |
 
 ### 4.6 判定汇总
 
-| 档 | 条数 | 明细所在 |
+| 档 | 条数 | 明细所在（可复核） |
 |---|---|---|
-| **A 运行时会访问（厂商后端/外链/本地）** | **26** | §4.1 的 24 条（去掉 `shhc-yh.com` 两条死常量）+ §4.4 的 `127.0.0.1`/`8.8.8.8`（`192.168.0.1` 等本地地址按族计 1） |
-| **B 库会访问（条件触发）** | **9 族 / 约 34 个端点** | §4.2 高德(6 族)、Bugly(1)、OSS region(1)、字节 zeus/APMPlus(3 域)、HMS GRS(5 域)、MSA-OAID(1)、iCatch 组播(1) |
-| **C 库里死字符串 / 本场景不触发** | **6** | AndroidVideoCache 文案、`schemas.android.com`、B 站图床、`location-inner.aliyuncs.com`、AMap 搜索/导航端点、APM Insight（`C` 判定见 §4.2） |
-| **D 厂商死常量** | **3** | `api.shhc-yh.com/api/`、`api.shhc-yh.com/`、`172.18.1.19` |
+| **A 运行时会访问（厂商后端 / 外链 / 本地）** | **29** | §4.1 的 29 行里 **24 行判 A**（其余 3 行 C、2 行 D）+ §4.4 的 **5 项**（`192.168.0.1`、`192.168.1.1`、`127.0.0.1`、`8.8.8.8`、`0.0.0.0`） |
+| **B 库会访问（条件触发）** | **10 族 / 约 35 个端点** | §4.2：高德（6 族端点）、Bugly（`android.bugly.qq.com`、`h.trace.qq.com`）、阿里 OSS region（`*.aliyuncs.com` 5 个 region + 2 个 location 域）、字节 zeus/APMPlus（`apmplus.volces.com`、`*.vemarsdev.com` ×2）、HMS GRS（5 域）+ hicloud metrics（4 域，§7.2）、MSA-OAID（Binder 无域名）、iCatch 组播（`234.168.168.168`，§4.4）、native 高德/YouTube（§7.1） |
+| **C 库里死字符串 / 本场景不触发** | **6** | AndroidVideoCache 报错文案（3 处）、`schemas.android.com`、B 站图床 `i2.hdslb.com`、`location-inner.aliyuncs.com`、高德搜索/导航类端点、APM Insight（判定理由见 §4.2 末段） |
+| **D 厂商死常量** | **3** | `http://api.shhc-yh.com/api/`、`http://api.shhc-yh.com/`（均只声明于 `_work/xtu_src/sources/com/gku/rxt/net/AppService.java:23,24`，全树无消费者）、`172.18.1.19`（`_work/xtu_src/sources/com/gku/base/utils/NetWorkInfoUtils.java:83`） |
 
-→ **真正需要我们在网络侧对齐的只有 A 类**；A 类里跟相机协议无关的全是商店/客服链接。
+**复核式**（在本附录内可直接跑）：
+
+```sh
+awk '/^### 4.1/,/^### 4.2/' <本文件> | grep '^| `' | grep -c '\*\*A'   # 24
+awk '/^### 4.4/,/^### 4.5/' <本文件> | grep -c '^| `'                   # 7（5A/1B/1D→C）
+```
+
+→ **真正需要我们在网络侧对齐的只有 A 类**；A 类里跟相机协议无关的全是商店/客服/协议链接，跟协议有关的全是 §4.3/§4.4 的本地地址。
 
 ---
 
@@ -663,8 +688,8 @@ Java 侧真实使用 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/local
 
 | action 串 | 常量定义 | 发送点 | 接收点 | 携带内容 |
 |---|---|---|---|---|
-| `com.gku.xtugo.MESSAGE_ACTION` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/MessageService.java:18` | `MessageService.java:127`（5678 收到相机报文后）、`com/gku/actioncam/hisilicon/dv/net/HttpProxy.java:314-316` | `com/gku/actioncam/hisilicon/dv/filebrowser/PreviewImageActivity.java:631-634`、`…/filebrowser/Hi3518PriviewImageActivity.java:575-578`（SD 卡状态刷新） | 相机推送的状态原文 |
-| `com.gku.xtugo.DV_ISALIVE_ACTION` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/KeepAliveService.java:14` | `KeepAliveService.java:58,73` | `com/gku/actioncam/amba/base/IjkBaseActivity.java:47`、`…/dv/filebrowser/PreviewImageActivity.java:1006`、`…/Hi3518PriviewImageActivity.java:916`、`…/dv/imagelookover/SwitchImageActivity.java:475` | 心跳成功/失败 |
+| `com.gku.xtugo.MESSAGE_ACTION` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/MessageService.java:18` | `com/gku/actioncam/hisilicon/dv/net/MessageService.java:127`（5678 收到相机报文后）、`com/gku/actioncam/hisilicon/dv/net/HttpProxy.java:314-316` | `com/gku/actioncam/hisilicon/dv/filebrowser/PreviewImageActivity.java:631-634`、`…/filebrowser/Hi3518PriviewImageActivity.java:575-578`（SD 卡状态刷新） | 相机推送的状态原文 |
+| `com.gku.xtugo.DV_ISALIVE_ACTION` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/KeepAliveService.java:14` | `com/gku/actioncam/hisilicon/dv/net/KeepAliveService.java:58,73` | `com/gku/actioncam/amba/base/IjkBaseActivity.java:47`、`com/gku/actioncam/hisilicon/dv/filebrowser/PreviewImageActivity.java:1006`、`…/Hi3518PriviewImageActivity.java:916`、`…/dv/imagelookover/SwitchImageActivity.java:475` | 心跳成功/失败 |
 
 **关键实现细节（值得照抄）**：注册一律走「≥33 显式 `RECEIVER_NOT_EXPORTED(=2)`、<33 走老 API」的双分支，例如
 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/filebrowser/PreviewImageActivity.java:631-635`：
@@ -694,25 +719,25 @@ else { registerReceiver(r, new IntentFilter(MessageService.MESSAGE_ACTION)); }
 
 | action | 出处（全路径:行） | 说明 |
 |---|---|---|
-| `android.intent.action.MEDIA_SCANNER_SCAN_FILE` | `…/dv/devicemanage/DeviceManageActivity.java:326`、`…/dv/dlg/DlgForProcessActivity.java:521`、`…/dv/dlg/DlgForDeleteProcessActivity.java:842`、`…/dv/localimage/ImageEditLib/ImageEditClipActivity.java:109`、`…/dv/ui/data/connect/ConnectDevice.java:167`、`…/dv/ui/data/connect/DownLoadFileUtils.java:201,302`、`…/dv/ui/data/CopyFileUtils.java:254`、`…/sigmastar/data/connect/DownLoadFileUtils.java:161`、`…/sigmastar/data/connect/SSConnectDevice.java:178`、`…/sigmastar/newUi/album/Utils/FileNewUtils.java:85`、`…/sigmastar/util/FileUtils.java:67`、`…/sigmastar/videoedit/FilePathUtils.java:140`、`…/dashcam/icatch/utils/MediaRefresh.java:183`、`com/gku/dashcam/icatch/data/IcatchConnectDevice.java:146` | **15 处**。Android 10+ 该广播已无效（须用 MediaStore API），是**必须注意的历史包袱**：官方 App 的媒体入库在某些机型上其实靠不住 |
-| `android.intent.action.MEDIA_SCANNER_SCAN_DIR` | `…/dashcam/icatch/utils/MediaRefresh.java:22` | 同上（iCatch 线） |
+| `android.intent.action.MEDIA_SCANNER_SCAN_FILE` | `com/gku/actioncam/hisilicon/dv/devicemanage/DeviceManageActivity.java:326`、`…/dv/dlg/DlgForProcessActivity.java:521`、`…/dv/dlg/DlgForDeleteProcessActivity.java:842`、`…/dv/localimage/ImageEditLib/ImageEditClipActivity.java:109`、`…/dv/ui/data/connect/ConnectDevice.java:167`、`…/dv/ui/data/connect/DownLoadFileUtils.java:201,302`、`…/dv/ui/data/CopyFileUtils.java:254`、`…/sigmastar/data/connect/DownLoadFileUtils.java:161`、`…/sigmastar/data/connect/SSConnectDevice.java:178`、`…/sigmastar/newUi/album/Utils/FileNewUtils.java:85`、`…/sigmastar/util/FileUtils.java:67`、`…/sigmastar/videoedit/FilePathUtils.java:140`、`com/gku/dashcam/icatch/utils/MediaRefresh.java:183`、`com/gku/dashcam/icatch/data/IcatchConnectDevice.java:146` | **15 处**。Android 10+ 该广播已无效（须用 MediaStore API），是**必须注意的历史包袱**：官方 App 的媒体入库在某些机型上其实靠不住 |
+| `android.intent.action.MEDIA_SCANNER_SCAN_DIR` | `com/gku/dashcam/icatch/utils/MediaRefresh.java:22` | 同上（iCatch 线） |
 | `android.intent.action.SEND` / `SEND_MULTIPLE` / `SENDTO` | `com/gku/base/utils/ShareUtils.java:17,45,49`、`…/dv/biz/HiShareFile.java:15,36`、`…/dv/localimage/AlbumPreviewActivity.java:192`、`…/newUi/album/Ui/Activity/ActivityNewPreview.java:327`、`…/newUi/album/Ui/Fragment/CommonFragment.java:291,308`、`…/newUi/userCenter/ui/activity/QuestionDescription.java:170`、`…/sigmastar/videoedit/VideoShareActivity.java:87` | 分享出站到微信/QQ（`queries{com.tencent.mm,com.tencent.qq}`） |
-| `android.intent.action.VIEW` | `…/dv/filebrowser/PreviewImageActivity.java:1188`、`…/Hi3518PriviewImageActivity.java:1098`、`…/dv/live/TelevisionActivity$ThumbClickListener.java:368`、`…/dv/setting/AboutClientActivity.java:172`、`…/dv/updateapp/UpgradeManager.java:924`、`…/sigmastar/upgrade/app/UpgradeTaskManager.java:924`、`…/upgrade/app/UpgradeViewManager.java:639`、`…/newUi/userCenter/ui/fragment/UserCenter.java:168`、`…/loginmodule/ui/fragment/UserCenterNewFragment.java:261`、`com/gku/base/utils/FileIntentUtils.java:15`、`com/gku/base/utils/MarketUtils.java:38`、`com/gku/base/webview/WebViewUtils.java:61`、`com/gku/rxt/net/CheckAppVersionUtils.java:327` | 13 处外跳（浏览器/应用市场/拨号盘/安装） |
-| `android.intent.action.INSTALL_PACKAGE` | `…/sigmastar/upgrade/app/UpgradeViewManager.java:634` | App 自升级安装（配合 §6 的 FileProvider URI） |
-| `android.intent.action.MAIN`（手工构造，非 launcher） | `…/newUi/userCenter/ui/fragment/UserCenter.java:339`、`com/gku/loginmodule/utils/OtherUtils.java:37` | 用 `getLaunchIntentForPackage` 拉起别的 App |
-| `android.settings.action.MANAGE_WRITE_SETTINGS` | `…/OldUi/preview/ui/activity/AmbaActionCameraPreviewActivity.java:1216`、`…/HisiActionCameraPreviewActivity.java:1227`、`com/gku/base/permission/PermissionActivity.java:61` | 跳「修改系统设置」授权页（对应 `WRITE_SETTINGS`） |
+| `android.intent.action.VIEW` | `com/gku/actioncam/hisilicon/dv/filebrowser/PreviewImageActivity.java:1188`、`…/Hi3518PriviewImageActivity.java:1098`、`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/live/TelevisionActivity.java:368`、`…/dv/setting/AboutClientActivity.java:172`、`…/dv/updateapp/UpgradeManager.java:924`、`com/gku/actioncam/sigmastar/upgrade/app/UpgradeTaskManager.java:924`、`…/upgrade/app/UpgradeViewManager.java:639`、`com/gku/actioncam/sigmastar/newUi/userCenter/ui/fragment/UserCenter.java:168`、`…/loginmodule/ui/fragment/UserCenterNewFragment.java:261`、`com/gku/base/utils/FileIntentUtils.java:15`、`com/gku/base/utils/MarketUtils.java:38`、`com/gku/base/webview/WebViewUtils.java:61`、`com/gku/rxt/net/CheckAppVersionUtils.java:327` | 13 处外跳（浏览器/应用市场/拨号盘/安装） |
+| `android.intent.action.INSTALL_PACKAGE` | `com/gku/actioncam/sigmastar/upgrade/app/UpgradeViewManager.java:634` | App 自升级安装（配合 §6 的 FileProvider URI） |
+| `android.intent.action.MAIN`（手工构造，非 launcher） | `com/gku/actioncam/sigmastar/newUi/userCenter/ui/fragment/UserCenter.java:339`、`com/gku/loginmodule/utils/OtherUtils.java:37` | 用 `getLaunchIntentForPackage` 拉起别的 App |
+| `android.settings.action.MANAGE_WRITE_SETTINGS` | `com/gku/actioncam/sigmastar/OldUi/preview/ui/activity/AmbaActionCameraPreviewActivity.java:1216`、`…/HisiActionCameraPreviewActivity.java:1227`、`com/gku/base/permission/PermissionActivity.java:61` | 跳「修改系统设置」授权页（对应 `WRITE_SETTINGS`） |
 | `android.settings.REQUEST_MANAGE_MEDIA` | `com/gku/HomeActivity.java:1049`、`…/dv/ui/WelcomeActivity.java:195`、`…/dv/ui/weight/MyBottomSheetDialog.java:312`、`com/gku/loginmodule/utils/PermissionUtils.java:118` | 跳「允许管理所有文件」（对应 §1.1 #6 的半死判定） |
 | `miui.intent.action.APP_PERM_EDITOR` + `setClassName("com.android.settings","com.miui.securitycenter.permission.AppPermissionsEditor")` | `com/gku/actioncam/sigmastar/bluetooth/utils/IntentUtils.java:26,27` | MIUI 判定/跳权限页；用 `queryIntentActivities` 探测（`:31-32`，即 `isIntentAvailable`） |
 | `android.intent.action.{SCREEN_ON,SCREEN_OFF,USER_PRESENT}` | `com/gku/dashcam/icatch/listener/ScreenListener.java:40,42,44,77,78,79` | iCatch 线的息屏监听 |
-| `android.net.wifi.STATE_CHANGE` / `android.net.wifi.supplicant.STATE_CHANGE` / `android.net.conn.CONNECTIVITY_CHANGE` | 22 处：`…/dv/ui/BaseActivity.java:33`、`…/dv/devicemanage/DeviceManageActivity.java:353,354,469,483,518`、`…/dv/filebrowser/{PreviewImageActivity.java:1005,Hi3518PriviewImageActivity.java:915}`、`…/dv/imagelookover/SwitchImageActivity.java:474`、`…/dv/live/TelevisionActivity.java:239,384`、`…/dv/wifi/WifiDeviceActivity.java:49,129`、`…/dv/wifi/WifiDisconnectReceiver.java:83`、`…/OldUi/preview/presenter/ActionCameraPreviewPresenter.java:177`、`…/amba/base/IjkBaseActivity.java:46`、`…/amba/ui/preview/AmbaPreviewActivity.java:1230`、`com/gku/dashcam/icatch/utils/WifiAPUtil.java:18,56` | **断连检测主力**。这是我们要复刻的核心信号（谁掉了 AP 就判定断开） |
+| `android.net.wifi.STATE_CHANGE` / `android.net.wifi.supplicant.STATE_CHANGE` / `android.net.conn.CONNECTIVITY_CHANGE` | 22 处：`…/dv/ui/BaseActivity.java:33`、`com/gku/actioncam/hisilicon/dv/devicemanage/DeviceManageActivity.java:353,354,469,483,518`、`…/dv/filebrowser/{com/gku/actioncam/hisilicon/dv/filebrowser/PreviewImageActivity.java:1005,com/gku/actioncam/hisilicon/dv/filebrowser/Hi3518PriviewImageActivity.java:915}`、`…/dv/imagelookover/SwitchImageActivity.java:474`、`…/dv/live/TelevisionActivity.java:239,384`、`…/dv/wifi/WifiDeviceActivity.java:49,129`、`…/dv/wifi/WifiDisconnectReceiver.java:83`、`…/OldUi/preview/presenter/ActionCameraPreviewPresenter.java:177`、`…/amba/base/IjkBaseActivity.java:46`、`…/amba/ui/preview/AmbaPreviewActivity.java:1230`、`com/gku/dashcam/icatch/utils/WifiAPUtil.java:18,56` | **断连检测主力**。这是我们要复刻的核心信号（谁掉了 AP 就判定断开） |
 | `com.android.music.musicservicecommand` | `com/gku/actioncam/sigmastar/widget/SSVideoView.java:583`、`com/gku/actioncam/widget/VideoView.java:588` | 耳机线控/第三方音乐广播的**接收**（锁屏播放控制），系统广播 |
 | `EVENT_TIME_LAPSE_STOP`、`CAMERA_CONNECT_CHANGE` | `_work/xtu_src/sources/m/mifan/acase/icatch/IcatchCase.java:586`、`m/mifan/acase/icatch/PropertyIdKt.java:7` | iCatch PTP 内部事件名，**不是 Android intent**（`signals-actions.tsv` 的误分桶） |
 | `CALLBACK_CHOOSE_CLICK` | `com/gku/amba/AmbaCameraFileActivity.java:35`、`…/amba/AmbaCameraPicFragment.java:317`、`…/amba/AmbaCameraRecordFragment.java:340`、`com/gku/hisi/Hisi_CameraFileActivity.java:22`、`…/hisi/Hisi_CameraPicFragment.java:286`、`…/hisi/Hisi_CameraRecordFragment.java:298` | `setResult` 用的 **extras key**，非 action |
-| `multicast.test` / `multicast.receive` | `com/icatchtek/control/core/CoreMulticast.java:21`、`com/icatchtek/control/core/feature/ICatchCameraAssistImpl$MulticastReceiver.java:320` | iCatch 组播内的标签串（配合 `234.168.168.168`，§4.4） |
+| `multicast.test` / `multicast.receive` | `com/icatchtek/control/core/CoreMulticast.java:21`、`_work/xtu_src/sources/com/icatchtek/control/core/feature/ICatchCameraAssistImpl.java:320` | iCatch 组播内的标签串（配合 `234.168.168.168`，§4.4） |
 
 #### (e) 一条**指向不存在 App** 的外跳（重要）
 
-`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/live/TelevisionActivity$ThumbClickListener.java:369`：
+`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/live/TelevisionActivity.java:369`：
 
 ```java
 intent.setClassName("com.gku.actioncam.hisilicon.android.videoplayer",
@@ -726,14 +751,15 @@ intent.setClassName("com.gku.actioncam.hisilicon.android.videoplayer",
 | 入口 | exported | 权限 | 无权限就能触发？ | 影响 |
 |---|---|---|---|---|
 | `com.gku.actioncam.hisilicon.dv.ui.WelcomeActivity` | true | 无 | ✅ 是 | 只能把 App 拉到前台，无参数注入点 |
-| `com.gku.gkucamplayer.GKUCamPlayer` | **true** | **无** | ✅ 是（显式组件名） | **唯一可被任意 App 拉起的厂商 Activity**；`screenOrientation=fullSensor`、无 filter。它内部会去连相机流 → 可被用来做「拒绝服务/界面劫持」，但**不能注入 IP/URL 参数**（无 `getIntent()` 关键参数解析） |
+| `com.gku.gkucamplayer.GKUCamPlayer` | **true** | **无** | ✅ 是（显式组件名） | **唯一可被任意 App 拉起、且会吃外部参数的厂商 Activity**。`_work/xtu_src/sources/com/gku/gkucamplayer/GKUCamPlayer.java:38` 取 `intent.getStringExtra("kPlayFilePath")`、`:39` 取 `kPlayFileName`，然后 **`:47` 原样塞进 `GSYVideoOptionBuilder.setUrl(this.url)`** 播放（`:139` 重播时同样）。配合 §3.1 的 `usesCleartextTraffic=true` 与 §3.2 的无 pin，**外部 App 可以让它播放任意 `http://` / `file://` / `rtsp://` 地址**（含 `:46` `PlayerFactory.setPlayManager(Exo2PlayerManager.class)`）。这是全清单里**实际意义最大的一个暴露面**（安全评估归 `docs/05`） |
 | `androidx.profileinstaller.ProfileInstallReceiver` | true | `android.permission.DUMP` | ❌ 否 | 系统/adb 专用 |
+| `com.bytedance.**.DouyinAuthorizeActivityProxy` ×3 + `…dy.sdk.stub.VideoAuthorizeActivityProxy` | **true** | **无** | ✅ 是（显式组件名，无 filter） | 抖音 OAuth 授权回跳页（§2.6 E3–E6）；与相机协议无关，但接收授权结果数据 |
 | `com.gku.base.BaseFileProvider`（`com.gku.xtugo.FileProvider`） | false + `grantUriPermissions=true` | — | ❌ 否（需本 App 主动授权） | 见 §6.2 的宽路径风险 |
 | 13 个 zeus/`servermanager` provider | false | — | ❌ 否 | 同 App 跨进程 |
-| 其余 200+ 组件 | false / 未写(=false) | 无 | ❌ 否 | — |
+| 其余 212 个组件 | false / 未写(=false) | 无 | ❌ 否 | — |
 | `com.gku.xtugo.MESSAGE_ACTION` / `DV_ISALIVE_ACTION` 广播 | — | 无 | ⚠️ **可被任意 App 监听**（`sendBroadcast` 不带 receiverPermission）；Android ≤32 也可被**伪造注入**（接收侧老 API 注册） | 泄露内容：相机推送的状态字符串（含录制计时/SD 卡状态） |
 
-**一句话结论**：`GKUCamPlayer` 是唯一真正的外部暴露面，其余都靠「无 intent-filter + 未写 exported」默认关闭；**内部广播是唯一的运行期信息泄露渠道**。
+**一句话结论**：厂商侧对外暴露只有 `GKUCamPlayer`（E2，**可注入任意播放 URL**）与启动器（E1，无参数）；另有 4 个抖音授权回调页导出且无权限，但属直播 SDK 设计所需。**内部广播是唯一的运行期信息泄露渠道**；全 App 无任何 DeepLink/scheme（§5.2）。
 
 ### 5.5 对我们互操作的影响
 
@@ -792,7 +818,7 @@ intent.setClassName("com.gku.actioncam.hisilicon.android.videoplayer",
 - 分享：`com/gku/base/utils/ShareUtils.java:17,45,49`（`SEND`/`SENDTO`/`SEND_MULTIPLE`）
 - 媒体分享：`com/gku/actioncam/hisilicon/dv/biz/HiShareFile.java:15,36`
 - 安装升级包：`com/gku/actioncam/sigmastar/upgrade/app/UpgradeViewManager.java:634`（`android.intent.action.INSTALL_PACKAGE`）、`:639`（`ACTION_VIEW`）
-- 相册分享：`com/gku/actioncam/sigmastar/newUi/album/Ui/Activity/ActivityNewPreview.java:327`、`…/CommonFragment.java:291,308`、`…/dv/localimage/AlbumPreviewActivity.java:192`
+- 相册分享：`com/gku/actioncam/sigmastar/newUi/album/Ui/Activity/ActivityNewPreview.java:327`、`com/gku/actioncam/sigmastar/newUi/album/Ui/Fragment/CommonFragment.java:291,308`、`…/dv/localimage/AlbumPreviewActivity.java:192`
 
 ### 6.3 库侧的 file_paths（对比）
 
@@ -801,7 +827,7 @@ intent.setClassName("com.gku.actioncam.hisilicon.android.videoplayer",
 
 ### 6.4 共享出来的具体路径
 
-由 `Common.java:170-176`（品牌段来自 `BuildConfig.APPLICATION_ID.split("\\.")[2]` = `xtugo`）与 §9.3 的缓存目录：
+由 `com/gku/actioncam/hisilicon/dv/biz/Common.java:170-176`（品牌段来自 `BuildConfig.APPLICATION_ID.split("\\.")[2]` = `xtugo`）与 §9.3 的缓存目录：
 
 | 路径 | 内容 |
 |---|---|
@@ -809,7 +835,7 @@ intent.setClassName("com.gku.actioncam.hisilicon.android.videoplayer",
 | `/DCIM/xtugo/{photo,video}/DashCam/` | iCatch 记录仪下载 |
 | `/mnt/sdcard/DCIM/ActionCam/`（`SSConstant.LOCAL_DOWNLOAD_DIR`，`_work/xtu_src/sources/com/gku/actioncam/sigmastar/SSConstant.java:10`） | 老 SigmaStar 下载根（**字面量就是 `/mnt/sdcard/` 前缀**，与 §6.2 `paths_base.xml` 的 `external-path` 同分区不同别名） |
 | `/mnt/sdcard/Android/data/com.gku.xtugo/cache/`（`SSConstant.LOCAL_THUMB_CACHE_DIR`，`_work/xtu_src/sources/com/gku/actioncam/sigmastar/SSConstant.java:11`） | 缩略图缓存 |
-| `/storage/emulated/0/DCIM/ActionCam/download/{a_aba,b_longji,c_mabuer,d_dive}.mp4` | 直播预览用的**内置演示视频**（硬编码 `file://`，`com/gku/actioncam/hisilicon/dv/live/TelevisionActivity$ThumbClickListener.java:367`） |
+| `/storage/emulated/0/DCIM/ActionCam/download/{a_aba,b_longji,c_mabuer,d_dive}.mp4` | 直播预览用的演示视频（`onClick` 里 4 条硬编码 `file://` 路径，`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/live/TelevisionActivity.java:367`；非 APK 内置，是预期已下载到该目录） |
 | `/mnt/sdcard/xtu_exception.txt`、`/mnt/sdcard/JKHardVersion/` | 崩溃/固件残留（`_work/re/xtugo/signals-fsPaths.tsv`） |
 
 ---
@@ -824,9 +850,9 @@ intent.setClassName("com.gku.actioncam.hisilicon.android.videoplayer",
 
 | `.so` | 内嵌端点/串 | 谁 `loadLibrary` | 判定与依据 |
 |---|---|---|---|
-| `lib/arm64-v8a/libAMapSDK_MAP_v10_0_600.so`（及 `armeabi-v7a` 同名） | `http://m5.amap.com`、`https://m5.amap.com/`、`http://m5.amap.com/ws/transfer/auth/map/indoor_maps`、`http://mpsapi.amap.com/`、`http://mpsapi.amap.com/ws/mps/vmap/`、`/ws/mps/rtt/`、`/ws/mps/smap`、`/ws/mps/lyrdata/ugc/`、`http://maps.testing.amap.com/ws/mps/vmap`、`/ws/mps/rtt` | 高德 Java SDK 自动（`com/amap/api/**`） | **B → 实际不成立**：轨迹页 `TrackActivity.java:389,497,667` 会加载地图，但清单无 apikey（§4.2）→ 瓦片请求在鉴权前就被拒。`maps.testing.amap.com` 是**测试域残留（C 死字符串）** |
+| `lib/arm64-v8a/libAMapSDK_MAP_v10_0_600.so`（及 `armeabi-v7a` 同名） | `http://m5.amap.com`、`https://m5.amap.com/`、`http://m5.amap.com/ws/transfer/auth/map/indoor_maps`、`http://mpsapi.amap.com/`、`http://mpsapi.amap.com/ws/mps/vmap/`、`/ws/mps/rtt/`、`/ws/mps/smap`、`/ws/mps/lyrdata/ugc/`、`http://maps.testing.amap.com/ws/mps/vmap`、`/ws/mps/rtt` | 高德 Java SDK 自动（`com/amap/api/**`） | **B → 实际不成立**：轨迹页 `com/gku/actioncam/hisilicon/dv/localimage/TrackActivity.java:389,497,667` 会加载地图，但清单无 apikey（§4.2）→ 瓦片请求在鉴权前就被拒。`maps.testing.amap.com` 是**测试域残留（C 死字符串）** |
 | `lib/arm64-v8a/libpanorama_vr.so`（16 MB，iCatch 全景 VR） | `https://www.googleapis.com/oauth2/v4/token`；`https://www.googleapis.com/youtube/v3/liveBroadcasts?part=id,snippet,status,contentDetails`、`…liveBroadcasts?id=%s`、`…liveBroadcasts?part=id,status&id=%s`、`…liveBroadcasts/bind?part=id,contentDetails&id=%s&streamId=%s`、`…liveBroadcasts/transition?broadcastStatus=%s&id=%s&part=id,snippet,contentDetails,status`、`…liveStreams?part=snippet,cdn`、`…liveStreams?part=id,status&id=%s`、`…liveStreams?part=id,snippet,status,cdn&id=%s`、`https://www.youtube.com/channel/`、`https://www.youtube.com/watch?v=`；另有 `com::icatch::live::Authenticator::{setUsernameAndPassword,assignUsernameAndPassword,resetUsernameAndPassword}`、`-----BEGIN PUBLIC KEY-----`、`#EXT-X-KEY:METHOD=AES-128,URI="%s"` | `_work/xtu_src/sources/com/icatchtek/pancam/core/jni/NativeLibraryLoader.java:31` | **B（仅 iCatch 记录仪 + 用户主动用 YouTube 直播时）**：Java 侧对偶物是 `_work/xtu_src/sources/com/gku/dashcam/icatch/sdkapi/PanoramaPhotoPlayback.java`、`…/sdkapi/PanoramaPreviewPlayback.java`、`…/dashcam/icatch/PanoramaSession.java:45`。XTU GO 运动相机路径**永不触发**；这是「官方 App 支持 YouTube 直播」的唯一证据，且**凭据由 native `Authenticator` 持有、APK 内无 OAuth client_id** |
-| `lib/arm64-v8a/libijkffmpeg.so` | 只有裸前缀 `http://`、`https://` 与 HLS/RTSP 查询模板（`?reason=authfailed`、`?reason=nosuchuser`、`?reason=needauth`、`?authmod=%s&user=%s`、`?authmod=%s&user=%s&challenge=%s&response=%s`、`?authmod=%s&user=%s&nonce=%s&cnonce=%s&nc=%s&response=%s`、`?localport=%d&ttl=%d&connect=%d&write_to_source=%d`、`?connect=1`、`?ttl=%d`、`?timeout=%d`） | 播放器（`com/gku/ffm/zqvideo/**`、`AmbaPreviewActivity.java:956` 的 `libijkplayer.so` 判断） | **A（本地）**：这些是 RTSP digest 认证的 URL 拼接模板 → 对应主文档 §3 的 `rtsp://…:554/livestream/12` 起流；**无公网域名** |
+| `lib/arm64-v8a/libijkffmpeg.so` | 只有裸前缀 `http://`、`https://` 与 HLS/RTSP 查询模板（`?reason=authfailed`、`?reason=nosuchuser`、`?reason=needauth`、`?authmod=%s&user=%s`、`?authmod=%s&user=%s&challenge=%s&response=%s`、`?authmod=%s&user=%s&nonce=%s&cnonce=%s&nc=%s&response=%s`、`?localport=%d&ttl=%d&connect=%d&write_to_source=%d`、`?connect=1`、`?ttl=%d`、`?timeout=%d`） | 播放器（`com/gku/ffm/zqvideo/**`、`com/gku/actioncam/amba/ui/preview/AmbaPreviewActivity.java:956` 的 `libijkplayer.so` 判断） | **A（本地）**：这些是 RTSP digest 认证的 URL 拼接模板 → 对应主文档 §3 的 `rtsp://…:554/livestream/12` 起流；**无公网域名** |
 | `lib/arm64-v8a/libusb_transport.so` | `http://libusb.info` | `_work/xtu_src/sources/com/icatchtek/control/core/jni/util/NativeLibraryLoader.java:30`、`com/icatchtek/pancam/core/jni/NativeLibraryLoader.java:28`、`com/icatchtek/reliant/core/jni/JUsbTransportBulk.java:20` | **C 死字符串**：libusb 版权文案 |
 | `lib/arm64-v8a/libmmkv.so` | 只有 OpenSSL 符号名（`openssl_aes_arm_{set_encrypt_key,set_decrypt_key,encrypt,decrypt}`） | MMKV 自用 | **无网络含义** |
 | 其余 26 个 `.so`（含 `libBugly_Native.so`、`libzeus_direct_dex.so`、`libzeusflipped.so`、`libreliant.so`、`libdepth_net_transport.so`、`libijkplayer.so`、`libmp3lame.so` 等） | **0 条 URL** | — | Bugly/字节的域名在 **Java/dex 侧**（§4.2），native 只有实现 |
@@ -842,10 +868,10 @@ intent.setClassName("com.gku.actioncam.hisilicon.android.videoplayer",
 | `assets/grs_sdk_server_config.json`（370 B） | `grs_base_url`: `https://grs.dbankcloud.com`、`.cn`、`.asia`、`https://grs.platform.dbankcloud.ru`、`.eu`；`grs_query_endpoint_1.0` = `/grs/1.0/%1$s/router`；`grs_query_endpoint_2.0` = `/grs/2.0/router`；`grs_query_timeout` = `2` | HMS GRS（`com/huawei/hms/framework/common/**`） | **B**：无 appId → 路由必然空（§4.2） |
 | `assets/grs_sdk_global_route_config_mlkit.json`（9,809 B） | `com.huawei.cloud.mlkithianalytics` 服务；区域 `China` / `Asia-African-Latin American` / `Europe` / `Russa`（原文拼写错误）→ `ROOT`: `https://metrics1.data.hicloud.com:6447`、`https://metrics-dra.dt.hicloud.com:6447`、`https://metrics5.data.hicloud.com:6447`、`https://metrics.dt.dbankcloud.ru` | HMS ML Kit 分析 | **B**：`mlkit` 只被文档扫描用（主文档 §8），端口 **6447** 是非标 HTTPS |
 | `assets/activate.html`（14,274 B） | 首行 `<!-- saved from url=(0166)https://sulu.cdkm.com/convert/file/st39hayqz35sf0ufmaxx0urxxe38dn9f/XTU%E7%9B%B8%E6%9C%BA%E8%AE%BE%E5%A4%87%E6%BF%80%E6%B4%BB%E7%94%A8%E6%88%B7%E5%8D%8F%E8%AE%AE.html -->` | **无 Java 引用**（`grep -rn "activate.html" com/gku` → 0） | **C 死资源**：⚠️ 但它泄露了一条事实——**XTU 的「设备激活用户协议」托管在第三方转换服务 `sulu.cdkm.com` 上，且文件 ID 是硬编码的 `st39hayqz35sf0ufmaxx0urxxe38dn9f`**。与主文档 §3.1 的 `getactivateinfo.cgi`/`setactivateinfo.cgi`（未解之谜 #7）同一业务 |
-| `assets/xtugo_privacy_cn.html`（25,282 B） | 第六节「第三方SDK收集和使用说明」表内 5 条外部链接：`https://lbs.amap.com/pages/privacy/`、`https://terms.aliyun.com/legal-agreement/terms/suit_bu1_ali_cloud/suit_bu1_ali_cloud202111292014_72878.html`、`https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/sdk-data-security-0000001050043971`、`https://privacy.qq.com/document/preview/fc748b3d96224fdb825ea79e132c1a56`、`https://developer.open-douyin.com/docs/resource/zh-CN/dop/operation-standard/service-protocol/douyin-sdk-privacy-policy` | `_work/xtu_src/sources/com/gku/module_my/ConstantsMy.java:11`（`XTUGO_PRIVACY_CN_ASSETS`）→ `WebViewUtils.loadUrlAndAssets(...)`，见 `ConstantsMy.java:19-22` 与 `_work/xtu_src/sources/com/gku/base/webview/WebViewUtils.java:201` | **A（网络优先、离线兜底）**：`ConstantsMy` 每个协议都成对给出 `https://device.gkuvision.com/static/*.html` + 同名 asset（`:10-17`）→ **断网也能弹协议**，这是我们做合规弹窗该照抄的模式 |
-| `assets/xtugo_privacy_en.html`（21,497 B） | `saved from url=(0055)https://www.gkuvision.com/special/xtugo_privacy_en.html` | `ConstantsMy.java:13` | **A**；⚠️ **注释泄露真实线上地址**是 `www.gkuvision.com/special/…`，而代码常量指向 `device.gkuvision.com/static/…` → 两个路径**不同**（见 §8 C-08） |
-| `assets/xtugo_useragreement_cn.html`（11,411 B） | `saved from url=(0061)https://www.gkuvision.com/special/xtugo_useragreement_cn.html` | `ConstantsMy.java:15` | **A** |
-| `assets/xtugo_useragreement_en.html`（14,326 B） | `saved from url=(0061)https://www.gkuvision.com/special/xtugo_useragreement_en.html` | `ConstantsMy.java:17` | **A** |
+| `assets/xtugo_privacy_cn.html`（25,282 B） | 第六节「第三方SDK收集和使用说明」表内 5 条外部链接：`https://lbs.amap.com/pages/privacy/`、`https://terms.aliyun.com/legal-agreement/terms/suit_bu1_ali_cloud/suit_bu1_ali_cloud202111292014_72878.html`、`https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/sdk-data-security-0000001050043971`、`https://privacy.qq.com/document/preview/fc748b3d96224fdb825ea79e132c1a56`、`https://developer.open-douyin.com/docs/resource/zh-CN/dop/operation-standard/service-protocol/douyin-sdk-privacy-policy` | `_work/xtu_src/sources/com/gku/module_my/ConstantsMy.java:11`（`XTUGO_PRIVACY_CN_ASSETS`）→ `WebViewUtils.loadUrlAndAssets(...)`，见 `com/gku/module_my/ConstantsMy.java:19-22` 与 `_work/xtu_src/sources/com/gku/base/webview/WebViewUtils.java:201` | **A（网络优先、离线兜底）**：`ConstantsMy` 每个协议都成对给出 `https://device.gkuvision.com/static/*.html` + 同名 asset（`:10-17`）→ **断网也能弹协议**，这是我们做合规弹窗该照抄的模式 |
+| `assets/xtugo_privacy_en.html`（21,497 B） | `saved from url=(0055)https://www.gkuvision.com/special/xtugo_privacy_en.html` | `com/gku/module_my/ConstantsMy.java:13` | **A**；⚠️ **注释泄露真实线上地址**是 `www.gkuvision.com/special/…`，而代码常量指向 `device.gkuvision.com/static/…` → 两个路径**不同**（见 §8 C-08） |
+| `assets/xtugo_useragreement_cn.html`（11,411 B） | `saved from url=(0061)https://www.gkuvision.com/special/xtugo_useragreement_cn.html` | `com/gku/module_my/ConstantsMy.java:15` | **A** |
+| `assets/xtugo_useragreement_en.html`（14,326 B） | `saved from url=(0061)https://www.gkuvision.com/special/xtugo_useragreement_en.html` | `com/gku/module_my/ConstantsMy.java:17` | **A** |
 | `assets/menu/ly_menu.json.json`（2,790 B，**文件名有重复 `.json.json`**） | 无 URL；结构 `{preferences:[{note:"模式", name_trn:"cam_setting_mode", cmd:"9001", ui:"UIList…"}]}` | 主文档 §6 已判定 **Java 0 引用** | **C 死资源**（4 位 `cmd` 协议仍未解，主文档未解之谜 #11） |
 
 其余 14 个文本 asset 与端点无关但值得记录：`ae/GNaviConfig.xml`（高德导航目录：`<data>./data_v6/</data>`）、`ae/res.ck`（33 B，内容是一个 **md5 串 `6a99be7e3b71ecdfbba3067b4547be1f`** → 高德资源包校验码）、`amap_sdk_shaders/*.glsl`（5 个）、`cncity.txt`（1,728 B 城市拼音对照）、`map_assets/styleiconslist.data`（1,662 B，56 个图标的索引清单）、`normalize.css`/`style.css`（协议页样式）、`litepal.xml`、`title_condition.html`（16,742 B 中文服务条款）与 `title_condition_en.html`（23,400 B 英文版）。
@@ -931,26 +957,31 @@ intent.setClassName("com.gku.actioncam.hisilicon.android.videoplayer",
 证据：`_work/xtu_res/resources/res/xml/network_security_config.xml` 全文 4 行、0 个 `<domain>`、0 个 `<pin>`、未声明 `<trust-anchors>`；且存在未被引用的 `_work/xtu_res/resources/res/xml/network_config_base.xml`（多一段 `debug-overrides/trust-anchors src="user"`）。
 **应改为**：补「厂商曾备过带用户 CA 的 debug 版本但没接上；最终生效版本无任何域名收口 → 公网 4 个后端与全部相机 HTTP 均可中间人」。
 
-### C-06 主文档 §1.2 / §1.4：导出的厂商组件口径
+### C-06 主文档 §1.2 / §1.4：导出组件口径（厂商范围内对，全 App 范围错）
 
-> 原文（§1.4 末注）：「`GKUCamPlayer` … 这是全 App 除启动器外唯一被导出的厂商组件」
+> 原文（§1.4 末注）：「`GKUCamPlayer`（`com.gku.gkucamplayer.GKUCamPlayer`）**exported=true** 且 `screenOrientation=fullSensor` —— 这是全 App 除启动器外唯一被导出的厂商组件，外部 App 可直接拉起它」
 
-核实：正确。补充可量化结论：`_work/re/xtugo/components.tsv` 全 219 行里 `exported=true` 只有 3 个（`WelcomeActivity`、`GKUCamPlayer`、`androidx.profileinstaller.ProfileInstallReceiver`），且 **`GKUCamPlayer` 没有任何 intent-filter** → 只能被**显式组件名**拉起；全 App 也**只有 3 个组件带 intent-filter**（`WelcomeActivity` LAUNCHER、`com.ss.android.socialbase.downloader.downloader.IndependentProcessDownloadService`、`ProfileInstallReceiver`）→ **不存在任何 DeepLink/scheme**（§5）。
+核实（`_work/re/xtugo/components.tsv` 第 4 列 grep `exported=true` → **7 行**）：
+- **厂商范围内正确**：219 个组件里 `com.gku.*` 导出的确实只有 2 个 —— `com.gku.actioncam.hisilicon.dv.ui.WelcomeActivity` 与 `com.gku.gkucamplayer.GKUCamPlayer`。
+- **全 App 范围内不完整**：另有 **4 个抖音 OAuth 授权回调页**也是 `exported=true` 且**无任何权限保护**（`com.bytedance.android.dy.sdk.stub.VideoAuthorizeActivityProxy`、`com.bytedance.android.openliveplugin.stub.activity.DouyinAuthorizeActivityProxy`、`…DouyinAuthorizeActivityLiveProcessProxy`（`process=:bytelive`）、`com.bytedance.android.openlive.broadcast.stub.activity.DouyinAuthorizeActivityProxy`），以及受 `android.permission.DUMP` 保护的 `androidx.profileinstaller.ProfileInstallReceiver`。逐条见 §2.6 E1–E7。
+- **更要紧的新证据**：`GKUCamPlayer` 不止「可被拉起」，它还**吃外部参数**——`_work/xtu_src/sources/com/gku/gkucamplayer/GKUCamPlayer.java:38-39` 读 `kPlayFilePath`/`kPlayFileName`，`:47` 与 `:139` 直接 `GSYVideoOptionBuilder.setUrl(this.url)` 交给 ExoPlayer（`:36` `PlayerFactory.setPlayManager(Exo2PlayerManager.class)`）播放 → 任意 App 可让它拉任意 `http://`/`file://`/`rtsp://`。§5.4 已按此改写。
+
+**应改为**：「唯一被导出的**厂商**组件（全 App 共 7 个导出：2 厂商 + 4 抖音授权回跳 + 1 `ProfileInstallReceiver`）；且 `GKUCamPlayer` 会把 `getStringExtra("kPlayFilePath")` 原样交给播放器 → 属**可注入 URL 的导出 Activity**，不是单纯的界面劫持」。
 
 ### C-07 主文档 §8 高德行：「清单没给 key」——**结论对，但论据是错的**
 
 > 原文（§8 高德行 + §10 #10）：「无 `com.amap.api.v2.apikey` meta-data；`manifest.md` §7 meta-data 表为空」
 
 实测：① 高德确实无 key（`grep com.amap.api.v2.apikey` 于原始清单 → 0 命中，全树亦无 `setApiKey`）→ **结论成立**。
-② 但「manifest 里没有任何 meta-data」**是取证工具的漏采**：`_work/re/xtugo/manifest.md:418-425` 的「全应用 meta-data」表只收了 7 条**组件级**，**漏掉了 19 条 `<application>` 级**（`_work/xtu_res/resources/AndroidManifest.xml:123, 272, 599, 646, 649, 785, 788, 791, 1010, 1013, 1116, 1123, 1184, 1187, 1190, 1193, 1196, 1203, 1206`）。全表见本附录 §3.3。
-③ 漏采里最要紧的两条：`UMENG_CHANNEL=product_GooglePlay`（→ 直接推翻 §8 的「必然抛异常」，见 C-09）与 `com.google.android.geo.API_KEY=AIzaSyAu4dYAjvpBVwWJtUKB19MEnQ5MsKn2bPE`（→ 说明这码原本接的是 **Google 地图**，与 `LocationUtil` 用 Play Services 一致；后来才叠了高德，两套并存）。
+② 但「manifest 里没有任何 meta-data」**是取证工具的漏采**：`_work/re/xtugo/manifest.md:418-428` 的「全应用 meta-data」表只收了 7 条**组件级**，**漏掉了 19 条 `<application>` 级**（`_work/xtu_res/resources/AndroidManifest.xml:123, 272, 599, 646, 649, 785, 788, 791, 1010, 1013, 1116, 1123, 1184, 1187, 1190, 1193, 1196, 1203, 1206`）。全表见本附录 §3.3。
+③ 漏采里最要紧的两条：`UMENG_CHANNEL=product_GooglePlay`（→ 直接推翻 §8 的「必然抛异常」，见 C-08）与 `com.google.android.geo.API_KEY=AIzaSyAu4dYAjvpBVwWJtUKB19MEnQ5MsKn2bPE`（→ 说明这码原本接的是 **Google 地图**，与 `LocationUtil` 用 Play Services 一致；后来才叠了高德，两套并存）。
 ④ 另有 4 组**明文 zeus 插件 appKey/appSecretKey**（§3.3 M4/M6/M7/M9）。
 
-**应改为**：把「manifest 里没有任何 meta-data」改成「manifest 的 `<application>` 级 meta-data 有 19 条（清单工具漏采），但**其中没有高德 key、没有 HMS appId、没有 QQ/微信 AppID**」；§8 高德行补「原生 SDK 侧还有 `m5.amap.com`/`mpsapi.amap.com` 瓦片口（§7.1），Java 侧真实调用在 `TrackActivity.java:389,497,667`」。
+**应改为**：把「manifest 里没有任何 meta-data」改成「manifest 的 `<application>` 级 meta-data 有 19 条（清单工具漏采），但**其中没有高德 key、没有 HMS appId、没有 QQ/微信 AppID**」；§8 高德行补「原生 SDK 侧还有 `m5.amap.com`/`mpsapi.amap.com` 瓦片口（§7.1），Java 侧真实调用在 `com/gku/actioncam/hisilicon/dv/localimage/TrackActivity.java:389,497,667`」。
 
 ### C-08 主文档 §8/§11：`UMENG_CHANNEL`「必然抛异常」
 
-> 原文（§8 友盟行）：「但 manifest 里 **没有任何 meta-data**，`UMENG_CHANNEL` 必然抛异常 → `NameNotFoundException` 被包成 RuntimeException（潜在崩溃点）」；§11 倒数第 2 行同引 `CrashReportManager.java:32`
+> 原文（§8 友盟行）：「但 manifest 里 **没有任何 meta-data**，`UMENG_CHANNEL` 必然抛异常 → `NameNotFoundException` 被包成 RuntimeException（潜在崩溃点）」；§11 倒数第 2 行同引 `com/gku/crashhandle/CrashReportManager.java:32`
 
 实测（文件全文 59 行，`_work/xtu_src/sources/com/gku/crashhandle/CrashReportManager.java`）：
 - `:24` `initCrashReport(Context)`；`:26` `new CrashReport.UserStrategy(context)`；`:27-29` `android_id` 同当 userId/deviceID；`:30` `setDeviceModel`；`:31-32` `setAppPackageName`；
@@ -963,7 +994,7 @@ intent.setClassName("com.gku.actioncam.hisilicon.android.videoplayer",
 
 > 原文（§8 末段）：「`https://device.gkuvision.com/static/…`（`_work/xtu_src/sources/com/gku/module_my/ConstantsMy.java:10-16`）」
 
-证据：assets 里的协议 HTML 顶部注释暴露了**第二套**线上地址 `https://www.gkuvision.com/special/{xtugo_privacy_en,xtugo_useragreement_cn,xtugo_useragreement_en}.html`（`_work/re/xtugo/assets-content.md:1957`、`:2078`、`:2136`），与代码常量 `device.gkuvision.com/static/…`（`_work/xtu_src/sources/com/gku/module_my/ConstantsMy.java:10,12,14,16`）**子域和路径都不同**。并且 `ConstantsMy.java:11,13,15,17` 为每个协议都配了一个 asset 文件名，走 `_work/xtu_src/sources/com/gku/base/webview/WebViewUtils.java:201` 的 `file:///android_asset/<name>` 兜底（调用者 `ConstantsMy.java:19-27` 的 `loadPrivacy`/`loadUserAgreement`）。
+证据：assets 里的协议 HTML 顶部注释暴露了**第二套**线上地址 `https://www.gkuvision.com/special/{xtugo_privacy_en,xtugo_useragreement_cn,xtugo_useragreement_en}.html`（`_work/re/xtugo/assets-content.md:1957`、`:2078`、`:2136`），与代码常量 `device.gkuvision.com/static/…`（`_work/xtu_src/sources/com/gku/module_my/ConstantsMy.java:10,12,14,16`）**子域和路径都不同**。并且 `com/gku/module_my/ConstantsMy.java:11,13,15,17` 为每个协议都配了一个 asset 文件名，走 `_work/xtu_src/sources/com/gku/base/webview/WebViewUtils.java:201` 的 `file:///android_asset/<name>` 兜底（调用者 `com/gku/module_my/ConstantsMy.java:19-27` 的 `loadPrivacy`/`loadUserAgreement`）。
 **应改为**：补「协议页有 3 个地址位：`www.gkuvision.com/special/…`（真实线上，仅出现在 asset 注释）、`device.gkuvision.com/static/…`（代码常量）、`assets/xtugo_*.html`（离线兜底，**网络优先**）」。
 
 ### C-10 主文档 §1.3 表 #33 与 §1.4：`READ_LOGS` 判「死声明」与 `LogService` 职责自相矛盾
@@ -984,9 +1015,9 @@ intent.setClassName("com.gku.actioncam.hisilicon.android.videoplayer",
 
 ### C-12 主文档 §8「高德」行的证据可加强
 
-> 原文：「`TrackActivity.java:23-32` 用 `AMap/MapView/CoordinateConverter`」
+> 原文：「`com/gku/actioncam/hisilicon/dv/localimage/TrackActivity.java:23-32` 用 `AMap/MapView/CoordinateConverter`」
 
-补充到「真会发请求」级别：`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/localimage/TrackActivity.java:389`（`gaodeAMap.addMarker`）、`:497`（`animateCamera`）、`:667`（`addPolyline`）；且 native `libAMapSDK_MAP_v10_0_600.so` 内嵌 `m5.amap.com`/`mpsapi.amap.com` 瓦片口（§7.1）。`_work/re/xtugo/manifest.md:418-425` 的 meta-data 表 7 行全属库，确认无 key。
+补充到「真会发请求」级别：`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/localimage/TrackActivity.java:389`（`gaodeAMap.addMarker`）、`:497`（`animateCamera`）、`:667`（`addPolyline`）；且 native `libAMapSDK_MAP_v10_0_600.so` 内嵌 `m5.amap.com`/`mpsapi.amap.com` 瓦片口（§7.1）。`_work/re/xtugo/manifest.md:418-428` 的 meta-data 表 7 行全属库，确认无 key。
 
 ---
 
@@ -997,6 +1028,6 @@ intent.setClassName("com.gku.actioncam.hisilicon.android.videoplayer",
 | U1 | 10 个幽灵是 R8 删的还是源码里就注释掉了 | 需要 `classes*.dex` 的原始 `dexdump` 比对（本附录用 `classes-all.tsv` 已足以判定「不在 dex」） |
 | U2 | `com.my.AppSettingActivity` 究竟属于哪个 SDK | 该类无 meta-data、无 filter，包名独立；需继续读 `com/my/**` 源码链 |
 | U3 | `signals-hosts.tsv` 的生成规则 | 它的 501 条**不含任何公网域名**（`grep gkuvision\|amap\|aliyuncs\|bugly\|douyin\|volc` 全 0），实为「点号标识符」桶。因此 §4 的域名是从 `own-literals.tsv` + 库源码 `"http…"` 字面量 + `natives-strings.tsv` 重建的，**与主文档引用的 hosts.tsv 不同源**，需要在 `tools/re/` 里补一个真正的域名抽取器 |
-| U4 | Bugly 的 `setAppChannel(null)` 是否真的静默通过 | 需运行期日志；静态只能确认清单无 meta-data（`_work/re/xtugo/manifest.md:418-425`） |
+| U4 | `applicationInfo.metaData` 是否可能为 `null` → `com/gku/crashhandle/CrashReportManager.java:40` 抛 **NPE**（不被 `:49` 的 `catch(NameNotFoundException)` 捕获） | 本包 `_work/xtu_res/resources/AndroidManifest.xml:123` 声明了 `UMENG_CHANNEL`，故当前不会；需在「去掉全部 app 级 meta-data」的重打包上验证 |
 | U5 | 高德无 key 时到底是「白屏」还是「崩溃」 | 装机复现（主文档未解之谜 #10 同一件事，本附录只提供端点与调用行） |
 | U6 | `libpanorama_vr.so` 的 YouTube OAuth `client_id` 在哪 | 库内只有 `Authenticator::setUsernameAndPassword` 与 URL 模板（§7.1）；Java 侧未见传参 → 可能在 iCatch 固件侧或未编译进本 App 的调用路径 |

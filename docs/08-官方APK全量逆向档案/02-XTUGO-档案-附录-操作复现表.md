@@ -88,10 +88,10 @@
 | 9 | 反向配网（相机去连手机热点，直播用） | `sendPacket(gatt, ch, String.format("ssid:%s;pwd:%s;", ssid, pwd), "R006")`；`BluetoothLive` 里写死 `sendWifi(…, "gkuvision-5G", "gku88888", …, "R006")` | `…/BLEConnectUtils.java:278`；`_work/xtu_src/sources/com/gku/module_camera/bluetooth/BluetoothLive.java:92,188` |
 | 10 | 直播参数下发 | `String.format("live_type:%s;res:%d;fps:%d;bitrate:%d;rtmp_url:%s;", …)` 标号 `R007` | `…/BLEConnectUtils.java:285` |
 | 11 | 其它命令 | `R004`（`:376`）、`R008_<code>`（`:295`）、`R009`（`:212`，回包前缀 `R009_cap:` → 能力位，`:783`） | 同文件 |
-| 12 | 分包 | `CHUNK_SIZE = 100`；单次 `writeCharacteristic` 超时 `TIMEOUT_MS = 1000` | `…/BLEConnectUtils.java:42-44` |
+| 12 | 分包 | `CHUNK_SIZE = 100`；单次 `writeCharacteristic` 超时 `TIMEOUT_MS = 1000` | `…/BLEConnectUtils.java:43-45` |
 | 13 | 权限门 | 每次 `writeCharacteristic` 前过 `BLEConnectUtils.checkBlePermission()` | `…/BLEConnectUtils.java:910-918` |
 
-> **冲突提示（与 `docs/07` 无冲突，与主文档 §2.4 有补充）**：`docs/07 §1.6 坑3` 说首页自动弹窗硬编码只放行 `xtu_s7pro`（`BaseBTPopupActivity.java:93`）——本附录确认：**BLE 链路只对 S7Pro 系列验证过**，不是所有 XTU 机型都有 BLE 配网。
+> **冲突提示（与 `docs/07` 无冲突，与主文档 §2.4 有补充）**：`docs/07 §1.6 坑3` 说首页自动弹窗硬编码只放行 `xtu_s7pro`（`_work/xtu_src/sources/com/gku/actioncam/sigmastar/newUi/deviceAdd/base/BaseBTPopupActivity.java:93`）——本附录确认：**BLE 链路只对 S7Pro 系列验证过**，不是所有 XTU 机型都有 BLE 配网。
 
 ### 1.5 探测顺序与识别成功后的信息拉取
 
@@ -166,11 +166,11 @@
 | 序 | 请求 | 精确参数 | 判据 | 出处 |
 |---|---|---|---|---|
 | 1 | `GET BASE + "record.cgi"` 系？ **否** | 预览**不需要**任何 CGI 起流命令，相机常驻推流 | — | `SSCommandUtil` 无 start stream 方法 |
-| 1' | 首批参数（连上后自动，见 §1.5 步 10） | `getallworkmode.cgi` / `getbatterycapacity.cgi` / `getsdstate.cgi` / `setsystime.cgi?-time=yyyyMMddHHmmss` | body 首行 `Success`（`SSResponseParse.SS_SUCCESS="Success"`，`_work/xtu_src/sources/com/gku/actioncam/sigmastar/data/SSResponseParse.java:41`） | `…/HisiPreviewModel.java:62-68,221` |
+| 1' | 首批参数（连上后自动，见 §1.5 步 10） | `getallworkmode.cgi` / `getbatterycapacity.cgi` / `getsdstate.cgi` / `setsystime.cgi?-time=yyyyMMddHHmmss` | body 首行 `Success`（`SSResponseParse.SS_SUCCESS="Success"`，`_work/xtu_src/sources/com/gku/actioncam/sigmastar/data/SSResponseParse.java:41`） | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/model/HaisiPreviewModel.java:62-68,221` |
 | 2 | 遮罩图 + 翻转预处理 | `getsecondmenuitem.cgi?-workmode=<mode>&-name=FLIP` 的值决定 `preview_cover` 旋转，取值 `"90°"`/`"180°"`/`"270°"`（**带度数符号与引号**，`TextUtils.equals` 精确比） | 非空 | `…/HisiActionCameraPreviewActivity.java:720-753` |
 | 3 | 延迟 `time` ms 后建流 | `initIjkVideoView(0)`（`event<=0`）或 `initIjkVideoView(1000)`（`event==268632078`） | — | `…/ActionCameraPreviewPresenter.java:731-739` |
 | 4 | `IjkMediaPlayer.loadLibrariesOnce(null)` + `native_profileBegin("libijkplayer.so")` | 抛 `UnsatisfiedLinkError` 则 `isInitIjkPlayer=false`，**继续走 setVideoPath**（静默降级） | — | `…/HisiActionCameraPreviewActivity.java:769-774` |
-| 5 | `preview_texture_video_view.setVideoPath("rtsp://192.168.0.1:554/livestream/12", <isAmba>, flipValue)`；随后 `requestFocus()` + `start()` + `hasStartPlay=true`；整个起流块被 `postDelayed(..., Math.max(time, 300))` 包住 → **最小延迟 300ms** | `onInfo(what==3)`（`MEDIA_INFO_VIDEO_RENDERING_START`） | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/ui/activity/HisiActionCameraPreviewActivity.java:828,833-837,839-841,843`；`…/HisiActionCameraPreviewActivity.java:784` |
+| 5 | `preview_texture_video_view.setVideoPath("rtsp://192.168.0.1:554/livestream/12", <isAmba>, flipValue)` | 随后 `requestFocus()` + `start()` + `hasStartPlay=true`；整个起流块被 `postDelayed(..., Math.max(time, 300))` 包住 → **最小延迟 300ms** | `onInfo(what==3)`（`MEDIA_INFO_VIDEO_RENDERING_START`） | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/ui/activity/HisiActionCameraPreviewActivity.java:828,833-837,839-841,843`；`…/HisiActionCameraPreviewActivity.java:784` |
 
 ### 2.5 失败重试（两条独立看门狗，数值照抄）
 
@@ -193,16 +193,16 @@
 | 取值枚举 | `"Big"` / `"Small"`，默认 `"Small"`；非法值一律改写为 `"Small"` | `…/dv/biz/Prefer.java:32`；`…/dv/biz/DV.java:119-132`、`:138` |
 | 写入点 | 设置页 `PreferenceScreen`（A 套老方言），`persistent="false"` | 主文档 §4.3 `preview_video` 行 |
 | 生效方式 | 仅当 `isPreviewBigBitRate()` 被调用（A 套 URL）→ **B/C 套不读，切了也没有报文变化** | `…/dv/biz/DV.java:319-341` |
-| 下载码流是另一个开关 | `Common.KEY_DOWNLOAD_VIDEO = "download_video"`，同样 `Big`/`Small`，默认 `Small`（`DV.isDownloadBigVideo()`，`…/dv/biz/DV.java:105-118`） | 见 §7.4 |
+| 下载码流是另一个开关 | `Common.KEY_DOWNLOAD_VIDEO = "download_video"`，同样 `Big`/`Small`，默认 `Small`（`DV.isDownloadBigVideo()`，`…/dv/biz/DV.java:104-118`） | 见 §7.4 |
 
 ### 2.7 预览页其它动作
 
 | 动作 | 报文 | 出处 |
 |---|---|---|
-| 画面旋转 | `GET BASE + "getcurrotation.cgi"` → 解析键 `rotation`（`Key.ROTATION`）；解析失败返回 `0` | `SSCommandUtil.java:27,173-175`；`…/HisiPreviewModel.java:249-261,279` |
+| 画面旋转 | `GET BASE + "getcurrotation.cgi"` → 解析键 `rotation`（`Key.ROTATION`）；解析失败返回 `0` | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/SSCommandUtil.java:27,173-175`；`_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/model/HaisiPreviewModel.java:249-261,279` |
 | 镜像 | 快设项 `FLIP`（`getsecondmenuitem`/`setcurparameter`） | 主文档 §4.2 |
-| 退出快录（Quick Video） | `GET BASE + "exitquickrec.cgi"`（**无 query**） | `SSCommandUtil.java:12,157-159`；`…/HisiPreviewModel.java:295` |
-| 快故事加时长 | `GET BASE + "record.cgi?-cmd=Storie"`（名字以 `S7PRO`/`S7PRO MAX` 结尾）否则 `?-cmd=Quick Stories` | `SSCommandUtil.java:177-184` |
+| 退出快录（Quick Video） | `GET BASE + "exitquickrec.cgi"`（**无 query**） | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/SSCommandUtil.java:12,157-159`；`_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/model/HaisiPreviewModel.java:295` |
+| 快故事加时长 | `GET BASE + "record.cgi?-cmd=Storie"`（名字以 `S7PRO`/`S7PRO MAX` 结尾）否则 `?-cmd=Quick Stories` | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/SSCommandUtil.java:177-184` |
 | 自动旋转开关（手机侧） | `Settings.System.canWrite()` + `putInt("accelerometer_rotation", …)`，**与相机无关** | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/ui/activity/AmbaActionCameraPreviewActivity.java:1215-1222`；`…/HisiActionCameraPreviewActivity.java:1226-1233` |
 | 预览失败提示（`event==10700000`） | Toast `R.string.ss_sd_out` = 默认 `SD card not detected`／中文「未检测到SD卡」 + `hideSdCardUI()` | `…/HisiActionCameraPreviewActivity.java:1122-1133` |
 | 插卡提示（`event==11700006`） | Toast `R.string.ss_sd_in` = 默认 `SD card detected`／中文「检测到SD卡」 | 同上 |
@@ -262,14 +262,14 @@
 | 20 | `ACTION_VIDEO_SLOW_STOP` | `/record2.cgi?&-type=slow&-cmd=stop` |
 | 21 | `ACTION_BUTT` | （哨兵，数组无此项，`cmd<21` 已排除） |
 
-**A 套是唯一「判据看 body」的实现**（`Command.java:37-52`）：
+**A 套是唯一「判据看 body」的实现**（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Command.java:37-52`）：
 - body 含 `SvrFuncResult` → 取 `substring(15, lastIndexOf("\""))`；该子串等于 `"sd is not ready"` → `Common.ERR_SD_ERROR`；等于 `"sd is full"` → `Common.ERR_SD_FULL`；否则 `parseInt` 当错误码（**这就是真机上 `0xFFFFF752` 那类值的来源，注意它按十进制 parse 会抛 `NumberFormatException` → `errorCode=-1`**）。
 - body 不含 `SvrFuncResult` 且 `statusCode==200` → `returnCode=0, errorCode=0`。
 - 非 200 → `returnCode=-1`。
 - `substring(15,…)` 是**按 `"var SvrFuncResult="` 长度硬数出来的**（15 字符），任何前缀变化都会切错。
 
 **B 套复用 A 套表时的 `executeCommand` 变形**（重要，容易漏）：`HaisiCommandUtil.executeCommand(cmd)` 在 `CameraParameters.IsNewAPP && cmd >= 10 && cmd != 10` 时把 `cmd` 折成 `cmd % 2 == 0 ? 1 : 0` —— 也就是说 **NewAPP 下第 11/12（common 启停）、13/14（loop）、15/16（timelapse）、17/18（recsnap）、19/20（slow）全部退化成 `1`（start）或 `0`（stop）**，落到 `/record.cgi?&-cmd=start` / `/record.cgi?&-cmd=stop`。
-出处：`_work/xtu_src/sources/com/gku/actioncam/sigmastar/HaisiCommandUtil.java:53-58`；同样的折叠逻辑在 `…/dv/biz/DV.java:347-354`（`executeCommand(int)`）。
+出处：`_work/xtu_src/sources/com/gku/actioncam/sigmastar/HaisiCommandUtil.java:53-58`；同样的折叠逻辑在 `…/dv/biz/DV.java:348-355`（`executeCommand(int)`）。
 例外：`cmd == 10` 保持原义（`exitquickrec.cgi`）。
 另有机型例外：`type == Common.SENSOR_34220`（`"34220"`，`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Common.java:145`）时 `Normal Video` 等 6 个模式的 `commandOperation` **恒返回索引 0**（即永远只发 start），见 `…/HaisiPreviewModel.java:342-351`。
 
@@ -282,7 +282,7 @@
 | 动作 | 报文 | 由谁决定 type | 出处 |
 |---|---|---|---|
 | 拍照（起） | `GET BASE + "photo.cgi?-type=photo&-cmd=start"` | `SSExchangeWorkMode.getPhotoType()` **写死返回 `"photo"`** —— 也就是说 B 套所有拍照模式发的都是同一个 type，连拍/延时的差异**全靠先切 `workmode`**，不靠 type | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/SSCommandUtil.java:149-151`；`…/util/SSExchangeWorkMode.java:37-39`；调用点 `…/OldUi/preview/model/SigmastartPreviewModel.java:220` |
-| 拍照（停） | `GET BASE + "photo.cgi?-type=photo&-cmd=stop"` | 同上 | `SSCommandUtil.java:153-155`；`…/SigmastartPreviewModel.java:233` |
+| 拍照（停） | `GET BASE + "photo.cgi?-type=photo&-cmd=stop"` | 同上 | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/SSCommandUtil.java:153-155`；`…/SigmastartPreviewModel.java:233` |
 | 海思预览页实际路径 | 经 `commandOperation()` → `getexecuteCommand(i)` → **A 套 `photo.cgi?&-type=…`**（带 `&`，与 B 套 `?` 起手的写法不同） | `i ∈ {2,3,4,5,6,7}` | `…/HaisiPreviewModel.java:360-371`、`:383` |
 
 > **静态冲突点**：同一 APK 内 `photo.cgi` 有两套拼法 —— B 套 `SSCommandUtil.startPhoto()` 是 `photo.cgi?-type=photo&-cmd=start`，A 套表是 `photo.cgi?&-type=photoburst`（`&` 起手的空首参 + 不同 type 串）。海思 NewAPP 机型走的是 **A 套表**（因为 `HaisiPreviewModel.commandOperation` → `getexecuteCommand`），所以 §3.2 的 type 枚举才是实际会出现在网络上的：`photo`、`photoburst`、`phototimelapse`、`phototimer`、`continuous`。
@@ -306,7 +306,7 @@
 | `"Quick Video"` | 12 / 0（同 `NormalVideo` 规则） | 11 / 0 | 同第一行 |
 | 其它 | -1 | -1 | `getexecuteCommand(-1)` → 数组越界被 catch → **返回空串 `""`** → `DeviceHttpUtils.get("")`（静默失败） |
 
-模式常量定义：`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/config/CameraParameters.java:46-74`（`NormalPhoto="NormalPhoto"`、`TimerPhoto="TimerPhoto"`、`Burst="Burst"`、`PhotoLapse="PhotoLapse"`、`NormalVideo=Common.WORK_MODE_NOMAL_VIDEO="NormalVideo"`（**拼写就是 `NOMAL`**，`…/dv/biz/Common.java:162`）、`CarMode="CarMode"`、`VideoLapse="VideoLapse"`、`VideoPhoto="VideoPhoto"`、`VideoLoop="Loop Video"`、`SlowRec="SlowRec"` + `New*` 系列等于 `SSExchangeWorkMode.SS_*`）。
+模式常量定义：`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/config/CameraParameters.java:46-74`（`NormalPhoto="NormalPhoto"`、`TimerPhoto="TimerPhoto"`、`Burst="Burst"`、`PhotoLapse="PhotoLapse"`、`NormalVideo=Common.WORK_MODE_NOMAL_VIDEO="NormalVideo"`（**拼写就是 `NOMAL`**，`…/dv/biz/Common.java:152`）、`CarMode="CarMode"`、`VideoLapse="VideoLapse"`、`VideoPhoto="VideoPhoto"`、`VideoLoop="Loop Video"`、`SlowRec="SlowRec"` + `New*` 系列等于 `SSExchangeWorkMode.SS_*`）。
 `SSExchangeWorkMode` 15 个串逐字（`_work/xtu_src/sources/com/gku/actioncam/sigmastar/util/SSExchangeWorkMode.java:11-25`）：`"Burst Photo"`、`"Car Looping"`、`"Lapse Photo"`、`"Timelapse Photo"`、`"Timelapse Video"`、`"Long Exposure"`、`"Normal Photo"`、`"Normal Video"`、`"Quick Stories"`、`"Quick Video"`、`"Raw Photo"`、`"Slow Motion"`、`"Timing Photo"`、`"Under Water"`、`"Video and Photo"`。
 
 ### 4.3 慢动作 / 延时的「参数」而非「命令」
@@ -361,7 +361,7 @@
 | 状态读取 | `getcurallinfo.cgi` → `SSystemWorkState(mode,state,event,pasttime)`，`state` 常量 `CAMERA_STATE_WORKING_STR=20` / `CAMERA_STATE_WORKING_END=21` | `…/HaisiPreviewModel.java:240-246`；`…/dv/ui/config/CameraParameters.java:23-24` |
 | 按状态算命令 | `commandOperation()`：视频类模式在 `state==20` 时给出的是 **stop** 索引（12/14/16/18/20），非 20 才是 start | `…/HaisiPreviewModel.java:340-382` |
 | 快门/录像按钮重绘 | `updateCommandUI(SSystemWorkState)` 每个分支首行都带 `&& sSystemWorkState.getState() == 20`/`== 21` 条件；`enableActionButton(true)` 只在 `updateOperateCommandUI` 末尾统一放开 | `…/HisiActionCameraPreviewActivity.java:1122-1133`、`:1135-1230` |
-| 模式弹层 | `SSModeSelectPopupWindow` 只在 `curWorkMode != null && allWorkMode != null` 时才允许弹出；弹出后选中项要等 `Success` 才 dismiss（`:280-284`）。**真正的「禁止」是：`showModeSelectPopupWindow` 前 UI 已根据 `workState.getState()==20` 把入口按钮置灰/不可点**（`AmbaActionCameraPreviewActivity.java:484`、`:150-186` 的 `updateOperateCommandUI` 驱动） | `…/ActionCameraPreviewPresenter.java:274-326`；`…/AmbaActionCameraPreviewActivity.java:484` |
+| 模式弹层 | `SSModeSelectPopupWindow` 只在 `curWorkMode != null && allWorkMode != null` 时才允许弹出；弹出后选中项要等 `Success` 才 dismiss（`:280-284`）。**真正的「禁止」是：`showModeSelectPopupWindow` 前 UI 已根据 `workState.getState()==20` 把入口按钮置灰/不可点**（`_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/ui/activity/AmbaActionCameraPreviewActivity.java:484`、`:150-186` 的 `updateOperateCommandUI` 驱动） | `…/ActionCameraPreviewPresenter.java:274-326`；`…/AmbaActionCameraPreviewActivity.java:484` |
 | 设置页 | 快设/参数写也是同一条 `setcurparameter.cgi`，App 侧**没有**再读 `state` 做门控 → 录像中改参数是「客户端不拦、固件拒」。真机结论「官方是客户端直接禁止」**只对「切模式」成立**，对「改参数」不成立（静态无门控代码），冲突点见 §12 | `…/HttpProxy.java:241-256` |
 | 定时拍进行中 | `mPhotoing` / `mTimingPhotoStopped` 两个 Activity 字段参与判断 | `…/HisiActionCameraPreviewActivity.java:1136-1137`、`:1188-1191` |
 
@@ -389,7 +389,7 @@
 | 3 写（模式内） | `GET BASE + "setcurparameter.cgi?-workmode=" + (TYPE==0 ? DV.Strmode : "System") + "&-name=" + <项> + "&-value=" + <值>`，整串空格→`%20` | **判据只看 200**（`doForSuccess()==0`） | `handler.sendEmptyMessage(1)` | `…/dv/net/HttpProxy.java:241-256` |
 | 3' 写（系统项） | `GET BASE + "setcurparameter.cgi?-workmode=System&-name=" + <项> + "&-value=" + <值>`；项名与值**各自** `Uri.encode(x,"utf-8")` | 只看 200 | 同上 | `…/HttpProxy.java:258-272` |
 | 4 写成功后 | `EventBus.post(MessageEventModel(TYPE==0?3:4))` + `setPosition(position)` + `setSelectValue(value)` → 列表局部刷新；**不回读设备** | — | — | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/data/SetDataUIUtils.java:186-204` |
-| 5 快设条（预览页浮层） | `getsecondmenuitem.cgi?-workmode=<模式>&-name=<快设项>` → `SSResponseParse.parseGetSecondItem` | 快设项按模式定：`Timing Photo`→`Self-Timer`、`Timelapse Photo`/`Timelapse Video`→`Time Lapse`、`Burst Photo`→`Number`、`Quick Stories`→`Duration`；其余无快设 | `dismissFastSetting()` | `SSExchangeWorkMode.java:41-59,61-66`；`…/HisiPreviewModel.java:71-83` |
+| 5 快设条（预览页浮层） | `getsecondmenuitem.cgi?-workmode=<模式>&-name=<快设项>` → `SSResponseParse.parseGetSecondItem` | 快设项按模式定：`Timing Photo`→`Self-Timer`、`Timelapse Photo`/`Timelapse Video`→`Time Lapse`、`Burst Photo`→`Number`、`Quick Stories`→`Duration`；其余无快设 | `dismissFastSetting()` | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/util/SSExchangeWorkMode.java:41-59,61-66`；`_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/model/HaisiPreviewModel.java:71-83` |
 
 **UI 类型推断（决定渲染成开关还是弹窗）** —— 逐条：
 
@@ -426,7 +426,7 @@
 | Audio（`audio_codec`，CheckBox） | `getaudioencode.cgi?` → `enable`（`"1"`→true/`"0"`→false/其它→null） | `setaudioencode.cgi?&-enable=%d` | 1 / 0 | `…/Setting.java:219,223`；`…/dv/net/HttpProxy.java:94-107` |
 | 画面翻转（`image_upsidedown`） | `getflip.cgi?` → `enable` | `setflip.cgi?&-enable=%d` | 1 / 0 | `…/Setting.java:145,149` |
 | 时间水印（`time_tag`） | `gettimeosd.cgi?` → `enable` | `settimeosd.cgi?&-enable=%d` | 1 / 0 | `…/Setting.java:264,268` |
-| 开机动作（`boot_action`） | `getbootaction.cgi?` → `action` | `setbootaction.cgi?&-action=%s` | entries `Idle`,`Record`,`Timelapse Record`,`Loop Record`,`Slow Motion` ／ values `idle`,`record`,`recordlapse`,`recordloop`,`recordslow`（**`Common.java:8-10` 只定义 `idle`/`record`/`timelapse` 三个常量，与数组不自洽**） | `…/Setting.java:211,215`；`res-strings-default.md:14-15` |
+| 开机动作（`boot_action`） | `getbootaction.cgi?` → `action` | `setbootaction.cgi?&-action=%s` | entries `Idle`,`Record`,`Timelapse Record`,`Loop Record`,`Slow Motion` ／ values `idle`,`record`,`recordlapse`,`recordloop`,`recordslow`（**`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Common.java:8-10` 只定义 `idle`/`record`/`timelapse` 三个常量，与数组不自洽**） | `…/Setting.java:211,215`；`res-strings-default.md:14-15` |
 | 自动息屏（`screen_auto_sleep`） | `getscreenautosleep.cgi?` → `time` | `setscreenautosleep.cgi?&-time=%d` | entries `OFF`,`1min`,`3min`,`5min` ／ values `0`,`1`,`3`,`5` | `…/Setting.java:338,342`；`res-strings-default.md:25-26` |
 | 亮度（`screen_brightness`） | `getscreenbrightness.cgi?` → `brightness` | `setscreenbrightness.cgi?&-brightness=%d` | int | `…/Setting.java:346,350` |
 | 自动关机（`auto_shutdown`） | `getautoshutdown.cgi?` → `time` | `setautoshutdown.cgi?&-time=%d` | int 秒 | `…/Setting.java:330,334` |
@@ -443,7 +443,7 @@
 | WiFi 信道 | `getwifichannel.cgi?` → `wifichannel` | `setwifichannel.cgi?&-wifichannel=%d` | int | `…/Setting.java:522,526` |
 | 开机 UI 模式 | `getpoweronuimode.cgi?` → `uimode` | `setpoweronuimode.cgi?&-uimode=%d` | `0..4`（`DV.getPowerOnUiMode()` 越界即丢弃，`…/dv/biz/DV.java:307-310`） | `…/Setting.java:354,358` |
 | 工作模式（数字） | `getworkmode.cgi?` | `setworkmode.cgi?&-workmode=%d?`（**尾部多一个 `?`，是真实笔误**） | `WORK_MODE_*`：`0`单拍、`1`定时、`2`RAW、`10`连拍、`11`延时拍、`12`连拍录像、`20`普通录像、`21`循环、`22`延时录、`23`录像+拍照、`24`慢动作、`25`快故事、`26`延时连拍 | `…/Setting.java:534,538`；`…/dv/biz/Common.java:149-162` |
-| 能力查询（按模式+类型） | `getcapability.cgi?&-workmode=%d&-type=%d`、`getparameter.cgi?&-workmode=%d&-type=%d` | `setparameter.cgi?&-workmode=%d&-type=%d&-value=%s` | `type` 枚举 = `CONFIG_*`：分辨率 0、间隔/定时/连拍率 1、场景/快照模式 2、快照间隔 3、照片分辨率 4、录像分辨率 5、模式 6、循环类型 7（`Common.java:12-26`） | `…/Setting.java:542,546,550` |
+| 能力查询（按模式+类型） | `getcapability.cgi?&-workmode=%d&-type=%d`、`getparameter.cgi?&-workmode=%d&-type=%d` | `setparameter.cgi?&-workmode=%d&-type=%d&-value=%s` | `type` 枚举 = `CONFIG_*`：分辨率 0、间隔/定时/连拍率 1、场景/快照模式 2、快照间隔 3、照片分辨率 4、录像分辨率 5、模式 6、循环类型 7（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/Common.java:12-26`） | `…/Setting.java:542,546,550` |
 | 设备能力 | `getdevcapabilities.cgi?` | — | 返回串里含 `"standby"` 才允许 WoL（§8.5） | `…/Setting.java:530` |
 | 电量 | `getbatterycapacity.cgi?` → `capacity`,`charge`,`ac` | — | int / 1 / 0/1 | `…/Setting.java:45` |
 | 卡状态 | `getsdstate.cgi?` → `sdstate`,`total`,`used` | — | `sdstate ∈ {"SDOK","SDFULL","SDNONE","SDERROR"}`；`total`/`used` 去掉 `" MB"` 后 parseInt | `…/Setting.java:89,107-115`；`…/HaisiPreviewModel.java:205-238` 同解析 |
@@ -506,8 +506,8 @@
 |---|---|---|---|
 | `SSC8838`/`SSC8826`/`SSC8838C` | `http://192.168.0.1/thumb<originPath>` | `http://192.168.0.1<originPath>`，`.MP4`→`-s.MP4`、`.mp4`→`-s.mp4` | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/bean/SSFileInfoBean.java:78-83,120-127,152-155` |
 | `H75N`/`CV75` | 直接用 `originPath`（走命令口 1285 + 数据口 8787） | `http://192.168.0.1<originPath 去掉 "/tmp/SD0">`，扩展名换 `.LRV`；`fileSize < 256`（`IjkMediaMeta.AV_CH_WIDE_LEFT`）时把 `/tmp/SD0` 去掉 | `…/SSFileInfoBean.java:84-85,128-146,156-160` |
-| 其余（含 **真机 `Hi3519DV500`**） | `http://192.168.0.1/<originPath>` 再把末 4 字符换成 `HiDefine.FILE_SUFFIX_THM = ".THM"` | `http://192.168.0.1/<originPath>`，`.MP4`/`.mp4` → `HiDefine.FILE_SUFIX_LRV = ".LRV"` | `…/SSFileInfoBean.java:86-94,147-151,161-165`；`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/HiDefine.java:26,30,32,33` |
-| C 套 | 同上：`String.format("http://%s/%s", SS_IP, path).replace(".MP4", ".LRV").replace("mp4",".LRV")`（海思），非海思直接原路径 | `…/Hisi_CameraRecordFragment.java:191` |
+| 其余（含 **真机 `Hi3519DV500`**） | `http://192.168.0.1/<originPath>` 再把末 4 字符换成 `HiDefine.FILE_SUFFIX_THM = ".THM"` | `http://192.168.0.1/<originPath>`，`.MP4`/`.mp4` → `HiDefine.FILE_SUFIX_LRV = ".LRV"` | `…/SSFileInfoBean.java:86-94,147-151,161-165`；`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/HiDefine.java:30,32,33` |
+| C 套 | — | 同上：`String.format("http://%s/%s", SS_IP, path).replace(".MP4", ".LRV").replace("mp4",".LRV")`（海思），非海思直接原路径 | `…/Hisi_CameraRecordFragment.java:191` |
 
 下载/取缩略图的实现：`SSDownloadUtil.singleSyncDownload(thumbPath, savePath, cb)` → `SSHttpClientUtil.GET` + `SYNC`（OkHttp，同步线程池）。缩略图下载失败**静默**（B 套海思 `loadThumbRetry`/`startLoadThumb`/`stopLoadThumb` 三个方法是**空实现**）。
 出处：`…/HisiPlaybackModel.java:150-190`、`:60-75`；`_work/xtu_src/sources/com/gku/actioncam/sigmastar/util/SSDownloadUtil.java:47-60`。
@@ -519,7 +519,7 @@
 | 1 | 选码流弹窗 | `showVideoQualityDialog(ArrayList<SSFileInfoBean>)`，仅当 `playback.getType() ∈ {"Video","Normal","Emr"}` 时弹；`"Photo"` 走另一支 | `…/SSPlaybackNewPresenter.java:896-948,976-978` |
 | 2 | 提示文案 | `String.format(R.string.downloadToLocal_hint, <目标目录>)`：默认「Don't turn off the screen manually during the download process… The downloaded files will be automatically saved to the album and saved in the %1$s directory」／中文「下载过程中不要手动熄屏不要远离相机，不然下载可能会断开，下载的文件会自动保存到相册，文件保存在 %1$s 目录下」；目录三选一：`G.localDCIMActionCamPhotoDataPath`（无 time 字段时）/`G.localDCIMActionCamSDVideoDataPath`（`isDownloadNormalVideo`）/`G.localDCIMActionCamVideoDataPath` | `…/SSPlaybackNewPresenter.java:254-259` |
 | 3 | 单文件 HTTP 下载 | OkHttp `GET <remotePath>`（§7.4 表），流式写盘；**先写 `savePath + ".MP4"` 临时文件**（`HiDefine.FILE_SUFIX_MP4`），若已存在先 `delete()`；边写边算 `file.length()/contentLength*100`，**节流 300ms** 才回调一次进度（`now-last>300 \|\| file.length()==contentLength`）；收尾 `new File(savePath).delete()` 后 `renameTo` | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/util/SSHttpClientUtil.java:138-195` |
-| 4 | **续传方式** | **没有 HTTP `Range` / `Content-Range` 请求头，全仓 `SSHttpClientUtil`/`DownLoadFileUtils`/`SSDownloadUtil` 零命中**。真正的「断点」实现只有两条：① 上一步的 `.MP4` 临时文件 + rename（**失败即 `file.delete()`，等于不续传**）；② **8080 二进制口**：`DownLoadFileUtils.createConnection(cServerPath, savePath)` 先 `cServerPath.replace("http://192.168.0.1/","")` 得到相对路径，连 `192.168.0.1:8080`，发 72 字节头（`CMD=0` + 路径长度 + 64 字节 UTF-8 路径，`ByteBuffer.order(LITTLE_ENDIAN)`），`setReceiveBufferSize(1048576)`，然后读 4+4+64 字节应答（`bytesToInt` 小端；负数长度做 `((i>>>1)<<1)|1` 修正）→ 再读裸字节 | `…/sigmastar/data/connect/DownLoadFileUtils.java:31-32,55-70,170-208,214-219` |
+| 4 | **续传方式** | **没有 HTTP `Range` / `Content-Range` 请求头，全仓 `SSHttpClientUtil`/`DownLoadFileUtils`/`SSDownloadUtil` 零命中**。真正的「断点」实现只有两条：① 上一步的 `.MP4` 临时文件 + rename（**失败即 `file.delete()`，等于不续传**）；② **8080 二进制口**：`DownLoadFileUtils.createConnection(cServerPath, savePath)` 先 `cServerPath.replace("http://192.168.0.1/","")` 得到相对路径，连 `192.168.0.1:8080`，发 72 字节头（`CMD=0` + 路径长度 + 64 字节 UTF-8 路径，`ByteBuffer.order(LITTLE_ENDIAN)`），`setReceiveBufferSize(1048576)`，然后读 4+4+64 字节应答（`bytesToInt` 小端；负数长度做 `((i>>>1)<<1)\|1` 修正）→ 再读裸字节 | `…/sigmastar/data/connect/DownLoadFileUtils.java:31-32,55-70,170-208,214-219` |
 | 5 | 8080 口批量下载（C 套） | `HisiDownloader.PORT = 8080`，走 `SocketHisiFile.getInstance()`：`putInt(0)`（cmd=0）→ `putInt(bytes.length)` → 64B 路径；进度按 `last_percent + 1` 才回调；取消 `SocketHisiFile.getInstance().stop()` | `_work/xtu_src/sources/com/gku/module_camera/hisi/HisiDownloader.java:75,134-145`；`…/SocketHisiFile.java:112-165` |
 | 6 | Ambarella 下载 | 命令口 `msg_id=1285` `{param:<path>,offset:0,fetch_size:0}` → 响应给 `path`+`size`；再连 8787 读 `size` 字节；65536 缓冲、`available()==0` 睡 100ms、连续 30 次（3s）无数据判失败、进度每 +1% 回调 | 附录 B §下载；`_work/xtu_src/sources/com/gku/actioncam/amba/socket/DataChannel.java:146-239` |
 | 7 | 完成 | `downloadFinish(savePath)` → 队列里下一条；全部完成 `allTaskFinish()`；空间不足回调 `notEnoughSpace()` | `…/SSHttpClientUtil.java:33-51`；`…/SSDownloadUtil.java:71-155` |
@@ -551,10 +551,10 @@
 | | 3 长度校验 | 新名长度 **必须等于**原长度、新密码长度 **必须等于**原长度，否则不发送 | `editText.length() == SSID_TITLE_Length` | Toast：`R.string.wifi_ssid_tips_1 + <原长度> + R.string.wifi_ssid_tips_2`（`Wi-Fi name must be ` + N + ` bits long`／中文「WIFI名长度必须为」+N+「位」）；密码同理 `wifi_psd_tips_1`/`wifi_psd_tips_2`（`PassWord name must be ` + N + ` bits long`／「WIFI密码长度必须为」+N+「位」） | `…/SetDataUIUtils.java:382-392` |
 | | 4 写（系统项） | `GET BASE + "setcurparameter.cgi?-workmode=System&-name=<项名>&-value=<值>"`（名与值各自 `Uri.encode(x,"utf-8")`）；`doForSuccess` → **只看 200** | 200 | `handler.sendEmptyMessage(1)` → **无 Toast**（`isFormatSd==false`） | `…/HttpProxy.java:258-272`；`…/SetDataUIUtils.java:270-287` |
 | | 4' 另一条写（走 `DV`） | `GET BASE + "setwifi.cgi?&-wifissid=<ssid>&-wifikey=<key>"`（`SSCommandUtil.setWiFi`/`HaisiCommandUtil.setWiFi`，注意 `?` 后紧跟 `&`） | 200 | — | `…/SSCommandUtil.java:125-127`；`…/HaisiCommandUtil.java:144-146`；`…/OldUi/setting/model/HaisiSettingModel.java:42`、`…/SigmastartSettingModel.java:43` |
-| A（老海思） | 写 | `DV.setWifiSsidPassword(ssid,pwd)` → `Setting.setWifi(ip,ssid,password)` → **`setSocketNoReply("/setwifi.cgi?&-wifissid=<ssid>&-wifikey=<pwd>", ip)`**：`new Socket(ip, 80)`、`setSoTimeout(6000)`，手写 `GET /cgi-bin/hi3510/setwifi.cgi?&-wifissid=…&-wifikey=… HTTP/1.1\r\nHost:<ip>\r\nConnection: Keep-Alive\r\nUser-Agent: HiCamera\r\n\r\n`，**写完即 close，完全不读响应** | **无判据**（socket 发出去就算完） | 无 | `…/dv/biz/DV.java:647-649`；`…/dv/biz/Setting.java:294-306,375-398` |
+| A（老海思） | 写 | `DV.setWifiSsidPassword(ssid,pwd)` → `Setting.setWifi(ip,ssid,password)` → **`setSocketNoReply("/setwifi.cgi?&-wifissid=<ssid>&-wifikey=<pwd>", ip)`**：`new Socket(ip, 80)`、`setSoTimeout(6000)`，手写 `GET /cgi-bin/hi3510/setwifi.cgi?&-wifissid=…&-wifikey=… HTTP/1.1\r\nHost:<ip>\r\nConnection: Keep-Alive\r\nUser-Agent: HiCamera\r\n\r\n`，**写完即 close，完全不读响应** | **无判据**（socket 发出去就算完） | 无 | `…/dv/biz/DV.java:647-649`；`…/dv/biz/Setting.java:295-307,375-398` |
 | A | 入口 | `Common.KEY_MODIFY_DV_NAME` → intent → `ModifyWifiActivity`（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/ModifyWifiActivity.java:36` 调 `setWifiSsidPassword`） | — | — | 主文档 §4.3 |
-| 手机侧热点模式切换 | STA：`GET http://<ip>/cgi-bin/setwifista.cgi?&-ssid=<ssid>&-key=<pwd>`（**前缀 `/cgi-bin`，不是 `/cgi-bin/hi3510`**）；AP：`GET http://<ip>/cgi-bin/setwifista.cgi?`（**同一路径、零参数**） | `doForSuccess` → 200 | 无 | `…/Setting.java:308-327`；调用点 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/weight/HiWifiScrollView.java:147` |
-| 休眠 WiFi | `GET http://<ip>/cgi-bin/hi3510/wifisleep.cgi?` | `doForSuccess` | 无 | `…/Setting.java:464` |
+| | 手机侧热点模式切换 | STA：`GET http://<ip>/cgi-bin/setwifista.cgi?&-ssid=<ssid>&-key=<pwd>`（**前缀 `/cgi-bin`，不是 `/cgi-bin/hi3510`**）；AP：`GET http://<ip>/cgi-bin/setwifista.cgi?`（**同一路径、零参数**） | `doForSuccess` → 200 | 无 | `…/Setting.java:308-327`；调用点 `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/weight/HiWifiScrollView.java:147` |
+| | 休眠 WiFi | `GET http://<ip>/cgi-bin/hi3510/wifisleep.cgi?` | `doForSuccess` | 无 | `…/Setting.java:463-465` |
 
 ### 8.2 对时
 
@@ -584,12 +584,12 @@
 
 | 检索面 | 结果 |
 |---|---|
-| CGI 串（`own-literals.tsv` 22620 条 + `catalog-http.md` 405 条） | 无 `reboot.cgi`、无 `restart.cgi`、无 `poweroff.cgi`、无 `shutdown.cgi`。最接近的是 `getautoshutdown.cgi`/`setautoshutdown.cgi?&-time=%d`（**自动关机时长**，非立即关机，`…/Setting.java:330,334`）、`wifisleep.cgi?`（`…/Setting.java:464`）、`setscreenautosleep.cgi?&-time=%d`（`…/Setting.java:342`） |
+| CGI 串（`own-literals.tsv` 22620 条 + `catalog-http.md` 405 条） | 无 `reboot.cgi`、无 `restart.cgi`、无 `poweroff.cgi`、无 `shutdown.cgi`。最接近的是 `getautoshutdown.cgi`/`setautoshutdown.cgi?&-time=%d`（**自动关机时长**，非立即关机，`…/Setting.java:330,334`）、`wifisleep.cgi?`（`…/Setting.java:463-465`）、`setscreenautosleep.cgi?&-time=%d`（`…/Setting.java:342`） |
 | 预览页电源位 UI | 布局 `main_frag_port.xml` / `main_frag_land.xml` 里有 `@+id/ivPower`（`R.java:16099` = `0x7f0a0316`）与 `@+id/viewCoverOnPowerOff`（`R.java:16830` = `0x7f0a0800+0x…`）。**全仓除 `R.java` 常量与 databinding 生成类外，无任何 `findViewById`/`setOnClickListener` 引用 → 死控件** |
 | 动态系统菜单 | 靠 `getprimarymenuitem.cgi?-workmode=System` 自描述；若固件在 `item` 里回了 `Reboot`/`Power Off`，App 会照抄显示，且因为 `cur` 为空被判为 type=1（纯点击）→ 走 `setcurparameter.cgi?-workmode=System&-name=<项>&-value=`（空值）。**App 侧不存在这种硬编码，故静态不可证** |
 | Ambarella | 只有常量、**无发送方**：`1537 WIFI_RESTART`、`1540 WIFI_STOP`、`1541 WIFI_START`、`1542 WIFI_STATUS`、`12 AMBA_POWER_MANAGE`、`259 AMBA_RESETVF`、`1793 AMBA_QUERY_SESSION_HOLDER`（`_work/xtu_src/sources/com/gku/actioncam/amba/model/AmbaCmdModel.java:85-86,90,94,98,118-120`；对照 `附录 B` §命令表：「仅常量，无发送方」） |
 | 唯一能「重启/唤醒」的实操 | ① `reset.cgi`（见 §8.3 的语义冲突）② **Wake-on-LAN 唤醒**：`Setting.wakeupDevice(ip, mac)` 手搓 102 字节 magic packet（`6×0xFF` + `MAC×16`）UDP **端口 9** 发到 `<ip 前三段>.255`，**连发 5 次**；门控 `DV.supportWakeSleep()` = `capability` 含 `"standby"` 或 `deviceAttr.type == "117"`（`Common.SENSOR_117`） | 
-| WoL 的 MAC 从哪来 | `Setting.macAddres2ByteArray(mac)`：要求长度 `17` 且含 `:`，按 `:` 切 6 段 16 进制转 byte；非法返回 `null` → `wakeupDevice` 直接 return | `…/Setting.java:432-448,451-483`；`…/dv/biz/DV.java:735-742` |
+| WoL 的 MAC 从哪来 | `Setting.macAddres2ByteArray(mac)`：要求长度 `17` 且含 `:`，按 `:` 切 6 段 16 进制转 byte；非法返回 `null` → `wakeupDevice` 直接 return；`…/Setting.java:467-481,483-512`；`…/dv/biz/DV.java:736-742` |
 
 ### 8.5 关于相机（版本回读）
 
@@ -598,7 +598,7 @@
 | 入口 | 系统页 `Information` 项 → `startActivity(AboutCameraActivity)`；老方言 `about_camera`（action `android.intent.action.tipactivity.aboutcamera`） | `…/SetDataUIUtils.java:330-332`；主文档 §4.3 |
 | 报文 | `GET BASE + "getdeviceattr.cgi"`（B/C）或 `GET http://<ip>/cgi-bin/hi3510/getdeviceattr.cgi`（A，`doForMap`） | `…/SSCommandUtil.java:53-55`；`…/Setting.java:245` |
 | 读键 | `name`、`type`、`softversion`、`hardversion`、`serialnum`、`pcbrevision`、`region`、`networkstatus`、`bluetoothrxversion`、`bluetoothtxoneversion`、`bluetoothtxtwoversion`、`startdate`、`runtimes`、`model`、`timeout` | `…/dv/net/HttpRequest.java:107-183` |
-| 另有 | `SSCameraAboutActivity.java:207` 用字面量 `"/cgi-bin/hi3510/getdeviceattr.cgi"` | `…/catalog-http.md:133` |
+| 另有 | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/setting/ui/activity/SSCameraAboutActivity.java:207` 用字面量 `"/cgi-bin/hi3510/getdeviceattr.cgi"` | `…/catalog-http.md:133` |
 
 ---
 
@@ -626,17 +626,17 @@
 
 | 步 | 动作 | 出处 |
 |---|---|---|
-| 1 | 本地固件目录扫描：`getUpgradePath(ctx) = Utility.getLocalAppDataPath(ctx).getAbsolutePath() + "/upgrade/"`（不存在则 `mkdirs()`） | `…/updateapp/UpgradeManager.java:85-93` |
-| 2 | 选包规则：`softVersion.startsWith("HiCam")` → `getLocalFirmwareByChip(ctx, softVersion.substring(5,9))`（取 4 位芯片号）；否则 `name.startsWith(HiDefine.DV_NETWORK_PREFIX2)` → `getLocalFirmwareByPrefix(ctx, deviceAttr.name + "_")`；否则 `getLocalAllFirmware(ctx)`；结果 `Arrays.sort()` | `…/UpgradeManager.java:116-128` |
+| 1 | 本地固件目录扫描：`getUpgradePath(ctx) = Utility.getLocalAppDataPath(ctx).getAbsolutePath() + "/upgrade/"`（不存在则 `mkdirs()`） | `…/updateapp/UpgradeManager.java:86-93` |
+| 2 | 选包规则：`softVersion.startsWith("HiCam")` → `getLocalFirmwareByChip(ctx, softVersion.substring(5,9))`（取 4 位芯片号）；否则 `name.startsWith(HiDefine.DV_NETWORK_PREFIX2)` → `getLocalFirmwareByPrefix(ctx, deviceAttr.name + "_")`；否则 `getLocalAllFirmware(ctx)`；结果 `Arrays.sort()` | `…/UpgradeManager.java:117-128` |
 | 3 | 用户挑包后判存：`exists(ctx, filename)` | `…/UpgradeManager.java:95-97`；`…/dv/updateapp/DownloadActivity.java:184`（扩展名判 `.sw`） |
 
 ### 9.3 下载
 
 | 实现 | 手法 | 细节 | 出处 |
 |---|---|---|---|
-| `UpgradeManager.download(ctx, filename)` | **系统 `DownloadManager`** | `Uri = SERVER_BASE_URL + filename`；目标 `getUpgradePath+filename`，已存在先 `delete()`；进度 `getDownloadProgress(ctx, downloadId)` 用 `ContentResolver.query(CONTENT_ALL_URLS)` 取 `COLUMN_BYTES_DOWNLOADED_SO_FAR`/`COLUMN_TOTAL_SIZE_BYTES`；取消 `remove(downloadId)` | `…/UpgradeManager.java:866-880,915-919` |
-| `DeviceVersionManager.startDownload(url, model)` | xUtils `x.http().get(RequestParams(url))` + `Callback.ProgressCallback<File>`，可 `cancelable`；并发 `maxConcurrent` | `…/loginmodule/manage/DeviceVersionManager.java:427-460` |
-| `UpgradePresenter.download(url)` | `DownloadUtil.get().download(url, getlocalAppDataPath()+"/"+mModelName, listener)`；OkHttp 流式写盘，文件名 `url.substring(lastIndexOf("/")+1)`；下载中持 `PowerManager.WakeLock(SCREEN_BRIGHT_WAKE_LOCK\|ACQUIRE_CAUSES_WAKEUP\|ON_AFTER_RELEASE = 268435466)`，成功后 500ms 释放 | `…/upgrade/firm/Presenter/UpgradePresenter.java:300-322`；`…/upgrade/firm/Utils/DownloadUtil.java:40-63,163-165` |
+| `UpgradeManager.download(ctx, filename)` | **系统 `DownloadManager`** | `Uri = SERVER_BASE_URL + filename`；目标 `getUpgradePath+filename`，已存在先 `delete()`；进度 `getDownloadProgress(ctx, downloadId)` 用 `ContentResolver.query(CONTENT_ALL_URLS)` 取 `COLUMN_BYTES_DOWNLOADED_SO_FAR`/`COLUMN_TOTAL_SIZE_BYTES`；取消 `remove(downloadId)` | `…/UpgradeManager.java:869-880,886-919,918-920` |
+| `DeviceVersionManager.startDownload(url, model)` | xUtils | `x.http().get(RequestParams(url))` + `Callback.ProgressCallback<File>`，可 `cancelable`；并发 `maxConcurrent` | `…/loginmodule/manage/DeviceVersionManager.java:427-460` |
+| `UpgradePresenter.download(url)` | `DownloadUtil.get().download(url, getlocalAppDataPath()+"/"+mModelName, listener)` | OkHttp 流式写盘，文件名 `url.substring(lastIndexOf("/")+1)`；下载中持 `PowerManager.WakeLock(SCREEN_BRIGHT_WAKE_LOCK\|ACQUIRE_CAUSES_WAKEUP\|ON_AFTER_RELEASE = 268435466)`，成功后 500ms 释放 | `…/upgrade/firm/Presenter/UpgradePresenter.java:300-322`；`…/upgrade/firm/Utils/DownloadUtil.java:40-63,163-165` |
 
 **下载阶段提示**（`UpgradePresenter` 的 Handler `what` → Toast）：
 
@@ -676,10 +676,10 @@
 | 1 | `NetworkDeviceUtils.getNetworkDevice().getSocketFactory().createSocket(getIpDevice(), 8080)`，`setSoTimeout(5000)` | **走运行时网关 IP（不是写死的 192.168.0.1）**，且绑网络 | `-100001` | `_work/xtu_src/sources/com/gku/SendSoftActivity.java:108-109` |
 | 2 | 写 72B 头 `TCP_MSG_S.toBytes()` | `ByteBuffer.allocate(72).order(nativeOrder())`；`putInt(s32Cmd = MSG_TYPE.RECV_FILE.ordinal() = 2)`、`putInt(s32DataLen = file.length())`、`put(szData[64])`，文件名 `getBytes(UTF_8)` 拷 `min(len, 63)` 字节 | — | `…/SendSoftActivity.java:110-118`；`_work/xtu_src/sources/com/gku/loginmodule/ui/activity/TCP_MSG_S.java:11-35`；`…/loginmodule/ui/activity/MSG_TYPE.java:4-10`（`GET_FILE=0,GET_FAILED=1,RECV_FILE=2,RECV_FAILED=3,RECV_RTMP=4`） |
 | 3 | 读 72B 回包（**按 `i += read(bArr,i,72-i)` 补齐循环**） | 判 `tcp_msg_s2.s32Cmd == 2` | `-100006`（读异常）/`-100004`（cmd 不符） | `…/SendSoftActivity.java:120-129` |
-| 4 | 写 MD5 串 | `outputStream.write(FileUtils.getFileMD5(file).getBytes(US_ASCII))` + flush | `-100009` | `…/SendSoftActivity.java:130-135` |
+| 4 | 写 MD5 串 | `outputStream.write(FileUtils.getFileMD5(file).getBytes(US_ASCII))` + flush | `-100009` | `…/SendSoftActivity.java:130-136` |
 | 5 | 裸文件流 | `byte[65536]`；进度 `(已发/总长)*100`，**每 +1% 或到达末尾才刷 UI**；日志打印首 10 / 末 10 字节 hex | `-100007`（写异常）/`-100008`（FileInputStream 异常） | `…/SendSoftActivity.java:136-193` |
-| 6 | 完成 | `outputStream.close()` → `closeSocket(0)` → `dealSuccess()`；UI 文案 `R.string.setting_updatefw_closeAppInfo`（`FW update has completed, please restart your application`／「固件更新已完成，请重新启动应用程序」） | — | `…/SendSoftActivity.java:195-204,242` |
-| 7 | 失败统一提示 | `getString(R.string.send_soft_fail_hint, code, modelName)` → 默认 `Send failed: %d\nPlease check if connected to %s Wi-Fi and try again.`／中文「发送失败:%d\n检查是否连上%s的WIFI后重试」 | — | `…/SendSoftActivity.java:222-225` |
+| 6 | 完成 | `outputStream.close()` → `closeSocket(0)` → `dealSuccess()`；UI 文案 `R.string.setting_updatefw_closeAppInfo`（`FW update has completed, please restart your application`／「固件更新已完成，请重新启动应用程序」） | — | `…/SendSoftActivity.java:195-203,242` |
+| 7 | 失败统一提示 | `getString(R.string.send_soft_fail_hint, code, modelName)` → 默认 `Send failed: %d\nPlease check if connected to %s Wi-Fi and try again.`／中文「发送失败:%d\n检查是否连上%s的WIFI后重试」 | — | `…/SendSoftActivity.java:219-225` |
 | 8 | 发送中提示 | `R.string.firm_sending + "\n" + percent + "%"`（`Firmware is being sent...\nPlease be as close as possible to the device…`／「固件正在发送中…\n请尽量靠近需要升级的设备，以确保升级成功」） | — | `…/SendSoftActivity.java:84,175` |
 
 **（d）HTTP 上传（另一套，`UpgradeManager`/`UpgradeTaskManager` 手写 socket）**：
@@ -725,7 +725,7 @@ name="sd"; filename="<file.getName()>"
 | 4 只列 `.apk` | `str.endsWith(".apk")` 才走 App 分支；`.sw` 走固件分支 | `…/dv/updateapp/DownloadActivity.java:179-184` |
 | 5 下载 | 系统 `DownloadManager`（同上） | `…/DownloadActivity.java:54,128` |
 | 6 安装 | `installAPK(ctx, uri)`：`ACTION_VIEW` + `application/vnd.android.package-archive` + `FLAG_ACTIVITY_NEW_TASK(268435456)`；`ActivityNotFoundException` 静默 | `…/UpgradeManager.java:922-933` |
-| 7 分流孪生 | SigmaStar 侧同一套复制在 `com.gku.actioncam.sigmastar.upgrade.app.{DownloadActivity,UpgradeTaskManager}`，行号一一对应（`:43,54,89,100,128`、`UpgradeTaskManager.java:102,191`） | — |
+| 7 分流孪生 | SigmaStar 侧同一套复制在 `com.gku.actioncam.sigmastar.upgrade.app.{DownloadActivity,UpgradeTaskManager}`，行号一一对应（`:43,54,89,100,128`、`_work/xtu_src/sources/com/gku/actioncam/sigmastar/upgrade/app/UpgradeTaskManager.java:102,191`） | — |
 | 8 跳商店 | `AboutClientActivity.jumpToAppStore("https://play.google.com/store/apps/details?id=com.gku.yutupro")`（**跳的是另一个品牌，不是自己**）；`MarketUtils` 另有 `market://details?id=<pkg>` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/setting/AboutClientActivity.java:164`；`_work/xtu_src/sources/com/gku/base/utils/MarketUtils.java:54` |
 
 ---
@@ -865,7 +865,7 @@ name="sd"; filename="<file.getName()>"
 | `event` | 任意非 0 | 录像/停录按钮重新 `enableActionButton(true)`（`updateOperateCommandUI` 末尾无条件） | `…/HisiActionCameraPreviewActivity.java:1133` |
 | `pasttime` | int，**不换算** | 直接进 `SSystemWorkState.pasttime` 当秒显示；Ambarella 机型除 2 补偿：`type ∈ {H75N,"CV75"}` 且**非** `Timing Photo` → `startRecordCountDown(pasttime/2)`，`Timing Photo` → `startRecordCountDown(pasttime)` | `…/SSResponseParse.java:490,505,525`；`…/amba/model/AmbaCmdModel.java:570`；补偿逻辑 `…/ActionCameraPreviewPresenter.java:718-727` |
 | `mode` | 模式串 | `curWorkMode = sSystemWorkState.getWorkMode()` → 模式图标 `SSExchangeWorkMode.workModeToResId()`（XTU 下 = `getIdentifier("ic_image_" + 归一小写名, "drawable", pkg)`） | `…/ActionCameraPreviewPresenter.java:700-702`、`:652-658`；`…/SSExchangeWorkMode.java:68-74,86-132` |
-| `state` 的 A 套版 | `getcamerastatus.cgi` 要求同时出现 `count=` 与 `status=`，缺一返回 `null`；分隔 `;|\n|Var` | 真机回 200 空 body ⇒ 判「无状态」 | `…/dv/net/HttpProxy.java:142-169` |
+| `state` 的 A 套版 | `getcamerastatus.cgi` 要求同时出现 `count=` 与 `status=`，缺一返回 `null`；分隔 `;\|\n\|Var` | 真机回 200 空 body ⇒ 判「无状态」 | `…/dv/net/HttpProxy.java:142-169` |
 | 电量 | `getbatterycapacity.cgi` → `capacity`(int)、`charge`(`"1"`→bCharging)、`ac`(`"1"`→bAC) | 仅在 `bAC` 或 `bCharging` **变化时**才 `showBatteryState()`（相同则 return，不重复刷 UI） | `…/SSResponseParse.java:245-279`；`…/ActionCameraPreviewPresenter.java:674-687` |
 | SD | `getsdstate.cgi` → `sdstate ∈ {SDOK,SDFULL,SDNONE,SDERROR}`、`total`、`used`（去 `" MB"` 后 parseInt，缺则 `-1`） | `showSdCardState()`、容量条 | `…/HaisiPreviewModel.java:205-238`（解析）；`…/ActionCameraPreviewPresenter.java:661-672` |
 
@@ -891,7 +891,7 @@ name="sd"; filename="<file.getName()>"
 | 12 | **`getfilelistinfoios.cgi` 与 `getfilelist.cgi` 的响应字段完整集** | 静态只读 `path`/`create`/`time`/`size`；`-type` 只有 `Photo`/`Video` 两个串（`SSCommandUtil.getFileList(int,int,int)`），而 `SSPlaybackNewPresenter` 侧出现 `Normal`/`Video`/`Event`/`Emr`/`Photo` 五种 type 语义 | 真机原始响应；对每种 `-type` 值各发一次记录返回码与体 |
 | 13 | **`getdirname.cgi` 到底给谁用** | 只有 `SSCommandUtil.getDirname()` + `SSResponseParse.parseDirname()` 两个定义，**全树零调用** | 真机手动 `curl` 看返回，判断是否用于日期分组（若返回 `YYYYMMDD` 列表则我们的回放分组可以改成服务端分组） |
 | 14 | **二维码配网码的真实格式** | 解析器只硬要求串里含 `WIFI:`、`S:`、`P:`，并只从 `S:`/`P:` 到下一个 `;` 取值；`split(";")` 结果被丢弃 → 含 `;`、`\`、`:` 的密码会被截断；`T:`（企业型）、`H:`（隐藏）完全不支持 | 拿官方相机机身/包装上的二维码实物解码，确认字段全集与转义规则 |
-| 15 | **BLE `R001`~`R009` 的语义与回包** | 本附录只能列「写了什么」，**通知回包字段**（`Status`/`Pin`/`KEY:1`/`SSID`/`PWD`/`WiFi_Status`/`R009_cap:`）的取值域、以及 4 位配对码的生成与拒绝重试规则在 `BLEConnectUtils.onCharacteristicChanged` 的混淆分支里；`docs/07 §1.2` 也是行为级描述 | ① nRF Connect 手工连一台相机逐条发 `R001`~`R009` 记回包 ② 对 `BLEConnectUtils.java:660-900` 做逐行精读 + 运行时日志（tag `xs, `、`onServicesDiscovered:`） |
+| 15 | **BLE `R001`~`R009` 的语义与回包** | 本附录只能列「写了什么」，**通知回包字段**（`Status`/`Pin`/`KEY:1`/`SSID`/`PWD`/`WiFi_Status`/`R009_cap:`）的取值域、以及 4 位配对码的生成与拒绝重试规则在 `BLEConnectUtils.onCharacteristicChanged` 的混淆分支里；`docs/07 §1.2` 也是行为级描述 | ① nRF Connect 手工连一台相机逐条发 `R001`~`R009` 记回包 ② 对 `_work/xtu_src/sources/com/gku/actioncam/sigmastar/newUi/deviceAdd/Fragment/connect/BLEConnectUtils.java:660-900` 做逐行精读 + 运行时日志（tag `xs, `、`onServicesDiscovered:`） |
 | 16 | **`m.mifan.acase` / iCatch 命令面** | 属另一个产品（XTU Mini1），命令号是 4 位十进制串，模板在 `assets/menu/*` 但**零引用**；`libcontrol.so` 内是 PTP | 单独建档（USB/HTTP 抓包 + `com.icatchtek.**` 精读）；本附录不覆盖 |
 | 17 | **相机端 HTTPS / 鉴权** | 全部相机请求**零鉴权、零 TLS**（`usesCleartextTraffic=true` + `network_security_config.xml` 只有 `cleartextTrafficPermitted="true"`）；无法从静态判断固件是否支持 | 真机试 https 端口与带 `Authorization` 头的请求 |
 | 18 | **`SvrFuncResult` 错误码全集** | 只有 `Command.executeCommand()` 会读它，且用 `substring(15, lastIndexOf("\""))` + `parseInt`（十六进制串会抛异常→ `errorCode=-1`）；`-2222` 仅在 `SSResponseParse` 里被 `contains("-222")` 吞掉 | 逐条构造非法参数抓返回，建一张错误码表（含 `0xFFFFF752` 这类有符号值的正确解法：`int` 直接按补码读） |

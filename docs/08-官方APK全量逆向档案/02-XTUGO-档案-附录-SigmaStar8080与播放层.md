@@ -199,7 +199,7 @@ ByteBuffer.allocate(72) → order(LITTLE_ENDIAN) → putInt(0)            // cmd
 | 偏移 | 长度 | 解析 | 含义 |
 |---|---|---|---|
 | `[0..3]` | 4 | `bytesToInt(bArr,0)`（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/data/connect/DownLoadFileUtils.java:338`） | `CMD`（回显 0） |
-| `[4..7]` | 4 | `bytesToInt(bArr2,0)`（`:324`）再过「负数修正」（`:326-330`） | **文件字节数**；小端读法 `(src[o]&255)|(src[o+1]<<8)|(src[o+2]<<16)|((src[o+3]&255)<<24)`（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/data/connect/DownLoadFileUtils.java:360-362`；孪生 `_work/xtu_src/sources/com/gku/actioncam/sigmastar/data/connect/DownLoadFileUtils.java:218-220`）→ 与 `_work/xtu_src/sources/com/gku/module_camera/hisi/SocketHisiFile.java:131` 的 `getInt() & 4294967295L` 一致（按无符号 32 位读） |
+| `[4..7]` | 4 | `bytesToInt(bArr2,0)`（`:324`）再过「负数修正」（`:326-330`） | **文件字节数**；小端读法 `(src[o]&255)\|(src[o+1]<<8)\|(src[o+2]<<16)\|((src[o+3]&255)<<24)`（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/data/connect/DownLoadFileUtils.java:360-362`；孪生 `_work/xtu_src/sources/com/gku/actioncam/sigmastar/data/connect/DownLoadFileUtils.java:218-220`）→ 与 `_work/xtu_src/sources/com/gku/module_camera/hisi/SocketHisiFile.java:131` 的 `getInt() & 4294967295L` 一致（按无符号 32 位读） |
 | `[8..71]` | 64 | `new String(bytes).trim()`（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/data/connect/DownLoadFileUtils.java:353-358`；孪生 `…/sigmastar/data/connect/DownLoadFileUtils.java:211-216`） | 文件名/路径回显 |
 | `[72…]` | = 上面的长度 | 循环 `socketReader.read(buf)` 追加写盘 | 裸文件字节流，**无分帧、无 CRC** |
 

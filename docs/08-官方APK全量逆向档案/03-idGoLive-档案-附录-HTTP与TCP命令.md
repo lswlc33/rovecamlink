@@ -32,7 +32,7 @@ Novatek NoVI 2.x 的 HTTP CGI 约定：`custom=1` = 「使用厂商自定义 CGI
 | 2016 | `urlMovieRecordingTime`(`:49`) | `?custom=1&cmd=2016` | — | `<Value>` / `parseXMLWithPull(obj,["Value"])` | `LyIC.getRecDuration`(`:234`) |
 | 2017 | `urlTriggerRAWencode`(`:64`) | `?custom=1&cmd=2017` | — | 无 | `LyIC.takePicture`(`:420`) |
 | 2018 | `urlGetRAWencodeJPEG`(`:31`) | `?custom=1&cmd=2018` | — | — | 取抓拍 JPEG |
-| 3001 | `urlModeChangePhoto/Movie/Playback`(`:42/41/43`) | `?custom=1&cmd=3001&par=0|1|2` | 0=拍照、1=录像、2=回放 | 无 | `LyIC.ready2CamLive`(`:333`)、`quit2RemoteFile`(`:318`)、`leaveRemoteFile`(`:299`) |
+| 3001 | `urlModeChangePhoto/Movie/Playback`(`:42/41/43`) | `?custom=1&cmd=3001&par=0\|1\|2` | 0=拍照、1=录像、2=回放 | 无 | `LyIC.ready2CamLive`(`:333`)、`quit2RemoteFile`(`:318`)、`leaveRemoteFile`(`:299`) |
 | 3003 | `urlSetSSID`(`:59`) | `?custom=1&cmd=3003&str=<ssid>` | str=新 SSID | 无 | 改 WiFi |
 | 3004 | `urlSetPassphrase`(`:58`) | `?custom=1&cmd=3004&str=<pwd>` | str=新密码 | 无 | 改 WiFi 密码 |
 | 3005 | `urlSetDate`(`:57`)；`LyIC.syncLocalTime`(`:392`) 直接内联完整串 | `?custom=1&cmd=3005&str=yyyy-MM-dd` | 日期 | 无 | 时间同步（与 3006 各发一次，两个独立请求） |
@@ -50,12 +50,12 @@ Novatek NoVI 2.x 的 HTTP CGI 约定：`custom=1` = 「使用厂商自定义 CGI
 | 3029 | `urlGetSSID`(`:32`) | `?custom=1&cmd=3029` | — | `<SSID>` + `<PASSPHRASE>`（`_work/idgo_live_src/sources/com/icatch/golive/net/LyIC.java:275`） | 连接握手；成功后立刻 `initSocket()` 开 TCP:3333（`_work/idgo_live_src/sources/com/icatch/golive/net/LyIC.java:280/285-291`） |
 | 3030 | `urlGetMoveSizeCapacity`(`:30`) | `?custom=1&cmd=3030` | — | `<Item Index>` 索引列表 | 录像规格能力表 |
 | 3031 | `urlQueryMenuItem`(`:51`) | `?custom=1&cmd=3031&str=all` | str=all | `Cmd` / `Index` / `Id`，`Id` ∈ {2003,2011,8010,8011} → key `CmdNNNN`（`_work/idgo_live_src/sources/com/icatch/golive/utils/XmlParseUtil.java:16-19,35-52`） | 动态菜单：固件决定显示哪些项 |
-| 3044 | `urlLensRotationOn`(`:38`) / `…Off`(`:37`) | `?custom=1&cmd=3044&par=1|0` | 镜头旋转 | — | 设置页 |
+| 3044 | `urlLensRotationOn`(`:38`) / `…Off`(`:37`) | `?custom=1&cmd=3044&par=1\|0` | 镜头旋转 | — | 设置页 |
 | 4002 | （`entity/FileInfo.java:55` 内联） | `<视频URL>?custom=1&cmd=4002` | 视频文件路径后挂 cmd | 二进制 JPEG 缩略图 | 回放墙缩略图 |
 | 4003 | `urlDeleteOneFile`(`:16`) | `?custom=1&cmd=4003&str=<path>` | str=文件路径 | 无 | 删除单文件 |
 | 4004 | `urlDeleteAll`(`:15`) | `?custom=1&cmd=4004` | — | 无 | 删除全部 |
-| 8010 | `urlMicrophoneModeNoumenon/Headphone`(`:39/40`) | `?custom=1&cmd=8010&par=0|1` | 0=机身麦、1=耳机麦 | `Cmd8010` | 录音源 |
-| 8011 | `urlRecordAudioOn/Off`(`:55/54`) | `?custom=1&cmd=8011&par=1|0` | 录音开关 | `Cmd8011` | 设置页 |
+| 8010 | `urlMicrophoneModeNoumenon/Headphone`(`:39/40`) | `?custom=1&cmd=8010&par=0\|1` | 0=机身麦、1=耳机麦 | `Cmd8010` | 录音源 |
+| 8011 | `urlRecordAudioOn/Off`(`:55/54`) | `?custom=1&cmd=8011&par=1\|0` | 录音开关 | `Cmd8011` | 设置页 |
 | 8012 | `urlGetHeadphoneState`(`:28`) | `?custom=1&cmd=8012` | — | `<Value>` | 耳机插入状态 |
 | 8013 | `urlGetBatteryState`(`:24`) | `?custom=1&cmd=8013` | — | `<Value>`（`_work/idgo_live_src/sources/com/icatch/golive/net/LyIC.java:181`） | 电量 |
 | 8888 | `urlHeartbeatPackage`(`:35`) | `?custom=1&cmd=8888` | — | 无 | **心跳主用**，周期 10000 ms（`LyIC.getHeartbeatPeriod()` `_work/idgo_live_src/sources/com/icatch/golive/net/LyIC.java:225`） |
@@ -105,7 +105,7 @@ Novatek 文件服务器路径前缀：`http://192.168.1.254/Novatek/<父目录>/
 | `/api/setdeviceinfo/?custom=1&cmd=1100&par=0` | GET | `:5` | 拍照（cmd 走 api 前缀） |
 | `/api/setdeviceinfo/?custom=1&cmd=3033&par=1` | GET | `:26` | 模式切换其它 |
 | `/api/setdeviceinfo/?custom=1&cmd=4016&par=1` | GET | `:25` | 心跳启动 |
-| `/api/setdeviceinfo/?custom=1&cmd=1008&par=0|1` | GET | `:38/39` | 相机 OSD 语言：0=中文、1=英文 |
+| `/api/setdeviceinfo/?custom=1&cmd=1008&par=0\|1` | GET | `:38/39` | 相机 OSD 语言：0=中文、1=英文 |
 | `/api/setdeviceinfo/?custom=1&cmd=3005&str=` | GET | `:37` | 日期（`/api` 版） |
 | `/api/getdeviceinfo/?custom=1&cmd=2002` | GET | `:12` | 当前录像分辨率 |
 | `/api/getdeviceinfo/?custom=1&cmd=2004` | GET | `:20` | 卡状态 |

@@ -132,7 +132,65 @@ export function run(app) {
         .sort((a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]))),
   ].join('\n'), { docs: true });
 
-  log(`${app.label}: catalog — http ${httpRows.length}, templates ${templates.length}, consts ${constRows.length}, enums ${enums.length}, numeric ${interesting.length}`);
+  /* ---- settings option pairs: <name>_entries / <name>_values ---- */
+  const valuesAll = rows(path.join(app.key, 'values-all.tsv'));
+  const arr = new Map();                       // name -> {type, locale -> value}
+  for (const v of valuesAll) {
+    if (!['string-array', 'array', 'integer-array', 'plurals'].includes(v.type)) continue;
+    const key = `${v.type}:${v.name}`;
+    if (!arr.has(key)) arr.set(key, {});
+    arr.get(key)[v.locale] = v.value;
+  }
+  const zhLocale = (name) => {
+    for (const loc of ['values-zh-rCN', 'values-zh']) if (arr.get(name)?.[loc]) return loc;
+    return null;
+  };
+  const pairs = [];
+  for (const key of arr.keys()) {
+    const name = key.split(':')[1];
+    const base = name.replace(/_(entries|labels|options|titles|summaries|values|keys)$/, '');
+    if (base === name) continue;                       // not an *_entries/*_values pair
+    const isLabels = !/_(values|keys)$/.test(name);
+    if (!isLabels) continue;                            // emit one row group per labels array
+    let valueKey = null;
+    for (const cand of [`array:${base}_values`, `string-array:${base}_values`, `integer-array:${base}_values`]) {
+      if (arr.has(cand)) { valueKey = cand; break; }
+    }
+    const splitItems = (s) => (s ?? '').split(' | ').map((x) => {
+      const i = x.indexOf('=');
+      return { idx: x.slice(0, i), text: x.slice(i + 1) };
+    });
+    const labels = splitItems(arr.get(key)?.values);
+    const values = valueKey ? splitItems(arr.get(valueKey)?.values) : [];
+    const zhKey = zhLocale(key);
+    const zhLabels = zhKey ? splitItems(arr.get(key)[zhKey]) : [];
+    pairs.push({ base, keyName: name, valueName: valueKey ? valueKey.split(':')[1] : '', labels, values, zhLabels });
+  }
+  const settingRows = [];
+  for (const g of pairs) {
+    g.labels.forEach((l, i) => {
+      settingRows.push([
+        g.base,
+        g.keyName,
+        l.idx,
+        l.text || '(空)',
+        g.values[i]?.text ?? '',
+        g.zhLabels[i]?.text && g.zhLabels[i].text !== l.text ? g.zhLabels[i].text : '',
+      ]);
+    });
+  }
+  if (settingRows.length) {
+    writeOut(app, 'catalog-settings.md', [
+      header(`${app.label} — 选项数组配对表（UI 文案 ↔ 协议值）`, [
+        `${pairs.length} 组 ` + '`*_entries` / `*_values`' + ` 配对，展开成 ${settingRows.length} 行`,
+        '官方设置页就是按位置索引把 label 映射到 value 的：这一张表给出「界面上那个选项」对应的「真正发给相机的值」',
+        '中文列只在 `values-zh-rCN`/`values-zh` 与默认文本不同时才有值',
+      ]),
+      mdTable(['设置组（数组基名）', 'labels 资源名', '序号', '界面文案（默认语言）', '协议值', '中文文案'], settingRows),
+    ].join('\n'), { docs: true });
+  }
+
+  log(`${app.label}: catalog — http ${httpRows.length}, templates ${templates.length}, consts ${constRows.length}, enums ${enums.length}, numeric ${interesting.length}, settings ${settingRows.length}`);
 }
 
 if (isMain(import.meta.url)) run(appArg());
