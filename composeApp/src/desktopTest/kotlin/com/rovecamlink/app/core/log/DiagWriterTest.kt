@@ -4,7 +4,7 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 
 /**
  * Behaviour of the writer itself: operation correlation, steady-state sampling,
@@ -15,7 +15,7 @@ class DiagWriterTest {
     private val url = "http://192.168.0.1/cgi-bin/hi3510/getcamerastatus.cgi"
 
     @AfterTest
-    fun restore() = kotlinx.coroutines.runBlocking {
+    fun restore() = runBlocking {
         Diag.clear()
         Diag.config.minLevel = LogLevel.DEBUG
         Diag.config.sampleSteadyTraffic = true
@@ -27,7 +27,10 @@ class DiagWriterTest {
         Diag.httpExchange("GET", url, status = 200, ms = ms, bodyChars = 7, contentType = "text/plain", headers = null, bodyPreview = "var x=\"1\";")
 
     @Test
-    fun steadyPollingIsSampledAndTheHiddenPartIsStillKept() = runTest {
+    fun steadyPollingIsSampledAndTheHiddenPartIsStillKept() = runBlocking {
+        // Lives in desktopTest rather than commonTest: the actor needs a real
+        // dispatcher to be asserted on, and `runBlocking` is JVM-only while
+        // kotlinx-coroutines-test cannot be resolved in CI.
         Diag.clear()
         repeat(30) { poll(ms = 10L + it) }
         Diag.awaitDrained()
@@ -45,7 +48,7 @@ class DiagWriterTest {
     }
 
     @Test
-    fun aChangedReplyBreaksTheRun() = runTest {
+    fun aChangedReplyBreaksTheRun() = runBlocking {
         Diag.clear()
         repeat(3) { poll() }
         Diag.httpExchange("GET", url, status = 500, ms = 5, bodyChars = 4, contentType = null, headers = null, bodyPreview = "err")
@@ -58,7 +61,7 @@ class DiagWriterTest {
     }
 
     @Test
-    fun theFirstRepliesAfterAnOutageAreNeverSampledAway() = runTest {
+    fun theFirstRepliesAfterAnOutageAreNeverSampledAway() = runBlocking {
         Diag.clear()
         repeat(4) { poll() } // #1 shown, #2..#4 folded
         Diag.httpExchange(
@@ -80,7 +83,7 @@ class DiagWriterTest {
     }
 
     @Test
-    fun operationsCorrelateEveryNestedLine() = runTest {
+    fun operationsCorrelateEveryNestedLine() = runBlocking {
         Diag.clear()
         Diag.inOp("capture", "mode=photo") {
             poll()
@@ -101,7 +104,7 @@ class DiagWriterTest {
     }
 
     @Test
-    fun aThrownOperationIsRecordedAsAFailure() = runTest {
+    fun aThrownOperationIsRecordedAsAFailure() = runBlocking {
         Diag.clear()
         val boom = runCatching {
             Diag.inOp("formatSd") { throw IllegalStateException("card busy") }
@@ -116,7 +119,7 @@ class DiagWriterTest {
     }
 
     @Test
-    fun ringEvictionIsVisibleInTheExportHeader() = runTest {
+    fun ringEvictionIsVisibleInTheExportHeader() = runBlocking {
         Diag.clear()
         Diag.config.ringCapacity = 8
         Diag.config.sampleSteadyTraffic = false
@@ -132,7 +135,7 @@ class DiagWriterTest {
     }
 
     @Test
-    fun theBundleDescribesItselfSoItCanBeReadCold() = runTest {
+    fun theBundleDescribesItselfSoItCanBeReadCold() = runBlocking {
         Diag.clear()
         Diag.warn(LogTag.WIFI, "gateway not resolvable")
         Diag.awaitDrained()

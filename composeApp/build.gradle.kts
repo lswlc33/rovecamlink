@@ -80,8 +80,9 @@ kotlin {
 
         commonTest.dependencies {
             implementation(kotlin("test"))
-            // Diag is an actor with its own dispatcher; asserting on it needs runTest.
-            implementation(libs.kotlinx.coroutines.test)
+            // Deliberately no new test artifacts: CI resolves dependencies through a
+            // proxy that is not reachable there, so only cached coordinates may appear
+            // here. Tests that need real coroutines live in desktopTest (JVM, runBlocking).
         }
     }
 }
