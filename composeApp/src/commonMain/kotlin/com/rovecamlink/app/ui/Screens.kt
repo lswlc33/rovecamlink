@@ -718,7 +718,13 @@ fun FilesScreen(state: AppState) {
                                 containerColor = CupertinoColors.systemRed,
                             ),
                             modifier = Modifier.weight(1f),
-                        ) { CupertinoText("Delete ($selectedCount)") }
+                        ) {
+                            if (state.isBusy(Op.Delete)) {
+                                CupertinoActivityIndicator(size = 14.dp, color = Color.White)
+                                Spacer(Modifier.width(6.dp))
+                            }
+                            CupertinoText("Delete ($selectedCount)")
+                        }
                     }
                 }
             }
@@ -1129,6 +1135,7 @@ placeholder = { CupertinoText("New password") }
                 singleLine = true,
             )
             item {
+                val wifiBusy = wifiSubmit && state.isBusy(Op.Settings)
                 Row(Modifier.fillMaxWidth().padding(it), horizontalArrangement = Arrangement.End) {
                     CupertinoButton(
                         onClick = {
@@ -1139,7 +1146,13 @@ placeholder = { CupertinoText("New password") }
                             !state.isBusy(Op.Settings) &&
                             wifiPass.isNotBlank(),
                         size = CupertinoButtonSize.Small,
-                    ) { CupertinoText(saveLabel) }
+                    ) {
+                        if (wifiBusy) {
+                            CupertinoActivityIndicator(size = 12.dp, color = Color.White)
+                            Spacer(Modifier.width(6.dp))
+                        }
+                        CupertinoText(saveLabel)
+                    }
                 }
             }
             if (wifiSubmit) {
@@ -1273,6 +1286,7 @@ private fun LazySectionScope.settingRow(
 
         else -> item {
             var draft by remember(s.value) { mutableStateOf(s.value) }
+            val textSaveBusy = enabled && state.isBusy(Op.Settings)
             Column(Modifier.fillMaxWidth().padding(it)) {
                 CupertinoText(s.title)
                 Spacer(Modifier.size(8.dp))
@@ -1287,9 +1301,15 @@ private fun LazySectionScope.settingRow(
                     Spacer(Modifier.width(10.dp))
                     CupertinoButton(
                         onClick = { state.setSetting(s.id, draft) },
-                        enabled = enabled && draft != s.value,
+                        enabled = enabled && !textSaveBusy && draft != s.value,
                         size = CupertinoButtonSize.Small,
-                    ) { CupertinoText(saveLabel) }
+                    ) {
+                        if (textSaveBusy) {
+                            CupertinoActivityIndicator(size = 12.dp, color = Color.White)
+                            Spacer(Modifier.width(6.dp))
+                        }
+                        CupertinoText(saveLabel)
+                    }
                 }
             }
         }
