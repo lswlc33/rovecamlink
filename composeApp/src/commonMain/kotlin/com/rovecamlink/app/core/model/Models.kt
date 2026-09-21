@@ -17,7 +17,7 @@ import org.jetbrains.compose.resources.StringResource
  * 它会作为参数注入到本地化的状态消息(如 "Connected · %1$s")。
  */
 enum class DevicePlatform(val displayName: String) {
-    /** Hisilicon Hi35xx – HTTP CGI at /cgi-bin/hi3510/<cmd>.cgi (XTU X7 Pro and most XTU/TUWIN Hi-based cams). */
+    /** Hisilicon Hi35xx – HTTP CGI at /cgi-bin/hi3510/<cmd>.cgi (XTU Hi-based cams, XTU S7/MINU2 are Ambarella). */
     HISILICON("Hisilicon CGI"),
 
     /** Ambarella – JSON-over-TCP/HTTP with {msg_id, rval} envelope. */
@@ -29,8 +29,11 @@ enum class DevicePlatform(val displayName: String) {
     /** TUWIN REST – `/api/...` JSON endpoints (Ride3Pro / Ride6). */
     TUWIN_REST("TUWIN REST"),
 
-    /** TUWIN M3 – `/app/...` HTTP + delimiter-framed TCP socket. */
+    /** TUWIN M3 – `/app/...` HTTP + read-chunk-as-frame TCP push (NOT delimiter-framed; that decoder is dead code upstream). */
     TUWIN_M3("TUWIN M3"),
+
+    /** iCatch PTP-over-IP + HTTP `/app/...` records (idGoLive / XTU Mini1). Property-table + object-table model. */
+    ICATCH("iCatch PTP"),
 
     UNKNOWN("Unknown"),
 }
@@ -77,6 +80,22 @@ data class CameraSession(
     val extras: Map<String, String> = emptyMap(),
 )
 
+/** SD-card health as reported by the camera (TUWIN's 9-state model collapsed to 4). */
+enum class SdCardState { OK, MISSING, ERROR, UNKNOWN;
+
+    companion object {
+        /** Maps a firmware-reported state string (e.g. `SDOK`, `NOSD`) to the enum. */
+        fun fromRaw(raw: String?): SdCardState = when {
+            raw == null -> UNKNOWN
+            raw.contains("OK", ignoreCase = true) -> OK
+            raw.contains("NO", ignoreCase = true) || raw.contains("NONE", ignoreCase = true) ||
+                raw.contains("ABSENT", ignoreCase = true) || raw.contains("无", ignoreCase = true) -> MISSING
+            raw.isBlank() -> UNKNOWN
+            else -> ERROR
+        }
+    }
+}
+
 /** Live device state polled from the camera. */
 data class DeviceStatus(
     val battery: Int? = null,
@@ -85,9 +104,28 @@ data class DeviceStatus(
     val mode: WorkMode? = null,
     val sdTotalMb: Long? = null,
     val sdFreeMb: Long? = null,
+    val sdState: SdCardState? = null,
     val videoTimeSec: Int? = null,
     val photoCount: Int? = null,
     val videoCount: Int? = null,
+    /** Raw key/value pairs straight from the firmware for forward-compat. */
+    val raw: Map<String, String> = emptyMap(),
+)
+
+/**
+ * Static device identity for the About screen. Field names mirror what each
+ * firmware reports (`softversion`/`swver`, `serialnum`/`uuid`, ...).
+ */
+data class DeviceInfo(
+    val name: String? = null,
+    val model: String? = null,
+    val serialNumber: String? = null,
+    val softVersion: String? = null,
+    val hardVersion: String? = null,
+    val region: String? = null,
+    val mac: String? = null,
+    val ssid: String? = null,
+    val soc: String? = null,
     /** Raw key/value pairs straight from the firmware for forward-compat. */
     val raw: Map<String, String> = emptyMap(),
 )

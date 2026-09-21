@@ -38,3 +38,7 @@ DerivedData/
 
 # Original vendor APKs (proprietary binaries, analysis inputs only)
 相机 app/
+
+# Agent scratch & JVM build output (never commit)
+.trae/
+simulator/bin/

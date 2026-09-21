@@ -5,15 +5,20 @@ import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.CmdResult
 import com.rovecamlink.app.core.model.DeviceEvent
+import com.rovecamlink.app.core.model.DeviceInfo
 import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.model.DeviceStatus
 import com.rovecamlink.app.core.model.FileType
 import com.rovecamlink.app.core.model.RemoteFile
+import com.rovecamlink.app.core.model.SdCardState
 import com.rovecamlink.app.core.model.WorkMode
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.transport.CameraHttp
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -78,6 +83,7 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
             videoTimeSec = obj?.int("recordtime") ?: obj?.int("videotime"),
             sdTotalMb = sd?.long("total") ?: sd?.long("totalspace"),
             sdFreeMb = sd?.long("free") ?: sd?.long("freespace") ?: sd?.long("available"),
+            sdState = sd?.string("status")?.let { SdCardState.fromRaw(it) },
             photoCount = sd?.int("photocount"),
             videoCount = sd?.int("videocount"),
             raw = obj?.rawMap() ?: emptyMap(),
@@ -154,6 +160,64 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override fun previewUrl(session: CameraSession): String =
         "rtsp://${session.host}:8080/?action=stream"
+
+    // ---------- device info / maintenance ----------
+
+    override suspend fun getDeviceInfo(session: CameraSession): DeviceInfo? {
+        val obj = http.getText("${session.baseUrl}/api/device/info")?.toObj() ?: return null
+        return DeviceInfo(
+            model = obj.string("model")?.ifEmpty { null },
+            softVersion = obj.string("swver")?.ifEmpty { null },
+            hardVersion = obj.string("hwver")?.ifEmpty { null },
+            serialNumber = obj.string("uuid")?.ifEmpty { null },
+            mac = obj.string("mac")?.ifEmpty { null },
+            ssid = obj.string("ssid")?.ifEmpty { null },
+            soc = obj.string("soc")?.ifEmpty { null },
+            raw = obj.rawMap(),
+        )
+    }
+
+    override suspend fun formatSd(session: CameraSession): CmdResult {
+        val r = http.getText("${session.baseUrl}/api/system/formatsd")
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("format SD failed")
+    }
+
+    override suspend fun factoryReset(session: CameraSession): CmdResult {
+        // Ride3Pro's official app marks this endpoint TODO; Ride6 routes it through the
+        // menu parameter id `factory_reset`. Best-effort on both.
+        val r = http.getText("${session.baseUrl}/api/menu/setparameter?id=factory_reset&value=1")
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("factory reset failed")
+    }
+
+    override suspend fun reboot(session: CameraSession): CmdResult {
+        val r = http.getText("${session.baseUrl}/api/reboot")
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("reboot failed")
+    }
+
+    override suspend fun syncTime(session: CameraSession): CmdResult {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val r = http.getText(
+            "${session.baseUrl}/api/vendor/send-time?year=${now.year}&month=${now.monthNumber}" +
+                "&day=${now.dayOfMonth}&hour=${now.hour}&minute=${now.minute}&second=${now.second}",
+        )
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("time sync failed")
+    }
+
+    override suspend fun setWifi(session: CameraSession, ssid: String, password: String): CmdResult {
+        // Ride3Pro/Ride6 route Wi-Fi name/password through the menu parameter ids
+        // `wifi_name` / `wifi_passwd` (doc 03 §1.5(d)).
+        val a = http.getText(
+            "${session.baseUrl}/api/menu/setparameter?id=wifi_name&value=${urlEnc(ssid)}",
+        )
+        val b = http.getText(
+            "${session.baseUrl}/api/menu/setparameter?id=wifi_passwd&value=${urlEnc(password)}",
+        )
+        return if (a != null && b != null) CmdResult.Ok
+        else CmdResult.Failure("setwifi failed")
+    }
+
+    private fun urlEnc(s: String): String =
+        s.replace(" ", "%20").replace("&", "%26").replace("=", "%3D")
 
     // ---- helpers ----
     private fun absolute(session: CameraSession, url: String) =

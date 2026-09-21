@@ -3,6 +3,7 @@ package com.rovecamlink.app.core.protocol
 import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.CmdResult
+import com.rovecamlink.app.core.model.DeviceInfo
 import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.model.DeviceStatus
 import com.rovecamlink.app.core.model.RemoteFile
@@ -54,6 +55,24 @@ interface CameraProtocol {
 
     /** Absolute RTSP (or fallback) URL for live preview. */
     fun previewUrl(session: CameraSession): String
+
+    /** Static identity for the About screen (firmware version, serial, ...). Null if unreachable. */
+    suspend fun getDeviceInfo(session: CameraSession): DeviceInfo?
+
+    /** Format the SD card (destructive — the UI must confirm first). */
+    suspend fun formatSd(session: CameraSession): CmdResult
+
+    /** Restore factory settings. The camera may reboot or drop the session. */
+    suspend fun factoryReset(session: CameraSession): CmdResult
+
+    /** Remote reboot. Returns a Failure on cameras without a reboot command. */
+    suspend fun reboot(session: CameraSession): CmdResult
+
+    /** Set the camera clock to the phone's current local time. */
+    suspend fun syncTime(session: CameraSession): CmdResult
+
+    /** Change the camera's own Wi-Fi network (the AP it broadcasts) name/password. */
+    suspend fun setWifi(session: CameraSession, ssid: String, password: String): CmdResult
 
     /** Optional event stream. */
     val events: Flow<com.rovecamlink.app.core.model.DeviceEvent>

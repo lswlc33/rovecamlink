@@ -21,6 +21,7 @@
     <string name="phase_joining_wifi">正在加入 Wi-Fi</string>
     <string name="phase_detecting_device">检测相机</string>
     <string name="phase_connecting">连接中</string>
+    <string name="phase_syncing_time">同步时间</string>
     <string name="phase_connected">已连接</string>
     <string name="phase_error">错误</string>
 
@@ -83,12 +84,72 @@
     <string name="action_download_file">下载 %1$s</string>
     <string name="action_retry_file">重试 %1$s</string>
     <string name="action_delete_file">删除 %1$s</string>
+    <string name="action_finish_select">完成</string>
+    <string name="action_start_select">选择</string>
+    <string name="section_batch">批量操作</string>
+    <string name="action_select_all">全选</string>
+    <string name="action_clear_selection">清空</string>
+    <string name="action_download_selected">下载（%1$d）</string>
+    <string name="action_delete_selected">删除（%1$d）</string>
+    <string name="action_clear_finished_downloads">清除已完成</string>
+    <string name="action_retry_failed_downloads">重试失败项</string>
+    <string name="group_undated">未知日期</string>
 
     <!-- Settings screen -->
     <string name="action_reload_settings">重新加载设置</string>
     <string name="section_camera_settings">相机设置</string>
     <string name="settings_none_reload">无 — 点击重新加载</string>
     <string name="label_settings">设置</string>
+    <string name="section_about">关于</string>
+    <string name="label_device_name">名称</string>
+    <string name="label_firmware">固件</string>
+    <string name="label_hardware">硬件</string>
+    <string name="label_serial">序列号</string>
+    <string name="label_region">区域</string>
+    <string name="label_mac">MAC 地址</string>
+    <string name="label_wifi_ssid">Wi-Fi</string>
+    <string name="action_reload_device_info">刷新设备信息</string>
+    <string name="section_firmware_update">固件更新</string>
+    <string name="label_installed_version">已装版本</string>
+    <string name="action_install_firmware">选择固件并更新</string>
+    <string name="firmware_update_unsupported">该机型暂不支持固件更新</string>
+    <string name="ota_update_applied">更新已应用</string>
+    <string name="ota_action_done">完成</string>
+    <string name="ota_cancelled">已取消</string>
+    <string name="action_dismiss">关闭</string>
+    <string name="ota_waiting_for_device">等待相机…</string>
+    <string name="ota_uploading">上传中…</string>
+    <string name="ota_installing">安装中…</string>
+    <string name="ota_waiting_for_reboot">相机重启中…</string>
+    <string name="ota_reconnecting">重新连接中…</string>
+    <string name="ota_verifying_version">正在核对版本（%1$s）…</string>
+    <string name="section_sd_card">SD 卡</string>
+    <string name="label_status">状态</string>
+    <string name="sd_ok">正常</string>
+    <string name="sd_missing">未插入</string>
+    <string name="sd_error">异常</string>
+    <string name="sd_unknown">未知</string>
+    <string name="label_total">总量</string>
+    <string name="label_free">剩余</string>
+    <string name="action_format_sd">格式化 SD 卡</string>
+    <string name="hint_new_ssid">新 SSID</string>
+    <string name="hint_new_password">新密码</string>
+    <string name="label_note">提示</string>
+    <string name="note_wifi_reconnect">相机将重启它的 Wi-Fi — 你需要重新连接到新网络。</string>
+    <string name="section_danger_zone">危险操作</string>
+    <string name="action_reboot_camera">重启相机</string>
+    <string name="action_factory_reset">恢复出厂设置</string>
+    <string name="title_format_sd">格式化 SD 卡?</string>
+    <string name="title_factory_reset">恢复出厂设置?</string>
+    <string name="title_reboot_camera">重启相机?</string>
+    <string name="msg_format_sd">卡上所有文件将被清除,此操作不可撤销。</string>
+    <string name="msg_factory_reset">相机所有设置将恢复出厂默认,此操作不可撤销。</string>
+    <string name="msg_reboot_camera">相机将重启,连接会短暂中断。</string>
+    <string name="action_confirm_format">格式化</string>
+    <string name="action_confirm_reset">重置</string>
+    <string name="action_confirm_reboot">重启</string>
+    <string name="title_batch_delete">删除 %1$d 个文件?</string>
+    <string name="msg_batch_delete">它们将从相机中删除,此操作不可撤销。</string>
 
     <!-- WorkMode display names -->
     <string name="workmode_video">视频</string>
@@ -134,4 +195,7 @@
     <string name="err_gallery_rejected">已下载,但相册拒绝接收 — 已保留在应用存储中。</string>
     <string name="err_download_failed">下载失败</string>
     <string name="err_command_failed">命令执行失败</string>
+    <string name="notice_factory_reset">相机已恢复出厂设置 — 可能会重启并断开连接。</string>
+    <string name="notice_reboot">相机正在重启 — 连接会短暂中断。</string>
+    <string name="status_syncing_time">正在同步相机时间…</string>
 </resources>

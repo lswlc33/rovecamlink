@@ -8,16 +8,21 @@ import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.CmdResult
 import com.rovecamlink.app.core.model.DeviceEvent
+import com.rovecamlink.app.core.model.DeviceInfo
 import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.model.DeviceStatus
 import com.rovecamlink.app.core.model.FileType
 import com.rovecamlink.app.core.model.RemoteFile
+import com.rovecamlink.app.core.model.SdCardState
 import com.rovecamlink.app.core.model.WorkMode
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.transport.CameraHttp
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -105,6 +110,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             videoTimeSec = allInfo.int("pasttime"),
             sdTotalMb = total,
             sdFreeMb = free,
+            sdState = SdCardState.fromRaw(sd["sdstate"]),
             photoCount = count.int("count"),
             raw = (camStatus + allInfo + batt + sd + count),
         )
@@ -281,7 +287,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         )
     }
 
-    /** create format yyyyMMddHHmmss -> epoch millis (best effort, UTC). */
+    /** create format yyyyMMddHHmmss -> epoch millis (best effort, local time — camera filenames are local). */
     @OptIn(kotlin.time.ExperimentalTime::class)
     private fun parseCreateDate(create: String?): Long? {
         if (create == null || create.length < 14) return null
@@ -293,7 +299,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             val mi = create.substring(10, 12).toInt()
             val s = create.substring(12, 14).toInt()
             kotlinx.datetime.LocalDateTime(y, mo, d, h, mi, s)
-                .toInstant(kotlinx.datetime.TimeZone.UTC).toEpochMilliseconds()
+                .toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
         }.getOrNull()
     }
 
@@ -315,4 +321,50 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override fun previewUrl(session: CameraSession): String =
         "rtsp://${session.host}:554/livestream/12"
+
+    // ---------- device info / maintenance ----------
+
+    override suspend fun getDeviceInfo(session: CameraSession): DeviceInfo? {
+        val attr = HiVarParser.parse(http.getText("${cgi(session.host, session.port)}/getdeviceattr.cgi")) ?: return null
+        return DeviceInfo(
+            name = attr["name"]?.trim()?.ifEmpty { null },
+            model = attr["model"]?.trim()?.ifEmpty { null },
+            serialNumber = attr["serialnum"]?.trim()?.ifEmpty { null },
+            softVersion = attr["softversion"]?.trim()?.ifEmpty { null },
+            hardVersion = attr["hardversion"]?.trim()?.ifEmpty { null },
+            region = attr["region"]?.trim()?.ifEmpty { null },
+            raw = attr,
+        )
+    }
+
+    override suspend fun formatSd(session: CameraSession): CmdResult {
+        val r = http.getText("${cgi(session.host, session.port)}/sdcommand.cgi?-format&-partition=1")
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("format SD failed")
+    }
+
+    override suspend fun factoryReset(session: CameraSession): CmdResult {
+        val r = http.getText("${cgi(session.host, session.port)}/reset.cgi")
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("factory reset failed")
+    }
+
+    override suspend fun reboot(session: CameraSession): CmdResult =
+        CmdResult.Failure("Reboot is not supported on this camera")
+
+    override suspend fun syncTime(session: CameraSession): CmdResult {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val stamp = "%04d%02d%02d%02d%02d%02d".format(
+            now.year, now.monthNumber, now.dayOfMonth, now.hour, now.minute, now.second,
+        )
+        val r = http.getText("${cgi(session.host, session.port)}/setsystime.cgi?-time=$stamp")
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("time sync failed")
+    }
+
+    override suspend fun setWifi(session: CameraSession, ssid: String, password: String): CmdResult {
+        val url = "${cgi(session.host, session.port)}/setwifi.cgi?&-wifissid=${urlencode(ssid)}&-wifikey=${urlencode(password)}"
+        val r = http.getText(url)
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("setwifi failed")
+    }
+
+    private fun urlencode(s: String): String =
+        s.replace(" ", "%20").replace("&", "%26").replace("=", "%3D").replace("+", "%2B")
 }

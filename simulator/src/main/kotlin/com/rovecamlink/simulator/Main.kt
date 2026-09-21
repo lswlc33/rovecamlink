@@ -1,14 +1,17 @@
 package com.rovecamlink.simulator
 
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
+import io.ktor.server.request.receive
 import io.ktor.server.response.respondBytes
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import kotlinx.serialization.json.JsonArray
@@ -36,6 +39,9 @@ import javax.imageio.ImageIO
 
 private var recording = false
 private var workMode = "NormalVideo"
+private var simTime: String? = null
+private var softVersion = "1.0.4"
+private var uploadedFirmwareName: String? = null
 private val settings = linkedMapOf(
     "Resolution" to "1080P60",
     "ImageStabilize" to "ON",
@@ -46,7 +52,7 @@ private val onOffOptions = listOf("ON", "OFF")
 
 private data class SimFile(val path: String, val create: String, val time: Int, val size: Long)
 
-private val files = listOf(
+private var files = listOf(
     SimFile("MOVIE/2026010112000000.MP4", "20260101120000", 32, 12_582_912),
     SimFile("DCIM/2026010112010000.JPG", "20260101120100", 0, 2_411_724),
     SimFile("MOVIE/2026010112020000.MP4", "20260101120200", 47, 20_971_520),
@@ -72,6 +78,16 @@ fun Application.simulatorModule() {
                 if (text == null) call.respondText("not found", status = HttpStatusCode.NotFound)
                 else call.respondText(text, ContentType.Text.Plain)
             }
+
+            // OTA upload: fileupload.cgi is a POST with a multipart body. We only need
+            // the field's filename (it carries the yyyyMMdd version token in real packages).
+            post("fileupload.cgi") {
+                val body = call.receive<ByteArray>()
+                val name = filenameFromMultipart(body)
+                uploadedFirmwareName = name
+                println("SIM: firmware package uploaded -> ${name ?: "<no filename>"} (${body.size} bytes)")
+                call.respondText("Success", ContentType.Text.Plain)
+            }
         }
 
         // Media + thumbnail downloads: /MOVIE/xxx.MP4 , /DCIM/xxx.JPG , /MOVIE/xxx.THM
@@ -94,7 +110,7 @@ fun Application.simulatorModule() {
 private fun handleCgi(cmd: String, q: io.ktor.http.Parameters): String? = when (cmd) {
     "getdeviceattr" -> varargBody(
         "model" to "X7Pro", "name" to "XTU X7 Pro (Sim)", "serialnum" to "SIM0000001",
-        "softversion" to "1.0.4", "hardversion" to "NewAPP", "type" to "117",
+        "softversion" to softVersion, "hardversion" to "NewAPP", "type" to "117",
         "region" to "G", "pcbrevision" to "V1.0",
     )
     "getcamerastatus" -> varargBody("count" to files.size.toString(), "status" to if (recording) "20" else "1")
@@ -161,7 +177,50 @@ private fun handleCgi(cmd: String, q: io.ktor.http.Parameters): String? = when (
     }
     "deletefile" -> "Success"
     "deleteallfiles" -> "Success"
-    "sdcommand" -> varargBody("sdstatus" to "1")
+    "sdcommand" -> {
+        // `sdcommand.cgi?-format&-partition=1` from the app's Format SD action:
+        // wipe the card so the empty listing is visible in the UI.
+        if (q["-format"] != null) {
+            files = emptyList()
+            println("SIM: SD card formatted — file list cleared")
+        }
+        varargBody("sdstatus" to "1")
+    }
+    "setsystime" -> {
+        simTime = q["-time"]
+        println("SIM: camera clock set to $simTime")
+        "Success"
+    }
+    "setwifi" -> {
+        val ssid = q["-wifissid"] ?: "<unchanged>"
+        val key = q["-wifikey"] ?: "<unchanged>"
+        println("SIM: camera Wi-Fi set to ssid=$ssid key=${if (key == "<unchanged>") key else "••••"}")
+        "Success"
+    }
+    "reset" -> {
+        recording = false
+        workMode = "NormalVideo"
+        settings.clear()
+        println("SIM: factory reset")
+        "Success"
+    }
+    "upgrade" -> {
+        // upgrade.cgi applies the previously-uploaded package. Real firmware carries a
+        // yyyyMMdd version token in its file name, so echo that back as the new version —
+        // exactly what the app's post-install version-confirm will compare against.
+        val name = uploadedFirmwareName
+        if (name != null) {
+            val next = Regex("\\d{8}").find(name)?.value
+            if (next != null) {
+                softVersion = "$next.0"
+            }
+            uploadedFirmwareName = null
+            println("SIM: firmware upgrade applied -> softversion=$softVersion (camera rebooting)")
+            "Success"
+        } else {
+            "no firmware"
+        }
+    }
 
     // A few legacy getters so the legacy settings path also works.
     "getvideoinfo" -> varargBody("resolution" to "1080P60", "fps" to "60")
@@ -230,3 +289,13 @@ private fun thumbnailJpeg(name: String): ByteArray = generatedJpeg(name)
 
 /** Photo thumbnail/download — real JPEG. */
 private fun photoJpeg(name: String): ByteArray = generatedJpeg(name)
+
+/**
+ * Extracts the `filename="..."` from a multipart body without a full parser — we send a
+ * known layout, so the first match on the ISO-8859-1 (byte-transparent) decode is enough.
+ */
+private fun filenameFromMultipart(body: ByteArray): String? {
+    val text = body.toString(Charsets.ISO_8859_1)
+    val m = Regex("""filename="([^"]+)"""", RegexOption.IGNORE_CASE).find(text) ?: return null
+    return m.groupValues[1].takeIf { it.isNotEmpty() }
+}

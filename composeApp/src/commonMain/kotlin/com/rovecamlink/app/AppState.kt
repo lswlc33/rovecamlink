@@ -6,15 +6,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.graphics.ImageBitmap
+import com.rovecamlink.app.brand.xtu.HisiliconOtaTransport
 import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.CmdResult
+import com.rovecamlink.app.core.model.DeviceEvent
+import com.rovecamlink.app.core.model.DeviceInfo
 import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.model.DeviceStatus
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.WorkMode
+import com.rovecamlink.app.core.ota.OtaCoordinator
+import com.rovecamlink.app.core.ota.OtaState
+import com.rovecamlink.app.core.ota.pickCameraFirmwarePackage
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.storage.sanitizeFileName
+import com.rovecamlink.app.core.update.AppUpdateInfo
+import com.rovecamlink.app.core.update.AppVersion
+import com.rovecamlink.app.core.update.applyAppUpdate
+import com.rovecamlink.app.core.update.checkForAppUpdate
 import com.rovecamlink.app.core.wifi.CameraNetwork
 import com.rovecamlink.app.core.wifi.DEFAULT_PREFIXES
 import com.rovecamlink.app.core.wifi.WifiResult
@@ -35,12 +45,13 @@ enum class Phase {
     ConnectingWifi,
     IdentifyingDevice,
     ConnectingProtocol,
+    SyncingTime,
     Connected,
     Error,
 }
 
 /** A discrete user/system operation so the UI can grey out only the relevant control. */
-enum class Op { Capture, Record, Mode, Refresh, Delete, Settings }
+enum class Op { Capture, Record, Mode, Refresh, Delete, Settings, FormatSd, FactoryReset, Reboot, DeviceInfo }
 
 /** Download queue entry. */
 data class DownloadItem(
@@ -72,6 +83,20 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         private set
     var deviceStatus by mutableStateOf<DeviceStatus?>(null)
         private set
+    var deviceInfo by mutableStateOf<DeviceInfo?>(null)
+        private set
+    var otaState by mutableStateOf<OtaState>(OtaState.Idle)
+        private set
+
+    // App self-update (A8) — runs against the Internet, independent of the camera session.
+    var appUpdateInfo by mutableStateOf<AppUpdateInfo?>(null)
+        private set
+    var checkingAppUpdate by mutableStateOf(false)
+        private set
+    var applyingAppUpdate by mutableStateOf(false)
+        private set
+    var appUpdateResult by mutableStateOf<String?>(null)
+        private set
     var settings by mutableStateOf<List<CameraSetting>>(emptyList())
         private set
     var files by mutableStateOf<List<RemoteFile>>(emptyList())
@@ -93,6 +118,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     private val thumbFailed = mutableSetOf<String>()
 
     private var pollJob: Job? = null
+    private var otaCoordinator: OtaCoordinator? = null
 
     /**
      * Bound to the live connection and cancelled on disconnect, so a refresh or
@@ -196,13 +222,44 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             session = s
             sessionScope = CoroutineScope(scope.coroutineContext + Job())
             consecutivePollFailures = 0
+            collectEvents(proto)
+            // Time sync is a named connection step (TUWIN makes it one too); it's
+            // best-effort so a camera that rejects it still connects.
+            phase = Phase.SyncingTime
+            statusMessage = localized(Res.string.status_syncing_time)
+            runCatching { proto.syncTime(s) }
             phase = Phase.Connected
             statusMessage = localized(Res.string.status_connected_platform, platform.displayName)
             startPolling()
+            loadDeviceInfo()
             loadSettings()
             refreshFiles()
         } catch (t: Throwable) {
             fail(t.message?.let(::raw) ?: localized(Res.string.err_connection_error))
+        }
+    }
+
+    /**
+     * Wires the protocol's push events into observable state. Launched on
+     * [sessionScope] so it is cancelled together with the session on disconnect;
+     * a device that never pushes events simply keeps the polling loop as the
+     * authority for status.
+     */
+    private fun collectEvents(proto: CameraProtocol) {
+        val owner = sessionScope ?: return
+        owner.launch {
+            proto.events.collect { ev ->
+                when (ev) {
+                    is DeviceEvent.RecordingChanged ->
+                        deviceStatus = deviceStatus?.copy(recording = ev.recording)
+                    is DeviceEvent.BatteryChanged ->
+                        deviceStatus = deviceStatus?.copy(battery = ev.percent)
+                    is DeviceEvent.Disconnected -> {
+                        errorMessage = ev.reason
+                        disconnect()
+                    }
+                }
+            }
         }
     }
 
@@ -215,6 +272,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         pollJob = null
         session = null
         deviceStatus = null
+        deviceInfo = null
+        otaState = OtaState.Idle
+        otaCoordinator = null
         files = emptyList()
         settings = emptyList()
         thumbnails.clear()
@@ -333,6 +393,140 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         r
     }
 
+    /**
+     * Batch delete inside a single operation. Iterating [deleteFile] from a loop
+     * would spawn concurrent read-modify-write on `files` and silently drop
+     * updates, so the whole batch runs sequentially and rebuilds the list once.
+     */
+    fun deleteFiles(list: List<RemoteFile>) = runOp(Op.Delete) { proto, s ->
+        if (list.isEmpty()) return@runOp CmdResult.Ok
+        var failed = 0
+        for (f in list) {
+            if (!proto.deleteFile(s, f).isOk) failed++
+            thumbnails.remove(f.name)
+            thumbFailed.remove(f.name)
+        }
+        val removed = list.mapTo(mutableSetOf()) { it.name }
+        files = files.filterNot { removed.contains(it.name) }
+        if (failed > 0) CmdResult.Failure("$failed of ${list.size} files could not be deleted")
+        else CmdResult.Ok
+    }
+
+    // ---------- device info / maintenance ----------
+
+    fun loadDeviceInfo() = runOp(Op.DeviceInfo) { proto, s ->
+        deviceInfo = proto.getDeviceInfo(s)
+        CmdResult.Ok
+    }
+
+    fun formatSd() = runOp(Op.FormatSd) { proto, s ->
+        val r = proto.formatSd(s)
+        if (r.isOk) {
+            // Formatting wipes the card: drop cached listings and thumbnails, then
+            // repull so the UI shows the (empty) card instead of stale files.
+            thumbnails.clear()
+            thumbFailed.clear()
+            files = proto.listFiles(s, 0, 999)
+            runCatching { deviceStatus = proto.getStatus(s) }
+        }
+        r
+    }
+
+    fun factoryReset() = runOp(Op.FactoryReset) { proto, s ->
+        val r = proto.factoryReset(s)
+        if (r.isOk) errorMessage = localized(Res.string.notice_factory_reset)
+        r
+    }
+
+    fun reboot() = runOp(Op.Reboot) { proto, s ->
+        val r = proto.reboot(s)
+        if (r.isOk) errorMessage = localized(Res.string.notice_reboot)
+        r
+    }
+
+    fun syncTime() = runOp(Op.Settings) { proto, s -> proto.syncTime(s) }
+
+    /** Change the camera's own Wi-Fi name/password (A4). */
+    fun setCameraWifi(ssid: String, password: String) =
+        runOp(Op.Settings) { proto, s -> proto.setWifi(s, ssid, password) }
+
+    // ---------- firmware OTA ----------
+
+    /**
+     * Whether the connected camera family supports firmware updates yet. Only the
+     * Hisilicon CGI transport is implemented so far (doc 04's "start with Hisilicon").
+     */
+    fun firmwareUpdateSupported(): Boolean =
+        session?.platform == DevicePlatform.HISILICON
+
+    /**
+     * Pick a local firmware package and run the update. Launched on [sessionScope]
+     * so it dies with the session; state is surfaced through [otaState].
+     */
+    fun installFirmwareUpdate() {
+        val base = session ?: return
+        val proto = protocol ?: return
+        val owner = sessionScope ?: return
+        if (!firmwareUpdateSupported()) {
+            otaState = OtaState.Failed("Firmware update is not yet supported for this camera")
+            return
+        }
+        val transport = HisiliconOtaTransport(graph.http)
+        val coord = OtaCoordinator(
+            transport = transport,
+            connect = { proto.connect(base.host, base.port) },
+        )
+        coord.onState = { otaState = it }
+        otaCoordinator = coord
+        owner.launch {
+            val pkg = runCatching { pickCameraFirmwarePackage() }.getOrNull()
+            if (pkg == null) {
+                if (!otaState.isTerminal) otaState = OtaState.Cancelled
+                return@launch
+            }
+            coord.run(pkg)
+        }
+    }
+
+    fun cancelFirmwareUpdate() {
+        otaCoordinator?.cancel()
+    }
+
+    /** Dismiss a terminal OTA state so the update button returns. */
+    fun resetOtaState() {
+        if (otaState.isTerminal) otaState = OtaState.Idle
+    }
+
+    // ---------- app self-update ----------
+
+    /** Latest installed app version (for display). */
+    fun currentAppVersion(): String = AppVersion.current
+
+    fun checkAppUpdate() = scope.launch {
+        checkingAppUpdate = true
+        appUpdateInfo = null
+        appUpdateResult = null
+        try {
+            // null → no newer release (or unreachable from a camera Wi-Fi sandbox).
+            appUpdateInfo = runCatching { checkForAppUpdate(graph.http) }.getOrNull()
+        } finally {
+            checkingAppUpdate = false
+        }
+    }
+
+    fun performAppUpdate() {
+        val info = appUpdateInfo ?: return
+        scope.launch {
+            applyingAppUpdate = true
+            try {
+                val msg = runCatching { applyAppUpdate(info, graph.http) }.getOrNull() ?: "Update failed"
+                appUpdateResult = msg
+            } finally {
+                applyingAppUpdate = false
+            }
+        }
+    }
+
     fun download(file: RemoteFile) {
         val proto = protocol ?: return
         val s = session ?: return
@@ -390,6 +584,16 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     fun downloadError(name: String): LocalizedString? =
         downloads.firstOrNull { it.file.name == name }?.error
+
+    /** Drop finished entries from the in-session queue (files stay on disk). */
+    fun clearFinishedDownloads() {
+        downloads.removeAll { it.state == DownloadItem.State.Done }
+    }
+
+    /** Re-queue every failed download (resumes from whatever bytes already landed). */
+    fun retryFailedDownloads() {
+        downloads.filter { it.state == DownloadItem.State.Failed }.forEach { download(it.file) }
+    }
 
     private fun markFailed(file: RemoteFile, reason: LocalizedString) {
         val i = downloads.indexOfFirst { it.file.name == file.name }

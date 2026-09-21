@@ -5,13 +5,17 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.post
 import io.ktor.client.request.prepareGet
+import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.readBytes
+import io.ktor.http.ContentType
 import io.ktor.http.contentLength
+import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.core.writeFully
@@ -78,6 +82,35 @@ class CameraHttp(
     suspend fun getBytes(url: String): ByteArray? = try {
         val resp = client.get { url(url) }
         if (resp.status.isSuccess()) resp.readBytes() else null
+    } catch (_: Throwable) {
+        null
+    }
+
+    /**
+     * POST [body] as [contentType] with optional extra [headers], returning the
+     * response text on HTTP success or null on any failure. Used for OTA uploads
+     * (e.g. the Hisilicon `fileupload.cgi` multipart body) where the app has to
+     * control the exact bytes and content-type.
+     */
+    suspend fun post(
+        url: String,
+        body: ByteArray,
+        contentType: ContentType,
+        headers: Map<String, String> = emptyMap(),
+        onProgress: (Float) -> Unit = {},
+    ): String? = try {
+        val resp = client.post {
+            this.url(url)
+            headers.forEach { (k, v) -> header(k, v) }
+            this.contentType(contentType)
+            setBody(body)
+        }
+        if (resp.status.isSuccess()) {
+            onProgress(1f)
+            resp.bodyAsText()
+        } else {
+            null
+        }
     } catch (_: Throwable) {
         null
     }
