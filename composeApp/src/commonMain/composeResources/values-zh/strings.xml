@@ -288,4 +288,6 @@
     <string name="label_select_all">全选</string>
     <string name="label_clear_selection">取消全选</string>
     <string name="label_unknown_date">日期未知</string>
+    <string name="action_raise_access_point">让相机重新开启热点</string>
+    <string name="hint_device_action">相机上有些项是操作而不是设置，请用下方的按钮执行。</string>
 </resources>

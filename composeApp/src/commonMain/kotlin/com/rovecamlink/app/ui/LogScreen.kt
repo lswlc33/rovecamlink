@@ -52,23 +52,13 @@ import com.robinpcrd.cupertino.theme.systemOrange
 import com.robinpcrd.cupertino.theme.systemRed
 import com.rovecamlink.app.AppState
 import com.rovecamlink.app.Res
-import com.rovecamlink.app.core.log.Diag
-import com.rovecamlink.app.core.log.LogFormat
-import com.rovecamlink.app.core.log.LogLevel
-import com.rovecamlink.app.core.log.LogRecord
-import com.rovecamlink.app.core.log.LogTag
-import com.rovecamlink.app.core.log.createLogStore
-// Every generated top-level extension lives in `com.rovecamlink.app` and MUST be
-// imported by name — that, not any real resource-lookup bug, is what made earlier
-// attempts here fail to resolve. (docs/06 and the old note in Screens.kt blamed the
-// resolver; ConnectScreen proves ~40 of these resolve fine once imported.)
 import com.rovecamlink.app.log_action_save
 import com.rovecamlink.app.log_action_save_current
 import com.rovecamlink.app.log_action_share
 import com.rovecamlink.app.log_action_share_current
 import com.rovecamlink.app.log_action_snapshot
-import com.rovecamlink.app.log_busy_saving
 import com.rovecamlink.app.log_busy_preparing
+import com.rovecamlink.app.log_busy_saving
 import com.rovecamlink.app.log_close
 import com.rovecamlink.app.log_empty
 import com.rovecamlink.app.log_export_hint
@@ -96,6 +86,16 @@ import com.rovecamlink.app.log_switch_filesink
 import com.rovecamlink.app.log_switch_sampling
 import com.rovecamlink.app.log_switch_secrets
 import com.rovecamlink.app.log_title
+import com.rovecamlink.app.core.log.Diag
+import com.rovecamlink.app.core.log.LogFormat
+import com.rovecamlink.app.core.log.LogLevel
+import com.rovecamlink.app.core.log.LogRecord
+import com.rovecamlink.app.core.log.LogTag
+import com.rovecamlink.app.core.log.createLogStore
+// Every generated top-level extension lives in `com.rovecamlink.app` and MUST be
+// imported by name — that, not any real resource-lookup bug, is what made earlier
+// attempts here fail to resolve. (docs/06 and the old note in Screens.kt blamed the
+// resolver; ConnectScreen proves ~40 of these resolve fine once imported.)
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch

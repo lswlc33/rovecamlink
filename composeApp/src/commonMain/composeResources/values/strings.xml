@@ -288,4 +288,6 @@
     <string name="label_select_all">Select all</string>
     <string name="label_clear_selection">Clear</string>
     <string name="label_unknown_date">Unknown date</string>
+    <string name="action_raise_access_point">Make the camera broadcast its hotspot again</string>
+    <string name="hint_device_action">Some items on this camera are actions, not settings — use the buttons below them.</string>
 </resources>

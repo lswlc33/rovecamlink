@@ -146,6 +146,23 @@ interface CameraProtocol {
     suspend fun setWifi(session: CameraSession, ssid: String, password: String): CmdResult
 
     /**
+     * Put the camera back into **access-point** mode, i.e. raise the hotspot again
+     * without Bluetooth.
+     *
+     * The second half of the user's complaint about Bluetooth provisioning: the
+     * official app has a way to make the camera broadcast again that does not go
+     * through GATT at all, and it is a plain HTTP call — which means it works exactly
+     * when the camera is reachable but the phone has been dropped from it (the
+     * firmware's STA mode, a sleep, or a hotspot that died while the app was closed).
+     * It cannot help when the camera is not on the network at all, so Bluetooth stays
+     * the primary route; this is the fallback the connection screen can offer.
+     *
+     * Protocols without such a command report a failure with the reason.
+     */
+    suspend fun ensureAccessPoint(session: CameraSession): CmdResult =
+        CmdResult.Failure("This camera has no way to raise its hotspot from the app")
+
+    /**
      * Called when a session ends. Protocols that cache per-host firmware facts (work-mode
      * tables, menu listings) drop them here, so a camera replaced on the same IP cannot
      * be served another model's table.

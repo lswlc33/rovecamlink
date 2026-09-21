@@ -100,6 +100,32 @@ internal class HiMaintenance(private val http: CameraHttp, private val cgi: (Cam
         }
     }
 
+    /**
+     * Raise the camera's hotspot again, without Bluetooth.
+     *
+     * `GET http://<ip>/cgi-bin/setwifista.cgi?` — bare, and **not** under
+     * `/cgi-bin/hi3510/` (`Common.ICGI_PATH`, `Common.java:61`). The official client
+     * calls it the moment the Wi-Fi drops (`Setting.setWifiToAp`, `Setting.java:325-327`
+     * via `HiWifiScrollView.java:147`) to pull the camera out of STA mode and back into
+     * being an access point.
+     *
+     * It cannot help a camera that is switched off or not on the network at all — that
+     * is what Bluetooth is for, since the radio has to answer before any IP exists.
+     * But "the camera was reachable and stopped broadcasting" is the other half of the
+     * field complaint, and this is the one command that fixes it.
+     */
+    suspend fun raiseAccessPoint(session: CameraSession): CmdResult {
+        val base = cgi(session).removeSuffix("/hi3510").substringBeforeLast("/cgi-bin")
+        val url = "$base/cgi-bin/setwifista.cgi?"
+        Diag.info(LogTag.PROTO, "setwifista (raise AP, no args) -> $url")
+        val r = http.getText(url)
+        return when (val verdict = Cgi.verdict(r)) {
+            is CgiReply.Accepted -> CmdResult.Ok
+            is CgiReply.Rejected -> refused("setwifista", verdict)
+            CgiReply.NoAnswer -> CmdResult.Failure("相机没有回应热点命令（setwifista.cgi）")
+        }
+    }
+
     private suspend fun refused(endpoint: String, verdict: CgiReply.Rejected): CmdResult.Failure {
         val detail = Cgi.explain(verdict.code)
         Diag.w(LogTag.PROTO) { "$endpoint refused: code=${verdict.code} — $detail (body=${LogFormat.bodyField(verdict.body, Diag.config.captureSecrets)})" }

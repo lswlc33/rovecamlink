@@ -64,7 +64,7 @@ enum class Phase {
 }
 
 /** A discrete user/system operation so the UI can grey out only the relevant control. */
-enum class Op { Capture, Record, Mode, Refresh, Delete, Settings, FormatSd, FactoryReset, Reboot, DeviceInfo }
+enum class Op { Capture, Record, Mode, Refresh, Delete, Settings, FormatSd, FactoryReset, Reboot, DeviceInfo, AccessPoint }
 
 /** Download queue entry. */
 data class DownloadItem(
@@ -1072,6 +1072,17 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     /** Change the camera's own Wi-Fi name/password (A4). */
     fun setCameraWifi(ssid: String, password: String) =
         runOp(Op.Settings) { proto, s -> proto.setWifi(s, ssid, password) }
+
+    /**
+     * Ask the camera to raise its hotspot again. The non-Bluetooth half of "the
+     * camera is on but the phone cannot see it": useful when the firmware was left in
+     * STA mode, or its AP stopped while the app was closed.
+     */
+    fun raiseAccessPoint() = runOp(Op.AccessPoint) { proto, s -> proto.ensureAccessPoint(s) }
+
+    /** Whether this camera family can be told to broadcast again at all. */
+    fun canRaiseAccessPoint(): Boolean =
+        session?.platform == DevicePlatform.HISILICON
 
     // ---------- firmware OTA ----------
 

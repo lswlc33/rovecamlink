@@ -83,10 +83,10 @@ import com.rovecamlink.app.phase_scanning_bluetooth
 import com.rovecamlink.app.phase_scanning_wifi
 import com.rovecamlink.app.phase_waking_camera
 import com.rovecamlink.app.placeholder_ip
-import com.rovecamlink.app.resolve
 import com.rovecamlink.app.section_status
 import com.rovecamlink.app.wifi_open
 import com.rovecamlink.app.wifi_secured
+import com.rovecamlink.app.resolve
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.qr.QrScanScreen
 import kotlinx.coroutines.awaitCancellation

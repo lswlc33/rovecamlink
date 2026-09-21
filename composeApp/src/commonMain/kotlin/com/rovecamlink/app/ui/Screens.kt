@@ -105,6 +105,7 @@ import com.rovecamlink.app.action_factory_reset
 import com.rovecamlink.app.action_format_sd
 import com.rovecamlink.app.action_logging
 import com.rovecamlink.app.action_photo
+import com.rovecamlink.app.action_raise_access_point
 import com.rovecamlink.app.action_reboot_camera
 import com.rovecamlink.app.action_record
 import com.rovecamlink.app.action_refresh_device_info
@@ -175,7 +176,6 @@ import com.rovecamlink.app.not_connected_title
 import com.rovecamlink.app.note_wifi_restarts
 import com.rovecamlink.app.rec_busy
 import com.rovecamlink.app.rec_idle
-import com.rovecamlink.app.resolve
 import com.rovecamlink.app.save
 import com.rovecamlink.app.sd_error
 import com.rovecamlink.app.sd_missing
@@ -200,6 +200,7 @@ import com.rovecamlink.app.title_format_sd
 import com.rovecamlink.app.title_reboot
 import com.rovecamlink.app.workmode_photo
 import com.rovecamlink.app.workmode_video
+import com.rovecamlink.app.resolve
 import com.rovecamlink.app.core.media.CameraPreviewView
 import com.rovecamlink.app.core.media.OrientationMode
 import com.rovecamlink.app.core.media.rememberDeviceOrientation
@@ -1069,6 +1070,7 @@ fun SettingsScreen(state: AppState) {
     val loggingLbl = stringResource(Res.string.action_logging)
     val diagnosticsLbl = stringResource(Res.string.action_diagnostics)
     val syncTimeLbl = stringResource(Res.string.action_sync_camera_time)
+    val raiseApLbl = stringResource(Res.string.action_raise_access_point)
     val notConnectedNote = stringResource(Res.string.not_connected_note)
     val settingsLbl = stringResource(Res.string.label_settings)
     val settingsNone = stringResource(Res.string.settings_none_reload)
@@ -1283,6 +1285,14 @@ fun SettingsScreen(state: AppState) {
             if (wifiSubmit) {
                 valueItem(noteLbl, wifiRestartNote)
             }
+            // The other half of "the app cannot open the camera's hotspot": when the
+            // camera is reachable but not broadcasting, this is the one command that
+            // brings the AP back without going through Bluetooth at all.
+            actionRow(
+                raiseApLbl,
+                busy = state.isBusy(Op.AccessPoint),
+                enabled = state.canRaiseAccessPoint(),
+            ) { state.raiseAccessPoint() }
         }
 
         section(title = { CupertinoText(dangerTitle.sectionTitle()) }) {

@@ -6,11 +6,11 @@ import androidx.compose.runtime.setValue
 import com.rovecamlink.app.AppGraph
 import com.rovecamlink.app.LocalizedString
 import com.rovecamlink.app.Res
-import com.rovecamlink.app.raw
-import com.rovecamlink.app.localized
 import com.rovecamlink.app.err_bluetooth_off
 import com.rovecamlink.app.err_bluetooth_unsupported
 import com.rovecamlink.app.err_scan_needs_location
+import com.rovecamlink.app.raw
+import com.rovecamlink.app.localized
 import com.rovecamlink.app.core.ble.BleCamera
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogTag
