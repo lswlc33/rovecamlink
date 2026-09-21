@@ -15,11 +15,18 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.rtsp.RtspMediaSource
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.ui.PlayerView
 import com.robinpcrd.cupertino.CupertinoText
+import com.rovecamlink.app.Res
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogTag
+import com.rovecamlink.app.core.log.monotonicMillis
+import com.rovecamlink.app.preview_none
+import org.jetbrains.compose.resources.stringResource
 
 private fun playbackStateName(state: Int): String = when (state) {
     Player.STATE_IDLE -> "IDLE"
@@ -29,10 +36,32 @@ private fun playbackStateName(state: Int): String = when (state) {
     else -> "state$state"
 }
 
+/**
+ * Buffer targets for the live view, in ms / bytes.
+ *
+ * ExoPlayer's defaults hold a live stream back until it has
+ * `bufferForPlaybackMs = 2500` before it paints anything, and keep a 50 MB target
+ * buffer on top of that — for a 1.5 Mbps camera stream that is tens of seconds of
+ * material. On a motion camera that delay is the difference between framing a shot
+ * and missing it, and the 2026-09-21 field session measured 2.6 s just to reach
+ * READY on top of whatever the pipeline then sat behind. These values aim at about
+ * a third of a second of smoothing, which is enough to ride out the WiFi jitter a
+ * camera AP produces without turning the view into a recording of the past.
+ */
+private const val MIN_BUFFER_MS = 1_000
+private const val MAX_BUFFER_MS = 3_000
+private const val PLAYBACK_BUFFER_MS = 150
+private const val REBUFFER_PLAYBACK_MS = 150
+private const val TARGET_BUFFER_BYTES = 256 * 1024
+
+/** Set when the player starts, so the log can say how long live view really takes. */
+private class LatencyProbe(var startedAt: Long = 0L, var readyAt: Long = 0L)
+
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
     val context = LocalContext.current
+    val probe = remember(rtspUrl) { LatencyProbe() }
 
     val player = remember(rtspUrl) {
         if (rtspUrl.isNullOrBlank()) {
@@ -40,27 +69,54 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
             null
         } else {
             Diag.info(LogTag.PREV, "player start url=$rtspUrl")
-            ExoPlayer.Builder(context).build().apply {
-                addListener(
-                    object : Player.Listener {
-                        override fun onPlaybackStateChanged(playbackState: Int) {
-                            Diag.info(LogTag.PREV, "state=${playbackStateName(playbackState)} url=$rtspUrl")
-                        }
-
-                        override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
-                            // The RTSP handshake failing is a protocol finding, not a UI bug.
-                            Diag.error(
-                                LogTag.PREV,
-                                "player error code=${error.errorCodeName} msg=${Diag.causeChain(error)} url=$rtspUrl",
-                            )
-                        }
-                    },
+            val loadControl = DefaultLoadControl.Builder()
+                .setBufferDurationsMs(
+                    MIN_BUFFER_MS,
+                    MAX_BUFFER_MS,
+                    PLAYBACK_BUFFER_MS,
+                    REBUFFER_PLAYBACK_MS,
                 )
-                setMediaItem(MediaItem.fromUri(Uri.parse(rtspUrl)))
-                repeatMode = Player.REPEAT_MODE_ALL
-                playWhenReady = true
-                prepare()
-            }
+                .setTargetBufferBytes(TARGET_BUFFER_BYTES)
+                // Prefer keeping the playback position fresh over filling a byte budget;
+                // the byte budget is what makes a low-bitrate stream run far behind.
+                .setPrioritizeTimeOverSizeThresholds(true)
+                .build()
+
+            ExoPlayer.Builder(context)
+                .setLoadControl(loadControl)
+                .build().apply {
+                    addListener(
+                        object : Player.Listener {
+                            override fun onPlaybackStateChanged(playbackState: Int) {
+                                if (playbackState == Player.STATE_BUFFERING && probe.startedAt == 0L) {
+                                    probe.startedAt = monotonicMillis()
+                                }
+                                if (playbackState == Player.STATE_READY && probe.startedAt > 0L) {
+                                    probe.readyAt = monotonicMillis()
+                                    Diag.info(
+                                        LogTag.PREV,
+                                        "state=READY first_frame=${probe.readyAt - probe.startedAt}ms " +
+                                            "buffer=${PLAYBACK_BUFFER_MS}ms url=$rtspUrl",
+                                    )
+                                    return
+                                }
+                                Diag.info(LogTag.PREV, "state=${playbackStateName(playbackState)} url=$rtspUrl")
+                            }
+
+                            override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                                // The RTSP handshake failing is a protocol finding, not a UI bug.
+                                Diag.error(
+                                    LogTag.PREV,
+                                    "player error code=${error.errorCodeName} msg=${Diag.causeChain(error)} url=$rtspUrl",
+                                )
+                            }
+                        },
+                    )
+                    setMediaSource(liveMediaSource(rtspUrl))
+                    repeatMode = Player.REPEAT_MODE_ALL
+                    playWhenReady = true
+                    prepare()
+                }
         }
     }
 
@@ -84,7 +140,23 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                 update = { view -> view.player = player },
             )
         } else {
-            CupertinoText("No preview", color = Color(0xFF8E8E93))
+            CupertinoText(stringResource(Res.string.preview_none), color = Color(0xFF8E8E93))
         }
     }
 }
+
+/**
+ * The preview transport.
+ *
+ * The official XTU GO app builds this stream with ijkplayer and, for every
+ * non-Ambarella camera type — which is what the Hi3519DV500 in the S7PRO is —
+ * sets `rtsp_flags = prefer_tcp` (`sigmastar/widget/SSVideoView.java:604-607`);
+ * only the AMBA/CV75 cameras get `rtsp_transport = udp`. RTP-over-TCP matters here
+ * beyond reliability: an RTSP receiver that loses UDP packets cannot render a
+ * frame until the next keyframe, so every dropped burst costs a full GOP of delay,
+ * which is exactly the multi-second stall this view kept showing.
+ */
+private fun liveMediaSource(rtspUrl: String): MediaSource =
+    RtspMediaSource.Factory()
+        .setForceUseRtpTcp(true)
+        .createMediaSource(MediaItem.fromUri(Uri.parse(rtspUrl)))
