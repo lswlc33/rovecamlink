@@ -143,7 +143,7 @@ uses-library：无。queries：只有 `package:com.facebook.katana`（`:104`）�
 
 `file_provider_path.xml` 实值（`resources/res/xml/file_provider_path.xml`）值得照抄的只有一条：
 `<external-path name="local_video_photo_path" path="DCIM/idGoLive"/>` —— 与 `AppInfo.DOWNLOAD_PATH="/DCIM/idGoLive/"` 对齐；其余 6 条（external `.`、external_files `.`、cache `.`、external_cache `.`、files `.`、**`<root-path name="sdcard1" path="."/>`**）里 root-path 挂整个文件系统，属过度授权。
-`device_filter.xml` 实值：两个 USB 设备 —— `vendor-id=10925 product-id=25859`（`0x2AAB:0x6503`）、`vendor-id=16716 product-id=25971`（`0x414C:0x6573`）。**这是包内唯一的「机型注册表」**，只覆盖 USB 通路；WiFi 侧确实无型号表（见 §2）。
+`device_filter.xml` 实值：两个 USB 设备 —— `vendor-id=10925 product-id=25859`（`0x2AAD:0x6503`）、`vendor-id=16716 product-id=25971`（`0x414C:0x6573`）。**这是包内唯一的「机型注册表」**，只覆盖 USB 通路；WiFi 侧确实无型号表（见 §2）。
 
 ---
 
@@ -151,13 +151,13 @@ uses-library：无。queries：只有 `package:com.facebook.katana`（`:104`）�
 
 复现前必须建立的四条事实：
 
-1. **没有「机型 → 能力」注册表，但有一条 34 项的「机型 → 禁用某功能」黑名单。**
+1. **没有「机型 → 能力」注册表，但有一条 33 项的「机型 → 禁用某功能」黑名单。**
    `CameraType`（`MyCamera/CameraType.java`）只有 `UNDEFIND_CAMERA=0`、`USB_CAMERA=1`、`WIFI_CAMERA=2`、`OLD_WIFI_CAMERA=3`；`CameraAddType`（`CameraAddType.java`）只有 `DEFAULT=0`、`WIFI_CONNECTION_AUTO=1`、`WIFI_CONNECTION_MANUAL=2`、`USB_CONNECTION=3`、`BT_CONNECTION=4`。**没有任何品牌/芯片枚举。**
    唯一按机型分叉的代码是 `SdkApi/CameraProperties.java:1476` 的 `Arrays.asList(...)`，
    命中即让 `setCameraDateTimeZone()` **直接 `return false`，不写 `0xD83E`**（判据是 `CameraFixedInfo.getCameraName()` 与列表**全等**，`:1478`）。见 §2.1。
    ⇒ 正确表述：**「能力靠探测（PTP 属性/事件 + HTTP capability），例外靠一张写死的相机名黑名单」**。
 
-### 2.1 相机名黑名单全量（`SdkApi/CameraProperties.java:1476`，34 项，顺序原样）
+### 2.1 相机名黑名单全量（`_work/idgo_live_src/sources/com/icatch/golive/SdkApi/CameraProperties.java:1476`，33 项（`Arrays.asList` 实参逐个点数），顺序原样）
 
 ```
 A86, A87, GA200, GA300, GA320, GA400, GA420, SF430, SF530, CT9300, DV19, AC9000,
@@ -261,7 +261,7 @@ Action Cam - 317, Action Cam - 386, Action Cam - 458, Action Camera, V40
 | QzIC/YzIC | `param` 键值 | `/app/setparamvalue?param=<p>&value=<v>`、`/api/setdeviceinfo/?custom=1&cmd=…&par=…` | 逐个即时写 |
 
 设置项列表由固件决定：PTP 机走 `getSupportedProperties()`（`_work/idgo_live_src/sources/com/icatchtek/control/customer/ICatchCameraProperty.java:73`）；
-LyIC 走 `cmd=3031&str=all` 拿 `Cmd/Index/Id` 三元组，App 只认 `Id ∈ {2003, 2011, 8010, 8011}`（`_work/idgo_live_src/sources/com/icatch/golive/utils/XmlParseUtil.java:41-52`），**其余 id 直接被丢弃** ⇒ 新固件加设置项不会自动出现在 UI。
+LyIC 走 `cmd=3031&str=all` 拿 `Cmd/Index/Id` 三元组，App 按 **`Cmd`** 值分流（`XmlParseUtil.java:39-52` 里 `strNextText` 读的是 `<Cmd>`，不是 `<Id>`）：`Cmd=2003` 收 `Index→Id` 映射，`2011/8010/8011` 各收一组 `Id`（`_work/idgo_live_src/sources/com/icatch/golive/utils/XmlParseUtil.java:41-52`），**其它 `Cmd` 的条目直接丢弃** ⇒ 新固件加设置项不会自动出现在 UI。
 
 **EV（曝光补偿）解码规则**（此前没读出来过）：
 `utils/ConvertTools.getExposureCompensation(int)`（`:60-67`）
@@ -435,7 +435,7 @@ App 级开关：`AppInfo.enableLive`（`:34`，由 `netconfig.properties` 覆盖
 | `docs/03-品牌型号与协议矩阵.md` §3 | 「`0xD7DB` 一个 ID 三重载」 | 三重载的常量值是 **55291 = `0xD7FB`**（`_work/idgo_live_src/sources/com/icatch/golive/data/PropertyId/PropertyId.java:5/34/47`：`AP_MODE_TO_STA_MODE`/`NOTIFY_FW_TO_SHARE_MODE`/`TIMELAPSE_VIDEO_SIZE_LIST_MASK`）。`0xD7DB`(55259) 全仓无定义 | 改为 `0xD7FB`；并补记 **`0xD834`、`0xD835` 各有 2 个名字**（`ESSID_NAME/STA_MODE_SSID`、`ESSID_PASSWORD/STA_MODE_PASSWORD`） |
 | docs/03 §3 | 「设置项 = `0xD7xx` 厂商段 + `0x50xx` 标准段」 | 还系统性存在 **`0xD6xx` 段**（`0xD605` 视频尺寸、`0xD606` 灯光频率、`0xD607` 日期戳、`0xD611` 缩时录像、`0xD614` 倒置、`0xD615` 慢动作）**与 `0xEE00`(缩时模式)、`0xE604`(MOVIE_REC 能力)、`0xFFFF`(UNDEFINED)** | 把「两段」改成「四段 + 高位能力码」，全量见附录 A |
 | docs/03 §3 | 「8 条传输通道」 | 实为 **11 条**：原 8 条之外，`XML-over-TCP:3333` 与 `HTTP CGI` 常被并为一条（应拆，因为 TCP 通道只在 `LyIC` 存在且**单向推送**），且遗漏了 ①蓝牙/BLE 配对通道、②UDP 组播的 **AES-CBC 配网通道（simpleConfig）**、③RTMP 上行 | 按 §3 的 11 行表替换；另注明 `enableSocketIO` 是第 12 条「存在但未启用」 |
-| docs/03 §3 / docs/01 | 「白标公版 App…**无型号注册表**」 | **部分不成立**：`SdkApi/CameraProperties.java:1476` 有 **34 项相机名黑名单**，含 `Victure/AC920`、`Victure/AC940`、`Crosstour/CT9900`、`Niceboy`、`Model : YDOL3`、`A86/A87/GA2xx/GA3xx/GA4xx/SF430/SF530/CT9300/DV19/AC9000/DiCam8xx/X7.2-LMXX72/X9.2-LMXX92/DC790/K10/V40/Action Cam*`；命中即 `setCameraDateTimeZone()` 不写 `0xD83E`（`:1478-1481`） | 改述为「无『机型→能力』注册表，有『机型名→跳过时区写入』黑名单（全量见 §2.1）」；贴牌名**在本 APK 内**，识别方式是 PTP `0xD831` 读名后 `contains()` **全等**匹配（非前缀）；另注意拼写是 `Crosstour` 不是 `Croslyour` |
+| docs/03 §3 / docs/01 | 「白标公版 App…**无型号注册表**」 | **部分不成立**：`SdkApi/CameraProperties.java:1476` 有 **33 项相机名黑名单（「34」是误计，按 `Arrays.asList` 实参点数）**，含 `Victure/AC920`、`Victure/AC940`、`Crosstour/CT9900`、`Niceboy`、`Model : YDOL3`、`A86/A87/GA2xx/GA3xx/GA4xx/SF430/SF530/CT9300/DV19/AC9000/DiCam8xx/X7.2-LMXX72/X9.2-LMXX92/DC790/K10/V40/Action Cam*`；命中即 `setCameraDateTimeZone()` 不写 `0xD83E`（`:1478-1481`） | 改述为「无『机型→能力』注册表，有『机型名→跳过时区写入』黑名单（全量见 §2.1）」；贴牌名**在本 APK 内**，识别方式是 PTP `0xD831` 读名后 `contains()` **全等**匹配（非前缀）；另注意拼写是 `Crosstour` 不是 `Croslyour` |
 | docs/03 / docs/05 | 「靠『哪个 IP 应答 ping』选 handler」 | 只对了一半：ping 只区分 `.254`/`.169.1`；**`192.168.1.1` 的 PTP 机不参与 ping 探测**，由 `MyCamera.connect(true)` 的成败决定，且 `connect` 成功后不再走 ping。另外两路 ping **共享同一个失败计数器**（`_work/idgo_live_src/sources/com/icatch/golive/net/ConnectDeviceManager.java:33-37`），达 2 就整体 404 | 改为「四层判定：PTP 会话成败 → ICMP 应答者 → getSSID 成败 → 相机名黑名单」，并保留对共享计数器 bug 的告警 |
 | docs/03 §3 | 「`192.168.1.254` 是 Novatek 风格，另有 XML-over-TCP:3333」 | 确认（`_work/idgo_live_src/sources/com/icatch/golive/net/LyIC.java:289`）。**补充**：同一 IP 上还并存**两种完全不同的 API**（`?custom=1&cmd=` XML 与 `/app/` JSON），后者由 `LyWyzRequestInfo`+`LyCmdWithYzIC` 实现，但 **`try2connectLywyzIC` 无调用点 ⇒ 死代码** | 明确「`.254` 有两套 profile，App 只会选中 Novatek 那套」；复现时把 `.254` 的双 profile 都实现并按 `getdeviceattr` 是否回 JSON 分流 |
 | docs/03 / docs/01 | 「预览是 PTP 原生拉流，参数串 `H264?W=&H=&FPS=&BR=`」 | 结构确认（`getSupportedStreamingInfos`/`setStreamingInfo`，非 RTSP）。**但字面串不在 APK 里**（对 20 个 arm64 .so 全量搜 `H264?` 零命中；native 侧的格式串是 `mediumName=%s;codec=%d;videoW=%d;videoH=%d;bitrate=%d;durationUs=%d;maxInputSize=%d;fps=%d`），它由**固件**返回；App 解析器 `_work/idgo_live_src/sources/com/icatch/golive/DataConvert/StreamInfoConvert.java:8-34`，且会**按高度降帧**（720→FPS=15、1080→FPS=10，`_work/idgo_live_src/sources/com/icatch/golive/utils/ConvertTools.java:80-95`），无 FPS 字段时兜底 30 | 把「参数串」标为「设备侧产生」；补记 App 的两处改写规则（降帧 + fps 兜底），否则我方预览帧率会偏高 |
@@ -445,6 +445,6 @@ App 级开关：`AppInfo.enableLive`（`:34`，由 `netconfig.properties` 覆盖
 | docs/03 | 「PTP/IP 端口号静态找不到，3195/3196 属推测」 | 复核后维持「静态无解」，但**3195/3196 无任何依据**：包内不存在该二值，且扫描证明端口是 .data 载入。`ptpip/init_cmd`+`init_cmd_ack`+`init_event`+`oprequest` 三通道握手存在 | 把「3195/3196」从推测里删掉，改写为「首选 `15740`（PTP-over-IP 规范默认），次选 3195/3196 仅作为待验假设」，并给出 §3.5 的 4 步验证方法 |
 | docs/01 / docs/03 | 「无扫码配网、无 Wi-Fi Direct」 | 「无 Wi-Fi Direct」成立（全仓 `WifiP2p` 零命中）。**「无配网」需要收窄**：确实没有 QR 扫描入口（`baseutil/qrcode/{QRCode,SetupQRCode}.java` 存在但未接到配网流程），但有 ①蓝牙把 SSID/密码写给相机（`fragment_btpair_setup`）、②组播 AES `simpleConfig`、③Android `WifiNetworkSpecifier` 直连（`_work/idgo_live_src/sources/com/icatch/golive/Presenter/LaunchPresenter.java:248-266`）、④手机开热点（`WifiApActivity`） | 改述为「无 QR 扫码；有 BT 配网 + 组播配网 + OS 级直连 + 手机热点四条替代路径」 |
 | docs/05 | 「续传用标准 `Range: bytes=N-`」 | 确认（`_work/idgo_live_src/sources/com/icatch/golive/net/OkHttpDownUtil.java:119`），但 header 名写的是**大写 `RANGE`**，且 `:242` 把同一 header 用在 **POST** 请求上（服务端多半忽略）；PTP 侧的续传另有 `ptp_getpartialobject` 一条独立机制 | 记为大写 `RANGE` 属实现细节（HTTP 头大小写不敏感，无功能影响）；补记 PTP partial-object 续传 |
-| docs/01 | 未提及 | **新发现**：①相机 SDK 全栈 **ARM-only**（x86/x86_64 无 `libcontrol.so`）；②`AppInfo.APP_VERSION="V1.4.3"` ≠ versionName `1.3.6`；③YouTube 直播 API 在 native（`libpanorama_vr.so`）而非 Java；④硬编码 YouTube stream key `3fur-h6bh-as8j-w7wd-d7us`；⑤**蓝牙权限缺 `BLUETOOTH_SCAN`/`BLUETOOTH_CONNECT` 而 targetSdk=35 ⇒ Android 12+ 蓝牙配对坏**；⑥`setConnectionCheckParam` 的第三个参数在 SDK 里被丢弃（`_work/idgo_live_src/sources/com/icatchtek/control/core/feature/ICatchCameraConfigImpl.java:85`）；⑦`device_filter.xml` 是唯一机型表（`0x2AAB:0x6503`、`0x414C:0x6573`）；⑧EV 值的 bit30 = /10 标志 | 逐条并入 docs/03 §3 与 docs/05；⑤与⑥在我方实现里作为「修正项」标注，不要继承 |
+| docs/01 | 未提及 | **新发现**：①相机 SDK 全栈 **ARM-only**（x86/x86_64 无 `libcontrol.so`）；②`AppInfo.APP_VERSION="V1.4.3"` ≠ versionName `1.3.6`；③YouTube 直播 API 在 native（`libpanorama_vr.so`）而非 Java；④硬编码 YouTube stream key `3fur-h6bh-as8j-w7wd-d7us`；⑤**蓝牙权限缺 `BLUETOOTH_SCAN`/`BLUETOOTH_CONNECT` 而 targetSdk=35 ⇒ Android 12+ 蓝牙配对坏**；⑥`setConnectionCheckParam` 的第三个参数在 SDK 里被丢弃（`_work/idgo_live_src/sources/com/icatchtek/control/core/feature/ICatchCameraConfigImpl.java:85`）；⑦`device_filter.xml` 是唯一机型表（`0x2AAD:0x6503`、`0x414C:0x6573`）；⑧EV 值的 bit30 = /10 标志 | 逐条并入 docs/03 §3 与 docs/05；⑤与⑥在我方实现里作为「修正项」标注，不要继承 |
 | docs/04 | 固件索引 URL | 确认 `https://idcam.oss-cn-shenzhen.aliyuncs.com/Firmware/firmware.json`，字段 `product/name/region/version/download`；**补充**：升级前有 `https://www.id221.com/api/app/firmware/area_check`（`{code,data.area_support}`）做区域门槛，落地文件名固定 `SPHOST.BRN` | 补上 area_check 门槛与文件名 |
 | 通用 | 反编译包里的域名字符串 ≠ API 清单 | 复核成立并进一步收敛：`push.smarthome.icatchtek.com`、`api.bpsc.tinyai.top:3026`、`usa.boi.tinyai.top:3006`、`demo.xarx.rocks`、w3c/dashif/smpte 命名空间、`libusb.info`、`169.254.169.254`、scribejava 179 provider **全部为死重量**；真在用的只有 6 个域名（附录 D §3 标「真在用」的行） | 保持「域名清单需逐个判定」的写法，直接引用附录 D §3 的表 |

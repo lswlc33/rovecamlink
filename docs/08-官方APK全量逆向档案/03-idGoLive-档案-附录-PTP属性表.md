@@ -10,7 +10,7 @@
 
 | 层 | 位置 | 作用 |
 |---|---|---|
-| 常量层（Java） | `com/icatch/golive/data/PropertyId/PropertyId.java:4-55`（51 个 `static final int`）+ `com/icatchtek/control/customer/type/ICatchCamProperty.java:5-23`（19 个能力常量） | App 层与 SDK 层各存一份 ID，值完全重叠 |
+| 常量层（Java） | `com/icatch/golive/data/PropertyId/PropertyId.java:5-55`（51 个 `static final int`）+ `com/icatchtek/control/customer/type/ICatchCamProperty.java:5-23`（19 个能力常量） | App 层与 SDK 层各存一份 ID，值完全重叠 |
 | 语义层（Java→JNI） | `com/icatchtek/control/core/feature/ICatchCameraPropertyImpl.java:24-326` → `com/icatchtek/control/core/jni/JCameraProperty.java` | `getCurrentImageSize()` 这类语义方法**不传 ID**，ID 硬编码在 `libcontrol.so` 内 |
 | 线上层（native） | `lib/arm64-v8a/libcontrol.so` 导出 `icatch_get_dev_prop_value` / `icatch_set_dev_prop_value` / `icatch_get_dev_prop_desc` / `ptp_getdevicepropvalue` / `ptp_setdevicepropvalue` / `ptp_getdevicepropdesc` / `ptp_getdeviceallpropdescs`（见 natives-symbols.tsv 行 6915/7022/7073 等） | 真正拼 PTP container 并发包 |
 

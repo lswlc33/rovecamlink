@@ -22,7 +22,7 @@
 | 实时图传 | **RTSP** + 自研 FFmpeg/GSY(ijkplayer) 渲染 | **RTSP** + ijkplayer |
 | 控制协议 | HTTP REST + 原生 TCP Socket + CGI | JSON-over-Socket + HTTP CGI + Socket |
 | 特色 | 路由级网络绑定、断点续传、菜单 XML | 抖音直播、互联网远程观看、全景 VR、高德 GPS、滤镜 |
-| 统计/崩溃 | 友盟 Umeng + ucrash | Bugly + APM Insight + Umeng |
+| 统计/崩溃 | 友盟 Umeng + ucrash | Bugly（在用）+ APM Insight + 火山 zeus；**全树无友盟 SDK**，只剩一处读自己清单里 `UMENG_CHANNEL` 渠道号的残留 |
 | 代码混淆 | 几乎不混淆（类名完整） | App 层重度混淆，SDK 层 (`com.gku.*`) 不混淆 |
 
 **核心结论**：两个 App 都印证了同一行业现实——**运动相机没有统一协议**。同一品牌内不同机型/芯片用的协议、端口、路径都不同。因此自研 App 的第一性设计目标必须是**协议可插拔**，而不是写死某一种相机。
@@ -73,25 +73,26 @@ TUWIN 已经实现了一套「按机型插拔」的适配器体系：
 | **RIDE3PRO** | `R3Pro` | HTTP REST (Retrofit) | 80 `/api/` | `GET /api/device/status` | **RTSP :8080** `/?action=stream` |
 | **RIDE6** | `R6` | HTTP REST | 80 `/api/` | `GET /api/device/status` | RTSP :8080 |
 | **RIDE5** | 任意 | HTTP CGI（海思风格 hisnet） | 80 `/cgi-bin/hisnet/` | `GET /cgi-bin/hisnet/getdeviceattr.cgi` | RTSP `/livestream/1` |
-| **M3** | `v57_sport_cam_ezgui` 等 | HTTP REST(`/app/`) **+ 原生 TCP Socket** | 80 `/app/` | `GET /app/getproductinfo` | RTSP（动态授权端点） |
+| **M3** | `v57_sport_cam_ezgui` 等 | HTTP REST(`/app/`) **+ 原生 TCP Socket（只读事件通道）** | 80 `/app/` | `GET /app/getproductinfo` | RTSP（动态授权端点） |
 
 `DeviceEndpointProtocol` 枚举 = **HTTP / RTSP / TCP**（三类传输）。
 
 #### 1.3.1 Ride3Pro / Ride6 —— REST API（完整端点）
-鉴权/设备：`GET /api/authdevice?seed={long}`、`GET /api/device/info`、`GET /api/device/status`、`GET /api/rtspstatus?seed={long}`、`GET /api/reboot`、`GET /api/vendor/send-time?year&month&day&hour&minute&second`
-拍摄：`GET /api/capture`、`GET /api/record/start`、`GET /api/record/stop`、`GET /api/setmode?mode={int}`
+鉴权/设备：`GET /api/authdevice?seed={long}`、`GET /api/device/info`、`GET /api/device/status`、`GET /api/rtspstatus?seed={long}`（**只声明、无任何业务调用点**，不计入鉴权链）、`GET /api/reboot`、`GET /api/vendor/send-time?year&month&day&hour&minute&second`
+拍摄：`GET /api/capture`（**声明但无调用点**，官方 Ride3Pro/Ride6 的「拍照」是播放器截 RTSP 帧）、`GET /api/record/start`、`GET /api/record/stop`、`GET /api/setmode?mode={int}`
 设置（菜单驱动）：`GET /api/menu/xml`（返回 **XML 菜单定义**，由 `Ride3ProMenuXmlParser` 解析）、`GET /api/menu/getparameter?id=`、`GET /api/menu/setparameter?id=&value=`
 存储/回放：`GET /api/sd/info`、`GET /api/system/formatsd`、`GET /api/playback/dayinfo?date=`、`/api/playback/filecount`、`/api/playback/filelist?mode=&file_index=`、`/api/playback/thumbnail?file_index=`（返回图片）、`/api/playback/delete?file_index=`、`/api/playback/start?file_index=`、`/pause?file_type=`、`/stop`、`/setspeed?`、`/settime?second=`
 固件：`POST /api/firmware/upload?md5sum=&model=&hw=&sw=`（body）
-工程细节：`Ride3ProHttpRequestQueue` + `Ride3ProHttpSerialDispatcher`（**串行队列**，相机不接受并发命令）、`Ride3ProRequestIdInterceptor`（请求 ID 注入）、`Ride3ProFormatTimeoutInterceptor`（格式化长超时）。
+工程细节：**串行是官方 App 单方面的自设，不是设备契约**——三层串成 1 并发：L1 `Ride3ProRequestScheduler`（优先级队列 + 单 worker，主路径）→ L2 `Ride3ProHttpRequestQueue`（Mutex，无会话 executor 时兜底）→ L3 `Ride3ProHttpSerialDispatcher`（`maxRequests=1`，**只被 Glide 两个调用点用**，设备 Retrofit client 根本没设 dispatcher）；同时 `retryOnConnectionFailure(false)`。APK 内**没有**任何「设备返回并发错误」的证据，故「相机不接受并发命令」静态不可证。`Ride3ProRequestIdInterceptor` 无条件给每个请求加头 `X-Request-Id`，值 = 进程级 `AtomicLong(0).incrementAndGet()`（那个「只对 thumbnail/rawdata 附加」的策略类零调用）。`Ride3ProFormatTimeoutInterceptor` 只对 `/api/system/formatsd` 把超时抬到 **60 s × connect/read/write**（基线 `DEVICE_CONTROL` 是 5/15/15 s）。
 
 #### 1.3.2 M3 —— REST(`/app/`) + TCP Socket 双通道
 HTTP（80，`/app/` 前缀，**泛化 param 协议**）：
 `getproductinfo`、`getdeviceattr`、`getbatteryinfo`、`getcurmode`、`getfilelist`、`getmediainfo`、`getsdinfo`、`getrecduration`、`getgravitydirection`、`getparamitems?param=`、`getparamvalue?param=`、`setparamvalue?param=&value=`、`setting?param=`、`mode?param={int}`、`playback?param=`、`getthumbnail?file=`、`deletefile?file=`、`setsystime?date=`、`settimezone?`、`setwifi?wifissid=&wifipwd=`、`sdformat`、`reset`、`POST /upload/{savepath}/{filesize}`（固件）。
-TCP Socket（`DefaultM3SocketConnector` + `DelimitedFrameDecoder`）：
-- `connect(network: Network, host, port, frameDecoder)` → `socket.connect(InetSocketAddress(host,port))`，**绑定到指定 Android `Network`**（关键：WiFi 直连下强制走相机 AP 网卡）。
-- `SessionSocket` 暴露 `messages: Flow<M3SocketMessage>` + `failures: Flow<Throwable>`——**相机实时事件推送通道**（状态/录制变化等）。
-- 帧格式：**分隔符定界**（delimiter），单帧上限 64KB，缓冲上限 256KB。
+TCP Socket（`DefaultM3SocketConnector` + **`LegacyReadChunkFrameDecoder`**，工厂 `M3FrameDecoderKt.createDefaultM3FrameDecoder()`；`DelimitedFrameDecoder`/`UnconfiguredFrameDecoder` 均为**死代码**，零构造点）：
+- `connect(network: Network, host, port, frameDecoder)` → `socket.connect(InetSocketAddress(host,port), 15000)`，**绑定到指定 Android `Network`**（关键：WiFi 直连下强制走相机 AP 网卡）。连接超时默认 **15000 ms**、单次读缓冲 `maxReadBytes` 默认 **4096 B**；`connect` 跑在 `Dispatchers.IO`，协程取消时在 `invokeOnCancellation` 里 `socket.close()`。
+- `SessionSocket` 暴露 `messages: Flow<M3SocketMessage>` + `failures: Flow<Throwable>`——**相机实时事件推送通道**（状态/录制变化等）。`messages` 是 `MutableSharedFlow(replay=0, extraBufferCapacity=64)` → **无订阅者即丢，不回放**；`failures` 是 `replay=1, extraBufferCapacity=1` → 新订阅者能收到最后一个异常。
+- **帧 = 一次 `read()` 拿到的字节块**：非空 chunk 整段就是一帧（`reset()` 是空实现），**没有分隔符、没有长度前缀**。「单帧上限 64KB、缓冲上限 256KB」是死代码 `DelimitedFrameDecoder` 的默认参数（65536/262144），运行时不生效。副作用：跨 read 的长 JSON 会被切成两帧，第二帧进 `Unknown`。
+- **单向只读**：`M3SessionSocket` 接口只有 `getFailures`/`getMessages`/`isOpen`/`close`，全 `core/device/` 与 `data/source/socket/` 目录 `getOutputStream` 零命中；socket 连不上时只把 `M3_SOCKET_EVENTS` 从能力集里去掉，**不阻断会话**。
 
 #### 1.3.3 Ride5 —— 海思 hisnet CGI
 路径前缀 `/cgi-bin/hisnet/`，探测 `getdeviceattr.cgi`，媒体 `rtsp://{host}/livestream/1`。属海思 IPC/DV SDK 的 CGI 风格。
@@ -119,11 +120,15 @@ val request = NetworkRequest.Builder()
 ### 1.5 实时图传（RTSP）
 - 传输：RTSP，`RtspTransport` 枚举（AUTO/TCP/UDP）。
 - URL：Ride3Pro/Ride6 = `rtsp://{host}:8080/?action=stream`；Ride5 = `rtsp://{host}/livestream/1`；M3 = 动态授权端点。
-- **鉴权握手（seed）**：开流前
-  1. `seed = Random.nextLong(Long.MAX_VALUE)`（随机长整型挑战值）
-  2. `GET /api/authdevice?seed=` → `GET /api/rtspstatus?seed=`
-  3. 成功后 `Ride3ProPreviewHandshakeCache.markReady(key)`，key = (deviceIdentity, sessionId, routeRevision)，避免重复鉴权。
-  - seed 用于让相机 RTSP 服务端授权本次连接。
+- **预览准备序列（实测顺序，与 UI 步骤名一致）**：
+  1. `seed = Random.nextLong(Long.MAX_VALUE)`（端侧随机数；**不参与任何计算、不校验回显，因此不构成挑战-应答**）
+  2. `GET /api/authdevice?seed=`——`result` 非 0 **且非 -2** 才算失败
+  3. `GET /api/vendor/send-time?…`——失败**只告警**（`Ride3Pro：同步时间失败`），照样往下走
+  4. `Ride3ProPreviewHandshakeCache.markReady(key)`，key = (deviceIdentity, sessionId, routeRevision)
+  5. `GET /api/setmode?mode=0`——失败硬抛；随后起播
+  - **`/api/rtspstatus` 不在这条链上**（声明了但没人调）。UI 可用的步骤串只有三个：设备认证 / 同步设备时间 / 切换预览模式。
+  - 握手缓存 `consume()` 是**只读探测（peek）**：同一 key 在 **10 分钟**（`VALIDITY_DURATION_MS = 600000`，单调时钟 `System.nanoTime()/1e6`）内可反复命中，预览与回放各自复用同一次握手；**只有过期时才删除**。把它实现成「一次性」会让每次起流多打一次 auth + send-time。
+  - ⚠️ 「seed 用于让相机 RTSP 服务端授权本次连接」属**推断**：客户端没有任何把 seed 交给 RTSP/播放器的通路，RTSP URL 里也不含 seed，auth 响应的 `info` 被声明成 `Any?` 且不解析（调用点只读 `result`）。
 - 端点授权：`DeviceEndpointAuthority.issue(...)` 颁发 `EndpointGrant`（RTSP/8080/`/`/MEDIA/PROFILE_BOOTSTRAP），`AuthorizedRtspEndpoint` 校验后才允许连。
 - 渲染：自研 `FFmpegTexturePlayerView`/`FFmpegPlayerView`（FFmpeg 解码 → OpenGL 纹理，低延迟）+ `GsyNativePlayerAdapter`(GSYVideoPlayer/ijkplayer) 作为备选；`MediaSessionController` + `startLivePreviewMediaSession` 管理播放会话。
 
@@ -136,9 +141,10 @@ val request = NetworkRequest.Builder()
 - 缩略图：`Ride3ProAviThumbnailCache` + Glide。
 
 ### 1.7 设置系统（菜单驱动）
-- 相机通过 `GET /api/menu/xml` 下发**菜单 XML**（项/可选值/当前值），App 用 `Ride3ProMenuXmlParser` 解析后动态渲染设置页（`Ride3ProSettingsRuntimeMapper`、`Ride3ProSettingsItem`）。
-- 读写：`getparameter?id=` / `setparameter?id=&value=`（id 为参数键，如 resolution/exposure/wb/fps/loop/hdr 等）。
-- 好处：**新增/变更设置项无需改 App**，由相机固件下发——自研 App 应保留这种「设备自描述」思路。
+- 相机通过 `GET /api/menu/xml` 下发**菜单 XML**（项 / 可选值 / **默认值 `<Default>`**），App 用 `Ride3ProMenuXmlParser` 解析后动态渲染设置页（`Ride3ProSettingsRuntimeMapper`、`Ride3ProSettingsItem`）。解析器只读 6 个名字：`Category/Name`、`Setting/{Name,ID,Type,Default}`、`Value/{Name,ID}`——**没有「当前值」这一项**；当前值是随后用 `getparameter?id=all` + 对 `Type ∈ {1,4}` 的项逐条补读得到的。
+- ⚠️ 会话路径上官方**不走 HTTP**：有会话 executor 时 `Ride3ProSessionApiService.getMenuXml` 被改写成裸 socket（`Ride3ProSessionTransport.getMenuXmlRaw`/`readMenuXmlRaw`，四个 `MENU_*` 常量 5000 / 524288 / 8192 / 30000 均已 `@Deprecated`）；HTTP `/api/menu/xml` 只是接口声明与兜底路径。
+- 读写：`getparameter?id=` / `setparameter?id=&value=`。**id 不是任意参数键**：取值域是一张封闭硬编码表，`forSetting(分区名, 项名)` 归一化后查表，只有 9 个线上串——`all`、`factory_reset`、`record_exposure`、`record_loop_recording`、`record_resolution`、`system_frequency`、`system_version`、`wifi_name`、`wifi_passwd`。表命中不了就不发 `setparameter`（抛 `IllegalStateException`）。`resolution`/`exposure` 是归一化后的菜单名、不是发出去的 id；`wb`/`fps`/`hdr` 在表里**根本不存在**。XML 的 `<ID>`（如 `0x0000208`、`0x0000301`）只做值回填与兼容性判等的键，不作为 `?id=` 发出。
+- 好处：**新增/变更设置项无需改 App**，由相机固件下发——自研 App 应保留这种「设备自描述」思路。⚠️ 但官方 App 自己也没真正做到：静态兜底菜单里的 31 项只有 9 项能上线，白平衡/连拍/锐度/ISO/防抖/屏保/语言/按键音/清除缓存等**既读不到也写不了**。
 
 ### 1.8 权限（清单）
 INTERNET、ACCESS/CHANGE_NETWORK_STATE、ACCESS/CHANGE_WIFI_STATE、ACCESS_FINE/COARSE_LOCATION、ACCESS_LOCATION_EXTRA_COMMANDS、**NEARBY_WIFI_DEVICES**(Android13+ 免定位扫描)、FOREGROUND_SERVICE + **FOREGROUND_SERVICE_REMOTE_MESSAGING**(常驻 socket)、POST_NOTIFICATIONS、REQUEST_INSTALL_PACKAGES(OTA)、READ_PHONE_STATE、旧版存储。
@@ -159,7 +165,7 @@ XTU GO 按**相机 SoC 芯片**分包，三套独立协议栈：
 | 平台 | 包 | 文件数 | 传输 | 控制协议 | 预览 |
 |---|---|---|---|---|---|
 | **Ambarella** | `amba/{base,model,socket,ui}` | 57 | TCP Socket(`DataChannelWIFI`) | **JSON `msg_id`/`rval`** 命令（Gson），队列+超时重试 | RTSP |
-| **Hisilicon** | `hisilicon/{dv,camplayer}` | 183 | HTTP | **CGI `/cgi-bin/hi3510/get|set*.cgi`**（`-param=value` 风格） | RTSP `:554 /livestream/12` |
+| **Hisilicon** | `hisilicon/{dv,camplayer}` | 183 | HTTP | **CGI `/cgi-bin/hi3510/get\|set*.cgi`**（`-param=value` 风格） | RTSP `:554 /livestream/12` |
 | **SigmaStar** | `sigmastar/{Interface,data,wifi,bluetooth,…}` | 253 | Socket(`ClientThread`)+HTTP | 接口/回调模型(`ISSPreview/ISSPlayback/ISSetting`)，**蓝牙心跳** | RTSP |
 
 #### 2.2.1 Ambarella（msg_id JSON 协议）
@@ -189,7 +195,11 @@ XTU GO 按**相机 SoC 芯片**分包，三套独立协议栈：
 5. **互联网远程**：`remote_live`（远程观看，可能经云服务器/阿里云 OSS）。
 
 ### 2.4 实时图传
-- `rtsp://%s:554/livestream/12`（端口 **554**，路径 `/livestream/12`），ijkplayer 渲染。
+- 不止一条 URL。老海思/`DV` 侧有**两种等价起流**（`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/biz/DV.java:319-329` RTSP、`:331-342` HTTP）：
+  - `rtsp://{ip}:554/livestream/12`（小码流）或 `/11`（大码流）
+  - `http://{ip}:80/12?trans=tcp&action=play&media=video_data`（同样按码流在 `11`/`12` 间切）
+  - 切 `11` 还是 `12` 由 `DV.isPreviewBigBitRate()`（`DV.java:119`，读 `prefer.previewVideo`，默认 `"Small"` → `12`）决定；SigmaStar 与 Ambarella 的代码路径**永远只有 `/12`**（`SSCommandUtil.java:50`、`HaisiCommandUtil.java:50`、`AmbaPreviewActivity.java:972` 都是字面量）。
+- ijkplayer 渲染，但**在用**的视图是 `com/gku/actioncam/widget/VideoTextureView.java:619-646`（20 条无条件 `setOption` + 按 `isAmba` 二选一各 2 条：非 AMBA → `rtsp_transport=tcp` + `framedrop=5`；AMBA → `udp` + `framedrop=100`）。`sigmastar/widget/SSVideoView.java` 的那 15 个 `setOption` 调用点只挂在 `activity_s_s_video_remote_play.xml` 上、无 Activity 使用，**属死代码**，别照抄它的 `rtsp_flags=prefer_tcp`。
 - `DouyinStreamController`（**抖音直播**）、`StreamConfigActivity`（推流配置）。
 
 ### 2.5 特色功能（TUWIN 没有的）
@@ -200,7 +210,18 @@ XTU GO 按**相机 SoC 芯片**分包，三套独立协议栈：
 - 阿里云 OSS 云存储上传。
 
 ### 2.6 权限（清单，远多于 TUWIN）
-网络/WiFi 全套 + 定位；**蓝牙全套**(BLUETOOTH/ADMIN/CONNECT/SCAN/ADVERTISE)；**CAMERA**(扫码)+RECORD_AUDIO；媒体全套(READ_MEDIA_IMAGES/VIDEO/AUDIO、MANAGE_MEDIA、ACCESS_MEDIA_LOCATION、WRITE_MEDIA_STORAGE)；WAKE_LOCK、FOREGROUND_SERVICE、SYSTEM_ALERT_WINDOW、WRITE_SETTINGS、FLASHLIGHT、VIBRATE、CALL_PHONE、GET_ACCOUNTS、READ_LOGS、GET_TASKS。
+共 **38 条** `uses-permission`。网络/WiFi 全套 + 定位；**蓝牙全套**(BLUETOOTH/ADMIN/CONNECT/SCAN/ADVERTISE)；**CAMERA**(扫码)+RECORD_AUDIO；媒体全套(READ_MEDIA_IMAGES/VIDEO/AUDIO、MANAGE_MEDIA、ACCESS_MEDIA_LOCATION、WRITE_MEDIA_STORAGE)；WAKE_LOCK、FOREGROUND_SERVICE、SYSTEM_ALERT_WINDOW、WRITE_SETTINGS、FLASHLIGHT、VIBRATE、CALL_PHONE、GET_ACCOUNTS、READ_LOGS、GET_TASKS。
+
+⚠️ **其中 12 条我们不要照着申请**，分三类（按「有无厂商消费者」和「有无功能」两轴判）：
+
+| 类别 | 权限 | 依据 |
+|---|---|---|
+| 真·死声明（全树 0 引用） | `READ_PRIVILEGED_PHONE_STATE`、`WRITE_MEDIA_STORAGE`、`CHANGE_CONFIGURATION`、`SYSTEM_ALERT_WINDOW`、`FLASHLIGHT`、`GET_ACCOUNTS` | 权限串在全树 grep 均 0 命中；`GET_ACCOUNTS` 只有库侧 `AccountManager`（`com/apm/applog/AppLog.java` 等），厂商代码 0 处 |
+| 申请了但无对应功能 | `CALL_PHONE`、`BLUETOOTH_ADVERTISE`、`BLUETOOTH_ADMIN`、`MANAGE_MEDIA` | 前三者只出现在运行时申请数组里；`MANAGE_MEDIA` 有 4 处 `Intent("android.settings.REQUEST_MANAGE_MEDIA")` 入口（`HomeActivity.java:1049`、`dv/ui/WelcomeActivity.java:195`、`MyBottomSheetDialog.java:312`、`PermissionUtils.java:118`）但包内无 MediaStore 管理动作 |
+| 只被第三方库检查 | `ACCESS_MEDIA_LOCATION`、`GET_TASKS` | 前者仅 Glide `QMediaStoreUriLoader.java:159` 的 `checkSelfPermission`；后者仅 `com/apm/insight/l/a.java:207`、`com/volcengine/zeus/download/h.java:59` 调 `getRunningTasks(1)` |
+
+反例（曾被误判为死声明，**确有厂商消费者**，不要一起删）：`MODIFY_AUDIO_SETTINGS` → `SSMediaController.java:124`、`widget/MediaController.java:123` 的 `AudioManager.setStreamMute`；`READ_LOGS` → `dv/LogService.java:152`、`base/utils/LogSwitchUtils.java:31-32` 起 `logcat` 子进程（但该权限 Android 4.1+ 读自身日志并不需要，普通 App 申请系统也不给 → 对我们仍是「不要申请」）。
+另有 **4 处独立运行时申请点**、彼此权限集不完全相同：`dv/ui/PermissionActivity.java:31-33`、`dv/ui/WelcomeActivity.java:53-55`、`dv/ui/weight/MyBottomSheetDialog.java:67-86`、`sigmastar/newUi/deviceAdd/base/BasePermissionActivity.java:18`；其中 `CALL_PHONE` 只在第一处出现。
 uses-feature：camera(+autofocus)、bluetooth、location、microphone、landscape+portrait。
 
 ---
@@ -233,19 +254,37 @@ uses-feature：camera(+autofocus)、bluetooth、location、microphone、landscap
 
 ### 3.5 自研应避免的「卡顿」根因（官方 App 痛点）
 - 命令**串行队列**+超时重试若设计不当会放大延迟 → 自研需做命令优先级、并发窗口、乐观 UI。
-- 重型 SDK（高德 20MB、全景 16MB、友盟/Bugly）拖慢启动 → 自研保持精简、按需加载。
+- 重型 SDK（高德 20MB、全景 16MB、Bugly/APM Insight/zeus）拖慢启动 → 自研保持精简、按需加载。
 - 预览渲染链路长（FFmpeg→OpenGL）→ 自研优先平台原生播放器 + 合理缓冲。
 - 大量 Activity/Fragment 跳转 → 自研用 Compose 单 Activity + 声明式导航，状态驱动。
 
 ---
 
 ## 4. 待补全的协议细节（自研 Phase 1 需进一步逆向/抓包）
-1. Ride3Pro `seed` 与相机端校验关系（authdevice/rtspstatus 返回体字段）。
-2. M3 TCP 帧的**分隔符字节**与 `M3SocketMessage` 字段结构。
-3. Ambarella `msg_id` 命令号对照表（各命令对应的整数 ID）与 `CmdRequestBean` 完整字段。
-4. Hisilicon `set*.cgi` 全量参数与取值范围（`getcapability`/`getdevcapabilities` 可枚举）。
-5. SigmaStar `ClientThread` 报文格式（是否 JSON/二进制、端口、心跳）。
-6. 各机型 **SSID 命名规则**（用于扫描匹配与设备识别）。
-7. 文件下载 URL 构造（回放 filelist 返回项 → 实际下载/缩略图 URL）。
+> 本节初稿写于 2026-09-20。2026-09-22 的穷尽式复现档案（`docs/08-官方APK全量逆向档案/`）已把其中 5 条关闭，逐条标注如下。
+1. ~~Ride3Pro `seed` 与相机端校验关系~~ → **已关闭为「静态无解且无需再解」**：auth 响应只被读 `result`，`info` 声明成 `Any?` 且不解析，RTSP URL 不含 seed；`/api/rtspstatus` 根本没有调用点，不再属于鉴权链。
+2. ~~M3 TCP 帧的**分隔符字节**与 `M3SocketMessage` 字段结构~~ → **问题本身不成立**：官方**没有分隔符**，活路径 `LegacyReadChunkFrameDecoder` 是「一次 read 即一帧」（读缓冲 4096 B）。7 个 `msgid` 与两个边界（空帧丢弃、坏帧归 `Unknown`）已全量抄出。剩下待真机验的是「跨 read 的长 JSON 被切成两帧」的实际发生率。
+3. Ambarella `msg_id` 命令号对照表与 `CmdRequestBean` 完整字段 → 已由 `docs/08` 的 Ambarella 报文全表覆盖（本文件 §2.2.1 的字段清单仍是旧版，以 08 为准）。
+4. Hisilicon `set*.cgi` 全量参数与取值范围 → 已由 `docs/08` 的海思 CGI 全表覆盖。
+5. SigmaStar `ClientThread` 报文格式（是否 JSON/二进制、端口、心跳） → 已关闭：8080 二进制帧，上行 72 B（无 MD5）/200 B（带 MD5，推固件）小端定长头 + 64 B 路径槽，下行 72 B 头 + 裸文件流；语言表响应例外地按文本行读。
+6. 各机型 **SSID 命名规则** → TUWIN 侧已有 6 条锚定正则 + 4 条 `PatternMatcher`；XTU 侧结论是**不存在 SSID 正则**，只有 `contains("XTU")` 子串判定，BLE 名才用 `toUpperCase().startsWith("XTU_")`——两套规则。
+7. 文件下载 URL 构造（回放 filelist 返回项 → 实际下载/缩略图 URL）→ 已关闭，见 `docs/03 §2` 的缩略图三取法（SigmaStar `http://<ip>/thumb<path>`、海思 `http://<ip>/<去扩展名>.THM`、Ambarella msg 1025 + 8787）。
 
 > 建议方式：静态逆向（jadx 已就绪）+ 真机抓包（Wireshark/mitmproxy 对相机 AP）+ 对照官方 App 行为。所有结论用于**互操作（interoperability）目的下的干净室重实现**，不复制其代码。
+
+---
+
+## 变更记录（2026-09-22 全量复现档案回写）
+
+| 处 | 改了什么 | 依据（`docs/08-官方APK全量逆向档案/`） |
+|---|---|---|
+| §0 统计/崩溃行 | XTU GO 的「Umeng」删掉：全树无友盟 SDK，只剩一处读自己清单的 `UMENG_CHANNEL`；崩溃上报是 Bugly | `02-XTUGO-档案.md §11`「友盟 SDK」行 + `02-XTUGO-档案-附录-权限组件与域名.md §8 C-08` |
+| §1.3 表格 M3 行 | 「原生 TCP Socket」补「只读事件通道」 | `01-TUWIN-档案-附录-协议面.md §8.2 D-8` |
+| §1.3.1 端点表 | `rtspstatus` 标为「只声明无调用点」，不计入鉴权链；`capture` 同标（官方拍照是播放器截 RTSP 帧） | `§8.1 C-1`、`§8.2 D-3`；`01-TUWIN-档案-附录-设置与操作.md §6` 末段 |
+| §1.3.1 工程细节 | 「相机不接受并发命令」降级为客户端自设；补三层串行的真实分工、`X-Request-Id` 无条件注入、format 超时 60 s × 3 与基线 5/15/15 | `§8.1 C-7`、`§8.2 D-4`、`§8.2 D-5` |
+| §1.3.2 整节 | 解码器类名改 `LegacyReadChunkFrameDecoder`；帧格式改为「一次 read 即一帧、无分隔符无长度前缀、读缓冲 4096 B」，64KB/256KB 标为死代码；补 15 s 连接超时、两个 Flow 的 replay 语义、socket 单向只读且连不上不阻断会话 | `§8.2 D-1/D-2/D-6/D-7/D-8`、`§8.1 C-12` |
+| §1.5 预览鉴权段 | 序列改写为 authdevice → send-time（失败仅告警）→ markReady → setmode；删 rtspstatus；`consume()` 从「一次性」改为「10 分钟内只读探测」；「seed 授权 RTSP」降级为推断 | `§8.1 C-2/C-3`、`§8.3 E-1/E-2` |
+| §1.7 设置系统 | 菜单 XML「当前值」改「默认值」并补当前值的真实来源；补「有会话时菜单走裸 socket」；`id` 取值域收窄为封闭 9 串，`wb`/`fps`/`hdr` 明确不存在 | `§8.3 E-3/E-4/E-5` |
+| §2.4 实时图传 | 从单一 RTSP URL 改为「RTSP + HTTP 两条 + `11`/`12` 码流开关 + SigmaStar/Ambarella 恒 `/12`」；播放器改为在用的 `VideoTextureView`，`SSVideoView` 标死代码 | `02-XTUGO-档案.md §11` 预览行、`02-XTUGO-档案-附录-SigmaStar8080与播放层.md §C.9` #1/#6/#7 |
+| §2.6 权限 | 38 条里 12 条「不可照抄」按两轴重列（6 真死声明 + 4 申请无功能 + 2 只被库检查）；`MODIFY_AUDIO_SETTINGS`/`READ_LOGS` 反例改判；补 4 处申请点彼此不同、`CALL_PHONE` 只在一处 | `02-XTUGO-档案.md §11` 权限行、`02-XTUGO-档案-附录-权限组件与域名.md §8 C-01/C-02/C-10` |
+| §3.5 / §4 | 「友盟」从 XTU 重型 SDK 里去掉；§4 七条待补全逐项标注已关闭/仍开放，其中第 2 条的问题前提（存在分隔符字节）不成立 | 同上，加 `02-XTUGO-档案-附录-SigmaStar8080与播放层.md §C.3` |
