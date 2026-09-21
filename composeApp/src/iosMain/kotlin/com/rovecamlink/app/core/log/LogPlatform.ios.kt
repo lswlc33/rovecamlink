@@ -1,44 +1,42 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package com.rovecamlink.app.core.log
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
-import platform.Foundation.NSLocale
 import platform.Foundation.NSProcessInfo
 import platform.Foundation.NSTemporaryDirectory
-import platform.Foundation.NSTimeZone
 import platform.Foundation.NSUserDomainMask
 
 /** `systemUptime` is the monotonic clock on Darwin (it does not follow clock updates). */
 actual fun monotonicMillis(): Long = (NSProcessInfo.processInfo.systemUptime * 1000.0).toLong()
 
 /**
- * iOS facts, deliberately from `NSProcessInfo`/`Foundation` only: this is called from
- * the logger's writer thread, and `UIDevice` is main-thread-only. The vendor device
- * name (`UIDevice.name`, "李工的 iPhone") is also personal data that has no business
- * inside a file the user is about to share.
+ * iOS facts, deliberately limited to `NSProcessInfo` and the sandbox path:
+ *
+ *  - this runs on the logger's writer thread, and `UIDevice` is main-thread-only, so
+ *    the marketing model name is left out;
+ *  - the user-chosen device name ("李工的 iPhone") is personal data with no business in
+ *    a file the user is about to share;
+ *  - `NSLocale`/`NSTimeZone` class accessors do not resolve from Kotlin/Native the way
+ *    they read on the JVM, and every record already carries a device-local wall clock
+ *    plus the header's `device.tz=`, which pins the offset down far enough.
  */
 actual fun platformDiagnostics(): List<Pair<String, String>> {
     val info = NSProcessInfo.processInfo
-    val os = info.operatingSystemVersion
-    val local = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     return listOf(
         "app.version" to "dev",
         "app.build" to "ios",
         "platform" to "ios",
-        "os.ios" to "${os.majorVersion}.${os.minorVersion}.${os.patchVersion}",
-        "device.locale" to (NSLocale.currentLocale.languageCode ?: "?"),
-        "app.timezone" to NSTimeZone.localTimeZone.name,
-        "app.local_time" to local.toString(),
-        "app.home" to NSTemporaryDirectory(),
-        "mem.ram_mb" to (info.physicalMemory / 1048576.0).toLong().toString(),
-        "cpu.cores" to info.activeProcessorCount.toString(),
         "process.name" to info.processName,
+        "process.uptime_s" to info.systemUptime.toLong().toString(),
+        "cpu.cores" to info.activeProcessorCount.toString(),
+        // physicalMemory is a ULong, so the scaling has to happen in Double.
+        "mem.ram_mb" to (info.physicalMemory.toDouble() / 1048576.0).toLong().toString(),
+        "app.sandbox" to NSTemporaryDirectory(),
     )
 }
 
