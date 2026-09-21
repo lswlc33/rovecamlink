@@ -1,6 +1,13 @@
 package com.rovecamlink.app.core.ota
 
 /**
+ * `String.format("%04d…")` is a JVM-only API, but these date stamps are what the
+ * cameras' own version strings are made of, so pad by hand to keep commonMain
+ * compilable for Kotlin/Native (iOS) as well.
+ */
+internal fun zeroPad(value: Int, width: Int): String = value.toString().padStart(width, '0')
+
+/**
  * Normalizes a firmware version string to a comparable `yyyyMMdd` date stamp.
  *
  * Doc 04 §4 conclusion 2: TUWIN M3, XTU (all three cloud APIs) and idGoLive all use a
@@ -36,7 +43,7 @@ object FirmwareVersion {
             val year = m.groupValues[3].toInt()
             val maxDay = daysInMonth(mon, year)
             if (day in 1..maxDay) {
-                return "%04d%02d%02d".format(year, mon, day)
+                return zeroPad(year, 4) + zeroPad(mon, 2) + zeroPad(day, 2)
             }
         }
 

@@ -15,6 +15,7 @@ import com.rovecamlink.app.core.model.FileType
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.SdCardState
 import com.rovecamlink.app.core.model.WorkMode
+import com.rovecamlink.app.core.ota.zeroPad
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.transport.CameraHttp
 import kotlinx.coroutines.flow.Flow
@@ -352,9 +353,8 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override suspend fun syncTime(session: CameraSession): CmdResult {
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val stamp = "%04d%02d%02d%02d%02d%02d".format(
-            now.year, now.monthNumber, now.dayOfMonth, now.hour, now.minute, now.second,
-        )
+        val stamp = zeroPad(now.year, 4) + zeroPad(now.monthNumber, 2) + zeroPad(now.dayOfMonth, 2) +
+            zeroPad(now.hour, 2) + zeroPad(now.minute, 2) + zeroPad(now.second, 2)
         val r = http.getText("${cgi(session.host, session.port)}/setsystime.cgi?-time=$stamp")
         return if (r != null) CmdResult.Ok else CmdResult.Failure("time sync failed")
     }

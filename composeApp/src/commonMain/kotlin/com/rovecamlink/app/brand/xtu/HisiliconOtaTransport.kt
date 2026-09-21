@@ -48,12 +48,14 @@ class HisiliconOtaTransport(private val http: CameraHttp) : OtaTransport {
     }
 
     private fun buildMultipart(fileName: String, bytes: ByteArray, boundary: String): ByteArray {
+        // encodeToByteArray() rather than toByteArray(): this is commonMain, and
+        // Kotlin/Native has no charset-free String overload. Both parts are ASCII.
         val head = (
             "--$boundary\r\n" +
                 "Content-Disposition: form-data; name=\"sd\"; filename=\"$fileName\"\r\n" +
                 "Content-Type: application/octet-stream\r\n\r\n"
-            ).toByteArray()
-        val tail = "\r\n--$boundary--\r\n".toByteArray()
+            ).encodeToByteArray()
+        val tail = "\r\n--$boundary--\r\n".encodeToByteArray()
         return ByteArray(head.size + bytes.size + tail.size).also { out ->
             var p = 0
             head.copyInto(out, p); p += head.size
