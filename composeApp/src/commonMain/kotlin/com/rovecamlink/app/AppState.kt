@@ -21,10 +21,6 @@ import com.rovecamlink.app.core.ota.OtaState
 import com.rovecamlink.app.core.ota.pickCameraFirmwarePackage
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.storage.sanitizeFileName
-import com.rovecamlink.app.core.update.AppUpdateInfo
-import com.rovecamlink.app.core.update.AppVersion
-import com.rovecamlink.app.core.update.applyAppUpdate
-import com.rovecamlink.app.core.update.checkForAppUpdate
 import com.rovecamlink.app.core.wifi.CameraNetwork
 import com.rovecamlink.app.core.wifi.DEFAULT_PREFIXES
 import com.rovecamlink.app.core.wifi.WifiResult
@@ -88,15 +84,6 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     var otaState by mutableStateOf<OtaState>(OtaState.Idle)
         private set
 
-    // App self-update (A8) — runs against the Internet, independent of the camera session.
-    var appUpdateInfo by mutableStateOf<AppUpdateInfo?>(null)
-        private set
-    var checkingAppUpdate by mutableStateOf(false)
-        private set
-    var applyingAppUpdate by mutableStateOf(false)
-        private set
-    var appUpdateResult by mutableStateOf<String?>(null)
-        private set
     var settings by mutableStateOf<List<CameraSetting>>(emptyList())
         private set
     var files by mutableStateOf<List<RemoteFile>>(emptyList())
@@ -255,7 +242,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     is DeviceEvent.BatteryChanged ->
                         deviceStatus = deviceStatus?.copy(battery = ev.percent)
                     is DeviceEvent.Disconnected -> {
-                        errorMessage = ev.reason
+                        // Camera-supplied text: shown as-is, not a translatable resource.
+                        errorMessage = ev.reason?.let(::raw)
                         disconnect()
                     }
                 }
@@ -495,36 +483,6 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     /** Dismiss a terminal OTA state so the update button returns. */
     fun resetOtaState() {
         if (otaState.isTerminal) otaState = OtaState.Idle
-    }
-
-    // ---------- app self-update ----------
-
-    /** Latest installed app version (for display). */
-    fun currentAppVersion(): String = AppVersion.current
-
-    fun checkAppUpdate() = scope.launch {
-        checkingAppUpdate = true
-        appUpdateInfo = null
-        appUpdateResult = null
-        try {
-            // null → no newer release (or unreachable from a camera Wi-Fi sandbox).
-            appUpdateInfo = runCatching { checkForAppUpdate(graph.http) }.getOrNull()
-        } finally {
-            checkingAppUpdate = false
-        }
-    }
-
-    fun performAppUpdate() {
-        val info = appUpdateInfo ?: return
-        scope.launch {
-            applyingAppUpdate = true
-            try {
-                val msg = runCatching { applyAppUpdate(info, graph.http) }.getOrNull() ?: "Update failed"
-                appUpdateResult = msg
-            } finally {
-                applyingAppUpdate = false
-            }
-        }
     }
 
     fun download(file: RemoteFile) {

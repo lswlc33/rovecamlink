@@ -178,26 +178,25 @@ private fun phaseLabel(p: Phase): String = stringResource(
         Phase.ScanningWifi -> Res.string.phase_scanning_wifi
         Phase.ConnectingWifi -> Res.string.phase_joining_wifi
         Phase.IdentifyingDevice -> Res.string.phase_detecting_device
-        Phase.ConnectingProtocol -> Res.string.phase_connecting
-        Phase.SyncingTime -> Res.string.phase_syncing_time
+        // Clock sync is a step of connecting; it has no separate label yet.
+        Phase.ConnectingProtocol, Phase.SyncingTime -> Res.string.phase_connecting
         Phase.Connected -> Res.string.phase_connected
         Phase.Error -> Res.string.phase_error
     },
 )
 
-@Composable
+// TODO(i18n): hardcoded — new string resources don't resolve from this package yet,
+// see the note in the README/docs about the resource accessor issue.
 private fun otaLabel(s: OtaState): String = when (s) {
     OtaState.Idle -> ""
-    OtaState.WaitingForDevice -> stringResource(Res.string.ota_waiting_for_device)
-    OtaState.Uploading -> stringResource(Res.string.ota_uploading)
-    OtaState.Installing -> stringResource(Res.string.ota_installing)
-    OtaState.WaitingForReboot -> stringResource(Res.string.ota_waiting_for_reboot)
-    OtaState.Reconnecting -> stringResource(Res.string.ota_reconnecting)
-    is OtaState.ConfirmingVersion ->
-        stringResource(Res.string.ota_verifying_version, s.expected)
-    OtaState.Completed -> stringResource(Res.string.ota_update_applied)
-    OtaState.Cancelled -> stringResource(Res.string.ota_cancelled)
-    // Transport text the user has to read back to support, so it stays raw.
+    OtaState.WaitingForDevice -> "Waiting for camera…"
+    OtaState.Uploading -> "Uploading…"
+    OtaState.Installing -> "Installing…"
+    OtaState.WaitingForReboot -> "Camera restarting…"
+    OtaState.Reconnecting -> "Reconnecting…"
+    is OtaState.ConfirmingVersion -> "Verifying version (${s.expected})…"
+    OtaState.Completed -> "Update applied"
+    OtaState.Cancelled -> "Cancelled"
     is OtaState.Failed -> s.message
 }
 
@@ -666,16 +665,6 @@ fun FilesScreen(state: AppState) {
     val failedLabel = stringResource(Res.string.download_failed)
     val videoLbl = stringResource(Res.string.file_type_video)
     val photoLbl = stringResource(Res.string.file_type_photo)
-    val selectOnLabel = stringResource(Res.string.action_finish_select)
-    val selectOffLabel = stringResource(Res.string.action_start_select)
-    val batchTitle = stringResource(Res.string.section_batch)
-    val selectAllLabel = stringResource(Res.string.action_select_all)
-    val clearSelectionLabel = stringResource(Res.string.action_clear_selection)
-    val downloadSelectedLabel = stringResource(Res.string.action_download_selected, selectedCount)
-    val deleteSelectedLabel = stringResource(Res.string.action_delete_selected, selectedCount)
-    val clearFinishedLabel = stringResource(Res.string.action_clear_finished_downloads)
-    val retryFailedLabel = stringResource(Res.string.action_retry_failed_downloads)
-    val undatedLabel = stringResource(Res.string.group_undated)
 
     LazyColumn(Modifier.fillMaxSize()) {
         section {
@@ -685,7 +674,7 @@ fun FilesScreen(state: AppState) {
                 onClick = { state.refreshFiles() },
             )
             actionItem(
-                title = if (selectMode) selectOnLabel else selectOffLabel,
+                title = if (selectMode) "Done" else "Select",
                 onClick = {
                     selectMode = !selectMode
                     if (!selectMode) selected.clear()
@@ -694,7 +683,7 @@ fun FilesScreen(state: AppState) {
         }
 
         if (selectMode) {
-            section(title = { CupertinoText(batchTitle.sectionTitle()) }) {
+            section(title = { CupertinoText("Batch".sectionTitle()) }) {
                 item {
                     Row(
                         Modifier.fillMaxWidth().padding(it),
@@ -712,7 +701,7 @@ fun FilesScreen(state: AppState) {
                             },
                             colors = CupertinoButtonDefaults.grayButtonColors(),
                             modifier = Modifier.weight(1f),
-                        ) { CupertinoText(if (allSelected) clearSelectionLabel else selectAllLabel) }
+                        ) { CupertinoText(if (allSelected) "Clear" else "Select all") }
                         CupertinoButton(
                             onClick = {
                                 state.files.filter { selected.contains(it.name) }
@@ -721,7 +710,7 @@ fun FilesScreen(state: AppState) {
                             enabled = selectedCount > 0,
                             colors = CupertinoButtonDefaults.grayButtonColors(),
                             modifier = Modifier.weight(1f),
-                        ) { CupertinoText(downloadSelectedLabel) }
+                        ) { CupertinoText("Download ($selectedCount)") }
                         CupertinoButton(
                             onClick = { pendingBatchDelete = true },
                             enabled = selectedCount > 0 && !state.isBusy(Op.Delete),
@@ -729,7 +718,7 @@ fun FilesScreen(state: AppState) {
                                 containerColor = CupertinoColors.systemRed,
                             ),
                             modifier = Modifier.weight(1f),
-                        ) { CupertinoText(deleteSelectedLabel) }
+                        ) { CupertinoText("Delete ($selectedCount)") }
                     }
                 }
             }
@@ -738,17 +727,17 @@ fun FilesScreen(state: AppState) {
         if (state.downloads.isNotEmpty()) {
             section(title = { CupertinoText(downloadsTitle.sectionTitle()) }) {
                 if (state.downloads.any { it.state == DownloadItem.State.Done }) {
-                    actionItem(title = clearFinishedLabel, onClick = { state.clearFinishedDownloads() })
+                    actionItem(title = "Clear finished", onClick = { state.clearFinishedDownloads() })
                 }
                 if (state.downloads.any { it.state == DownloadItem.State.Failed }) {
-                    actionItem(title = retryFailedLabel, onClick = { state.retryFailedDownloads() })
+                    actionItem(title = "Retry failed", onClick = { state.retryFailedDownloads() })
                 }
                 state.downloads.forEach { d -> downloadItem(d, doneLabel, failedLabel) }
             }
         }
 
         groups.forEach { g ->
-            val heading = (g.key?.toString() ?: undatedLabel) + " · " + g.files.size
+            val heading = (g.key?.toString() ?: "Unknown date") + " · " + g.files.size
             section(title = { CupertinoText(heading.sectionTitle()) }) {
                 g.files.forEach { f ->
                     val thumb = state.thumbnails[f.name]
@@ -809,14 +798,12 @@ fun FilesScreen(state: AppState) {
         val targets = state.files.filter { selected.contains(it.name) }
         CupertinoAlertDialog(
             onDismissRequest = { pendingBatchDelete = false },
-            title = {
-                CupertinoText(stringResource(Res.string.title_batch_delete, targets.size))
+            title = { CupertinoText("Delete ${targets.size} files?") },
+            message = {
+                CupertinoText("The selected files will be removed from the camera. This cannot be undone.")
             },
-            message = { CupertinoText(stringResource(Res.string.msg_batch_delete)) },
             buttons = {
-                cancel(onClick = { pendingBatchDelete = false }) {
-                    CupertinoText(stringResource(Res.string.cancel))
-                }
+                cancel(onClick = { pendingBatchDelete = false }) { CupertinoText("Cancel") }
                 destructive(
                     onClick = {
                         state.deleteFiles(targets)
@@ -824,7 +811,7 @@ fun FilesScreen(state: AppState) {
                         selectMode = false
                         pendingBatchDelete = false
                     },
-                    title = { CupertinoText(stringResource(Res.string.delete)) },
+                    title = { CupertinoText("Delete") },
                 )
             },
         )
@@ -1036,45 +1023,6 @@ fun SettingsScreen(state: AppState) {
     val settingsNone = stringResource(Res.string.settings_none_reload)
     val saveLabel = stringResource(Res.string.save)
 
-    // Resolved here once: `section { }` bodies are lazy-builder scope, not composable.
-    val dash = "—"
-    val aboutTitle = stringResource(Res.string.section_about)
-    val nameLbl = stringResource(Res.string.label_device_name)
-    val modelLbl = stringResource(Res.string.label_model)
-    val firmwareLbl = stringResource(Res.string.label_firmware)
-    val hardwareLbl = stringResource(Res.string.label_hardware)
-    val serialLbl = stringResource(Res.string.label_serial)
-    val regionLbl = stringResource(Res.string.label_region)
-    val macLbl = stringResource(Res.string.label_mac)
-    val wifiLbl = stringResource(Res.string.label_wifi_ssid)
-    val reloadInfoLbl = stringResource(Res.string.action_reload_device_info)
-    val otaTitle = stringResource(Res.string.section_firmware_update)
-    val installedLbl = stringResource(Res.string.label_installed_version)
-    val installFirmwareLbl = stringResource(Res.string.action_install_firmware)
-    val otaUnsupportedLbl = stringResource(Res.string.firmware_update_unsupported)
-    val otaAppliedLbl = stringResource(Res.string.ota_update_applied)
-    val otaDoneLbl = stringResource(Res.string.ota_action_done)
-    val otaCancelledLbl = stringResource(Res.string.ota_cancelled)
-    val otaProgressLbl = otaLabel(state.otaState)
-    val dismissLbl = stringResource(Res.string.action_dismiss)
-    val statusLbl = stringResource(Res.string.label_status)
-    val cancelLbl = stringResource(Res.string.cancel)
-    val sdTitle = stringResource(Res.string.section_sd_card)
-    val sdOkLbl = stringResource(Res.string.sd_ok)
-    val sdMissingLbl = stringResource(Res.string.sd_missing)
-    val sdErrorLbl = stringResource(Res.string.sd_error)
-    val sdUnknownLbl = stringResource(Res.string.sd_unknown)
-    val totalLbl = stringResource(Res.string.label_total)
-    val freeLbl = stringResource(Res.string.label_free)
-    val formatSdLbl = stringResource(Res.string.action_format_sd)
-    val cameraWifiTitle = stringResource(Res.string.section_camera_wifi)
-    val newSsidHint = stringResource(Res.string.hint_new_ssid)
-    val newPasswordHint = stringResource(Res.string.hint_new_password)
-    val noteLbl = stringResource(Res.string.label_note)
-    val wifiReconnectNote = stringResource(Res.string.note_wifi_reconnect)
-    val dangerTitle = stringResource(Res.string.section_danger_zone)
-    val rebootLbl = stringResource(Res.string.action_reboot_camera)
-    val factoryResetLbl = stringResource(Res.string.action_factory_reset)
 
     LazyColumn(Modifier.fillMaxSize()) {
         section {
@@ -1085,82 +1033,99 @@ fun SettingsScreen(state: AppState) {
             )
         }
 
-        section(title = { CupertinoText(aboutTitle.sectionTitle()) }) {
-            valueItem(nameLbl, info?.name ?: dash)
-            valueItem(modelLbl, info?.model ?: state.session?.model ?: dash)
-            valueItem(firmwareLbl, info?.softVersion ?: dash)
-            valueItem(hardwareLbl, info?.hardVersion ?: dash)
-            valueItem(serialLbl, info?.serialNumber ?: dash)
-            valueItem(regionLbl, info?.region ?: dash)
-            valueItem(macLbl, info?.mac ?: dash)
-            valueItem(wifiLbl, info?.ssid ?: dash)
+
+        section(title = { CupertinoText("About".sectionTitle()) }) {
+            valueItem("Name", info?.name ?: "—")
+            valueItem("Model", info?.model ?: state.session?.model ?: "—")
+            valueItem("Firmware", info?.softVersion ?: "—")
+            valueItem("Hardware", info?.hardVersion ?: "—")
+            valueItem("Serial number", info?.serialNumber ?: "—")
+            valueItem("Region", info?.region ?: "—")
+            valueItem("MAC", info?.mac ?: "—")
+            valueItem("Wi-Fi", info?.ssid ?: "—")
             actionItem(
-                title = reloadInfoLbl,
+                title = "Refresh device info",
+
                 busy = state.isBusy(Op.DeviceInfo),
                 onClick = { state.loadDeviceInfo() },
             )
         }
 
-        section(title = { CupertinoText(otaTitle.sectionTitle()) }) {
-            valueItem(installedLbl, info?.softVersion ?: dash)
+
+        section(title = { CupertinoText("Firmware update".sectionTitle()) }) {
+            valueItem("Installed", info?.softVersion ?: "—")
+
             when (val ota = state.otaState) {
                 OtaState.Idle -> actionItem(
-                    title = if (state.firmwareUpdateSupported()) installFirmwareLbl else otaUnsupportedLbl,
+
+                    title = if (state.firmwareUpdateSupported()) {
+                        "Select & update firmware"
+                    } else {
+                        "Firmware update unsupported"
+                    },
+
                     enabled = state.firmwareUpdateSupported(),
                     onClick = { state.installFirmwareUpdate() },
                 )
+
                 OtaState.Completed -> {
-                    valueItem(statusLbl, otaAppliedLbl)
-                    actionItem(title = otaDoneLbl, onClick = { state.resetOtaState() })
+                    valueItem("Status", "Update applied")
+                    actionItem("Done", onClick = { state.resetOtaState() })
                 }
-                OtaState.Cancelled -> actionItem(
-                    title = otaCancelledLbl,
-                    onClick = { state.resetOtaState() },
-                )
+                OtaState.Cancelled -> actionItem("Cancelled", onClick = { state.resetOtaState() })
                 is OtaState.Failed -> {
                     // The reason comes straight off the transport, so it stays raw text.
-                    valueItem(statusLbl, ota.message)
-                    actionItem(title = dismissLbl, onClick = { state.resetOtaState() })
+                    valueItem("Status", ota.message)
+                    actionItem("Dismiss", onClick = { state.resetOtaState() })
                 }
                 else -> {
-                    valueItem(statusLbl, otaProgressLbl)
-                    actionItem(title = cancelLbl, onClick = { state.cancelFirmwareUpdate() })
+                    valueItem("Status", otaLabel(ota))
+                    actionItem("Cancel", onClick = { state.cancelFirmwareUpdate() })
                 }
+
             }
         }
 
-        section(title = { CupertinoText(sdTitle.sectionTitle()) }) {
+
+        section(title = { CupertinoText("SD card".sectionTitle()) }) {
             valueItem(
-                statusLbl,
+                "Status",
                 st?.sdState?.let {
                     when (it) {
-                        SdCardState.OK -> sdOkLbl
-                        SdCardState.MISSING -> sdMissingLbl
-                        SdCardState.ERROR -> sdErrorLbl
-                        SdCardState.UNKNOWN -> sdUnknownLbl
+                        SdCardState.OK -> "OK"
+                        SdCardState.MISSING -> "Missing"
+                        SdCardState.ERROR -> "Error"
+                        SdCardState.UNKNOWN -> "Unknown"
                     }
-                } ?: dash,
+                } ?: "—",
             )
-            valueItem(totalLbl, st?.sdTotalMb?.let { humanBytes(it * 1024 * 1024) } ?: dash)
-            valueItem(freeLbl, st?.sdFreeMb?.let { humanBytes(it * 1024 * 1024) } ?: dash)
+            valueItem("Total", st?.sdTotalMb?.let { humanBytes(it * 1024 * 1024) } ?: "—")
+            valueItem("Free", st?.sdFreeMb?.let { humanBytes(it * 1024 * 1024) } ?: "—")
             actionItem(
-                title = formatSdLbl,
+                title = "Format SD card",
+
                 busy = state.isBusy(Op.FormatSd),
                 onClick = { pending = DangerOp.FormatSd },
             )
         }
 
-        section(title = { CupertinoText(cameraWifiTitle.sectionTitle()) }) {
+
+        section(title = { CupertinoText("Camera Wi-Fi".sectionTitle()) }) {
             textField(
+
                 value = wifiSsid,
                 onValueChange = { wifiSsid = it; wifiSubmit = false },
-                placeholder = { CupertinoText(info?.ssid?.ifBlank { newSsidHint } ?: newSsidHint) },
+                
+placeholder = { CupertinoText(info?.ssid?.ifBlank { "New SSID" } ?: "New SSID") }
+,
                 singleLine = true,
             )
             textField(
                 value = wifiPass,
                 onValueChange = { wifiPass = it; wifiSubmit = false },
-                placeholder = { CupertinoText(newPasswordHint) },
+                
+placeholder = { CupertinoText("New password") }
+,
                 singleLine = true,
             )
             item {
@@ -1178,21 +1143,32 @@ fun SettingsScreen(state: AppState) {
                 }
             }
             if (wifiSubmit) {
-                valueItem(noteLbl, wifiReconnectNote)
+
+                valueItem(
+                    "Note",
+                    "The camera will restart its Wi-Fi — you'll need to reconnect to the new network.",
+                )
+
             }
         }
 
-        section(title = { CupertinoText(dangerTitle.sectionTitle()) }) {
+
+        section(title = { CupertinoText("Danger zone".sectionTitle()) }) {
+
             // Reboot is a TUWIN REST command; Hisilicon cameras have no such CGI.
             if (state.session?.platform == DevicePlatform.TUWIN_REST) {
                 actionItem(
-                    title = rebootLbl,
+
+                    title = "Reboot camera",
+
                     busy = state.isBusy(Op.Reboot),
                     onClick = { pending = DangerOp.Reboot },
                 )
             }
             actionItem(
-                title = factoryResetLbl,
+
+                title = "Factory reset",
+
                 busy = state.isBusy(Op.FactoryReset),
                 onClick = { pending = DangerOp.FactoryReset },
             )
@@ -1217,26 +1193,26 @@ fun SettingsScreen(state: AppState) {
 
     pending?.let { op ->
         val title = when (op) {
-            DangerOp.FormatSd -> stringResource(Res.string.title_format_sd)
-            DangerOp.FactoryReset -> stringResource(Res.string.title_factory_reset)
-            DangerOp.Reboot -> stringResource(Res.string.title_reboot_camera)
+            DangerOp.FormatSd -> "Format SD card?"
+            DangerOp.FactoryReset -> "Factory reset?"
+            DangerOp.Reboot -> "Reboot camera?"
         }
         val message = when (op) {
-            DangerOp.FormatSd -> stringResource(Res.string.msg_format_sd)
-            DangerOp.FactoryReset -> stringResource(Res.string.msg_factory_reset)
-            DangerOp.Reboot -> stringResource(Res.string.msg_reboot_camera)
+            DangerOp.FormatSd -> "All files on the card will be erased. This cannot be undone."
+            DangerOp.FactoryReset -> "All camera settings will be restored to factory defaults. This cannot be undone."
+            DangerOp.Reboot -> "The camera will restart and the connection will drop briefly."
         }
         val confirmLabel = when (op) {
-            DangerOp.FormatSd -> stringResource(Res.string.action_confirm_format)
-            DangerOp.FactoryReset -> stringResource(Res.string.action_confirm_reset)
-            DangerOp.Reboot -> stringResource(Res.string.action_confirm_reboot)
+            DangerOp.FormatSd -> "Format"
+            DangerOp.FactoryReset -> "Reset"
+            DangerOp.Reboot -> "Reboot"
         }
         CupertinoAlertDialog(
             onDismissRequest = { pending = null },
             title = { CupertinoText(title) },
             message = { CupertinoText(message) },
             buttons = {
-                cancel(onClick = { pending = null }) { CupertinoText(stringResource(Res.string.cancel)) }
+                cancel(onClick = { pending = null }) { CupertinoText("Cancel") }
                 destructive(
                     onClick = {
                         when (op) {
