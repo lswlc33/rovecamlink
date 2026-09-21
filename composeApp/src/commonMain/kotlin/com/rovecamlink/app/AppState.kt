@@ -298,6 +298,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 }
             }
         },
+        onHandshakeFailed = { connectBestNetwork() },
     )
 
     /**
@@ -342,26 +343,34 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         }
         val network = nearby.bestNetwork()
         if (network != null) {
-            val saved = graph.wifiCredentials.passwordFor(network.ssid)
-            val factory = graph.registry.defaultPasswordFor(network.ssid)
-            val passphrase = saved ?: factory.takeIf { network.secured }
-            Diag.info(
-                LogTag.APP,
-                "CONNECT nearby: wifi ${network.ssid} secured=${network.secured} " +
-                    "credential=${if (saved != null) "saved" else if (passphrase != null) "factory" else "none"}",
-            )
-            if (network.secured && passphrase == null) {
-                askPasswordFor = network
-                errorMessage = localized(Res.string.err_passphrase_needed, network.ssid)
-            } else {
-                connect(network.ssid, passphrase)
-            }
+            connectBestNetwork()
             return
         }
         // Nothing in range: restart the search and say so, rather than leaving an
         // empty screen to be interpreted.
         nearby.refreshNow()
         errorMessage = localized(Res.string.err_no_camera_nearby)
+    }
+
+    /**
+     * Policy step 3/4: the strongest hotspot we can see, joined with whatever
+     * credential we have for it. Also what a dead Bluetooth handshake falls back to,
+     * so one radio failing never costs the user the tap.
+     */
+    private fun connectBestNetwork() {
+        val network = nearby.bestNetwork() ?: run {
+            errorMessage = localized(Res.string.err_no_camera_nearby)
+            return
+        }
+        val saved = graph.wifiCredentials.passwordFor(network.ssid)
+        val factory = graph.registry.defaultPasswordFor(network.ssid)
+        val passphrase = saved ?: factory.takeIf { network.secured }
+        Diag.info(
+            LogTag.APP,
+            "CONNECT wifi ${network.ssid} secured=${network.secured} " +
+                "credential=${if (saved != null) "saved" else if (passphrase != null) "factory" else "none"}",
+        )
+        if (network.secured && passphrase == null) askPasswordFor = network else connect(network.ssid, passphrase)
     }
 
     /** Re-read both radios now — the 刷新 button. */

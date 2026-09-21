@@ -38,6 +38,8 @@ class ProvisioningController(
     private val scope: CoroutineScope,
     private val onCredentials: (ssid: String, password: String?) -> Unit,
     private val onStage: (stage: String) -> Unit,
+    /** Called when Bluetooth could not deliver, so the caller can try the Wi-Fi route. */
+    private val onHandshakeFailed: () -> Unit = {},
 ) {
     var busy by mutableStateOf(false)
         private set
@@ -103,7 +105,15 @@ class ProvisioningController(
                 outcome is BleOutcome.BluetoothOff -> notice = localized(Res.string.err_bluetooth_off)
                 outcome is BleOutcome.PermissionsDenied -> notice = localized(Res.string.err_bluetooth_denied)
                 outcome is BleOutcome.Unsupported -> notice = localized(Res.string.err_bluetooth_unsupported)
-                outcome is BleOutcome.Failed -> notice = raw(outcome.message)
+                outcome is BleOutcome.Failed -> {
+                    notice = raw(outcome.message)
+                    // Bluetooth is the route that can wake a sleeping camera, but it is
+                    // not the only one that can *reach* a camera that is already
+                    // broadcasting. A 25-second handshake that goes nowhere must not be
+                    // the end of the user's one tap, so the caller gets to try the
+                    // hotspot it can see.
+                    onHandshakeFailed()
+                }
                 else -> notice = localized(Res.string.err_bluetooth_unsupported)
             }
         }
