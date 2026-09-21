@@ -199,11 +199,10 @@ L22 · [class] public LyCmdWithYzIC · extends `IntegratedCircuit` · `com/icatc
 - `int i = this.load_end_index`  L224
 - `String string = "<binary/metadata>"`  L330
 
-方法（46）：
+方法（45）：
 - `void handleFileType(String str, JSONObject jSONObject, List<FileInfo> list, Handler handler)`  L75
     - 体内字面量："files" · "name" · "duration" · "createtime" · "createtimestr" · "type" · "http://192.168.1.254:80"
 - `int compare(Object obj, Object obj2)`  L84 @Override
-- `throw new RuntimeException(e)`  L92
 - `void handleRecResolutionValue(Handler handler, String str)`  L100
 - `void startMovieRecord(final Handler handler)`  L114
 - `void handleMessage(Message message)`  L117 @Override
@@ -521,7 +520,7 @@ L23 · [class] public QzIC · extends `IntegratedCircuit` · `com/icatch/golive/
 - `String str2`  L179
 - `int i = this.load_end_index`  L284
 
-方法（51）：
+方法（49）：
 - `void handleDeviceSdStatus(final Handler handler, String str)`  L29
     - 体内字面量："info" · "status"
 - `void handleMessage(Message message)`  L34 @Override
@@ -529,7 +528,6 @@ L23 · [class] public QzIC · extends `IntegratedCircuit` · `com/icatch/golive/
 - `void handleFileType(String str, JSONObject jSONObject, List<FileInfo> list, Handler handler)`  L61
     - 体内字面量："files" · "name" · "duration" · "createtime" · "createtimestr" · "type" · "http://192.168.169.1:80"
 - `int compare(Object obj, Object obj2)`  L70 @Override
-- `throw new RuntimeException(e)`  L78
 - `void handleRecResolutionValue(Handler handler, String str)`  L86
 - `void startMovieRecord(final Handler handler)`  L100
 - `void handleMessage(Message message)`  L103 @Override
@@ -566,7 +564,6 @@ L23 · [class] public QzIC · extends `IntegratedCircuit` · `com/icatch/golive/
 - `void getSSID(final Handler handler)`  L362 @Override
 - `void handleMessage(Message message)`  L365 @Override
     - 体内字面量："QzIntegratedCircuit" · "urlGetMediaInfo -> codeFailure" · "QzIntegratedCircuit" · "getSSID -> urlGetMediaInfo.json_obj:"
-- `throw new RuntimeException(e)`  L374
 - `void handleMessage(Message message)`  L380 @Override
     - 体内字面量："QzIntegratedCircuit" · "getSSID -> urlGetSSID.json_obj:" · "info" · "ssid"
 - `void leaveRemoteFile()`  L398 @Override

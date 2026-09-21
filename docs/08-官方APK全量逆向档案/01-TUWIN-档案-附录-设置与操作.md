@@ -449,6 +449,187 @@ Ride5 无整数模式常量，模式以**字符串 workmode** 表达。APK 内�
 
 ## 3. 页面与入口
 
+> 本节的「中文」列一律抄 `_work/re/tuwin/res-strings-zh.md`（优先 `values-zh-rCN`，其次 `values-zh`）；该表未覆盖的条目标 **（无中文）**，此时界面直接显示 `_work/re/tuwin/res-strings-default.md` 的英文原文。
+> 布局列抄 `_work/re/tuwin/layouts.tsv`（249 个 layout + 4 个 xml，共 253 条）。
+
+### 3.0 先说清楚：TUWIN 没有 Android 菜单 XML
+
+`_work/re/tuwin/layouts.tsv` 的 `type` 列只有两个取值：`layout`（249 条）与 `xml`（4 条）。**零条 `menu`** —— 全 APK 不存在 `res/menu/*.xml`。那 4 个 `xml` 是 `app_update_file`、`file_paths`、`locales_config`、`network_config`（`_work/re/tuwin/layouts.md` 「xml（4 个）」节），与菜单无关。
+
+因此「菜单 XML 动态渲染」在 TUWIN 里**只有一处**：Ride3Pro/Ride6 设置页的下半区，数据源是相机 HTTP 下发的 `WIFI_MENU.xml`（`GET /api/menu/xml`，Schema 见 §1.1），渲染容器是 `activity_ride3_pro_settings` 的 `rv_settings`，兜底数据是 §1.2.1 的静态表。其余全部页面都是**静态布局 + 代码里手写点击**，顶栏统一用自定义控件 `com.tuwinsmart.tuwin.presentation.widget.ToolBar`（`_work/re/tuwin/layouts.tsv` 的 `layout_actionbar` 行：`BLLinearLayout RelativeLayout ImageView TextView LinearLayout ImageButton`，id `iv_back`/`tv_title`/`iv_right`/`btn_right`）。
+
+| 渲染方式 | 页面 | 依据 |
+|---|---|---|
+| **设备 XML 动态渲染** | `Ride3ProSettingsActivity` 下半区（`ride6_dynamic_container` + `rv_settings`，条目布局 `item_ride3_pro_settings_section` / `item_ride3_pro_settings_item`） | `_work/tuwin_src/sources/com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity.java:122`（`new Ride3ProSettingsAdapter(C1870R.string.ride6_setting_meta)`） |
+| **设备参数列表动态渲染（非 XML）** | `M3DeviceSettingsActivity`（`rv_settings` 之外的 `RecyclerView`，布局 `activity_m3_device_settings` id `recycler_view`），数据来自 `getparamitems` | §1.4 |
+| 静态布局 + 运行时按机型裁剪可见行 | `MoreSettingsActivity`（Ride5/Ride3Pro 通用页） | §1.6 的 `MoreSettingsCapabilityPolicy.resolve` 表 |
+| 纯静态布局 | 其余所有页（下表） | `_work/re/tuwin/layouts.tsv` |
+
+### 3.1 主页容器：`HomeActivity`（`activity_home`）
+
+`_work/tuwin_src/sources/com/tuwinsmart/tuwin/presentation/p010ui/home/HomeActivity.java`。3 个 Tab 对应 3 个 Fragment，用 `switchFragment(index)` 做 add/hide/show（`:190`），挂载容器 id `fl_content`（`:203`）。
+
+| 控件（中文） | 资源 id | 布局 id | 代码位置 | 点击后的动作 |
+|---|---|---|---|---|
+| 首页 | `home` | `btn_connect`（含 `iv_home`/`tv_home`） | `HomeActivity.java:135`、`:175` | `switchFragment(0)` → `ConnectFragment`（tag `connect`，`:84-88`） |
+| 已下载 | `album`（英文默认 `Downloaded`） | `btn_album`（`iv_album`/`tv_album`） | `HomeActivity.java:148`、`:181` | `switchFragment(1)` → `AlbumFragment`（tag `album`，`:90-94`） |
+| 帮助 | `help` | `btn_helper`（`iv_helper`/`tv_helper`） | `HomeActivity.java:162`、`:187` | `switchFragment(2)` → `MineFragment`（tag `helper`，`:96-100`） |
+| — | `permission_view_stub` | `permission_view_stub` | `activity_home` 布局根 | 权限遮罩层，`getPermissionView()`（`:55`） |
+
+首次进入且未同意隐私时弹全屏隐私框（`:127-129` → `showPrivacyDialog()` `:293`）：标题 `privacy_policy_title`，正文走 `HomePrivacyPolicyContentLoader`，按钮 `privacy_policy_agree` / `privacy_policy_disagree`。
+
+### 3.2 首页列表：`ConnectFragment`（`fragment_connect`）
+
+布局 id：`cl_logo`、`iv_logo`、`refresh_layout`（下拉刷新）、`recycler_view`。列表由 `HomeListAdapter` 渲染，行型布局 6 种（`_work/re/tuwin/layouts.tsv`）：`item_home_list_device_title`、`item_home_list_device`、`item_home_list_add_device`、`item_home_list_brand`、`item_home_list_service_card`、`item_home_list_weather`。
+
+| 控件（中文） | 资源 id / 布局 | 代码位置 | 点击后的动作 |
+|---|---|---|---|
+| 添加设备 | `add_device` → `item_home_list_add_device`（id `tv_add`） | `_work/tuwin_src/sources/com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectFragment.java:292-302` | 先 `ConnectHelperDialog.INSTANCE.show(...)`（权限引导），确认后再 `ConnectDialog2.newInstance(deviceType, ssid, pwd, apBssid)`（`fragmentTransaction.add(..., "ConnectDialog2")`） |
+| 设备卡片 | `item_home_list_device`（`iv_device_preview`/`pb_device_loading`/`tv_device_name`/`iv_connected`） | `_work/tuwin_src/sources/com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectFragment$initFragment$2$onItemClick$1.java:115-186` | M3：先 `withTimeoutOrNull(5000L)` 取重力方向（`:119`），再进 `M3DeviceDetailActivity`（`:160-163`，extra `gravityDirection`+`device_session_id`）；Ride3Pro/Ride6/Ride5/未知：进 `DeviceDetailActivity`（`:144-158`、`:168-182`，extra `extra_device_type_code`/`device_session_id`/`device_id`）。动画 `launchByRightToLeftAnim` |
+| 设备卡片·长按/删除 | `confirm_delete_device`「确认删除此设备吗？」 | `ConnectFragment.java:324-332` | `Alert` 标题=该文案，正按钮 `confirm`「确认」/负按钮 `cancel`「取消」→ 从 `preferenceHelper.cacheDevices` 移除 |
+| 服务卡片 | `item_home_list_service_card`（`tv_service_1`/`tv_service_2`/`tv_service_3`） | `ConnectFragment.java:355-360` | 电商跳转：`tbopen://m.taobao.com/tbopen/index.html?...tuwin.tmall.com`；失败兜底 `tmall://page.tm/shop?shopId=255736524`，再兜底 `https://tuwin.tmall.com` |
+| 刷新 | `refresh_layout` | `ConnectFragment.java:633`（`scheduleFirmwareReconnectRefresh(long)`）、`ConnectFragmentShowRefreshPolicy` | 触发重连探测（§5） |
+| — | — | `ConnectFragment.java:351` | 无网络时 Toast `network_error_check_network`「网络连接异常，请检查网络」 |
+| 设备管理入口 | — | `ConnectFragment.java:308` | `launchByRightToLeftAnim(DeviceListActivity)`，布局 `activity_device_list`（单 `RecyclerView` `rv_device_list`，无文案） |
+
+### 3.3 设备添加与连接向导
+
+链路：`ConnectDialog2` →（`DeviceWifiScanDialog` 选热点）→ `ConnectionProgressDialog` → 成功回首页/预览；失败 → `ConnectHelperActivity` / `ConnectHelperDetailActivity`。
+
+| 步 | 页/弹窗 | 布局 | 控件（中文） | 资源 id | 动作 |
+|---|---|---|---|---|---|
+| 0 | 权限引导弹窗 | `dialog_connect_helper` | TUWIN将为您提供以下服务 / 请「开启」相应权限 / 定位权限 / 存储权限 / 去开启 / 先不开启 | `tuwin_service_title`、`please_enable_permissions`、`location_permission`、`location_permission_desc`、`storage_permission`、`storage_permission_desc`、`enable_permissions`、`not_open_now`（id `btn_submit`/`btn_reject`） | 跳系统权限页；`ConnectHelperDialog` 与机型无关 |
+| 1 | Wi-Fi 未开提示 | `dialog_connect2` | Wi-Fi 未开启 / 请打开手机 Wi-Fi / 开启 Wi-Fi 后，返回 App 继续连接设备 / 好的 | `wifi_disabled_dialog_title`、`wifi_disabled_dialog_message`、`wifi_disabled_dialog_hint`、`wifi_disabled_confirm_action`（id `btn_submit`） | 打开系统 Wi-Fi 面板 |
+| 2 | 选设备热点 | `dialog_device_wifi_scan`（行 `item_device_wifi`） | 选择设备 Wi-Fi / 附近设备 / 正在扫描附近的设备 Wi-Fi… / 取消 / 重新扫描 / 找不到设备 Wi-Fi？ / 前往系统设置连接 | `select_device_wifi`、`nearby_device_wifi`、`scanning_device_wifi`、`cancel`、`retry_scan`、`device_wifi_not_found_question`、`connect_via_system_wifi`（id `btn_device_wifi_cancel`/`btn_device_wifi_retry`/`btn_device_wifi_fallback`/`rv_device_wifi`） | 选中项 → `ConnectDialogViewModel` 建连；`retry_scan` 重扫；`fallback` 跳系统 WLAN 设置页 |
+| 3 | 连接进度 | `dialog_connection_progress` | 请保持设备 Wi-Fi 连接，完成前不要退出应用 | `connection_dialog_hint`（id `progress_connection`/`tv_connection_title`/`tv_connection_detail`/`status_container`） | 标题/详情两行文本由 `ConnectionProgressDialog` 按探测阶段改写 |
+| 4a | 帮助列表 | `activity_connect_helper`（`fragment_connect` 侧入口 `ConnectHelperActivity`） | 无静态文案；动态填 `tv_default_wifi_name`、`tv_default_wifi_password`、`btn_action` | — | 展示机型默认 SSID/密码；`btn_action` → `ConnectHelperDetailActivity` |
+| 4b | 帮助详情 | `activity_connect_helper_detail` | 连接方法 / 搜索不到设备 / 连接超时/连接失败 / 重置连接方案，正文长文 `connection_basic_steps`、`device_not_found_solutions`、`connection_timeout_solutions` | `connection_method`、`device_not_found`、`connection_timeout_failed`、`reset_connection_method` | 「重置连接方案」清 SSID 绑定；文案里的机型名是原文（如「1. 确保 Ride5 设备开机」） |
+
+### 3.4 预览页（Ride 系）：`DeviceDetailActivity`（`activity_device_detail`）
+
+顶栏标题由 `DeviceDetailTitlePolicy` 决定；电池条 `battery_view`（`layout_battery`，`BatteryView.setSsid(...)` 见 `DeviceDetailActivity.java:700-704`，仅 `BatteryViewVisibilityPolicy.shouldShow(type)` 为真时可见，`:722`）。
+
+| 控件（中文） | 资源 id | 布局 id | 代码位置 | 动作 |
+|---|---|---|---|---|
+| 低清预览 | `low_quality_preview` | `btn_low_quality` | `DeviceDetailActivity.java:686` → `:845-852` | 弹 `Alert`：标题 `what_is_low_quality_preview`「什么是低清预览」，正文 `power_saving_preview_explanation`，按钮 `i_know`；**不发请求** |
+| 回看 | `playback` | `btn_review`（`iv_review_icon`/`tv_review_title`/`tv_review_description`） | `activity_device_detail` 内 `ll_action_buttons` | 跳回放页，路由见 §3.7（`DeviceDetailStorageEntryRoutePolicy`） |
+| 存储管理 | `storage_management` | `sv_device_actions` 的 `cl_storage`（`iv_storage_icon`/`tv_storage_title`/`tv_storage_description`） | `DeviceDetailActivity.java:634` → `:812-815`（`goStorage()`）→ `:974` `openStoragePage()` | Ride3Pro/Ride6 → 能力探测后路由（`:976-979`）；其它机型 → `StorageTabActivity` |
+| 内存卡异常卡 | `memory_card_error`「内存卡异常」+ `ride3pro_memory_card_abnormal_format_hint`「无法正常录像，点击去格式化」 | `cl_sd_abnormal`（`iv_sd_abnormal_icon`/`tv_sd_abnormal_title`/`tv_sd_abnormal_description`） | `DeviceDetailActivity.java:647` → `:819-822` | `StorageManagerActivity.createIntent(this, deviceSessionId)`（格式化/推出内存卡页） |
+| 录像写入异常卡 | `ride3pro_recording_write_error_title`「录像写入异常」+ `ride3pro_recording_write_error_hint`「发现 %d 个异常录像文件，请检查SD卡」 | `cl_recording_write_error` | `DeviceDetailActivity.java:660` → `:825-832` | `showRide3ProExceptionDialog(title, msg)`（`:3265`，单按钮 `i_know`） |
+| 摄像头异常卡 | `ride3pro_camera_abnormal_title`「摄像头异常」+ `ride3pro_camera_not_detected_hint`「未检测到CMOS传感器，请检查设备」 | `cl_camera_abnormal`（`frame_88`/`tv_camera_abnormal_*`） | `DeviceDetailActivity.java:673` → `:835-841` | 同上异常弹窗 |
+| 前后摄切换 | — | `btn_steam_type`（图标 `ic_steam_front`/`ic_steam_back`，`:741`） | `DeviceDetailActivity.java:764` → `:868-872` | `checkCamNumAndSwitchSteamType(!isFront)`；`camnum==1` 或 Ride3Pro/Ride6 时整按钮 `View.GONE`（`DeviceDetailSteamTypeVisibilityPolicy.resolve`，`:17-29`）；不支持时 Toast `steam_type_switch_not_supported`（`:1493`） |
+| 截图 | — | `btn_screenshot` | `DeviceDetailActivity.java:777` → `:875-878`（`takePhoto()`） | 见 §4 拍照 |
+| 全屏 | — | `btn_fullscreen` | `DeviceDetailActivity.java:730` → `:856-864` | `videoView.toggleFullscreen()`，纯本地 |
+| 小贴士 | `tips`「小贴士」+ `master_ride5_fully` / `master_ride3pro_fully` | `btn_tip`（`iv_tips_icon`/`tv_tips_title`/`tv_tips_description`） | `DeviceDetailActivity.java:791` → `:881-885` | `ExternalWebActivity.launch(..., HomeTipsWebsiteCachePolicy.TIPS_URL, getString(tips))` |
+| 设置 | `title_more_settings`「更多」 | 顶栏右侧 | `DeviceDetailActivity.java:1084`（`goSettings()`）→ `:1097`/`:1104`/`:1114` | 按 `DeviceDetailSettingsEntryRoutePolicy.resolve(type)`：M3 → `M3DeviceSettingsActivity`；Ride3Pro/Ride6 → `Ride3ProSettingsActivity`；其它 → `MoreSettingsActivity` |
+| 版本行 | `device_version_info_format` | `tv_device_version_info` | `DeviceDetailActivity.java:2928` | 显示 `BuildConfig.VERSION_NAME` + 设备版本 |
+
+### 3.5 预览页（M3）：`M3DeviceDetailActivity`（`activity_m3_device_detail`）
+
+静态文案：占位 `m3_device_detail_placeholder`「M3 设备详情（开发中）」、假数据 `4K30FPS`、`9.8G/28.8G`、`sd_card_abnormal`「SD异常」、`low_quality_preview`「低清预览」、`fullscreen_toggle`「切换全屏」、`100`。
+
+| 控件（中文） | 布局 id | 代码位置 | 动作 |
+|---|---|---|---|
+| 回放入口 | `ivGallery` | `M3DeviceDetailActivity.java:390` → `:2159` | `new Intent(this, M3StorageActivity.class)`；VM 侧事件 `navigationToGalleryEvent`（`onGalleryClicked`） |
+| 设置入口 | `ivSettings` | `M3DeviceDetailActivity.java:401` → `:2239` | `new Intent(this, M3DeviceSettingsActivity.class)`；事件 `navigationToSettingsEvent`（`onSettingsClicked`） |
+| 低清预览说明 | `llLowQualityPreview` | `M3DeviceDetailActivity.java:423` | 弹本地说明框，不发请求 |
+| 模式网格开关 | `ivModeMenu` | `M3DeviceDetailActivity.java:436` | 切换侧边条 `rvModeSelector` / 网格 `modeGridItems`（§2.1）；条目布局 `dialog_m3_mode_selector` + `item_m3_mode_option`，标题 `shooting_mode`「拍摄模式」 |
+| 录像键 | `btnRecord`（`fragment_normal_record_mode`，配 `llRecordingStatus`/`ivRecordingIndicator`/`tvRecordingStatus`） | `_work/tuwin_src/sources/com/tuwinsmart/tuwin/presentation/p010ui/device/detail/fragment/NormalRecordModeFragment.java:76-93` | 切换中 → Toast `m3_wait_mode_switch_finish`「请等待模式切换完成」；否则 `viewModel.onRecordClicked()` |
+| 拍照键 | `btnPhoto`（`fragment_normal_photo_mode`，配 `llPhotoStatus`/`tvPhotoStatus`） | `fragment/TimedPhotoModeFragment.java`、`fragment/NormalPhotoModeFragment.java` 同构 | `viewModel.takePhoto()` |
+| 缩时拍照键 | `btnTimelapsePhoto`（`fragment_timelapse_photo_mode`，多一行 `tvTimelapseCountdown`） | 同上 | `viewModel.onTimelapsePhotoShutterClicked()` |
+| 电量 | `llBatteryContainer`/`ivBattery`/`tvBatteryLevel`/`ivCharging` | 由 `M3DeviceDetailViewModel.observeBatteryUpdates` 驱动 | §5 |
+| 加载/遮罩 | `pbPlayerLoading`、`vFlashOverlay`、`vCenterIndicator` | — | 首帧门与拍照白闪 |
+
+模式 → Fragment 由 `ModeStrategy` 提供，`getModeId()` 返回 §2.1 的整数（例：`NormalRecordModeStrategy.java:12-14` 返回 `21` → `NormalRecordModeFragment`）。
+
+### 3.6 设置页族
+
+**`Ride3ProSettingsActivity`（`activity_ride3_pro_settings`）** —— 顶栏标题 `title_more_settings`「更多」（`Ride3ProSettingsActivity.java:230`）。上半区固定 7 行卡片（`legacy_settings_container`），下半区动态。
+
+| 控件（中文） | 布局 id | 代码位置 | 动作 |
+|---|---|---|---|
+| 通用设置 | `tv_ride6_settings_header` 上方分组标题 `general_settings` | 布局静态文案 | 仅分区标题 |
+| 设备名称 | `btn_device_name`/`tv_device_name`（`device_name_label`） | `:345` → `:422` | `Alert(INPUT)`，标题 `modify_device_name`「修改设备名称」 |
+| WiFi密码设置 | `btn_wifi_setting`（`wifi_password_settings`） | `:358`、`:945` | `Alert(INPUT)`，标题 `wifi_password_settings`，hint `input_new_wifi_password_hint`「请输入新的wifi密码」；校验失败 Toast `ride3pro_wifi_password_invalid`「WIFI密码必须为任意8个字符」（`:814`/`:957`） |
+| 存储管理 | `btn_storage_setting`（`storage_management`） | `:371` | 跳存储页 |
+| 固件升级 | `btn_firmware_upgrade` + `tv_firmware_version`（`firmware_upgrade`） | `:384`、`:937` | `new Intent(this, UpgradeActivity.class)` |
+| 恢复出厂设置 | `btn_factory_reset`（`factory_reset`） | `:397` → `:1039-1056` | 确认框 `CommonDialog`（标题 `factory_reset`，正文 `confirm_factory_reset`，按钮 `confirm`/`cancel`）→ `doFactoryReset()` |
+| 重启设备 | `btn_reboot`（`reboot_device`） | `:411` → `:1128-1145` | 确认框 → `rebootDevice()` |
+| Ride6 扩展设置（动态区） | `ride6_settings_section_title`「Ride6 扩展设置」/ `rv_settings` / `tv_settings_error` | `:122`、`:515` | 每条 item 点击 → `onRide6SettingClicked`（`:529`）：Type 0/3 → 选项弹窗；Type 1/4 → 直接执行；Type 2 → 输入框。错误行文案 `ride6_settings_load_failed_retry`「设置加载失败，点击重试」 |
+
+**`M3DeviceSettingsActivity`（`activity_m3_device_settings`）** —— 单 `RecyclerView`，加载中文案 `loading_config`「加载配置中…」。行渲染与点击全在 `M3SettingsAdapter`（§1.4）：开关行用 `Switch`，多值行点击 → `dialog_setting_selection`（标题 `tvDialogTitle` = 行标题，条目 `item_setting_option`）；`GeneralMenuItem` 三行分别跳 `M3StorageSettingsActivity`、`UpgradeActivity`、`M3FactoryResetActivity`。
+
+**`MoreSettingsActivity`（`activity_more_settings`）** —— 静态 14 行，机型裁剪见 §1.6。
+
+| 控件（中文） | 布局 id | 代码位置 | 动作 |
+|---|---|---|---|
+| 功能设置 / 通用设置 | 两个分组标题 `function_settings`、`general_settings` | 静态 | — |
+| 录像时长（默认值 `1分钟`） | `btn_circle_record_duration`/`tv_circle_record_duration` | §1.6 `Rec_Split_Time` 行 | 弹 `select_recording_duration`「请选择循环录制时间」 |
+| 同步时间 | `btn_sync_time` | `MoreSettingsActivity.java:429-431` → `:1230-1232` | `syncTime()`（`:2659`），见 §4 |
+| 分辨率设置（默认值 `1080P+1080P`，**该条无中文**） | `btn_dpi_setting`/`tv_dpi_setting` | §1.6 `MEDIAMODE` 行 | 弹 `select_recording_resolution`「请选择录制分辨率」 |
+| 紧急录像 | `btn_urgent_level`/`switch_urgent_level` | §1.6 `GSR_SENSITIVITY` | 开 precede 弹说明框 |
+| 哨兵模式 | `btn_parking_level`/`switch_parking_level` | §1.6 `GSR_PARKING` | 同上 |
+| 智能降风噪 | `btn_wind_noise`/`switch_wind_noise` | §1.6 `VCAPVQE` | 同上 |
+| 录音开关 | `switch_record_voice` | §1.6 `AUDIO` | 直接写值 |
+| 上下翻转（仅前摄）/ 左右翻转（仅前摄） | `switch_shangxia` / `switch_zuoyou` | §1.6 `FLIP` / `MIRROR` | 直接写值 |
+| WiFi 模式（初值 `加载中...`） | `btn_wifi_mode`/`tv_wifi_mode_desc` | §1.6 `WIFI_DEAULT_STATE` | 弹 `wifi_mode_dialog_title`「设置 WiFi 模式」三选一 |
+| 设备备注 / WIFI设置 / 存储设置 / 固件升级 / 恢复出厂设置 | `btn_device_name`+`tv_device_name` / `btn_wifi_setting` / `btn_storage_setting` / `btn_software_update`+`tv_soft_version` / `btn_reset_device` | `:1336`（升级）等 | `device_note`、`wifi_settings`、`storage_settings`、`firmware_upgrade`、`factory_reset`；升级 → `new Intent(this, UpgradeActivity.class)` |
+
+**四个 M3 子页**（`M3WifiSettingsActivity` / `M3StorageSettingsActivity` / `M3FactoryResetActivity` / `M3DeviceSettingsActivity`）文案与接口见 §1.5，入口即上表 `GeneralMenuItem`。
+
+### 3.7 回放页族（按机型分三条链路）
+
+| 机型 | 页 | 布局 | 入口 | 下一步 |
+|---|---|---|---|---|
+| Ride3Pro/Ride6 | `Ride3ProStorageActivity` | `activity_ride3pro_storage` | 预览页 `cl_storage` → `DeviceDetailStorageEntryRoutePolicy`（`CAPABILITY_ENTRY`） | 日期 Tab（`tab_layout`/`view_pager`，行 `item_storage_list_video_date_title`）→ `Ride3ProHourDetailActivity` |
+| Ride3Pro/Ride6（索引式） | `Ride3ProIndexedStorageActivity` + `Ride3ProIndexedStorageFragment` | `activity_ride3pro_indexed_storage`、`fragment_ride3pro_indexed_storage` | 能力探测判定（`Ride3ProStorageCapabilityProbe`） | `Ride3ProIndexedStorageActivity.java:473` → `Ride3ProHourDetailActivity` |
+| Ride3Pro/Ride6 | `Ride3ProHourDetailActivity` | `activity_ride3pro_hour_detail` | `Ride3ProHourDetailActivity.java:1654` | `:1609` `playbackLauncher.launch(Ride3ProDailyDetailActivity.createIntent(...))` |
+| Ride3Pro/Ride6 | `Ride3ProDailyDetailActivity` | `activity_ride3_pro_daily_detail` | 上一条 | 播放器 `FFmpegPlayerView`；下载 → 下载列表；删除回传 extra `EXTRA_DELETED_FILE_INDEX`（`Ride3ProDailyDetailActivity.java:786`） |
+| Ride5 | `StorageTabActivity` / `StorageManagerActivity` | `activity_storage_tab` / `activity_storage_manager` | 预览页 `cl_storage`（`LEGACY_STORAGE_TAB`） | `StorageLocalItemFragment.java:205` → `DailyDetailActivity` |
+| Ride5 | `DailyDetailActivity` | `activity_daily_detail` | 上一条 | `DailyDetailActivity.java:686` → `ShowPicsActivity`（照片）；`:732` → `Ride5HourlyPlaybackActivity`（视频） |
+| Ride5 | `Ride5HourlyPlaybackActivity` → `Ride5HourDetailActivity` | `activity_ride5_hour_detail`（小时卡片 `item_ride5_hour_recording`、已选片 `item_ride5_selected_video`） | `Ride5HourlyPlaybackActivity.java:435` | `Ride5HourDetailActivity.java:988` 回到小时页 |
+| M3 | `M3StorageActivity` | `activity_m3_storage` | 预览页 `ivGallery` | `M3StorageFileFragment.java:261` → `M3VideoPlayActivity`（`M3VideoPlayActivity.java:1010`） |
+| 通用 | `VideoPlayActivity` | `activity_play_video` | `VideoPlayActivity.java:846`；下载完成后由 `DownloadListActivity.java:561` 拉起 | 分享/转码 |
+
+回放页公共控件（`activity_m3_storage` 与 `activity_ride3pro_storage` 同名 id）：
+
+| 控件（中文） | 布局 id | 动作 |
+|---|---|---|
+| 内存卡 | `tv_title`（`title_memory_card`） | 页标题 |
+| 已选0项 / 全选 | `tv_select_count`（`selected_items`）/ `btn_select_all`+`tv_select_all`（`select_all`） | 进入多选态，显示 `fl_select_toolbar`（`btn_close_select`） |
+| 无文件 | `tv_empty_state`（`empty_folder`） | 空态占位 |
+| 下载 | `btn_download`/`tv_download`（`download_button`） | 提交下载任务（§4） |
+| 删除 | `btn_delete`/`tv_delete`（`delete`） | 批量删除（§4） |
+| 下载中角标 | `fl_downloading`/`btn_downloading`/`tv_downloading_number` | 跳 `DownloadListActivity` |
+| 上拉加载更多 | `tv_load_more_hint`（`ride3pro_storage_pull_to_load_more_hint`，中文表未覆盖，实为「继续上拉加载更多」） | `fragment_ride3pro_storage_list` |
+
+### 3.8 下载 / 传输列表
+
+| 页 | 布局 | 控件（中文） | 资源 id | 动作 |
+|---|---|---|---|---|
+| 任务列表 | `activity_download_list`（`refresh_layout`/`recycler_view`/`tv_state`） | 暂无任何下载任务 | `no_download_tasks` | 空态文本；行型 `item_download_list_title`、`item_download_list_video_date_title`、`item_download_list_video_item`、`item_download_list_item`；点击 → `DownloadListActivity` 的 `onTaskClick`（`DownloadListActivity.java:324`），完成后 → `ShowPicsActivity`（`:550`）或 `VideoPlayActivity`（`:561`） |
+| 已下载 Tab | `fragment_album` | 已下载 / 已选0项 / 全选 / 您还没有授予文件管理权限 / 去授予 / 删除 | `downloaded`、`selected_items`、`select_all`、`no_file_permission`、`go_authorize`、`delete`（id `btn_request_permission`、`btn_delete`） | `btn_downloading`/`tv_downloading_number` → `DownloadListActivity`；`btn_request_permission` → 系统授权页 |
+| 本地分页 | `fragment_local_download_list` | 同 `fragment_album` 底部动作区 | — | `LocalDownloadListFragment` |
+| 存储管理 | `activity_storage_manager` | 存储卡状态良好 / 剩余容量：N/A / 距离上一次格式化 SD 卡已 %d 天 / 格式化内存卡 / 推出内存卡 / 存储卡须知 | `storage_card_status_good`、`remaining_capacity_na`、`sd_card_format_elapsed_days`、`format_memory_card`、`eject_memory_card`、`storage_card_notice`（id `tv_storage_status`、`tv_storage_remains`、`tv_storage_total`、`tv_sd_format_reminder`、`btn_restore_sdcard`、`btn_remove_sdcard`） | `btn_restore_sdcard` → 格式化确认框（`StorageManagerActivity$showFormatConfirmDialog$1$1`）；`btn_remove_sdcard` → 退出/断开 |
+
+### 3.9 弹窗清单（自有，非库内 `abc_*`/`mtrl_*`）
+
+| 弹窗类 | 布局 | 用途 |
+|---|---|---|
+| `CommonDialog` | `dialog_common`（`tv_title`/`tv_sub_title`/`btn_primary`/`btn_second`） | 通用二次确认（格式化、恢复出厂、重启都用它） |
+| `ConnectDialog2` | `dialog_connect2` | Wi-Fi 未开提示 + 连接入口 |
+| `ConnectHelperDialog` | `dialog_connect_helper` | 定位/存储权限引导 |
+| `ConnectionProgressDialog` | `dialog_connection_progress` | 连接进度两行文案 |
+| `DeviceWifiScanDialog` | `dialog_device_wifi_scan` + `item_device_wifi` | 附近设备热点列表 |
+| `FirmwareDownloadDialog` | `dialog_firmware_download` | App 侧固件包下载进度 |
+| `FirmwareUploadDialog` | `dialog_firmware_upload`（含自定义 `FirmwareUploadRingView`） | 固件包上传到相机 |
+| `FirmwareUpdateBottomSheet` | `dialog_firmware_update` | 升级说明 + 确认 |
+| `ProgressDialog` | `dialog_progress`（`ProgressBar` + `tv_msg`，id `tv_progress_msg`） | 「修改中…」「恢复出厂设置中…」 |
+| `Ride3ProStorageLoadingDialog` | `dialog_ride3pro_storage_loading`（`Ride3ProLoadingCardView`） | 回放首屏骨架 |
+| `Ride3ProDeleteConfirmDialog` | 复用 `dialog_common` | 删除确认 |
+| `Alert`（`com.release.alert`） | `item_alert_view_bottom` 等 | INPUT / TWO_INPUT / 普通三态，设置页大量使用 |
+| `M3SettingsAdapter` 选择弹层 | `dialog_setting_selection` + `item_setting_option` | M3 参数取值选择 |
+
 ## 4. 操作复现表
 
 ## 5. 状态与轮询

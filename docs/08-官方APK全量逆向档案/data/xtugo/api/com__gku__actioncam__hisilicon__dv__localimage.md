@@ -338,9 +338,9 @@ L21 · [interface] public Callback · `com/gku/actioncam/hisilicon/dv/localimage
 ### `com.gku.actioncam.hisilicon.dv.localimage.ImageEditLib.GPUImageFilterTools`
 L88 · [class] public GPUImageFilterTools · `com/gku/actioncam/hisilicon/dv/localimage/ImageEditLib/GPUImageFilterTools.java`
 
-方法（3）：
+方法（2）：
 - `GPUImageFilter createFilterForType(final Context context, final FilterType type)`  L169
-- `throw new IllegalStateException( 0 )`  L329
+    - 体内字面量："No filter of that type!"
 - `GPUImageFilter createBlendFilter(Context context, Class<? extends GPUImageTwoInputFilter> filterClass)`  L333
 ### `com.gku.actioncam.hisilicon.dv.localimage.ImageEditLib.GPUImageFilterTools$FilterAdjuster`
 L355 · [class] public static FilterAdjuster · `com/gku/actioncam/hisilicon/dv/localimage/ImageEditLib/GPUImageFilterTools.java`
@@ -715,7 +715,7 @@ L34 · [class] public ImageEditActivity · extends `BaseActivity implements Simp
 - `String str`  L330
 - `ImageEdit imageEdit = this.mImageEdit`  L353
 
-方法（26）：
+方法（25）：
 - `void open(Context context, String imagePath)`  L56
 - `void onCreate(Bundle savedInstanceState)`  L63 @Override
     - 体内字面量："/"
@@ -735,7 +735,7 @@ L34 · [class] public ImageEditActivity · extends `BaseActivity implements Simp
 - `void rotationImage(float angle)`  L194
 - `void imageEditResult(String path)`  L198 @Override
 - `void onEditObjSelect(int r4)`  L220 @Override
-- `throw new UnsupportedOperationException( 4 )`  L284
+    - 体内字面量："Method not decompiled: com.gku.actioncam.hisilicon.dv.localimage.ImageEditLib.ImageEditActivity.onEditObjSelect(int):void"
 - `void onStart()`  L288 @Override
 - `String getResultPath()`  L296
 - `void onPreviewImageCallback(int position, String previewImagePath)`  L301 @Override

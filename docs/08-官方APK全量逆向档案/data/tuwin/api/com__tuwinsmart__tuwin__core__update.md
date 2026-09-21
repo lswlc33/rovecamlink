@@ -222,18 +222,14 @@ L40 · [class] public final AppUpdateCoordinator · `com/tuwinsmart/tuwin/core/u
 - `Object obj = c21101.result`  L440
 - `int i = c21101.label`  L442
 
-方法（9）：
+方法（6）：
 - `public AppUpdateCoordinator(RouteProvider routeProvider, AppUpdateGateway gateway, Function0<String> appVersion, Function1<? super String, Boolean> isValidDownloadUrl)`  L122
     - 体内字面量："routeProvider" · "gateway" · "appVersion" · "isValidDownloadUrl"
 - ` AppUpdateCoordinator(RouteProvider routeProvider, AppUpdateGateway appUpdateGateway, Function0 function0, C21071 c21071, int i, DefaultConstructorMarker defaultConstructorMarker)`  L156
 - `StateFlow<AppUpdateCheckState> getState()`  L160
 - `Object check(AppUpdateCheckKey appUpdateCheckKey, Continuation<? super AppUpdateCheckResult> continuation)`  L170
-- `throw new IllegalStateException( 83 )`  L242
 - `Object clearCompleted(Continuation<? super Unit> continuation)`  L347
-- `throw new IllegalStateException( 84 )`  L377
 - `Object runCheck(AppUpdateCheckKey appUpdateCheckKey, Continuation<? super AppUpdateCheckResult> continuation)`  L415
-- `throw new IllegalStateException( 90 )`  L504
-    - 体内字面量："Invalid app update response" · "RouteSuperseded" · "Cancelled"
 ### `com.tuwinsmart.tuwin.core.update.AppUpdateCoordinator$C21071`
 L143 · [class] public C21071 · extends `FunctionReferenceImpl implements Function1<String, Boolean>` · implements `Function1<String, Boolean>` · `com/tuwinsmart/tuwin/core/update/AppUpdateCoordinator.java`
 注解：
@@ -290,12 +286,11 @@ L23 · [class] final AppUpdateCoordinator$runCheck$response$1 · extends `Suspen
 - `AppUpdateCoordinator this$0`  L26
 - `int i = this.label`  L95
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Continuation<?> continuation)`  L36 @Override
 - `Object invoke(Continuation<? super CheckUpdateBean> continuation)`  L41 @Override
     - 体内字面量："<anonymous>" · "Lcom/tuwinsmart/tuwin/data/source/remote/dto/CheckUpdateBean;" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.core.update.AppUpdateCoordinator$runCheck$response$1$1" · "AppUpdateCoordinator.kt" · "invokeSuspend"
 - `Object invokeSuspend(Object obj)`  L93 @Override
-- `throw new IllegalStateException( 14 )`  L105
 ### `com.tuwinsmart.tuwin.core.update.AppUpdateCoordinator$runCheck$response$1$C21111`
 L49 · [class] static final C21111 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super CheckUpdateBean>, Object>` · implements `Function2<CoroutineScope, Continuation<? super CheckUpdateBean>, Object>` · `com/tuwinsmart/tuwin/core/update/AppUpdateCoordinator$runCheck$response$1.java`
 注解：
@@ -306,11 +301,10 @@ L49 · [class] static final C21111 · extends `SuspendLambda implements Function
 - `AppUpdateCoordinator this$0`  L52
 - `int i = this.label`  L74
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L62 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super CheckUpdateBean> continuation)`  L67 @Override
 - `Object invokeSuspend(Object obj)`  L72 @Override
-- `throw new IllegalStateException( 13 )`  L84
 ### `com.tuwinsmart.tuwin.core.update.AppUpdateCoordinatorKt`
 L12 · [class] public final AppUpdateCoordinatorKt · `com/tuwinsmart/tuwin/core/update/AppUpdateCoordinatorKt.java`
 注解：
@@ -359,13 +353,12 @@ L33 · [class] public final DeviceOtaCoordinator · `com/tuwinsmart/tuwin/core/u
 - `MutableStateFlow<DeviceOtaProgress> mutableStateFlow = this._progress`  L787
 - `MutableStateFlow<DeviceOtaProgress> mutableStateFlow = this._progress`  L793
 
-方法（8）：
+方法（7）：
 - `public DeviceOtaCoordinator(DeviceOtaUploadQueue uploadQueue, Function2<? super TransferRequest, ? super Continuation<? super TransferResult>, ? extends Object> download, Function2<? super TransferUploadRequest, ? super Continuation<? super TransferResult>, ? extends Object> upload)`  L63
     - 体内字面量："uploadQueue" · "download" · "upload" · "<anonymous>" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferResult;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferUploadRequest;" · "com.tuwinsmart.tuwin.core.update.DeviceOtaCoordinator$1" · "DeviceOtaCoordinator.kt" · "invokeSuspend"
 - ` DeviceOtaCoordinator(DeviceOtaUploadQueue deviceOtaUploadQueue, Function2 function2, C21121 c21121, int i, DefaultConstructorMarker defaultConstructorMarker)`  L125
 - `StateFlow<DeviceOtaProgress> getProgress()`  L129
 - `Object execute(DeviceOtaPlan deviceOtaPlan, Continuation<? super DeviceOtaResult> continuation)`  L165
-- `throw new IllegalStateException( 120 )`  L772
 - `void transition(DeviceOtaState state, DeviceOtaPlan plan)`  L782
 - `DeviceOtaResult.Cancelled cancelled()`  L786
 - `DeviceOtaResult.Failed failed(Throwable error)`  L792
@@ -379,11 +372,10 @@ L80 · [class] public static final C21121 · extends `SuspendLambda implements F
 - `int label`  L83
 - `int i = this.label`  L106
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L92 @Override
 - `Object invoke(TransferUploadRequest transferUploadRequest, Continuation<? super TransferResult> continuation)`  L99 @Override
 - `Object invokeSuspend(Object obj)`  L104 @Override
-- `throw new IllegalStateException( 81 )`  L117
 ### `com.tuwinsmart.tuwin.core.update.DeviceOtaCoordinator$C21131`
 L44 · [class] static final C21131 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/update/DeviceOtaCoordinator.java`
 注解：

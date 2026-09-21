@@ -491,15 +491,13 @@ L19 · [class] public StreamProvider · implements `IStreamProvider` · `com/ica
 - `ICatchVideoFormat videoFormat`  L129
 - `MVideoFormat mVideoFormat = null`  L130
 
-方法（9）：
+方法（7）：
 - `public StreamProvider(ICatchIStreamProvider iCatchIStreamProvider)`  L23
 - `boolean containsAudioStream()`  L28 @Override
 - `boolean containsVideoStream()`  L47 @Override
 - `MAudioFormat getAudioFormat()`  L66 @Override
 - `boolean getNextAudioFrame(FrameBuffer frameBuffer)`  L90 @Override
-- `throw new TryAgainException()`  L101
 - `boolean getNextVideoFrame(FrameBuffer frameBuffer)`  L109 @Override
-- `throw new TryAgainException()`  L120
 - `MVideoFormat getVideoFormat()`  L128 @Override
 ### `com.icatch.golive.SdkApi.mobileapi.SurfaceContext`
 L7 · [class] public SurfaceContext · implements `ISurfaceContext` · `com/icatch/golive/SdkApi/mobileapi/SurfaceContext.java`

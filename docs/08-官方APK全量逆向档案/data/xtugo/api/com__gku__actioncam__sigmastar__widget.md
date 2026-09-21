@@ -1135,7 +1135,7 @@ L27 · [class] public SegmentTabLayout · extends `FrameLayout implements ValueA
 - `float f2 = this.mDividerWidth`  L363
 - `FragmentChangeManager fragmentChangeManager = this.mFragmentChangeManager`  L391
 
-方法（65）：
+方法（64）：
 - `public SegmentTabLayout(Context context)`  L76
 - `public SegmentTabLayout(Context context, AttributeSet attrs)`  L80
 - `public SegmentTabLayout(Context context, AttributeSet attrs, int defStyleAttr)`  L84
@@ -1143,7 +1143,7 @@ L27 · [class] public SegmentTabLayout · extends `FrameLayout implements ValueA
 - `void obtainAttributes(Context context, AttributeSet attrs)`  L115
     - 体内字面量："#222831" · "#ffffff"
 - `void setTabData(String[] titles)`  L158
-- `throw new IllegalStateException( 6 )`  L160
+    - 体内字面量："Titles can not be NULL or EMPTY !"
 - `void setTabData(String[] titles, FragmentActivity fa, int containerViewId, ArrayList<Fragment> fragments)`  L166
 - `void notifyDataSetChanged()`  L171
 - `void setEnableTabLayout(boolean enableTabLayout)`  L182

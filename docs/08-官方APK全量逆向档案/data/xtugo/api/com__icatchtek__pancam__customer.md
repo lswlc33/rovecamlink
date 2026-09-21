@@ -191,13 +191,13 @@ L23 · [interface] public ICatchIPancamVideoPlayback · extends `ICatchIPancamRe
 ### `com.icatchtek.pancam.customer.ICatchPancamConfig`
 L11 · [class] public ICatchPancamConfig · `com/icatchtek/pancam/customer/ICatchPancamConfig.java`
 
-方法（16）：
+方法（14）：
 - `private ICatchPancamConfig()`  L14
 - `ICatchPancamConfig getInstance()`  L17
 - `void setVideoDecoder(ICatchIStreamVideoDecoder iCatchIStreamVideoDecoder)`  L21
-- `throw new IchNotSupportedException( 0 )`  L22
+    - 体内字面量："This API currently supported by SDK, will coming soon."
 - `void setAudioDecoder(ICatchIStreamAudioDecoder iCatchIStreamAudioDecoder)`  L25
-- `throw new IchNotSupportedException( 1 )`  L26
+    - 体内字面量："This API currently supported by SDK, will coming soon."
 - `boolean setPreviewCacheParam(int i, int i2)`  L29
 - `int getPreviewCacheTime()`  L33
 - `boolean setSoftwareDecoder(boolean z)`  L37
@@ -246,7 +246,7 @@ L24 · [class] public final ICatchPancamSession · `com/icatchtek/pancam/custome
 - `ICatchPancamPreview iCatchPancamPreview = this.preview`  L102
 - `ICatchPancamVideoPlayback iCatchPancamVideoPlayback = this.videoPlayback`  L107
 
-方法（14）：
+方法（13）：
 - `private ICatchPancamSession()`  L32
 - `ICatchPancamSession createSession()`  L35
 - `int getSessionID()`  L40 @Deprecated
@@ -254,8 +254,7 @@ L24 · [class] public final ICatchPancamSession · `com/icatchtek/pancam/custome
 - `boolean delEventListener(int i, ICatchIPancamListener iCatchIPancamListener, boolean z)`  L48
 - `void finalize()`  L52
 - `boolean prepareSession(ICatchITransport iCatchITransport, ICatchGLColor iCatchGLColor, ICatchGLDisplayPPI iCatchGLDisplayPPI)`  L61
-    - 体内字面量："SystemInfo" · "Model: " · "SystemInfo" · "API level: " · "SystemInfo" · "Android version: "
-- `throw new IchTransportException( 6  + iCatchITransport +  7 )`  L84
+    - 体内字面量："SystemInfo" · "Model: " · "SystemInfo" · "API level: " · "SystemInfo" · "Android version: " · "Transport not supported [" · "]"
 - `boolean destroySession()`  L94
 - `ICatchPancamInfo getInfo()`  L115
 - `ICatchIPancamControl getControl()`  L119
@@ -472,16 +471,16 @@ L6 · [class] public ICatchGLImageRaw · `com/icatchtek/pancam/customer/type/ICa
 - `int imageH`  L9
 - `int imageW`  L10
 
-方法（9）：
+方法（7）：
 - `public ICatchGLImageRaw(int i, int i2, int i3)`  L12
 - `public ICatchGLImageRaw(int i, int i2, int i3, byte[] bArr)`  L16
-- `throw new IchInvalidArgumentException( 0 )`  L19
+    - 体内字面量："This buffer does not contains enough data."
 - `int getFormat()`  L24
 - `int getImageW()`  L28
 - `int getImageH()`  L32
 - `byte[] getBuffer()`  L36
 - `void init(int i, int i2, int i3)`  L40
-- `throw new IchInvalidArgumentException( 1 )`  L42
+    - 体内字面量："This imageW or imageH should be less or equal than zero."
 ### `com.icatchtek.pancam.customer.type.ICatchGLLogLevel`
 L4 · [class] public ICatchGLLogLevel · `com/icatchtek/pancam/customer/type/ICatchGLLogLevel.java`
 

@@ -420,7 +420,118 @@ Ride3Pro 的**操作级 grant 表**（`tuwin/core/device/ride3pro/Ride3ProDevice
 
 ## 3. 鉴权与握手
 
-（待填）
+### 3.0 总结论
+
+四个机型**全部没有真正的鉴权**：没有账号/token/签名/加密挑战，没有任何 `Authorization`/`Cookie` 头被注入（`_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/source/remote/api/ride3pro/Ride3ProApiService.java` 与 `_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/source/remote/api/p006m3/M3ApiService.java` 的注解集合里只有 `@GET/@Query/@Body/@Headers/@Streaming/@POST`，`Ride3ProApiService.java:9-16` 的 import 可穷举证明）。访问控制完全靠「手机必须连在设备自己的 AP 上」。存在的最接近握手的东西有三个，按机型分：
+
+| 机型 | 握手物 | 是不是安全机制 | 结论 |
+|---|---|---|---|
+| Ride3Pro / Ride6 | `GET /api/authdevice?seed=<随机 long>` | 否 | 无状态随机数，响应内容不解析，`result==-2` 被豁免 → 更像「让设备把这台 client 标为已连接 + 刷一次流许可」的通知型调用 |
+| M3 | 无 | — | `/app/getproductinfo` 零参数，后续 `/app/getmediainfo` 也零参数 |
+| Ride5 | `client.cgi?-operation=register&-ip=<手机 IP>` | 否，是**反向通道注册** | 让设备主动连手机的 9002 端口；不带任何凭据 |
+
+### 3.1 Ride3Pro / Ride6：`/api/authdevice?seed=`
+
+#### seed 从哪来：端侧随机数，不是时间戳、不是常量
+
+| 生成点 | 代码 | 取值域 |
+|---|---|---|
+| 预览握手 | `kotlin.random.Random.INSTANCE.nextLong(Long.MAX_VALUE)`，`_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/repository/Ride3ProStreamRepositoryImpl.java:239` | `0 .. 9223372036854775806`（`nextLong(until)` 上界排他，`Long.MAX_VALUE` 取不到） |
+| 回放握手 | 同一表达式，`_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl.java:1049` | 同上 |
+
+- 每次进入握手流程**重新生成一个新的 seed**；没有任何地方把它存进 `PreferenceHelper`/字段，也没有和 `System.currentTimeMillis()`、MAC、uuid 做过异或或拼接（全仓 `grep -rn "seed"` 在业务层只命中这两个生成点与 Retrofit 形参透传）。
+- 传输形态：`@Query("seed") long`，Retrofit 以十进制无符号字符串拼接（`_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/source/remote/api/ride3pro/Ride3ProApiService.java:22-23`）。所以设备侧能看到的只有 0..2^63-1 的十进制数。
+- 结论：**seed 不构成鉴权凭据**，它的作用只能是「让每次 auth 请求 URL 唯一（绕过 HTTP 缓存/代理复用）+ 让设备端有理由回一次新鲜状态」。复现时随便填一个 `[0, 2^63)` 的整数即可，但**必须每次不同**。
+
+#### 请求顺序（预览路径，完整链）
+
+`prepareRtspStream` → `prepareRtspStreamInternal`（`_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/repository/Ride3ProStreamRepositoryImpl.java:202-392`）：
+
+1. `Ride3ProSessionExecutorResolver.INSTANCE.refreshLegacyBindingIfNeeded()`（`:235`）。
+2. 取握手缓存 key（`:237`）；`handshakeKeyProvider.invoke()` 返回 null，或缓存未命中 → 走第 3 步；命中 → 打日志 `"Ride3Pro：当前预览会话已有握手缓存，跳过重复 auth/send-time"`（`:256`）直接跳到第 5 步。
+3. `GET /api/authdevice?seed=<随机>`（`:239-247`，经 `runPreviewStep("/api/authdevice", 步骤名"设备认证", …)`）。步骤名走 `previewStepName(R.string.ride3pro_preview_step_device_auth, "设备认证")`（`:240`），即 UI 进度文案，第二个参数是中文兜底。
+4. `GET /api/vendor/send-time?year&month&day&hour&minute&second`（`:384-392`），6 个整数取自 `Calendar.getInstance()`：年=`get(1)`、月=`get(2)+1`、日=`get(5)`、时=`get(11)`、分=`get(12)`、秒=`get(13)`（回放路径的逐字段展开见 `_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl.java:1097-1103`）。**没有时区参数、没有 UTC 换算**——设备被写成本机本地时间。此步失败只 `Timber.w` + 发一个 `Ride3ProPreviewPrepareWarning.SEND_TIME_FAILED` 警告（`Ride3ProStreamRepositoryImpl.java:307-315`），**不阻断预览**。
+5. 握手缓存 `markReady(key)`（`:319-321`；回放 `Ride3ProPlaybackRepositoryImpl.java:1081-1083`）——注意：**send-time 失败也照样 markReady**，缓存的是「auth 已过」而不是「auth+时间同步都成功」。
+6. `GET /api/setmode?mode=0`（`:260-267`），失败**硬抛** `Ride3ProConnectionException.httpFailed("/api/setmode", errorMessage)`（`:273-275`、`:336-338`、`:352-354`）。
+7. 启动录像（`recordRepository.startRecording()`，`:276-289`），失败仅 `Timber.w("Ride3Pro：预览准备时启动录像失败，继续尝试预览")` + `Ride3ProPreviewPrepareWarning.RECORDING_START_FAILED`。
+8. 之后才由上层拿 `rtsp://…:8080/?action=stream`（§7）去起播。
+
+回放路径（`m2855preparePlaybackRtspStreamIoAF18A`，`_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl.java:1020-1136`）只做第 1~5 步的 auth + send-time（**不打 setmode，mode=2 由回放入口另发**），日志文案是 `"Ride3Pro：当前回放会话已有握手缓存，跳过重复 auth/send-time"`（`:1060`）。
+
+#### 响应字段怎么被用：只用 `result`，`info` 完全丢弃
+
+- 响应模型 `Ride3ProApiResponse<T>`，`@SerializedName("result") int` + `@SerializedName("info") T`（`_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/source/remote/api/ride3pro/Ride3ProApiResponse.java:15-19`）。
+- `authDevice` 的 `T` 声明为 `Any?`（`Ride3ProApiService.java:23`），调用点只读 `isSuccess()` / `getResult()` / `getErrorMessage()`，**不碰 `getInfo()`**——所以设备在 auth 响应里回什么都行，客户端不解析、不使用（不存在「设备下发一个 key/端口」这类行为）。
+
+#### 失败分支（逐条）
+
+| 条件 | 行为 | 证据 |
+|---|---|---|
+| `result == 0` | 通过 | `_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/source/remote/api/ride3pro/Ride3ProApiResponse.java:83-85`（`isSuccess()` 定义为 `result == 0`） |
+| `result != 0` 但 `result == -2` | **同样通过**（唯一被显式豁免的错误码，语义上是「已认证/重复认证」幂等） | 预览 `Ride3ProStreamRepositoryImpl.java:380`（`if (!resp.isSuccess() && resp.getResult() != -2) throw …`）；回放 `Ride3ProPlaybackRepositoryImpl.java:1092` |
+| `result` 为其它非 0 值 | 预览：抛 `Ride3ProConnectionException.httpFailed("/api/authdevice", getErrorMessage())`（`Ride3ProStreamRepositoryImpl.java:381`）；回放：不抛，返回 `Result.failure(同样的异常)`（`Ride3ProPlaybackRepositoryImpl.java:1093-1094`） | 同左 |
+| HTTP 层异常（连接失败/超时/非 2xx/JSON 解析炸） | 预览：`send-time` 段用 try/catch 吞成警告；auth 段的异常冒泡到 `prepareRtspStream` 的 `catch (Exception)`，被包成 `Ride3ProConnectionException.fetchFailed("Failed to prepare Ride3Pro RTSP stream", e)`（`Ride3ProStreamRepositoryImpl.java:184-187`）；回放对应文案 `"Failed to prepare Ride3Pro playback RTSP stream"`（`Ride3ProPlaybackRepositoryImpl.java:1132-1134`） | 同左 |
+| `CancellationException` | 原样重抛，不包装（`Ride3ProStreamRepositoryImpl.java:182-183`、`Ride3ProPlaybackRepositoryImpl.java:1127-1129`） | 同左 |
+| `errorMessage` | `getErrorMessage()`：`info` 是 String 时 `"result=<n>, info=<str>"`，否则 `"result=<n>"`（`Ride3ProApiResponse.java:87-95`） | 同左 |
+
+#### 握手缓存：10 分钟内不重复 auth
+
+`_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/repository/Ride3ProPreviewHandshakeCache.java`：
+
+| 项 | 值 / 语义 | 行号 |
+|---|---|---|
+| `VALIDITY_DURATION_MS` | `600000`（= 10 分钟） | `:18` |
+| `NANOSECONDS_PER_MILLISECOND` | `1000000`；时钟是 `System.nanoTime() / 1000000`，**单调时钟，不受系统改时间影响** | `:17`、`:242-243` |
+| 容器 | 进程级 `static LinkedHashMap<Key, Entry>`，所有方法 `synchronized`，**无容量上限、不落盘、不跨进程** | `:20`、`:187-239` |
+| `Key` | `(deviceIdentity: String, sessionId: String, routeRevision: Long)`；三个字段各自校验：identity/session 非空白、`routeRevision >= 0`，违反抛 `IllegalArgumentException("deviceIdentity is required")` / `"sessionId is required"` / `"routeRevision is required"` | `:24-97` |
+| `consume(key, now)` | 命中且 `now - readyAt < 600000` → `true`（**不删除条目**，所以名字是 consume 但语义是 peek：同一次握手的预览+回放可以各自命中）；过期 → `remove` 后 `false` | `:199-211` |
+| `markReady(key, now)` | `put`，同一个 key 重复 mark 会刷新时间戳 | `:187-190` |
+| `clearSession(sessionId, routeRevision?)` | 按 sessionId（可选再限定 routeRevision）批量摘除 | `:220-236` |
+| `clear()` | 全清 | `:238-240` |
+| key 的来源 | `Ride3ProSessionExecutorResolver.INSTANCE.current()` 的 `deviceIdentity` / `sessionId` / `routeRevision`；**executor 为 null 或 `deviceIdentity` 为 null 时返回 null key**，于是每次握手都走完整 auth（`Ride3ProStreamRepositoryImpl.java:127-134`、`Ride3ProPlaybackRepositoryImpl.java:144-151`） | 同左 |
+
+### 3.2 `/api/rtspstatus?seed=`：形参与 auth 一致，但**没有任何业务调用点**
+
+- 声明：`_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/source/remote/api/ride3pro/Ride3ProApiService.java:57-58`，`@GET("/api/rtspstatus") getRtspStatus(@Query("seed") long, Continuation<? super Ride3ProApiResponse<Object>>)`——**与 authDevice 同构**：一个 `long seed`、`info` 不解析。它的作用只可能是「查询设备当前是否允许起 RTSP 流 / 刷一流权限」，具体语义在设备侧，客户端代码里没有任何线索。
+- 包装层：`_work/tuwin_src/sources/com/tuwinsmart/tuwin/core/device/ride3pro/Ride3ProSessionApiService.java:654-704`（`$seed` 透传给 `Ride3ProApiService.getRtspStatus`，调用点 `:688`）与 `_work/tuwin_src/sources/com/tuwinsmart/tuwin/data/source/remote/api/ride3pro/QueuedRide3ProApiService.java:397-447`（调用点 `:431`）。
+- **全量检索结果**：`grep -rn "getRtspStatus" _work/tuwin_src/sources/com/tuwinsmart` 只命中 5 处，即接口声明（`Ride3ProApiService.java:58`）+ 两个包装类的协程体和 override（`Ride3ProSessionApiService.java:688,703`、`QueuedRide3ProApiService.java:431,446`）。两个 override 是 `implements Ride3ProApiService` 的**实现方**，不是调用方。
+- 结论：官方 App 在预览/回放起流前**不发** `/api/rtspstatus`；起流失败的重试靠重跑 §3.1 的 prepare 流程。复现时可以不实现它。（注意 §2.1 第 15 行把「调用点」记成了这两个包装类，见 §8 纠正项 C-1。）
+
+### 3.3 M3：`/app/getproductinfo` 之后拿什么
+
+M3 没有鉴权，探测与会话建立是两段：
+
+1. **探测段**（`_work/tuwin_src/sources/com/tuwinsmart/tuwin/core/device/p005m3/M3SessionConnector.java`）
+   - `executeProbe` 用 PROBE grant 打 `GET /app/getproductinfo`（无 query），基址 `httpBaseUrl(host, 80)`（`:1883-1926`）。
+   - OkHttp 构建时叠加 `endpointInterceptor(grant, revision)` 与 `M3HttpClientCompatibilityKt.applyM3HttpCompatibility`（`:1901-1902`），Retrofit 加 `GsonConverterFactory.create(new GsonBuilder().setLenient().create())`（`:1914`）。
+   - **重试**：`M3SessionConnector$executeProbe$response$1.java:54` 调 `M3SessionConnectorKt.retryM3ProductInfoProbe(maxAttempts, retryDelayMillis, retryDelay, requireRouteActive, request)`；两个参数是 connector 的构造字段 `productInfoProbeMaxAttempts` / `productInfoProbeRetryDelayMillis`（`M3SessionConnector.java:81-83`、`:117-135`），默认常量 `M3_PRODUCT_INFO_PROBE_MAX_ATTEMPTS = 5`、`M3_PRODUCT_INFO_PROBE_RETRY_DELAY_MILLIS = 2000`（`_work/tuwin_src/sources/com/tuwinsmart/tuwin/core/device/p005m3/M3SessionConnectorKt.java:45-46`），`retryM3ProductInfoProbe$default` 的 bit1 直接写死 `i = 5`（`:185-193`）。默认延迟动作是 `DelayKt.delay(ms)`（内部类 `C19062.invokeSuspend`，`:166-181`）。connector 构造器还有两条前置校验：`maxAttempts <= 0` → `IllegalArgumentException("M3 product-info probe requires at least one attempt")`，`retryDelayMillis < 0` → `"M3 product-info probe retry delay cannot be negative"`（`M3SessionConnector.java:140-145`）。重试主体 `retryM3ProductInfoProbe` **JADX 反编译失败**（`M3SessionConnectorKt.java:129-135`，"Method dump skipped, instruction units count: 265"），所以「哪些异常参与重试」静态无解；从形参 `requireRouteActive: Function0<Unit>` 与 `DebugMetadata` 的局部名 `{delayBeforeRetry, requireRouteActive, request, maxAttempts, retryDelayMillis, attempt}`（`:54`）可确定它「每次重试前检查路由仍活跃 + 先 delay 再 request」，但**判定条件需要重跑反编译（`jadx --show-bad-code` 或 baksmali）才能逐条确认**。
+   - 失败分支：`result != 0` → `IllegalStateException("M3 probe failed: " + errorMessage)`，`errorMessage` 为 null 时用字面量 `"device rejected request"`（`M3SessionConnector.java:1931-1936`）；`result == 0` 但 `parseDeviceInfo()` 为 null → `IllegalStateException("M3 probe response has no product info")`（`:1938-1941`；JADX 把 `== null` 渲染成了 `!= null`，语义按错误消息取反，与 §1.5 差异点 3 同一处）。
+   - 探测产出的 `DeviceProbeResult` 只带 `model`，serial/firmware/boardVersion/features **全 null**（`:1942`）。
+2. **会话段**（`_work/tuwin_src/sources/com/tuwinsmart/tuwin/core/device/p005m3/M3DeviceAdapter.java` 的 `M3AdapterSession.open()`，`:169-440`），拿到 verified route 之后按序做：
+   - 校验链（任一失败直接抛，不重试）：`deviceType != M3` → `IllegalArgumentException("M3 adapter cannot open <type>")`（`:206-208`）；无 route → `IllegalStateException("M3 session has no verified route")`（`:210-212`）；route 状态不在 `{VERIFIED, READY}` → `IllegalArgumentException("M3 route is not verified: <routeId>@<revision>")`（`:213-215`）；control grant 缺失或与 session/purpose/protocol/revision 不符 → `IllegalStateException("M3 session has no control EndpointGrant")` / `IllegalArgumentException("M3 control EndpointGrant does not match session route")`（`:216-222`）；identity 缺失 → `IllegalStateException("M3 session has no verified identity")`；model 不匹配 → `IllegalArgumentException("M3 model mismatch: <model>")`（`:227-233`，即 §1.5 的二次校验）。
+   - **`getproductinfo` 之后拿的是 `/app/getmediainfo`**（协程 `M3DeviceAdapter$M3AdapterSession$open$mediaResponse$1`，`:234-241`），不是任何 auth 请求。响应 `result != 0` → `IllegalStateException("M3 media info request failed: <errorMessage>")`（`:356-358`）；`mediaInfo == null` → `IllegalStateException("M3 media response is not a valid success payload")`（`:360-362`）。
+   - 由 `M3DynamicEndpointPolicy.parse(controlHost, media)` 一次算出两个端点：RTSP 媒体端点 + **TCP 事件端点**（`_work/tuwin_src/sources/com/tuwinsmart/tuwin/core/device/p005m3/M3DynamicEndpointPolicy.java:78`），随后 `issueMediaGrant`（RTSP）+ `issueSocketGrant`（TCP）（`M3DeviceAdapter.java:363-367`、`:916-922`），最后 `authorizeSocket` + `socketConnector.connect(network, grant.host, single(grant.allowedPorts), frameDecoderFactory())`（`:368-385`、`_work/tuwin_src/sources/com/tuwinsmart/tuwin/core/device/p005m3/M3DeviceAdapter$M3AdapterSession$open$socket$1.java:55`）。TCP 细节见 §4。
+
+### 3.4 Ride5：无鉴权，但有一段「反向回调注册」握手
+
+`_work/tuwin_src/sources/com/tuwinsmart/tuwin/core/device/ride5/Ride5DeviceAdapterSession.java` 的 `open()`：
+
+1. control grant 校验（`:224-229`，两处 `IllegalArgumentException("Failed requirement.")`）。
+2. `callbackIp = getSession().getCallbackIp()`，`trim` 后为空 → **`IllegalStateException("RIDE5 session requires an explicit callback IP")`（`:230-233`、`:363`）**，即 Ride5 没有可用回调 IP 时整个会话直接失败。
+3. 签两张 grant：TCP grant（`allowedPorts = {9002}`、前缀 `{"/"}`）与 RTSP grant（`allowedPorts = {554}`、前缀 `{"/livestream"}`），`:250-251`。
+4. `Ride5CallbackChannel.start()`——**先在手机上开 9002 服务端**（`:259`）。
+5. `registerCallback(callbackIp)` → `client.cgi?-operation=register&-ip=<手机IP>`（`_work/tuwin_src/sources/com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java:305` 传字面量 `"register"`，封装在 `:319-321`）。
+6. `checkSocketConnect(callbackIp)` → `checkconnect.cgi?-ip=<手机IP>`（`Ride5CgiGateway.java:409`、封装 `:423`）。
+7. `getDeviceAttributes()` → `getdeviceattr.cgi`（`Ride5DeviceAdapterSession.java:304`）。
+8. 关闭时 `unregisterCallback(callbackIp)` → `client.cgi?-operation=unregister`（`Ride5CgiGateway.java:357`、`:371`；调用点 `Ride5DeviceAdapterSession.java:767-779`）。
+9. 失败分支：第 4~7 步任一步抛（含 `Ride5CgiException.BusinessError/ProtocolError`）→ `close()` 整个 session 后重抛（`Ride5DeviceAdapterSession.java:308-360`）。
+
+### 3.5 复现要点
+
+1. Ride3Pro：`authdevice` 与 `send-time` 都要发，但**只有 auth 的失败会阻断**；auth 的 `-2` 必须当成功处理，否则首次连接会概率性失败。
+2. Ride3Pro：10 分钟内同一 `(deviceIdentity, sessionId, routeRevision)` 可跳过 auth（等价实现：连接级缓存 auth 状态 10 分钟，用单调时钟计时）。
+3. M3：`getmediainfo` 的 `port` 字段同时是**TCP 事件通道端口**（§4），所以 RTSP 端口和事件端口是设备分别给的，不能写死。
+4. Ride5：不提供手机侧回调 IP 就不要尝试建会话；`register` 必须在本地 9002 监听起来之后发。
 
 ---
 

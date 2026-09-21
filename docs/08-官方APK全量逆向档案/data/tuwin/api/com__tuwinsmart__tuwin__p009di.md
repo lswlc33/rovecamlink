@@ -222,12 +222,10 @@ L457 · [class] static final AnonymousClass1 · extends `SuspendLambda implement
 - `int label`  L461
 - `int i = this.label`  L485
 
-方法（5）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L471 @Override
 - `Object invoke(TransferRequest transferRequest, Continuation<? super TransferResult> continuation)`  L478 @Override
 - `Object invokeSuspend(Object obj)`  L483 @Override
-- `throw new IllegalStateException( 57 )`  L492
-- `throw new NoWhenBranchMatchedException()`  L509
 ### `com.tuwinsmart.tuwin.p009di.AppModuleKt$AnonymousClass2`
 L881 · [class] AnonymousClass2 · extends `FunctionReferenceImpl implements Function0<Unit>` · implements `Function0<Unit>` · `com/tuwinsmart/tuwin/p009di/AppModuleKt.java`
 注解：

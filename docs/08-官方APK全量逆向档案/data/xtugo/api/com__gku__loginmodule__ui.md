@@ -787,10 +787,10 @@ L50 · [class] public static AlertParams · `com/gku/loginmodule/ui/dialog/Alert
 - `int mGravity = 17`  L70
 - `int i4 = this.mAnimation`  L99
 
-方法（3）：
+方法（2）：
 - `public AlertParams(Context context, int themeResId)`  L72
 - `void apply(AlertController alert)`  L77
-- `throw new IllegalArgumentException( 0 )`  L84
+    - 体内字面量："please set layout"
 ### `com.gku.loginmodule.ui.dialog.AlertDialog`
 L11 · [class] public AlertDialog · extends `Dialog` · `com/gku/loginmodule/ui/dialog/AlertDialog.java`
 

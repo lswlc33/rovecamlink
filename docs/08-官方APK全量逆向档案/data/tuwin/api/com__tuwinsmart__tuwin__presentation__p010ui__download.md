@@ -82,7 +82,7 @@ L54 · [class] public final DownloadFileTaskAdapter · extends `RecyclerView.Ada
 - `ArrayList arrayList2 = arrayList`  L485
 - `String path`  L495
 
-方法（39）：
+方法（38）：
 - `int getItemViewType(int position)`  L104 @Override
 - `List<DownloadUtil.DownloadFileTask> getMediaList$app_release_64()`  L108
 - `void setMediaList$app_release_64(List<DownloadUtil.DownloadFileTask> list)`  L112
@@ -107,8 +107,6 @@ L54 · [class] public final DownloadFileTaskAdapter · extends `RecyclerView.Ada
 - `SimpleDateFormat getFormat2()`  L194
 - `DownloadTagInfo parseDownloadTag(String tag)`  L198
 - `String parseDate(DownloadTagInfo tagInfo)`  L202
-- `throw new NoWhenBranchMatchedException()`  L232
-    - 体内字面量："/" · "/"
 - `RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L249 @Override
     - 体内字面量："parent" · "inflate(...)" · "inflate(...)"
 - `void onBindViewHolder(RecyclerView.ViewHolder holder, int position)`  L262 @Override
@@ -223,7 +221,7 @@ L51 · [class] public final DownloadListAdapter · extends `RecyclerView.Adapter
 - `int i2 = i - 1`  L409
 - `Function0<Unit> function0 = this$0.onTasksCleared`  L441
 
-方法（41）：
+方法（40）：
 - `int getItemViewType(int position)`  L96 @Override
 - `List<DownloadTask> getMediaList$app_release_64()`  L100
 - `void setMediaList$app_release_64(List<DownloadTask> list)`  L104
@@ -239,8 +237,6 @@ L51 · [class] public final DownloadListAdapter · extends `RecyclerView.Adapter
 - `Regex getM3DateRegex()`  L145
 - `DownloadTagInfo parseDownloadTag(String tag)`  L149
 - `String parseDate(DownloadTagInfo tagInfo)`  L153
-- `throw new NoWhenBranchMatchedException()`  L183
-    - 体内字面量："/" · "/"
 - `String buildThumbnailUrl(DownloadTagInfo tagInfo)`  L199
 - `RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L204 @Override
     - 体内字面量："parent" · "inflate(...)"
@@ -448,10 +444,9 @@ L22 · [class] public final DownloadTaskThumbnailRequestPolicy · `com/tuwinsmar
 - `Result.Companion companion2 = Result.INSTANCE`  L148
 - `String str`  L161
 
-方法（7）：
+方法（6）：
 - `private DownloadTaskThumbnailRequestPolicy()`  L52
 - `DownloadTaskThumbnailModel resolveModel(DownloadUtil.DownloadFileTask task, DownloadTagInfo tagInfo, DownloadNetworkRoute.Device currentDeviceRoute, Function1<? super String, ? extends Object> resolveLocalThumbnail, Function3<? super String, ? super String, ? super Long, ? extends Object> authorizeM3Thumbnail, Function3<? super String, ? super Integer, ? super Long, ? extends Object> authorizeRide3ProThumbnail, Function3<? super String, ? super String, ? super Long, ? extends Object> authorizeRide5Preview)`  L55
-- `throw new NoWhenBranchMatchedException()`  L89
 - `DownloadTaskThumbnailModel resolveM3Model(DownloadUtil.DownloadFileTask task, DownloadTagInfo tagInfo, DownloadNetworkRoute.Device currentDeviceRoute, Function3<? super String, ? super String, ? super Long, ? extends Object> authorizeThumbnail)`  L92
 - `DownloadTaskThumbnailModel resolveRide3ProModel(DownloadUtil.DownloadFileTask task, DownloadTagInfo tagInfo, DownloadNetworkRoute.Device currentDeviceRoute, Function3<? super String, ? super Integer, ? super Long, ? extends Object> authorizeThumbnail)`  L114
 - `DownloadTaskThumbnailModel resolveRide5Model(DownloadUtil.DownloadFileTask task, DownloadTagInfo tagInfo, DownloadNetworkRoute.Device currentDeviceRoute, Function3<? super String, ? super String, ? super Long, ? extends Object> authorizePreview)`  L138
@@ -796,11 +791,10 @@ L599 · [class] static final C27371 · extends `SuspendLambda implements Functio
 - `int i = this.label`  L620
 - `DownloadListActivity downloadListActivity = DownloadListActivity.this`  L635
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L607 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L612 @Override
 - `Object invokeSuspend(Object obj)`  L617 @Override
-- `throw new IllegalStateException( 130 )`  L630
 ### `com.tuwinsmart.tuwin.presentation.p010ui.download.DownloadListActivity$Companion`
 L167 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/download/DownloadListActivity.java`
 注解：

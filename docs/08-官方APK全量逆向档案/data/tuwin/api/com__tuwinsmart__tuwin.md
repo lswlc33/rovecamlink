@@ -219,12 +219,10 @@ L404 · [class] static final C18721 · extends `SuspendLambda implements Functio
 - `int i = this.label`  L429
 - `boolean z = appUpdateCheckResult instanceof AppUpdateCheckResult.NoUpdate`  L453
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L417 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L422 @Override
 - `Object invokeSuspend(Object obj)`  L427 @Override
-- `throw new IllegalStateException( 123 )`  L439
-    - 体内字面量："App update check failed" · "App update check cancelled: " · "App update check skipped: internet route is not ready"
 ### `com.tuwinsmart.tuwin.TuwinApplication$C18731`
 L617 · [class] static final C18731 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/TuwinApplication.java`
 注解：
@@ -238,12 +236,10 @@ L617 · [class] static final C18731 · extends `SuspendLambda implements Functio
 - `TuwinApplication this$0`  L623
 - `int i = this.label`  L648
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L636 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L641 @Override
 - `Object invokeSuspend(Object obj)`  L646 @Override
-- `throw new IllegalStateException( 164 )`  L658
-    - 体内字面量："App update download failed" · "App update download cancelled: "
 ### `com.tuwinsmart.tuwin.TuwinApplication$C18742`
 L2062 · [class] static final C18742 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/TuwinApplication.java`
 注解：
@@ -253,11 +249,10 @@ L2062 · [class] static final C18742 · extends `SuspendLambda implements Functi
 - `int label`  L2064
 - `int i = this.label`  L2085
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L2073 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L2078 @Override
 - `Object invokeSuspend(Object obj)`  L2083 @Override
-- `throw new IllegalStateException( 309 )`  L2094
 ### `com.tuwinsmart.tuwin.TuwinApplication$C18751`
 L1369 · [class] static final C18751 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/TuwinApplication.java`
 注解：
@@ -284,12 +279,10 @@ L1369 · [class] static final C18751 · extends `SuspendLambda implements Functi
 - `Function1<Boolean, Unit> function2 = this.$callback`  L1528
 - `Function1<Boolean, Unit> function3 = this.$callback`  L1545
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1397 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1402 @Override
 - `Object invokeSuspend(Object obj)`  L1415 @Override
-- `throw new IllegalStateException( 237 )`  L1429
-    - 体内字面量："RIDE5 recording result belongs to a stale route"
 ### `com.tuwinsmart.tuwin.TuwinApplication$C18761`
 L1628 · [class] static final C18761 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/TuwinApplication.java`
 注解：
@@ -312,12 +305,10 @@ L1628 · [class] static final C18761 · extends `SuspendLambda implements Functi
 - `boolean z4 = this.$start`  L1710
 - `Function1<Boolean, Unit> function2 = this.$callback`  L1711
 
-方法（6）：
+方法（5）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1652 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1657 @Override
 - `Object invokeSuspend(Object obj)`  L1662 @Override
-- `throw new IllegalStateException( 261 )`  L1674
-    - 体内字面量："Ride3Pro å½åæ§å¶å è½½æç¤ºå³é­å¤±è´¥"
 - `void run()`  L1702 @Override
 - `void invokeSuspend$lambda$1$lambda$0(Function1 function1)`  L1723
 ### `com.tuwinsmart.tuwin.TuwinApplication$C18811`
@@ -381,12 +372,11 @@ L1796 · [class] static final C18831 · extends `SuspendLambda implements Functi
 - `Object objM2864startRecordingIoAF18A`  L1823
 - `int i = this.label`  L1825
 
-方法（5）：
+方法（4）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1807 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L1812 @Override
 - `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L1817
 - `Object invokeSuspend(Object obj)`  L1822 @Override
-- `throw new IllegalStateException( 278 )`  L1835
 ### `com.tuwinsmart.tuwin.TuwinApplication$C18841`
 L1865 · [class] static final C18841 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/TuwinApplication.java`
 注解：
@@ -397,12 +387,11 @@ L1865 · [class] static final C18841 · extends `SuspendLambda implements Functi
 - `Object objM2865startRecordingInPreviewModeIoAF18A`  L1892
 - `int i = this.label`  L1894
 
-方法（5）：
+方法（4）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1876 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L1881 @Override
 - `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L1886
 - `Object invokeSuspend(Object obj)`  L1891 @Override
-- `throw new IllegalStateException( 287 )`  L1904
 ### `com.tuwinsmart.tuwin.TuwinApplication$Companion`
 L2104 · [class] public static final Companion · `com/tuwinsmart/tuwin/TuwinApplication.java`
 注解：
@@ -426,12 +415,11 @@ L20 · [class] final TuwinApplication$handleRide3ProRecord$1$result$1 · extends
 - `Object objM2866stopRecordingIoAF18A`  L49
 - `int i = this.label`  L51
 
-方法（5）：
+方法（4）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L33 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L38 @Override
 - `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L43
 - `Object invokeSuspend(Object obj)`  L48 @Override
-- `throw new IllegalStateException( 8 )`  L69
 ### `com.tuwinsmart.tuwin.TuwinApplication$WhenMappings`
 L171 · [class] public WhenMappings · `com/tuwinsmart/tuwin/TuwinApplication.java`
 注解：

@@ -77,12 +77,11 @@ L16 · [class] public FirmwareInfo · implements `Serializable` · `com/icatch/g
 - `String version`  L24
 - `String str = strArrSplit[strArrSplit.length - 1]`  L104
 
-方法（12）：
+方法（11）：
 - `public FirmwareInfo()`  L26
 - `public FirmwareInfo(String str, String str2, String str3, String str4, String str5)`  L29
 - `void clearFiles(Context context)`  L37
     - 体内字面量："/Firmware/"
-- `throw new RuntimeException(e)`  L42
 - `List<FirmwareInfo> getFirmwareList(Context context)`  L46
     - 体内字面量："/Firmware/"
 - `void saveFirmwareList(Context context, List<FirmwareInfo> list)`  L71

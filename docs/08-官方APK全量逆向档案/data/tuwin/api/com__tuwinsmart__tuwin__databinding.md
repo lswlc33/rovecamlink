@@ -786,13 +786,13 @@ L11 · [class] public final ActivityShowPicsBinding · implements `ViewBinding` 
 - `ViewPager rootView`  L12
 - `ViewPager viewPager`  L13
 
-方法（6）：
+方法（5）：
 - `private ActivityShowPicsBinding(ViewPager viewPager, ViewPager viewPager2)`  L15
 - `ViewPager getRoot()`  L21 @Override
 - `ActivityShowPicsBinding inflate(LayoutInflater layoutInflater)`  L25
 - `ActivityShowPicsBinding inflate(LayoutInflater layoutInflater, ViewGroup viewGroup, boolean z)`  L29
 - `ActivityShowPicsBinding bind(View view)`  L37
-- `throw new NullPointerException( 0 )`  L39
+    - 体内字面量："rootView"
 ### `com.tuwinsmart.tuwin.databinding.ActivityStorageManagerBinding`
 L16 · [class] public final ActivityStorageManagerBinding · implements `ViewBinding` · `com/tuwinsmart/tuwin/databinding/ActivityStorageManagerBinding.java`
 
@@ -1522,13 +1522,13 @@ L11 · [class] public final ItemHomeListAddDeviceBinding · implements `ViewBind
 - `BLFrameLayout flEmptyDevice`  L12
 - `BLFrameLayout rootView`  L13
 
-方法（6）：
+方法（5）：
 - `private ItemHomeListAddDeviceBinding(BLFrameLayout bLFrameLayout, BLFrameLayout bLFrameLayout2)`  L15
 - `BLFrameLayout getRoot()`  L21 @Override
 - `ItemHomeListAddDeviceBinding inflate(LayoutInflater layoutInflater)`  L25
 - `ItemHomeListAddDeviceBinding inflate(LayoutInflater layoutInflater, ViewGroup viewGroup, boolean z)`  L29
 - `ItemHomeListAddDeviceBinding bind(View view)`  L37
-- `throw new NullPointerException( 0 )`  L39
+    - 体内字面量："rootView"
 ### `com.tuwinsmart.tuwin.databinding.ItemHomeListBrandBinding`
 L15 · [class] public final ItemHomeListBrandBinding · implements `ViewBinding` · `com/tuwinsmart/tuwin/databinding/ItemHomeListBrandBinding.java`
 
@@ -1966,11 +1966,11 @@ L14 · [class] public final ViewGlobalLoadingStatusBinding · implements `ViewBi
 - `TextView text`  L18
 - `int i = C1870R.id.image`  L41
 
-方法（5）：
+方法（4）：
 - `private ViewGlobalLoadingStatusBinding(View view, ImageView imageView, ProgressBar progressBar, TextView textView)`  L20
 - `View getRoot()`  L28 @Override
 - `ViewGlobalLoadingStatusBinding inflate(LayoutInflater layoutInflater, ViewGroup viewGroup)`  L32
-- `throw new NullPointerException( 0 )`  L34
+    - 体内字面量："parent"
 - `ViewGlobalLoadingStatusBinding bind(View view)`  L40
 ### `com.tuwinsmart.tuwin.databinding.ViewRecordingControlEventsBinding`
 L15 · [class] public final ViewRecordingControlEventsBinding · implements `ViewBinding` · `com/tuwinsmart/tuwin/databinding/ViewRecordingControlEventsBinding.java`
@@ -1985,11 +1985,11 @@ L15 · [class] public final ViewRecordingControlEventsBinding · implements `Vie
 - `View rootView`  L22
 - `int i = C1870R.id.recording_events_body`  L48
 
-方法（5）：
+方法（4）：
 - `private ViewRecordingControlEventsBinding(View view, LinearLayout linearLayout, TextView textView, LinearLayout linearLayout2, RecyclerView recyclerView, TextView textView2, ImageView imageView)`  L24
 - `View getRoot()`  L35 @Override
 - `ViewRecordingControlEventsBinding inflate(LayoutInflater layoutInflater, ViewGroup viewGroup)`  L39
-- `throw new NullPointerException( 0 )`  L41
+    - 体内字面量："parent"
 - `ViewRecordingControlEventsBinding bind(View view)`  L47
 ### `com.tuwinsmart.tuwin.databinding.ViewRide3proHourPlaybackOverlayBinding`
 L17 · [class] public final ViewRide3proHourPlaybackOverlayBinding · implements `ViewBinding` · `com/tuwinsmart/tuwin/databinding/ViewRide3proHourPlaybackOverlayBinding.java`
@@ -2027,11 +2027,11 @@ L13 · [class] public final ViewRide3proLoadingCardBinding · implements `ViewBi
 - `View rootView`  L17
 - `int i = C1870R.id.loading_card_message`  L40
 
-方法（5）：
+方法（4）：
 - `private ViewRide3proLoadingCardBinding(View view, TextView textView, ProgressBar progressBar, TextView textView2)`  L19
 - `View getRoot()`  L27 @Override
 - `ViewRide3proLoadingCardBinding inflate(LayoutInflater layoutInflater, ViewGroup viewGroup)`  L31
-- `throw new NullPointerException( 0 )`  L33
+    - 体内字面量："parent"
 - `ViewRide3proLoadingCardBinding bind(View view)`  L39
 ### `com.tuwinsmart.tuwin.databinding.ViewRide3proPlaybackOverlayBinding`
 L16 · [class] public final ViewRide3proPlaybackOverlayBinding · implements `ViewBinding` · `com/tuwinsmart/tuwin/databinding/ViewRide3proPlaybackOverlayBinding.java`
@@ -2094,11 +2094,11 @@ L13 · [class] public final ViewRide5LoadingCardBinding · implements `ViewBindi
 - `View rootView`  L17
 - `int i = C1870R.id.loading_card_message`  L40
 
-方法（5）：
+方法（4）：
 - `private ViewRide5LoadingCardBinding(View view, TextView textView, ProgressBar progressBar, TextView textView2)`  L19
 - `View getRoot()`  L27 @Override
 - `ViewRide5LoadingCardBinding inflate(LayoutInflater layoutInflater, ViewGroup viewGroup)`  L31
-- `throw new NullPointerException( 0 )`  L33
+    - 体内字面量："parent"
 - `ViewRide5LoadingCardBinding bind(View view)`  L39
 ### `com.tuwinsmart.tuwin.databinding.ViewstubPermissionLayoutBinding`
 L14 · [class] public final ViewstubPermissionLayoutBinding · implements `ViewBinding` · `com/tuwinsmart/tuwin/databinding/ViewstubPermissionLayoutBinding.java`

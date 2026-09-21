@@ -96,7 +96,7 @@ L35 · [class] public final Ride3ProHeartbeatManager · `com/tuwinsmart/tuwin/pr
 - `Ride3ProRequestExecutor ride3ProRequestExecutor2 = ride3ProRequestExecutorInvoke`  L300
 - `Job job = this.heartbeatJob`  L379
 
-方法（20）：
+方法（19）：
 - `public Ride3ProHeartbeatManager()`  L48
 - `public Ride3ProHeartbeatManager(Ride3ProDeviceRepository deviceRepository)`  L53
     - 体内字面量："deviceRepository"
@@ -124,7 +124,7 @@ L35 · [class] public final Ride3ProHeartbeatManager · `com/tuwinsmart/tuwin/pr
     - 体内字面量："result" · "Ride3Pro: ä¸¢å¼æ§ route revision å¿è·³ç»æ session=" · "Ride3Pro: Skipped(NotReady), session=" · "Ride3Pro: session å¿è·³å¤±è´¥"
 - `void updateStatusStore(String sessionId, long routeRevision, Ride3ProConnectionSnapshot snapshot)`  L345
 - `java.lang.Object m3017requestHeartbeatWithRetryIoAF18A(kotlin.coroutines.Continuation<? super kotlin.Result<com.tuwinsmart.tuwin.domain.repository.Ride3ProConnectionSnapshot>> r14)`  L370
-- `throw new UnsupportedOperationException( 79 )`  L375
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.ride3pro.Ride3ProHeartbeatManager.m3017requestHeartbeatWithRetryIoAF18A(kotlin.coroutines.Continuation):java.lang.Object"
 - `void stop()`  L378
 ### `com.tuwinsmart.tuwin.presentation.p010ui.ride3pro.Ride3ProHeartbeatManager$C28041`
 L131 · [class] static final C28041 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/ride3pro/Ride3ProHeartbeatManager.java`
@@ -134,11 +134,11 @@ L131 · [class] static final C28041 · extends `SuspendLambda implements Functio
 - `Object L$0`  L132
 - `int label`  L133
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L140 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L147 @Override
 - `java.lang.Object invokeSuspend(java.lang.Object r17)`  L164 @Override
-- `throw new UnsupportedOperationException( 70 )`  L243
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.ride3pro.Ride3ProHeartbeatManager.C28041.invokeSuspend(java.lang.Object):java.lang.Object"
 ### `com.tuwinsmart.tuwin.presentation.p010ui.ride3pro.Ride3ProHeartbeatManager$requestHeartbeatWithRetry$1`
 L15 · [class] final Ride3ProHeartbeatManager$requestHeartbeatWithRetry$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/ride3pro/Ride3ProHeartbeatManager$requestHeartbeatWithRetry$1.java`
 注解：

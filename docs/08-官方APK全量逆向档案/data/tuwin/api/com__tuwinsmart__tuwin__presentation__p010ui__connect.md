@@ -63,7 +63,7 @@ L38 · [class] public final ConnectHelperActivity · extends `ToolBarActivity` �
 - `int i3 = C1870R.drawable.wifi_1_ride3pro_gif`  L299
 - `int i = C1870R.drawable.wifi_1_m3_gif`  L334
 
-方法（22）：
+方法（21）：
 - `View getContentRoot()`  L75 @Override
     - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
 - `void onCreate(Bundle savedInstanceState)`  L89 @Override
@@ -79,7 +79,6 @@ L38 · [class] public final ConnectHelperActivity · extends `ToolBarActivity` �
 - `void bindHelperItem$lambda$2(ConnectHelperActivity this$0, View view)`  L229
     - 体内字面量："this$0"
 - `HelperItem createHelperItem()`  L239
-- `throw new NoWhenBranchMatchedException()`  L260
 - `HelperItem getRide5HelperItem(final DeviceType targetDeviceType)`  L271
 - `Unit invoke()`  L284 @Override
 - `void invoke2()`  L290
@@ -236,11 +235,10 @@ L892 · [class] static final C25751 · extends `SuspendLambda implements Functio
 - `LogHelper logHelper = LogHelper.INSTANCE`  L921
 - `DeviceType deviceType = this.$deviceType`  L922
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L905 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L910 @Override
 - `Object invokeSuspend(Object obj)`  L915 @Override
-- `throw new IllegalStateException( 177 )`  L939
 ### `com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectFragment$C25762`
 L258 · [class] public static final C25762 · implements `OnItemClickListener` · `com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectFragment.java`
 注解：
@@ -277,12 +275,10 @@ L1013 · [class] static final C25781 · extends `SuspendLambda implements Functi
 - `int i = this.label`  L1042
 - `HomeListAdapter homeListAdapter = this.this$0.mAdapter`  L1074
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1027 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1034 @Override
 - `Object invokeSuspend(Object obj)`  L1039 @Override
-- `throw new IllegalStateException( 189 )`  L1057
-    - 体内字面量："banner fetch success count=" · ", ids=" · ","
 ### `com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectFragment$C25791`
 L391 · [class] static final C25791 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectFragment.java`
 注解：
@@ -291,12 +287,11 @@ L391 · [class] static final C25791 · extends `SuspendLambda implements Functio
 - `int label`  L392
 - `int i = this.label`  L450
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L399 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L404 @Override
     - 体内字面量："<anonymous>" · "status" · "Lcom/tuwinsmart/tuwin/presentation/ui/connect/fragment/ConnectViewModel$ConnectionStatus;" · "com.tuwinsmart.tuwin.presentation.ui.connect.fragment.ConnectFragment$observeViewModelState$1$1" · "ConnectFragment.kt" · "invokeSuspend"
 - `Object invokeSuspend(Object obj)`  L448 @Override
-- `throw new IllegalStateException( 120 )`  L459
 ### `com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectFragment$C25791$AnonymousClass1`
 L412 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<ConnectViewModel.ConnectionStatus, Continuation<? super Unit>, Object>` · implements `Function2<ConnectViewModel.ConnectionStatus, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectFragment.java`
 注解：
@@ -306,11 +301,11 @@ L412 · [class] static final AnonymousClass1 · extends `SuspendLambda implement
 - `int label`  L414
 - `ConnectFragment this$0`  L415
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L424 @Override
 - `Object invoke(ConnectViewModel.ConnectionStatus connectionStatus, Continuation<? super Unit> continuation)`  L431 @Override
 - `Object invokeSuspend(Object obj)`  L436 @Override
-- `throw new IllegalStateException( 119 )`  L443
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectFragment$C25802`
 L477 · [class] static final C25802 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectFragment.java`
 注解：
@@ -319,12 +314,11 @@ L477 · [class] static final C25802 · extends `SuspendLambda implements Functio
 - `int label`  L478
 - `int i = this.label`  L545
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L485 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L490 @Override
     - 体内字面量："<anonymous>" · "devices" · "Lcom/tuwinsmart/tuwin/domain/model/ConnectedDevice;" · "com.tuwinsmart.tuwin.presentation.ui.connect.fragment.ConnectFragment$observeViewModelState$2$1" · "ConnectFragment.kt" · "invokeSuspend"
 - `Object invokeSuspend(Object obj)`  L543 @Override
-- `throw new IllegalStateException( 138 )`  L554
 ### `com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectFragment$C25802$AnonymousClass1`
 L498 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<List<? extends ConnectedDevice>, Continuation<? super Unit>, Object>` · implements `Function2<List<? extends ConnectedDevice>, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectFragment.java`
 注解：
@@ -335,12 +329,11 @@ L498 · [class] static final AnonymousClass1 · extends `SuspendLambda implement
 - `ConnectFragment this$0`  L501
 - `HomeListAdapter homeListAdapter = this.this$0.mAdapter`  L532
 
-方法（5）：
+方法（4）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L510 @Override
 - `Object invoke(List<? extends ConnectedDevice> list, Continuation<? super Unit> continuation)`  L517 @Override
 - `Object invoke2(List<ConnectedDevice> list, Continuation<? super Unit> continuation)`  L522
 - `Object invokeSuspend(Object obj)`  L527 @Override
-- `throw new IllegalStateException( 137 )`  L538
 ### `com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectFragment$C25811`
 L648 · [class] static final C25811 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectFragment.java`
 注解：
@@ -351,11 +344,11 @@ L648 · [class] static final C25811 · extends `SuspendLambda implements Functio
 - `int label`  L651
 - `ConnectFragment this$0`  L652
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L662 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L667 @Override
 - `java.lang.Object invokeSuspend(java.lang.Object r10)`  L682 @Override
-- `throw new UnsupportedOperationException( 160 )`  L782
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectFragment.C25811.invokeSuspend(java.lang.Object):java.lang.Object"
 ### `com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectFragment$initFragment$2$onItemClick$1`
 L29 · [class] final ConnectFragment$initFragment$2$onItemClick$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectFragment$initFragment$2$onItemClick$1.java`
 注解：
@@ -382,16 +375,10 @@ L29 · [class] final ConnectFragment$initFragment$2$onItemClick$1 · extends `Su
 - `ConnectedDevice connectedDevice4 = this.$item`  L161
 - `ConnectedDevice connectedDevice5 = this.$item`  L236
 
-方法（6）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L70 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L75 @Override
 - `Object invokeSuspend(Object obj)`  L95 @Override
-- `throw new NoWhenBranchMatchedException()`  L166
-    - 体内字面量："extra_device_type_code" · "device_session_id" · "device_id"
-- `throw new IllegalStateException( 18 )`  L191
-    - 体内字面量："Failed to get gravity direction" · "extra_device_type_code" · "device_session_id" · "device_id"
-- `throw new NoWhenBranchMatchedException()`  L241
-    - 体内字面量："extra_device_type_code" · "device_session_id" · "device_id"
 ### `com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectFragment$initFragment$2$onItemClick$1$response$1`
 L19 · [class] final ConnectFragment$initFragment$2$onItemClick$1$response$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Integer>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Integer>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectFragment$initFragment$2$onItemClick$1$response$1.java`
 注解：
@@ -403,11 +390,10 @@ L19 · [class] final ConnectFragment$initFragment$2$onItemClick$1$response$1 · 
 - `int i = this.label`  L44
 - `ConnectedDevice connectedDevice = this.$item`  L48
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L32 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Integer> continuation)`  L37 @Override
 - `Object invokeSuspend(Object obj)`  L42 @Override
-- `throw new IllegalStateException( 7 )`  L57
 ### `com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectFragment$initFragment$2$onItemClick$1$WhenMappings`
 L37 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectFragment$initFragment$2$onItemClick$1.java`
 注解：
@@ -481,7 +467,7 @@ L45 · [class] public final ConnectViewModel · extends `ViewModel` · `com/tuwi
 - `int i = c25841.label`  L343
 - `DeviceRepository deviceRepository = this.deviceRepository`  L346
 
-方法（13）：
+方法（11）：
 - ` ConnectViewModel(DeviceRepository deviceRepository, RefreshConnectionUseCase refreshConnectionUseCase, OtaDeviceLifecycle otaDeviceLifecycle, M3SessionRepositoryFactory m3SessionRepositoryFactory, int i, DefaultConstructorMarker defaultConstructorMarker)`  L99
 - `public ConnectViewModel(DeviceRepository deviceRepository, RefreshConnectionUseCase refreshConnectionUseCase, OtaDeviceLifecycle otaDeviceLifecycle, M3SessionRepositoryFactory m3SessionRepositoryFactory)`  L103
     - 体内字面量："deviceRepository" · "refreshConnectionUseCase" · "otaDeviceLifecycle"
@@ -492,14 +478,11 @@ L45 · [class] public final ConnectViewModel · extends `ViewModel` · `com/tuwi
     - 体内字面量："device"
 - `Object getM3GravityDirection$default(ConnectViewModel connectViewModel, String str, Continuation continuation, int i, Object obj)`  L139
 - `Object getM3GravityDirection(String str, Continuation<? super Integer> continuation)`  L155
-- `throw new IllegalStateException( 60 )`  L207
 - `void refreshDeviceConnection$default(ConnectViewModel connectViewModel, Network network, ConnectRefreshSource connectRefreshSource, int i, Object obj)`  L234
     - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.connect.fragment.ConnectViewModel$refreshDeviceConnection$1" · "ConnectViewModel.kt" · "invokeSuspend" · "$this$launch" · "currentSSID" · "currentBSSID" · "$this$launch" · "currentSSID" · "currentBSSID" · "device" · "checkMode" · "$this$launch" · "$this$launch" · "currentSSID" · "currentBSSID" · "L$0" · "L$1" · "L$2" · "L$0" · "L$1" · "L$2" · "L$4" · "L$5" · "L$0" · "L$1" · "L$0" · "L$1" · "L$2"
 - `void refreshDeviceConnection(Network network, ConnectRefreshSource refreshSource)`  L320
     - 体内字面量："refreshSource"
 - `Object updateDevice(ConnectedDevice connectedDevice, Continuation<? super Unit> continuation)`  L327
-- `throw new IllegalStateException( 95 )`  L359
-    - 体内字面量："Device saved: " · ", type: " · "Lcom/tuwinsmart/tuwin/presentation/ui/connect/fragment/ConnectViewModel$ConnectionStatus;" · "()V" · "Checking" · "Connected" · "Failed" · "Idle" · "NotConnected" · "Lcom/tuwinsmart/tuwin/presentation/ui/connect/fragment/ConnectViewModel$ConnectionStatus$Checking;" · "Lcom/tuwinsmart/tuwin/presentation/ui/connect/fragment/ConnectViewModel$ConnectionStatus$Connected;" · "Lcom/tuwinsmart/tuwin/presentation/ui/connect/fragment/ConnectViewModel$ConnectionStatus$Failed;" · "Lcom/tuwinsmart/tuwin/presentation/ui/connect/fragment/ConnectViewModel$ConnectionStatus$Idle;" · "Lcom/tuwinsmart/tuwin/presentation/ui/connect/fragment/ConnectViewModel$ConnectionStatus$NotConnected;" · "app_release_64"
 ### `com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectViewModel$C25821`
 L59 · [class] static final C25821 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectViewModel.java`
 注解：
@@ -526,11 +509,11 @@ L248 · [class] static final C25831 · extends `SuspendLambda implements Functio
 - `Object L$5`  L256
 - `int label`  L257
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L267 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L274 @Override
 - `java.lang.Object invokeSuspend(java.lang.Object r23)`  L311 @Override
-- `throw new UnsupportedOperationException( 93 )`  L316
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectViewModel.C25831.invokeSuspend(java.lang.Object):java.lang.Object"
 ### `com.tuwinsmart.tuwin.presentation.p010ui.connect.fragment.ConnectViewModel$C25841`
 L80 · [class] static final C25841 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/connect/fragment/ConnectViewModel.java`
 注解：

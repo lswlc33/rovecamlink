@@ -95,7 +95,7 @@ L38 · [class] public final RecordingEventRide5SessionPort · implements `Ride5S
 - `Ride5SessionPort ride5SessionPort5 = recordingEventRide5SessionPort.delegate`  L390
 - `NonCancellable nonCancellable = NonCancellable.INSTANCE`  L419
 
-方法（28）：
+方法（27）：
 - `Object batteryCapacity(Continuation<? super Ride5CgiPayload> continuation)`  L68 @Override
 - `Object cameraNumber(Continuation<? super Ride5CgiPayload> continuation)`  L73 @Override
 - `Object cameraParameter(String str, String str2, Continuation<? super Ride5CgiPayload> continuation)`  L78 @Override
@@ -124,8 +124,6 @@ L38 · [class] public final RecordingEventRide5SessionPort · implements `Ride5S
     - 体内字面量："delegate" · "deviceProvider" · "repository" · "now"
 - ` RecordingEventRide5SessionPort(Ride5SessionPort ride5SessionPort, Function1 function1, RecordingControlEventRepository recordingControlEventRepository, C19741 c19741, int i, DefaultConstructorMarker defaultConstructorMarker)`  L216
 - `Object command(String str, Continuation<? super Ride5CgiPayload> continuation)`  L230 @Override
-- `throw new IllegalStateException( 90 )`  L438
-    - 体内字面量："RIDE5 recording event persistence failed: action=%s session=%s" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.core.device.ride5.RecordingEventRide5SessionPort$command$2" · "Ride5Ports.kt" · "invokeSuspend"
 ### `com.tuwinsmart.tuwin.core.device.ride5.RecordingEventRide5SessionPort$C19741`
 L202 · [class] C19741 · extends `FunctionReferenceImpl implements Function0<Long>` · implements `Function0<Long>` · `com/tuwinsmart/tuwin/core/device/ride5/RecordingEventRide5SessionPort.java`
 注解：
@@ -157,11 +155,10 @@ L460 · [class] static final C19762 · extends `SuspendLambda implements Functio
 - `Object objMo2803appendgIAlus`  L486
 - `int i = this.label`  L488
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L475 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L480 @Override
 - `Object invokeSuspend(Object obj)`  L485 @Override
-- `throw new IllegalStateException( 99 )`  L498
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CallbackBufferBudget`
 L10 · [class] public final Ride5CallbackBufferBudget · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CallbackBufferBudget.java`
 注解：
@@ -253,7 +250,7 @@ L53 · [class] public final Ride5CallbackChannel · `com/tuwinsmart/tuwin/core/d
 - `Ride5CallbackChannel ride5CallbackChannel = this`  L694
 - `Result.Companion companion2 = Result.INSTANCE`  L698
 
-方法（17）：
+方法（14）：
 - `public Ride5CallbackChannel(String sessionId, RouteSnapshot route, EndpointGrant callbackGrant, DeviceEndpointAuthority endpointAuthority, Function0<RouteSnapshot> currentRoute, String str, Ride5CallbackServerSocketFactory socketFactory, Ride5CallbackDecoder decoder, Ride5CallbackLimits limits, CoroutineScope parentScope)`  L115
     - 体内字面量："sessionId" · "route" · "callbackGrant" · "endpointAuthority" · "currentRoute" · "socketFactory" · "decoder" · "limits" · "parentScope" · "Failed requirement." · "Failed requirement." · "Failed requirement." · "Failed requirement."
 - ` Ride5CallbackChannel(String str, RouteSnapshot routeSnapshot, EndpointGrant endpointGrant, DeviceEndpointAuthority deviceEndpointAuthority, Function0 function0, String str2, Ride5CallbackServerSocketFactory ride5CallbackServerSocketFactory, Ride5CallbackDecoder ride5CallbackDecoder, Ride5CallbackLimits ride5CallbackLimits, CoroutineScope coroutineScope, int i, DefaultConstructorMarker defaultConstructorMarker)`  L155
@@ -264,13 +261,10 @@ L53 · [class] public final Ride5CallbackChannel · `com/tuwinsmart/tuwin/core/d
 - `Object close(Continuation<? super Unit> continuation)`  L254
 - `void invalidateForRoute(long newRouteRevision)`  L345
 - `Object acceptLoop(Ride5CallbackServerSocket ride5CallbackServerSocket, Continuation<? super Unit> continuation)`  L355
-- `throw new IllegalStateException( 110 )`  L377
 - `Object receive(final Ride5CallbackSocket ride5CallbackSocket, Continuation<? super Unit> continuation)`  L529
-- `throw new IllegalStateException( 120 )`  L560
 - `Boolean invoke()`  L596 @Override
 - `Unit invoke(byte[] bArr)`  L607 @Override
 - `void invoke2(byte[] payload)`  L613
-- `throw new Ride5CallbackException( 122 , null, 2, null)`  L623
 - `boolean isAuthorizedSource(String remoteHost)`  L690
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CallbackChannel$C19781`
 L76 · [class] static final C19781 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CallbackChannel.java`
@@ -292,11 +286,10 @@ L471 · [class] static final C19794 · extends `SuspendLambda implements Functio
 - `int label`  L473
 - `int i = this.label`  L494
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L482 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L487 @Override
 - `Object invokeSuspend(Object obj)`  L492 @Override
-- `throw new IllegalStateException( 119 )`  L503
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CallbackChannel$C19801`
 L308 · [class] static final C19801 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CallbackChannel.java`
 注解：
@@ -305,11 +298,10 @@ L308 · [class] static final C19801 · extends `SuspendLambda implements Functio
 - `int label`  L309
 - `int i = this.label`  L328
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L316 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L321 @Override
 - `Object invokeSuspend(Object obj)`  L326 @Override
-- `throw new IllegalStateException( 109 )`  L337
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CallbackChannel$C19811`
 L97 · [class] static final C19811 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CallbackChannel.java`
 注解：
@@ -331,11 +323,10 @@ L214 · [class] static final C19843 · extends `SuspendLambda implements Functio
 - `int label`  L216
 - `int i = this.label`  L237
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L225 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L230 @Override
 - `Object invokeSuspend(Object obj)`  L235 @Override
-- `throw new IllegalStateException( 99 )`  L246
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CallbackDecoder`
 L12 · [interface] public Ride5CallbackDecoder · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CallbackDecoder.java`
 注解：
@@ -504,9 +495,9 @@ L10 · [interface] public Ride5CallbackServerSocketFactory · `com/tuwinsmart/tu
 L15 · [class] public static final DefaultImpls · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CallbackServerSocketFactory.java`
 注解：
 
-方法（2）：
+方法（1）：
 - `Ride5CallbackServerSocket open$default(Ride5CallbackServerSocketFactory ride5CallbackServerSocketFactory, int i, String str, int i2, Object obj)`  L16
-- `throw new UnsupportedOperationException( 9 )`  L18
+    - 体内字面量："Super calls with default arguments not supported in this target, function: open"
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CallbackSocket`
 L11 · [interface] public Ride5CallbackSocket · extends `AutoCloseable` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CallbackSocket.java`
 注解：
@@ -611,7 +602,7 @@ L64 · [class] public final Ride5CgiGateway · `com/tuwinsmart/tuwin/core/device
 - `Object obj = c20181.result`  L1816
 - `int i = c20181.label`  L1818
 
-方法（46）：
+方法（42）：
 - `public Ride5CgiGateway(String sessionId, RouteSnapshot route, EndpointGrant endpointGrant, RouteProvider routeProvider, RoutedRetrofitProvider retrofitProvider, DeviceEndpointAuthority endpointAuthority, HttpClientProfile profile, EndpointPurpose requestedPurpose, DeviceOperationKind operation, Function0<RouteSnapshot> currentRoute, Ride5CgiParser parser, Function0<String> fallbackDeviceId, Function2<? super RouteLease, ? super EndpointGrant, ? extends Ride5CgiApi> apiFactory)`  L146
     - 体内字面量："sessionId" · "route" · "endpointGrant" · "routeProvider" · "retrofitProvider" · "endpointAuthority" · "profile" · "requestedPurpose" · "operation" · "currentRoute" · "parser" · "fallbackDeviceId" · "apiFactory" · "Failed requirement." · "Failed requirement." · "Failed requirement." · "Failed requirement."
 - ` Ride5CgiGateway(final String str, final RouteSnapshot routeSnapshot, EndpointGrant endpointGrant, RouteProvider routeProvider, final RoutedRetrofitProvider routedRetrofitProvider, final DeviceEndpointAuthority deviceEndpointAuthority, HttpClientProfile httpClientProfile, EndpointPurpose endpointPurpose, DeviceOperationKind deviceOperationKind, Function0 function0, Ride5CgiParser ride5CgiParser, Function0 function1, Function2 function2, int i, DefaultConstructorMarker defaultConstructorMarker)`  L188
@@ -631,8 +622,6 @@ L64 · [class] public final Ride5CgiGateway · `com/tuwinsmart/tuwin/core/device
     - 体内字面量："<anonymous>" · "it" · "Lcom/tuwinsmart/tuwin/core/device/ride5/Ride5CgiApi;" · "com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$checkSocketConnect$2" · "Ride5CgiGateway.kt" · "invokeSuspend"
 - `Object checkSocketConnect(String str, Continuation<? super Ride5CgiPayload> continuation)`  L423
 - `Object getDeviceAttributes(Continuation<? super Ride5CgiPayload> continuation)`  L428
-- `throw new IllegalStateException( 156 )`  L457
-    - 体内字面量："devid" · "devid" · "devid" · "<anonymous>" · "it" · "Lcom/tuwinsmart/tuwin/core/device/ride5/Ride5CgiApi;" · "com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$setSystemTime$2" · "Ride5CgiGateway.kt" · "invokeSuspend"
 - `Object setSystemTime(String str, Continuation<? super Ride5CgiPayload> continuation)`  L524
     - 体内字面量："<anonymous>" · "it" · "Lcom/tuwinsmart/tuwin/core/device/ride5/Ride5CgiApi;" · "com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$getWorkState$2" · "Ride5CgiGateway.kt" · "invokeSuspend"
 - `Object getWorkState(Continuation<? super Ride5CgiPayload> continuation)`  L573
@@ -680,12 +669,8 @@ L64 · [class] public final Ride5CgiGateway · `com/tuwinsmart/tuwin/core/device
 - `Object getBatteryCapacity(Continuation<? super Ride5CgiPayload> continuation)`  L1692
 - `void invalidate()`  L1696
 - `Object request(Function1<? super String, Ride5CgiPayload> function1, Function2<? super Ride5CgiApi, ? super Continuation<? super String>, ? extends Object> function2, Continuation<? super Ride5CgiPayload> continuation)`  L1717
-- `throw new RouteUnavailableException( 378  + this.sessionId)`  L1742
-    - 体内字面量："RIDE5 route revision changed: " · "@"
-- `throw new IllegalStateException( 381 )`  L1773
 - `Object request$default(Ride5CgiGateway ride5CgiGateway, Function1 function1, Function2 function2, Continuation continuation, int i, Object obj)`  L1792
 - `Object withLeaseCancellation(RouteLease routeLease, Function1<? super Continuation<? super T>, ? extends Object> function1, Continuation<? super T> continuation)`  L1801
-- `throw new IllegalStateException( 382 )`  L1821
 - `Unit invoke(Throwable th3)`  L1845 @Override
 - `void invoke2(Throwable th3)`  L1851
     - 体内字面量："RIDE5 route lease was closed" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$withLeaseCancellation$2" · "Ride5CgiGateway.kt" · "invokeSuspend"
@@ -699,11 +684,10 @@ L379 · [class] static final C19882 · extends `SuspendLambda implements Functio
 - `int label`  L382
 - `int i = this.label`  L405
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L391 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L398 @Override
 - `Object invokeSuspend(Object obj)`  L403 @Override
-- `throw new IllegalStateException( 155 )`  L415
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C19892`
 L907 · [class] static final C19892 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -716,11 +700,10 @@ L907 · [class] static final C19892 · extends `SuspendLambda implements Functio
 - `int label`  L912
 - `int i = this.label`  L937
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L923 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L930 @Override
 - `Object invokeSuspend(Object obj)`  L935 @Override
-- `throw new IllegalStateException( 244 )`  L947
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C19902`
 L855 · [class] static final C19902 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -731,11 +714,10 @@ L855 · [class] static final C19902 · extends `SuspendLambda implements Functio
 - `int label`  L858
 - `int i = this.label`  L881
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L867 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L874 @Override
 - `Object invokeSuspend(Object obj)`  L879 @Override
-- `throw new IllegalStateException( 235 )`  L891
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C19912`
 L1012 · [class] static final C19912 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -745,11 +727,10 @@ L1012 · [class] static final C19912 · extends `SuspendLambda implements Functi
 - `int label`  L1014
 - `int i = this.label`  L1035
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1021 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1028 @Override
 - `Object invokeSuspend(Object obj)`  L1033 @Override
-- `throw new IllegalStateException( 262 )`  L1045
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C19922`
 L1651 · [class] static final C19922 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -759,11 +740,10 @@ L1651 · [class] static final C19922 · extends `SuspendLambda implements Functi
 - `int label`  L1653
 - `int i = this.label`  L1674
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1660 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1667 @Override
 - `Object invokeSuspend(Object obj)`  L1672 @Override
-- `throw new IllegalStateException( 373 )`  L1684
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C19932`
 L1125 · [class] static final C19932 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -773,11 +753,10 @@ L1125 · [class] static final C19932 · extends `SuspendLambda implements Functi
 - `int label`  L1127
 - `int i = this.label`  L1148
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1134 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1141 @Override
 - `Object invokeSuspend(Object obj)`  L1146 @Override
-- `throw new IllegalStateException( 283 )`  L1158
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C19942`
 L1487 · [class] static final C19942 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -789,11 +768,10 @@ L1487 · [class] static final C19942 · extends `SuspendLambda implements Functi
 - `int label`  L1491
 - `int i = this.label`  L1515
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1501 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1508 @Override
 - `Object invokeSuspend(Object obj)`  L1513 @Override
-- `throw new IllegalStateException( 346 )`  L1525
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C19952`
 L1541 · [class] static final C19952 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -805,11 +783,10 @@ L1541 · [class] static final C19952 · extends `SuspendLambda implements Functi
 - `int label`  L1545
 - `int i = this.label`  L1569
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1555 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1562 @Override
 - `Object invokeSuspend(Object obj)`  L1567 @Override
-- `throw new IllegalStateException( 355 )`  L1579
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C19962`
 L1329 · [class] static final C19962 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -820,11 +797,10 @@ L1329 · [class] static final C19962 · extends `SuspendLambda implements Functi
 - `int label`  L1332
 - `int i = this.label`  L1355
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1341 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1348 @Override
 - `Object invokeSuspend(Object obj)`  L1353 @Override
-- `throw new IllegalStateException( 319 )`  L1365
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C19972`
 L1381 · [class] static final C19972 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -835,11 +811,10 @@ L1381 · [class] static final C19972 · extends `SuspendLambda implements Functi
 - `int label`  L1384
 - `int i = this.label`  L1407
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1393 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1400 @Override
 - `Object invokeSuspend(Object obj)`  L1405 @Override
-- `throw new IllegalStateException( 328 )`  L1417
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C19981`
 L84 · [class] static final C19981 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -860,11 +835,10 @@ L633 · [class] static final C19992 · extends `SuspendLambda implements Functio
 - `int label`  L635
 - `int i = this.label`  L656
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L642 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L649 @Override
 - `Object invokeSuspend(Object obj)`  L654 @Override
-- `throw new IllegalStateException( 195 )`  L666
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20002`
 L682 · [class] static final C20002 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -875,11 +849,10 @@ L682 · [class] static final C20002 · extends `SuspendLambda implements Functio
 - `int label`  L685
 - `int i = this.label`  L708
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L694 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L701 @Override
 - `Object invokeSuspend(Object obj)`  L706 @Override
-- `throw new IllegalStateException( 204 )`  L718
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20012`
 L733 · [class] C20012 · extends `FunctionReferenceImpl implements Function1<String, Ride5CgiPayload>` · implements `Function1<String, Ride5CgiPayload>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -898,11 +871,10 @@ L749 · [class] static final C20023 · extends `SuspendLambda implements Functio
 - `int label`  L753
 - `int i = this.label`  L777
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L763 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L770 @Override
 - `Object invokeSuspend(Object obj)`  L775 @Override
-- `throw new IllegalStateException( 217 )`  L787
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20032`
 L803 · [class] static final C20032 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -913,11 +885,10 @@ L803 · [class] static final C20032 · extends `SuspendLambda implements Functio
 - `int label`  L806
 - `int i = this.label`  L829
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L815 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L822 @Override
 - `Object invokeSuspend(Object obj)`  L827 @Override
-- `throw new IllegalStateException( 226 )`  L839
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20042`
 L963 · [class] static final C20042 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -927,11 +898,10 @@ L963 · [class] static final C20042 · extends `SuspendLambda implements Functio
 - `int label`  L965
 - `int i = this.label`  L986
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L972 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L979 @Override
 - `Object invokeSuspend(Object obj)`  L984 @Override
-- `throw new IllegalStateException( 253 )`  L996
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20052`
 L1226 · [class] static final C20052 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -941,11 +911,10 @@ L1226 · [class] static final C20052 · extends `SuspendLambda implements Functi
 - `int label`  L1228
 - `int i = this.label`  L1249
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1235 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1242 @Override
 - `Object invokeSuspend(Object obj)`  L1247 @Override
-- `throw new IllegalStateException( 301 )`  L1259
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20062`
 L532 · [class] static final C20062 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -955,11 +924,10 @@ L532 · [class] static final C20062 · extends `SuspendLambda implements Functio
 - `int label`  L534
 - `int i = this.label`  L555
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L541 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L548 @Override
 - `Object invokeSuspend(Object obj)`  L553 @Override
-- `throw new IllegalStateException( 177 )`  L565
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20072`
 L275 · [class] static final C20072 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -970,11 +938,10 @@ L275 · [class] static final C20072 · extends `SuspendLambda implements Functio
 - `int label`  L278
 - `int i = this.label`  L301
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L287 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L294 @Override
 - `Object invokeSuspend(Object obj)`  L299 @Override
-- `throw new IllegalStateException( 136 )`  L311
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20081`
 L105 · [class] static final C20081 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -1010,11 +977,10 @@ L1076 · [class] static final C20113 · extends `SuspendLambda implements Functi
 - `int label`  L1078
 - `int i = this.label`  L1099
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1085 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1092 @Override
 - `Object invokeSuspend(Object obj)`  L1097 @Override
-- `throw new IllegalStateException( 274 )`  L1109
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20122`
 L1595 · [class] static final C20122 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -1027,11 +993,10 @@ L1595 · [class] static final C20122 · extends `SuspendLambda implements Functi
 - `int label`  L1600
 - `int i = this.label`  L1625
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1611 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1618 @Override
 - `Object invokeSuspend(Object obj)`  L1623 @Override
-- `throw new IllegalStateException( 364 )`  L1635
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20132`
 L1433 · [class] static final C20132 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -1043,11 +1008,10 @@ L1433 · [class] static final C20132 · extends `SuspendLambda implements Functi
 - `int label`  L1437
 - `int i = this.label`  L1461
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1447 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1454 @Override
 - `Object invokeSuspend(Object obj)`  L1459 @Override
-- `throw new IllegalStateException( 337 )`  L1471
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20142`
 L480 · [class] static final C20142 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -1058,11 +1022,10 @@ L480 · [class] static final C20142 · extends `SuspendLambda implements Functio
 - `int label`  L483
 - `int i = this.label`  L506
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L492 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L499 @Override
 - `Object invokeSuspend(Object obj)`  L504 @Override
-- `throw new IllegalStateException( 168 )`  L516
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20152`
 L1275 · [class] static final C20152 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -1074,11 +1037,10 @@ L1275 · [class] static final C20152 · extends `SuspendLambda implements Functi
 - `int label`  L1279
 - `int i = this.label`  L1303
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1289 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1296 @Override
 - `Object invokeSuspend(Object obj)`  L1301 @Override
-- `throw new IllegalStateException( 310 )`  L1313
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20162`
 L1174 · [class] static final C20162 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -1089,11 +1051,10 @@ L1174 · [class] static final C20162 · extends `SuspendLambda implements Functi
 - `int label`  L1177
 - `int i = this.label`  L1200
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1186 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L1193 @Override
 - `Object invokeSuspend(Object obj)`  L1198 @Override
-- `throw new IllegalStateException( 292 )`  L1210
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20172`
 L327 · [class] static final C20172 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -1104,11 +1065,10 @@ L327 · [class] static final C20172 · extends `SuspendLambda implements Functio
 - `int label`  L330
 - `int i = this.label`  L353
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L339 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L346 @Override
 - `Object invokeSuspend(Object obj)`  L351 @Override
-- `throw new IllegalStateException( 146 )`  L363
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20181`
 L127 · [class] static final C20181 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -1131,11 +1091,10 @@ L1887 · [class] static final C20192 · extends `SuspendLambda implements Functi
 - `int i = this.label`  L1911
 - `Function1<Continuation<? super T>, Object> function1 = this.$block`  L1914
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1899 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super T> continuation)`  L1904 @Override
 - `Object invokeSuspend(Object obj)`  L1909 @Override
-- `throw new IllegalStateException( 390 )`  L1922
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$C20202`
 L581 · [class] static final C20202 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway.java`
 注解：
@@ -1146,11 +1105,10 @@ L581 · [class] static final C20202 · extends `SuspendLambda implements Functio
 - `int label`  L584
 - `int i = this.label`  L607
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L593 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L600 @Override
 - `Object invokeSuspend(Object obj)`  L605 @Override
-- `throw new IllegalStateException( 186 )`  L617
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$getDeviceAttributes$payload$1`
 L17 · [class] final Ride5CgiGateway$getDeviceAttributes$payload$1 · extends `SuspendLambda implements Function2<Ride5CgiApi, Continuation<? super String>, Object>` · implements `Function2<Ride5CgiApi, Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway$getDeviceAttributes$payload$1.java`
 注解：
@@ -1160,11 +1118,10 @@ L17 · [class] final Ride5CgiGateway$getDeviceAttributes$payload$1 · extends `S
 - `int label`  L19
 - `int i = this.label`  L40
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L26 @Override
 - `Object invoke(Ride5CgiApi ride5CgiApi, Continuation<? super String> continuation)`  L33 @Override
 - `Object invokeSuspend(Object obj)`  L38 @Override
-- `throw new IllegalStateException( 8 )`  L50
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$request$body$1`
 L17 · [class] final Ride5CgiGateway$request$body$1 · extends `SuspendLambda implements Function1<Continuation<? super String>, Object>` · implements `Function1<Continuation<? super String>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGateway$request$body$1.java`
 注解：
@@ -1175,12 +1132,11 @@ L17 · [class] final Ride5CgiGateway$request$body$1 · extends `SuspendLambda im
 - `int label`  L20
 - `Ride5CgiGateway this$0`  L21
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Continuation<?> continuation)`  L33 @Override
 - `Object invoke(Continuation<? super String> continuation)`  L38 @Override
 - `java.lang.Object invokeSuspend(java.lang.Object r6)`  L51 @Override
-    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
-- `throw new UnsupportedOperationException( 6 )`  L82
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGateway$request$body$1.invokeSuspend(java.lang.Object):java.lang.Object" · "call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5CgiGatewayKt`
 L17 · [class] public final Ride5CgiGatewayKt · `com/tuwinsmart/tuwin/core/device/ride5/Ride5CgiGatewayKt.java`
 注解：
@@ -1393,7 +1349,7 @@ L50 · [class] public final Ride5DeviceAdapterSession · implements `DeviceAdapt
 - `Result.Companion companion2 = Result.INSTANCE`  L787
 - `Result.Companion companion3 = Result.INSTANCE`  L826
 
-方法（12）：
+方法（10）：
 - `public Ride5DeviceAdapterSession(DeviceSessionSnapshot session, RouteProvider routeProvider, RoutedRetrofitProvider retrofitProvider, DeviceEndpointAuthority endpointAuthority, Function0<RouteSnapshot> currentRoute, Ride5CallbackServerSocketFactory callbackSocketFactory, Ride5CallbackDecoder callbackDecoder, Ride5SessionRegistry sessionRegistry, CoroutineScope parentScope, Function0<Unit> onClosed)`  L123
     - 体内字面量："session" · "routeProvider" · "retrofitProvider" · "endpointAuthority" · "currentRoute" · "callbackSocketFactory" · "callbackDecoder" · "sessionRegistry" · "parentScope" · "onClosed"
 - `DeviceSessionSnapshot getSession()`  L147 @Override
@@ -1403,13 +1359,9 @@ L50 · [class] public final Ride5DeviceAdapterSession · implements `DeviceAdapt
 - `Object open(Continuation<? super DeviceAdapterOpenResult> continuation)`  L174 @Override
 - `String invoke()`  L242 @Override
     - 体内字面量："/" · "/livestream"
-- `throw new IllegalStateException( 121 )`  L513
-    - 体内字面量："product"
 - `Object collect(FlowCollector<? super DeviceAdapterEvent> flowCollector, Continuation continuation2)`  L667 @Override
 - `void invalidateForRoute(long newRouteRevision)`  L715 @Override
 - `Object close(Continuation<? super Unit> continuation)`  L737 @Override
-- `throw new IllegalStateException( 145 )`  L831
-    - 体内字面量："Lcom/tuwinsmart/tuwin/core/device/ride5/Ride5DeviceAdapterSession$Companion;" · "()V" · "CALLBACK_PORT" · "RTSP_LIVE_PORT" · "app_release_64"
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5DeviceAdapterSession$C20261`
 L78 · [class] static final C20261 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5DeviceAdapterSession.java`
 注解：
@@ -1433,11 +1385,9 @@ L581 · [class] public static final C20272 · implements `FlowCollector` · `com
 - `int i = anonymousClass1.label`  L637
 - `FlowCollector flowCollector = this.$this_unsafeFlow`  L640
 
-方法（4）：
+方法（2）：
 - `public C20272(FlowCollector flowCollector)`  L605
 - `Object emit(Object obj, Continuation continuation)`  L622 @Override
-- `throw new NoWhenBranchMatchedException()`  L648
-- `throw new IllegalStateException( 144 )`  L658
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5DeviceAdapterSession$C20272$AnonymousClass1`
 L588 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5DeviceAdapterSession.java`
 注解：
@@ -1488,20 +1438,11 @@ L37 · [class] public final Ride5DeviceMediaPort · implements `DeviceMediaPort`
 - `Ride5DeviceMediaPort ride5DeviceMediaPort = this`  L74
 - `Result.Companion companion2 = Result.INSTANCE`  L77
 
-方法（11）：
+方法（3）：
 - `public Ride5DeviceMediaPort(VerifiedDeviceFileCatalog fileCatalog, DeviceSessionManager sessions)`  L41
     - 体内字面量："fileCatalog" · "sessions"
 - `Object requestMediaEndpoint(MediaSessionRequest mediaSessionRequest, RouteLease routeLease, Continuation<? super DeviceMediaEndpoint> continuation)`  L49 @Override
-- `throw new RouteSupersededException( 18 )`  L62
 - `DeviceMediaEndpoint livePreviewEndpoint(MediaSessionRequest request, RouteLease lease)`  L70
-- `throw new RouteUnavailableException( 19 )`  L85
-- `throw new RouteUnavailableException( 20 )`  L89
-- `throw new RouteSupersededException( 21 )`  L92
-- `throw new RouteSupersededException( 22 )`  L96
-- `throw new RouteUnavailableException( 23 )`  L100
-- `throw new RouteSupersededException( 24 )`  L103
-- `throw new RouteUnavailableException( 25 )`  L107
-    - 体内字面量："rtsp://" · ":" · "/livestream/1"
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5FilePort`
 L12 · [interface] public Ride5FilePort · `com/tuwinsmart/tuwin/core/device/ride5/Ride5FilePort.java`
 注解：
@@ -1618,10 +1559,8 @@ L15 · [class] public final Ride5LegacyIdleDecoder · implements `Ride5CallbackD
 - `int i`  L18
 - `int i2 = 0`  L26
 
-方法（2）：
+方法（1）：
 - `void decode(Ride5CallbackSocket socket, Ride5CallbackLimits limits, Function0<Boolean> isActive, Ride5CallbackBufferBudget bufferBudget, Function1<? super byte[], Unit> emit)`  L17 @Override
-- `throw new Ride5CallbackException( 24 , null, 2, null)`  L32
-    - 体内字面量："toByteArray(...)"
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5MediaPort`
 L10 · [interface] public Ride5MediaPort · `com/tuwinsmart/tuwin/core/device/ride5/Ride5MediaPort.java`
 注解：
@@ -1795,7 +1734,7 @@ L59 · [class] public final Ride5SessionConnector · `com/tuwinsmart/tuwin/core/
 - `?? r33 = r13.endpointAuthority`  L1275
 - `String str4 = str2`  L1295
 
-方法（14）：
+方法（12）：
 - `public Ride5SessionConnector(NetworkTopologyMonitor topology, DeviceRouteRegistry routes, RouteProvider routeProvider, RoutedRetrofitProvider retrofitProvider, DeviceEndpointAuthority endpointAuthority, DeviceSessionManager sessionManager, ProcessBindingController processBindingController, DeviceIdentityVerifier identityVerifier, Function1<? super Network, String> bssidProvider)`  L96
     - 体内字面量："topology" · "routes" · "routeProvider" · "retrofitProvider" · "endpointAuthority" · "sessionManager" · "processBindingController" · "identityVerifier" · "bssidProvider"
 - ` Ride5SessionConnector(NetworkTopologyMonitor networkTopologyMonitor, DeviceRouteRegistry deviceRouteRegistry, RouteProvider routeProvider, RoutedRetrofitProvider routedRetrofitProvider, DeviceEndpointAuthority deviceEndpointAuthority, DeviceSessionManager deviceSessionManager, ProcessBindingController processBindingController, DeviceIdentityVerifier deviceIdentityVerifier, Function1 function1, int i, DefaultConstructorMarker defaultConstructorMarker)`  L117
@@ -1811,12 +1750,11 @@ L59 · [class] public final Ride5SessionConnector · `com/tuwinsmart/tuwin/core/
     - 体内字面量："it"
 - `String invoke()`  L507 @Override
     - 体内字面量："probe-" · "RIDE5 candidate route disappeared"
-- `throw new IllegalStateException( 80 )`  L925
 - `Object m2726connectUserInitiatedyxL6bBk$default(Ride5SessionConnector ride5SessionConnector, Network network, String str, String str2, boolean z, Continuation continuation, int i, Object obj)`  L1289
     - 体内字面量："ride5-"
 - `String connectUserInitiated_yxL6bBk$lambda$1(Lazy<String> lazy)`  L1303
 - `java.lang.Object takeoverSameDeviceSessions(long r10, java.lang.String r12, kotlin.coroutines.Continuation<? super java.lang.Boolean> r13)`  L1320
-- `throw new UnsupportedOperationException( 89 )`  L1325
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.core.device.ride5.Ride5SessionConnector.takeoverSameDeviceSessions(long, java.lang.String, kotlin.coroutines.Continuation):java.lang.Object"
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5SessionConnector$C20311`
 L74 · [class] static final C20311 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5SessionConnector.java`
 注解：
@@ -1885,12 +1823,11 @@ L40 · [class] final Ride5SessionConnector$connectUserInitiated$verified$1 · im
 - `DeviceType deviceType = DeviceType.RIDE5`  L142
 - `String str4 = str3`  L147
 
-方法（4）：
+方法（3）：
 - `Object probe(ProbePermit probePermit, Network network, DeviceProtocolProfile deviceProtocolProfile, Continuation<? super DeviceProbeResult> continuation)`  L66 @Override
 - `RouteSnapshot invoke()`  L107 @Override
 - `String invoke()`  L119 @Override
-- `throw new IllegalStateException( 12 )`  L132
-    - 体内字面量："model" · "product" · "RIDE5 identity marker is not recognized"
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine" · "model" · "product" · "RIDE5 identity marker is not recognized"
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5SessionConnector$connectUserInitiated$verified$1$probe$1`
 L14 · [class] final Ride5SessionConnector$connectUserInitiated$verified$1$probe$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5SessionConnector$connectUserInitiated$verified$1$probe$1.java`
 注解：
@@ -2010,7 +1947,7 @@ L180 · [class] static final CatalogRecordingRide5SessionPort · implements `Rid
 - `Ride5SessionPort ride5SessionPort = this.delegate`  L334
 - `ArrayList arrayList3 = arrayList2`  L366
 
-方法（27）：
+方法（26）：
 - `Object batteryCapacity(Continuation<? super Ride5CgiPayload> continuation)`  L186 @Override
 - `Object cameraNumber(Continuation<? super Ride5CgiPayload> continuation)`  L191 @Override
 - `Object cameraParameter(String str, String str2, Continuation<? super Ride5CgiPayload> continuation)`  L196 @Override
@@ -2038,8 +1975,6 @@ L180 · [class] static final CatalogRecordingRide5SessionPort · implements `Rid
 - `public CatalogRecordingRide5SessionPort(Ride5SessionPort delegate, String sessionId, VerifiedDeviceFileCatalog catalog)`  L305
     - 体内字面量："delegate" · "sessionId" · "catalog"
 - `Object fileList(String str, String str2, Continuation<? super Ride5CgiPayload> continuation)`  L316 @Override
-- `throw new IllegalStateException( 100 )`  L344
-    - 体内字面量：";"
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5SessionPortProvider$withSessionDecorators$2$1`
 L22 · [class] final Ride5SessionPortProvider$withSessionDecorators$2$1 · extends `SuspendLambda implements Function1<Continuation<? super RecordingControlDevice>, Object>` · implements `Function1<Continuation<? super RecordingControlDevice>, Object>` · `com/tuwinsmart/tuwin/core/device/ride5/Ride5SessionPortProvider$withSessionDecorators$2$1.java`
 注解：
@@ -2057,11 +1992,10 @@ L22 · [class] final Ride5SessionPortProvider$withSessionDecorators$2$1 · exten
 - `RecordingControlDevice.Companion companion2 = RecordingControlDevice.INSTANCE`  L81
 - `DeviceType deviceType2 = DeviceType.RIDE5`  L82
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Continuation<?> continuation)`  L35 @Override
 - `Object invoke(Continuation<? super RecordingControlDevice> continuation)`  L40 @Override
 - `Object invokeSuspend(Object obj)`  L47 @Override
-- `throw new IllegalStateException( 6 )`  L74
 ### `com.tuwinsmart.tuwin.core.device.ride5.Ride5SessionRegistry`
 L17 · [class] public final Ride5SessionRegistry · `com/tuwinsmart/tuwin/core/device/ride5/Ride5SessionRegistry.java`
 注解：
@@ -2120,7 +2054,7 @@ L24 · [class] public final SerializedRide5RecordingSessionPort · implements `R
 - `Ride5SessionPort ride5SessionPort2 = serializedRide5RecordingSessionPort.delegate`  L393
 - `Ride5SessionPort ride5SessionPort3 = serializedRide5RecordingSessionPort2.delegate`  L407
 
-方法（28）：
+方法（26）：
 - `Object batteryCapacity(Continuation<? super Ride5CgiPayload> continuation)`  L74 @Override
 - `Object cameraNumber(Continuation<? super Ride5CgiPayload> continuation)`  L79 @Override
 - `Object cameraParameter(String str, String str2, Continuation<? super Ride5CgiPayload> continuation)`  L84 @Override
@@ -2147,10 +2081,7 @@ L24 · [class] public final SerializedRide5RecordingSessionPort · implements `R
 - `public SerializedRide5RecordingSessionPort(Ride5SessionPort delegate, Mutex mutex)`  L188
     - 体内字面量："delegate" · "mutex"
 - `Object command(String str, Continuation<? super Ride5CgiPayload> continuation)`  L199 @Override
-- `throw new IllegalStateException( 74 )`  L260
 - `Object ensureRecordingStopped(Continuation<? super Ride5CgiPayload> continuation)`  L309 @Override
-- `throw new IllegalStateException( 75 )`  L346
-    - 体内字面量："success" · "true" · "running" · "false"
 ### `com.tuwinsmart.tuwin.core.device.ride5.SerializedRide5RecordingSessionPort$C20351`
 L32 · [class] static final C20351 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/ride5/SerializedRide5RecordingSessionPort.java`
 注解：
@@ -2180,7 +2111,6 @@ L55 · [class] static final C20361 · extends `ContinuationImpl` · `com/tuwinsm
 L13 · [class] public final UnconfiguredRide5CallbackDecoder · implements `Ride5CallbackDecoder` · `com/tuwinsmart/tuwin/core/device/ride5/UnconfiguredRide5CallbackDecoder.java`
 注解：
 
-方法（2）：
+方法（1）：
 - `void decode(Ride5CallbackSocket socket, Ride5CallbackLimits limits, Function0<Boolean> isActive, Ride5CallbackBufferBudget bufferBudget, Function1<? super byte[], Unit> emit)`  L15 @Override
-    - 体内字面量："socket" · "limits" · "isActive" · "bufferBudget" · "emit"
-- `throw new Ride5CallbackException( 24 , null, 2, null)`  L21
+    - 体内字面量："socket" · "limits" · "isActive" · "bufferBudget" · "emit" · "RIDE5 callback frame decoder is not configured; protocol evidence is required"

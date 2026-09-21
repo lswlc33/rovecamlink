@@ -203,7 +203,7 @@ L106 · [class] public final ConnectDialog2 · extends `BaseDialogFragment` · `
 - `ConnectUtil connectUtil = ConnectUtil.INSTANCE`  L1988
 - `DeviceConfig deviceConfig2 = this.deviceConfig`  L1989
 
-方法（82）：
+方法（78）：
 - `void showConnectionFailureDialog$lambda$7(View view)`  L241
 - `public ConnectDialog2()`  L245
 - `Fragment invoke()`  L250 @Override
@@ -247,8 +247,6 @@ L106 · [class] public final ConnectDialog2 · extends `BaseDialogFragment` · `
     - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$handleM3ConnectionSuccess$1" · "ConnectDialog2.kt" · "invokeSuspend"
 - `void handleM3ConnectionSuccess(M3ConnectionResult result)`  L1125
 - `Object saveM3DeviceInfo(M3ConnectionResult m3ConnectionResult, Continuation<? super Unit> continuation)`  L1131
-- `throw new IllegalStateException( 256 )`  L1168
-    - 体内字面量："M3: Device info saved - uuid=" · ", softver=" · "M3: Failed to get device attributes" · "M3: Device info saved - uuid=" · ", softver=" · "M3: Failed to save device info"
 - `void handleConnectionFailed()`  L1200
 - `void handleConnectionError()`  L1205
 - `void showConnectionFailureDialog()`  L1209
@@ -262,8 +260,6 @@ L106 · [class] public final ConnectDialog2 · extends `BaseDialogFragment` · `
     - 体内字面量："ds"
 - `String resolveHelpUrl(Context context)`  L1380
 - `String resolveHelpTitle(Context context)`  L1391
-- `throw new NoWhenBranchMatchedException()`  L1407
-    - 体内字面量："getString(...)"
 - `Object saveDeviceInfo(HashMap<String, String> map, Continuation<? super Unit> continuation)`  L1417
 - `void beginConnectionFlow()`  L1475
 - `void connectWhenLocationReady()`  L1487
@@ -281,11 +277,7 @@ L106 · [class] public final ConnectDialog2 · extends `BaseDialogFragment` · `
 - `List<String> requiredWifiSpecifierPermissions()`  L1719
     - 体内字面量："android.permission.NEARBY_WIFI_DEVICES"
 - `String getConnectionProgressText(ConnectionProgress progress)`  L1728
-- `throw new NoWhenBranchMatchedException()`  L1771
-    - 体内字面量："getString(...)"
 - `String getConnectionStepName(ConnectionProgress progress)`  L1778
-- `throw new NoWhenBranchMatchedException()`  L1821
-    - 体内字面量："getString(...)"
 - `int resolveRideConnectionStringRes(int ride3ProResId, int ride6ResId)`  L1828
 - `void showConnectionRunning(String message)`  L1837
     - 体内字面量："getString(...)"
@@ -319,12 +311,10 @@ L1017 · [class] static final C23931 · extends `SuspendLambda implements Functi
 - `int label`  L1019
 - `int i = this.label`  L1040
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1028 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1033 @Override
 - `Object invokeSuspend(Object obj)`  L1038 @Override
-- `throw new IllegalStateException( 245 )`  L1050
-    - 体内字面量："ä¿å­è®¾å¤ä¿¡æ¯å¤±è´¥"
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$C23941`
 L1079 · [class] static final C23941 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialog2.java`
 注解：
@@ -334,11 +324,10 @@ L1079 · [class] static final C23941 · extends `SuspendLambda implements Functi
 - `int label`  L1081
 - `int i = this.label`  L1102
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1090 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1095 @Override
 - `Object invokeSuspend(Object obj)`  L1100 @Override
-- `throw new IllegalStateException( 254 )`  L1111
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$C23951`
 L581 · [class] static final C23951 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialog2.java`
 注解：
@@ -347,12 +336,11 @@ L581 · [class] static final C23951 · extends `SuspendLambda implements Functio
 - `int label`  L582
 - `int i = this.label`  L640
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L589 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L594 @Override
     - 体内字面量："<anonymous>" · "Lcom/tuwinsmart/tuwin/domain/model/ConnectState;" · "com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$observeConnectState$1$1" · "ConnectDialog2.kt" · "invokeSuspend"
 - `Object invokeSuspend(Object obj)`  L638 @Override
-- `throw new IllegalStateException( 193 )`  L649
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$C23951$AnonymousClass1`
 L602 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<ConnectState, Continuation<? super Unit>, Object>` · implements `Function2<ConnectState, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialog2.java`
 注解：
@@ -362,11 +350,11 @@ L602 · [class] static final AnonymousClass1 · extends `SuspendLambda implement
 - `int label`  L604
 - `ConnectDialog2 this$0`  L605
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L614 @Override
 - `Object invoke(ConnectState connectState, Continuation<? super Unit> continuation)`  L621 @Override
 - `Object invokeSuspend(Object obj)`  L626 @Override
-- `throw new IllegalStateException( 192 )`  L633
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$C23961`
 L749 · [class] static final C23961 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialog2.java`
 注解：
@@ -375,12 +363,11 @@ L749 · [class] static final C23961 · extends `SuspendLambda implements Functio
 - `int label`  L750
 - `int i = this.label`  L826
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L757 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L762 @Override
     - 体内字面量："<anonymous>" · "Lcom/tuwinsmart/tuwin/presentation/dialog/ConnectDialogViewModel$WifiScanUiEvent;" · "com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$observeWifiScanEvents$1$1" · "ConnectDialog2.kt" · "invokeSuspend"
 - `Object invokeSuspend(Object obj)`  L824 @Override
-- `throw new IllegalStateException( 225 )`  L835
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$C23961$AnonymousClass1`
 L770 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<ConnectDialogViewModel.WifiScanUiEvent, Continuation<? super Unit>, Object>` · implements `Function2<ConnectDialogViewModel.WifiScanUiEvent, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialog2.java`
 注解：
@@ -390,11 +377,11 @@ L770 · [class] static final AnonymousClass1 · extends `SuspendLambda implement
 - `int label`  L772
 - `ConnectDialog2 this$0`  L773
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L798 @Override
 - `Object invoke(ConnectDialogViewModel.WifiScanUiEvent wifiScanUiEvent, Continuation<? super Unit> continuation)`  L805 @Override
 - `Object invokeSuspend(Object obj)`  L810 @Override
-- `throw new IllegalStateException( 224 )`  L813
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$C23961$AnonymousClass1$WhenMappings`
 L778 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialog2.java`
 注解：
@@ -409,12 +396,11 @@ L665 · [class] static final C23971 · extends `SuspendLambda implements Functio
 - `int label`  L666
 - `int i = this.label`  L724
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L673 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L678 @Override
     - 体内字面量："<anonymous>" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceWifiScanState;" · "com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$observeWifiScanState$1$1" · "ConnectDialog2.kt" · "invokeSuspend"
 - `Object invokeSuspend(Object obj)`  L722 @Override
-- `throw new IllegalStateException( 209 )`  L733
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$C23971$AnonymousClass1`
 L686 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<DeviceWifiScanState, Continuation<? super Unit>, Object>` · implements `Function2<DeviceWifiScanState, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialog2.java`
 注解：
@@ -424,11 +410,11 @@ L686 · [class] static final AnonymousClass1 · extends `SuspendLambda implement
 - `int label`  L688
 - `ConnectDialog2 this$0`  L689
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L698 @Override
 - `Object invoke(DeviceWifiScanState deviceWifiScanState, Continuation<? super Unit> continuation)`  L705 @Override
 - `Object invokeSuspend(Object obj)`  L710 @Override
-- `throw new IllegalStateException( 208 )`  L717
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialog2$C23981`
 L223 · [class] static final C23981 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialog2.java`
 注解：
@@ -556,7 +542,7 @@ L63 · [class] public final ConnectDialogViewModel · extends `ViewModel` · `co
 - `Result.Companion companion2 = Result.INSTANCE`  L1284
 - `Job job = this.connectionJob`  L1299
 
-方法（28）：
+方法（27）：
 - ` ConnectDialogViewModel(RefreshConnectionUseCase refreshConnectionUseCase, DeviceRepository deviceRepository, DeviceWifiConnectionCoordinator deviceWifiConnectionCoordinator, DeviceWifiScanner deviceWifiScanner, long j, int i, DefaultConstructorMarker defaultConstructorMarker)`  L122
 - `public ConnectDialogViewModel(RefreshConnectionUseCase refreshConnectionUseCase, DeviceRepository deviceRepository, DeviceWifiConnectionCoordinator wifiConnectionCoordinator, DeviceWifiScanner deviceWifiScanner, long j)`  L126
     - 体内字面量："refreshConnectionUseCase" · "deviceRepository" · "wifiConnectionCoordinator" · "deviceWifiScanner"
@@ -582,7 +568,6 @@ L63 · [class] public final ConnectDialogViewModel · extends `ViewModel` · `co
     - 体内字面量："<anonymous>" · "com.tuwinsmart.tuwin.presentation.dialog.ConnectDialogViewModel$detectRideConnection$1" · "ConnectDialogViewModel.kt" · "invokeSuspend"
 - `void detectRideConnection(DeviceType tempDeviceType, long timeoutMs)`  L546
 - `Object m2887retryDetectRide3ProgIAlus(ConnectedDevice connectedDevice, Continuation<? super Result<ConnectedDevice>> continuation)`  L595
-- `throw new IllegalStateException( 149 )`  L915
 - `void reportProgress(ConnectionProgress progress)`  L1056
 - `Object reportStepFailure(ConnectionProgress connectionProgress, int i, int i2, Continuation<? super Unit> continuation)`  L1061
 - `Object reportStandardProgress(ConnectionProgressUpdate connectionProgressUpdate, Continuation<? super Unit> continuation)`  L1068
@@ -610,11 +595,10 @@ L303 · [class] static final C24001 · extends `SuspendLambda implements Functio
 - `MutableStateFlow mutableStateFlow = ConnectDialogViewModel.this._connectState`  L351
 - `MutableStateFlow mutableStateFlow2 = ConnectDialogViewModel.this._connectState`  L362
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Continuation<?> continuation)`  L320 @Override
 - `Object invoke(Continuation<? super Unit> continuation)`  L325 @Override
 - `Object invokeSuspend(Object obj)`  L330 @Override
-- `throw new IllegalStateException( 118 )`  L345
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialogViewModel$C24011`
 L1098 · [class] static final C24011 · extends `SuspendLambda implements Function1<Continuation<? super Unit>, Object>` · implements `Function1<Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialogViewModel.java`
 注解：
@@ -625,11 +609,10 @@ L1098 · [class] static final C24011 · extends `SuspendLambda implements Functi
 - `int i = this.label`  L1119
 - `RefreshConnectionUseCase refreshConnectionUseCase = ConnectDialogViewModel.this.refreshConnectionUseCase`  L1124
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Continuation<?> continuation)`  L1106 @Override
 - `Object invoke(Continuation<? super Unit> continuation)`  L1111 @Override
 - `Object invokeSuspend(Object obj)`  L1116 @Override
-- `throw new IllegalStateException( 163 )`  L1134
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialogViewModel$C24021`
 L402 · [class] static final C24021 · extends `SuspendLambda implements Function1<Continuation<? super Unit>, Object>` · implements `Function1<Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialogViewModel.java`
 注解：
@@ -648,12 +631,10 @@ L402 · [class] static final C24021 · extends `SuspendLambda implements Functio
 - `RefreshConnectionUseCase refreshConnectionUseCase2 = ConnectDialogViewModel.this.refreshConnectionUseCase`  L508
 - `MutableStateFlow mutableStateFlow = ConnectDialogViewModel.this._connectState`  L525
 
-方法（5）：
+方法（3）：
 - `Continuation<Unit> create(Continuation<?> continuation)`  L441 @Override
 - `Object invoke(Continuation<? super Unit> continuation)`  L446 @Override
 - `Object invokeSuspend(Object obj)`  L455 @Override
-- `throw new NoWhenBranchMatchedException()`  L473
-- `throw new IllegalStateException( 133 )`  L519
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialogViewModel$C24021$WhenMappings`
 L409 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialogViewModel.java`
 注解：
@@ -673,11 +654,10 @@ L1168 · [class] static final C24032 · extends `SuspendLambda implements Functi
 - `int i = this.label`  L1197
 - `MutableStateFlow mutableStateFlow = this.this$0._connectState`  L1212
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1184 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1189 @Override
 - `Object invokeSuspend(Object obj)`  L1194 @Override
-- `throw new IllegalStateException( 172 )`  L1207
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialogViewModel$C24032$AnonymousClass1`
 L1232 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialogViewModel.java`
 注解：
@@ -688,11 +668,10 @@ L1232 · [class] static final AnonymousClass1 · extends `SuspendLambda implemen
 - `int i = this.label`  L1256
 - `Function1<Continuation<? super Unit>, Object> function1 = this.$block`  L1259
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1244 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1249 @Override
 - `Object invokeSuspend(Object obj)`  L1254 @Override
-- `throw new IllegalStateException( 182 )`  L1266
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialogViewModel$C24041`
 L212 · [class] static final C24041 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialogViewModel.java`
 注解：
@@ -705,11 +684,10 @@ L212 · [class] static final C24041 · extends `SuspendLambda implements Functio
 - `int i = this.label`  L238
 - `MutableStateFlow mutableStateFlow = ConnectDialogViewModel.this._wifiScanState`  L260
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L225 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L230 @Override
 - `Object invokeSuspend(Object obj)`  L235 @Override
-- `throw new IllegalStateException( 109 )`  L251
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialogViewModel$connectWithWifiSpecifier$1$result$1`
 L18 · [class] final ConnectDialogViewModel$connectWithWifiSpecifier$1$result$1 · extends `SuspendLambda implements Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object>` · implements `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialogViewModel$connectWithWifiSpecifier$1$result$1.java`
 注解：
@@ -720,11 +698,10 @@ L18 · [class] final ConnectDialogViewModel$connectWithWifiSpecifier$1$result$1 
 - `ConnectDialogViewModel this$0`  L21
 - `int i = this.label`  L44
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L30 @Override
 - `Object invoke(ConnectionProgressUpdate connectionProgressUpdate, Continuation<? super Unit> continuation)`  L37 @Override
 - `Object invokeSuspend(Object obj)`  L42 @Override
-- `throw new IllegalStateException( 8 )`  L54
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialogViewModel$detectM3Connection$1$result$1`
 L18 · [class] final ConnectDialogViewModel$detectM3Connection$1$result$1 · extends `SuspendLambda implements Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object>` · implements `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialogViewModel$detectM3Connection$1$result$1.java`
 注解：
@@ -735,11 +712,10 @@ L18 · [class] final ConnectDialogViewModel$detectM3Connection$1$result$1 · ext
 - `ConnectDialogViewModel this$0`  L21
 - `int i = this.label`  L44
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L30 @Override
 - `Object invoke(ConnectionProgressUpdate connectionProgressUpdate, Continuation<? super Unit> continuation)`  L37 @Override
 - `Object invokeSuspend(Object obj)`  L42 @Override
-- `throw new IllegalStateException( 8 )`  L54
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialogViewModel$detectRideConnection$1$result$1`
 L18 · [class] final ConnectDialogViewModel$detectRideConnection$1$result$1 · extends `SuspendLambda implements Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object>` · implements `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialogViewModel$detectRideConnection$1$result$1.java`
 注解：
@@ -750,11 +726,10 @@ L18 · [class] final ConnectDialogViewModel$detectRideConnection$1$result$1 · e
 - `ConnectDialogViewModel this$0`  L21
 - `int i = this.label`  L44
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L30 @Override
 - `Object invoke(ConnectionProgressUpdate connectionProgressUpdate, Continuation<? super Unit> continuation)`  L37 @Override
 - `Object invokeSuspend(Object obj)`  L42 @Override
-- `throw new IllegalStateException( 8 )`  L54
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialogViewModel$retryDetectRide3Pro$1`
 L15 · [class] final ConnectDialogViewModel$retryDetectRide3Pro$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialogViewModel$retryDetectRide3Pro$1.java`
 注解：
@@ -786,11 +761,10 @@ L21 · [class] final ConnectDialogViewModel$retryDetectRide3Pro$2$result$1 · ex
 - `ConnectDialogViewModel this$0`  L26
 - `int i = this.label`  L53
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L37 @Override
 - `Object invoke(ConnectionProgressUpdate connectionProgressUpdate, Continuation<? super Unit> continuation)`  L44 @Override
 - `Object invokeSuspend(Object obj)`  L51 @Override
-- `throw new IllegalStateException( 8 )`  L79
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectDialogViewModel$WhenMappings`
 L85 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/dialog/ConnectDialogViewModel.java`
 注解：
@@ -885,7 +859,7 @@ L26 · [class] public final ConnectionProgressDialog · extends `DialogFragment`
 - `DialogConnectionProgressBinding dialogConnectionProgressBinding = this.binding`  L139
 - `ImageView imageView = dialogConnectionProgressBinding.ivConnectionStatus`  L147
 
-方法（11）：
+方法（10）：
 - `void onCreate(Bundle savedInstanceState)`  L75 @Override
 - `Dialog onCreateDialog(Bundle savedInstanceState)`  L81 @Override
 - `void onStart()`  L93 @Override
@@ -899,7 +873,6 @@ L26 · [class] public final ConnectionProgressDialog · extends `DialogFragment`
     - 体内字面量："title" · "detail"
 - `void update(Mode mode, String title, String detail)`  L130
 - `void render()`  L137
-- `throw new NoWhenBranchMatchedException()`  L157
 - `void onDestroyView()`  L165 @Override
 ### `com.tuwinsmart.tuwin.presentation.dialog.ConnectionProgressDialog$Mode`
 L34 · [enum] private Mode · `com/tuwinsmart/tuwin/presentation/dialog/ConnectionProgressDialog.java`

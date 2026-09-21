@@ -1537,7 +1537,7 @@ L45 · [class] public RemoteDeviceFilesFragmentPresenter · extends `BasePresent
 - `long fileSize = 0`  L242
 - `List<MultiPbItemInfo> list = this.pbItemInfoList`  L484
 
-方法（32）：
+方法（31）：
 - `public RemoteDeviceFilesFragmentPresenter(Activity activity, int i)`  L113
     - 体内字面量："RemoteDeviceFilesFragmentPresenter"
 - `LinkedList<ICatchFile> convertFileList(List<FileItemInfo> list)`  L126
@@ -1573,7 +1573,6 @@ L45 · [class] public RemoteDeviceFilesFragmentPresenter · extends `BasePresent
     - 体内字面量："/VIDEO" · "/JPG" · "/EVENT" · "/VIDEO" · "/JPG" · "/EVENT" · "pbItemInfoList="
 - `void run()`  L458 @Override
 - `void run()`  L467 @Override
-- `throw new RuntimeException(e)`  L476
 - `void refreshPhotoWall()`  L482
     - 体内字面量："1122" · "refreshPhotoWall"
 - `void resetCurIndex()`  L493

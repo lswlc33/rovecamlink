@@ -946,7 +946,7 @@ L32 · [class] public AmbaPlaybackPresenter · implements `IChannelListener` · 
 - `String str`  L416
 - `LruCache<String, Bitmap> lruCache = this.bitmapLruCache`  L489
 
-方法（49）：
+方法（48）：
 - `void handleMessage(Message msg)`  L44 @Override
 - `public AmbaPlaybackPresenter(AmbaPlaybackActivity ambaPlaybackActivity)`  L73
 - `void failure(int code)`  L83 @Override
@@ -993,7 +993,7 @@ L32 · [class] public AmbaPlaybackPresenter · implements `IChannelListener` · 
 - `void prepareDownloadThumb(String dtsPath, AmbaRequestCallback ambaRequestCallback)`  L415
 - `void setClientInfo(AmbaRequestCallback ambaRequestCallback)`  L431
 - `void getFileInfoList(int start, int end, AmbaRequestCallback ambaRequestCallback)`  L435
-- `throw new Exception( 36 )`  L441
+    - 体内字面量："åï¼æé¬¼ï¼ä¸ä¸ªç¼©ç¥å¾ä¸è½½åä¸¤ç§å®ç°"
 - `void getFileList(int start, int end, AmbaRequestCallback ambaRequestCallback)`  L448
 - `void getFileInfo(String path, AmbaRequestCallback ambaRequestCallback)`  L456
 - `void dumpToShow(int shareType, HiDefine.PathConnection pathConnection)`  L464
@@ -2250,7 +2250,7 @@ L62 · [class] public final BroadcastDouyinFragment2 · extends `BaseFragment im
 - `ComponentActivity componentActivity`  L1292
 - `RTMPBean rTMPBean = broadcastDouyinFragment2.rtmpBean`  L1310
 
-方法（118）：
+方法（115）：
 - `public BroadcastDouyinFragment2()`  L130
 - `void onActivityResult(Object obj)`  L133 @Override
     - 体内字面量："registerForActivityResult(...)"
@@ -2358,7 +2358,6 @@ L62 · [class] public final BroadcastDouyinFragment2 · extends `BaseFragment im
     - 体内字面量："msg"
 - `void onFail(int code, String msg)`  L790 @Override
     - 体内字面量："msg"
-- `throw new NoWhenBranchMatchedException()`  L806
 - `void onClick(View view2)`  L812 @Override
 - `void onClick(View view2)`  L818 @Override
 - `void initListener$lambda$7(BroadcastDouyinFragment2 broadcastDouyinFragment2, View view)`  L825
@@ -2372,7 +2371,6 @@ L62 · [class] public final BroadcastDouyinFragment2 · extends `BaseFragment im
     - 体内字面量："status"
 - `void onFail(int code, String msg)`  L906 @Override
     - 体内字面量："msg"
-- `throw new NoWhenBranchMatchedException()`  L915
 - `void initListener$lambda$13(BroadcastDouyinFragment2 broadcastDouyinFragment2, View view)`  L920
 - `void initListener$lambda$14(BroadcastDouyinFragment2 broadcastDouyinFragment2, View view)`  L927
 - `void startNewLive(String msg, int fbl, int fps, int bitrate)`  L938
@@ -2393,7 +2391,6 @@ L62 · [class] public final BroadcastDouyinFragment2 · extends `BaseFragment im
     - 体内字面量："<set-?>"
 - `void broadcastStatusChanged(DouyinStreamController.BroadcastStatus broadcastStatus)`  L1103 @Override
     - 体内字面量："broadcastStatus"
-- `throw new NoWhenBranchMatchedException()`  L1122
 - `void onPinSuccess(final String deviceName, final boolean isSupportBlueLive)`  L1131 @Override
     - 体内字面量："deviceName"
 - `void run()`  L1147 @Override
@@ -2721,7 +2718,7 @@ L22 · [class] public final CameraPreviewView · extends `TextureView` · `com/g
 - `int i = 0`  L82
 - `String str2 = str`  L98
 
-方法（18）：
+方法（13）：
 - `public CameraPreviewView(Context context)`  L29
     - 体内字面量："context" · "camera" · "null cannot be cast to non-null type android.hardware.camera2.CameraManager" · "CameraThread"
 - `boolean onSurfaceTextureDestroyed(SurfaceTexture surface)`  L40 @Override
@@ -2734,22 +2731,17 @@ L22 · [class] public final CameraPreviewView · extends `TextureView` · `com/g
     - 体内字面量："surface"
 - `void release()`  L63
 - `void openFrontCamera()`  L76
-- `throw new IllegalStateException( 33 )`  L100
 - `void onOpened(CameraDevice device)`  L106 @Override
     - 体内字面量："device"
 - `void onDisconnected(CameraDevice device)`  L113 @Override
     - 体内字面量："device"
 - `void onError(CameraDevice device, int error)`  L120 @Override
-    - 体内字面量："device"
-- `throw new RuntimeException( 37  + error)`  L122
-- `throw new RuntimeException( 38 , e)`  L126
-- `throw new RuntimeException( 39 , e2)`  L128
+    - 体内字面量："device" · "ç¸æºæå¼å¤±è´¥: error=" · "ç¸æºè®¿é®å¤±è´¥" · "ç¼ºå°ç¸æºæé"
 - `void createPreviewSession(final CameraDevice camera, final Handler cameraHandler)`  L133
 - `void onConfigured(CameraCaptureSession session)`  L142 @Override
     - 体内字面量："session" · "build(...)"
 - `void onConfigureFailed(CameraCaptureSession session)`  L153 @Override
-    - 体内字面量："session"
-- `throw new RuntimeException( 43 )`  L155
+    - 体内字面量："session" · "é¢è§ä¼è¯éç½®å¤±è´¥"
 ### `com.gku.actioncam.amba.ui.stream.dialog.BluePinAddDialogFragment`
 L17 · [class] public final BluePinAddDialogFragment · extends `BottomSheetDialogFragment` · `com/gku/actioncam/amba/ui/stream/dialog/BluePinAddDialogFragment.java`
 注解：

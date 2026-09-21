@@ -218,7 +218,7 @@ L14 · [class] public abstract GSYBaseActivityDetail · extends `GSYBaseVideoPla
 - `OrientationUtils orientationUtils = this.orientationUtils`  L212
 - `OrientationUtils orientationUtils = this.orientationUtils`  L222
 
-方法（42）：
+方法（41）：
 - `void clickForFullScreen()`  L19
 - `boolean getDetailOrientationRotateAuto()`  L21
 - `GSYVideoOptionBuilder getGSYVideoOptionBuilder()`  L23
@@ -259,7 +259,6 @@ L14 · [class] public abstract GSYBaseActivityDetail · extends `GSYBaseVideoPla
 - `void onDestroy()`  L191 @Override
 - `void onConfigurationChanged(Configuration configuration)`  L203 @Override
 - `void onPrepared(String str, Object... objArr)`  L211
-- `throw new NullPointerException( 0 )`  L214
 - `void onQuitFullscreen(String str, Object... objArr)`  L221 @Override
 ### `com.gku.ffm.zqvideo.GSYBaseADActivityDetail`
 L15 · [class] public abstract GSYBaseADActivityDetail · extends `GSYBaseVideoPlayer, R extends GSYADVideoPlayer> extends GSYBaseActivityDetail<T>` · `com/gku/ffm/zqvideo/GSYBaseADActivityDetail.java`
@@ -1193,21 +1192,13 @@ L18 · [class] public GSYVideoGLViewSimpleRender · extends `GSYVideoGLViewBaseR
 - `boolean mTakeShotPic = false`  L36
 - `float[] fArr = {-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f}`  L44
 
-方法（27）：
+方法（23）：
 - `void releaseAll()`  L40 @Override
 - `public GSYVideoGLViewSimpleRender()`  L43
 - `void onDrawFrame(GL10 gl10)`  L54 @Override
 - `void onSurfaceChanged(GL10 gl10, int i, int i2)`  L70 @Override
 - `void onSurfaceCreated(GL10 gl10, EGLConfig eGLConfig)`  L75 @Override
-    - 体内字面量："aPosition" · "glGetAttribLocation aPosition"
-- `throw new RuntimeException( 3 )`  L84
-    - 体内字面量："aTextureCoord" · "glGetAttribLocation aTextureCoord"
-- `throw new RuntimeException( 6 )`  L89
-    - 体内字面量："uMVPMatrix" · "glGetUniformLocation uMVPMatrix"
-- `throw new RuntimeException( 9 )`  L94
-    - 体内字面量："uSTMatrix" · "glGetUniformLocation uSTMatrix"
-- `throw new RuntimeException( 12 )`  L99
-    - 体内字面量："glBindTexture mTextureID"
+    - 体内字面量："aPosition" · "glGetAttribLocation aPosition" · "Could not get attrib location for aPosition" · "aTextureCoord" · "glGetAttribLocation aTextureCoord" · "Could not get attrib location for aTextureCoord" · "uMVPMatrix" · "glGetUniformLocation uMVPMatrix" · "Could not get attrib location for uMVPMatrix" · "uSTMatrix" · "glGetUniformLocation uSTMatrix" · "Could not get attrib location for uSTMatrix" · "glBindTexture mTextureID"
 - `void onFrameAvailable(SurfaceTexture surfaceTexture)`  L115 @Override
 - `void setEffect(GSYVideoGLView.ShaderInterface shaderInterface)`  L120 @Override
 - `GSYVideoGLView.ShaderInterface getEffect()`  L129 @Override
@@ -1750,7 +1741,7 @@ L26 · [class] public GSYVideoHelper · `com/gku/ffm/zqvideo/utils/GSYVideoHelpe
 - `ViewGroup viewGroup2 = this.mWindowViewContainer`  L349
 - `OrientationUtils orientationUtils = this.mOrientationUtils`  L365
 
-方法（38）：
+方法（37）：
 - `public GSYVideoHelper(Context context)`  L45
 - `public GSYVideoHelper(Context context, StandardGSYVideoPlayer standardGSYVideoPlayer)`  L49
     - 体内字面量："NULL"
@@ -1775,7 +1766,6 @@ L26 · [class] public GSYVideoHelper · `com/gku/ffm/zqvideo/utils/GSYVideoHelpe
 - `void addVideoPlayer(int i, View view, String str, ViewGroup viewGroup, View view2)`  L284
 - `void setPlayPositionAndTag(int i, String str)`  L303
 - `void startPlay()`  L308
-- `throw new NullPointerException( 3 )`  L315
 - `void onClick(View view)`  L327 @Override
 - `void doFullBtnLogic()`  L335
 - `boolean backFromFull()`  L343
@@ -2922,7 +2912,7 @@ L29 · [class] public abstract GSYVideoView · extends `GSYTextureRenderView imp
 - `NetInfoModule netInfoModule = this.mNetInfoModule`  L831
 - `int i = this.mCurrentState`  L843
 
-方法（95）：
+方法（94）：
 - `boolean backFromFull(Context context)`  L73
 - `GSYVideoViewBridge getGSYVideoManager()`  L75
 - `int getLayoutId()`  L77
@@ -2954,8 +2944,7 @@ L29 · [class] public abstract GSYVideoView · extends `GSYTextureRenderView imp
 - `void init(Context context)`  L344
     - 体内字面量："audio"
 - `void initInflate(Context context)`  L360
-    - 体内字面量："GSYImageCover" · "********************\n*****   æ³¨æ   *************************\n*è¯¥çæ¬éè¦æ¸é¤å¸å±æä»¶ä¸­çGSYImageCover\n****  Attention  ***\n*Please remove GSYImageCover from Layout in this Version\n********************\n"
-- `throw new InflateException( 11 )`  L367
+    - 体内字面量："GSYImageCover" · "********************\n*****   æ³¨æ   *************************\n*è¯¥çæ¬éè¦æ¸é¤å¸å±æä»¶ä¸­çGSYImageCover\n****  Attention  ***\n*Please remove GSYImageCover from Layout in this Version\n********************\n" · "è¯¥çæ¬éè¦æ¸é¤å¸å±æä»¶ä¸­çGSYImageCoverï¼please remove GSYImageCover from your layout"
 - `void startButtonLogic()`  L373
 - `void prepareVideo()`  L386
 - `void startPrepare()`  L390

@@ -223,7 +223,7 @@ L27 · [class] public StickyGridHeadersGridView · extends `GridView implements 
 - `StickyGridHeadersBaseAdapterWrapper stickyGridHeadersBaseAdapterWrapper = this.mAdapter`  L961
 - `StickyGridHeadersBaseAdapterWrapper stickyGridHeadersBaseAdapterWrapper`  L1012
 
-方法（61）：
+方法（51）：
 - `public StickyGridHeadersGridView(Context context)`  L215
 - `public StickyGridHeadersGridView(Context context, AttributeSet attributeSet)`  L219
 - `public StickyGridHeadersGridView(Context context, AttributeSet attributeSet, int i)`  L223
@@ -242,18 +242,8 @@ L27 · [class] public StickyGridHeadersGridView · extends `GridView implements 
 - `boolean areHeadersSticky()`  L539
 - `void attachHeader(View view)`  L543
     - 体内字面量："mAttachInfo" · "dispatchAttachedToWindow" · "android.view.View$AttachInfo"
-- `throw new RuntimePlatformSupportException(e)`  L552
-- `throw new RuntimePlatformSupportException(e2)`  L554
-- `throw new RuntimePlatformSupportException(e3)`  L556
-- `throw new RuntimePlatformSupportException(e4)`  L558
-- `throw new RuntimePlatformSupportException(e5)`  L560
-- `throw new RuntimePlatformSupportException(e6)`  L562
 - `void detachHeader(View view)`  L567
     - 体内字面量："dispatchDetachedFromWindow"
-- `throw new RuntimePlatformSupportException(e)`  L574
-- `throw new RuntimePlatformSupportException(e2)`  L576
-- `throw new RuntimePlatformSupportException(e3)`  L578
-- `throw new RuntimePlatformSupportException(e4)`  L580
 - `void dispatchDraw(Canvas canvas)`  L586 @Override
 - `View getHeaderAt(int i)`  L704
 - `View getStickiedHeader()`  L715

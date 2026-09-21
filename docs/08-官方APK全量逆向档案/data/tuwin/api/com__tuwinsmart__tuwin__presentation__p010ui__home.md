@@ -184,7 +184,7 @@ L84 · [class] public final HomeListAdapter · extends `RecyclerView.Adapter<Rec
 - `HomeListPreviewState homeListPreviewState`  L1424
 - `int i = 0`  L1466
 
-方法（64）：
+方法（63）：
 - ` HomeListAdapter(List list, OnItemClickListener onItemClickListener, Function1 function1, boolean z, int i, DefaultConstructorMarker defaultConstructorMarker)`  L159
 - `List<ConnectedDevice> getDeviceList()`  L163
 - `OnItemClickListener getListener()`  L167
@@ -201,8 +201,6 @@ L84 · [class] public final HomeListAdapter · extends `RecyclerView.Adapter<Rec
     - 体内字面量："parent" · "inflate(...)" · "inflate(...)" · "inflate(...)" · "inflate(...)" · "inflate(...)"
 - `int getItemViewType(int position)`  L260 @Override
 - `void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position)`  L290 @Override
-- `throw new NoWhenBranchMatchedException()`  L339
-    - 体内字面量："btnDeviceDetail"
 - `void onClick(View view)`  L351 @Override
     - 体内字面量："btnActionPause"
 - `void onClick(View view)`  L359 @Override
@@ -328,12 +326,10 @@ L750 · [class] static final C27631 · extends `SuspendLambda implements Functio
 - `Result.Companion companion6 = Result.INSTANCE`  L1130
 - `Result.Companion companion7 = Result.INSTANCE`  L1133
 
-方法（10）：
+方法（9）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L766 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L773 @Override
 - `Object invokeSuspend(Object obj)`  L797 @Override
-- `throw new IllegalStateException( 151 )`  L820
-    - 体内字面量："HomeListAdapter: card preview cancelled: " · "HomeListAdapter: card preview failed"
 - `DeviceSessionSnapshot invoke(String id)`  L878 @Override
 - `DeviceSessionSnapshot invoke(String id)`  L915 @Override
 - `DeviceSessionSnapshot invoke(String id)`  L953 @Override
@@ -347,11 +343,11 @@ L1301 · [class] static final C27641 · extends `SuspendLambda implements Functi
 字段/常量（1）：
 - `int label`  L1302
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1309 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1314 @Override
 - `java.lang.Object invokeSuspend(java.lang.Object r6)`  L1329 @Override
-- `throw new UnsupportedOperationException( 181 )`  L1375
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.home.adapter.HomeListAdapter.C27641.invokeSuspend(java.lang.Object):java.lang.Object"
 ### `com.tuwinsmart.tuwin.presentation.p010ui.home.adapter.HomeListAdapter$C27651`
 L1226 · [class] static final C27651 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/home/adapter/HomeListAdapter.java`
 注解：
@@ -365,11 +361,10 @@ L1226 · [class] static final C27651 · extends `SuspendLambda implements Functi
 - `Result.Companion companion = Result.INSTANCE`  L1257
 - `Result.Companion companion2 = Result.INSTANCE`  L1270
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1238 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1245 @Override
 - `Object invokeSuspend(Object obj)`  L1250 @Override
-- `throw new IllegalStateException( 173 )`  L1264
 ### `com.tuwinsmart.tuwin.presentation.p010ui.home.adapter.HomeListAdapter$WhenMappings`
 L119 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/home/adapter/HomeListAdapter.java`
 注解：
@@ -434,12 +429,11 @@ L18 · [class] final C2757x4614b080 · extends `SuspendLambda implements Functio
 - `Object L$0`  L21
 - `int label`  L22
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L32 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super String> continuation)`  L37 @Override
 - `java.lang.Object invokeSuspend(java.lang.Object r8)`  L51 @Override
-    - 体内字面量："call to 'resume' before 'invoke' with coroutine" · "yomu.atlasmeta.one"
-- `throw new UnsupportedOperationException( 11 )`  L108
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.home.C2757x4614b080.invokeSuspend(java.lang.Object):java.lang.Object" · "call to 'resume' before 'invoke' with coroutine" · "yomu.atlasmeta.one"
 ### `com.tuwinsmart.tuwin.presentation.p010ui.home.HomeActivity`
 L44 · [class] public final HomeActivity · extends `BaseActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/home/HomeActivity.java`
 注解：
@@ -483,7 +477,7 @@ L44 · [class] public final HomeActivity · extends `BaseActivity` · `com/tuwin
 - `Object next`  L357
 - `ActivityHomeBinding activityHomeBinding = this.binding`  L431
 
-方法（26）：
+方法（25）：
 - `View getPermissionView()`  L55
 - `void setPermissionView(View view)`  L59
 - `View getContentRoot()`  L64 @Override
@@ -510,7 +504,7 @@ L44 · [class] public final HomeActivity · extends `BaseActivity` · `com/tuwin
     - 体内字面量："privacyPolicyHtml"
 - `void showPrivacyDialog$lambda$6(HomeActivity this$0, View view)`  L327
 - `void showPrivacyDialog$lambda$7(View view)`  L350
-- `throw new RuntimeException( 69 )`  L352
+    - 体内字面量："System.exit returned normally, while it was supposed to halt JVM."
 - `void onResume()`  L356 @Override
 - `void toggleBottomBar(boolean show)`  L430
 - `void onPause()`  L440 @Override
@@ -529,11 +523,10 @@ L384 · [class] static final C27541 · extends `SuspendLambda implements Functio
 - `DeviceType deviceType = this.$effectiveDeviceType`  L413
 - `ConnectedDevice connectedDevice = this.$connectedDevice`  L414
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L397 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L402 @Override
 - `Object invokeSuspend(Object obj)`  L407 @Override
-- `throw new IllegalStateException( 77 )`  L422
 ### `com.tuwinsmart.tuwin.presentation.p010ui.home.HomeActivity$showPrivacyDialog$alert$1$1`
 L20 · [class] final HomeActivity$showPrivacyDialog$alert$1$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/home/HomeActivity$showPrivacyDialog$alert$1$1.java`
 注解：
@@ -543,19 +536,17 @@ L20 · [class] final HomeActivity$showPrivacyDialog$alert$1$1 · extends `Suspen
 - `int label`  L22
 - `int i = this.label`  L43
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L31 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L36 @Override
 - `Object invokeSuspend(Object obj)`  L41 @Override
-- `throw new IllegalStateException( 7 )`  L52
 ### `com.tuwinsmart.tuwin.presentation.p010ui.home.HomeLegacyDeviceActionPolicy`
 L12 · [class] public final HomeLegacyDeviceActionPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/home/HomeLegacyDeviceActionPolicy.java`
 注解：
 
-方法（3）：
+方法（2）：
 - `private HomeLegacyDeviceActionPolicy()`  L42
 - `boolean shouldRunLegacyDeviceActions(DeviceType deviceType)`  L45
-- `throw new NoWhenBranchMatchedException()`  L52
 ### `com.tuwinsmart.tuwin.presentation.p010ui.home.HomeLegacyDeviceActionPolicy$WhenMappings`
 L17 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/home/HomeLegacyDeviceActionPolicy.java`
 注解：
@@ -585,15 +576,13 @@ L38 · [class] public final HomePrivacyPolicyContentLoader · `com/tuwinsmart/tu
 - `int iLastIndexOf$default`  L283
 - `String str = html`  L285
 
-方法（9）：
+方法（7）：
 - `private HomePrivacyPolicyContentLoader()`  L65
 - `String getProminentLocationDisclosureHtml()`  L68
 - `String getLoadingHtml()`  L84
 - `void loadOnline(Context context, Function1<? super String, Unit> onLoaded)`  L232
     - 体内字面量："context" · "onLoaded"
 - `Object fetchWhenInternetRouteReady(String str, Continuation<? super String> continuation)`  L240
-- `throw new IllegalStateException( 59 )`  L265
-- `throw new RouteUnavailableException( 60 )`  L273
 - `String buildDialogHtml$app_release_64(String privacyPolicyHtml)`  L276
     - 体内字面量："privacyPolicyHtml" · "\n"
 - `String extractDialogHtml$app_release_64(String html)`  L281
@@ -628,11 +617,10 @@ L105 · [class] static final C27581 · extends `SuspendLambda implements Functio
 - `HomePrivacyPolicyContentLoader homePrivacyPolicyContentLoader2 = HomePrivacyPolicyContentLoader.INSTANCE`  L173
 - `Function1<String, Unit> function1 = this.$onLoaded`  L183
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L120 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L127 @Override
 - `Object invokeSuspend(Object obj)`  L132 @Override
-- `throw new IllegalStateException( 46 )`  L156
 ### `com.tuwinsmart.tuwin.presentation.p010ui.home.HomePrivacyPolicyContentLoader$C27581$AnonymousClass1`
 L196 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/home/HomePrivacyPolicyContentLoader.java`
 注解：
@@ -642,11 +630,11 @@ L196 · [class] static final AnonymousClass1 · extends `SuspendLambda implement
 - `Function1<String, Unit> $onLoaded`  L198
 - `int label`  L199
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L210 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L215 @Override
 - `Object invokeSuspend(Object obj)`  L220 @Override
-- `throw new IllegalStateException( 56 )`  L223
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.presentation.p010ui.home.HomeTipsWebsiteCacheCoordinator`
 L17 · [class] public final HomeTipsWebsiteCacheCoordinator · `com/tuwinsmart/tuwin/presentation/p010ui/home/HomeTipsWebsiteCacheCoordinator.java`
 注解：

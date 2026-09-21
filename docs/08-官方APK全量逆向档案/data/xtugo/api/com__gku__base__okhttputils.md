@@ -265,7 +265,7 @@ L30 · [class] public MultiDownloader · `com/gku/base/okhttputils/MultiDownload
 - `PrintStream printStream6 = System.out`  L414
 - `Object[] objArr6 = new Object[1]`  L415
 
-方法（14）：
+方法（13）：
 - `public MultiDownloader(Network network, String str, String str2)`  L43
     - 体内字面量：".tmp"
 - `void start()`  L50
@@ -281,7 +281,6 @@ L30 · [class] public MultiDownloader · `com/gku/base/okhttputils/MultiDownload
 - `boolean fetchFileInfo()`  L154
     - 体内字面量："Content-Length" · "Accept-Ranges" · "æä»¶å¤§å°: %d bytes, Rangeæ¯æ: %s%n" · "bytes"
 - `void downloadPart(int i, long j, long j2)`  L208
-- `throw new IOException( 16 )`  L254
 - `void saveProgress()`  L427
 - `void loadProgress()`  L446
     - 体内字面量："æ¢å¤è¿åº¦: å·²ä¸è½½ " · " bytes" · "æ æ³è¯»åè¿åº¦æä»¶ï¼éæ°å¼å§ä¸è½½ã"

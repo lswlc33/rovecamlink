@@ -273,7 +273,7 @@ L42 · [class] public DlgForProcessActivity · extends `Activity` · `com/gku/ac
 - `FileInputStream fileInputStream = null`  L958
 - `byte[] bArr = new byte[1024]`  L964
 
-方法（16）：
+方法（15）：
 - `void handleMessage(Message msg)`  L67 @Override
 - `void onCreate(Bundle savedInstanceState)`  L117 @Override
 - `void onClick(View v)`  L124 @Override
@@ -286,7 +286,7 @@ L42 · [class] public DlgForProcessActivity · extends `Activity` · `com/gku/ac
     - 体内字面量："dlgType" · "imgPathLen" · "bDeleteSuccess"
 - `boolean downloadImage(String str, String str2)`  L255
 - `boolean downloadImagePathConnection(com.gku.actioncam.hisilicon.dv.biz.HiDefine.PathConnection r23, java.lang.String r24)`  L873
-- `throw new UnsupportedOperationException( 58 )`  L878
+    - 体内字面量："Method not decompiled: com.gku.actioncam.hisilicon.dv.dlg.DlgForProcessActivity.downloadImagePathConnection(com.gku.actioncam.hisilicon.dv.biz.HiDefine$PathConnection, java.lang.String):boolean"
 - `long getContentSize(HttpURLConnection conn)`  L881
 - `void startDownlaod()`  L895
 - `void run()`  L898 @Override

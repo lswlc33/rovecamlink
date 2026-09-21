@@ -12,9 +12,8 @@
 ### `com.gku.crashhandle.CrashMock`
 L4 · [class] public CrashMock · `com/gku/crashhandle/CrashMock.java`
 
-方法（2）：
+方法（1）：
 - `void mockJavaCrash()`  L5
-- `throw new RuntimeException()`  L6
 ### `com.gku.crashhandle.CrashReportManager`
 L17 · [class] public final CrashReportManager · `com/gku/crashhandle/CrashReportManager.java`
 注解：
@@ -23,9 +22,8 @@ L17 · [class] public final CrashReportManager · `com/gku/crashhandle/CrashRepo
 - `Boolean isDebuggable = BuildConfig.isDebuggable`  L46
 - `String MODEL = Build.MODEL`  L55
 
-方法（4）：
+方法（3）：
 - `private CrashReportManager()`  L20
 - `void initCrashReport(Context context)`  L24 
     - 体内字面量："context" · "android_id" · "unknown" · "getApplicationInfo(...)" · "UMENG_CHANNEL"
-- `throw new RuntimeException(e)`  L50
 - `String getSystemModel()`  L54

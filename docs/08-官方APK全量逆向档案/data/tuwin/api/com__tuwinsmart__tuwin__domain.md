@@ -40,7 +40,7 @@ L18 · [class] public final ConnectedDevice · `com/tuwinsmart/tuwin/domain/mode
 - `String str9 = this.sessionId`  L191
 - `DeviceType deviceType = this.deviceType`  L328
 
-方法（48）：
+方法（47）：
 - `public ConnectedDevice()`  L86
 - `String getSsid()`  L91
 - `String getModel()`  L96
@@ -93,8 +93,6 @@ L18 · [class] public final ConnectedDevice · `com/tuwinsmart/tuwin/domain/mode
 - `String getSessionId()`  L319
 - `void setSessionId(String str)`  L323
 - `String getDeviceName()`  L327
-- `throw new NoWhenBranchMatchedException()`  L345
-    - 体内字面量："Lcom/tuwinsmart/tuwin/domain/model/ConnectedDevice$Companion;" · "()V" · "DEFAULT_WIFI_PASSWORD" · "fromM3DeviceAttr" · "Lcom/tuwinsmart/tuwin/domain/model/ConnectedDevice;" · "attr" · "Lcom/tuwinsmart/tuwin/domain/model/M3DeviceAttr;" · "fromRide5DeviceAttr" · "Ljava/util/HashMap;" · "Lkotlin/collections/HashMap;" · "app_release_64"
 ### `com.tuwinsmart.tuwin.domain.model.ConnectedDevice$Companion`
 L350 · [class] public static final Companion · `com/tuwinsmart/tuwin/domain/model/ConnectedDevice.java`
 注解：
@@ -515,12 +513,11 @@ L14 · [class] public final DeviceConfig · `com/tuwinsmart/tuwin/domain/model/D
 L113 · [class] public static final Companion · `com/tuwinsmart/tuwin/domain/model/DeviceConfig.java`
 注解：
 
-方法（4）：
+方法（3）：
 - ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L142
 - `private Companion()`  L146
 - `DeviceConfig fromDeviceType(DeviceType deviceType)`  L149
     - 体内字面量："deviceType" · "TUWIN_XXXX" · "TUWIN_R3P_XXX" · "TUWIN_R6_XXX" · "TUWIN_M3_XXXX"
-- `throw new NoWhenBranchMatchedException()`  L164
 ### `com.tuwinsmart.tuwin.domain.model.DeviceConfig$Companion$WhenMappings`
 L117 · [class] public WhenMappings · `com/tuwinsmart/tuwin/domain/model/DeviceConfig.java`
 注解：
@@ -1062,7 +1059,7 @@ L21 · [class] public final Ride3ProPlaybackCatalogReducer · `com/tuwinsmart/tu
 - `Object next`  L226
 - `Object next`  L244
 
-方法（20）：
+方法（18）：
 - `private Ride3ProPlaybackCatalogReducer()`  L24
 - `Ride3ProPlaybackCatalog replaceDay(Ride3ProPlaybackCatalog catalog, Ride3ProDayGroup dayGroup)`  L27
     - 体内字面量："catalog" · "dayGroup"
@@ -1087,9 +1084,7 @@ L21 · [class] public final Ride3ProPlaybackCatalogReducer · `com/tuwinsmart/tu
 - `Ride3ProDayGroup invoke(Ride3ProDayGroup day)`  L207 @Override
     - 体内字面量："day"
 - `Ride3ProDayGroup requireDay(Ride3ProPlaybackCatalog catalog, int date)`  L225
-- `throw new IllegalArgumentException( 56  + date)`  L239
 - `Ride3ProHourGroup requireHour(Ride3ProDayGroup day, Ride3ProHourKey key)`  L243
-- `throw new IllegalArgumentException( 57  + key)`  L257
 - `Ride3ProDayGroup snapshot(Ride3ProDayGroup day)`  L260
 - `Integer decrementReportedCount(Integer count)`  L270
 ### `com.tuwinsmart.tuwin.domain.model.Ride3ProPlaybackFile`
@@ -1151,7 +1146,7 @@ L12 · [class] public final Ride3ProPlaybackTimestamp · `com/tuwinsmart/tuwin/d
 - `int i = value / YEAR_DIVISOR`  L108
 - `int i3 = value % 100`  L110
 
-方法（14）：
+方法（13）：
 - `Ride3ProPlaybackTimestamp copy$default(Ride3ProPlaybackTimestamp ride3ProPlaybackTimestamp, int i, int i2, int i3, int i4, Object obj)`  L28
 - `int getDate()`  L42
 - `int getHour()`  L47
@@ -1168,8 +1163,6 @@ L12 · [class] public final Ride3ProPlaybackTimestamp · `com/tuwinsmart/tuwin/d
 - `int getMinute()`  L100
 - `void requireValidDate(int value)`  L104
     - 体内字面量："date must be a valid YYYYMMDD date: "
-- `throw new IllegalArgumentException( 33  + value, e)`  L120
-    - 体内字面量："Lcom/tuwinsmart/tuwin/domain/model/Ride3ProPlaybackTimestamp$Companion;" · "()V" · "DAY_MODULUS" · "MAX_HOUR" · "MAX_MINUTE" · "MAX_YYYYMMDD" · "MIN_HOUR" · "MIN_MINUTE" · "MIN_YYYYMMDD" · "MONTH_DIVISOR" · "MONTH_MODULUS" · "YEAR_DIVISOR" · "app_release_64"
 ### `com.tuwinsmart.tuwin.domain.model.Ride3ProPlaybackTimestamp$Companion`
 L126 · [class] private static final Companion · `com/tuwinsmart/tuwin/domain/model/Ride3ProPlaybackTimestamp.java`
 注解：
@@ -1461,9 +1454,9 @@ L15 · [interface] public M3ConnectionMaintenanceRepository · `com/tuwinsmart/t
 L24 · [class] public static final DefaultImpls · `com/tuwinsmart/tuwin/domain/repository/M3ConnectionMaintenanceRepository.java`
 注解：
 
-方法（2）：
+方法（1）：
 - `Object m2873detectM3ConnectiongIAlus$default(M3ConnectionMaintenanceRepository m3ConnectionMaintenanceRepository, Function2 function2, Continuation continuation, int i, Object obj)`  L27
-- `throw new UnsupportedOperationException( 17 )`  L29
+    - 体内字面量："Super calls with default arguments not supported in this target, function: detectM3Connection-gIAlu-s"
 ### `com.tuwinsmart.tuwin.domain.repository.M3ConnectionMaintenanceRepository$detectM3Connection$1`
 L18 · [class] final M3ConnectionMaintenanceRepository$detectM3Connection$1 · extends `SuspendLambda implements Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object>` · implements `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/domain/repository/M3ConnectionMaintenanceRepository$detectM3Connection$1.java`
 注解：
@@ -1471,11 +1464,11 @@ L18 · [class] final M3ConnectionMaintenanceRepository$detectM3Connection$1 · e
 字段/常量（1）：
 - `int label`  L19
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L26 @Override
 - `Object invoke(ConnectionProgressUpdate connectionProgressUpdate, Continuation<? super Unit> continuation)`  L31 @Override
 - `Object invokeSuspend(Object obj)`  L36 @Override
-- `throw new IllegalStateException( 8 )`  L39
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.domain.repository.M3DeviceAttrRepository`
 L12 · [interface] public M3DeviceAttrRepository · `com/tuwinsmart/tuwin/domain/repository/M3DeviceAttrRepository.java`
 注解：
@@ -1520,11 +1513,11 @@ L26 · [interface] public M3DeviceRepository · `com/tuwinsmart/tuwin/domain/rep
 L110 · [class] public static final DefaultImpls · `com/tuwinsmart/tuwin/domain/repository/M3DeviceRepository.java`
 注解：
 
-方法（6）：
+方法（4）：
 - `Object m2874takePhotogIAlus$default(M3DeviceRepository m3DeviceRepository, int i, Continuation continuation, int i2, Object obj)`  L112
-- `throw new UnsupportedOperationException( 92 )`  L114
+    - 体内字面量："Super calls with default arguments not supported in this target, function: takePhoto-gIAlu-s"
 - `Object m2875uploadFirmwareBWLJW6A$default(M3DeviceRepository m3DeviceRepository, Uri uri, long j, Function2 function2, Continuation continuation, int i, Object obj)`  L124
-- `throw new UnsupportedOperationException( 93 )`  L126
+    - 体内字面量："Super calls with default arguments not supported in this target, function: uploadFirmware-BWLJW6A"
 - `void invoke(long j2, long j3)`  L130
 - `Unit invoke(Long l, Long l2)`  L134 @Override
 ### `com.tuwinsmart.tuwin.domain.repository.M3RecordingTimeUpdate`
@@ -1653,11 +1646,11 @@ L95 · [class] public static final Companion · `com/tuwinsmart/tuwin/domain/rep
 L65 · [class] public static final DefaultImpls · `com/tuwinsmart/tuwin/domain/repository/Ride3ProDeviceRepository.java`
 注解：
 
-方法（4）：
+方法（2）：
 - `Object m2876detectConnection0E7RQCE$default(Ride3ProDeviceRepository ride3ProDeviceRepository, Network network, Function2 function2, Continuation continuation, int i, Object obj)`  L68
-- `throw new UnsupportedOperationException( 49 )`  L70
+    - 体内字面量："Super calls with default arguments not supported in this target, function: detectConnection-0E7RQCE"
 - `Object m2877detectConnectionLightweightgIAlus$default(Ride3ProDeviceRepository ride3ProDeviceRepository, Network network, Continuation continuation, int i, Object obj)`  L82
-- `throw new UnsupportedOperationException( 50 )`  L84
+    - 体内字面量："Super calls with default arguments not supported in this target, function: detectConnectionLightweight-gIAlu-s"
 ### `com.tuwinsmart.tuwin.domain.repository.Ride3ProDeviceRepository$detectConnection$1`
 L18 · [class] final Ride3ProDeviceRepository$detectConnection$1 · extends `SuspendLambda implements Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object>` · implements `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/domain/repository/Ride3ProDeviceRepository$detectConnection$1.java`
 注解：
@@ -1665,11 +1658,11 @@ L18 · [class] final Ride3ProDeviceRepository$detectConnection$1 · extends `Sus
 字段/常量（1）：
 - `int label`  L19
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L26 @Override
 - `Object invoke(ConnectionProgressUpdate connectionProgressUpdate, Continuation<? super Unit> continuation)`  L31 @Override
 - `Object invokeSuspend(Object obj)`  L36 @Override
-- `throw new IllegalStateException( 8 )`  L39
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.domain.repository.Ride5DeviceAttrRepository`
 L12 · [interface] public Ride5DeviceAttrRepository · `com/tuwinsmart/tuwin/domain/repository/Ride5DeviceAttrRepository.java`
 注解：
@@ -1773,11 +1766,11 @@ L51 · [class] static final C23721 · extends `SuspendLambda implements Function
 字段/常量（1）：
 - `int label`  L52
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L59 @Override
 - `Object invoke(ConnectionProgressUpdate connectionProgressUpdate, Continuation<? super Unit> continuation)`  L64 @Override
 - `Object invokeSuspend(Object obj)`  L69 @Override
-- `throw new IllegalStateException( 32 )`  L72
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.domain.strategy.ConnectionStrategy$DefaultImpls`
 L25 · [class] public static final DefaultImpls · `com/tuwinsmart/tuwin/domain/strategy/ConnectionStrategy.java`
 注解：
@@ -1786,9 +1779,9 @@ L25 · [class] public static final DefaultImpls · `com/tuwinsmart/tuwin/domain/
 - `ConnectionCheckMode connectionCheckMode2 = connectionCheckMode`  L34
 - `Function2 function3 = function2`  L38
 
-方法（2）：
+方法（1）：
 - `Object checkConnection$default(ConnectionStrategy connectionStrategy, Network network, ConnectionCheckMode connectionCheckMode, Function2 function2, String str, boolean z, Continuation continuation, int i, Object obj)`  L27
-- `throw new UnsupportedOperationException( 23 )`  L29
+    - 体内字面量："Super calls with default arguments not supported in this target, function: checkConnection"
 ### `com.tuwinsmart.tuwin.domain.strategy.M3ConnectionStrategy`
 L72 · [class] public final M3ConnectionStrategy · implements `ConnectionStrategy` · `com/tuwinsmart/tuwin/domain/strategy/M3ConnectionStrategy.java`
 注解：
@@ -1877,7 +1870,7 @@ L72 · [class] public final M3ConnectionStrategy · implements `ConnectionStrate
 - `Unit unit = null`  L1589
 - `Result.Companion companion2 = Result.INSTANCE`  L1597
 
-方法（18）：
+方法（15）：
 - `public M3ConnectionStrategy(M3SessionConnector m3SessionConnector, DeviceSessionManager deviceSessionManager, M3SessionRepositoryFactory repositoryFactory, CoroutineScope timeSyncScope, Function0<? extends Date> nowProvider, Function0<? extends TimeZone> timeZoneProvider)`  L170
     - 体内字面量："m3SessionConnector" · "deviceSessionManager" · "repositoryFactory" · "timeSyncScope" · "nowProvider" · "timeZoneProvider"
 - ` M3ConnectionStrategy(M3SessionConnector m3SessionConnector, DeviceSessionManager deviceSessionManager, M3SessionRepositoryFactory m3SessionRepositoryFactory, CoroutineScope coroutineScope, C23731 c23731, C23742 c23742, int i, DefaultConstructorMarker defaultConstructorMarker)`  L187
@@ -1886,14 +1879,9 @@ L72 · [class] public final M3ConnectionStrategy · implements `ConnectionStrate
     - 体内字面量："getDefault(...)"
 - `Object checkPrerequisites(Continuation<? super PrerequisiteCheckResult> continuation)`  L205 @Override
 - `Object checkConnection(Network network, ConnectionCheckMode connectionCheckMode, Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, String str, boolean z, Continuation<? super ConnectionResult> continuation)`  L237 @Override
-- `throw new IllegalStateException( 173 )`  L282
-    - 体内字面量："M3 prerequisites check failed: " · "Prerequisites not met" · "m3-restore-" · "m3-restore-"
 - `Object checkActiveSession(String str, Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, Continuation<? super ConnectionResult> continuation)`  L337
 - `Object checkUserSession(M3SessionConnector m3SessionConnector, Network network, String str, Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, Continuation<? super ConnectionResult> continuation)`  L393
-- `throw new IllegalStateException( 208 )`  L901
 - `Object buildSuccessFromDeviceAttr(DeviceSessionSnapshot deviceSessionSnapshot, Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, Continuation<? super ConnectionResult> continuation)`  L953
-- `throw new IllegalStateException( 213 )`  L1032
-    - 体内字面量："M3 session route changed while reading attributes" · "Unknown error" · "Failed to get device attributes: " · "Unknown error" · "Failed to get device attributes: " · "M3 session route changed while reading attributes"
 - `void scheduleTimeSync(final String sessionId, final long routeRevision)`  L1233
 - `Boolean invoke(M3ConnectionStrategy.SessionRevision existing)`  L1244 @Override
     - 体内字面量："existing" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.domain.strategy.M3ConnectionStrategy$scheduleTimeSync$1" · "M3ConnectionStrategy.kt" · "invokeSuspend" · "repository" · "syncSucceeded" · "L$0" · "I$0"
@@ -1966,12 +1954,11 @@ L1511 · [class] static final C23782 · extends `SuspendLambda implements Functi
 - `DeviceSessionManager deviceSessionManager = m3ConnectionStrategy.deviceSessionManager`  L1553
 - `Result.Companion companion2 = Result.INSTANCE`  L1566
 
-方法（5）：
+方法（4）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1525 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L1532 @Override
 - `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L1537
 - `Object invokeSuspend(Object obj)`  L1542 @Override
-- `throw new IllegalStateException( 252 )`  L1560
 ### `com.tuwinsmart.tuwin.domain.strategy.M3ConnectionStrategy$C23791`
 L1260 · [class] static final C23791 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/domain/strategy/M3ConnectionStrategy.java`
 注解：
@@ -2006,12 +1993,10 @@ L1260 · [class] static final C23791 · extends `SuspendLambda implements Functi
 - `M3ConnectionStrategy m3ConnectionStrategy5 = M3ConnectionStrategy.this`  L1470
 - `SessionRevision sessionRevision5 = this.$key`  L1471
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1277 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1282 @Override
 - `Object invokeSuspend(Object obj)`  L1298 @Override
-- `throw new IllegalStateException( 239 )`  L1396
-    - 体内字面量："M3 Connection: Time and timezone synced successfully" · "M3 Connection: Unexpected error during time sync" · "M3 Connection: Time sync failed" · "M3 Connection: Unexpected error during time sync"
 ### `com.tuwinsmart.tuwin.domain.strategy.M3ConnectionStrategy$Companion`
 L1674 · [class] private static final Companion · `com/tuwinsmart/tuwin/domain/strategy/M3ConnectionStrategy.java`
 注解：
@@ -2173,18 +2158,13 @@ L50 · [class] public final Ride3ProConnectionStrategy · implements `Connection
 - `Result.Companion companion = Result.INSTANCE`  L1106
 - `Result.Companion companion2 = Result.INSTANCE`  L1109
 
-方法（13）：
+方法（9）：
 - `public Ride3ProConnectionStrategy(Ride3ProDeviceRepository ride3ProDeviceRepository, Ride3ProSessionConnector ride3ProSessionConnector, DeviceSessionManager deviceSessionManager, DeviceType targetDeviceType)`  L125
     - 体内字面量："ride3ProDeviceRepository" · "targetDeviceType"
 - ` Ride3ProConnectionStrategy(Ride3ProDeviceRepository ride3ProDeviceRepository, Ride3ProSessionConnector ride3ProSessionConnector, DeviceSessionManager deviceSessionManager, DeviceType deviceType, int i, DefaultConstructorMarker defaultConstructorMarker)`  L134
 - `Object checkPrerequisites(Continuation<? super PrerequisiteCheckResult> continuation)`  L139 @Override
 - `Object checkConnection(Network network, ConnectionCheckMode connectionCheckMode, Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, String str, boolean z, Continuation<? super ConnectionResult> continuation)`  L204 @Override
-- `throw new NoWhenBranchMatchedException()`  L385
-- `throw new NoWhenBranchMatchedException()`  L541
-- `throw new IllegalStateException( 128 )`  L886
 - `Object reestablishSessionIfPossible(Network network, String str, Continuation<? super ConnectionResult> continuation)`  L894
-- `throw new IllegalStateException( 133 )`  L1001
-    - 体内字面量："Ride3Pro: refresh re-establishment failed"
 - `boolean isCurrentSsidReadable()`  L1016
     - 体内字面量："\"" · "unknown"
 - `ConnectionResult existingSession(String sessionId)`  L1027
@@ -2331,7 +2311,7 @@ L74 · [class] public final Ride5ConnectionStrategy · implements `ConnectionStr
 - `Result.Companion companion2 = Result.INSTANCE`  L1456
 - `boolean zAdd`  L1477
 
-方法（20）：
+方法（15）：
 - `public Ride5ConnectionStrategy(Ride5DeviceAttrRepository ride5DeviceAttrRepository, Ride5SessionConnector ride5SessionConnector, DeviceSessionManager deviceSessionManager, Ride5SessionPortProvider sessionPortProvider, CoroutineScope timeSyncScope, Function0<? extends Date> nowProvider, Function0<? extends TimeZone> timeZoneProvider)`  L211
     - 体内字面量："ride5DeviceAttrRepository" · "sessionPortProvider" · "timeSyncScope" · "nowProvider" · "timeZoneProvider"
 - ` Ride5ConnectionStrategy(Ride5DeviceAttrRepository ride5DeviceAttrRepository, Ride5SessionConnector ride5SessionConnector, DeviceSessionManager deviceSessionManager, Ride5SessionPortProvider ride5SessionPortProvider, CoroutineScope coroutineScope, Function0 function0, Function0 function1, int i, DefaultConstructorMarker defaultConstructorMarker)`  L228
@@ -2340,20 +2320,12 @@ L74 · [class] public final Ride5ConnectionStrategy · implements `ConnectionStr
     - 体内字面量："getDefault(...)"
 - `Object checkPrerequisites(Continuation<? super PrerequisiteCheckResult> continuation)`  L246 @Override
 - `Object checkConnection(Network network, ConnectionCheckMode connectionCheckMode, Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, String str, boolean z, Continuation<? super ConnectionResult> continuation)`  L280 @Override
-- `throw new IllegalStateException( 182 )`  L354
-    - 体内字面量："Ride5 prerequisites check failed: " · "Prerequisites not met" · "Ride5 connection check error" · "Unknown error"
 - `Object connectUserSession(Network network, String str, Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, Continuation<? super ConnectionResult> continuation)`  L463
-- `throw new IllegalStateException( 199 )`  L1140
 - `Object reestablishSessionIfPossible(Network network, String str, Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, Continuation<? super ConnectionResult> continuation)`  L1147
-- `throw new IllegalStateException( 204 )`  L1247
-    - 体内字面量："Ride5: refresh re-establishment failed: %s"
 - `boolean isCurrentSsidReadable()`  L1260
     - 体内字面量："\"" · "unknown"
 - `Object existingSession(String str, Continuation<? super ConnectionResult> continuation)`  L1273
-- `throw new IllegalStateException( 208 )`  L1353
 - `Object readWifiPassword(ConnectedDevice connectedDevice, long j, Continuation<? super Unit> continuation)`  L1364
-- `throw new IllegalStateException( 211 )`  L1409
-    - 体内字面量："wifipwd" · "RIDE5 Wi-Fi response route is stale" · "Ride5: Wi-Fi password query failed (%s)"
 - `DeviceSessionSnapshot activeRide5Session(final DeviceSessionManager manager)`  L1439
 - `DeviceSessionSnapshot invoke(String id)`  L1448 @Override
 - `void scheduleTimeSync(final String sessionId, final long routeRevision)`  L1476
@@ -2455,11 +2427,10 @@ L1503 · [class] static final C23911 · extends `SuspendLambda implements Functi
 - `SessionRevision sessionRevision3 = this.$key`  L1552
 - `int i4 = this.I$0`  L1592
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1519 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1524 @Override
 - `Object invokeSuspend(Object obj)`  L1533 @Override
-- `throw new IllegalStateException( 229 )`  L1590
 ### `com.tuwinsmart.tuwin.domain.strategy.Ride5ConnectionStrategy$Companion`
 L1730 · [class] private static final Companion · `com/tuwinsmart/tuwin/domain/strategy/Ride5ConnectionStrategy.java`
 注解：
@@ -2509,14 +2480,11 @@ L28 · [class] public final DetectConnectionUseCase · `com/tuwinsmart/tuwin/dom
 - `Result.Companion companion2 = Result.INSTANCE`  L138
 - `Result.Companion companion3 = Result.INSTANCE`  L144
 
-方法（6）：
+方法（3）：
 - `public DetectConnectionUseCase(M3ConnectionStrategy m3Strategy, Ride5ConnectionStrategy ride5Strategy, Ride3ProConnectionStrategy ride3ProStrategy, Ride3ProConnectionStrategy ride3ProConnectionStrategy)`  L61
     - 体内字面量："m3Strategy" · "ride5Strategy" · "ride3ProStrategy"
 - ` DetectConnectionUseCase(M3ConnectionStrategy m3ConnectionStrategy, Ride5ConnectionStrategy ride5ConnectionStrategy, Ride3ProConnectionStrategy ride3ProConnectionStrategy, Ride3ProConnectionStrategy ride3ProConnectionStrategy2, int i, DefaultConstructorMarker defaultConstructorMarker)`  L71
 - `Object m2879invokebMdYcbs(DeviceType deviceType, Network network, ConnectionCheckMode connectionCheckMode, Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, String str, boolean z, Continuation<? super Result<ConnectedDevice>> continuation)`  L77
-- `throw new NoWhenBranchMatchedException()`  L106
-- `throw new IllegalStateException( 34 )`  L124
-- `throw new NoWhenBranchMatchedException()`  L142
 ### `com.tuwinsmart.tuwin.domain.usecase.device.DetectConnectionUseCase$invoke$1`
 L16 · [class] final DetectConnectionUseCase$invoke$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/domain/usecase/device/DetectConnectionUseCase$invoke$1.java`
 注解：
@@ -2536,11 +2504,11 @@ L18 · [class] final DetectConnectionUseCase$invoke$2 · extends `SuspendLambda 
 字段/常量（1）：
 - `int label`  L19
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L26 @Override
 - `Object invoke(ConnectionProgressUpdate connectionProgressUpdate, Continuation<? super Unit> continuation)`  L31 @Override
 - `Object invokeSuspend(Object obj)`  L36 @Override
-- `throw new IllegalStateException( 8 )`  L39
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.domain.usecase.device.DetectConnectionUseCase$WhenMappings`
 L36 · [class] public WhenMappings · `com/tuwinsmart/tuwin/domain/usecase/device/DetectConnectionUseCase.java`
 注解：
@@ -2608,11 +2576,10 @@ L25 · [class] public final RefreshConnectionUseCase · `com/tuwinsmart/tuwin/do
 - `Result.Companion companion6 = Result.INSTANCE`  L376
 - `Result.Companion companion7 = Result.INSTANCE`  L453
 
-方法（3）：
+方法（2）：
 - `public RefreshConnectionUseCase(DetectConnectionUseCase detectConnectionUseCase, DeviceRepository deviceRepository, DeviceVersionRepository deviceVersionRepository, SdCardFormatReminderUseCase sdCardFormatReminderUseCase)`  L32
     - 体内字面量："detectConnectionUseCase" · "deviceRepository" · "deviceVersionRepository" · "sdCardFormatReminderUseCase"
 - `Object m2881invokehUnOzRk(ConnectedDevice connectedDevice, Network network, ConnectionCheckMode connectionCheckMode, Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, boolean z, Continuation<? super Result<ConnectedDevice>> continuation)`  L68
-- `throw new IllegalStateException( 36 )`  L163
 ### `com.tuwinsmart.tuwin.domain.usecase.device.RefreshConnectionUseCase$invoke$1`
 L16 · [class] final RefreshConnectionUseCase$invoke$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/domain/usecase/device/RefreshConnectionUseCase$invoke$1.java`
 注解：
@@ -2639,11 +2606,11 @@ L19 · [class] public final RefreshConnectionUseCase$invoke$2 · extends `Suspen
 字段/常量（1）：
 - `int label`  L20
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L27 @Override
 - `Object invoke(ConnectionProgressUpdate connectionProgressUpdate, Continuation<? super Unit> continuation)`  L32 @Override
 - `Object invokeSuspend(Object obj)`  L37 @Override
-- `throw new IllegalStateException( 8 )`  L40
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.domain.usecase.device.SaveDeviceUseCase`
 L19 · [class] public final SaveDeviceUseCase · `com/tuwinsmart/tuwin/domain/usecase/device/SaveDeviceUseCase.java`
 注解：
@@ -2660,11 +2627,10 @@ L19 · [class] public final SaveDeviceUseCase · `com/tuwinsmart/tuwin/domain/us
 - `Result.Companion companion = Result.INSTANCE`  L80
 - `Result.Companion companion2 = Result.INSTANCE`  L85
 
-方法（3）：
+方法（2）：
 - `public SaveDeviceUseCase(DeviceRepository deviceRepository, DeviceVersionRepository deviceVersionRepository, SdCardFormatReminderUseCase sdCardFormatReminderUseCase)`  L24
     - 体内字面量："deviceRepository" · "deviceVersionRepository" · "sdCardFormatReminderUseCase"
 - `Object m2882invokegIAlus(ConnectedDevice connectedDevice, Continuation<? super Result<? extends List<ConnectedDevice>>> continuation)`  L35
-- `throw new IllegalStateException( 21 )`  L65
 ### `com.tuwinsmart.tuwin.domain.usecase.device.SaveDeviceUseCase$invoke$1`
 L15 · [class] final SaveDeviceUseCase$invoke$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/domain/usecase/device/SaveDeviceUseCase$invoke$1.java`
 注解：

@@ -385,12 +385,11 @@ L253 · [class] static TimeoutDns · implements `Dns` · `com/gku/actioncam/sigm
 字段/常量（1）：
 - `int timeoutMs`  L254
 
-方法（5）：
+方法（4）：
 - `public TimeoutDns(int timeoutMs)`  L256
 - `List<InetAddress> lookup(final String hostname)`  L261 @Override
 - `Object call()`  L265 @Override
-    - 体内字面量："DNS lookup failed: " · "DNS lookup failed: "
-- `throw new UnknownHostException( 37  + hostname)`  L282
+    - 体内字面量："DNS lookup failed: " · "DNS lookup failed: " · "DNS lookup timed out: "
 - `List lambda$lookup$0(String str)`  L290
     - 体内字面量："DNS resolution failed: "
 ### `com.gku.actioncam.sigmastar.upgrade.firm.Ui.UpgradeSendFirmActivity`

@@ -180,7 +180,7 @@ L18 · [class] public final DeviceAdapterRegistry · `com/tuwinsmart/tuwin/core/
 - `DeviceAdapter deviceAdapter`  L47
 - `Set<DeviceType> setKeySet`  L57
 
-方法（7）：
+方法（6）：
 - `public DeviceAdapterRegistry()`  L22
 - `public DeviceAdapterRegistry(List<? extends DeviceAdapter> adapters)`  L26
     - 体内字面量："adapters"
@@ -188,7 +188,6 @@ L18 · [class] public final DeviceAdapterRegistry · `com/tuwinsmart/tuwin/core/
 - `void register(DeviceAdapter adapter)`  L39
     - 体内字面量："adapter" · "Adapter already registered for "
 - `DeviceAdapter adapterFor(DeviceType deviceType)`  L46
-- `throw new IllegalStateException( 22  + deviceType)`  L51
 - `Set<DeviceType> registeredTypes()`  L56
 ### `com.tuwinsmart.tuwin.core.device.DeviceAdapterSession`
 L13 · [interface] public DeviceAdapterSession · `com/tuwinsmart/tuwin/core/device/DeviceAdapterSession.java`
@@ -254,11 +253,10 @@ L12 · [class] public final DeviceControlChannelRecoveryResult · `com/tuwinsmar
 L13 · [class] public final DeviceHostPolicy · `com/tuwinsmart/tuwin/core/device/DeviceHostPolicy.java`
 注解：
 
-方法（3）：
+方法（2）：
 - `private DeviceHostPolicy()`  L43
 - `String hostFor(DeviceType deviceType)`  L46
     - 体内字面量："deviceType" · "192.168.169.1" · "192.168.25.1" · "192.168.0.1"
-- `throw new NoWhenBranchMatchedException()`  L58
 ### `com.tuwinsmart.tuwin.core.device.DeviceHostPolicy$WhenMappings`
 L18 · [class] public WhenMappings · `com/tuwinsmart/tuwin/core/device/DeviceHostPolicy.java`
 注解：
@@ -348,7 +346,7 @@ L69 · [class] public final DeviceSessionManager · `com/tuwinsmart/tuwin/core/d
 - `Object obj = c18911.result`  L407
 - `int i = c18911.label`  L409
 
-方法（21）：
+方法（16）：
 - `public DeviceSessionManager(DeviceRouteRegistry routes, DeviceEndpointAuthority endpointAuthority, DeviceAdapterRegistry adapters, CoroutineScope scope)`  L123
     - 体内字面量："routes" · "endpointAuthority" · "adapters" · "scope"
 - ` DeviceSessionManager(DeviceRouteRegistry deviceRouteRegistry, DeviceEndpointAuthority deviceEndpointAuthority, DeviceAdapterRegistry deviceAdapterRegistry, CoroutineScope coroutineScope, int i, DefaultConstructorMarker defaultConstructorMarker)`  L137
@@ -360,13 +358,10 @@ L69 · [class] public final DeviceSessionManager · `com/tuwinsmart/tuwin/core/d
 - `SharedFlow<DeviceAdapterEvent> events(String sessionId)`  L209
     - 体内字面量："sessionId"
 - `Object m2715opengIAlus(String str, Continuation<? super Result<DeviceSessionSnapshot>> continuation)`  L216
-- `throw new IllegalStateException( 91 )`  L234
 - `Object m2716recoverControlChannelgIAlus(String str, Continuation<? super Result<DeviceSessionSnapshot>> continuation)`  L251
-- `throw new IllegalStateException( 92 )`  L269
 - `Object close$default(DeviceSessionManager deviceSessionManager, String str, String str2, Continuation continuation, int i, Object obj)`  L283
     - 体内字面量："requested"
 - `Object close(String str, String str2, Continuation<? super Unit> continuation)`  L291
-- `throw new IllegalStateException( 95 )`  L330
 - `void routeRevisionChanged(DeviceRouteChange change)`  L353
     - 体内字面量："change"
 - `Set<String> activeSessionIds()`  L372
@@ -375,10 +370,8 @@ L69 · [class] public final DeviceSessionManager · `com/tuwinsmart/tuwin/core/d
 - `Object closeAll$default(DeviceSessionManager deviceSessionManager, String str, Continuation continuation, int i, Object obj)`  L384
     - 体内字面量："runtime stopped"
 - `Object closeAll(String str, Continuation<? super Unit> continuation)`  L392
-- `throw new IllegalStateException( 100 )`  L417
 - `ManagedDeviceSession find(String sessionId)`  L438
-- `throw new DeviceSessionNotFoundException( 101  + sessionId)`  L443
-    - 体内字面量："Lcom/tuwinsmart/tuwin/core/device/DeviceSessionManager$ManagedDeviceSession;" · "id" · "initial" · "Lcom/tuwinsmart/tuwin/core/device/DeviceSessionSnapshot;" · "(Lcom/tuwinsmart/tuwin/core/device/DeviceSessionManager;Ljava/lang/String;Lcom/tuwinsmart/tuwin/core/device/DeviceSessionSnapshot;)V" · "_events" · "Lkotlinx/coroutines/flow/MutableSharedFlow;" · "Lcom/tuwinsmart/tuwin/core/device/DeviceAdapterEvent;" · "_state" · "Lkotlinx/coroutines/flow/MutableStateFlow;" · "activeAdapter" · "Lcom/tuwinsmart/tuwin/core/device/DeviceAdapterSession;" · "closed" · "Ljava/util/concurrent/atomic/AtomicBoolean;" · "eventJob" · "Lkotlinx/coroutines/Job;" · "Lkotlinx/coroutines/flow/SharedFlow;" · "getEvents" · "()Lkotlinx/coroutines/flow/SharedFlow;" · "getId" · "()Ljava/lang/String;" · "job" · "Lkotlinx/coroutines/CompletableJob;" · "openMutex" · "Lkotlinx/coroutines/sync/Mutex;" · "sessionScope" · "Lkotlinx/coroutines/CoroutineScope;" · "Lkotlinx/coroutines/flow/StateFlow;" · "getState" · "()Lkotlinx/coroutines/flow/StateFlow;" · "cancelForRoute" · "cause" · "reason" · "(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "closeAdapterPreserving" · "adapter" · "primary" · "(Lcom/tuwinsmart/tuwin/core/device/DeviceAdapterSession;Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "invalidateForRoute" · "route" · "Lcom/tuwinsmart/tuwin/core/network/RouteSnapshot;" · "open" · "Lkotlin/Result;" · "open-gIAlu-s" · "(Lcom/tuwinsmart/tuwin/core/device/DeviceAdapterSession;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "openInternal" · "openInternal-gIAlu-s" · "recoverControlChannel" · "recoverControlChannel-IoAF18A" · "(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "startEventCollection" · "Lkotlinx/coroutines/flow/Flow;" · "validateOpenResult" · "result" · "Lcom/tuwinsmart/tuwin/core/device/DeviceAdapterOpenResult;" · "app_release_64"
+    - 体内字面量："Unknown device session: " · "Lcom/tuwinsmart/tuwin/core/device/DeviceSessionManager$ManagedDeviceSession;" · "id" · "initial" · "Lcom/tuwinsmart/tuwin/core/device/DeviceSessionSnapshot;" · "(Lcom/tuwinsmart/tuwin/core/device/DeviceSessionManager;Ljava/lang/String;Lcom/tuwinsmart/tuwin/core/device/DeviceSessionSnapshot;)V" · "_events" · "Lkotlinx/coroutines/flow/MutableSharedFlow;" · "Lcom/tuwinsmart/tuwin/core/device/DeviceAdapterEvent;" · "_state" · "Lkotlinx/coroutines/flow/MutableStateFlow;" · "activeAdapter" · "Lcom/tuwinsmart/tuwin/core/device/DeviceAdapterSession;" · "closed" · "Ljava/util/concurrent/atomic/AtomicBoolean;" · "eventJob" · "Lkotlinx/coroutines/Job;" · "Lkotlinx/coroutines/flow/SharedFlow;" · "getEvents" · "()Lkotlinx/coroutines/flow/SharedFlow;" · "getId" · "()Ljava/lang/String;" · "job" · "Lkotlinx/coroutines/CompletableJob;" · "openMutex" · "Lkotlinx/coroutines/sync/Mutex;" · "sessionScope" · "Lkotlinx/coroutines/CoroutineScope;" · "Lkotlinx/coroutines/flow/StateFlow;" · "getState" · "()Lkotlinx/coroutines/flow/StateFlow;" · "cancelForRoute" · "cause" · "reason" · "(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "closeAdapterPreserving" · "adapter" · "primary" · "(Lcom/tuwinsmart/tuwin/core/device/DeviceAdapterSession;Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "invalidateForRoute" · "route" · "Lcom/tuwinsmart/tuwin/core/network/RouteSnapshot;" · "open" · "Lkotlin/Result;" · "open-gIAlu-s" · "(Lcom/tuwinsmart/tuwin/core/device/DeviceAdapterSession;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "openInternal" · "openInternal-gIAlu-s" · "recoverControlChannel" · "recoverControlChannel-IoAF18A" · "(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "startEventCollection" · "Lkotlinx/coroutines/flow/Flow;" · "validateOpenResult" · "result" · "Lcom/tuwinsmart/tuwin/core/device/DeviceAdapterOpenResult;" · "app_release_64"
 ### `com.tuwinsmart.tuwin.core.device.DeviceSessionManager$C18861`
 L144 · [class] C18861 · extends `FunctionReferenceImpl implements Function1<DeviceRouteChange, Unit>` · implements `Function1<DeviceRouteChange, Unit>` · `com/tuwinsmart/tuwin/core/device/DeviceSessionManager.java`
 注解：
@@ -581,29 +574,20 @@ L449 · [class] final ManagedDeviceSession · `com/tuwinsmart/tuwin/core/device/
 - `Job job = this.eventJob`  L1759
 - `DeviceAdapterSession deviceAdapterSession = this.activeAdapter`  L1764
 
-方法（22）：
+方法（13）：
 - `public ManagedDeviceSession(DeviceSessionManager deviceSessionManager, String id, DeviceSessionSnapshot initial)`  L463
     - 体内字面量："id" · "initial"
 - `String getId()`  L481
 - `StateFlow<DeviceSessionSnapshot> getState()`  L485
 - `SharedFlow<DeviceAdapterEvent> getEvents()`  L489
 - `Object m2719opengIAlus(DeviceAdapterSession deviceAdapterSession, Continuation<? super Result<DeviceSessionSnapshot>> continuation)`  L495
-- `throw new IllegalStateException( 166 )`  L530
 - `Object m2720recoverControlChannelIoAF18A(Continuation<? super Result<DeviceSessionSnapshot>> continuation)`  L591
-- `throw new IllegalStateException( 173 )`  L834
 - `Object closeAdapterPreserving(DeviceAdapterSession deviceAdapterSession, Throwable th, Continuation<? super Unit> continuation)`  L1079
-- `throw new IllegalStateException( 181 )`  L1118
 - `Object m2718openInternalgIAlus(DeviceAdapterSession deviceAdapterSession, Continuation<? super Result<DeviceSessionSnapshot>> continuation)`  L1215
-- `throw new RouteSupersededException( 184  + r14.id)`  L1377
-- `throw new RouteSupersededException( 185  + r14.id)`  L1409
-- `throw new IllegalStateException( 186 )`  L1412
-- `throw new RouteSupersededException( 187  + r14.id)`  L1486
-- `throw new RouteSupersededException( 188  + r14.id)`  L1580
 - `void startEventCollection(Flow<? extends DeviceAdapterEvent> events, long revision)`  L1627
 - `void validateOpenResult(DeviceAdapterOpenResult result, long revision)`  L1635
     - 体内字面量："Adapter identity does not match session device type: " · "Adapter returned an invalid control EndpointGrant: " · "@" · "Adapter EndpointGrant does not match session revision: " · "@" · "Adapter capabilities do not match session revision: " · "@"
 - `Object close(String str, Continuation<? super Unit> continuation)`  L1656
-- `throw new IllegalStateException( 196 )`  L1717
 - `void invalidateForRoute(RouteSnapshot route)`  L1737
     - 体内字面量："route"
 - `void cancelForRoute(Throwable cause)`  L1757
@@ -623,11 +607,10 @@ L20 · [class] final DeviceSessionManager$ManagedDeviceSession$cancelForRoute$1 
 - `Result.Companion companion = Result.INSTANCE`  L56
 - `Result.Companion companion2 = Result.INSTANCE`  L76
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L36 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L43 @Override
 - `Object invokeSuspend(Object obj)`  L48 @Override
-- `throw new IllegalStateException( 7 )`  L70
 ### `com.tuwinsmart.tuwin.core.device.DeviceSessionManager$ManagedDeviceSession$close$1`
 L14 · [class] final DeviceSessionManager$ManagedDeviceSession$close$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/DeviceSessionManager$ManagedDeviceSession$close$1.java`
 注解：
@@ -656,11 +639,10 @@ L20 · [class] final DeviceSessionManager$ManagedDeviceSession$invalidateForRout
 - `Result.Companion companion = Result.INSTANCE`  L56
 - `Result.Companion companion2 = Result.INSTANCE`  L76
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L36 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L43 @Override
 - `Object invokeSuspend(Object obj)`  L48 @Override
-- `throw new IllegalStateException( 7 )`  L70
 ### `com.tuwinsmart.tuwin.core.device.DeviceSessionManager$ManagedDeviceSession$open$1`
 L15 · [class] final DeviceSessionManager$ManagedDeviceSession$open$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/DeviceSessionManager$ManagedDeviceSession$open$1.java`
 注解：
@@ -706,13 +688,12 @@ L23 · [class] final DeviceSessionManager$ManagedDeviceSession$startEventCollect
 - `RouteSnapshot route`  L65
 - `MutableStateFlow mutableStateFlow = managedDeviceSession._state`  L70
 
-方法（6）：
+方法（5）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L39 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L44 @Override
 - `Object invokeSuspend(Object obj)`  L49 @Override
 - `Object emit(Object obj2, Continuation continuation)`  L60 @Override
 - `Object emit(DeviceAdapterEvent deviceAdapterEvent, Continuation<? super Unit> continuation)`  L64
-- `throw new IllegalStateException( 7 )`  L82
 ### `com.tuwinsmart.tuwin.core.device.DeviceSessionManager$open$1`
 L16 · [class] final DeviceSessionManager$open$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/device/DeviceSessionManager$open$1.java`
 注解：
@@ -745,11 +726,10 @@ L19 · [class] final DeviceSessionManager$routeRevisionChanged$1$1 · extends `S
 - `DeviceSessionManager this$0`  L22
 - `int i = this.label`  L44
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L32 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L37 @Override
 - `Object invokeSuspend(Object obj)`  L42 @Override
-- `throw new IllegalStateException( 8 )`  L53
 ### `com.tuwinsmart.tuwin.core.device.DeviceSessionNotFoundException`
 L10 · [class] public final DeviceSessionNotFoundException · extends `IllegalStateException` · `com/tuwinsmart/tuwin/core/device/DeviceSessionNotFoundException.java`
 注解：

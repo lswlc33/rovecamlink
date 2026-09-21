@@ -304,7 +304,7 @@ L28 · [class] public final DeviceUrlBuilder · `com/tuwinsmart/tuwin/core/util/
 - `Object obj = null`  L219
 - `Object next`  L231
 
-方法（19）：
+方法（15）：
 - `private DeviceUrlBuilder()`  L58
 - `String buildM3DownloadUrl(String fileName)`  L61
     - 体内字面量："fileName" · "M3 download"
@@ -320,19 +320,11 @@ L28 · [class] public final DeviceUrlBuilder · `com/tuwinsmart/tuwin/core/util/
     - 体内字面量："relativePath" · "RIDE5 download"
 - `String buildDownloadUrl$default(DeviceUrlBuilder deviceUrlBuilder, DeviceType deviceType, String str, String str2, Integer num, int i, Object obj)`  L95
 - `String buildDownloadUrl(DeviceType deviceType, String relativePath, String fileName, Integer fileIndex)`  L105
-    - 体内字面量："deviceType" · "relativePath" · "RIDE3PRO download"
-- `throw new NoWhenBranchMatchedException()`  L128
-    - 体内字面量："RIDE6 download"
+    - 体内字面量："deviceType" · "relativePath" · "RIDE3PRO download" · "RIDE6 download"
 - `String buildThumbnailUrl$default(DeviceUrlBuilder deviceUrlBuilder, DeviceType deviceType, String str, String str2, Integer num, int i, Object obj)`  L139
 - `String buildThumbnailUrl(DeviceType deviceType, String relativePath, String fileName, Integer fileIndex)`  L149
-    - 体内字面量："deviceType" · "relativePath" · "RIDE3PRO thumbnail"
-- `throw new NoWhenBranchMatchedException()`  L172
-    - 体内字面量："RIDE6 thumbnail"
+    - 体内字面量："deviceType" · "relativePath" · "RIDE3PRO thumbnail" · "RIDE6 thumbnail"
 - `String buildAuthorizedHttpUrl(DeviceEndpointAuthority authority, String grantId, String sessionId, long routeRevision, EndpointPurpose purpose, String relativePath)`  L183
-- `throw new IllegalArgumentException( 57 )`  L196
-    - 体内字面量：":" · "[" · "[" · "]"
-- `throw new IllegalArgumentException( 62 )`  L209
-    - 体内字面量："://" · "Device URL builder accepts relative paths only" · "http://" · ":" · "/" · "/"
 - `DeviceType getCurrentDeviceType()`  L217
 - `String getConnectedDeviceVersion(DeviceType deviceType)`  L230
 - `String unavailable(String kind)`  L252
@@ -716,7 +708,7 @@ L120 · [class] public final DownloadUtil · `com/tuwinsmart/tuwin/core/util/dow
 - `DownloadUtil downloadUtil = this`  L2818
 - `Set<String> set = addedToMediaStoreFiles`  L2850
 
-方法（125）：
+方法（121）：
 - `File invoke()`  L136 @Override
     - 体内字面量："TUWIN" · "TUWIN" · "TUWIN"
 - `int compare(Object obj, Object obj2)`  L155 @Override
@@ -729,8 +721,7 @@ L120 · [class] public final DownloadUtil · `com/tuwinsmart/tuwin/core/util/dow
 - `void addTasks(List<String> jsonTags, DeviceType deviceType, DownloadNetworkRoute networkRoute)`  L700
 - `int addTasksStrict$default(DownloadUtil downloadUtil, List list, DeviceType deviceType, DownloadNetworkRoute downloadNetworkRoute, int i, Object obj)`  L723
 - `int addTasksStrict(List<String> jsonTags, DeviceType deviceType, DownloadNetworkRoute networkRoute)`  L730
-    - 体内字面量："jsonTags" · "deviceType"
-- `throw new SecurityException( 383 )`  L734
+    - 体内字面量："jsonTags" · "deviceType" · "download storage permission is required"
 - `DownloadTaskInput parseDownloadTaskInput(String jsonTag, DeviceType deviceType, DownloadNetworkRoute networkRoute)`  L750
     - 体内字面量："url" · "download task url is required" · "download task requires an explicit NetworkIntent and EndpointGrant"
 - `void enqueueDownloadTask(DownloadTaskInput input, DeviceType deviceType)`  L764
@@ -779,15 +770,11 @@ L120 · [class] public final DownloadUtil · `com/tuwinsmart/tuwin/core/util/dow
 - `void fetchRemoteFileSize(String url, Function1<? super Long, Unit> onResult)`  L1054
     - 体内字面量："url" · "onResult" · "DownloadUtil: fetchRemoteFileSize rejected because NetworkIntent is missing"
 - `void fetchRemoteFileSizeRouted(String url, DownloadNetworkRoute networkRoute, final Function1<? super Long, Unit> onResult)`  L1061
-- `throw new NoWhenBranchMatchedException()`  L1075
-    - 体内字面量："download_head"
 - `void onFailure(Call call, IOException e)`  L1096 @Override
     - 体内字面量："call" · "e"
 - `void onResponse(Call call, Response response)`  L1104 @Override
 - `void downloadFile$default(DownloadUtil downloadUtil, String str, Function1 function1, Function1 function2, String str2, Progress progress, Function1 function3, Function1 function4, Function1 function5, boolean z, boolean z2, String str3, long j, DownloadNetworkRoute downloadNetworkRoute, File file, Function1 function6, TransferCheckpoint transferCheckpoint, File file2, Function1 function7, int i, Object obj)`  L1139
 - `void downloadFile(String url, final Function1<? super String, Unit> onSuccess, final Function1<? super String, Unit> onError, String fileName, Progress progress, final Function1<? super Progress, Unit> onProgress, final Function1<? super Call, Unit> onCallCreated, Function1<? super Function0<Unit>, Unit> onCancelHandleCreated, boolean addToMediaStore, boolean postFinishEvent, String ride3ProFirmwareVersion, long initialOffset, DownloadNetworkRoute networkRoute, File destination, Function1<? super String, Unit> onCancelled, TransferCheckpoint transferCheckpoint, File transferPartialFile, Function1<? super TransferCheckpoint, Unit> onTransferCheckpoint)`  L1143
-- `throw new NoWhenBranchMatchedException()`  L1181
-    - 体内字面量："download" · "Download route is unavailable"
 - `void invoke2(String filePath)`  L1217
     - 体内字面量："filePath"
 - `Unit invoke(String str3)`  L1224 @Override
@@ -864,9 +851,7 @@ L120 · [class] public final DownloadUtil · `com/tuwinsmart/tuwin/core/util/dow
 - `void invoke2(OkHttpClient.Builder client)`  L2378
     - 体内字面量："$this$client"
 - `Response intercept(Interceptor.Chain chain)`  L2392 @Override
-    - 体内字面量："chain"
-- `throw new IllegalArgumentException( 552 )`  L2404
-    - 体内字面量："http" · "https" · "Internet download URL must use http or https" · "Internet download URL must not contain credentials" · "Download route revision changed before request creation"
+    - 体内字面量："chain" · "Invalid internet download URL" · "http" · "https" · "Internet download URL must use http or https" · "Internet download URL must not contain credentials" · "Download route revision changed before request creation"
 - `void startTranscodeDownloadFileTask(DownloadFileTask task, File inputFile)`  L2426
 - `Unit invoke()`  L2450 @Override
 - `void invoke2()`  L2456
@@ -914,11 +899,10 @@ L1448 · [class] static final C21492 · extends `SuspendLambda implements Functi
 - `Function1<String, Unit> function4 = this.$onError`  L1543
 - `Function1<Progress, Unit> function5 = this.$onProgress`  L1554
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1482 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1487 @Override
 - `Object invokeSuspend(Object obj)`  L1492 @Override
-- `throw new IllegalStateException( 457 )`  L1504
 ### `com.tuwinsmart.tuwin.core.util.download.DownloadUtil$C21511`
 L2476 · [class] static final C21511 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/core/util/download/DownloadUtil.java`
 注解：
@@ -940,13 +924,13 @@ L2476 · [class] static final C21511 · extends `SuspendLambda implements Functi
 - `DownloadFileTask downloadFileTask3 = this.$task`  L2561
 - `DownloadUtil downloadUtil = DownloadUtil.INSTANCE`  L2570
 
-方法（6）：
+方法（5）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L2493 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L2498 @Override
 - `Object invokeSuspend(Object obj)`  L2503 @Override
 - `Unit invoke(Integer num, Integer num2)`  L2520 @Override
 - `void invoke(int i2, int i3)`  L2525
-- `throw new IllegalStateException( 566 )`  L2535
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
 ### `com.tuwinsmart.tuwin.core.util.download.DownloadUtil$DownloadFileTask`
 L303 · [class] public static final DownloadFileTask · `com/tuwinsmart/tuwin/core/util/download/DownloadUtil.java`
 注解：
@@ -1150,14 +1134,12 @@ L26 · [class] final DownloadUtil$startRoutedDeviceDownload$stateJob$1 · extend
 - `Progress progress4 = progress`  L84
 - `Function1<Progress, Unit> function2 = function1`  L86
 
-方法（7）：
+方法（5）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L48 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L53 @Override
 - `Object invokeSuspend(Object obj)`  L58 @Override
 - `Object emit(Object obj2, Continuation continuation)`  L70 @Override
 - `Object emit(TransferState transferState, Continuation<? super Unit> continuation)`  L74
-- `throw new IllegalStateException( 7 )`  L98
-- `throw new KotlinNothingValueException()`  L102
 ### `com.tuwinsmart.tuwin.core.util.download.DownloadUtil$WhenMappings`
 L188 · [class] public WhenMappings · `com/tuwinsmart/tuwin/core/util/download/DownloadUtil.java`
 注解：
@@ -1508,12 +1490,11 @@ L78 · [class] private static final DelegatingHandler · implements `Thread.Unca
 - `String processName`  L81
 - `Thread.UncaughtExceptionHandler uncaughtExceptionHandler = this.previousHandler`  L102
 
-方法（4）：
+方法（3）：
 - `public DelegatingHandler(String processName, File crashLogDir, Thread.UncaughtExceptionHandler uncaughtExceptionHandler)`  L83
     - 体内字面量："processName" · "crashLogDir"
 - `void uncaughtException(Thread thread, Throwable throwable)`  L92 @Override
     - 体内字面量："thread" · "throwable" · "å´©æºå æ å·²ä¿å­: " · "ä¿å­å´©æºå æ å¤±è´¥"
-- `throw new RuntimeException( 45 )`  L108
 - `Map<String, String> crashMetadata()`  L112
     - 体内字面量："session_id" · "process_name" · "process_id" · "app_version" · "app_version_code" · "250" · "android_version" · "android_sdk" · "device" · " "
 ### `com.tuwinsmart.tuwin.core.util.logging.AppHttpLogger`
@@ -1948,12 +1929,10 @@ L13 · [class] public final Ride3ProIndexedDiagnosticFormatter · `com/tuwinsmar
 字段/常量（1）：
 - `String string`  L53
 
-方法（4）：
+方法（3）：
 - `private Ride3ProIndexedDiagnosticFormatter()`  L16
 - `String format(Ride3ProIndexedDiagnosticEvent event)`  L19
-    - 体内字面量："event" · "Ride3Pro Indexed Trace: event=hour_scan_start trace_id=" · " date=" · " hour=" · " last_file_index=" · " started_elapsed_ms=" · "Ride3Pro Indexed Trace: event=file_list_page trace_id=" · " page=" · " request_file_index=" · " page_size=" · " valid=" · " skipped=" · " target=" · " newer=" · " older=" · " collected=" · " decision=" · " next_file_index=" · " completion_reason=" · " failure_reason=" · " cost_ms=" · "Ride3Pro Indexed Trace: event=hour_scan_finish trace_id=" · " pages=" · " files=" · " outcome=" · " reason=" · " wrapped=" · " cost_ms=" · "Ride3Pro Indexed Trace: event=screen_start trace_id=" · " screen=" · " started_elapsed_ms=" · "Ride3Pro Indexed Trace: event=screen_visible trace_id=" · " screen=" · " outcome=" · " items=" · " cost_ms=" · "Ride3Pro Indexed Trace: event=hour_open_start trace_id=" · " date=" · " hour=" · " reported_file_count=" · " last_file_index=" · " cached=" · " latest=" · " started_elapsed_ms="
-- `throw new NoWhenBranchMatchedException()`  L46
-    - 体内字面量："Ride3Pro Indexed Trace: event=hour_open_finish trace_id=" · " date=" · " hour=" · " outcome=" · " items=" · " cost_ms="
+    - 体内字面量："event" · "Ride3Pro Indexed Trace: event=hour_scan_start trace_id=" · " date=" · " hour=" · " last_file_index=" · " started_elapsed_ms=" · "Ride3Pro Indexed Trace: event=file_list_page trace_id=" · " page=" · " request_file_index=" · " page_size=" · " valid=" · " skipped=" · " target=" · " newer=" · " older=" · " collected=" · " decision=" · " next_file_index=" · " completion_reason=" · " failure_reason=" · " cost_ms=" · "Ride3Pro Indexed Trace: event=hour_scan_finish trace_id=" · " pages=" · " files=" · " outcome=" · " reason=" · " wrapped=" · " cost_ms=" · "Ride3Pro Indexed Trace: event=screen_start trace_id=" · " screen=" · " started_elapsed_ms=" · "Ride3Pro Indexed Trace: event=screen_visible trace_id=" · " screen=" · " outcome=" · " items=" · " cost_ms=" · "Ride3Pro Indexed Trace: event=hour_open_start trace_id=" · " date=" · " hour=" · " reported_file_count=" · " last_file_index=" · " cached=" · " latest=" · " started_elapsed_ms=" · "Ride3Pro Indexed Trace: event=hour_open_finish trace_id=" · " date=" · " hour=" · " outcome=" · " items=" · " cost_ms="
 - `String orMissing(Object obj)`  L52
 ### `com.tuwinsmart.tuwin.core.util.logging.Ride3ProIndexedDiagnostics`
 L13 · [class] public final Ride3ProIndexedDiagnostics · `com/tuwinsmart/tuwin/core/util/logging/Ride3ProIndexedDiagnostics.java`
@@ -2086,7 +2065,7 @@ L21 · [class] public final RuntimeLogSnapshot · `com/tuwinsmart/tuwin/core/uti
 - `int i = 0`  L111
 - `int i2 = i + 1`  L113
 
-方法（11）：
+方法（10）：
 - `private RuntimeLogSnapshot()`  L22
 - `File[] selectLogFiles(File file)`  L25
 - `boolean accept(File file2, String str)`  L28 @Override
@@ -2094,8 +2073,7 @@ L21 · [class] public final RuntimeLogSnapshot · `com/tuwinsmart/tuwin/core/uti
 - `boolean lambda$selectLogFiles$0(File file, String str)`  L44
     - 体内字面量："LOG" · ".txt"
 - `File create(File file, File file2, String str, Map<String, String> map)`  L48
-- `throw new IOException( 2  + file2)`  L50
-    - 体内字面量："diagnostic_" · ".zip" · "diagnostic_id" · "log_file_count" · "crash_file_count"
+    - 体内字面量："Unable to create diagnostic directory: " · "diagnostic_" · ".zip" · "diagnostic_id" · "log_file_count" · "crash_file_count"
 - `boolean test(Object obj)`  L59 @Override
     - 体内字面量："manifest.json"
 - `void writeEntry(ZipOutputStream zipOutputStream, String str, byte[] bArr)`  L103
@@ -2146,7 +2124,7 @@ L8 · [class] public TimberImpl · extends `TimberInterface.Tree` · `com/tuwins
 - `TimberInterface.Tree[] treeArray = new TimberInterface.Tree[0]`  L11
 - `List<TimberInterface.Tree> listUnmodifiableList`  L242
 
-方法（35）：
+方法（31）：
 - `void mo517v(String str, Object... objArr)`  L15 @Override
 - `void mo519v(Throwable th, String str, Object... objArr)`  L23 @Override
 - `void mo518v(Throwable th)`  L31 @Override
@@ -2173,12 +2151,11 @@ L8 · [class] public TimberImpl · extends `TimberInterface.Tree` · `com/tuwins
 - `TimberImpl tag(String str)`  L186
 - `TimberImpl isWrite(boolean z)`  L193
 - `void plant(TimberInterface.Tree tree)`  L200
-- `throw new IllegalArgumentException( 0 )`  L202
+    - 体内字面量："Cannot plant Timber into itself."
 - `void plant(TimberInterface.Tree... treeArr)`  L210
-- `throw new IllegalArgumentException( 1 )`  L213
-- `throw new IllegalArgumentException( 2 )`  L216
+    - 体内字面量："trees contained null" · "Cannot plant Timber into itself."
 - `void uproot(TimberInterface.Tree tree)`  L225
-- `throw new IllegalArgumentException( 3  + tree)`  L228
+    - 体内字面量："Cannot uproot tree which is not planted: "
 - `void uprootAll()`  L234
 - `List<TimberInterface.Tree> forest()`  L241
 - `int treeCount()`  L249
@@ -2189,9 +2166,8 @@ L17 · [class] public abstract TimberInterface · `com/tuwinsmart/tuwin/core/uti
 - `int MAX_STACK_TRACE_LENGTH = 10240`  L18
 - `String TAG = "TUWIN_LOG"`  L19
 
-方法（2）：
+方法（1）：
 - `private TimberInterface()`  L21
-- `throw new AssertionError()`  L22
 ### `com.tuwinsmart.tuwin.core.util.logging.TimberInterface$DebugTree`
 L250 · [class] public static DebugTree · extends `Tree` · `com/tuwinsmart/tuwin/core/util/logging/TimberInterface.java`
 
@@ -2261,7 +2237,7 @@ L23 · [class] public WriteRuntimeLogTree · extends `TimberInterface.DebugTree`
 - `ExecutorService executorService = this.executor`  L77
 - `ExecutorService executorService = this.executor`  L90
 
-方法（23）：
+方法（21）：
 - `void lambda$flush$0()`  L32
 - `private WriteRuntimeLogTree()`  L35
 - `WriteRuntimeLogTree getInstance()`  L42
@@ -2271,11 +2247,8 @@ L23 · [class] public WriteRuntimeLogTree · extends `TimberInterface.DebugTree`
 - `void log(int i, String str, Boolean bool, String str2, Throwable th)`  L63 @Override
     - 体内字面量："WriteRuntimeLogTree æªåå§åï¼è·³è¿æä»¶æ¥å¿" · "unknown" · "[session=" · "][source=" · "]"
 - `void flush()`  L76
-- `throw new IllegalStateException( 7 )`  L79
 - `void run()`  L83 @Override
 - `File createSnapshot(final String str)`  L89
-- `throw new IllegalStateException( 8 )`  L92
-    - 体内字面量："diagnostics"
 - `Object call()`  L97 @Override
 - `File lambda$createSnapshot$1(File file, String str)`  L104
     - 体内字面量："session_id" · "app_version" · "app_version_code" · "android_version" · "device_model" · " "
@@ -3338,7 +3311,7 @@ L206 · [class] private static final StartupDeviceIdentity · `com/tuwinsmart/tu
 - `Kind kind`  L210
 - `String value`  L211
 
-方法（12）：
+方法（11）：
 - `StartupDeviceIdentity copy$default(StartupDeviceIdentity startupDeviceIdentity, Kind kind, String str, int i, Object obj)`  L250
 - `Kind getKind()`  L261
 - `String getValue()`  L266
@@ -3353,9 +3326,7 @@ L206 · [class] private static final StartupDeviceIdentity · `com/tuwinsmart/tu
 - `Kind getKind()`  L302
 - `String getValue()`  L306
 - `boolean matches(ConnectedDevice device)`  L310
-    - 体内字面量："device"
-- `throw new NoWhenBranchMatchedException()`  L322
-    - 体内字面量："Lcom/tuwinsmart/tuwin/core/util/StartupOtaCheckCohort$StartupDeviceIdentity$Companion;" · "()V" · "Lcom/tuwinsmart/tuwin/core/util/StartupOtaCheckCohort$StartupDeviceIdentity;" · "device" · "Lcom/tuwinsmart/tuwin/domain/model/ConnectedDevice;" · "app_release_64"
+    - 体内字面量："device" · "Lcom/tuwinsmart/tuwin/core/util/StartupOtaCheckCohort$StartupDeviceIdentity$Companion;" · "()V" · "Lcom/tuwinsmart/tuwin/core/util/StartupOtaCheckCohort$StartupDeviceIdentity;" · "device" · "Lcom/tuwinsmart/tuwin/domain/model/ConnectedDevice;" · "app_release_64"
 ### `com.tuwinsmart.tuwin.core.util.StartupOtaCheckCohort$StartupDeviceIdentity$Companion`
 L327 · [class] public static final Companion · `com/tuwinsmart/tuwin/core/util/StartupOtaCheckCohort.java`
 注解：
@@ -3559,7 +3530,7 @@ L36 · [class] public UpgradeDevice · `com/tuwinsmart/tuwin/core/util/UpgradeDe
 - `Cursor cursorQuery`  L868
 - `int[] iArr = {0, 100}`  L872
 
-方法（27）：
+方法（26）：
 - `public UpgradeDevice()`  L60
 - `public UpgradeDevice(Network network, DeviceEndpointAuthority deviceEndpointAuthority, String str, String str2, long j)`  L64
 - `void setHandler(Handler handler)`  L77
@@ -3579,7 +3550,6 @@ L36 · [class] public UpgradeDevice · `com/tuwinsmart/tuwin/core/util/UpgradeDe
 - `String[] getMatchedFirmware(Context context)`  L129
 - `void uploadFirmware(File file, byte[] bArr, long j)`  L151
 - `EndpointGrant requireOtaGrant()`  L629
-- `throw new IllegalStateException( 35 )`  L633
 - `byte[] getBlock(Long l, File file, int i)`  L640
 - `boolean upload(File file, String str, String str2)`  L712
     - 体内字面量："12233" · "åºä»¶åçº§åä¸ä¼ " · "12233" · "æ»åæ° " · "12233" · "å½åç¬¬å å " · "12233" · "å½ååæ° >= æ»åæ° ä¸ä¼ æå!"
@@ -3761,11 +3731,11 @@ L196 · [class] static final C21291 · extends `SuspendLambda implements Functio
 - `Object L$4`  L204
 - `int label`  L205
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L216 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L221 @Override
 - `java.lang.Object invokeSuspend(java.lang.Object r10)`  L235 @Override
-- `throw new UnsupportedOperationException( 123 )`  L345
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.core.util.UpgradeHelper.C21291.invokeSuspend(java.lang.Object):java.lang.Object"
 ### `com.tuwinsmart.tuwin.core.util.UpgradeHelperKt`
 L13 · [class] public final UpgradeHelperKt · `com/tuwinsmart/tuwin/core/util/UpgradeHelperKt.java`
 注解：
@@ -3812,14 +3782,13 @@ L20 · [class] public final DeviceLogFilePolicy · `com/tuwinsmart/tuwin/core/ut
 - `File file = fileArrListFiles[i]`  L100
 - `DeviceLogFilePolicy deviceLogFilePolicy = INSTANCE`  L101
 
-方法（7）：
+方法（6）：
 - `private DeviceLogFilePolicy()`  L50
 - `String fileName$default(DeviceLogFilePolicy deviceLogFilePolicy, String str, DeviceType deviceType, String str2, int i, Object obj)`  L53
 - `String fileName(String date, DeviceType deviceType, String ssid)`  L60
     - 体内字面量："date"
 - `String suffix(DeviceType deviceType)`  L66
     - 体内字面量："UNKNOWN" · "RIDE3PRO" · "RIDE6" · "RIDE5"
-- `throw new NoWhenBranchMatchedException()`  L83
 - `File findExistingFile(File fileDir, String date, DeviceType deviceType, String ssid)`  L86
 - `boolean hasContent(File file)`  L135
 ### `com.tuwinsmart.tuwin.core.util.wifi.DeviceLogFilePolicy$WhenMappings`
@@ -3896,12 +3865,10 @@ L51 · [class] public final LogHelper · `com/tuwinsmart/tuwin/core/util/wifi/Lo
 - `String str`  L332
 - `SimpleDateFormat simpleDateFormat = sdf`  L333
 
-方法（13）：
+方法（12）：
 - `private LogHelper()`  L80
 - `Object downloadLogFile$default(LogHelper logHelper, DeviceType deviceType, String str, Continuation continuation, int i, Object obj)`  L83
 - `Object downloadLogFile(DeviceType deviceType, String str, Continuation<? super DeviceLogDownloadResult> continuation)`  L94
-- `throw new IllegalStateException( 43 )`  L139
-    - 体内字面量："device_log_download_reused" · "file" · "bytes"
 - `File getFile()`  L192
 - `File getFile(DeviceType deviceType)`  L201
 - `File getFile(DeviceType deviceType, String ssid)`  L205
@@ -3944,12 +3911,10 @@ L244 · [class] static final C21532 · extends `SuspendLambda implements Functio
 - `File file = null`  L288
 - `DeviceType deviceType = this.$deviceType`  L294
 
-方法（4）：
+方法（3）：
 - `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L256 @Override
 - `Object invoke(CoroutineScope coroutineScope, Continuation<? super FeedbackLogUploadResult> continuation)`  L263 @Override
 - `Object invokeSuspend(Object obj)`  L268 @Override
-- `throw new IllegalStateException( 69 )`  L309
-    - 体内字面量："feedback_log_upload_finished" · "diagnostic_id" · "status"
 ### `com.tuwinsmart.tuwin.core.util.wifi.manager.WiFiManagerWrapper`
 L16 · [class] public final WiFiManagerWrapper · `com/tuwinsmart/tuwin/core/util/wifi/manager/WiFiManagerWrapper.java`
 注解：

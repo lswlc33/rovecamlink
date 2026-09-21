@@ -322,14 +322,12 @@ L14 · [class] public ICatchUsbScsiTransport · implements `ICatchITransport` ·
 - `int USB_TRANSPORT_ERROR_TRY_AGAIN = -200`  L15
 - `String deviceName`  L16
 
-方法（11）：
+方法（7）：
 - `public ICatchUsbScsiTransport(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection)`  L18
-- `throw new IchInvalidArgumentException( 0 )`  L20
+    - 体内字面量："The usb device and its connection should not be null."
 - `boolean destroyTransport()`  L30 @Override
 - `int executeScsiCommand(ICatchScsiCommandInfo iCatchScsiCommandInfo, byte[] bArr)`  L34
-- `throw new IchInvalidArgumentException( 1 )`  L36
-- `throw new IchInvalidArgumentException( 2 )`  L40
-- `throw new IchTryAgainException( 3 )`  L46
+    - 体内字面量："Invalid argument, the command info should not be null." · "Not enough buffer to hold transfer data." · "Wait resource timeout, please try again."
 - `int getCurrentMode()`  L49
 - `boolean prepareTransport()`  L54 @Override
 - `int switchToPlayback()`  L58
@@ -347,9 +345,9 @@ L6 · [class] public ICatchUsbTransportLog · `com/icatchtek/reliant/customer/tr
 ### `com.icatchtek.reliant.customer.transport.ICatchUVCBulkTransport`
 L11 · [class] public ICatchUVCBulkTransport · implements `ICatchITransport` · `com/icatchtek/reliant/customer/transport/ICatchUVCBulkTransport.java`
 
-方法（4）：
+方法（3）：
 - `public ICatchUVCBulkTransport(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection)`  L12
-- `throw new IchInvalidArgumentException( 0 )`  L14
+    - 体内字面量："The usb device and its connection should not be null."
 - `boolean destroyTransport()`  L21 @Override
 - `boolean prepareTransport()`  L26 @Override
 ### `com.icatchtek.reliant.customer.transport.ICatchUVCIsoTransport`
@@ -360,9 +358,9 @@ L11 · [class] public ICatchUVCIsoTransport · implements `ICatchITransport` · 
 - `int productID`  L13
 - `int vendorID`  L14
 
-方法（10）：
+方法（9）：
 - `public ICatchUVCIsoTransport(int i, int i2, int i3)`  L16
-- `throw new IchInvalidArgumentException( 0 )`  L18
+    - 体内字面量："The usb device and its connection should not be null."
 - `ICatchUVCIsoTransport fromString(String str)`  L25
     - 体内字面量："vendorID" · "fileDescriptor"
 - `boolean destroyTransport()`  L36 @Override

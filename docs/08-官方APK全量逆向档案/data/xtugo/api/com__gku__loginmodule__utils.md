@@ -170,9 +170,9 @@ L17 · [class] public ZipUtils · `com/gku/loginmodule/utils/ZipUtils.java`
 - `byte[] bArr = new byte[1024]`  L37
 - `byte[] bArr = new byte[4096]`  L103
 
-方法（6）：
+方法（5）：
 - `void zipFile(String srcPath, String destPathAndName)`  L18
-- `throw new FileNotFoundException( 0  + srcPath)`  L21
+    - 体内字面量："File not found: "
 - `void zipSingleFile(File file, String parentPath, ZipOutputStream zos)`  L34
 - `void zipDirectory(File dir, String parentPath, ZipOutputStream zos)`  L50
     - 体内字面量："/" · "/"

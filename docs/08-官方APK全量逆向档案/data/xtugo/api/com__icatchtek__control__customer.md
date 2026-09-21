@@ -267,13 +267,13 @@ L20 · [class] public ICatchCameraSession · `com/icatchtek/control/customer/ICa
 - `ICatchCameraState stateClient`  L26
 - `int i = this.sessionID`  L75
 
-方法（15）：
+方法（13）：
 - `ICatchCameraSession createSession()`  L28
 - `ICatchCameraConfig getCameraConfig(ICatchITransport iCatchITransport)`  L32
 - `ICatchCameraAssist getCameraAssist(ICatchITransport iCatchITransport)`  L36
 - `int getSessionID()`  L41 @Deprecated
 - `boolean prepareSession(ICatchITransport iCatchITransport)`  L45
-- `throw new IchTransportException( 2  + iCatchITransport +  3 )`  L64
+    - 体内字面量："Transport not supported [" · "]"
 - `boolean destroySession()`  L74
 - `boolean checkConnection()`  L82
 - `ICatchCameraInfo getInfoClient()`  L87
@@ -282,7 +282,6 @@ L20 · [class] public ICatchCameraSession · `com/icatchtek/control/customer/ICa
 - `ICatchCameraProperty getPropertyClient()`  L102
 - `ICatchCameraPlayback getPlaybackClient()`  L107
 - `void checkSession()`  L112
-- `throw new IchInvalidSessionException()`  L114
 ### `com.icatchtek.control.customer.ICatchCameraState`
 L7 · [interface] public ICatchCameraState · `com/icatchtek/control/customer/ICatchCameraState.java`
 
@@ -565,7 +564,7 @@ L16 · [class] public ICatchCamPhotoExif · `com/icatchtek/control/customer/type
 - `String str3 = strArrSplit[0]`  L104
 - `String str4 = strArrSplit[1]`  L105
 
-方法（14）：
+方法（12）：
 - `public ICatchCamPhotoExif(String str)`  L59
 - `String getAttribute(String str)`  L63
 - `int getAttributeInt(String str, int i)`  L67
@@ -585,8 +584,6 @@ L16 · [class] public ICatchCamPhotoExif · `com/icatchtek/control/customer/type
     - 体内字面量："GPSDateStamp" · "GPSTimeStamp"
 - `float convertRationalLatLonToFloat(String str, String str2)`  L176
     - 体内字面量："/" · "/" · "/"
-- `throw new IllegalArgumentException()`  L187
-- `throw new IllegalArgumentException()`  L189
 ### `com.icatchtek.control.customer.type.ICatchCamPreviewMode`
 L4 · [class] public ICatchCamPreviewMode · `com/icatchtek/control/customer/type/ICatchCamPreviewMode.java`
 

@@ -41,7 +41,7 @@
 | 1 | 启动器 → `WelcomeActivity` | 唯一 `LAUNCHER`，`exported=true`，`theme=@style/welcomeTheme_XTU` | 主文档 §1.4 |
 | 2 | 权限页 `PermissionActivity` | 按 API 分三套数组申请（≤29 / 30–32 / ≥33），全串见主文档 §1.3 | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/PermissionActivity.java:31-33` |
 | 3 | `HomeActivity.onCreate` 起编排 | 底部 4 tab：`camera` / `photos` / `xtu_plus` / `user_center`；未连相机时把 tab1 换成 `FragmentDisConnectCamera` | `_work/xtu_src/sources/com/gku/HomeActivity.java:510-521`、`:1586-1600` |
-| 4 | `DeviceVersionManager.checkDeviceVersion(true)` | App 启动即查一次固件版本（§9） | `_work/xtu_src/sources/com/gku/HomeActivity.java:599` |
+| 4 | `DeviceVersionManager.checkDeviceVersion(true)` | App 启动即查一次固件版本（§9） | `_work/xtu_src/sources/com/gku/HomeActivity.java:597` |
 | 5 | `MessageService` / `KeepAliveService` | 前台通知 id `10121`，起 5678 回拨 `ServerSocket`；心跳 2000ms/5000ms | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/MessageService.java:56-60`、`…/KeepAliveService.java:12-16` |
 
 ### 1.2 WiFi 连接方式（三条并存，XTU 自己写得不一致）
@@ -142,8 +142,8 @@
 | 条件 | 值 | 出处 |
 |---|---|---|
 | 已连接且 `CameraParameters.BaseUrl` 已设 | `http://<ip>/cgi-bin/hi3510/` | `_work/xtu_src/sources/com/gku/HomeActivity.java:1756` |
-| `DV.cameraInfors != null` | 否则首帧前会补发 Ambarella `msg_id=11`（对海思机是空操作） | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/ui/activity/HisiActionCameraPreviewActivity.java:818-830` |
-| `IsConnectCamera == true` | `NewDV.getInstance().setConnectStatus(true)` | `…/HomeActivity.java:1733` |
+| `DV.cameraInfors != null` | 否则首帧前会补发 Ambarella `msg_id=11`（对海思机是空操作） | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/ui/activity/HisiActionCameraPreviewActivity.java:816-828` |
+| `IsConnectCamera == true` | `NewDV.getInstance().setConnectStatus(true)` | `…/HomeActivity.java:1738` |
 | 预览页 | `HisiActionCameraPreviewActivity`（B 套 UI）/ `AmbaActionCameraPreviewActivity`（Ambarella）/ `ActivityNewPreview`（C 套） | 分派见主文档 §2.2 `PreviewModelManage` |
 
 ### 2.2 起流 URL 选择（三套实现，值逐个抄）
@@ -170,7 +170,7 @@
 | 2 | 遮罩图 + 翻转预处理 | `getsecondmenuitem.cgi?-workmode=<mode>&-name=FLIP` 的值决定 `preview_cover` 旋转，取值 `"90°"`/`"180°"`/`"270°"`（**带度数符号与引号**，`TextUtils.equals` 精确比） | 非空 | `…/HisiActionCameraPreviewActivity.java:720-753` |
 | 3 | 延迟 `time` ms 后建流 | `initIjkVideoView(0)`（`event<=0`）或 `initIjkVideoView(1000)`（`event==268632078`） | — | `…/ActionCameraPreviewPresenter.java:731-739` |
 | 4 | `IjkMediaPlayer.loadLibrariesOnce(null)` + `native_profileBegin("libijkplayer.so")` | 抛 `UnsatisfiedLinkError` 则 `isInitIjkPlayer=false`，**继续走 setVideoPath**（静默降级） | — | `…/HisiActionCameraPreviewActivity.java:769-774` |
-| 5 | `preview_texture_video_view.setVideoPath("rtsp://192.168.0.1:554/livestream/12", true, flipValue)` | 第 2 参 `true` = 预览模式 | `onInfo(what==3)`（MEDIA_INFO_VIDEO_RENDERING_START） | `…/HisiActionCameraPreviewActivity.java:829`、`:845` |
+| 5 | `preview_texture_video_view.setVideoPath("rtsp://192.168.0.1:554/livestream/12", <isAmba>, flipValue)`；随后 `requestFocus()` + `start()` + `hasStartPlay=true`；整个起流块被 `postDelayed(..., Math.max(time, 300))` 包住 → **最小延迟 300ms** | `onInfo(what==3)`（`MEDIA_INFO_VIDEO_RENDERING_START`） | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/ui/activity/HisiActionCameraPreviewActivity.java:828,833-837,839-841,843`；`…/HisiActionCameraPreviewActivity.java:784` |
 
 ### 2.5 失败重试（两条独立看门狗，数值照抄）
 
@@ -179,7 +179,9 @@
 | **错误重试** | `OnErrorListener.onError(what,extra)` | `initIjkVideoView2(1000)` → 销毁重建 `VideoTextureView` 后延迟 1000ms 重新起流 | 延迟 `1000L` | `…/HisiActionCameraPreviewActivity.java:800-806`、`:705-708` |
 | **完成重试** | `OnCompletionListener.onCompletion`（RTSP 被相机单方面断流） | 仅当 `curActivityIsVis` 为真时 `initIjkVideoView2(500)` | 延迟 `500L` | `…/HisiActionCameraPreviewActivity.java:809-816` |
 | **卡流看门狗** | `checkRunnable`，`handler.postDelayed(checkRunnable, 1200L)` 自递归 | 若 `videoRenderingStart && lastStreamTime>0 && now-lastStreamTime>1500 && curActivityIsVis` → 判定断流 → `removeCallbacks(taskRunnable)` 后重建 | 探测周期 `1200L` ms、停滞阈值 `1500` ms | `…/HisiActionCameraPreviewActivity.java:176-197,784-794,848-850` |
-| **遮罩超时** | `mainUIUpdateHandler.postDelayed(taskRunnable, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS)`（ExoPlayer 常量 = **5000 ms**） | 到点仍未渲染 → 保留遮罩并重排 | `5000` ms | `…/HisiActionCameraPreviewActivity.java:152,691-692` |
+| **遮罩超时** | `mainUIUpdateHandler.postDelayed(taskRunnable, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS)`（ExoPlayer 常量真值 = **3000 ms**，`_work/xtu_src/sources/com/google/android/exoplayer2/C.java:84`） | 到点仍未渲染 → `initIjkVideoView(0)` 重建 | `3000` ms | `…/HisiActionCameraPreviewActivity.java:152-158,690-693` |
+| **4K 复读重播**（仅 Ambarella） | `runRefView()` → `postDelayed(runRefViewRunnable, SilenceSkippingAudioProcessor.DEFAULT_MINIMUM_SILENCE_DURATION_US)`；常量真值 **150000**（`_work/xtu_src/sources/com/google/android/exoplayer2/audio/SilenceSkippingAudioProcessor.java:9`），而 `postDelayed` 单位是 **ms** → 实际周期 **150 秒** | 当 `resolutionString ∈ {"4K60","4K30"}` 且 Activity 可见 → `initIjkVideoView(0)` 重起流，然后自我续期 | `150000` ms | `…/HisiActionCameraPreviewActivity.java:159-169,681-688`；仅 `type ∈ {H75N,"CV75"}` 才启动（`…/HisiActionCameraPreviewActivity.java:631-636`，`cameraInfors != null` 分支里才 `runRefView()`） |
+| **卡流提示** | `checkRunnable` 判到卡流时 `showCenterToast(R.string.text_please_near_device)`，`needTips=false`（一次） | — | — | `…/HisiActionCameraPreviewActivity.java:181-190` |
 | **状态驱动重连** | `getcurallinfo.cgi` 的 `event` | `event<=0` → `initIjkVideoView(0)`；`event==268632078`（0x1003000E）→ `initIjkVideoView(1000)` | — | `…/ActionCameraPreviewPresenter.java:731-739` |
 | **Ambarella 侧** | `rval` 特判 | `-444`→事件 137、`-4`→129、`-1`→136、`-34/-33/-18/-17`→135（`-17` 额外 Toast `R.string.sd_no_more_space`「The memory card is full.」/「存储卡已满」）、body 含 `"Read timed out"`→事件 128 | — | `_work/xtu_src/sources/com/gku/actioncam/amba/model/AmbaCmdModel.java:390-451` |
 
@@ -326,7 +328,7 @@
 | `Lapse Photo` / `Timelapse Photo` | `showLoadingMessage(getString(R.string.mode_photo_timer) + "...")` | `mode_photo_timer` 中文见 §6 | `:1201-1203` |
 | 单张 | `showNormalMessage(R.string.ss_event_start_photo, 1500)` | `Start taking pictures` / 开始拍照 | `:1207-1209` |
 | 落盘完成 `state==21 && event ∈ {11700002,273420290,273420315,272642051}` 或 `event ∈ {4, 268632078}` | `showFinishMessage(R.string.ss_event_save, 1500)` | `Saved` / 已保存 | `:1212-1216` |
-| 快门防抖 | `iv_capture.setEnabled(false)` + `postDelayed(..., C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS /*5000*/)` 后恢复 | — | `…/HisiActionCameraPreviewActivity.java:1101-1110` |
+| 快门防抖 | `iv_capture.setEnabled(false)` + `postDelayed(..., C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS /*3000 ms*/)` 后恢复 | — | `…/HisiActionCameraPreviewActivity.java:1101-1110` |
 | 长按曝光（`Long Exposure` 且 `state==20`） | 单独分支 | — | `…/AmbaActionCameraPreviewActivity.java:333-336` |
 
 ---
@@ -544,8 +546,8 @@
 
 | 套 | 步 | 报文（逐字） | 判据 | 失败提示 | 出处 |
 |---|---|---|---|---|---|
-| B/C（NewAPP 动态菜单） | 1 读 | `GET BASE + "getwifi.cgi"`（含空格会 `Uri.encode`，但 `:320-322` 的 `replaceAll` 返回值被丢弃＝无效） | `statusCode==200`；解析键 `wifissid`、`wifikey`（`SSResponseParse.parseGetWiFi` → `new SSWiFiInfo(map.get("wifissid"), map.get("wifikey"))`） | 非 200 只写日志 | `…/SetDataUtils.java:318-330`；`…/SSResponseParse.java:467-485` |
-| | 2 弹窗 | `postDelayed(500L)` 后弹 `R.layout.dialog_modify_wifi`：`etSSID`（去前缀后的名）、`etPassword`、`btnDialogApply`、`btnDialogCancel` | — | — | `…/SetDataUIUtils.java:295-315,360-380` |
+| B/C（NewAPP 动态菜单） | 1 读 | `GET BASE + "getwifi.cgi"`（含空格会 `Uri.encode`，但 `…/SetDataUtils.java:320-322` 的 `replaceAll` 返回值被丢弃＝无效） | `statusCode==200`；解析键 `wifissid`、`wifikey`（`SSResponseParse.parseGetWiFi` → `new SSWiFiInfo(map.get("wifissid"), map.get("wifikey"))`） | 非 200 只写日志 | `…/SetDataUtils.java:318-330`；`…/SSResponseParse.java:467-485` |
+| | 2 弹窗 | `postDelayed(500L)` 后弹 `R.layout.dialog_modify_wifi`：`etSSID`（去前缀后的名）、`etPassword`、`btnDialogApply`、`btnDialogCancel` | — | — | `…/SetDataUIUtils.java:293-315,361-384` |
 | | 3 长度校验 | 新名长度 **必须等于**原长度、新密码长度 **必须等于**原长度，否则不发送 | `editText.length() == SSID_TITLE_Length` | Toast：`R.string.wifi_ssid_tips_1 + <原长度> + R.string.wifi_ssid_tips_2`（`Wi-Fi name must be ` + N + ` bits long`／中文「WIFI名长度必须为」+N+「位」）；密码同理 `wifi_psd_tips_1`/`wifi_psd_tips_2`（`PassWord name must be ` + N + ` bits long`／「WIFI密码长度必须为」+N+「位」） | `…/SetDataUIUtils.java:382-392` |
 | | 4 写（系统项） | `GET BASE + "setcurparameter.cgi?-workmode=System&-name=<项名>&-value=<值>"`（名与值各自 `Uri.encode(x,"utf-8")`）；`doForSuccess` → **只看 200** | 200 | `handler.sendEmptyMessage(1)` → **无 Toast**（`isFormatSd==false`） | `…/HttpProxy.java:258-272`；`…/SetDataUIUtils.java:270-287` |
 | | 4' 另一条写（走 `DV`） | `GET BASE + "setwifi.cgi?&-wifissid=<ssid>&-wifikey=<key>"`（`SSCommandUtil.setWiFi`/`HaisiCommandUtil.setWiFi`，注意 `?` 后紧跟 `&`） | 200 | — | `…/SSCommandUtil.java:125-127`；`…/HaisiCommandUtil.java:144-146`；`…/OldUi/setting/model/HaisiSettingModel.java:42`、`…/SigmastartSettingModel.java:43` |
@@ -559,7 +561,7 @@
 | 套 | 报文 | 值来源 | 判据 | 提示 | 出处 |
 |---|---|---|---|---|---|
 | B/C | `GET BASE + "setsystime.cgi?-time=yyyyMMddHHmmss"` | `new SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis())`（**手机本地时间，无时区偏移**） | body `trim().equals("Success")` | 成功 Toast `R.string.ss_set_system_time`（`The phone time has been synced to the device`／「已同步手机时间到设备」） | `…/SSCommandUtil.java:137-139`；`…/SigmastartPreviewModel.java:160`；`…/HaisiPreviewModel.java:221-232`；`…/ActionCameraPreviewPresenter.java:690-695` |
-| B（无值型系统项） | `GET BASE + "setsystime.cgi?-time=" + <同上>`（`setDevicePamarsStrNoValue(1)`） | 同上 | `doForSuccess` → 200 | 成功 `handler.sendEmptyMessage(3)` → Toast `R.string.synec_time`（`Synchronize mobile phone time to camera`／「已同步手机时间到相机」）；确认框 `R.string.set_datetime`（`Set Phone Time to Camera`／「将手机时间同步到相机」） | `…/HttpProxy.java:274-288`；`…/SetDataUIUtils.java:70-72,409-415,440-458` |
+| B（无值型系统项） | `GET BASE + "setsystime.cgi?-time=" + <同上>`（`setDevicePamarsStrNoValue(1)`） | 同上 | `doForSuccess` → 200 | 成功 `handler.sendEmptyMessage(3)` → Toast `R.string.synec_time`（`Synchronize mobile phone time to camera`／「已同步手机时间到相机」）；确认框 `R.string.set_datetime`（`Set Phone Time to Camera`／「将手机时间同步到相机」） | `…/HttpProxy.java:274-288`；`…/SetDataUIUtils.java:68-72,409-425,441-458` |
 | A | `GET http://<ip>/cgi-bin/hi3510/setsystime.cgi?&-time=%04d%02d%02d%02d%02d%02d` | `GregorianCalendar`：年、月+1、日、时、分、秒 | `doForSuccess` | 无 | `…/Setting.java:248-253` |
 | Ambarella | 走 `setcurparameter` 风格，项名 `"Time Zone"`，值 = `String.format("%+d", rawOffset/3600000)` | 时区偏移小时数，带 `+`/`-` | — | — | `_work/xtu_src/sources/com/gku/actioncam/amba/model/AmbaCmdModel.java:307,310-312` |
 | **自动触发** | 连上相机进预览页时 `requestPreviewParams()` 的第 4 步就是 `setSystemTime()` —— **每次进预览都会无条件对时一次** | — | — | — | `…/HaisiPreviewModel.java:62-68` |
@@ -618,7 +620,7 @@
 - 本地缓存键：`getMapKey(DeviceVersionInfo)` / `getServiceKey(...)`（`:218-230`、`:265-266` 用 `hardware_version`）。
 - 落盘目录：`getCacheDir()/version/<region>/<hardware>/<model>/<version>/<url 末段文件名>`（`…/DeviceVersionManager.java:644-661`）。
 - 机型名解析：固件文件名末段按 `_` 切、再按 `.` 切取版本号，`\d{8}` 提日期（`…/upgrade/firm/Presenter/UpgradePresenter.java:150-156`）。
-- 触发时机：`HomeActivity` 建 `DeviceVersionManager.INSTANCE.getInstance().checkDeviceVersion(true)`（`_work/xtu_src/sources/com/gku/HomeActivity.java:599`）；红点回调 `onNeedUpdateMsg(needUpdate)` → `layoutRed.setVisibility(0/8)`（`:1130-1137`）。
+- 触发时机：`HomeActivity` 建 `DeviceVersionManager.INSTANCE.getInstance().checkDeviceVersion(true)`（`_work/xtu_src/sources/com/gku/HomeActivity.java:597`）；红点回调 `onNeedUpdateMsg(needUpdate)` → `layoutRed.setVisibility(0/8)`（`…/HomeActivity.java:1130-1137`）。
 
 ### 9.2 检查更新（本地）
 
@@ -730,16 +732,184 @@ name="sd"; filename="<file.getName()>"
 
 ## 10. 附加功能
 
-（待补）
+### 10.1 GPS / 高德叠加（轨迹页）
+
+| 维度 | 事实 | 出处 |
+|---|---|---|
+| 入口 | 本地相册/回放预览页 → `startActivity(TrackActivity)`，**只带一个 extra：`"LocalVideoPath"`**（视频本地绝对路径） | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/localimage/AlbumPreviewActivity.java:215-220`；`…/sigmastar/newUi/album/Ui/Activity/ActivityNewPreview.java:350` |
+| 页面 | `TrackActivity`（`exported=false`，`portrait`，`theme=@style/CustomActionBar`），两套布局 `activity_track` / `activity_track_land`（按 `getRequestedOrientation()==0` 选） | `_work/re/xtugo/manifest.md:242`；`…/localimage/TrackActivity.java:112-119` |
+| 地图 | 高德 `AMap`（`com.amap.api.maps.AMap`、`MapView`、`MovingPointOverlay`）与 Google `MapView` 双实现，`isGaodeMap` 二选一 | `…/TrackActivity.java:23,56,66,386,507` |
+| 坐标转换 | `GPSConversion.gps84_To_Gcj02(lat,lon)`；常数 `a=6378245.0`、`ee=0.006693421622965943`、`pi=3.141592653589793`、`x_pi=52.35987755982988`；`outOfChina(lon<72.004 \|\| lon>137.8347 \|\| lat<0.8293 \|\| lat>55.8271)`；`exchangeUnit()` 度分秒→十进制 | `_work/xtu_src/sources/com/gku/gps/GPSConversion.java:6-19,21-27,42-48` |
+| 数据格式 | `GPSInfoBean{message, List<GpsBean{latitude,longitude,status,EW,NS,…}}`，`message` 必须等于常量 `"Get GPS Info"`（`GpsInfo.GET_GPS_INFO`/`ICatchGpsInfo.GET_GPS_INFO`）才做 `supplement()` 空洞填补（用上一个 `A` 状态点覆盖下一个 `V` 点，正反向各扫一遍） | `…/gps/GpsInfo.java:5`；`…/gps/ICatchGpsInfo.java:5`；`…/gps/GPSConversion.java:30-40` |
+| **发什么报文** | **什么都不发**。GPS 点来自**已下载到本地的视频文件旁路数据**（不是相机 CGI）；`TrackActivity` 只把本地路径给 `VideoView.setVideoPath()` | `…/TrackActivity.java:120,128` |
+| **硬缺陷（静态可判）** | `TrackActivity.gpsInfoBean` 声明为 `private GPSInfoBean gpsInfoBean = null;`（`:79`），**全文件无任何赋值**，而 `onCreate` 第 164 行无条件 `this.gpsInfoBean.getGps().get(0)` → **进入该页必 NPE**；且 `com.gku.gps.GPSInfoBean` 在整个 `com/gku/` 树里除 `TrackActivity`/`CutActivity`/`VideoEditActivity` 外无生产者 → **GPS 叠加功能在 XTU GO 8.4.3 里是半截（iCatch 记录仪搬过来的）** | `…/TrackActivity.java:79,164,175,235,467-503`；`grep -rn "GPSInfoBean" _work/xtu_src/sources/` 结果 |
+| 视频侧烧录 | `ffmpeg -i <视频> -framerate <gpsFrameRate> -i <saveGpsImagePath>/img%3d.png -filter_complex [0][1]overlay=60:main_h-overlay_h-30 -y -q:v 1 -max_muxing_queue_size 1080 -vcodec libx264 -acodec copy -crf 35 -preset ultrafast -r 15 -qp 20 -threads 10 <out>`（**手机侧合成，与相机无关**） | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/videoedit/CutActivity.java:538`；`…/videoedit/VideoEditActivity.java:542` |
+
+### 10.2 滤镜 / 特效
+
+| 维度 | 事实 | 出处 |
+|---|---|---|
+| 入口 | 本地图片预览 → `ImageEditActivity`，顶栏 tab `@string/image_edit_tools`/`@string/image_edit_filter`(`Filters`)/`@string/image_edit_effect`(`Effects`) | `_work/re/xtugo/layouts.md:77`；`_work/re/xtugo/res-strings-default.md:1287-1288` |
+| 实现 | **纯手机侧 GPUImage**：`jp.co.cyberagent.android.gpuimage.GPUImageView`（`activity_image_edit_effect.xml` 的 `@+id/iv_cover`）；`ColorFilterPreviewTask` + `ImageEdit.setColorFilter(..., float[] …)` | `_work/re/xtugo/layouts.md:79`；`_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/localimage/ImageEditLib/ImageEditEffectActivity.java:21,30,56`；`…/ImageEditActivity.java:34,43-44,135-136,278-281` |
+| 特效枚举 | `R.string.spec_effect_blur`=「Blue」、`spec_effect_emboss`=「Emboss」、`spec_effect_sketch`=「Sketch」、`spec_effect_toon`=「Toom」（原文如此，笔误）、`spec_effect_white_balance`=「WhiteBalan」 | `_work/re/xtugo/res-strings-default.md:2070-2074` |
+| 保存 | `R.menu.menu_save`（本地写文件） | `…/ImageEditActivity.java:141` |
+| **发什么报文** | **无**。相机不参与；相机侧若另有「滤镜」项，它只会以 §6.1 动态菜单里 `getsecondmenuitem` 回的一个项名出现，APK 里查不到 | — |
+| 文件筛选（另一处叫「筛选」的 UI，勿混） | `file_filter.xml`：`筛选文件/时间段/到/摄像头类型/重置/确定`，`@+id/min_time_edt`、`@+id/max_time_edt`、`@+id/sensors_type_txv` —— 属 **iCatch 记录仪** `com.gku.dashcam.icatch.ui.fragment.DialogFragmentFromBottom` | `_work/re/xtugo/layouts.md:241`；`_work/xtu_src/sources/com/gku/dashcam/icatch/ui/fragment/DialogFragmentFromBottom.java:100-101` |
+
+### 10.3 全景 VR
+
+| 维度 | 事实 | 出处 |
+|---|---|---|
+| 归属 | **iCatch 全景记录仪（`com.gku.dashcam.icatch`），不是运动相机**。渲染枚举 `RenderType.PANORAMA_RENDER`；会话 `PanoramaSession`；SDK 封装 `PanoramaControl(ICatchPancamSession)`，只有 `addEventListener(int, ICatchIPancamListener)` / `removeEventListener(...)` | `_work/xtu_src/sources/com/gku/dashcam/icatch/streaming/RenderType.java:6`；`…/icatch/PanoramaSession.java:14`；`…/icatch/sdkapi/PanoramaControl.java:11-33` |
+| UI | 三个 Activity 的切换按钮 `@+id/panorama_type_btn`：`PreviewActivity`（预览）、`PhotoPbActivity`（照片回放）、`VideoPb2Activity`（视频回放，点击切 2D/全景） | `…/icatch/ui/activity/PreviewActivity.java:64,276-281,677,682`；`…/PhotoPbActivity.java:52`；`…/VideoPb2Activity.java:38,73,110,317`；布局 `content_panorama_video_pb.xml`（含 `eisSwitch`、`SurfaceView`） |
+| 底层 SDK | `com.icatchtek.pancam.core/customer`（iCatch 公版全景 SDK，PTP over USB/HTTP）；主文档 §0 已声明该族只做接口级解读 | `_work/re/xtugo/api/com__icatchtek__pancam__core.md`、`…__customer.md` |
+| **发什么报文** | 走 iCatch PTP（`libcontrol.so`），**不属于运动相机三条协议栈**，本附录不展开 | — |
+
+### 10.4 抖音直播（`DouyinStreamController`）
+
+| 步 | 动作 | 精确值 | 出处 |
+|---|---|---|---|
+| 1 | 入口 | `StreamConfigActivity` → `BroadcastDouyinFragment2`（tab），UI：`rg_resolution` / `rg_fps`（`rbs_25`/`rbs_30`，默认 `rbs_30`）/ `rg_bs`（`rbs_flu`/`rbs_high` = bitrate 0 / 非0）、隐私勾选 `imgCheck` | `_work/xtu_src/sources/com/gku/actioncam/amba/ui/stream/BroadcastDouyinFragment2.java:600-626` |
+| 2 | SDK 初始化 | `DouYinSDK.getInstance().init(new SdkInitConfig.Builder(app, "780679", "XTU GO", BuildConfig.VERSION_NAME, 243L).isDebug(true).initializeListener(...))` —— **直播开放平台 AppID = `"780679"`，appName = `"XTU GO"`，versionCode = `243`，`isDebug=true`（正式版仍开 debug）** | `_work/xtu_src/sources/com/gku/actioncam/amba/ui/stream/DouyinStreamController.java:158-160` |
+| 3 | 授权 | `DouyinBroadcastApi.isBroadcastInited()` → `login()` → `DouyinBroadcastApi.login(activity, AccountAuthCallback)`；成功 `BroadcastStatus.ATH`；失败 Toast `R.string.auth_fail`（`Authorization failed`/「授权失败」）+ `":"+p0` | `…/DouyinStreamController.java:141,192-207` |
+| 4 | 开播 | `DouyinBroadcastApi.startBroadcast(LiveAngle, CamType)`（`getBroadcastType()` 返回 `Pair<CamType,LiveAngle>`）→ `StartLiveResp`（含 `pushUrl`/`roomId`）；`getRoomId()` 取房间号 | `…/DouyinStreamController.java:269-300`；`…/DouyinStreamController$Companion`（`turnOffBroadcast(roomId)` → `DouyinBroadcastApi.turnOffBroadcast(roomId) != null`，`:110-126`） |
+| 5 | 错误码 | `CODE_ERROR_DOUYIN_UNINIT` / `CODE_ERROR_DOUYIN_UNAUTH` / `CODE_ERROR_DOUYIN_STARTBROADCAST_RETURN_NULL` / `CODE_ERROR_DOUYIN_RTMPPUSHURL_ERROR`；`uninit` 文案 = `R.string.uninit`（`Uninitialized`/「未初始化」） | `…/DouyinStreamController.java:99-126`；`_work/re/xtugo/res-strings-default.md` |
+| 6 | **把 RTMP 地址交给相机** | `startNewLive(msg=rtmpUrl, fbl=res, fps, bitrate)` → 存 `RTMPBean` + `SharedPreferencesUtils.saveRTMPBean()` → **BLE 下行 `R007`**：`String.format("live_type:%s;res:%d;fps:%d;bitrate:%d;rtmp_url:%s;", liveType, res, fps, bitrate, rtmpUrl)`；同调用链 `BLEConnectUtils.startLive("tiktokCN", fbl, fps, bitrate, msg)` | `…/BroadcastDouyinFragment2.java:938-953`；`_work/xtu_src/sources/com/gku/actioncam/sigmastar/newUi/deviceAdd/Fragment/connect/BLEConnectUtils.java:285` |
+| 7 | 先让相机连上手机能上网的热点 | **BLE `R006`**：`String.format("ssid:%s;pwd:%s;", ssid, pwd)`；`BluetoothLive` 里硬编码 `sendWifi(…, "gkuvision-5G", "gku88888", …, "R006")` | `…/BLEConnectUtils.java:278`；`_work/xtu_src/sources/com/gku/module_camera/bluetooth/BluetoothLive.java:92,188` |
+| 8 | 推流页 | `StreamingActivity`（`exported=false`，从 `HomeActivity.INTENT_RTMP_TASK` 取 `RTMPBean`），只有计时 UI + `closeLive()` 确认框；**App 侧不推流**，RTMP 由相机自己推 | `_work/xtu_src/sources/com/gku/actioncam/amba/ui/stream/StreamingActivity.java:42,136-140`；`_work/re/xtugo/api/com__gku__actioncam__amba.md`（`sendBufWithRTMP`） |
+
+### 10.5 扫码直播 / 自定义 RTMP（「互联网远程观看」在本 APK 里的真实形态）
+
+| 步 | 动作 | 精确值 | 出处 |
+|---|---|---|---|
+| 1 | 平台选择页 | `SelectLiveActivity`（`R.string.rl_selete_plaform` = `Choose live platform`／「选择直播平台」），`GridView @+id/select_live_grid` 用 `IMAGE_ID[]` 铺图标，任何一项点击**都只进同一个 `CustomLiveActivity`** | `_work/xtu_src/sources/com/gku/actioncam/remote_live/SelectLiveActivity.java:40-65` |
+| 2 | 自定义页 | `CustomLiveActivity`，标题 `R.string.rl_custom_setting`；三块：`@+id/custom_live_wifi_scan`（选 WiFi，`R.string.rl_live_wifi`+`rl_selete_wifi`）、`@+id/custom_live_rtmp_edit`（`R.string.rl_input_rtmp`）、`@+id/start_live_button` | `_work/re/xtugo/layouts.md:62`；`…/remote_live/custom/CustomLiveActivity.java:43-82` |
+| 3 | 选 WiFi | `startActivityForResult(new Intent(this, ScanWifiActivity.class), 718)`；`ScanWifiActivity` 注册 `android.net.wifi.SCAN_RESULTS` 收 AP 列表，选中后可再弹 `layout_wifi_dialog`（`@string/ssid`/`@string/password`/`rl_wifi_cancel`/`rl_wifi_confirm`） | `…/CustomLiveActivity.java:97`；`_work/xtu_src/sources/com/gku/actioncam/remote_live/ScanWifiActivity.java:285,314`；`_work/re/xtugo/layouts.md:373` |
+| 4 | 起流前置门 | `isLivePrepared()`：`url != null && url.startsWith("rtmp")`，否则按钮变灰（`live_platform_view_white` + `rl_start_live_black` + `setTextColor(MEASURED_STATE_MASK)`） | `…/CustomLiveActivity.java:105-121` |
+| 5 | 出二维码 | `startActivity(QRShowActivity)` 带三个 extra：`"ssid"`、`"pwd"`、`"url"`；`url` 为空则直接 `finish()` | `…/CustomLiveActivity.java:99-104`；`_work/xtu_src/sources/com/gku/actioncam/remote_live/QRShowActivity.java:24-38` |
+| 6 | 二维码内容（逐字格式） | `QRContentBean.toString()` = `"[SSID:" + ssid + ",PWD:" + pwd + ",URL:" + url + "]"` —— **方括号 + 逗号分隔的自定义文本，不是标准 WIFI: 码**；用 `QRCodeUtil.zxingQRBitmap(w,w,…)` 画，边长 = 屏宽 × 0.8 | `_work/xtu_src/sources/com/gku/actioncam/remote_live/QRContentBean.java:18-23`；`…/QRShowActivity.java:31-37` |
+| 7 | 谁扫 | **相机扫**（页标题 `R.string.rl_scan_code_live` = `Scan code live`／「扫码直播」，正文 `R.string.rl_camera_scan_qr` = `Camera scan QR code`／「相机扫描二维码」，布局 `activity_q_r_show.xml`）→ 相机自己拿到 SSID/密码/RTMP 后连云端推流 | `_work/re/xtugo/res-strings-default.md:1899-1911`；`_work/re/xtugo/layouts.md:95` |
+| 8 | 另有云端服务（**不是这条链路的报文**） | `com.gku.rxt.net.AppService`：`API_SERVICE_HOST_IP="http://api.shhc-yh.com/"`、`API_FW_SERVICE_HOST_IP="http://api.shhc-yh.com/api/"`、`API_APP_SERVICE_HOST_IP="http://www.gkuvision.com:8882/upload/update.xml"`；方法 `ossPost(mid)`、`getVersionInfo()`；底层 `m.mifan.acase.core.HttpProtocol` | `_work/xtu_src/sources/com/gku/rxt/net/AppService.java:22-24,31` |
+
+### 10.6 `m.mifan.acase.**` 这套协议库是给谁用的
+
+| 维度 | 结论 | 证据 |
+|---|---|---|
+| 服务对象 | **XTU Mini1 行车记录仪（iCatch 方案）**，不是运动相机 | 配套 Activity 全在 manifest 且 `theme=IcatchAppTheme`：`cn.rxt.qscase.{MainActivity,ControlActivity,AlbumActivity,PreferencesActivity,AgreementPermissionActivity,Main2Activity}`、`com.example.icatchplayerlibrary.VideoPbActivity`、`m.mifan.acase.icatch.IcatchVideoPlayerActivity`、`cn.rxt.caeuicore.album.page.preview.VideoPlayerActivity`（主文档 §1.4 末行） |
+| 核心类型 | `m.mifan.acase.icatch.IcatchCase`（`extends Case implements IcathEventHandler.Callback`，135 个字段/常量，持 `IcathEventHandler eventHandler`、`Case.FwCallback`、`int workMode=-1`、`boolean hasSdcard`、`boolean isCollecting`） | `_work/re/xtugo/api/m__mifan__acase__icatch.md:12-45` |
+| 传输 | `m.mifan.acase.core.HttpProtocol`（Kotlin，`new HttpProtocol(false, 1, null)`）+ `ApiResult`；命令号是 **4 位十进制字符串**（`9001` 监控工作模式、`1002` 拍照分辨率、`9007` 拍照张数、`2002` 录像分辨率），定义在 assets 的模板里 | `_work/xtu_src/sources/com/gku/rxt/net/AppService.java:31`；主文档 §6（`assets/menu/LZXCAM`、`assets/menu/ly_menu.json`，`cmd` 4 位数字，`ui ∈ {UIList,UITimePicker,UITimerRecord,UICustom,UISwitch,UIInput,UIWifiSet,UISDFormat,UIReSet}`） |
+| 设备地址 | `192.168.1.1`（`IcatchCaseKt.API_HOST_ICATCH`），AP 默认密码 `"12345678"`（`WifiAPUtil.DEFAULT_AP_PASSWORD`） | 主文档 §2.5 |
+| 连接分派 | `HomeActivity.checkConnectionDevice()` 里 `ip=="192.168.1.1"` → `connectDashCamera2(...)`（与运动相机完全分流），并会先 `resetBT()` | `_work/xtu_src/sources/com/gku/HomeActivity.java:562-565,1624-1626` |
+| 判定 | **XTU 运动相机的任何操作都不需要经过 `m.mifan.acase`**；复现运动相机时把它当独立子产品 | — |
 
 ---
 
 ## 11. 状态轮询
 
-（待补）
+### 11.1 结论先行
+
+**B 套（真机 S7PRO）预览页没有周期性的状态轮询**，状态是「推送 + 事件驱动」。三个原本该轮询的方法是**空实现**：
+
+| 方法 | 实现 | 出处 |
+|---|---|---|
+| `ActionCameraPreviewPresenter.registerMessageReceiver()` | `{}` 空 | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/OldUi/preview/presenter/ActionCameraPreviewPresenter.java:80-81` |
+| `startBatteryPolling()` / `stopBatteryPolling()` | `{}` 空 | `:83-84,89-90` |
+| `startSDCardPolling()` / `stopSDCardPolling()` | `{}` 空 | `:86-87,92-93` |
+
+（调用方仍在 `onStart` 里调 `presenter.registerMessageReceiver()`，`…/HisiActionCameraPreviewActivity.java:315-320`，即调了个空函数。）
+
+### 11.2 真正的状态来源：相机 → App 的 5678 回拨推送
+
+| 维度 | 值 | 出处 |
+|---|---|---|
+| 服务端 | `HisiSocketServer.getInstance().start(activity, callback)`，`bind(new InetSocketAddress(5678))`，`soTimeout=5000` | `_work/xtu_src/sources/com/gku/module_camera/hisi/HisiSocketServer.java:19,73-74`；启动点 `…/HisiActionCameraPreviewActivity.java:307-312` |
+| 另一路 | `MessageService` `new ServerSocket(5678)`，`soTimeout=3000`，读满 ≤512B，广播 `com.gku.xtugo.MESSAGE_ACTION`，extra 键 `"data"` | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/MessageService.java:18-19,32,92-127` |
+| 推送体格式 | 伪 JSON：`{"mode":"<模式串>";"state":"<int>";"event":"<long>";"pasttime":"<int>"}`（分隔符是 **`;` 不是 `,`**），键前带 `var ` → 解析时读 `jSONObject.optString("var mode")`/`optInt("var state")`/`optLong("var event")`/`optInt("var pasttime")` | `…/dv/net/HttpProxy.java:313-316`；`…/ActionCameraPreviewPresenter.java:110-118` |
+| 回调链 | `onReceiveMsg(msg)` → `presenter.onReceive(msg)` → `SSResponseParse.parseGetAllInfo(msg)` → `preview.updateOperateCommandUI(state)` | `…/HisiActionCameraPreviewActivity.java:309-311`；`…/ActionCameraPreviewPresenter.java:150-156` |
+| Ambarella 推送 | `msg_id` 判别：`268435466`(0x1000000A) = 工作状态、`268435489`(0x10000021) = 旋转（读 `"var rotation"` → `loadRotateSuccess`）、`268435507`(0x10000033) = 蓝牙收发器（读 `"BluetoothDevOne"`/`"BluetoothDevTwo"` → `loadBluetoothTXSuccess`） | `…/ActionCameraPreviewPresenter.java:108-128` |
+
+### 11.3 有周期的东西（数值逐个抄）
+
+| 循环 | 周期（ms） | 端点/动作 | 驱动什么 | 出处 |
+|---|---|---|---|---|
+| **`KeepAliveService` 心跳** | 失败态 `Thread.sleep(ExoPlayer.DEFAULT_DETACH_SURFACE_TIMEOUT_MS)` = **2000**；正常态 `Thread.sleep(5000L)` = **5000**；连续失败计数 `> 5`（`MAX_TICK_COUNT=5`）才广播 `com.gku.xtugo.DV_ISALIVE_ACTION`，extra `"networkpast"=false`；恢复时立刻广播 `true` | **不发任何网络请求**：`Utility.isDeviceAvailable(ctx)` 的真实实现是 `((WifiManager) ctx.getSystemService("wifi")).isWifiEnabled()` —— **只查本机 WiFi 开关** | 断连提示 / `BaseActivity`、`IjkBaseActivity`、`PreviewImageActivity`、`SwitchImageActivity`、`WifiDisconnectReceiver` 的收流方 | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/KeepAliveService.java:12-16,43-84`；`…/dv/biz/Utility.java:19-26`；接收方 `…/dv/ui/BaseActivity.java:34`、`…/amba/base/IjkBaseActivity.java:47`、`…/dv/wifi/WifiDisconnectReceiver.java:125` |
+| **`requestCurWorkModeParams` 节流门** | `if (System.currentTimeMillis() - lastRequest > 1000)` → 每 **1000ms 最多一次** | `getsecondmenuitem.cgi?-workmode=<模式>&-name=Resolution` + `getcurworkmode.cgi` | 预览页分辨率文字、快设条 | `…/ActionCameraPreviewPresenter.java:365-371` |
+| **录像计时器** | `CountDownTimer(Long.MAX_VALUE, 1000L)` → **1000ms** 一跳 | 本地，无报文 | 录像时长文字；`Timing Photo` 递减、`Quick Stories` 用 `(quickStoriesRecordTime + quickStoriesAddTime) - currentTime` 递增 | `…/ActionCameraPreviewPresenter.java:239-266` |
+| **卡流看门狗** | `postDelayed(checkRunnable, 1200L)`，阈值 `now - lastStreamTime > 1500` | 无请求，只重建播放器 | 断流自动重连 + Toast `R.string.text_please_near_device`（`Please keep your phone near the device for stable signal`／「请将手机靠近设备以保持信号稳定」） | `…/HisiActionCameraPreviewActivity.java:176-197,848-850` |
+| **遮罩重试** | `3000`（`C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS`） | `initIjkVideoView(0)` | 首帧遮罩 | `…/HisiActionCameraPreviewActivity.java:152-158,690-693` |
+| **Ambarella 4K 复读** | `150000`（把 µs 常数当 ms 用，实为 150s） | `initIjkVideoView(0)`，条件 `resolutionString ∈ {"4K60","4K30"}` | 4K 预览保活 | `…/HisiActionCameraPreviewActivity.java:159-169,682-684` |
+| **屏幕旋转拉取** | `handler.postDelayed(this, 500L)`（`isPulling` 为真时自递归） | `presenter.subscribeScreenRotate()`（**该方法在 presenter 里是空壳**，`…/ActionCameraPreviewPresenter.java:333-335` 转调 `previewModelManage.getModel().subscribeScreenRotate()`） | 预览画面方向 | `…/HisiActionCameraPreviewActivity.java:143-149` |
+| **WiFi 信号** | **事件驱动**，`android.net.wifi.RSSI_CHANGED` + `android.net.wifi.STATE_CHANGE` | 无报文（`WifiManager`） | 预览页信号格 `updateWiFiRssiUI` | `…/ActionCameraPreviewPresenter.java:158-187` |
+| **回放返回** | `postDelayed(…, 1500L)` | 无报文，`EventBus.post(MessageEvent(backFromPlayback=true))` | 回放页退出动画 | `…/OldUi/playback/presenter/SSPlaybackNewPresenter.java:983-999` |
+| **App 升级页下载进度** | `sendEmptyMessageDelayed(2003, 1000L)` → **1000ms** | 查 `DownloadManager` 进度 | 进度条 | `…/dv/updateapp/DownloadActivity.java:103`；孪生 `…/sigmastar/upgrade/app/DownloadActivity.java:103` |
+| **抖音直播页** | `sendEmptyMessageDelayed(100, 1000L)` / `sendEmptyMessageDelayed(101, 2000L)` | 本地计时 | 直播时长/状态 | `…/amba/ui/stream/BroadcastDouyinFragment4.java:71,99` |
+| **BLE 等 AP 就绪** | `WiFi_Status != 1` 时每秒重写 `R002`（**无上限**） | BLE，非 HTTP | 配网进度 | `…/BLEConnectUtils.java:752-758`（`docs/07 §1.6 坑1`） |
+| **A 套主动查状态** | `HttpProxy.getCameraCurrentInfor(ctx, VERSION)`：`VERSION==1` → `getcurallinfo.cgi`，否则 `getallinfo.cgi`（`VERSION==2` 时 `mode` 是数字，走 `replaceMode(int)` 映射成模式名）→ 拼伪 JSON → **自己广播 `MESSAGE_ACTION`** | 上面两个 CGI | 与推送同一套 UI 通道 | `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/net/HttpProxy.java:305-317,319-360` |
+
+### 11.4 各字段驱动哪些 UI（`getcurallinfo.cgi` / 推送共用）
+
+| 字段 | 值 | 驱动 | 出处 |
+|---|---|---|---|
+| `state` | `20` WORKING | ① 录像中：快门换 stop 图标、`commandOperation` 出 stop 索引、禁切模式入口；② `Quick Video` → `showExitQuickVideoOperateUI()`；③ 视频模式 + `state==20` → `showNormalMessage(R.string.ss_event_start_record,1500)` + `startRecordCountDown(pasttime)`；④ `AmbaActionCameraPreviewActivity` 里 `Long Exposure` + `state==20` 单独分支 | `…/CameraParameters.java:23-24`；`…/HisiActionCameraPreviewActivity.java:1135-1210`；`…/AmbaActionCameraPreviewActivity.java:333-336` |
+| `state` | `21` STANDBY | 停录/落盘：`showFinishMessage(R.string.ss_event_save,1500)` + `finishRecordCountDown()`；`Video and Photo` 模式下 `state==21` 会 `hideMainUI(false)` | `…/HisiActionCameraPreviewActivity.java:1160-1185` |
+| `event` | `10700000` | Toast `R.string.ss_sd_out`（「未检测到SD卡」）+ `hideSdCardUI()` | `…/HisiActionCameraPreviewActivity.java:1126-1129` |
+| `event` | `11700006` | Toast `R.string.ss_sd_in`（「检测到SD卡」） | `:1131-1132` |
+| `event` | `11800001` | Toast `R.string.operation_success`（`Operation Success`/「操作成功」） | `:1140-1142` |
+| `event` | `1` / `268763137` | 视为开始录像（与 `state==20` 同分支） | `:1143-1145` |
+| `event` | `2` / `268763138` | 视为停止录像 | `:1160` |
+| `event` | `3` / `268632077` | 视为开始拍照 | `:1186-1188` |
+| `event` | `4` / `268632078` | 视为拍照完成；**同时触发 `initIjkVideoView(1000)` 重起流** | `:1212-1216`；`…/ActionCameraPreviewPresenter.java:736-738` |
+| `event` | `11700002` / `273420290` / `273420291` / `273420315` / `272642051` | 与 `state==21` 组合判「已保存」 | `:1160-1163`、`:1212-1214` |
+| `event` | `4026597633` | 结束录像倒计时 `finishRecordCountDown()`（UI 线程） | `…/ActionCameraPreviewPresenter.java:703-712` |
+| `event` | `<= 0` | `initIjkVideoView(0)` 重起流 | `…/ActionCameraPreviewPresenter.java:731-735` |
+| `event` | 任意非 0 | 录像/停录按钮重新 `enableActionButton(true)`（`updateOperateCommandUI` 末尾无条件） | `…/HisiActionCameraPreviewActivity.java:1133` |
+| `pasttime` | int，**不换算** | 直接进 `SSystemWorkState.pasttime` 当秒显示；Ambarella 机型除 2 补偿：`type ∈ {H75N,"CV75"}` 且**非** `Timing Photo` → `startRecordCountDown(pasttime/2)`，`Timing Photo` → `startRecordCountDown(pasttime)` | `…/SSResponseParse.java:490,505,525`；`…/amba/model/AmbaCmdModel.java:570`；补偿逻辑 `…/ActionCameraPreviewPresenter.java:718-727` |
+| `mode` | 模式串 | `curWorkMode = sSystemWorkState.getWorkMode()` → 模式图标 `SSExchangeWorkMode.workModeToResId()`（XTU 下 = `getIdentifier("ic_image_" + 归一小写名, "drawable", pkg)`） | `…/ActionCameraPreviewPresenter.java:700-702`、`:652-658`；`…/SSExchangeWorkMode.java:68-74,86-132` |
+| `state` 的 A 套版 | `getcamerastatus.cgi` 要求同时出现 `count=` 与 `status=`，缺一返回 `null`；分隔 `;|\n|Var` | 真机回 200 空 body ⇒ 判「无状态」 | `…/dv/net/HttpProxy.java:142-169` |
+| 电量 | `getbatterycapacity.cgi` → `capacity`(int)、`charge`(`"1"`→bCharging)、`ac`(`"1"`→bAC) | 仅在 `bAC` 或 `bCharging` **变化时**才 `showBatteryState()`（相同则 return，不重复刷 UI） | `…/SSResponseParse.java:245-279`；`…/ActionCameraPreviewPresenter.java:674-687` |
+| SD | `getsdstate.cgi` → `sdstate ∈ {SDOK,SDFULL,SDNONE,SDERROR}`、`total`、`used`（去 `" MB"` 后 parseInt，缺则 `-1`） | `showSdCardState()`、容量条 | `…/HaisiPreviewModel.java:205-238`（解析）；`…/ActionCameraPreviewPresenter.java:661-672` |
 
 ---
 
 ## 12. 静态定不来的操作
 
-（待补）
+下表每一项都**至少缺一个字段**（报文存在性、参数域顺序、固件响应体、或成功判据），并给出补证手段。
+
+| # | 悬而未决 | 为什么静态定不来 | 需要什么手段补证 |
+|---|---|---|---|
+| 1 | **`reset.cgi` 到底是「恢复出厂」还是「重启」** | 同一条命令：入口项名 `"Factory Reset"`、确认框 `R.string.restore_tip`=「确定恢复出厂设置?」，但失败 Toast 资源 `R.string.reset_fail` 的中文是「重启失败」；`Command`/`HttpProxy` 两层都不看 body | 真机各发一次并观察：① 相机是否重启（`getdeviceattr.cgi` 断连→重连）② 用户数据是否被清（`getfilecount.cgi` 是否归零）。若两问皆否，则中文文案是错标 |
+| 2 | **相机侧是否存在「重启 / 关机」命令** | 全 APK 无 `reboot.cgi`/`restart.cgi`/`poweroff.cgi`；预览页布局里的 `@+id/ivPower`、`@+id/viewCoverOnPowerOff` 在 Java 侧零引用（只有 `R.java` 常量与 databinding 字段）；Ambarella 侧 `1537 WIFI_RESTART`/`1540 WIFI_STOP`/`1541 WIFI_START`/`1542 WIFI_STATUS`/`12 AMBA_POWER_MANAGE`/`259 AMBA_RESETVF` **全是无发送方的常量** | ① 真机抓 `getprimarymenuitem.cgi?-workmode=System` 的 `item` 全串（若回 `Reboot`/`Power Off` 且 `cur` 为空，则 App 会自动生成一行点击型菜单并走 `setcurparameter.cgi?-workmode=System&-name=Reboot&-value=`，空值是否被接受要实测）② 对 Ambarella 机型主动发 `{msg_id:1537/1540/1541}` 看是否响应 |
+| 3 | **录像中「改参数」是否被客户端禁止** | 主文档/真机说「录像中切模式/改参数被拒，官方是客户端直接禁止」。静态只找到**切模式**的 UI 门控（§5.3）；`setcurparameter.cgi` 的三条写路径（`HttpProxy.setModelPamarsStr`/`setDevicePamarsStr`/`SSCommandUtil.setCurParam`）**均未读 `workState.state`**，也没有 `isEnabled` 判断 | 真机：`state==20` 时手动点设置项，抓包确认「按钮是否可点」+「是否仍发请求」。若仍发请求 → 「客户端禁止」这条结论要收窄成「只禁切模式」 |
+| 4 | **NewAPP 机型上 `getcurallinfo.cgi` 的推送方向** | App 同时监听 5678 与 8080 无关联；`HttpProxy.getCameraCurrentInfor()` 会**自己造一条假推送广播**，与真推送走同一通道，静态无法区分相机是否真的主动推 | 真机 tcpdump/`ss -tlnp`：确认相机是否主动连 5678；以及 `getcurallinfo.cgi` 的请求频率是 App 发的还是相机推触发的 |
+| 5 | **`pasttime` 的真实单位** | 代码零换算，显示层当秒；真机 S7PRO 约 1 拍/秒、Ambarella 半秒 → App 对海思「碰巧对」，对 Ambarella 会差 2 倍（且已写死 `pasttime/2` 补偿） | 长录一次，同步秒表比对；`Hi3519DV500` 与 `CV75` 各一台 |
+| 6 | **`getprimarymenuitem.cgi` 同响应行内 `item`/`cur` 的完整字段集** | 解析用 `getMap2`（只要求 `";`），真机把 item 与 cur 写同一行时只有最后一个键能读到；系统页还人为拼 `",test"` 占位 | 真机原始响应体（`curl` 落原始字节，含 `\r\n`）→ 判定该 CGI 是否可被宽松解析替代 |
+| 7 | **NewAPP 方言的**全部**可选值枚举**（分辨率/帧率/延时间隔/连拍张数/白平衡/曝光补偿…） | 值全部由 `getsecondmenuitem.cgi` 在运行期返回，APK 内只有 12 个硬编码项名与 8 个特殊帧率串（`720P100/720P200/1080P100/1080P200/720P120/720P240/1080P120/1080P240`） | 逐模式真机拉 `getprimarymenuitem` + 每项 `getsecondmenuitem`，导出成表；同时拉 `/mnt/language.xml` 或 `/tmp/FL0/language.json` 才能拿到中文项名 |
+| 8 | **各工作模式的完整清单** | `getallworkmode.cgi` 的 `photo`/`video` 两项是设备给的；静态只有 15 个已知串 + `NewTimeStretch`/`NewManualRecsnap`/`NewLapseBurst`/`"Night Photo"`/`"Night Scene"`/`"Loop Video"`/`"Video+Photo"`/`"Lapse Video"`/`"Timelapse Video"` 等别名 | 真机 `curl BASE'getallworkmode.cgi'` 全型 × 全固件版本 |
+| 9 | **预览大码流（11）在 NewAPP 上是否根本不可用** | `SSCommandUtil.previewLiveStream()`/`HaisiCommandUtil.previewLiveStream()` 写死 `rtsp://192.168.0.1:554/livestream/12`，不读 `preview_video` 开关；只有 A 套 `DV.getVideoRtspURL()/getVideoHttpURL()` 会出 `11` | 真机手动试 `rtsp://<ip>:554/livestream/11` 与 `http://<ip>:80/11?trans=tcp&action=play&media=video_data`，看能否起流 |
+| 10 | **预览主机 IP 是否恒为 `192.168.0.1`** | 上述常量路径用 `SSConstant.SS_IP`，而 `DV.getVideoRtspURL()` 用运行时 `this.ip`；若相机 IP 被用户改过，B 套预览必挂 | 真机改 IP 后复现；决定我们是否照抄这个常量 |
+| 11 | **下载是否有续传** | 三套下载（HTTP 临时文件+rename、8080 定长头、Ambarella 8787 裸管道）均**无 `Range`/`offset` 复用**（Ambarella 的 `offset`/`fetch_size` 在 `getFile` 里恒为 `0`） | 真机下载中途断 WiFi，再点下载，看是否从头开始 |
+| 12 | **`getfilelistinfoios.cgi` 与 `getfilelist.cgi` 的响应字段完整集** | 静态只读 `path`/`create`/`time`/`size`；`-type` 只有 `Photo`/`Video` 两个串（`SSCommandUtil.getFileList(int,int,int)`），而 `SSPlaybackNewPresenter` 侧出现 `Normal`/`Video`/`Event`/`Emr`/`Photo` 五种 type 语义 | 真机原始响应；对每种 `-type` 值各发一次记录返回码与体 |
+| 13 | **`getdirname.cgi` 到底给谁用** | 只有 `SSCommandUtil.getDirname()` + `SSResponseParse.parseDirname()` 两个定义，**全树零调用** | 真机手动 `curl` 看返回，判断是否用于日期分组（若返回 `YYYYMMDD` 列表则我们的回放分组可以改成服务端分组） |
+| 14 | **二维码配网码的真实格式** | 解析器只硬要求串里含 `WIFI:`、`S:`、`P:`，并只从 `S:`/`P:` 到下一个 `;` 取值；`split(";")` 结果被丢弃 → 含 `;`、`\`、`:` 的密码会被截断；`T:`（企业型）、`H:`（隐藏）完全不支持 | 拿官方相机机身/包装上的二维码实物解码，确认字段全集与转义规则 |
+| 15 | **BLE `R001`~`R009` 的语义与回包** | 本附录只能列「写了什么」，**通知回包字段**（`Status`/`Pin`/`KEY:1`/`SSID`/`PWD`/`WiFi_Status`/`R009_cap:`）的取值域、以及 4 位配对码的生成与拒绝重试规则在 `BLEConnectUtils.onCharacteristicChanged` 的混淆分支里；`docs/07 §1.2` 也是行为级描述 | ① nRF Connect 手工连一台相机逐条发 `R001`~`R009` 记回包 ② 对 `BLEConnectUtils.java:660-900` 做逐行精读 + 运行时日志（tag `xs, `、`onServicesDiscovered:`） |
+| 16 | **`m.mifan.acase` / iCatch 命令面** | 属另一个产品（XTU Mini1），命令号是 4 位十进制串，模板在 `assets/menu/*` 但**零引用**；`libcontrol.so` 内是 PTP | 单独建档（USB/HTTP 抓包 + `com.icatchtek.**` 精读）；本附录不覆盖 |
+| 17 | **相机端 HTTPS / 鉴权** | 全部相机请求**零鉴权、零 TLS**（`usesCleartextTraffic=true` + `network_security_config.xml` 只有 `cleartextTrafficPermitted="true"`）；无法从静态判断固件是否支持 | 真机试 https 端口与带 `Authorization` 头的请求 |
+| 18 | **`SvrFuncResult` 错误码全集** | 只有 `Command.executeCommand()` 会读它，且用 `substring(15, lastIndexOf("\""))` + `parseInt`（十六进制串会抛异常→ `errorCode=-1`）；`-2222` 仅在 `SSResponseParse` 里被 `contains("-222")` 吞掉 | 逐条构造非法参数抓返回，建一张错误码表（含 `0xFFFFF752` 这类有符号值的正确解法：`int` 直接按补码读） |
+| 19 | **`TrackActivity`（GPS/高德轨迹页）是否可用** | `gpsInfoBean` 声明后从未赋值，`onCreate` 无条件 `getGps().get(0)` → 静态判定必 NPE；`com.gku.gps.*` 的生产者（`"Get GPS Info"` 的应答解析）不在 `com/gku/` 树里 | 真机点进该页看是否闪退；若不闪退说明有未被 jadx 还原的注入路径（`_work/xtu_bad/sources/com/gku/actioncam/hisilicon/dv/localimage/TrackActivity.java` 同路径的 smali 伪码需再核） |
+| 20 | **App 自身更新在 XTU GO 上是否真的可达** | `UpgradeManager.serverHaveLatestAPK()` 依赖 `versionName` 末 8 位是 `yyyyMMdd` 且文件名带日期，异常即 `return true`；入口在 `settingpreferences.xml` 的 `update_version`，但该项文案是 `Camera System Update`／「相机系统更新」→ 很可能用户看到的是固件页而非 App 页 | 真机走「我的-设置-相机系统更新」，看列表是否含 `.apk` 项、能否触发安装 |
+| 21 | **抖音直播 `startBroadcast` 的返回体与推流失败码** | 关键逻辑在字节跳动 `com.bytedance.android.openlive.broadcast.**` 三方 SDK 内，非厂商代码；本 APK 只给了 4 个错误码常量与 `R.string` 文案 | 真机实测一遍开播（含未授权/无网/RTMP 非法）记 `StartLiveResp` 字段与相机侧行为 |
+| 22 | **`getactivateinfo`/`settrial`/`setactivateinfo` 的 `status`/`version` 语义** | 只知 `status==0` 触发激活弹窗、`settrial`/`setactivateinfo` 用 `%d`+`%s` 回填原值；试用次数上限（协议文案说 3 次）在固件侧 | 真机连做 3 次试用观察 `status` 变化；且仅 S7PRO/S7PRO MAX 有这条链 |
+
+### 12.1 与主文档 / 其他文档的冲突点汇总（本附录已就地标注）
+
+| # | 冲突 | 本附录的立场 | 位置 |
+|---|---|---|---|
+| C1 | 主文档 §11 称「预览 12 会切成 11（`isPreviewBigBitRate()`）」 | **只对 A 套成立**；B/C 套 `previewLiveStream()` 写死 `12` 且写死 `192.168.0.1` | §2.2 |
+| C2 | 主文档 §1.4/§3.4 称 `KeepAliveService` 是「2000ms/5000ms 心跳**轮询**」 | 周期数值正确，但**探测的不是相机**：`Utility.isDeviceAvailable()` 只查本机 `WifiManager.isWifiEnabled()`，一个报文都不发 | §11.3 |
+| C3 | 主文档 §5 承诺「改参数也被客户端禁止」 | 静态只见「切模式」有 UI 门控，三条写参数路径都无 `state` 判断 | §5.3、§12 #3 |
+| C4 | `reset.cgi` 的中文失败文案是「重启失败」，入口却是「恢复出厂设置」 | 记为待真机裁定，不擅自统一 | §8.3、§12 #1 |
+| C5 | `photo.cgi` 两套拼法（`?-type=photo&-cmd=start` vs `?&-type=photoburst`） | 海思 NewAPP 实走 A 套表（带 `&`、type 五值），B 套 `SSCommandUtil.startPhoto` 恒为 `"photo"` | §4.1 |
+| C6 | 云端固件版本接口两条 URL 参数名不同（`firm_ware_model` vs `firmWareModel`，路径 `v1/push/` vs `push/`） | 两者都在代码里，按调用方分别复现 | §9.1 |
+| C7 | `getdeviceattr.cgi` 解析在无 `networkstatus` 键时走 else 分支，使用未赋值变量 → NPE → 整次识别失败并**误入 Ambarella socket 兜底** | 按代码事实陈述，并提示这是真机可复现的行为 | §1.5 步 5 |
+| C8 | 主文档 §4.1 的 `getcurallinfo` 事件/状态语义 | 补全 `event` 数值 → UI 全表，并新增 `4026597633`、`11800001`、`10700000`、`11700006`、`268763137/138`、`268632077/078`、`1/2/3/4` 与 `268632078` 触发重起流 | §11.4 |
+| C9 | `docs/07` 与 BLE 结论 | 无冲突；本附录补充：BLE 链路实际只对 S7Pro 系列验证过（`docs/07 §1.6 坑3`），以及 `R006`/`R007` 的**逐字段模板串** | §1.4 |

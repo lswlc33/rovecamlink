@@ -231,9 +231,8 @@ L594 · [class] private static final SwitchingProvider · implements `Provider<T
 - `int id`  L596
 - `SingletonCImpl singletonCImpl`  L597
 
-方法（2）：
+方法（1）：
 - `T get()`  L606 @Override
-- `throw new AssertionError(this.id)`  L610
 ### `com.gku.DaggerBaseApplication_HiltComponents_SingletonC$Builder`
 L92 · [class] public static final Builder · `com/gku/DaggerBaseApplication_HiltComponents_SingletonC.java`
 
@@ -332,9 +331,8 @@ L666 · [class] private static final SwitchingProvider · implements `Provider<T
 - `int id`  L667
 - `SingletonCImpl singletonCImpl`  L668
 
-方法（2）：
+方法（1）：
 - `T get()`  L676 @Override
-- `throw new AssertionError(this.id)`  L680
 ### `com.gku.DaggerBaseApplication_HiltComponents_SingletonC$ViewCBuilder`
 L212 · [class] private static final ViewCBuilder · implements `BaseApplication_HiltComponents.ViewC.Builder` · `com/gku/DaggerBaseApplication_HiltComponents_SingletonC.java`
 
@@ -402,9 +400,8 @@ L532 · [class] private static final SwitchingProvider · implements `Provider<T
 - `SingletonCImpl singletonCImpl`  L535
 - `ViewModelCImpl viewModelCImpl`  L536
 
-方法（2）：
+方法（1）：
 - `T get()`  L546 @Override
-- `throw new AssertionError(this.id)`  L563
 ### `com.gku.DaggerBaseApplication_HiltComponents_SingletonC$ViewWithFragmentCBuilder`
 L185 · [class] private static final ViewWithFragmentCBuilder · implements `BaseApplication_HiltComponents.ViewWithFragmentC.Builder` · `com/gku/DaggerBaseApplication_HiltComponents_SingletonC.java`
 

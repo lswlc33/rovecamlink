@@ -606,14 +606,10 @@ L10 · [class] public PanoramaTools · `com/icatch/golive/utils/PanoramaTools.ja
 - `String str2 = TAG`  L21
 - `boolean zIsPanorama = false`  L28
 
-方法（6）：
+方法（3）：
 - `boolean isPanorama(long j, long j2)`  L13
 - `boolean isPanorama(String str)`  L17
 - `boolean isPanoramaForVideo(String str)`  L27
-- `throw new RuntimeException(e)`  L46
-    - 体内字面量："MediaMetadataRetriever exception "
-- `throw new RuntimeException(e3)`  L53
-- `throw new RuntimeException(e4)`  L61
 ### `com.icatch.golive.utils.PermissionTools`
 L12 · [class] public PermissionTools · `com/icatch/golive/utils/PermissionTools.java`
 

@@ -733,7 +733,7 @@ L17 · [class] public PropertyTypeInteger · `com/gku/dashcam/icatch/entity/Prop
 - `int i = this.propertyId`  L196
 - `boolean z = true`  L229
 
-方法（13）：
+方法（12）：
 - `public PropertyTypeInteger(CameraProperties cameraProperties, HashMap<Integer, ItemInfo> hashMap, int propertyId, Context context)`  L27
 - `public PropertyTypeInteger(CameraProperties cameraProperties, int propertyId, Context context)`  L35
 - `void initItem()`  L42
@@ -743,8 +743,7 @@ L17 · [class] public PropertyTypeInteger · `com/gku/dashcam/icatch/entity/Prop
 - `String getCurrentUiStringInPreview()`  L146
 - `String getCurrentUiStringInSetting(int position)`  L152
 - `int getCurrentIcon()`  L156
-    - 体内字面量："itemInfo="
-- `throw new NullPointerException( 4 )`  L160
+    - 体内字面量："itemInfo=" · "getCurrentIcon itemInfo is null"
 - `String[] getValueList()`  L165
 - `Boolean setValue(int value)`  L169
 - `Boolean setValueByPosition(int position)`  L194

@@ -601,13 +601,13 @@ L11 · [class] public final ActivityLocalAlbumBinding · implements `ViewBinding
 字段/常量（1）：
 - `FrameLayout rootView`  L12
 
-方法（6）：
+方法（5）：
 - `private ActivityLocalAlbumBinding(FrameLayout rootView)`  L14
 - `FrameLayout getRoot()`  L19 @Override
 - `ActivityLocalAlbumBinding inflate(LayoutInflater inflater)`  L23
 - `ActivityLocalAlbumBinding inflate(LayoutInflater inflater, ViewGroup parent, boolean attachToParent)`  L27
 - `ActivityLocalAlbumBinding bind(View rootView)`  L35
-- `throw new NullPointerException( 0 )`  L37
+    - 体内字面量："rootView"
 ### `com.gku.xtugo.databinding.ActivityLoginRegisterModuleBinding`
 L15 · [class] public abstract ActivityLoginRegisterModuleBinding · extends `ViewDataBinding` · `com/gku/xtugo/databinding/ActivityLoginRegisterModuleBinding.java`
 
@@ -696,13 +696,13 @@ L11 · [class] public final ActivityPhotoPbBinding · implements `ViewBinding` �
 字段/常量（1）：
 - `CoordinatorLayout rootView`  L12
 
-方法（6）：
+方法（5）：
 - `private ActivityPhotoPbBinding(CoordinatorLayout rootView)`  L14
 - `CoordinatorLayout getRoot()`  L19 @Override
 - `ActivityPhotoPbBinding inflate(LayoutInflater inflater)`  L23
 - `ActivityPhotoPbBinding inflate(LayoutInflater inflater, ViewGroup parent, boolean attachToParent)`  L27
 - `ActivityPhotoPbBinding bind(View rootView)`  L35
-- `throw new NullPointerException( 0 )`  L37
+    - 体内字面量："rootView"
 ### `com.gku.xtugo.databinding.ActivityPreferStrBinding`
 L13 · [class] public final ActivityPreferStrBinding · implements `ViewBinding` · `com/gku/xtugo/databinding/ActivityPreferStrBinding.java`
 
@@ -1462,13 +1462,13 @@ L11 · [class] public final ActivityVideoPb2Binding · implements `ViewBinding` 
 字段/常量（1）：
 - `CoordinatorLayout rootView`  L12
 
-方法（6）：
+方法（5）：
 - `private ActivityVideoPb2Binding(CoordinatorLayout rootView)`  L14
 - `CoordinatorLayout getRoot()`  L19 @Override
 - `ActivityVideoPb2Binding inflate(LayoutInflater inflater)`  L23
 - `ActivityVideoPb2Binding inflate(LayoutInflater inflater, ViewGroup parent, boolean attachToParent)`  L27
 - `ActivityVideoPb2Binding bind(View rootView)`  L35
-- `throw new NullPointerException( 0 )`  L37
+    - 体内字面量："rootView"
 ### `com.gku.xtugo.databinding.ActivityVideoShareBinding`
 L16 · [class] public final ActivityVideoShareBinding · implements `ViewBinding` · `com/gku/xtugo/databinding/ActivityVideoShareBinding.java`
 
@@ -1666,13 +1666,13 @@ L11 · [class] public final CommonLayoutProgressDialogFullscreenBinding · imple
 字段/常量（1）：
 - `LinearLayout rootView`  L12
 
-方法（6）：
+方法（5）：
 - `private CommonLayoutProgressDialogFullscreenBinding(LinearLayout rootView)`  L14
 - `LinearLayout getRoot()`  L19 @Override
 - `CommonLayoutProgressDialogFullscreenBinding inflate(LayoutInflater inflater)`  L23
 - `CommonLayoutProgressDialogFullscreenBinding inflate(LayoutInflater inflater, ViewGroup parent, boolean attachToParent)`  L27
 - `CommonLayoutProgressDialogFullscreenBinding bind(View rootView)`  L35
-- `throw new NullPointerException( 0 )`  L37
+    - 体内字面量："rootView"
 ### `com.gku.xtugo.databinding.ContentDownloadSizeDialogBinding`
 L13 · [class] public final ContentDownloadSizeDialogBinding · implements `ViewBinding` · `com/gku/xtugo/databinding/ContentDownloadSizeDialogBinding.java`
 
@@ -1843,13 +1843,13 @@ L11 · [class] public final DialogAmbaProgressBinding · implements `ViewBinding
 字段/常量（1）：
 - `LinearLayout rootView`  L12
 
-方法（6）：
+方法（5）：
 - `private DialogAmbaProgressBinding(LinearLayout rootView)`  L14
 - `LinearLayout getRoot()`  L19 @Override
 - `DialogAmbaProgressBinding inflate(LayoutInflater inflater)`  L23
 - `DialogAmbaProgressBinding inflate(LayoutInflater inflater, ViewGroup parent, boolean attachToParent)`  L27
 - `DialogAmbaProgressBinding bind(View rootView)`  L35
-- `throw new NullPointerException( 0 )`  L37
+    - 体内字面量："rootView"
 ### `com.gku.xtugo.databinding.DialogAppUpdateBinding`
 L15 · [class] public final DialogAppUpdateBinding · implements `ViewBinding` · `com/gku/xtugo/databinding/DialogAppUpdateBinding.java`
 
@@ -2050,13 +2050,13 @@ L11 · [class] public final DialogLoadingFullscreenBinding · implements `ViewBi
 字段/常量（1）：
 - `RelativeLayout rootView`  L12
 
-方法（6）：
+方法（5）：
 - `private DialogLoadingFullscreenBinding(RelativeLayout rootView)`  L14
 - `RelativeLayout getRoot()`  L19 @Override
 - `DialogLoadingFullscreenBinding inflate(LayoutInflater inflater)`  L23
 - `DialogLoadingFullscreenBinding inflate(LayoutInflater inflater, ViewGroup parent, boolean attachToParent)`  L27
 - `DialogLoadingFullscreenBinding bind(View rootView)`  L35
-- `throw new NullPointerException( 0 )`  L37
+    - 体内字面量："rootView"
 ### `com.gku.xtugo.databinding.DialogModifyWifiBinding`
 L15 · [class] public final DialogModifyWifiBinding · implements `ViewBinding` · `com/gku/xtugo/databinding/DialogModifyWifiBinding.java`
 
@@ -3214,13 +3214,13 @@ L11 · [class] public final HicheckWidgetBinding · implements `ViewBinding` · 
 - `CheckBox checkbox`  L12
 - `CheckBox rootView`  L13
 
-方法（6）：
+方法（5）：
 - `private HicheckWidgetBinding(CheckBox rootView, CheckBox checkbox)`  L15
 - `CheckBox getRoot()`  L21 @Override
 - `HicheckWidgetBinding inflate(LayoutInflater inflater)`  L25
 - `HicheckWidgetBinding inflate(LayoutInflater inflater, ViewGroup parent, boolean attachToParent)`  L29
 - `HicheckWidgetBinding bind(View rootView)`  L37
-- `throw new NullPointerException( 0 )`  L39
+    - 体内字面量："rootView"
 ### `com.gku.xtugo.databinding.IcatchContentPreviewBinding`
 L17 · [class] public final IcatchContentPreviewBinding · implements `ViewBinding` · `com/gku/xtugo/databinding/IcatchContentPreviewBinding.java`
 
@@ -3324,13 +3324,13 @@ L11 · [class] public final IncludeLocationDialogBinding · implements `ViewBind
 字段/常量（1）：
 - `LinearLayout rootView`  L12
 
-方法（6）：
+方法（5）：
 - `private IncludeLocationDialogBinding(LinearLayout rootView)`  L14
 - `LinearLayout getRoot()`  L19 @Override
 - `IncludeLocationDialogBinding inflate(LayoutInflater inflater)`  L23
 - `IncludeLocationDialogBinding inflate(LayoutInflater inflater, ViewGroup parent, boolean attachToParent)`  L27
 - `IncludeLocationDialogBinding bind(View rootView)`  L35
-- `throw new NullPointerException( 0 )`  L37
+    - 体内字面量："rootView"
 ### `com.gku.xtugo.databinding.ItemAnnouncementCreateTimeBinding`
 L13 · [class] public final ItemAnnouncementCreateTimeBinding · implements `ViewBinding` · `com/gku/xtugo/databinding/ItemAnnouncementCreateTimeBinding.java`
 
@@ -3504,13 +3504,13 @@ L11 · [class] public final ItemPureImageBinding · implements `ViewBinding` · 
 - `ImageView iv`  L12
 - `ImageView rootView`  L13
 
-方法（6）：
+方法（5）：
 - `private ItemPureImageBinding(ImageView rootView, ImageView iv)`  L15
 - `ImageView getRoot()`  L21 @Override
 - `ItemPureImageBinding inflate(LayoutInflater inflater)`  L25
 - `ItemPureImageBinding inflate(LayoutInflater inflater, ViewGroup parent, boolean attachToParent)`  L29
 - `ItemPureImageBinding bind(View rootView)`  L37
-- `throw new NullPointerException( 0 )`  L39
+    - 体内字面量："rootView"
 ### `com.gku.xtugo.databinding.ItemReportFeedbackBinding`
 L14 · [class] public final ItemReportFeedbackBinding · implements `ViewBinding` · `com/gku/xtugo/databinding/ItemReportFeedbackBinding.java`
 

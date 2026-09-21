@@ -192,10 +192,10 @@ L11 · [class] public ExoPlayerCacheManager · implements `ICacheManager` · `co
 - `ExoSourceManager mExoSourceManager`  L12
 - `ExoSourceManager exoSourceManager = this.mExoSourceManager`  L42
 
-方法（7）：
+方法（6）：
 - `void setCacheAvailableListener(ICacheManager.ICacheAvailableListener iCacheAvailableListener)`  L15 @Override
 - `void doCacheLogic(Context context, IMediaPlayer iMediaPlayer, String str, Map<String, String> map, File file)`  L19 @Override
-- `throw new UnsupportedOperationException( 0 )`  L21
+    - 体内字面量："ExoPlayerCacheManager only support IjkExo2MediaPlayer"
 - `void clearCache(Context context, File file, String str)`  L31 @Override
 - `void release()`  L36 @Override
 - `boolean hadCached()`  L41 @Override
@@ -317,7 +317,7 @@ L50 · [class] public IjkExo2MediaPlayer · extends `AbstractMediaPlayer impleme
 - `ExoPlayer exoPlayer = this.mInternalPlayer`  L983
 - `ExoPlayer exoPlayer = this.mInternalPlayer`  L1022
 
-方法（181）：
+方法（179）：
 - `MediaInfo getMediaInfo()`  L79 @Override
 - `IjkTrackInfo[] getTrackInfo()`  L84 @Override
 - `int getVideoSarDen()`  L89 @Override
@@ -450,10 +450,10 @@ L50 · [class] public IjkExo2MediaPlayer · extends `AbstractMediaPlayer impleme
 - `void setDataSource(String str)`  L724 @Override
 - `void setDataSource(Context context, Uri uri)`  L729 @Override
 - `void setDataSource(FileDescriptor fileDescriptor)`  L736 @Override
-- `throw new UnsupportedOperationException( 1 )`  L737
+    - 体内字面量："no support"
 - `String getDataSource()`  L741 @Override
 - `void prepareAsync()`  L746 @Override
-- `throw new IllegalStateException( 2 )`  L748
+    - 体内字面量："can't prepare a prepared player"
 - `void start()`  L754 @Override
 - `void stop()`  L763 @Override
 - `void pause()`  L772 @Override

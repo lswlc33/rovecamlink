@@ -267,9 +267,8 @@ L20 · [class] public ICatchCameraSession · `com/icatchtek/control/customer/ICa
 - `ICatchCameraState stateClient`  L26
 - `int i = this.sessionID`  L52
 
-方法（15）：
+方法（13）：
 - `void checkSession()`  L28
-- `throw new IchInvalidSessionException()`  L30
 - `ICatchCameraSession createSession()`  L34
 - `ICatchCameraAssist getCameraAssist(ICatchITransport iCatchITransport)`  L38
 - `ICatchCameraConfig getCameraConfig(ICatchITransport iCatchITransport)`  L42
@@ -282,7 +281,7 @@ L20 · [class] public ICatchCameraSession · `com/icatchtek/control/customer/ICa
 - `int getSessionID()`  L80 @Deprecated
 - `ICatchCameraState getStateClient()`  L84
 - `boolean prepareSession(ICatchITransport iCatchITransport)`  L89
-- `throw new IchTransportException( 2  + iCatchITransport +  3 )`  L105
+    - 体内字面量："Transport not supported [" · "]"
 ### `com.icatchtek.control.customer.ICatchCameraState`
 L7 · [interface] public ICatchCameraState · `com/icatchtek/control/customer/ICatchCameraState.java`
 
@@ -565,12 +564,10 @@ L14 · [class] public ICatchCamPhotoExif · `com/icatchtek/control/customer/type
 - `String str3 = strArrSplit[0]`  L83
 - `String str4 = strArrSplit[1]`  L84
 
-方法（14）：
+方法（12）：
 - `public ICatchCamPhotoExif(String str)`  L57
 - `float convertRationalLatLonToFloat(String str, String str2)`  L61
     - 体内字面量：","
-- `throw new IllegalArgumentException()`  L72
-- `throw new IllegalArgumentException()`  L74
 - `void loadAttributes(String str)`  L78
     - 体内字面量：";" · ":"
 - `double getAltitude(double d)`  L94

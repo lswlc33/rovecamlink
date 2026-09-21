@@ -129,10 +129,9 @@ L42 · [class] public DownloadFirmwareActivity · extends `BaseActivity` · `com
 - `TextView tv_hint`  L53
 - `String str = strArrSplit[strArrSplit.length - 1]`  L330
 
-方法（21）：
+方法（20）：
 - `void handleData(String str)`  L168
     - 体内字面量："firmware_list" · "product" · "name" · "version" · "download" · "list_firmware size: "
-- `throw new RuntimeException(e)`  L184
 - `boolean hasDownloaded(final FirmwareInfo firmwareInfo)`  L188
     - 体内字面量：" " · " "
 - `void onClick(DialogInterface dialogInterface, int i)`  L202 @Override
@@ -207,14 +206,13 @@ L32 · [class] public FeedbackActivity · extends `BaseActivity` · `com/icatch/
 - `String str = "email: " + string3`  L141
 - `String str2 = str + "   content: " + string5`  L151
 
-方法（9）：
+方法（8）：
 - `String getAppVersionName(Context context)`  L95
     - 体内字面量："VersionInfo" · "Exception: "
 - `void initView()`  L104
 - `void onClick(View view)`  L107 @Override
 - `void onClick(View view)`  L118 @Override
 - `void onSubmit()`  L125
-- `throw new RuntimeException(e)`  L165
 - `void m529lambda$initView$0$comicatchgoliveuiactivityFeedbackActivity(View view)`  L170
 - `void m530lambda$initView$1$comicatchgoliveuiactivityFeedbackActivity(View view)`  L175
 - `void onCreate(Bundle bundle)`  L180 @Override
@@ -1257,11 +1255,9 @@ L61 · [class] public PreviewActivity · extends `BaseActivity implements View.O
 - `PreviewPlayerView previewPlayerView = this.previewPlayerView`  L1204
 - `PreviewPlayerView previewPlayerView = this.previewPlayerView`  L1213
 
-方法（127）：
+方法（125）：
 - `void changeSettingUI()`  L135
     - 体内字面量："listView"
-- `throw new RuntimeException(e)`  L145
-- `throw new RuntimeException(e2)`  L147
 - `void delayStartRecording()`  L151
 - `void run()`  L155 @Override
 - `void initView()`  L161
@@ -1772,7 +1768,7 @@ L25 · [class] public VideoPbActivity · extends `AppCompatActivity implements V
 - `VideoPlayerView videoPlayerView = this.videoPlayerView`  L259
 - `VideoPlayerView videoPlayerView = this.videoPlayerView`  L268
 
-方法（29）：
+方法（27）：
 - `void backClick()`  L37
 - `void initPreviewPlayerView(MediaStreamPlayer mediaStreamPlayer, boolean z)`  L46 @Override
 - `void onConfigurationChanged(Configuration configuration)`  L56 @Override
@@ -1791,8 +1787,6 @@ L25 · [class] public VideoPbActivity · extends `AppCompatActivity implements V
 - `boolean onTouch(View view, MotionEvent motionEvent)`  L140 @Override
     - 体内字面量："onTouch event:"
 - `void onClick(View view)`  L168 @Override
-- `throw new RuntimeException(e)`  L173
-- `throw new RuntimeException(e2)`  L175
 - `void onDestroy()`  L180 @Override
 - `boolean onKeyDown(int i, KeyEvent keyEvent)`  L186 @Override
     - 体内字面量："AppStart" · "home" · "AppStart" · "back"
@@ -1907,7 +1901,7 @@ L42 · [class] public YdeviceSettingActivity · extends `AppCompatActivity` · `
 - `int length = strArr.length`  L685
 - `int i = this.video_definition_status`  L686
 
-方法（74）：
+方法（72）：
 - `void changeDeviceNamePwd(String str, String str2)`  L70
     - 体内字面量："http://192.168.169.1/app/setwifi?wifipwd=" · "http://192.168.169.1/app/setwifi?wifissid="
 - `void confirmFormatDevice()`  L83
@@ -1928,13 +1922,11 @@ L42 · [class] public YdeviceSettingActivity · extends `AppCompatActivity` · `
 - `void handleDeviceStatus(String str)`  L212
     - 体内字面量："info" · "free"
 - `void handleMenuConfigInfo(String str)`  L229
-- `throw new RuntimeException(e)`  L303
 - `void handleMenuList(String str)`  L308
     - 体内字面量："info" · "name" · "YES" · "YES" · "YES"
 - `void initData()`  L364
 - `void handleMessage(Message message)`  L370 @Override
     - 体内字面量："M1RequestInfo.urlGetCapability RequestInfo = codeFailure" · "info" · "info" · "ç¬¬8ä½æ°å­æ¯ï¼"
-- `throw new RuntimeException(e)`  L393
 - `void initEvent()`  L399
 - `void onClick(View view)`  L402 @Override
 - `void onClick(View view)`  L408 @Override
@@ -4051,7 +4043,7 @@ L36 · [class] public RemoteDeviceFilesFragment · extends `BaseMultiPbFragment2
 - `OnStatusChangedListener onStatusChangedListener = this.modeChangedListener`  L362
 - `RemoteDeviceFilesAdapter remoteDeviceFilesAdapter`  L370
 
-方法（46）：
+方法（45）：
 - `void cleanClickItemBorder()`  L57
 - `void loadMoreFile()`  L66
 - `void run()`  L84 @Override
@@ -4069,7 +4061,6 @@ L36 · [class] public RemoteDeviceFilesFragment · extends `BaseMultiPbFragment2
 - `void m509xd177843b(List list)`  L147
 - `void m510xf70b8d3c()`  L162
 - `void run()`  L168 @Override
-- `throw new RuntimeException(e)`  L173
 - `void m511xe6a34082(View view)`  L178
 - `void m512xc374983(View view)`  L183
 - `void m513x2d646a0f(List list)`  L188

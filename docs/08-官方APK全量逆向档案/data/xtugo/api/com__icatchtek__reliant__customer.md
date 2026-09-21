@@ -322,18 +322,16 @@ L14 · [class] public ICatchUsbScsiTransport · implements `ICatchITransport` ·
 - `int USB_TRANSPORT_ERROR_TRY_AGAIN = -200`  L15
 - `String deviceName`  L16
 
-方法（11）：
+方法（7）：
 - `public ICatchUsbScsiTransport(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection)`  L18
-- `throw new IchInvalidArgumentException( 0 )`  L20
+    - 体内字面量："The usb device and its connection should not be null."
 - `boolean prepareTransport()`  L30 @Override
 - `boolean destroyTransport()`  L35 @Override
 - `int getCurrentMode()`  L39
 - `int switchToPreview()`  L43
 - `int switchToPlayback()`  L47
 - `int executeScsiCommand(ICatchScsiCommandInfo iCatchScsiCommandInfo, byte[] bArr)`  L51
-- `throw new IchInvalidArgumentException( 1 )`  L53
-- `throw new IchInvalidArgumentException( 2 )`  L57
-- `throw new IchTryAgainException( 3 )`  L63
+    - 体内字面量："Invalid argument, the command info should not be null." · "Not enough buffer to hold transfer data." · "Wait resource timeout, please try again."
 ### `com.icatchtek.reliant.customer.transport.ICatchUsbTransportLog`
 L6 · [class] public ICatchUsbTransportLog · `com/icatchtek/reliant/customer/transport/ICatchUsbTransportLog.java`
 
@@ -347,9 +345,9 @@ L6 · [class] public ICatchUsbTransportLog · `com/icatchtek/reliant/customer/tr
 ### `com.icatchtek.reliant.customer.transport.ICatchUVCBulkTransport`
 L11 · [class] public ICatchUVCBulkTransport · implements `ICatchITransport` · `com/icatchtek/reliant/customer/transport/ICatchUVCBulkTransport.java`
 
-方法（4）：
+方法（3）：
 - `public ICatchUVCBulkTransport(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection)`  L12
-- `throw new IchInvalidArgumentException( 0 )`  L14
+    - 体内字面量："The usb device and its connection should not be null."
 - `boolean prepareTransport()`  L21 @Override
 - `boolean destroyTransport()`  L26 @Override
 ### `com.icatchtek.reliant.customer.transport.ICatchUVCIsoTransport`
@@ -360,9 +358,9 @@ L10 · [class] public ICatchUVCIsoTransport · implements `ICatchITransport` · 
 - `int productID`  L12
 - `int vendorID`  L13
 
-方法（10）：
+方法（9）：
 - `public ICatchUVCIsoTransport(int i, int i2, int i3)`  L15
-- `throw new IchInvalidArgumentException( 0 )`  L17
+    - 体内字面量："The usb device and its connection should not be null."
 - `int getVendorID()`  L24
 - `int getProductID()`  L28
 - `int getFileDescriptor()`  L32
