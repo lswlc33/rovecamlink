@@ -17,7 +17,7 @@ private class DesktopWifiController : WifiController {
 }
 
 private class DesktopWifiScanner : WifiScanner {
-    override suspend fun scan(prefixes: List<String>): List<CameraNetwork> = emptyList()
+    override suspend fun scan(prefixes: List<String>, force: Boolean): List<CameraNetwork> = emptyList()
 }
 
 actual fun createWifiController(): WifiController = DesktopWifiController()

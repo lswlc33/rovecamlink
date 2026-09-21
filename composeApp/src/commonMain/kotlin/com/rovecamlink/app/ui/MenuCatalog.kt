@@ -235,3 +235,58 @@ object MenuCatalog {
         SettingGroup.Other,
     )
 }
+
+/**
+ * How this app labels the camera's shooting modes.
+ *
+ * The list of modes is the firmware's (`getallworkmode.cgi`, or the names the camera
+ * answers a menu request for). This table only labels them, and says what the shutter
+ * has to do in each, so a firmware that adds a mode still shows up — under its own
+ * English name, never hidden.
+ *
+ * The Chinese here is ours, not the official app's: XTU GO ships no Chinese for mode
+ * names at all. It downloads `language.xml` from the camera over raw TCP on port 8080
+ * and renders `<lanstr en="Normal Video" zh="…"/>` at runtime
+ * (`_work/xtu_src/.../sigmastar/data/connect/ConnectDevice.java:44-56`,
+ * `hisilicon/dv/ui/data/FileUtils.java:126`), which this app cannot reach without a
+ * socket transport it does not have. Where an official Chinese string *does* exist in
+ * the APK it is reused, and marked *(官方)*.
+ */
+object ModeCatalog {
+
+    /** Firmware mode name → Chinese label + one-line description of what it captures. */
+    private data class ModeMeta(val zhTitle: String, val zhHelp: String)
+
+    private val items: Map<String, ModeMeta> = mapOf(
+        "Normal Video" to ModeMeta("普通录像", "最常用的录像档：正常速度、正常声音。"),
+        "Slow Motion" to ModeMeta("慢动作", "高帧率拍摄、正常速度回放，画面被放慢。分辨率决定能慢多少倍。"),
+        "Timelapse Video" to ModeMeta("延时录像", "按固定间隔取帧并合成短视频，适合云走、日照变化等缓慢场景。"),
+        "Car Looping" to ModeMeta("循环录像", "写满存储卡后从最旧一段开始覆盖，行车或长时间值守用。"),
+        "Loop Video" to ModeMeta("循环录像", "写满存储卡后从最旧一段开始覆盖。"),
+        "Quick Stories" to ModeMeta("快拍短片", "按下即录一段固定时长的短片，录满自动停止。"),
+        "Quick Video" to ModeMeta("快录", "从待机直接开录，跳过开机流程。"),
+        "Under Water" to ModeMeta("水下模式", "偏蓝的水下场景下校正色彩与曝光。"),
+        "Video and Photo" to ModeMeta("录像中拍照", "一边录像一边抓静态照片，不必停下来切换。"),
+        "Time Stretch" to ModeMeta("变速录像", "同一段素材里改变播放速度。"),
+        "Manual Recsnap" to ModeMeta("手动录像快照", "录像中由你按下的瞬间存一张照片。"),
+        "Normal Photo" to ModeMeta("拍照", "按一下拍一张。"),
+        "Raw Photo" to ModeMeta("Raw 拍照", "*(官方)* 保存未处理的原始画面，后期空间最大、文件最大。"),
+        "Burst Photo" to ModeMeta("连拍", "*(官方)* 一次按下拍出连续多张，张数由设置里的张数项决定。"),
+        "Timing Photo" to ModeMeta("定时拍照", "*(官方)* 按设定的间隔持续拍一张又一张，需要再按一次才停。"),
+        "Timelapse Photo" to ModeMeta("延时拍照", "*(官方)* 按间隔拍照并可用于合成延时画面，需要再按一次才停。"),
+        "Lapse Photo" to ModeMeta("延时拍照", "同上，另一版固件的写法。"),
+        "Night Timelapse Photo" to ModeMeta("夜景延时", "*(官方)* 夜间长曝光连拍。"),
+        "Night Photo" to ModeMeta("夜景拍照", "夜间单张，曝光时间更长。"),
+        "Night Scene" to ModeMeta("夜景模式", "夜间场景预设。"),
+        "Long Exposure" to ModeMeta("长曝光拍照", "*(官方)* 快门长时间打开，拍车灯轨迹、星轨。需要把相机固定住。"),
+        "Lapse Burst" to ModeMeta("延时连拍", "每个间隔连拍一组。"),
+    )
+
+    /** The firmware's own name when we have no label for it — never hide a mode. */
+    fun titleOf(name: String): String = items[name.trim()]?.zhTitle ?: name
+
+    fun helpOf(name: String): String? = items[name.trim()]?.zhHelp
+
+    /** Every mode name this catalogue knows, so a test can diff it against a real listing. */
+    val knownModes: Set<String> get() = items.keys
+}

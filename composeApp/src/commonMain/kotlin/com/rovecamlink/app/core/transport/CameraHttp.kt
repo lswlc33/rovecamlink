@@ -58,6 +58,13 @@ class CameraHttp(
         /** A request slower than this is worth a line while it is still in flight. */
         private const val PENDING_WARN_MS = 3_000L
 
+        /**
+         * Ceiling for [getBytes]. A real camera preview is tiny — the S7PRO's `.THM`
+         * files measured 6–28 KB in the 2026-09-21 session — so anything past this is
+         * not a thumbnail and is refused rather than buffered.
+         */
+        const val MAX_SMALL_BODY: Int = 1024 * 1024
+
         fun defaultClient(): HttpClient = HttpClient(CIO) {
             expectSuccess = false
             engine { requestTimeout = 20_000 }
@@ -100,22 +107,29 @@ class CameraHttp(
         }
     }
 
-    /** GET returning raw bytes (thumbnails, small binaries). */
-    suspend fun getBytes(url: String): ByteArray? = exchange("GET", url) { call ->
-        try {
-            val resp = client.get { url(url) }
-            val bytes = resp.readBytes()
-            val ok = resp.status.isSuccess()
-            call.reply(
-                resp, bytes.size,
-                bodyPreview = if (ok) null else bytes.decodeToString(0, minOf(bytes.size, 512), throwOnInvalidSequence = false),
-            )
-            if (ok) bytes else null
-        } catch (t: Throwable) {
-            call.fail(t)
-            null
+    /**
+     * GET returning raw bytes (thumbnails, small binaries), refusing a body larger
+     * than [maxBytes]. The cap is not tidiness: a "preview" URL that turns out to be
+     * the original 48 MB photo would otherwise be buffered whole, decoded whole, and
+     * the process killed for it — with the heap this app measured on the test phone,
+     * one such frame is most of the allowance.
+     */
+    suspend fun getBytes(url: String, maxBytes: Int = MAX_SMALL_BODY): ByteArray? =
+        exchange("GET", url, note = "cap=${maxBytes}B") { call ->
+            try {
+                val resp = client.get { url(url) }
+                val bytes = resp.readBytes(maxBytes)
+                val ok = resp.status.isSuccess()
+                call.reply(
+                    resp, bytes.size,
+                    bodyPreview = if (ok) null else bytes.decodeToString(0, minOf(bytes.size, 512), throwOnInvalidSequence = false),
+                )
+                if (ok) bytes else null
+            } catch (t: Throwable) {
+                call.fail(t)
+                null
+            }
         }
-    }
 
     /**
      * POST [body] as [contentType] with optional extra [headers], returning the

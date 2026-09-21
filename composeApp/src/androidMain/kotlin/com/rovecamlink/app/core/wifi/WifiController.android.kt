@@ -12,6 +12,7 @@ import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
 import android.net.wifi.WifiNetworkSpecifier
 import android.os.Build
+import android.os.SystemClock
 import com.rovecamlink.app.androidContext
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogTag
@@ -326,11 +327,18 @@ private class AndroidWifiController : WifiController {
 private class AndroidWifiScanner : WifiScanner {
     private val wm by lazy { androidContext.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager }
 
+    @Volatile private var lastRequestAt = 0L
+
     @Suppress("DEPRECATION", "MissingPermission")
-    override suspend fun scan(prefixes: List<String>): List<CameraNetwork> {
+    override suspend fun scan(prefixes: List<String>, force: Boolean): List<CameraNetwork> {
         return try {
-            val started = runCatching { wm.startScan() }.getOrDefault(false)
-            Diag.debug(LogTag.WIFI, "startScan requested -> $started")
+            val now = SystemClock.elapsedRealtime()
+            val due = force || now - lastRequestAt >= MIN_SCAN_REQUEST_INTERVAL_MS
+            if (due) {
+                lastRequestAt = now
+                val started = runCatching { wm.startScan() }.getOrDefault(false)
+                Diag.debug(LogTag.WIFI, "startScan requested (forced=$force) -> $started")
+            }
             val results: List<ScanResult> = wm.scanResults ?: emptyList()
             results
                 .filter { r -> prefixes.any { p -> (r.SSID ?: "").startsWith(p, ignoreCase = true) } }
@@ -340,11 +348,27 @@ private class AndroidWifiScanner : WifiScanner {
                     CameraNetwork(r.SSID ?: "", secured, r.level)
                 }
                 .sortedByDescending { it.rssi }
-                .also { Diag.info(LogTag.WIFI, "scan results: ${it.size} camera-like (${results.size} total in range)") }
+                .also {
+                    Diag.debug(
+                        LogTag.WIFI,
+                        "scan results: ${it.size} camera-like (${results.size} total in range" +
+                            if (due) ")" else ", cached — request not due yet)",
+                    )
+                }
         } catch (t: Throwable) {
             Diag.error(LogTag.WIFI, "scan threw ${Diag.causeChain(t)}")
             emptyList()
         }
+    }
+
+    companion object {
+        /**
+         * Android answers `startScan()` with `false` while it is rate-limiting us
+         * (measured on the 2026-09-21 OnePlus run: two calls three seconds apart,
+         * both refused), so a 2-second refresh cycle asks for a real scan at most
+         * this often and reads cached results in between.
+         */
+        private const val MIN_SCAN_REQUEST_INTERVAL_MS = 15_000L
     }
 }
 

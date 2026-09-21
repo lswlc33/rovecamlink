@@ -208,4 +208,84 @@
     <string name="action_use_this_network">Use this network</string>
     <string name="label_bluetooth_idle">Tap "Connect camera" to search over Bluetooth.</string>
     <string name="hint_auto_connect">Finds the camera over Bluetooth, wakes its hotspot and joins it — nothing to type.</string>
+
+    <!-- Diagnostics / log screen (LogScreen). Buttons, titles, filters, placeholders and
+         dialog text only — the log records themselves stay the raw rovdiag/1 grammar. -->
+    <string name="log_title">Diagnostics</string>
+    <string name="log_close">Close</string>
+    <string name="log_records_summary">%1$d records · %2$d shown</string>
+    <string name="log_action_share">Share TXT</string>
+    <string name="log_action_save">Save TXT</string>
+    <string name="log_action_snapshot">Snapshot</string>
+    <string name="log_action_share_current">Share this run</string>
+    <string name="log_action_save_current">Save this run</string>
+    <string name="log_export_hint">Share/Save include every run on this device. Just this session:</string>
+    <string name="log_busy_preparing">Preparing…</string>
+    <string name="log_busy_saving">Saving…</string>
+    <string name="log_note_shared">shared %1$s (%2$s)</string>
+    <string name="log_note_share_unavailable">share sheet unavailable — use Save TXT</string>
+    <string name="log_note_saved">saved to %1$s</string>
+    <string name="log_note_save_failed">save failed (no writable location)</string>
+    <string name="log_note_export_failed">export failed: %1$s</string>
+    <string name="log_filter_all">All</string>
+    <string name="log_filter_info">Info+</string>
+    <string name="log_filter_warn">Warn+</string>
+    <string name="log_filter_error">Error</string>
+    <string name="log_follow">Follow</string>
+    <string name="log_filter_placeholder">filter by text, tag or op…</string>
+    <string name="log_settings_title">Logging settings</string>
+    <string name="log_show">Show</string>
+    <string name="log_hide">Hide</string>
+    <string name="log_level_hint">Recorded level (what the writer keeps at full detail)</string>
+    <string name="log_switch_bodies">Capture request/response bodies</string>
+    <string name="log_switch_secrets">Keep passwords/tokens verbatim</string>
+    <string name="log_switch_sampling">Collapse identical repeated exchanges</string>
+    <string name="log_switch_filesink">Write the rolling session file</string>
+    <string name="log_session_file_line">session file: %1$s</string>
+    <string name="log_session_opening">opening…</string>
+    <string name="log_empty">No records yet.</string>
+    <string name="log_no_match">Nothing matches this filter.</string>
+
+    <!-- Connection redesign: two controls, two self-refreshing lists. -->
+    <string name="action_refresh">Refresh</string>
+    <string name="action_connect">Connect</string>
+    <string name="action_diagnostics">Diagnostics</string>
+    <string name="action_logging">Write diagnostics to a file</string>
+    <string name="action_app_settings">App settings</string>
+    <string name="action_sync_camera_time">Sync camera clock</string>
+    <string name="action_start_lapse">Start</string>
+    <string name="action_stop_lapse">Stop</string>
+    <string name="hint_connect_choice">Nothing in range yet. Turn the camera on, then refresh.</string>
+    <string name="hint_ble_wake">Bluetooth opens the camera hotspot for you and brings the passphrase back.</string>
+    <string name="hint_last_refresh">Updated %1$d s ago</string>
+    <string name="hint_rotate_picture">Turn the picture with the phone</string>
+    <string name="label_nearby_none">No camera found</string>
+    <string name="label_no_bluetooth_cameras">No camera over Bluetooth</string>
+    <string name="label_no_wifi_cameras">No camera hotspot in range</string>
+    <string name="label_saved">saved</string>
+    <string name="label_current_camera_wifi_short">on this network</string>
+    <string name="label_bluetooth_count">%1$d Bluetooth</string>
+    <string name="label_wifi_count">%1$d hotspot</string>
+    <string name="err_passphrase_needed">%1$s needs a passphrase — type it once</string>
+    <string name="err_no_camera_nearby">No camera in range: check the camera is on, and that Bluetooth or Wi-Fi is allowed for this app</string>
+
+    <!-- Shooting modes and the device menu that is not part of them. -->
+    <string name="section_capture_mode">Shooting mode</string>
+    <string name="label_camera_settings">Capture settings</string>
+    <string name="label_device_settings">Device settings</string>
+    <string name="label_photo_count">Photos</string>
+    <string name="label_sd_state">Card</string>
+
+    <!-- Files tab actions that used to be hardcoded English. -->
+    <string name="action_select">Select</string>
+    <string name="action_clear_finished">Clear finished</string>
+    <string name="action_retry_failed">Retry failed</string>
+    <string name="action_download_count">Download (%1$d)</string>
+    <string name="action_delete_count">Delete (%1$d)</string>
+    <string name="title_delete_count">Delete %1$d files?</string>
+    <string name="hint_batch_delete_many">The selected files are removed from the camera. This cannot be undone.</string>
+    <string name="label_batch">Batch</string>
+    <string name="label_select_all">Select all</string>
+    <string name="label_clear_selection">Clear</string>
+    <string name="label_unknown_date">Unknown date</string>
 </resources>

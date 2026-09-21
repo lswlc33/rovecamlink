@@ -12,11 +12,10 @@ private class UnimplementedBleCentral : BleCentral {
     override val isAvailable: Boolean get() = false
     override suspend fun ensurePermissions(): Boolean = false
     override fun isAdapterEnabled(): Boolean = false
-    override suspend fun scan(
-        profiles: List<BleCameraProfile>,
-        timeoutMs: Long,
-        onFound: (List<BleCamera>) -> Unit,
-    ): List<BleCamera> = emptyList()
+    override fun startScan(profiles: List<BleCameraProfile>): Boolean = false
+    override fun scannedCameras(): List<BleCamera> = emptyList()
+    override fun stopScan() {}
+    override fun clearScanResults() {}
 
     override suspend fun wakeAndFetch(
         camera: BleCamera,

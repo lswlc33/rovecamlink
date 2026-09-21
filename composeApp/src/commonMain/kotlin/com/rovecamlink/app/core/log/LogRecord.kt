@@ -133,6 +133,13 @@ class LogConfig {
     /** Append records to the rolling session file on disk. */
     var fileSink: Boolean = true
 
+    /**
+     * Master record switch. When paused, [Diag.at] drops every record before it
+     * reaches the ring or the file — the whole capture goes quiet, not just the
+     * disk copy. Used by the one-tap toggle so "logging off" means off.
+     */
+    var paused: Boolean = false
+
     /** Collapse steady, repeating HTTP exchanges into sampled lines (see [LogRecord.sampleKey]). */
     var sampleSteadyTraffic: Boolean = true
 

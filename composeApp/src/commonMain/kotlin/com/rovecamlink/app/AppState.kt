@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.graphics.ImageBitmap
 import com.rovecamlink.app.brand.xtu.HisiliconOtaTransport
+import com.rovecamlink.app.core.model.CameraMode
 import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.CmdResult
@@ -14,8 +15,12 @@ import com.rovecamlink.app.core.model.DeviceEvent
 import com.rovecamlink.app.core.model.DeviceInfo
 import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.model.DeviceStatus
+import com.rovecamlink.app.core.model.ModeFamily
+import com.rovecamlink.app.core.model.ModeTrigger
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.WorkMode
+import com.rovecamlink.app.core.model.workMode
+import com.rovecamlink.app.core.nearby.NearbyController
 import com.rovecamlink.app.core.ota.OtaCoordinator
 import com.rovecamlink.app.core.ota.OtaState
 import com.rovecamlink.app.core.ota.pickCameraFirmwarePackage
@@ -114,8 +119,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         private set
     var errorMessage by mutableStateOf<LocalizedString?>(null)
 
-    var networks by mutableStateOf<List<CameraNetwork>>(emptyList())
-        private set
+    /**
+     * Hotspot the user has to type a passphrase for. Set by
+     * [connectNearby] when the strongest camera in range is WPA-protected and we
+     * have neither a Bluetooth report nor a saved credential for it; the connection
+     * screen turns it into a password row, and clearing it is the screen's job.
+     */
+    var askPasswordFor by mutableStateOf<CameraNetwork?>(null)
 
     /** SSID the phone is joined to right now, when the platform will tell us. */
     val currentWifiSsid: String? get() = graph.wifi.currentCameraSsid()
@@ -258,36 +268,126 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     // ---------- WiFi + discovery ----------
 
     /**
-     * Bluetooth provisioning: find the camera, wake its hotspot, get the
-     * credentials. It owns its own observable state so the connection screen can
-     * show what Bluetooth is doing without the session state machine having to
-     * learn about GATT. When it succeeds it feeds the same [connect] entry point
-     * the Wi-Fi list uses — one join path, two ways to learn what to join.
+     * Bluetooth provisioning: wake the camera's hotspot and get the credentials. It
+     * owns its own observable state so the connection screen can show what Bluetooth
+     * is doing without the session state machine having to learn about GATT. When it
+     * succeeds it feeds the same [connect] entry point the Wi-Fi list uses.
      */
     val provisioning = ProvisioningController(
         graph = graph,
         scope = scope,
         onCredentials = { ssid, password -> connect(ssid, password) },
-        onFallback = { scanWifi() },
         onStage = { stage ->
             when (stage) {
-                "ble-scan" -> {
-                    goPhase(Phase.ScanningBle)
-                    statusMessage = localized(Res.string.phase_scanning_bluetooth)
-                }
                 "ble-wake" -> {
                     goPhase(Phase.WakingAp)
                     statusMessage = localized(Res.string.status_waking_camera)
                 }
-                else -> if (phase == Phase.ScanningBle || phase == Phase.WakingAp) {
+                else -> if (phase == Phase.WakingAp) {
                     // The Bluetooth step is over (often because it could not start);
-                    // leaving "正在搜索相机" on screen would read as still working.
+                    // leaving "正在唤醒相机" on screen would read as still working.
                     goPhase(Phase.Idle)
                     statusMessage = null
                 }
             }
         },
     )
+
+    /**
+     * What is in range: camera advertisements over Bluetooth and camera hotspots over
+     * Wi-Fi, re-read on their own every couple of seconds while the device tab is
+     * open. Discovery is no longer a button the user has to find — see
+     * [com.rovecamlink.app.core.nearby.NearbyController].
+     */
+    val nearby = NearbyController(graph, scope)
+
+    /** The camera-like hotspot the phone is already joined to, when there is one. */
+    val joinedCameraNetwork: String?
+        get() = currentWifiSsid?.takeIf { ssid ->
+            ssid.isNotBlank() && DEFAULT_PREFIXES.any { ssid.startsWith(it, ignoreCase = true) }
+        }
+
+    /**
+     * The one tap of the connection screen. Reaches the best camera in range by the
+     * cheapest route that can work, in the order the field evidence put things:
+     *
+     * 1. Already on a camera hotspot → never ask the system to rejoin it, adopt the
+     *    network and talk. Re-requesting a network we are on is what made a join from
+     *    system Settings look like a failure, and what let a VPN keep the route.
+     * 2. A camera answering Bluetooth → Bluetooth wakes the hotspot and brings the
+     *    passphrase back with it, so nothing is ever typed. Strongest signal wins.
+     * 3. A camera hotspot we can already get into (saved or factory passphrase).
+     * 4. A camera hotspot that needs a passphrase we do not have → ask for that one
+     *    thing instead of failing with "找不到相机".
+     */
+    fun connectNearby() {
+        errorMessage = null
+        joinedCameraNetwork?.let {
+            Diag.info(LogTag.APP, "CONNECT nearby: already on $it, adopting without a join")
+            connect()
+            return
+        }
+        val camera = nearby.bestBluetooth()
+        if (camera != null && provisioning.supported() && !provisioning.busy) {
+            Diag.info(LogTag.APP, "CONNECT nearby: BLE ${camera.name} (${camera.rssi}dBm)")
+            provisioning.connect(camera)
+            return
+        }
+        val network = nearby.bestNetwork()
+        if (network != null) {
+            val saved = graph.wifiCredentials.passwordFor(network.ssid)
+            val factory = graph.registry.defaultPasswordFor(network.ssid)
+            val passphrase = saved ?: factory.takeIf { network.secured }
+            Diag.info(
+                LogTag.APP,
+                "CONNECT nearby: wifi ${network.ssid} secured=${network.secured} " +
+                    "credential=${if (saved != null) "saved" else if (passphrase != null) "factory" else "none"}",
+            )
+            if (network.secured && passphrase == null) {
+                askPasswordFor = network
+                errorMessage = localized(Res.string.err_passphrase_needed, network.ssid)
+            } else {
+                connect(network.ssid, passphrase)
+            }
+            return
+        }
+        // Nothing in range: restart the search and say so, rather than leaving an
+        // empty screen to be interpreted.
+        nearby.refreshNow()
+        errorMessage = localized(Res.string.err_no_camera_nearby)
+    }
+
+    /** Re-read both radios now — the 刷新 button. */
+    fun refreshNearby() {
+        askPasswordFor = null
+        nearby.refreshNow()
+    }
+
+    /** Join a hotspot the user picked from the Wi-Fi list, with the passphrase they typed. */
+    fun connectToNetwork(network: CameraNetwork, passphrase: String?) {
+        askPasswordFor = null
+        connect(network.ssid, passphrase)
+    }
+
+    /** True when we already hold a passphrase for [ssid], so the row needs no typing. */
+    fun hasSavedPassword(ssid: String): Boolean = graph.wifiCredentials.passwordFor(ssid) != null
+
+    /**
+     * A row the user tapped in the Wi-Fi list. Open network or a passphrase we hold →
+     * join it now; otherwise ask for that one thing. Bluetooth still wins for the
+     * automatic path, because only it opens a hotspot that is switched off — this is
+     * the manual route, taken when the user named the network themselves.
+     */
+    fun pickNetwork(network: CameraNetwork) {
+        errorMessage = null
+        val passphrase = graph.wifiCredentials.passwordFor(network.ssid)
+            ?: graph.registry.defaultPasswordFor(network.ssid)
+        when {
+            !network.secured -> connectToNetwork(network, null)
+            passphrase != null -> connectToNetwork(network, passphrase)
+            else -> askPasswordFor = network
+        }
+    }
 
     fun scanWifi() = scope.launch {
         goPhase(Phase.ScanningWifi)
@@ -309,9 +409,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             errorMessage = localized(Res.string.err_scan_needs_location)
             return@launch
         }
-        runCatching { graph.scanner.scan() }
+        runCatching { graph.scanner.scan(force = true) }
             .onSuccess {
-                networks = it
                 Diag.i(LogTag.WIFI) {
                     "scan found ${it.size} camera-like networks: " +
                         it.joinToString(", ") { n -> "${n.ssid}(${n.rssi}dBm,${if (n.secured) "wpa" else "open"})" }
@@ -375,6 +474,14 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 port = parts[1].toIntOrNull() ?: 80
                 Diag.d { "manual host parsed into host=$host port=$port" }
             }
+            // Which brand this hotspot belongs to, when we recognise the name: gives
+            // discovery a first address to try instead of walking nine candidates.
+            val knownSsid = ssid ?: currentWifiSsid
+            val preferredHost = manualHost?.substringBefore(':') ?: graph.registry.fixedHostFor(knownSsid)
+            if (ssid != null && !password.isNullOrBlank()) graph.wifiCredentials.remember(ssid, password)
+            // Filled by the fixed-host probe below, so a camera found where its brand
+            // says it is does not get identified a second time.
+            var identified: DevicePlatform? = null
             if (host == null) {
                 // Joining a network we're already on is a no-op the OS rejects (or
                 // re-prompts for), so skip it when the user joined in system settings.
@@ -397,7 +504,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                         }
                         is WifiResult.Failed -> {
                             Diag.at(LogLevel.ERROR, LogTag.WIFI, "join $ssid failed in ${Diag.uptimeMillis() - t0}ms: ${r.message}")
-                            fail(localized(Res.string.err_wifi_failed, r.message)); return
+                            fail(localized(Res.string.err_wifi_failed, r.message, ssid)); return
                         }
                         WifiResult.Cancelled -> {
                             Diag.i(LogTag.WIFI) { "join $ssid cancelled by the user" }
@@ -409,14 +516,23 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 }
                 goPhase(Phase.IdentifyingDevice)
                 statusMessage = localized(Res.string.status_detecting_model)
-                val gw = graph.wifi.gateway()
-                Diag.d { "gateway resolved to ${gw ?: "(none)"}" }
-                val found = graph.discovery.discover(gw)
-                if (found == null) {
-                    Diag.i { "abort: discovery found no camera (gateway=${gw ?: "none"})" }
-                    fail(localized(Res.string.err_no_camera_found)); return
+                val direct = preferredHost
+                if (direct != null) {
+                    Diag.i { "asking the fixed host $direct for ${knownSsid ?: "-"} before consulting the gateway" }
+                    identified = graph.discovery.identify(direct, port)
+                    if (identified != null) host = direct
                 }
-                host = found.first
+                if (identified == null) {
+                    val gw = graph.wifi.gateway()
+                    Diag.d { "gateway resolved to ${gw ?: "(none)"}" }
+                    val found = graph.discovery.discover(gw, preferredHost = direct)
+                    if (found == null) {
+                        Diag.i { "abort: discovery found no camera (preferred=${direct ?: "none"} gateway=${gw ?: "none"})" }
+                        fail(localized(Res.string.err_no_camera_found)); return
+                    }
+                    host = found.first
+                    identified = found.second
+                }
             }
 
             goPhase(Phase.ConnectingProtocol)
@@ -425,7 +541,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 Diag.i { "abort: no host resolved" }
                 fail(localized(Res.string.err_no_host_resolved)); return
             }
-            val platform: DevicePlatform = graph.discovery.identify(h, port)
+            val platform: DevicePlatform = identified
+                ?: graph.discovery.identify(h, port)
                 ?: run {
                     Diag.i { "abort: unsupported camera at $h:$port" }
                     fail(localized(Res.string.err_unsupported_camera, h, port)); return
@@ -448,11 +565,20 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 .onSuccess { r -> Diag.opOutcome("syncTime", r.isOk, if (r is CmdResult.Failure) r.message else "") }
                 .onFailure { Diag.at(LogLevel.WARN, LogTag.PROTO, "syncTime threw ${Diag.causeChain(it)} (ignored)") }
             goPhase(Phase.Connected)
+            // The radios have done their job: an LE scan still running competes with
+            // the hotspot for the combo chip on some phones, and a Wi-Fi scan request
+            // now costs the camera a deauth cycle for no reason.
+            nearby.stop()
+            askPasswordFor = null
             statusMessage = localized(Res.string.status_connected_platform, platform.displayName)
             Diag.i { "CONNECT done host=${s.host} platform=${platform.displayName} (poll + list now start)" }
             startPolling()
             loadDeviceInfo()
+            // The mode table first: which settings menu is worth asking for depends on
+            // which mode the camera is in, and the mode list is what the UI shows.
+            loadModes()
             loadSettings()
+            loadDeviceSettings()
             refreshFiles()
         } catch (t: Throwable) {
             Diag.at(LogLevel.ERROR, LogTag.APP, "CONNECT threw ${Diag.causeChain(t)}${Diag.stackSuffix(t)}")
@@ -516,6 +642,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         otaCoordinator = null
         files = emptyList()
         settings = emptyList()
+        modes = emptyList()
+        deviceSettings = emptyList()
         thumbnails.clear()
         thumbsInFlight.clear()
         thumbFailed.clear()
@@ -614,7 +742,72 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     fun capture() = runOp(Op.Capture) { proto, s -> proto.capture(s) }
 
+    /**
+     * End a running start/stop capture sequence (the camera's 延时拍照 / 定时拍照
+     * modes). A mode whose shutter is a single shot never needs this, so the UI only
+     * offers it while [captureRunning] is true for a [ModeTrigger.TOGGLE] mode.
+     */
+    fun stopCapture() = runOp(Op.Capture) { proto, s -> proto.stopCapture(s) }
+
     fun record(start: Boolean) = runOp(Op.Record) { proto, s -> proto.record(s, start) }
+
+    /**
+     * The shooting modes this camera offers. Empty until a session is up, or on a
+     * plugin that cannot enumerate them — the UI then falls back to the coarse
+     * video/photo pair, which is what [WorkMode] still means.
+     */
+    var modes by mutableStateOf<List<CameraMode>>(emptyList())
+        private set
+
+    /** The mode the camera reports right now, in its own spelling. */
+    val currentMode: CameraMode? get() = modes.firstOrNull { it.name == deviceStatus?.modeName?.trim() }
+
+    /**
+     * True while a [ModeTrigger.TOGGLE] capture sequence is running. `getcurallinfo`
+     * state 20 means "recording" only in a video-family mode, and "mid-capture" in a
+     * plain photo mode; in a timelapse/timer photo mode it genuinely means the camera
+     * is taking frames until told to stop, which is the case the two-state shutter
+     * exists for.
+     */
+    val captureRunning: Boolean
+        get() = deviceStatus?.busy == true && currentMode?.trigger == ModeTrigger.TOGGLE
+
+    /**
+     * Whether the shutter would have to refuse a photo right now. With no mode table
+     * the coarse [WorkMode] is the only clue, and on the S7PRO a `photo.cgi` fired from
+     * a video mode started a recording and produced no file at all — so the button
+     * stays off until the camera is actually in a photo family.
+     */
+    fun needsPhotoModeForShutter(): Boolean =
+        currentMode?.family != ModeFamily.PHOTO && deviceStatus?.mode != WorkMode.PHOTO
+
+    /** The device's own menu (`workmode=System` on the CGI family) — not per-mode settings. */
+    var deviceSettings by mutableStateOf<List<CameraSetting>>(emptyList())
+        private set
+
+    /** Read the mode table, then the menus it implies. */
+    fun loadModes() = runOp(Op.Mode) { proto, s ->
+        val listed = proto.listModes(s)
+        modes = listed
+        Diag.i(LogTag.PROTO) { "modes offered n=${listed.size} ${listed.joinToString(",") { it.name }.take(240)}" }
+        CmdResult.Ok
+    }
+
+    /**
+     * Change the camera's shooting mode by its firmware name, then re-read the
+     * settings menu: which items exist is a function of the mode, so a stale menu
+     * would keep offering video-only settings after the camera moved into a photo mode.
+     */
+    fun selectMode(mode: CameraMode) = runOp(Op.Mode) { proto, s ->
+        val r = proto.setNamedMode(s, mode)
+        if (r.isOk) {
+            reloadSettingsForMode(proto, s)
+            // The status poll reads at most every POLL_INTERVAL_MS; without this the
+            // mode strip would keep highlighting the mode we just left.
+            deviceStatus = deviceStatus?.copy(modeName = mode.name, mode = mode.family.workMode())
+        }
+        r
+    }
 
     /**
      * Change the camera's work mode, then re-read the settings menu: which items
@@ -624,6 +817,26 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     fun setMode(mode: WorkMode) = runOp(Op.Mode) { proto, s ->
         val r = proto.setMode(s, mode)
         if (r.isOk) reloadSettingsForMode(proto, s)
+        r
+    }
+
+    fun loadDeviceSettings() = runOp(Op.Settings) { proto, s ->
+        val listed = proto.getDeviceSettings(s)
+        deviceSettings = listed
+        Diag.i(LogTag.PROTO) { "device settings loaded n=${listed.size} ids=${listed.joinToString(",") { it.id }.take(240)}" }
+        CmdResult.Ok
+    }
+
+    fun setDeviceSetting(id: String, value: String) = runOp(Op.Settings) { proto, s ->
+        val before = deviceSettings.firstOrNull { it.id == id }?.value
+        Diag.i(LogTag.PROTO) { "SET(device) $id ${before ?: "?"} -> ${LogFormat.settingValue(id, value, Diag.config.captureSecrets)}" }
+        val r = proto.setDeviceSetting(s, id, value)
+        if (r.isOk) {
+            deviceSettings = deviceSettings.map { if (it.id == id) it.copy(value = value) else it }
+            val read = runCatching { proto.readBack(s, id) }.getOrNull()
+            if (read != null) deviceSettings = deviceSettings.map { if (it.id == id) read else it }
+        }
+        if (r is CmdResult.Failure) Diag.at(LogLevel.ERROR, LogTag.PROTO, "SET(device) $id refused: ${LogFormat.field(r.message)}")
         r
     }
 
@@ -667,7 +880,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     }
 
     fun refreshFiles() = runOp(Op.Refresh) { proto, s ->
-        val listed = proto.listFiles(s, 0, 999)
+        val listed = proto.listFiles(s, 0, LISTING_PAGE)
+        val previous = files.size
         // Forget thumbnails for files that no longer exist; keep the rest so a
         // refresh doesn't re-download images we already have.
         val present = listed.mapTo(mutableSetOf()) { it.name }
@@ -676,7 +890,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         thumbFailed.retainAll(present)
         files = listed
         Diag.i(LogTag.FILE) {
-            "list ${listed.size} files (was ${files.size + gone.size})" +
+            "list ${listed.size} files (was $previous)" +
                 (if (gone.isEmpty()) "" else " removed=${gone.size} [${gone.joinToString(",") { it.substringAfterLast('/') }.take(160)}]") +
                 (if (listed.isEmpty()) " — empty card or the listing endpoint returned nothing" else "")
         }
@@ -687,12 +901,25 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * Fetches and decodes the preview image for [file] once. Safe to call from a
      * composition: repeat calls for the same file are ignored while one is in
      * flight or already resolved.
+     *
+     * The in-flight cap exists because a camera listing is not bounded by what the
+     * screen can show: `listFiles(0, 999)` plus a preview request per row put ~50
+     * simultaneous GETs on one hotspot, and the whole card's JPEGs behind them on
+     * one heap. Rows ask again as the list recomposes, so a request that is turned
+     * away here is not lost — it is just queued by the UI's own rhythm.
      */
     fun loadThumbnail(file: RemoteFile) {
         val proto = protocol ?: return
         val s = session ?: return
         val owner = sessionScope ?: return
         if (thumbnails.containsKey(file.name) || thumbFailed.contains(file.name)) return
+        if (thumbsInFlight.size >= MAX_THUMBS_IN_FLIGHT) {
+            Diag.debug(
+                LogTag.FILE,
+                "thumb queued behind ${thumbsInFlight.size} transfers ${file.name}",
+            )
+            return
+        }
         if (!thumbsInFlight.add(file.name)) return
         owner.launch {
             try {
@@ -713,9 +940,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     }
                 }
                 if (bitmap != null) {
-                    thumbnails[file.name] = bitmap
                     trimThumbnails()
-                    Diag.v(LogTag.FILE) { "thumb ok ${file.name} ${bytes?.size ?: 0}B ${bitmap.width}x${bitmap.height}" }
+                    thumbnails[file.name] = bitmap
+                    Diag.v(LogTag.FILE) { "thumb ok ${file.name} ${bytes.size}B ${bitmap.width}x${bitmap.height}" }
                 } else {
                     Diag.d(LogTag.FILE) { "thumb unavailable ${file.name} (bytes=${bytes?.size ?: "null"})" }
                     // Don't cache a permanent null: a transient hotspot failure would
@@ -728,9 +955,35 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         }
     }
 
+    /**
+     * Evict before inserting, not after: a cache that trims afterwards has already
+     * paid for the new bitmap, and one decoded 12 MP frame is ~48 MB of ARGB on a
+     * phone this app measured with a 256 MB heap class.
+     */
     private fun trimThumbnails() {
-        while (thumbnails.size > MAX_CACHED_THUMBNAILS) {
-            thumbnails.remove(thumbnails.keys.first())
+        while (thumbnails.size >= MAX_CACHED_THUMBNAILS) {
+            thumbnails.remove(thumbnails.keys.firstOrNull() ?: return)
+        }
+    }
+
+    /**
+     * A progress callback for [CameraHttp.download], which reports from its own
+     * dispatcher. [downloads] is a snapshot list the composition iterates on the main
+     * thread, so writing it from the transfer thread is a
+     * `ConcurrentModificationException` waiting for a fast file; every update is
+     * re-posted to the app scope instead, floored at one post per 2 % so a 19 MB/s
+     * transfer cannot flood that queue.
+     */
+    private fun progressWriter(name: String): (Float) -> Unit {
+        var lastPosted = -1f
+        return { p ->
+            if (p >= 1f || p - lastPosted >= 0.02f) {
+                lastPosted = p
+                scope.launch {
+                    val i = downloads.indexOfFirst { it.file.name == name }
+                    if (i >= 0) downloads[i] = downloads[i].copy(progress = p)
+                }
+            }
         }
     }
 
@@ -916,10 +1169,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                         "START ${file.name} size=${LogFormat.size(file.sizeBytes)} on_disk=${LogFormat.size(have)} " +
                             "resume_from=$resumeFrom dest=$dest"
                     }
-                    val written = proto.download(s, file, dest, resumeFrom) { p ->
-                        val i = downloads.indexOfFirst { it.file.name == file.name }
-                        if (i >= 0) downloads[i] = downloads[i].copy(progress = p)
-                    }
+                    val written = proto.download(s, file, dest, resumeFrom, progressWriter(file.name))
                     val ms = Diag.uptimeMillis() - t0
                     if (written < 0L) {
                         Diag.at(
@@ -1037,8 +1287,22 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
 private const val POLL_FAILURES_BEFORE_LOST = 3
 
+/**
+ * Upper bound on one card listing. The camera answers with whatever it has, so this
+ * is a guard against a 2 000-file card becoming 2 000 rows the UI has to build and
+ * 2 000 thumbnail requests behind them.
+ */
+private const val LISTING_PAGE = 300
+
 /** Status polling interval; it is a load characteristic of the camera, so it belongs in the log. */
 private const val POLL_INTERVAL_MS = 1_500L
 
 /** Decoded thumbnails held at once; beyond this the oldest are evicted. */
-private const val MAX_CACHED_THUMBNAILS = 120
+private const val MAX_CACHED_THUMBNAILS = 24
+
+/**
+ * Preview fetches allowed at the same moment. One hotspot serves the status poll,
+ * the live view and this list, and the 2026-09-21 session showed ten thumbnail GETs
+ * firing inside a 110 ms window — the same card with 200 files would have fired 200.
+ */
+private const val MAX_THUMBS_IN_FLIGHT = 4

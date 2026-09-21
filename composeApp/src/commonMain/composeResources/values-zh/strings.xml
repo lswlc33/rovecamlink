@@ -208,4 +208,84 @@
     <string name="action_use_this_network">直接用它</string>
     <string name="label_bluetooth_idle">点上面的「连接相机」，用蓝牙搜索。</string>
     <string name="hint_auto_connect">用蓝牙找到相机、让它打开热点并自动连上，全程不用输入任何东西。</string>
+
+    <!-- 诊断日志页（LogScreen）。只翻译按钮、标题、筛选、占位符与弹窗文案；
+         日志内容本身仍是 rovdiag/1 原始格式，供 grep 使用，不翻译。 -->
+    <string name="log_title">诊断日志</string>
+    <string name="log_close">关闭</string>
+    <string name="log_records_summary">共 %1$d 条记录 · 显示 %2$d 条</string>
+    <string name="log_action_share">导出并分享</string>
+    <string name="log_action_save">保存到文件</string>
+    <string name="log_action_snapshot">刷新环境快照</string>
+    <string name="log_action_share_current">仅分享本次</string>
+    <string name="log_action_save_current">仅保存本次</string>
+    <string name="log_export_hint">上面两项会包含本机全部历史记录；只导本次会话：</string>
+    <string name="log_busy_preparing">正在生成…</string>
+    <string name="log_busy_saving">正在保存…</string>
+    <string name="log_note_shared">已分享 %1$s（%2$s）</string>
+    <string name="log_note_share_unavailable">系统分享不可用——请改用「保存到文件」</string>
+    <string name="log_note_saved">已保存到 %1$s</string>
+    <string name="log_note_save_failed">保存失败（没有可写的目录）</string>
+    <string name="log_note_export_failed">导出失败：%1$s</string>
+    <string name="log_filter_all">全部</string>
+    <string name="log_filter_info">信息+</string>
+    <string name="log_filter_warn">警告+</string>
+    <string name="log_filter_error">错误</string>
+    <string name="log_follow">自动跟随</string>
+    <string name="log_filter_placeholder">按文本、标签或操作筛选…</string>
+    <string name="log_settings_title">日志设置</string>
+    <string name="log_show">展开</string>
+    <string name="log_hide">收起</string>
+    <string name="log_level_hint">记录级别（低于此级别的会被合并，不保留完整细节）</string>
+    <string name="log_switch_bodies">捕获请求/响应正文</string>
+    <string name="log_switch_secrets">明文保留密码/令牌（导出的文件可能含相机 Wi-Fi 密码）</string>
+    <string name="log_switch_sampling">合并重复的相同请求</string>
+    <string name="log_switch_filesink">写入滚动会话文件</string>
+    <string name="log_session_file_line">会话文件：%1$s</string>
+    <string name="log_session_opening">正在打开…</string>
+    <string name="log_empty">暂无记录。</string>
+    <string name="log_no_match">没有符合筛选条件的记录。</string>
+
+    <!-- 连接页改版：两个按钮、两个自动刷新的列表。 -->
+    <string name="action_refresh">刷新</string>
+    <string name="action_connect">连接</string>
+    <string name="action_diagnostics">诊断日志</string>
+    <string name="action_logging">把诊断日志写入文件</string>
+    <string name="action_app_settings">应用设置</string>
+    <string name="action_sync_camera_time">同步相机时间</string>
+    <string name="action_start_lapse">开始</string>
+    <string name="action_stop_lapse">停止</string>
+    <string name="hint_connect_choice">附近还没有相机。请先打开相机，再点刷新。</string>
+    <string name="hint_ble_wake">蓝牙会替你打开相机热点，并把密码带回来。</string>
+    <string name="hint_last_refresh">%1$d 秒前刷新</string>
+    <string name="hint_rotate_picture">画面跟随手机方向旋转</string>
+    <string name="label_nearby_none">未发现相机</string>
+    <string name="label_no_bluetooth_cameras">蓝牙范围内没有相机</string>
+    <string name="label_no_wifi_cameras">附近没有相机热点</string>
+    <string name="label_saved">已保存</string>
+    <string name="label_current_camera_wifi_short">已在该网络</string>
+    <string name="label_bluetooth_count">蓝牙 %1$d 台</string>
+    <string name="label_wifi_count">热点 %1$d 个</string>
+    <string name="err_passphrase_needed">%1$s 需要密码，请输入一次</string>
+    <string name="err_no_camera_nearby">附近没有找到相机：请确认相机已开机，并允许本应用使用蓝牙和 Wi-Fi</string>
+
+    <!-- 拍摄模式，以及不属于拍摄模式的设备菜单。 -->
+    <string name="section_capture_mode">拍摄模式</string>
+    <string name="label_camera_settings">拍摄设置</string>
+    <string name="label_device_settings">设备设置</string>
+    <string name="label_photo_count">照片数</string>
+    <string name="label_sd_state">存储卡</string>
+
+    <!-- 文件页里原先写死英文的操作。 -->
+    <string name="action_select">选择</string>
+    <string name="action_clear_finished">清除已完成</string>
+    <string name="action_retry_failed">重试失败项</string>
+    <string name="action_download_count">下载（%1$d）</string>
+    <string name="action_delete_count">删除（%1$d）</string>
+    <string name="title_delete_count">删除 %1$d 个文件？</string>
+    <string name="hint_batch_delete_many">选中的文件会从相机上删除，无法恢复。</string>
+    <string name="label_batch">批量操作</string>
+    <string name="label_select_all">全选</string>
+    <string name="label_clear_selection">取消全选</string>
+    <string name="label_unknown_date">日期未知</string>
 </resources>

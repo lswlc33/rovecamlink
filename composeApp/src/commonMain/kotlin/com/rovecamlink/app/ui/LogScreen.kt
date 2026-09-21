@@ -51,23 +51,68 @@ import com.robinpcrd.cupertino.theme.CupertinoTheme
 import com.robinpcrd.cupertino.theme.systemOrange
 import com.robinpcrd.cupertino.theme.systemRed
 import com.rovecamlink.app.AppState
+import com.rovecamlink.app.Res
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogLevel
 import com.rovecamlink.app.core.log.LogRecord
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.createLogStore
+// Every generated top-level extension lives in `com.rovecamlink.app` and MUST be
+// imported by name — that, not any real resource-lookup bug, is what made earlier
+// attempts here fail to resolve. (docs/06 and the old note in Screens.kt blamed the
+// resolver; ConnectScreen proves ~40 of these resolve fine once imported.)
+import com.rovecamlink.app.log_action_save
+import com.rovecamlink.app.log_action_save_current
+import com.rovecamlink.app.log_action_share
+import com.rovecamlink.app.log_action_share_current
+import com.rovecamlink.app.log_action_snapshot
+import com.rovecamlink.app.log_busy_saving
+import com.rovecamlink.app.log_busy_preparing
+import com.rovecamlink.app.log_close
+import com.rovecamlink.app.log_empty
+import com.rovecamlink.app.log_export_hint
+import com.rovecamlink.app.log_filter_all
+import com.rovecamlink.app.log_filter_error
+import com.rovecamlink.app.log_filter_info
+import com.rovecamlink.app.log_filter_placeholder
+import com.rovecamlink.app.log_filter_warn
+import com.rovecamlink.app.log_follow
+import com.rovecamlink.app.log_hide
+import com.rovecamlink.app.log_level_hint
+import com.rovecamlink.app.log_no_match
+import com.rovecamlink.app.log_note_export_failed
+import com.rovecamlink.app.log_note_save_failed
+import com.rovecamlink.app.log_note_saved
+import com.rovecamlink.app.log_note_share_unavailable
+import com.rovecamlink.app.log_note_shared
+import com.rovecamlink.app.log_records_summary
+import com.rovecamlink.app.log_session_file_line
+import com.rovecamlink.app.log_session_opening
+import com.rovecamlink.app.log_settings_title
+import com.rovecamlink.app.log_show
+import com.rovecamlink.app.log_switch_bodies
+import com.rovecamlink.app.log_switch_filesink
+import com.rovecamlink.app.log_switch_sampling
+import com.rovecamlink.app.log_switch_secrets
+import com.rovecamlink.app.log_title
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Live diagnostic log: the in-app preview of what [Diag] is recording, plus the
- * two exits a support request needs (share a TXT / save a TXT).
+ * exits a support request needs.
  *
- * TODO(i18n): strings are hardcoded English on purpose — this is a developer tool
- * whose output is a log file, and new resource keys still do not resolve from this
- * package (see docs and the note in Screens.kt).
+ * The primary Share/Save action exports *every* persisted run ([Diag.exportFullBundle],
+ * replayed off disk), because that is what survives a crash — the previous runs are
+ * the reason a user files a report. A secondary, clearly labelled pair exports only
+ * the current session ([Diag.exportBundle], the in-memory ring).
+ *
+ * Labels are localised through [Res.string]; the *records themselves* stay as the
+ * on-disk `rovdiag/1` grammar — they are a developer artifact and are grepped.
  */
 @Composable
 fun LogScreen(state: AppState, onClose: () -> Unit) {
@@ -111,26 +156,34 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
         if (follow && last >= 0) listState.scrollToItem(last)
     }
 
-    fun export(share: Boolean) {
+    // [full] picks between the every-run export and the current-run-only export; both
+    // share the same flush + save/share plumbing.
+    fun export(share: Boolean, full: Boolean) {
         if (busy != null) return
         scope.launch(NonCancellable) {
             // NonCancellable: this coroutine belongs to the screen, and closing the
             // preview mid-export would otherwise discard the bundle it just built.
-            busy = if (share) "Preparing…" else "Saving…"
+            busy = getString(if (share) Res.string.log_busy_preparing else Res.string.log_busy_saving)
             try {
                 Diag.awaitDrained()
-                val text = Diag.exportBundle()
-                val name = Diag.exportName()
+                val text = if (full) Diag.exportFullBundle() else Diag.exportBundle()
+                val name = if (full) Diag.exportFullName() else Diag.exportName()
+                val size = LogFormat.size(text.length.toLong())
                 val outcome = if (share) {
-                    if (store.share(name, text)) "shared $name (${LogFormat.size(text.length.toLong())})"
-                    else "share sheet unavailable — use Save TXT"
+                    if (store.share(name, text)) {
+                        getString(Res.string.log_note_shared, name, size)
+                    } else {
+                        getString(Res.string.log_note_share_unavailable)
+                    }
                 } else {
-                    store.save(name, text)?.let { "saved to $it" } ?: "save failed (no writable location)"
+                    val saved = store.save(name, text)
+                    if (saved != null) getString(Res.string.log_note_saved, saved)
+                    else getString(Res.string.log_note_save_failed)
                 }
                 note = outcome
                 Diag.info(LogTag.LOG, "export ${if (share) "shared" else "saved"}: $outcome")
             } catch (t: Throwable) {
-                note = "export failed: ${t.message}"
+                note = getString(Res.string.log_note_export_failed, t.message ?: "?")
                 Diag.error(LogTag.LOG, "export failed ${Diag.causeChain(t)}")
             } finally {
                 busy = null
@@ -152,12 +205,12 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
                 onClick = onClose,
                 colors = CupertinoButtonDefaults.grayButtonColors(),
                 size = CupertinoButtonSize.Small,
-            ) { CupertinoText("Close") }
+            ) { CupertinoText(stringResource(Res.string.log_close)) }
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
-                CupertinoText("Diagnostics", fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                CupertinoText(stringResource(Res.string.log_title), fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
                 CupertinoText(
-                    text = "$total records · ${records.size} shown",
+                    text = stringResource(Res.string.log_records_summary, total, records.size),
                     color = CupertinoTheme.colorScheme.secondaryLabel,
                     fontSize = 11.sp,
                 )
@@ -171,16 +224,16 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
         ) {
             CupertinoButton(
-                onClick = { export(share = true) },
+                onClick = { export(share = true, full = true) },
                 modifier = Modifier.weight(1f),
                 enabled = busy == null,
-            ) { CupertinoText("Share TXT") }
+            ) { CupertinoText(stringResource(Res.string.log_action_share)) }
             CupertinoButton(
-                onClick = { export(share = false) },
+                onClick = { export(share = false, full = true) },
                 modifier = Modifier.weight(1f),
                 enabled = busy == null,
                 colors = CupertinoButtonDefaults.grayButtonColors(),
-            ) { CupertinoText("Save TXT") }
+            ) { CupertinoText(stringResource(Res.string.log_action_save)) }
             CupertinoButton(
                 onClick = {
                     state.refreshDiagnosticsEnv()
@@ -191,7 +244,33 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
                 },
                 enabled = busy == null,
                 colors = CupertinoButtonDefaults.grayButtonColors(),
-            ) { CupertinoText("Snapshot") }
+            ) { CupertinoText(stringResource(Res.string.log_action_snapshot)) }
+        }
+        // Secondary, explicitly current-run-only path so the every-run default above is
+        // never mistaken for "this session only".
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
+        ) {
+            CupertinoText(
+                text = stringResource(Res.string.log_export_hint),
+                color = CupertinoTheme.colorScheme.tertiaryLabel,
+                fontSize = 10.sp,
+                modifier = Modifier.weight(1f),
+            )
+            CupertinoButton(
+                onClick = { export(share = true, full = false) },
+                enabled = busy == null,
+                size = CupertinoButtonSize.Small,
+                colors = CupertinoButtonDefaults.grayButtonColors(),
+            ) { CupertinoText(stringResource(Res.string.log_action_share_current), fontSize = 12.sp) }
+            CupertinoButton(
+                onClick = { export(share = false, full = false) },
+                enabled = busy == null,
+                size = CupertinoButtonSize.Small,
+                colors = CupertinoButtonDefaults.grayButtonColors(),
+            ) { CupertinoText(stringResource(Res.string.log_action_save_current), fontSize = 12.sp) }
         }
 
         note?.let {
@@ -208,15 +287,18 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp),
         ) {
+            val levelTabs = listOf(
+                stringResource(Res.string.log_filter_all) to null,
+                stringResource(Res.string.log_filter_info) to LogLevel.INFO,
+                stringResource(Res.string.log_filter_warn) to LogLevel.WARN,
+                stringResource(Res.string.log_filter_error) to LogLevel.ERROR,
+            )
             CupertinoSegmentedControl(
-                selectedTabIndex = listOf<LogLevel?>(null, LogLevel.INFO, LogLevel.WARN, LogLevel.ERROR)
-                    .indexOf(viewLevel).coerceAtLeast(0),
+                selectedTabIndex = levelTabs.map { it.second }.indexOf(viewLevel).coerceAtLeast(0),
                 modifier = Modifier.weight(1f),
                 paddingValues = PaddingValues(0.dp),
             ) {
-                listOf<Pair<String, LogLevel?>>(
-                    "All" to null, "Info+" to LogLevel.INFO, "Warn+" to LogLevel.WARN, "Error" to LogLevel.ERROR,
-                ).forEach { (label, level) ->
+                levelTabs.forEach { (label, level) ->
                     CupertinoSegmentedControlTab(
                         onClick = { viewLevel = level },
                         isSelected = viewLevel == level,
@@ -226,12 +308,12 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
             Spacer(Modifier.width(8.dp))
             CupertinoSwitch(checked = follow, onCheckedChange = { follow = it })
             Spacer(Modifier.width(4.dp))
-            CupertinoText("Follow", fontSize = 12.sp)
+            CupertinoText(stringResource(Res.string.log_follow), fontSize = 12.sp)
         }
         CupertinoTextField(
             value = query,
             onValueChange = { query = it },
-            placeholder = { CupertinoText("filter by text, tag or op…", fontSize = 13.sp) },
+            placeholder = { CupertinoText(stringResource(Res.string.log_filter_placeholder), fontSize = 13.sp) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
         )
@@ -245,12 +327,15 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         ) {
             CupertinoText(
-                "Logging settings",
+                stringResource(Res.string.log_settings_title),
                 color = CupertinoTheme.colorScheme.accent,
                 fontSize = 13.sp,
                 modifier = Modifier.weight(1f),
             )
-            CupertinoText(if (showConfig) "Hide" else "Show", fontSize = 11.sp)
+            CupertinoText(
+                stringResource(if (showConfig) Res.string.log_hide else Res.string.log_show),
+                fontSize = 11.sp,
+            )
         }
         if (showConfig) {
             Column(
@@ -261,7 +346,7 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
                     .padding(bottom = 8.dp),
             ) {
                 CupertinoText(
-                    "Recorded level (what the writer keeps at full detail)",
+                    stringResource(Res.string.log_level_hint),
                     color = CupertinoTheme.colorScheme.secondaryLabel,
                     fontSize = 11.sp,
                 )
@@ -270,6 +355,9 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     paddingValues = PaddingValues(0.dp),
                 ) {
+                    // The segment labels are the level tokens themselves — the file is
+                    // keyed on `V D I W E`, so translating them here would break the
+                    // preview's correspondence to the exported log.
                     LogLevel.entries.forEach { l ->
                         CupertinoSegmentedControlTab(
                             onClick = {
@@ -281,12 +369,12 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
                         ) { CupertinoText(l.name.lowercase().take(4), fontSize = 12.sp) }
                     }
                 }
-                LogSwitch("Capture request/response bodies", captureBodies) {
+                LogSwitch(stringResource(Res.string.log_switch_bodies), captureBodies) {
                     captureBodies = it
                     Diag.config.captureBodies = it
                     Diag.info(LogTag.LOG, "config bodies=$it")
                 }
-                LogSwitch("Keep passwords/tokens verbatim", captureSecrets) {
+                LogSwitch(stringResource(Res.string.log_switch_secrets), captureSecrets) {
                     captureSecrets = it
                     Diag.config.captureSecrets = it
                     Diag.warn(
@@ -294,18 +382,19 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
                         "config secrets=$it — exported files may contain the camera Wi-Fi password",
                     )
                 }
-                LogSwitch("Collapse identical repeated exchanges", sampling) {
+                LogSwitch(stringResource(Res.string.log_switch_sampling), sampling) {
                     sampling = it
                     Diag.config.sampleSteadyTraffic = it
                     Diag.info(LogTag.LOG, "config sampling=$it")
                 }
-                LogSwitch("Write the rolling session file", fileSink) {
+                LogSwitch(stringResource(Res.string.log_switch_filesink), fileSink) {
                     fileSink = it
                     Diag.config.fileSink = it
                     Diag.info(LogTag.LOG, "config file_sink=$it")
                 }
+                val sessionValue = sessionPath ?: Diag.fileSinkError() ?: stringResource(Res.string.log_session_opening)
                 CupertinoText(
-                    text = "session file: ${sessionPath ?: Diag.fileSinkError() ?: "opening…"}",
+                    text = stringResource(Res.string.log_session_file_line, sessionValue),
                     color = CupertinoTheme.colorScheme.tertiaryLabel,
                     fontSize = 10.sp,
                     maxLines = 3,
@@ -324,7 +413,9 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
             if (records.isEmpty()) {
                 item {
                     CupertinoText(
-                        text = if (query.isBlank() && viewLevel == null) "No records yet." else "Nothing matches this filter.",
+                        text = stringResource(
+                            if (query.isBlank() && viewLevel == null) Res.string.log_empty else Res.string.log_no_match,
+                        ),
                         color = CupertinoTheme.colorScheme.tertiaryLabel,
                         fontSize = 13.sp,
                         modifier = Modifier.padding(16.dp),
@@ -337,6 +428,8 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
     detail?.let { rec ->
         CupertinoAlertDialog(
             onDismissRequest = { detail = null },
+            // The dialog title is the record's own identifiers (seq/level/tag) — part of
+            // the log grammar, deliberately not translated.
             title = { CupertinoText("#${rec.seq} ${rec.level.name} ${rec.tag.id}") },
             message = {
                 Column(Modifier.heightIn(max = 360.dp)) {
@@ -349,7 +442,7 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
             buttons = {
                 cancel(
                     onClick = { detail = null },
-                    title = { CupertinoText("Close") },
+                    title = { CupertinoText(stringResource(Res.string.log_close)) },
                 )
             },
         )

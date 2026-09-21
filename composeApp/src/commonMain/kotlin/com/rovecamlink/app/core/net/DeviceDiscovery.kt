@@ -5,6 +5,7 @@ import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.protocol.CameraProtocolRegistry
 import com.rovecamlink.app.core.transport.CameraHttp
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Runtime device identification. Because the X7 Pro and other cams are not all
@@ -55,16 +56,53 @@ class DeviceDiscovery(
             null
         }
 
-    /** Try the gateway hint first, then well-known camera IPs. */
-    suspend fun discover(gatewayHint: String?): Pair<String, DevicePlatform>? {
-        val hosts = (listOfNotNull(gatewayHint) + candidateHosts).distinct()
-        Diag.i(LogTag.NET) { "discover gateway_hint=${gatewayHint ?: "none"} candidates=${hosts.joinToString(",")}" }
-        for (host in hosts) {
-            val platform = identify(host) ?: continue
+    /**
+     * Find the camera, cheapest clue first: the address the hotspot's brand always
+     * uses, then the gateway the platform reported, then the well-known list.
+     *
+     * The order is load-bearing. In the 2026-09-21 S7PRO session the platform
+     * gateway resolved to `0.0.0.0` and then to a VPN address, so discovery walked
+     * nine hosts at two 8-second connect timeouts each — 15 `ConnectTimeoutException`s
+     * fired while the live view was trying to deliver frames, and the walk outlived
+     * the camera it was looking for. A brand that fixes its AP address now gets there
+     * in one probe, and everything after that first guess runs on a short budget.
+     */
+    suspend fun discover(gatewayHint: String?, preferredHost: String? = null): Pair<String, DevicePlatform>? {
+        val hosts = buildList {
+            preferredHost?.takeIf { isRoutableIpv4(it) }?.let { add(it) }
+            gatewayHint?.takeIf { isRoutableIpv4(it) }?.let { add(it) }
+            addAll(candidateHosts)
+        }.distinct()
+        Diag.i(LogTag.NET) {
+            "discover preferred=${preferredHost ?: "-"} gateway_hint=${gatewayHint ?: "-"} " +
+                "candidates=${hosts.joinToString(",")}"
+        }
+        for (index in hosts.indices) {
+            val host = hosts[index]
+            // Only the first guess is worth a full 8-second connect timeout; after
+            // that a host either answers quickly or is not the camera.
+            val budget = if (index == 0) FIRST_HOST_BUDGET_MS else LATER_HOST_BUDGET_MS
+            val platform = withTimeoutOrNull(budget) { identify(host) } ?: continue
             Diag.i(LogTag.NET) { "camera found at $host as ${platform.displayName}" }
             return host to platform
         }
         Diag.w(LogTag.NET) { "discover failed: no camera answered on ${hosts.size} candidate hosts" }
         return null
+    }
+
+    companion object {
+        /** A usable dotted-quad, not the `0.0.0.0` / `fe80::…` the platform hands back. */
+        fun isRoutableIpv4(host: String): Boolean {
+            val parts = host.split('.')
+            if (parts.size != 4) return false
+            val octets = parts.map { it.toIntOrNull() ?: return false }
+            if (octets.any { it !in 0..255 }) return false
+            // 0.0.0.0 is what ConnectivityManager reports when it has no route;
+            // 169.254.x is link-local, which no camera CGI answers on.
+            return octets[0] != 0 && !(octets[0] == 169 && octets[1] == 254)
+        }
+
+        private const val FIRST_HOST_BUDGET_MS = 12_000L
+        private const val LATER_HOST_BUDGET_MS = 2_500L
     }
 }

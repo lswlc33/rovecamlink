@@ -61,6 +61,47 @@ enum class WorkMode(val code: Int, val displayNameRes: StringResource) {
     }
 }
 
+/**
+ * Which side of the shutter a firmware mode belongs to. [OTHER] covers a camera that
+ * reports a mode the app has no family for; it is still selectable, because the
+ * firmware's own list is the authority on what the camera can do.
+ */
+enum class ModeFamily { VIDEO, PHOTO, OTHER }
+
+/**
+ * What the capture button has to do in a given mode.
+ *
+ * [SINGLE] is one press, one result. [TOGGLE] modes run until they are told to stop
+ * — the XTU/SigmaStar 延时拍照 and 定时拍照 families are started with
+ * `photo.cgi?&-type=phototimelapse&-cmd=start` and only ended by the matching
+ * `-cmd=stop`, so a button that always sends "start" leaves the camera taking frames
+ * for minutes after the user thinks it stopped.
+ */
+enum class ModeTrigger { SINGLE, TOGGLE }
+
+/**
+ * One shooting mode, as the firmware names it. [name] is the exact wire value of
+ * `-workmode=` (spacing included — `Normal Video` and `NormalVideo` are different
+ * answers to a camera that rejects the wrong one with `SvrFuncResult="-2222"`), so
+ * it is what must be sent back, never a re-derived spelling.
+ */
+data class CameraMode(
+    val name: String,
+    val family: ModeFamily,
+    val trigger: ModeTrigger = ModeTrigger.SINGLE,
+)
+
+/**
+ * The coarse family a [CameraMode] belongs to, for the code paths that still speak
+ * [WorkMode] (a plugin with no mode table, or a status field that only says
+ * "video-ish"). [OTHER] maps to photo so a control guarded on "photo mode" stays
+ * conservative rather than firing a capture the camera would refuse.
+ */
+fun ModeFamily.workMode(): WorkMode = when (this) {
+    ModeFamily.VIDEO -> WorkMode.VIDEO
+    else -> WorkMode.PHOTO
+}
+
 enum class FileType { VIDEO, PHOTO, UNKNOWN }
 
 /**

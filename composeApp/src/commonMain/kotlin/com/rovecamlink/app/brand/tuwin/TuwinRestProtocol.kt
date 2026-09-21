@@ -48,6 +48,21 @@ import kotlin.random.Random
 class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override val platform = DevicePlatform.TUWIN_REST
+
+    /**
+     * Only the two REST-family names (docs/03 §1a: `^TUWIN_R3P_…`, `^TUWIN_R6_…`).
+     * `TUWIN_M3_*` and `TUWIN_R5*_*` are different transports on different default
+     * IPs, and the catch-all `^TUWIN_[A-Za-z0-9]{6,}$` would claim those too, so
+     * neither gets a fixed host here — they keep the candidate walk.
+     */
+    override val wifiSsidPrefixes = listOf("TUWIN_R3P_", "TUWIN_R6_")
+
+    /** Ride3Pro / Ride6 ship 192.168.25.1 as the AP gateway. */
+    override val fixedHost: String? get() = "192.168.25.1"
+
+    /** ConnectedDevice.DEFAULT_WIFI_PASSWORD in the official app — never user-typed. */
+    override val defaultWifiPassword: String? get() = "12345678"
+
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
     private val _events = MutableSharedFlow<DeviceEvent>(extraBufferCapacity = 8)
     override val events: Flow<DeviceEvent> = _events

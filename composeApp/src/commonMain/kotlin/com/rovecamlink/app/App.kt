@@ -85,14 +85,19 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                     actions = {
                 ConnectionPill(state)
                 // Diagnostics must be one tap away from any tab: that is where the
-                // failure you want to report just happened.
+                // failure you want to report just happened. One tap also puts it away
+                // again — the same button is the close control, so the page never has
+                // to be re-found after it was dismissed by a screen change.
                 CupertinoIconButton(
-                    onClick = { state.openDiagnostics() },
+                    onClick = {
+                        if (state.diagnosticsOpen) state.closeDiagnostics() else state.openDiagnostics()
+                    },
                     colors = CupertinoButtonDefaults.plainButtonColors(),
                 ) {
                     CupertinoIcon(
                         CupertinoIcons.Filled.Terminal,
-                        contentDescription = "Diagnostics",
+                        contentDescription = stringResource(Res.string.action_diagnostics),
+                        tint = if (state.diagnosticsOpen) CupertinoTheme.colorScheme.accent else Color.Unspecified,
                         modifier = Modifier.size(20.dp),
                     )
                 }

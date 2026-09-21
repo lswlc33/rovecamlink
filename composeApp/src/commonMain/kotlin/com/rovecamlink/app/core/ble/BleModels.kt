@@ -139,17 +139,25 @@ interface BleCentral {
     fun isAdapterEnabled(): Boolean
 
     /**
-     * Scan for cameras matching [profiles] for up to [timeoutMs], calling
-     * [onFound] with the full best-so-far list each time a new one appears — the
-     * UI shows cameras as they are discovered instead of freezing until the scan
-     * ends. Returns when the timeout expires or the coroutine is cancelled, which
-     * must also stop the underlying scan.
+     * Start a background scan that keeps accumulating advertisements until
+     * [stopScan]. The connection screen's 2-second refresh cycle is a *reader* of
+     * the result, not a series of scans: an Android LE scan torn down and restarted
+     * every two seconds misses the advertisement packets it was not listening for in
+     * the gap, which is how a camera that is plainly in range stops appearing.
+     *
+     * Returns false when nothing could start (no adapter, permission denied, adapter
+     * switched off) — the caller reports that as a reason, never as an empty list.
      */
-    suspend fun scan(
-        profiles: List<BleCameraProfile>,
-        timeoutMs: Long = DEFAULT_SCAN_MS,
-        onFound: (List<BleCamera>) -> Unit = {},
-    ): List<BleCamera>
+    fun startScan(profiles: List<BleCameraProfile>): Boolean
+
+    /** The cameras heard from lately, strongest signal first. Thread-safe to poll. */
+    fun scannedCameras(): List<BleCamera>
+
+    /** Stop the background scan and keep what was seen (a later scan adds to it). */
+    fun stopScan()
+
+    /** Forget every advertisement, so a manual refresh cannot show a gone camera. */
+    fun clearScanResults()
 
     /**
      * Connect, run the profile's handshake, and return the hotspot the camera
@@ -170,7 +178,8 @@ interface BleCentral {
     fun abort()
 
     companion object {
-        const val DEFAULT_SCAN_MS = 8_000L
+        /** A camera not heard from for this long is dropped from the list. */
+        const val STALE_AFTER_MS = 12_000L
         const val DEFAULT_HANDSHAKE_MS = 25_000L
     }
 }

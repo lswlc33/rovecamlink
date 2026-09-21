@@ -29,8 +29,13 @@ class XtuBleProfile(
 
     override val id: String get() = ID
 
-    /** `XTU_` covers `XTU_S7Pro_f9e5e2`; the bare prefix covers odd firmwares. */
-    override val namePrefixes: List<String> = listOf("XTU_")
+    /**
+     * `XTU` is the official discovery filter (`BLEScanActivity.java:46` tests
+     * `name.startsWith("XTU")`, `HomeActivity.java:2648` uses `contains`). The real
+     * S7Pro advertises `XTU_S7Pro_f9e5e2`, so the narrower `XTU_` would work on this
+     * one camera and silently miss the ones that name themselves differently.
+     */
+    override val namePrefixes: List<String> = listOf("XTU")
 
     /** XTU's AP always hands out itself as the gateway (SSConstant.SS_IP). */
     override val expectedGateway: String? get() = "192.168.0.1"
@@ -101,9 +106,12 @@ internal class XtuBleHandshake(
     }
 
     /**
-     * `Status=1,Pin=1234` is the accept; `KEY=0` / `Status=0` means the camera did not
-     * take this code — and the official client's answer is to invent a new one and
-     * resend, not to bother the user. We do the same, a few times, then give up.
+     * `Status=1,Pin=1234` is the accept — the official client additionally demands a
+     * non-empty `Pin` (`BLEConnectUtils.java:644-660`), which we treat as optional
+     * because a firmware that only answers `Status=1` is still saying yes. `KEY=0` /
+     * `Status=0` means it did not take this code — and the official client's answer
+     * is to invent a new one and resend, not to bother the user. We do the same, a
+     * few times, then give up.
      */
     private fun onPairingReply(reply: Map<String, String>): BleProgress {
         val status = reply[BleKeys.STATUS]
@@ -136,7 +144,14 @@ internal class XtuBleHandshake(
         return send(command(CONFIRM, pairingKey), "confirm-ap")
     }
 
-    /** `WiFi_Status=1` means the AP is really broadcasting; anything else is noise. */
+    /**
+     * `WiFi_Status=1` means the AP is really broadcasting. Anything else is not a
+     * refusal but a camera that is still bringing the AP up: the official client
+     * re-sends `R002_<code>` **every second, without a cap**
+     * (`BLEConnectUtils.java:750-758`) and only the caller's own timeout ends it, so
+     * we keep asking too and let [com.rovecamlink.app.core.ble.BleCentral.wakeAndFetch]
+     * decide when the attempt is over.
+     */
     private fun onConfirmReply(reply: Map<String, String>): BleProgress {
         reply[BleKeys.SSID]?.takeIf { it.isNotEmpty() }?.let {
             ssid = it
@@ -152,10 +167,12 @@ internal class XtuBleHandshake(
 
     override fun onTick(nowMs: Long): List<BleFrame> {
         if (stage == Stage.Done || stage == Stage.Failed) return emptyList()
-        if (nowMs - lastSentAt < RETRY_INTERVAL_MS) return emptyList()
-        // The official client retries forever; we stop and let the caller's hard
-        // timeout turn it into a readable error instead of a hung spinner.
-        if (sendsForStage >= MAX_SENDS) return emptyList()
+        val interval = if (stage == Stage.ConfirmingAp) AP_POLL_INTERVAL_MS else RETRY_INTERVAL_MS
+        if (nowMs - lastSentAt < interval) return emptyList()
+        // Pairing and AP-open are bounded so a dead camera becomes an error instead of
+        // an infinite write loop; the AP-up poll is not, because a slow camera is the
+        // normal case rather than a failure.
+        if (stage != Stage.ConfirmingAp && sendsForStage >= MAX_SENDS) return emptyList()
         return send(pendingCommand(), "retry").frames()
     }
 
@@ -192,6 +209,13 @@ internal class XtuBleHandshake(
 
         /** Resend the pending command this often; the camera answers within ~1s. */
         const val RETRY_INTERVAL_MS = 1_500L
+
+        /**
+         * While waiting for the AP to come up, the official client polls once a
+         * second (`BLEConnectUtils.java:750-758`); a hotspot takes longer than our
+         * old 8 x 1.5 s budget to start on a cold camera.
+         */
+        const val AP_POLL_INTERVAL_MS = 1_000L
 
         /** Cap so a dead camera becomes an error instead of an infinite write loop. */
         const val MAX_SENDS = 8

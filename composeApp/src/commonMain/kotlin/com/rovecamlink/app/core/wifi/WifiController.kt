@@ -62,7 +62,20 @@ interface WifiController {
  * usually start with a brand prefix (e.g. "XTU", "X7", "RIDE", "M3").
  */
 interface WifiScanner {
-    suspend fun scan(prefixes: List<String> = DEFAULT_PREFIXES): List<CameraNetwork>
+    /**
+     * Camera-like networks in range, strongest signal first.
+     *
+     * [force] asks the operating system for a genuinely fresh scan. Android
+     * rate-limits `WifiManager.startScan()` — the 2026-09-21 field log has two
+     * calls three seconds apart both answered `false` — so a 2-second UI refresh
+     * cycle reads the cached results and lets the platform throttle decide when a
+     * real scan is worth requesting. Without that split the list looks frozen and
+     * every manual tap on 刷新 is a no-op.
+     */
+    suspend fun scan(
+        prefixes: List<String> = DEFAULT_PREFIXES,
+        force: Boolean = false,
+    ): List<CameraNetwork>
 }
 
 data class CameraNetwork(val ssid: String, val secured: Boolean, val rssi: Int)

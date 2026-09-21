@@ -63,6 +63,45 @@ class HiCgiParsingTest {
     }
 
     @Test
+    fun `action rows are marked and keep their neighbours aligned`() {
+        // The device menu (`-workmode=System`) ends with rows that have no value at
+        // all — SD Format, Information, Time Set are tapped, not chosen. The
+        // firmware marks them by leaving their `cur` slot empty, and pads a short
+        // `cur` with `-` exactly as `SSResponseParse.java:391-399` does.
+        val body = "var item=\"Voice Control,Grid,Time Set,Wi-Fi,SD Format,Information\";" +
+            "var cur=\"ON,OFF,-,2.4G,-,-\";"
+        val rows = HiMenu.parsePrimaryItems(body)
+        assertEquals(
+            listOf("Voice Control", "Grid", "Time Set", "Wi-Fi", "SD Format", "Information"),
+            rows.map { it.name },
+            "an empty cur slot must not shift the values onto the next item",
+        )
+        assertEquals(listOf("ON", "OFF", "", "2.4G", "", ""), rows.map { it.value })
+        assertEquals(listOf(false, false, true, false, true, true), rows.map { it.isAction })
+        // The pairs view stays for the existing callers: a value-less row reads "".
+        assertEquals("Time Set" to "", HiMenu.parsePrimary(body)[2])
+        assertEquals(6, HiMenu.parsePrimary(body).size)
+    }
+
+    @Test
+    fun `a cur list shorter than the items pads to action rows`() {
+        val rows = HiMenu.parsePrimaryItems("var item=\"A,B,C\";\nvar cur=\"1\";\n")
+        assertEquals(listOf("1", "", ""), rows.map { it.value })
+        assertEquals(listOf(false, true, true), rows.map { it.isAction })
+    }
+
+    @Test
+    fun `a menu with no cur at all is not a page of buttons`() {
+        // Some firmware answers only `item`. Calling every row an action would turn
+        // the whole settings page into dead buttons, so the per-item read has to get
+        // its chance instead.
+        val rows = HiMenu.parsePrimaryItems("var item=\"A,B\";\n")
+        assertEquals(2, rows.size)
+        assertTrue(rows.none { it.isAction }, "no cur variable means \"unknown\", not \"no value\"")
+        assertEquals(listOf("", ""), rows.map { it.value })
+    }
+
+    @Test
     fun `second menu gives the authoritative options and value`() {
         val body = "var item=\"4K30,4K30 HDR,4K30 SuperView,2.7K50,2.7K30,2.7K30 HDR," +
             "1440P60(4:3),1440P30(4:3),1080P120,1080P60,1080P30,1080P30 HDR,1080P30 SuperView," +

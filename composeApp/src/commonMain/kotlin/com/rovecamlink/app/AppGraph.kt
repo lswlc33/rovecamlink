@@ -6,6 +6,7 @@ import com.rovecamlink.app.core.ble.BleCameraProfile
 import com.rovecamlink.app.core.ble.XtuBleProfile
 import com.rovecamlink.app.core.ble.createBleCentral
 import com.rovecamlink.app.core.ble.createPairingKeyStore
+import com.rovecamlink.app.core.net.createWifiCredentialStore
 import com.rovecamlink.app.core.net.DeviceDiscovery
 import com.rovecamlink.app.core.protocol.CameraProtocolRegistry
 import com.rovecamlink.app.core.storage.createFileSaver
@@ -34,6 +35,13 @@ class AppGraph {
     val scanner = createWifiScanner()
     val fileSaver = createFileSaver()
     val permissions = createPermissionController()
+
+    /**
+     * Passphrases that worked, per hotspot name. What Bluetooth reports and what the
+     * user types once both land here, so a camera seen in the Wi-Fi list is a one-tap
+     * connect instead of a memory test.
+     */
+    val wifiCredentials = createWifiCredentialStore()
 
     /**
      * Bluetooth side of connecting: find the camera before any Wi-Fi exists, wake

@@ -53,9 +53,16 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.RoveCamLink">
 
+        <!--
+          Portrait-locked on purpose: the live view rotates the *picture* with the
+          phone's own attitude (core.media.rememberDeviceOrientation), and letting the
+          activity rotate too would turn the frame twice. The field report asked for
+          exactly that split — 「不是旋转应用，只旋转画面」.
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

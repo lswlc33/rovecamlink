@@ -79,69 +79,113 @@ private class AndroidBleCentral : BleCentral {
         }
     }
 
-    override suspend fun scan(
-        profiles: List<BleCameraProfile>,
-        timeoutMs: Long,
-        onFound: (List<BleCamera>) -> Unit,
-    ): List<BleCamera> {
-        val scanner = adapter?.bluetoothLeScanner ?: return emptyList()
-        val found = LinkedHashMap<String, BleCamera>()
-        val stopped = CompletableDeferred<Unit>()
-        val callback = object : ScanCallback() {
-            override fun onScanResult(callbackType: Int, result: ScanResult) = ingest(result)
-
-            override fun onBatchScanResults(results: MutableList<ScanResult>) {
-                results.forEach { ingest(it) }
-            }
-
-            override fun onScanFailed(errorCode: Int) {
-                Diag.warn(LogTag.NET, "BLE scan failed code=$errorCode (adapter busy, or permission revoked)")
-                stopped.complete(Unit)
-            }
-
-            private fun ingest(result: ScanResult) {
-                val device = result.device ?: return
-                // device.name needs BLUETOOTH_CONNECT and is null without it far too
-                // often to be the only source, so the raw advertisement is the fallback.
-                val name = runCatching { device.name }.getOrNull()
-                    ?: result.scanRecord?.deviceName
-                    ?: return
-                val profile = profiles.firstOrNull { it.matches(name) } ?: return
-                val previous = found[name]
-                if (previous != null && previous.rssi >= result.rssi) return
-                found[name] = BleCamera(device.address ?: "", name, result.rssi, profile.id)
-                onFound(found.values.sortedByDescending { it.rssi })
-            }
+    override fun startScan(profiles: List<BleCameraProfile>): Boolean {
+        val bt = adapter ?: return false
+        if (!bt.isEnabled) {
+            Diag.info(LogTag.NET, "BLE scan refused: adapter is off")
+            return false
         }
-        return try {
-            runCatching {
+        val scanner = bt.bluetoothLeScanner ?: run {
+            Diag.error(LogTag.NET, "BLE scan refused: no BluetoothLeScanner on this device")
+            return false
+        }
+        synchronized(scanLock) {
+            if (scanCallback != null) return true
+            val callback = object : ScanCallback() {
+                override fun onScanResult(callbackType: Int, result: ScanResult) = ingest(result)
+
+                override fun onBatchScanResults(results: MutableList<ScanResult>) {
+                    results.forEach { ingest(it) }
+                }
+
+                override fun onScanFailed(errorCode: Int) {
+                    // 2 == SCAN_FAILED_ALREADY_STARTED, which for us means an earlier
+                    // scan is still registered and results are still arriving.
+                    if (errorCode == 2) {
+                        Diag.debug(LogTag.NET, "BLE startScan reported ALREADY_STARTED")
+                        return
+                    }
+                    Diag.error(LogTag.NET, "BLE scan failed code=$errorCode (adapter busy, or permission revoked)")
+                    synchronized(scanLock) { if (scanCallback === this) scanCallback = null }
+                }
+
+                private fun ingest(result: ScanResult) {
+                    val device = result.device ?: return
+                    // device.name needs BLUETOOTH_CONNECT and is null without it far too
+                    // often to be the only source, so the raw advertisement is the fallback.
+                    val name = runCatching { device.name }.getOrNull()
+                        ?: result.scanRecord?.deviceName
+                        ?: return
+                    val profile = profiles.firstOrNull { it.matches(name) } ?: return
+                    remember(
+                        // The pair is keyed by name, so a firmware that rotates its
+                        // address still reads as the same camera.
+                        name,
+                        BleCamera(runCatching { device.address }.getOrNull() ?: "", name, result.rssi, profile.id),
+                    )
+                }
+            }
+            val started = runCatching {
                 scanner.startScan(
                     null,
                     ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build(),
                     callback,
                 )
-            }.onFailure {
-                Diag.error(LogTag.NET, "BLE startScan threw ${Diag.causeChain(it)}")
-                return emptyList()
+            }.isSuccess
+            if (!started) {
+                Diag.error(LogTag.NET, "BLE startScan threw; permission revoked or adapter busy")
+                return false
             }
-            Diag.debug(LogTag.NET, "BLE scan started (LOW_LATENCY, ${timeoutMs}ms budget)")
-            coroutineScope {
-                launch {
-                    delay(timeoutMs)
-                    stopped.complete(Unit)
-                }
-                stopped.await()
-            }
-            Diag.info(LogTag.NET, "BLE scan found ${found.size}: ${found.keys.joinToString(", ")}")
-            found.values.sortedByDescending { it.rssi }
-        } finally {
-            runCatching { scanner.stopScan(callback) }
+            scanCallback = callback
+            Diag.info(LogTag.NET, "BLE scan started (LOW_LATENCY, names ${profiles.joinToString(",") { p -> p.namePrefixes.joinToString("/") }})")
+            return true
+        }
+    }
+
+    override fun scannedCameras(): List<BleCamera> {
+        val now = monotonicMillis()
+        return synchronized(scanLock) {
+            seen.entries.filter { now - it.value.second <= BleCentral.STALE_AFTER_MS }
+                .map { it.value.first }
+                .sortedByDescending { it.rssi }
+        }
+    }
+
+    override fun stopScan() {
+        val scanner = adapter?.bluetoothLeScanner
+        synchronized(scanLock) {
+            val cb = scanCallback ?: return
+            scanCallback = null
+            runCatching { scanner?.stopScan(cb) }
+                .onFailure { Diag.debug(LogTag.NET, "BLE stopScan threw ${Diag.causeChain(it)}") }
+        }
+    }
+
+    override fun clearScanResults() {
+        synchronized(scanLock) { seen.clear() }
+    }
+
+    /** Record one advertisement, keeping the strongest signal seen for this name. */
+    private fun remember(name: String, camera: BleCamera) {
+        synchronized(scanLock) {
+            val previous = seen[name]
+            val best = if (previous != null && previous.first.rssi >= camera.rssi) previous.first else camera
+            // lastSeen always moves forward: a weaker report is still proof the
+            // camera is in range, and dropping it would blink the row off the list.
+            seen[name] = best to monotonicMillis()
         }
     }
 
     override fun abort() {
         active?.closeNow()
     }
+
+    private val scanLock = Any()
+
+    /** name → (camera, monotonic time of its last advertisement). Guarded by [scanLock]. */
+    private val seen = LinkedHashMap<String, Pair<BleCamera, Long>>()
+
+    @Volatile private var scanCallback: ScanCallback? = null
 }
 
 /** API 31+ has the runtime BLUETOOTH pair; below that scanning rides on location. */
@@ -151,6 +195,14 @@ private fun blePermissions(): Array<String> =
     } else {
         arrayOf(Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN)
     }
+
+/**
+ * Log-safe form of a notification: the keys and the shape stay, the passphrase
+ * becomes its length. The diagnostics TXT leaves the phone through a share sheet,
+ * and `PWD=` is the one field in the whole handshake that grants network access.
+ */
+private fun maskPassphrase(text: String): String =
+    text.replace(Regex("PWD=([^,]*)")) { "PWD=<${it.groupValues[1].length}ch>" }
 
 actual fun createBleCentral(): BleCentral = AndroidBleCentral()
 
@@ -246,6 +298,16 @@ private class GattSession(
         @Suppress("DEPRECATION")
         override fun onCharacteristicChanged(g: BluetoothGatt, ch: BluetoothGattCharacteristic) {
             val value = ch.value ?: return
+            // Log what the camera actually said before we interpret it. Every field of
+            // the XTU handshake has been re-derived from the APK at least once, and the
+            // one thing the APK cannot answer is what *this* firmware replies with —
+            // so the raw notification, passphrase masked, has to be in the log we get
+            // back from a failed field test.
+            Diag.info(
+                LogTag.NET,
+                "BLE notify ${camera.name} stage=${handshake.stage()} " +
+                    "len=${value.size} ${maskPassphrase(decodeBlePayload(value))}",
+            )
             buffer += value
             if (buffer.size > MAX_BUFFER) buffer = value
             when (val progress = handshake.onNotify(buffer)) {
@@ -278,20 +340,45 @@ private class GattSession(
     }
 
     /**
-     * Pick the characteristic the camera actually talks on. These firmwares do not
-     * advertise a stable service UUID, so — exactly like the official client — the
-     * rule is "the last characteristic that has a CCCD, or the 8888 one".
+     * Pick the characteristic the camera actually talks on.
+     *
+     * The command channel is `00008888` — `BluetoothConnector.java:242` asks for
+     * exactly `getService(0000180a).getCharacteristic(00008888)`, and `8888` is the
+     * only hard-coded characteristic UUID in the whole APK. It is also what the live
+     * data path uses, so it is the one place a real device reliably writes to.
+     *
+     * The order below is deliberately the *strict* version of the official
+     * `BLEConnectUtils.java:541` test, which accepts "has a CCCD **or** is 8888" and
+     * therefore lets the last characteristic of an unrelated service (battery,
+     * device-info) win the race on a full GATT table — `DeviceAddWaveFragment.java:285`
+     * is the same app's own corrected **and** test. We try 8888 first, and only fall
+     * back to a CCCD-bearing writable characteristic when the camera does not expose
+     * it, which is what an earlier version of this file assumed was normal.
      */
     private fun discover(g: BluetoothGatt) {
         if (characteristic != null || closed) return
         val all = g.services.flatMap { it.characteristics }
-        val chosen = all.lastOrNull { c -> c.descriptors.any { it.uuid == CCCD } }
-            ?: all.lastOrNull { it.uuid == XTU_CHAR }
-            ?: all.firstOrNull { it.properties and BluetoothGattCharacteristic.PROPERTY_WRITE > 0 }
+        val writable = BluetoothGattCharacteristic.PROPERTY_WRITE or
+            BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
+        fun hasCccd(c: BluetoothGattCharacteristic) = c.descriptors.any { it.uuid == CCCD }
+        val chosen = all.lastOrNull { it.uuid == XTU_CHAR && hasCccd(it) }
+            ?: all.firstOrNull { it.uuid == XTU_CHAR }
+            ?: all.lastOrNull { hasCccd(it) && it.properties and writable > 0 }
+            ?: all.lastOrNull { hasCccd(it) }
+            ?: all.firstOrNull { it.properties and writable > 0 }
         if (chosen == null) {
-            Diag.error(LogTag.NET, "no usable BLE characteristic on ${camera.name} (${g.services.size} services)")
+            val seen = g.services.flatMap { c -> c.characteristics }.joinToString(",") { c -> "${c.uuid}:${c.properties}" }
+            Diag.error(
+                LogTag.NET,
+                "no usable BLE characteristic on ${camera.name}: ${g.services.size} services, chars=$seen",
+            )
             return failOpen("相机的蓝牙服务不认识")
         }
+        Diag.info(
+            LogTag.NET,
+            "BLE command channel = ${chosen.uuid} (write=0x${chosen.properties.toString(16)}, " +
+                "cccd=${chosen.descriptors.any { it.uuid == CCCD }}) of ${g.services.size} services",
+        )
         characteristic = chosen
         enableNotifications(g, chosen)
     }

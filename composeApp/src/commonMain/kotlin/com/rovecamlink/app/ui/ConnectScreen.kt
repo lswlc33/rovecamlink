@@ -1,5 +1,8 @@
+@file:OptIn(com.robinpcrd.cupertino.ExperimentalCupertinoApi::class)
+
 package com.rovecamlink.app.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,19 +14,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.robinpcrd.cupertino.CupertinoActivityIndicator
@@ -41,28 +46,32 @@ import com.robinpcrd.cupertino.theme.CupertinoTheme
 import com.robinpcrd.cupertino.theme.systemRed
 import com.rovecamlink.app.AppState
 import com.rovecamlink.app.Phase
-import com.rovecamlink.app.action_auto_connect
+import com.rovecamlink.app.Res
+import com.rovecamlink.app.action_connect
 import com.rovecamlink.app.action_connect_to_ip
 import com.rovecamlink.app.action_disconnect
 import com.rovecamlink.app.action_join_connect
-import com.rovecamlink.app.action_scan_cameras
+import com.rovecamlink.app.action_refresh
 import com.rovecamlink.app.action_scan_qr
-import com.rovecamlink.app.action_use_this_network
 import com.rovecamlink.app.cancel
-import com.rovecamlink.app.hint_auto_connect
+import com.rovecamlink.app.err_bluetooth_unsupported
+import com.rovecamlink.app.hint_ble_wake
+import com.rovecamlink.app.hint_connect_choice
+import com.rovecamlink.app.hint_last_refresh
 import com.rovecamlink.app.label_bluetooth_cameras
-import com.rovecamlink.app.label_bluetooth_idle
-import com.rovecamlink.app.label_bluetooth_none
-import com.rovecamlink.app.label_current_camera_wifi
-import com.rovecamlink.app.label_host
-import com.rovecamlink.app.label_info
-import com.rovecamlink.app.label_model
-import com.rovecamlink.app.label_nearby_cameras
+import com.rovecamlink.app.label_bluetooth_count
+import com.rovecamlink.app.label_current_camera_wifi_short
+import com.rovecamlink.app.label_hint
+import com.rovecamlink.app.label_nearby_none
+import com.rovecamlink.app.label_no_bluetooth_cameras
+import com.rovecamlink.app.label_no_wifi_cameras
 import com.rovecamlink.app.label_other_ways
 import com.rovecamlink.app.label_password
 import com.rovecamlink.app.label_phase
+import com.rovecamlink.app.label_saved
 import com.rovecamlink.app.label_wifi_cameras
-import com.rovecamlink.app.nearby_cameras_none
+import com.rovecamlink.app.label_wifi_count
+import com.rovecamlink.app.not_connected_title
 import com.rovecamlink.app.notice_vpn_active
 import com.rovecamlink.app.phase_connected
 import com.rovecamlink.app.phase_connecting
@@ -78,34 +87,58 @@ import com.rovecamlink.app.resolve
 import com.rovecamlink.app.section_status
 import com.rovecamlink.app.wifi_open
 import com.rovecamlink.app.wifi_secured
-import com.rovecamlink.app.Res
+import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.qr.QrScanScreen
-import com.rovecamlink.app.core.wifi.CameraNetwork
-import com.rovecamlink.app.core.wifi.DEFAULT_PREFIXES
+import kotlinx.coroutines.awaitCancellation
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.roundToInt
 
 /**
- * The connection screen: one obvious action at the top, everything else beneath it
- * in the order a person actually tries things.
+ * The device tab: find a camera, connect, get out of the way.
  *
- * 1. Bluetooth — nothing to type, and it wakes the camera's hotspot for you.
- * 2. The hotspot the phone is already joined to — adopt it, never rejoin it.
- * 3. A camera hotspot from the Wi-Fi list.
- * 4. QR code / literal IP, for the firmware that will not cooperate.
+ * Two controls, per the field report that asked for them — 刷新 re-reads both radios
+ * now, 连接 reaches the best camera in range — and both lists also refresh on their
+ * own while this screen is open, so neither "I have to press a button every time" nor
+ * "nothing moves until I press it" is true any more. The lists stay tappable for the
+ * cases the automatic choice gets wrong: a second camera in range, a hotspot that
+ * needs a passphrase, a camera whose Bluetooth name is not the network you want.
  *
- * Every failure names itself ("Bluetooth is off on this phone") instead of leaving
- * an empty list to interpret, and the VPN case is explained rather than hidden —
- * that combination is what made the official app feel broken on this project.
+ * Route order is the order that actually works on the S7PRO: a hotspot the phone is
+ * already joined to is adopted without asking Bluetooth for anything (re-requesting a
+ * network we are on is what made a manual join look broken, and what let a VPN keep
+ * the route); otherwise Bluetooth, because it is the only route that also *opens* the
+ * camera's hotspot and brings the passphrase back with it; then the Wi-Fi list.
  *
- * Strings are resolved up front because a section body is not a composable scope.
+ * Section bodies are not composable scope functions in this UI kit, so every label is
+ * resolved once, up front. Inside a section, rows pad with the section's own
+ * `PaddingValues` — the manual 16.dp padding that used to sit on top of it is what
+ * made the lists look inset twice.
  */
 @Composable
 fun ConnectScreen(state: AppState) {
-    val provision = state.provisioning
-    var selected by remember { mutableStateOf<CameraNetwork?>(null) }
-    var password by remember { mutableStateOf("") }
     var manualIp by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var showQr by remember { mutableStateOf(false) }
+    val nearby = state.nearby
+    var tick by remember { mutableStateOf(0L) }
+
+    // Search while this screen is on screen; stop when it is not, so a backgrounded
+    // tab does not keep the LE scanner busy.
+    LaunchedEffect(Unit) {
+        nearby.start()
+        try {
+            awaitCancellation()
+        } finally {
+            nearby.stop()
+        }
+    }
+    // The "n 秒前" stamp needs its own heartbeat; the scan loop has its own cadence.
+    LaunchedEffect(Unit) {
+        while (true) {
+            tick = Diag.uptimeMillis()
+            kotlinx.coroutines.delay(TICK_MS)
+        }
+    }
 
     if (showQr) {
         QrScanScreen(
@@ -118,204 +151,195 @@ fun ConnectScreen(state: AppState) {
         return
     }
 
+    val connected = state.phase == Phase.Connected
+    val joined = state.joinedCameraNetwork
     val statusTitle = stringResource(Res.string.section_status).sectionTitle()
-    val phaseLbl = stringResource(Res.string.label_phase)
-    val infoLbl = stringResource(Res.string.label_info)
-    val modelLbl = stringResource(Res.string.label_model)
-    val hostLbl = stringResource(Res.string.label_host)
     val phaseNow = phaseText(state.phase)
     val statusNow = state.statusMessage?.resolve().orEmpty()
-    val noticeNow = provision.notice?.resolve() ?: state.errorMessage?.resolve()
+    val noticeNow = nearby.notice?.resolve()
+        ?: state.provisioning.notice?.resolve()
+        ?: state.errorMessage?.resolve()
     val vpnNote = stringResource(Res.string.notice_vpn_active)
+    val phaseLbl = stringResource(Res.string.label_phase)
+    val refreshLbl = stringResource(Res.string.action_refresh)
+    val connectLbl = stringResource(Res.string.action_connect)
     val disconnectLbl = stringResource(Res.string.action_disconnect)
-    val autoLbl = stringResource(Res.string.action_auto_connect)
-    val autoHint = stringResource(Res.string.hint_auto_connect)
+    val choiceHint = stringResource(Res.string.hint_connect_choice)
+    val cameraLbl = stringResource(Res.string.not_connected_title)
     val bleTitle = stringResource(Res.string.label_bluetooth_cameras).sectionTitle()
-    val nearbyLbl = stringResource(Res.string.label_nearby_cameras)
-    val bleNone = stringResource(Res.string.label_bluetooth_none)
-    val bleIdle = stringResource(Res.string.label_bluetooth_idle)
+    val bleHint = stringResource(Res.string.hint_ble_wake)
+    val bleNone = stringResource(Res.string.label_no_bluetooth_cameras)
+    val bleUnsupported = stringResource(Res.string.err_bluetooth_unsupported)
     val wifiTitle = stringResource(Res.string.label_wifi_cameras).sectionTitle()
-    val wifiNone = stringResource(Res.string.nearby_cameras_none)
+    val wifiNone = stringResource(Res.string.label_no_wifi_cameras)
     val securedLbl = stringResource(Res.string.wifi_secured)
     val openLbl = stringResource(Res.string.wifi_open)
-    val scanWifiLbl = stringResource(Res.string.action_scan_cameras)
+    val savedLbl = stringResource(Res.string.label_saved)
     val otherTitle = stringResource(Res.string.label_other_ways).sectionTitle()
-    val scanQrLbl = stringResource(Res.string.action_scan_qr)
+    val qrLbl = stringResource(Res.string.action_scan_qr)
+    val ipLbl = stringResource(Res.string.action_connect_to_ip)
     val ipHint = stringResource(Res.string.placeholder_ip)
-    val connectIpLbl = stringResource(Res.string.action_connect_to_ip)
+    val passwordLbl = stringResource(Res.string.label_password)
+    val cancelLbl = stringResource(Res.string.cancel)
+    val hintLbl = stringResource(Res.string.label_hint)
+    val joinLbl = stringResource(Res.string.action_join_connect)
+    val noneLbl = stringResource(Res.string.label_nearby_none)
+    val ageSeconds = if (nearby.lastUpdateAt == 0L) -1 else ((tick - nearby.lastUpdateAt) / 1000f).roundToInt()
 
-    val connected = state.phase == Phase.Connected
-    val joinedCamera = state.currentWifiSsid?.takeIf { ssid ->
-        DEFAULT_PREFIXES.any { ssid.startsWith(it, ignoreCase = true) }
+    val canConnect = joined != null || nearby.hasCandidate
+    val busy = state.provisioning.busy || state.phase.isConnecting()
+    val summary = when {
+        connected -> state.session?.model.orEmpty()
+        joined != null -> joined
+        nearby.bluetooth.isNotEmpty() || nearby.networks.isNotEmpty() ->
+            (listOfNotNull(
+                nearby.bluetooth.firstOrNull()?.name,
+                nearby.networks.firstOrNull()?.ssid,
+            )).joinToString(" · ").ifBlank { noneLbl }
+        else -> noneLbl
     }
-    val connecting = state.phase == Phase.ConnectingWifi ||
-        state.phase == Phase.IdentifyingDevice ||
-        state.phase == Phase.ConnectingProtocol ||
-        state.phase == Phase.SyncingTime
 
     LazyColumn(Modifier.fillMaxSize()) {
+        item {
+            ConnectHero(
+                connected = connected,
+                title = if (connected) summary else cameraLbl,
+                subtitle = if (connected) {
+                    state.session?.let { "${it.host}:${it.port}" } ?: ""
+                } else {
+                    nearbyCountLine(
+                        ble = nearby.bluetooth.size,
+                        wifi = nearby.networks.size,
+                        joined = joined != null,
+                        searching = nearby.searching,
+                        none = noneLbl,
+                    )
+                },
+                refreshLabel = refreshLbl,
+                connectLabel = connectLbl,
+                disconnectLabel = disconnectLbl,
+                scanning = nearby.searching,
+                busy = busy,
+                canConnect = canConnect,
+                footnote = when {
+                    connected -> ""
+                    ageSeconds < 0 -> choiceHint
+                    canConnect -> stringResource(Res.string.hint_last_refresh, ageSeconds)
+                    else -> choiceHint
+                },
+                onRefresh = { state.refreshNearby() },
+                onConnect = { state.connectNearby() },
+                onDisconnect = { state.disconnect() },
+            )
+        }
+
         section(title = { CupertinoText(statusTitle) }) {
             infoRow(phaseLbl, phaseNow)
-            if (statusNow.isNotEmpty()) infoRow(infoLbl, statusNow)
-            if (!noticeNow.isNullOrEmpty()) infoRow("!", noticeNow)
+            if (statusNow.isNotEmpty()) infoRow(hintLbl, statusNow)
+            if (noticeNow != null) infoRow("!", noticeNow)
             if (state.vpnActive) infoRow("VPN", vpnNote)
-            state.session?.let { s ->
-                infoRow(modelLbl, s.model)
-                infoRow(hostLbl, "${s.host}:${s.port}")
-            }
         }
 
-        if (connected) {
-            section {
-                item {
-                    Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)) {
-                        PrimaryButton(
-                            label = disconnectLbl,
-                            container = CupertinoColors.systemRed,
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = { state.disconnect() },
-                        )
-                    }
-                }
+        section(title = { CupertinoText(bleTitle) }) {
+            when {
+                !state.provisioning.supported() -> infoRow(hintLbl, bleUnsupported)
+                nearby.bluetooth.isEmpty() -> infoRow(hintLbl, if (nearby.searching) "…" else bleNone)
             }
-            return@LazyColumn
-        }
-
-        // The one control most people ever touch.
-        item {
-            Column(
-                Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                PrimaryButton(
-                    label = autoLbl,
-                    busy = provision.busy || connecting,
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        // A camera we already paired with goes straight to the
-                        // handshake; anything else needs a scan first.
-                        val paired = provision.cameras.firstOrNull { provision.isPaired(it) }
-                        if (paired != null) provision.connect(paired) else provision.scan()
+            nearby.bluetooth.forEach { cam ->
+                val paired = state.provisioning.isPaired(cam)
+                link(
+                    onClick = { if (!busy) state.provisioning.connect(cam) },
+                    title = {
+                        CupertinoText(cam.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     },
-                )
-                Spacer(Modifier.height(6.dp))
-                CupertinoText(
-                    text = autoHint,
-                    fontSize = 12.sp,
-                    color = CupertinoTheme.colorScheme.tertiaryLabel,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-
-        if (provision.supported()) {
-            section(title = { CupertinoText(bleTitle) }) {
-                if (provision.cameras.isEmpty()) {
-                    val bleLine = when {
-                        provision.busy -> "…"
-                        !provision.scanned -> bleIdle
-                        else -> bleNone
-                    }
-                    infoRow(nearbyLbl, bleLine)
-                }
-                provision.cameras.forEach { cam ->
-                    val pairedMark = if (provision.isPaired(cam)) " · ✓" else ""
-                    link(
-                        onClick = { provision.connect(cam) },
-                        title = { CupertinoText(cam.name) },
-                        caption = { CupertinoText("${cam.rssi} dBm$pairedMark") },
-                        trailingIcon = {},
-                    )
-                }
-            }
-        }
-
-        // Already joined the hotspot in Settings: adopt it, do not rejoin it.
-        joinedCamera?.let { ssid ->
-            section {
-                item {
-                    Row(
-                        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    ) {
+                    caption = {
                         CupertinoText(
-                            text = stringResource(Res.string.label_current_camera_wifi, ssid),
-                            modifier = Modifier.weight(1f),
+                            "蓝牙 ${cam.rssi} dBm" + if (paired) " · $savedLbl" else "",
+                            fontSize = 12.sp,
                         )
-                        CupertinoButton(
-                            onClick = { state.connect() },
-                            size = CupertinoButtonSize.Small,
-                            colors = CupertinoButtonDefaults.filledButtonColors(),
-                        ) {
-                            CupertinoText(stringResource(Res.string.action_use_this_network))
-                        }
+                    },
+                    trailingIcon = {},
+                )
+            }
+            if (nearby.bluetooth.isNotEmpty()) {
+                item {
+                    Column(Modifier.fillMaxWidth().padding(it)) {
+                        CupertinoText(bleHint, fontSize = 11.sp, color = CupertinoTheme.colorScheme.tertiaryLabel)
                     }
                 }
             }
         }
 
         section(title = { CupertinoText(wifiTitle) }) {
-            if (state.networks.isEmpty()) infoRow(nearbyLbl, wifiNone)
-            state.networks.forEach { network ->
-                val security = if (network.secured) securedLbl else openLbl
+            if (nearby.networks.isEmpty()) {
+                infoRow(hintLbl, if (nearby.searching) "…" else wifiNone)
+            }
+            nearby.networks.forEach { network ->
+                val isJoined = joined.equals(network.ssid, ignoreCase = true)
                 link(
-                    onClick = {
-                        if (network.secured) {
-                            selected = network
-                            password = ""
-                        } else {
-                            state.connect(network.ssid, null)
-                        }
+                    onClick = { if (!busy) state.pickNetwork(network) },
+                    title = {
+                        CupertinoText(
+                            network.ssid + if (isJoined) " ✓" else "",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     },
-                    title = { CupertinoText(network.ssid) },
-                    caption = { CupertinoText("$security · ${network.rssi} dBm") },
+                    caption = {
+                        val credential = if (isJoined || state.hasSavedPassword(network.ssid)) savedLbl else null
+                        CupertinoText(
+                            listOfNotNull(
+                                if (network.secured) securedLbl else openLbl,
+                                "${network.rssi} dBm",
+                                credential,
+                            ).joinToString(" · "),
+                            fontSize = 12.sp,
+                        )
+                    },
                     trailingIcon = {},
                 )
             }
-            actionRow(scanWifiLbl, busy = state.phase == Phase.ScanningWifi) { state.scanWifi() }
         }
 
-        selected?.let { network ->
+        state.askPasswordFor?.let { network ->
             section(title = { CupertinoText(network.ssid.sectionTitle()) }) {
                 item {
-                    Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)) {
+                    Column(Modifier.fillMaxWidth().padding(it)) {
                         textField(
                             value = password,
                             onValueChange = { password = it },
-                            placeholder = { CupertinoText(stringResource(Res.string.label_password)) },
+                            placeholder = { CupertinoText(passwordLbl) },
                             singleLine = true,
                         )
                     }
                 }
                 item {
                     Row(
-                        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
+                        Modifier.fillMaxWidth().padding(it),
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        PrimaryButton(
-                            label = stringResource(Res.string.action_join_connect),
+                        AccentButton(
+                            label = joinLbl,
                             modifier = Modifier.weight(1f),
                             busy = state.phase == Phase.ConnectingWifi,
                         ) {
-                            state.connect(network.ssid, password.ifBlank { null })
-                            selected = null
+                            state.connectToNetwork(network, password.ifBlank { null })
+                            password = ""
                         }
                         CupertinoButton(
-                            onClick = { selected = null },
+                            onClick = { state.askPasswordFor = null },
                             colors = CupertinoButtonDefaults.grayButtonColors(),
-                        ) { CupertinoText(stringResource(Res.string.cancel)) }
+                        ) { CupertinoText(cancelLbl) }
                     }
                 }
             }
         }
 
-        // Kept, but out of the way: the last resort, not the first screen.
         section(title = { CupertinoText(otherTitle) }) {
-            actionRow(scanQrLbl) { showQr = true }
+            actionRow(qrLbl) { showQr = true }
             item {
-                Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)) {
+                Column(Modifier.fillMaxWidth().padding(it)) {
                     textField(
                         value = manualIp,
                         onValueChange = { manualIp = it },
@@ -324,7 +348,7 @@ fun ConnectScreen(state: AppState) {
                     )
                 }
             }
-            actionRow(connectIpLbl, busy = state.phase == Phase.IdentifyingDevice) {
+            actionRow(ipLbl, busy = state.phase == Phase.IdentifyingDevice) {
                 val ip = manualIp.trim()
                 if (ip.isNotEmpty()) state.connect(manualHost = ip)
             }
@@ -332,12 +356,106 @@ fun ConnectScreen(state: AppState) {
     }
 }
 
+/** "2 个蓝牙 · 1 个热点" — what the two radios found, in one line. */
+@Composable
+private fun nearbyCountLine(ble: Int, wifi: Int, joined: Boolean, searching: Boolean, none: String): String {
+    val parts = buildList {
+        if (joined) add(stringResource(Res.string.label_current_camera_wifi_short))
+        if (ble > 0) add(stringResource(Res.string.label_bluetooth_count, ble))
+        if (wifi > 0) add(stringResource(Res.string.label_wifi_count, wifi))
+    }
+    return parts.joinToString(" · ").ifBlank { if (searching) "…" else none }
+}
+
+/**
+ * The card on top of the device tab: what was found and the two buttons that matter.
+ * Everything below it is a fallback for when that choice is the wrong one.
+ */
+@Composable
+private fun ConnectHero(
+    connected: Boolean,
+    title: String,
+    subtitle: String,
+    refreshLabel: String,
+    connectLabel: String,
+    disconnectLabel: String,
+    scanning: Boolean,
+    busy: Boolean,
+    canConnect: Boolean,
+    footnote: String,
+    onRefresh: () -> Unit,
+    onConnect: () -> Unit,
+    onDisconnect: () -> Unit,
+) {
+    val scheme = CupertinoTheme.colorScheme
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(scheme.secondarySystemBackground)
+            .padding(16.dp),
+    ) {
+        CupertinoText(
+            title,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 17.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (subtitle.isNotEmpty()) {
+            Spacer(Modifier.height(4.dp))
+            CupertinoText(subtitle, fontSize = 13.sp, color = scheme.secondaryLabel)
+        }
+        Spacer(Modifier.height(12.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+            if (connected) {
+                AccentButton(
+                    label = disconnectLabel,
+                    modifier = Modifier.weight(1f),
+                    container = CupertinoColors.systemRed,
+                    onClick = onDisconnect,
+                )
+            } else {
+                CupertinoButton(
+                    onClick = onRefresh,
+                    modifier = Modifier.heightIn(min = 44.dp),
+                    size = CupertinoButtonSize.Large,
+                    colors = CupertinoButtonDefaults.grayButtonColors(),
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (scanning) {
+                            CupertinoActivityIndicator(size = 14.dp)
+                            Spacer(Modifier.width(6.dp))
+                        }
+                        CupertinoText(refreshLabel, fontWeight = FontWeight.Medium)
+                    }
+                }
+                AccentButton(
+                    label = connectLabel,
+                    modifier = Modifier.weight(1f),
+                    busy = busy,
+                    // Disabled with a reason beside it: a greyed 连接 next to "nothing
+                    // found" reads as a broken button, so the footnote says what to do.
+                    enabled = canConnect && !busy,
+                    onClick = onConnect,
+                )
+            }
+        }
+        if (footnote.isNotEmpty()) {
+            Spacer(Modifier.height(8.dp))
+            CupertinoText(footnote, fontSize = 11.sp, color = scheme.tertiaryLabel)
+        }
+    }
+}
+
 /** Big accent button with an inline spinner, so a busy control still explains itself. */
 @Composable
-private fun PrimaryButton(
+internal fun AccentButton(
     label: String,
     modifier: Modifier = Modifier,
     busy: Boolean = false,
+    enabled: Boolean = true,
     container: Color = CupertinoTheme.colorScheme.accent,
     onClick: () -> Unit,
 ) {
@@ -345,7 +463,7 @@ private fun PrimaryButton(
         onClick = onClick,
         modifier = modifier.heightIn(min = 44.dp),
         size = CupertinoButtonSize.Large,
-        enabled = !busy,
+        enabled = enabled && !busy,
         colors = CupertinoButtonDefaults.filledButtonColors(containerColor = container),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -359,21 +477,20 @@ private fun PrimaryButton(
 }
 
 /** Label above value, so a long message wraps instead of clipping. */
-private fun LazySectionScope.infoRow(title: String, value: String) {
+internal fun LazySectionScope.infoRow(title: String, value: String) {
     item {
-        Column(
-            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
-        ) {
-            CupertinoText(text = title, fontSize = 12.sp, color = CupertinoTheme.colorScheme.secondaryLabel)
-            CupertinoText(text = value)
+        Column(Modifier.fillMaxWidth().padding(it)) {
+            CupertinoText(title, fontSize = 12.sp, color = CupertinoTheme.colorScheme.secondaryLabel)
+            CupertinoText(value)
         }
     }
 }
 
 /** Centred tappable row, mirroring the action rows elsewhere in the app. */
-private fun LazySectionScope.actionRow(
+internal fun LazySectionScope.actionRow(
     label: String,
     busy: Boolean = false,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     item {
@@ -382,7 +499,7 @@ private fun LazySectionScope.actionRow(
             Modifier
                 .fillMaxWidth()
                 .heightIn(min = 44.dp)
-                .clickable(onClick = onClick),
+                .clickable(enabled = enabled && !busy, onClick = onClick),
             contentAlignment = Alignment.Center,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -396,9 +513,9 @@ private fun LazySectionScope.actionRow(
     }
 }
 
-/** Phase → the words a user reads, including the two Bluetooth-only stages. */
+/** Phase → the words a user reads, including the Bluetooth-only stages. */
 @Composable
-private fun phaseText(phase: Phase): String = stringResource(
+internal fun phaseText(phase: Phase): String = stringResource(
     when (phase) {
         Phase.Idle -> Res.string.phase_idle
         Phase.ScanningWifi -> Res.string.phase_scanning_wifi
@@ -411,3 +528,11 @@ private fun phaseText(phase: Phase): String = stringResource(
         Phase.Error -> Res.string.phase_error
     },
 )
+
+private fun Phase.isConnecting(): Boolean = this == Phase.ConnectingWifi ||
+    this == Phase.IdentifyingDevice ||
+    this == Phase.ConnectingProtocol ||
+    this == Phase.SyncingTime
+
+/** Cadence of the "n 秒前" stamp; the scan loop keeps its own, faster one. */
+private const val TICK_MS = 500L

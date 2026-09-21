@@ -79,6 +79,7 @@ object Diag {
         class Add(val record: LogRecord, val stats: ((LogStats) -> Unit)?) : Msg
         class Tail(val n: Int, val level: LogLevel?, val query: String?, val reply: CompletableDeferred<List<LogRecord>>) : Msg
         class Bundle(val reply: CompletableDeferred<String>) : Msg
+        class FullBundle(val reply: CompletableDeferred<String>) : Msg
         class Count(val reply: CompletableDeferred<Int>) : Msg
         class SessionFile(val reply: CompletableDeferred<String?>) : Msg
         class Clear(val reply: CompletableDeferred<Unit>) : Msg
@@ -126,10 +127,7 @@ object Diag {
                 FileSystem.SYSTEM.list(dir)
                     // `rovcamlink-log-*` are user exports (Save TXT writes into the same
                     // directory); only the rolling session files may be pruned.
-                    .filter {
-                        it.name.startsWith("rovcamlink-") && it.name.endsWith(".txt") &&
-                            !it.name.startsWith("rovcamlink-log-")
-                    }
+                    .filter { isSessionFile(it.name) }
                     .sortedByDescending { it.name }
                     .drop(KEEP_FILES)
                     .forEach { old -> runCatching { FileSystem.SYSTEM.delete(old) } }
@@ -150,6 +148,16 @@ object Diag {
 
     private val w = Writer()
 
+    /** A persisted session file staged for the full export (records + span filled by [analyze]). */
+    private class RunFile(val name: String, val path: Path, val bytes: Long) {
+        var content: String = ""
+        var records = 0
+        var firstWall = ""
+        var lastWall = ""
+        /** Set when a run too big for the budget was sliced to its most recent tail. */
+        var contentTruncated = false
+    }
+
     init {
         scope.launch(workerCtx) {
             for (m in inbox) {
@@ -163,6 +171,13 @@ object Diag {
                         is Msg.Bundle -> {
                             w.flush()
                             m.reply.complete(bundle())
+                        }
+
+                        is Msg.FullBundle -> {
+                            // Flush first so the current run's trailing lines are on disk
+                            // and the file replay below sees them too.
+                            w.flush()
+                            m.reply.complete(fullBundle())
                         }
 
                         is Msg.Count -> m.reply.complete(w.ring.size)
@@ -214,6 +229,7 @@ object Diag {
         when (m) {
             is Msg.Tail -> m.reply.complete(w.ring.toList())
             is Msg.Bundle -> m.reply.complete("(log bundle failed: ${LogFormat.field(t.message)})")
+            is Msg.FullBundle -> m.reply.complete("(log bundle failed: ${LogFormat.field(t.message)})")
             is Msg.Count -> m.reply.complete(w.ring.size)
             is Msg.SessionFile -> m.reply.complete(w.filePath?.toString())
             is Msg.Clear -> m.reply.complete(Unit)
@@ -248,6 +264,10 @@ object Diag {
         statsOp: ((LogStats) -> Unit)? = null,
         bypassLevel: Boolean = false,
     ) {
+        // `paused` is the master switch behind the one-tap toggle: while it is set
+        // nothing is accepted at all — not the ring, not the file — so a "logging off"
+        // tap genuinely quiets the capture instead of just the disk copy.
+        if (config.paused) return
         if (!bypassLevel && !enabled(level)) return
         inbox.trySend(
             Msg.Add(
@@ -362,6 +382,9 @@ object Diag {
         reqId: Int = -1,
         note: String = "",
     ) {
+        // httpExchange posts straight to the inbox, so it has to honour the master
+        // switch itself — otherwise a paused toggle would keep capturing every CGI call.
+        if (config.paused) return
         val id = if (reqId > 0) reqId else nextId()
         val endpoint = LogFormat.endpointKey(url)
         val safeUrl = LogFormat.redactUrl(url, config.captureSecrets)
@@ -474,6 +497,64 @@ object Diag {
     /** File name for an export of the current session. */
     fun exportName(): String = "rovecamlink-log-${fileNameStamp(startWallMillis)}.txt"
 
+    /**
+     * The default export: every persisted session file read back off disk, oldest
+     * first, one delimited block per run, plus a top-level index. This is the one
+     * that survives a crash — the previous runs are exactly what a dropout report
+     * needs and the ring alone cannot show them. Falls back to the current run when
+     * the log directory is missing or unreadable.
+     */
+    suspend fun exportFullBundle(): String {
+        val reply = CompletableDeferred<String>()
+        inbox.trySend(Msg.FullBundle(reply))
+        return runCatching { reply.await() }.getOrElse { "export failed: " + it.message }
+    }
+
+    /**
+     * File name for the full export. Also `rovcamlink-log-` prefixed — the same
+     * invariant that keeps pruneOld from deleting user exports and keeps [fullBundle]
+     * from re-importing an earlier export as if it were a run.
+     */
+    fun exportFullName(): String = "rovcamlink-log-full-" + fileNameStamp(startWallMillis) + ".txt"
+
+    // ======================= one-tap toggle =======================
+
+    /** Master on/off for the whole capture: drives [LogConfig.paused] (see [at]). */
+    fun setRecording(on: Boolean) {
+        if (config.paused == !on) return // already in the requested state
+        if (on) {
+            config.paused = false
+            at(LogLevel.INFO, LogTag.LOG, "logging resumed", bypassLevel = true)
+        } else {
+            // Emit the boundary while the capture is still live, THEN go quiet — an
+            // at() after paused=true would be dropped and the log would just stop dead.
+            at(LogLevel.INFO, LogTag.LOG, "logging paused", bypassLevel = true)
+            config.paused = true
+        }
+    }
+
+    /** Flip the master switch; returns the new enabled state. Wire this to one tap. */
+    fun toggleRecording(): Boolean {
+        setRecording(config.paused)
+        return !config.paused
+    }
+
+    /**
+     * On/off for the rolling session file only. Unlike [setRecording] the ring keeps
+     * filling, so a current-run export still works while the file sink is off.
+     */
+    fun setFileLogging(on: Boolean) {
+        val changed = config.fileSink != on
+        config.fileSink = on
+        if (changed) at(LogLevel.INFO, LogTag.LOG, "file sink " + if (on) "on" else "off", bypassLevel = true)
+    }
+
+    /** Flip the file sink; returns the new state. */
+    fun toggleFileLogging(): Boolean {
+        setFileLogging(!config.fileSink)
+        return config.fileSink
+    }
+
     // ======================= writer =======================
 
     private fun handle(m: Msg.Add) {
@@ -566,7 +647,7 @@ object Diag {
         return matches.reversed()
     }
 
-    private fun bundle(): String = buildString(1 shl 16) {
+    private fun bundle(memoryReason: String? = null): String = buildString(1 shl 16) {
         val lastElapsed = w.ring.lastOrNull()?.elapsedMillis ?: 0L
         append("==== ROVECAMLINK DIAGNOSTIC LOG ====\n")
         append("format=").append(FORMAT_ID).append('\n')
@@ -598,6 +679,11 @@ object Diag {
             ?.forEach { (k, v) -> append(kvLine(k, v)) }
         append("session_file=").append(w.filePath?.toString() ?: "(not writing)").append('\n')
         w.fileError?.let { append("session_file_error=").append(LogFormat.safe(it)).append('\n') }
+        if (memoryReason != null) {
+            // Set only by the full-export fallback: says why earlier runs could not be
+            // replayed from disk, so a reader never mistakes this for the whole history.
+            append("current_run_only=").append(LogFormat.safe(memoryReason)).append('\n')
+        }
         append("==== RECORDS (").append(w.ring.size).append(" in memory")
         if (w.stats.ringEvictions > 0) append(", ").append(w.stats.ringEvictions).append(" evicted")
         append(") ====\n")
@@ -617,6 +703,182 @@ object Diag {
         append("==== SUMMARY ====\n")
         append(w.stats.summary(0L, lastElapsed))
         append("==== END ====\n")
+    }
+
+    /**
+     * The full export. Past runs are replayed from their persisted session files —
+     * the only thing a crash-and-relaunch leaves behind — oldest first, one delimited
+     * block per run. The current run is embedded verbatim from [bundle], so its env
+     * header and statistics are the real ones rather than a guess; the on-disk blocks
+     * carry `source=disk` and a file-derived summary instead. Falls back to the live
+     * ring when the log directory is missing or unreadable.
+     */
+    private fun fullBundle(): String {
+        val now = Clock.System.now().toEpochMilliseconds()
+        val dir = runCatching { store.logsDir() }.getOrNull()
+            ?: return bundle("no log directory is configured, so only this run can be exported")
+        val listed = runCatching { scanSessionFiles(dir) }
+        if (listed.isFailure) {
+            return bundle("cannot read the log directory: ${listed.exceptionOrNull()?.message}")
+        }
+        val currentName = w.filePath?.name
+        val history = listed.getOrThrow().filter { it.name != currentName }.sortedBy { it.name }
+
+        // Spend the size budget from the newest history backwards. A dropout report
+        // needs the run that just died, so it is the *oldest* files that get dropped,
+        // and the current run (bounded by the ring, not the budget) is always included.
+        val kept = ArrayList<RunFile>()
+        var budget = EXPORT_MAX_BYTES
+        var i = history.size - 1
+        while (i >= 0) {
+            val f = history[i]
+            if (f.bytes <= budget) {
+                f.content = readText(f.path); analyze(f); kept.add(0, f); budget -= f.bytes
+            } else if (kept.isEmpty()) {
+                // Even the newest run alone blows the budget: slice it to its most
+                // recent tail so a huge session still yields a usable, size-bounded file
+                // instead of either dropping everything or emitting an enormous export.
+                f.content = trimToTail(readText(f.path), budget)
+                f.contentTruncated = true
+                analyze(f)
+                kept.add(0, f)
+                budget = 0
+                break
+            } else {
+                break // whole-file fits ran out; everything older is omitted
+            }
+            i--
+        }
+        val dropped = history.filterNot { it in kept }
+        val totalRuns = kept.size + 1
+
+        return buildString(1 shl 18) {
+            append("==== ROVECAMLINK DIAGNOSTIC LOG - FULL ====\n")
+            append("format=").append(FORMAT_ID).append('\n')
+            append("export.scope=full (all persisted runs oldest-first + the current run)\n")
+            append("app.export=").append(LogFormat.wall(now, tz)).append('\n')
+            append("log_dir=").append(LogFormat.field(dir.toString(), config.captureSecrets)).append('\n')
+            append("history_budget=").append(LogFormat.size(EXPORT_MAX_BYTES)).append('\n')
+            append("legend=every run sits between \"==== RUN n ====\" and \"==== END RUN n ====\"; ")
+                .append("source=disk = replayed from a file, source=memory = this live run. ")
+                .append("Per-run grammar is unchanged (see the current-run block's own legend).\n")
+
+            append("==== INDEX ====\n")
+            append("runs=").append(totalRuns)
+                .append(" from_disk=").append(kept.size)
+                .append(" current_run=memory\n")
+            var totalRecords = 0
+            var runNo = 1
+            kept.forEach {
+                append("run=").append(runNo).append('/').append(totalRuns)
+                    .append(" source=disk file=").append(it.name)
+                    .append(" bytes=").append(LogFormat.size(it.bytes))
+                    .append(" records=").append(it.records)
+                    .append(" span=").append(it.firstWall).append("..").append(it.lastWall).append('\n')
+                totalRecords += it.records
+                runNo++
+            }
+            append("run=").append(runNo).append('/').append(totalRuns)
+                .append(" source=memory file=").append(currentName ?: "(no session file yet)")
+                .append(" records=").append(w.ring.size)
+                .append(" span=").append(LogFormat.wall(startWallMillis, tz)).append("..").append(LogFormat.wall(now, tz))
+                .append('\n')
+            totalRecords += visibleRingCount()
+            append("total_records=").append(totalRecords).append('\n')
+            if (dropped.isNotEmpty()) {
+                append("TRUNCATED_OLDER_RUNS=").append(dropped.size)
+                    .append(" omitted to stay under ").append(LogFormat.size(EXPORT_MAX_BYTES))
+                    .append(": ").append(dropped.joinToString(" ") { it.name }).append('\n')
+                append("note=oldest runs dropped first; lower the level or shorten the session to keep all of them\n")
+            }
+            append("==== END INDEX ====\n\n")
+
+            runNo = 1
+            kept.forEach {
+                append("==== RUN ").append(runNo).append('/').append(totalRuns)
+                    .append(" source=disk file=").append(it.name)
+                    .append(" records=").append(it.records)
+                    .append(" span=").append(it.firstWall).append("..").append(it.lastWall)
+                    .append(" ====\n")
+                append("format=").append(FORMAT_ID).append('\n')
+                append("==== RECORDS (").append(it.records).append(" read from disk) ====\n")
+                append(it.content)
+                if (!it.content.endsWith("\n")) append('\n')
+                append("==== SUMMARY (from file) ====\n")
+                append("records=").append(it.records)
+                    .append(" bytes=").append(it.bytes)
+                    .append(" span=").append(it.firstWall).append("..").append(it.lastWall).append('\n')
+                if (it.contentTruncated) {
+                    append("truncated=run exceeded the ")
+                        .append(LogFormat.size(EXPORT_MAX_BYTES))
+                        .append(" budget; only its most recent records are shown, older lines omitted\n")
+                }
+                append("note=endpoint tables and first/last error need the live process; this run has ended\n")
+                append("==== END RUN ").append(runNo).append(" ====\n\n")
+                runNo++
+            }
+            // Current run: embed the real bundle so its env header + stats survive intact.
+            append("==== RUN ").append(runNo).append('/').append(totalRuns)
+                .append(" source=memory (this run, still live) ====\n")
+            append(bundle())
+            append("==== END RUN ").append(runNo).append(" ====\n")
+            append("==== END ====\n")
+        }
+    }
+
+    /** Records in the ring that a DEBUG-level export would actually print. */
+    private fun visibleRingCount(): Int {
+        var n = 0
+        w.ring.forEach { if (enabled(it.level)) n++ }
+        return n
+    }
+
+    /** Rolling session files only — never user exports (`rovcamlink-log-*`). */
+    private fun scanSessionFiles(dir: Path): List<RunFile> {
+        val out = ArrayList<RunFile>()
+        FileSystem.SYSTEM.list(dir).forEach { p ->
+            if (!isSessionFile(p.name)) return@forEach
+            val size = runCatching { FileSystem.SYSTEM.metadata(p).size }.getOrNull() ?: return@forEach
+            out.add(RunFile(p.name, p, size))
+        }
+        return out
+    }
+
+    /** One pass over a replayed file: count records and take the first/last wall column. */
+    private fun analyze(f: RunFile) {
+        f.content.lineSequence().forEach { line ->
+            if (line.isEmpty() || line.startsWith(LogFormat.CONT)) return@forEach
+            f.records++
+            val wall = line.split(' ').getOrNull(1) ?: return@forEach
+            if (f.firstWall.isEmpty()) f.firstWall = wall
+            f.lastWall = wall
+        }
+    }
+
+    private fun readText(path: Path): String = runCatching {
+        FileSystem.SYSTEM.source(path).buffer().use { it.readUtf8() }
+    }.getOrDefault("")
+
+    /**
+     * Keep at most [maxBytes] of the newest content from [text], starting on a record
+     * boundary (never mid-line, never on an orphan `|  ` continuation), so a tail slice
+     * is still valid `rovdiag/1`. The whole file is already in memory here — we only
+     * reached this path because that one run alone exceeds the export budget.
+     */
+    private fun trimToTail(text: String, maxBytes: Long): String {
+        val max = maxBytes.toInt().coerceIn(0, text.length)
+        if (max >= text.length) return text
+        var start = text.length - max
+        val nl = text.indexOf('\n', start)
+        start = if (nl < 0) text.length else nl + 1 // advance to the next whole line
+        while (start < text.length) {
+            val end = text.indexOf('\n', start).let { if (it < 0) text.length else it }
+            val line = text.substring(start, end)
+            if (line.startsWith(LogFormat.CONT) || line.isEmpty()) {
+                start = end + 1
+            } else break
+        }
+        return text.substring(start.coerceAtMost(text.length))
     }
 
     private fun kvLine(key: String, value: String): String = "$key=${LogFormat.field(value, config.captureSecrets)}\n"
@@ -673,4 +935,29 @@ object Diag {
     private const val FLUSH_EVERY = 25
     private const val FLUSH_HEARTBEAT_MS = 2_000L
     private const val MAX_RUNS = 256
+
+    /**
+     * Size budget for the *historical* part of a full export (KEEP_FILES can together
+     * be tens of MB, far more than a share sheet or a Downloads hand-off should carry).
+     * ~6 MiB is roughly sixty thousand lines — comfortably mailable — and when it is
+     * exceeded the oldest runs are omitted with an explicit TRUNCATED_OLDER_RUNS note,
+     * never silently. The current run sits outside the budget because the ring caps it.
+     */
+    private const val EXPORT_MAX_BYTES = 6L * 1024 * 1024
 }
+
+/**
+ * Rolling session files (`rovcamlink-<stamp>.txt`) are the only things the writer
+ * prunes and the only things a full export replays. User exports — both the
+ * current-run `rovcamlink-log-<stamp>.txt` and the full `rovcamlink-log-full-<stamp>.txt`
+ * — share the `rovcamlink-log-` prefix, which keeps them out of pruning AND out of the
+ * replay set, so an export can never be deleted by pruning or re-imported as a run.
+ * These prefixes must stay in sync with Diag.exportName() / Diag.exportFullName().
+ */
+private const val SESSION_PREFIX = "rovcamlink-"
+private const val EXPORT_PREFIX = "rovcamlink-log-"
+
+private fun isUserExport(name: String): Boolean = name.startsWith(EXPORT_PREFIX)
+
+private fun isSessionFile(name: String): Boolean =
+    name.startsWith(SESSION_PREFIX) && name.endsWith(".txt") && !isUserExport(name)
