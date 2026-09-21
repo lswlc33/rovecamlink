@@ -101,7 +101,17 @@ data class DeviceStatus(
     val battery: Int? = null,
     val charging: Boolean? = null,
     val recording: Boolean = false,
+    /**
+     * The camera is working (state 20) but not recording — mid-capture, mode change
+     * or startup. Controls must not fire, and saying "busy" is truer than saying
+     * "idle" or falsely claiming "recording".
+     */
+    val busy: Boolean = false,
     val mode: WorkMode? = null,
+    /** The firmware's own work-mode name, e.g. "Normal Video" / "Timelapse Photo". */
+    val modeName: String? = null,
+    /** Raw `getcurallinfo` work state (20 working / 21 standby) for diagnostics. */
+    val workState: Int? = null,
     val sdTotalMb: Long? = null,
     val sdFreeMb: Long? = null,
     val sdState: SdCardState? = null,
@@ -130,7 +140,14 @@ data class DeviceInfo(
     val raw: Map<String, String> = emptyMap(),
 )
 
-/** A setting the user can change (resolution, bitrate, exposure, ...). */
+/**
+ * A setting the user can change (resolution, bitrate, exposure, ...).
+ *
+ * [id] is the name the firmware knows (the `-name=` of `setcurparameter.cgi`), so
+ * it must survive a UI relabel untouched. [title] is the firmware's own label; the
+ * UI maps [id] through a catalog to get a translated title, an explanation and a
+ * group, and falls back to [title] for items no catalog knows.
+ */
 data class CameraSetting(
     val id: String,
     val title: String,
@@ -138,6 +155,26 @@ data class CameraSetting(
     val options: List<Option> = emptyList(),
 ) {
     data class Option(val value: String, val label: String)
+
+    /** True when the firmware offers exactly two ON/OFF-ish choices: render as a switch. */
+    val isToggle: Boolean
+        get() {
+            if (options.size != 2) return false
+            val values = options.map { it.value.trim().uppercase() }.toSet()
+            return TOGGLE_VALUE_PAIRS.any { it == values }
+        }
+
+    /** The value to send for switch position [on] on an [isToggle] setting. */
+    fun toggleValue(on: Boolean): String {
+        fun meansOn(v: String) = v.trim() == "1" || v.trim().equals("ON", ignoreCase = true)
+        return (if (on) options.firstOrNull { meansOn(it.value) } else options.firstOrNull { !meansOn(it.value) })
+            ?.value ?: options[if (on) 1 else 0].value
+    }
+
+    companion object {
+        /** Value pairs that mean a switch: firmware `0`/`1` and firmware `ON`/`OFF`. */
+        private val TOGGLE_VALUE_PAIRS = listOf(setOf("0", "1"), setOf("ON", "OFF"))
+    }
 }
 
 data class RemoteFile(

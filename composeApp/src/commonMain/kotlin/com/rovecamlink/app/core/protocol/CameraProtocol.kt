@@ -32,6 +32,15 @@ interface CameraProtocol {
     suspend fun getStatus(session: CameraSession): DeviceStatus
     suspend fun getSettings(session: CameraSession): List<CameraSetting>
     suspend fun setSetting(session: CameraSession, id: String, value: String): CmdResult
+
+    /**
+     * Re-read a single setting after [setSetting] accepted it, so the UI can show what
+     * the firmware actually holds. A full [getSettings] is often one request per item,
+     * which is far too expensive to run after every tap; protocols that can address one
+     * item override this. Null means "no cheap read-back — update locally".
+     */
+    suspend fun readBack(session: CameraSession, id: String): CameraSetting? = null
+
     suspend fun setMode(session: CameraSession, mode: WorkMode): CmdResult
     suspend fun capture(session: CameraSession): CmdResult
     suspend fun record(session: CameraSession, start: Boolean): CmdResult
@@ -73,6 +82,13 @@ interface CameraProtocol {
 
     /** Change the camera's own Wi-Fi network (the AP it broadcasts) name/password. */
     suspend fun setWifi(session: CameraSession, ssid: String, password: String): CmdResult
+
+    /**
+     * Called when a session ends. Protocols that cache per-host firmware facts (work-mode
+     * tables, menu listings) drop them here, so a camera replaced on the same IP cannot
+     * be served another model's table.
+     */
+    fun onSessionClosed(session: CameraSession) {}
 
     /** Optional event stream. */
     val events: Flow<com.rovecamlink.app.core.model.DeviceEvent>
