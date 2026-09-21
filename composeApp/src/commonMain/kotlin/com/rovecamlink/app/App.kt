@@ -28,7 +28,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.robinpcrd.cupertino.CupertinoActivityIndicator
+import com.robinpcrd.cupertino.CupertinoButtonDefaults
 import com.robinpcrd.cupertino.CupertinoIcon
+import com.robinpcrd.cupertino.CupertinoIconButton
 import com.robinpcrd.cupertino.CupertinoNavigationBar
 import com.robinpcrd.cupertino.CupertinoNavigationBarItem
 import com.robinpcrd.cupertino.CupertinoScaffold
@@ -38,6 +40,7 @@ import com.robinpcrd.cupertino.icons.CupertinoIcons
 import com.robinpcrd.cupertino.icons.filled.ExclamationmarkCircle
 import com.robinpcrd.cupertino.icons.filled.Folder
 import com.robinpcrd.cupertino.icons.filled.Gearshape2
+import com.robinpcrd.cupertino.icons.filled.Terminal
 import com.robinpcrd.cupertino.icons.filled.Video
 import com.robinpcrd.cupertino.icons.filled.WifiRouter
 import com.robinpcrd.cupertino.theme.CupertinoColors
@@ -48,6 +51,7 @@ import com.robinpcrd.cupertino.theme.systemRed
 import com.rovecamlink.app.ui.DevicesScreen
 import com.rovecamlink.app.ui.FilesScreen
 import com.rovecamlink.app.ui.LiveScreen
+import com.rovecamlink.app.ui.LogScreen
 import com.rovecamlink.app.ui.SettingsScreen
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -78,7 +82,21 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                             fontSize = 17.sp,
                         )
                     },
-                    actions = { ConnectionPill(state) },
+                    actions = {
+                ConnectionPill(state)
+                // Diagnostics must be one tap away from any tab: that is where the
+                // failure you want to report just happened.
+                CupertinoIconButton(
+                    onClick = { state.openDiagnostics() },
+                    colors = CupertinoButtonDefaults.plainButtonColors(),
+                ) {
+                    CupertinoIcon(
+                        CupertinoIcons.Filled.Terminal,
+                        contentDescription = "Diagnostics",
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+            },
                 )
             },
             bottomBar = {
@@ -98,11 +116,15 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
             },
         ) { padding ->
             Box(Modifier.fillMaxSize().padding(padding)) {
-                when (tab) {
-                    Tab.Devices -> DevicesScreen(state)
-                    Tab.Live -> LiveScreen(state)
-                    Tab.Files -> FilesScreen(state)
-                    Tab.Settings -> SettingsScreen(state)
+                if (state.diagnosticsOpen) {
+                    LogScreen(state, onClose = { state.closeDiagnostics() })
+                } else {
+                    when (tab) {
+                        Tab.Devices -> DevicesScreen(state)
+                        Tab.Live -> LiveScreen(state)
+                        Tab.Files -> FilesScreen(state)
+                        Tab.Settings -> SettingsScreen(state)
+                    }
                 }
                 state.errorMessage?.let { msg ->
                     ErrorBanner(msg) { state.errorMessage = null }

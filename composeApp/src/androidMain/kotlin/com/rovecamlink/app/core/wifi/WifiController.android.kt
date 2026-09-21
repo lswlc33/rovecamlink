@@ -13,6 +13,8 @@ import android.net.wifi.WifiManager
 import android.net.wifi.WifiNetworkSpecifier
 import android.os.Build
 import com.rovecamlink.app.androidContext
+import com.rovecamlink.app.core.log.Diag
+import com.rovecamlink.app.core.log.LogTag
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
@@ -38,6 +40,12 @@ private class AndroidWifiController : WifiController {
     }
 
     override fun gateway(): String? {
+        val g = gatewayInternal()
+        Diag.debug(LogTag.WIFI, "gateway() -> ${g ?: "(none)"} bound=${boundNetwork != null} linkProps=${linkProps?.summary()}")
+        return g
+    }
+
+    private fun gatewayInternal(): String? {
         // 1. Link properties captured when we joined the camera network ourselves.
         linkProps?.let { lp ->
             lp.routes?.firstOrNull { it.isDefaultRoute }?.gateway?.hostAddress?.let { return it }
@@ -57,6 +65,7 @@ private class AndroidWifiController : WifiController {
     }
 
     override suspend fun connect(ssid: String, password: String?): WifiResult {
+        Diag.info(LogTag.WIFI, "join request ssid=$ssid pass=${password?.length ?: 0}ch api=${Build.VERSION.SDK_INT} modern=${Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q}")
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             connectModern(ssid, password)
         } else {
@@ -73,17 +82,23 @@ private class AndroidWifiController : WifiController {
             .setNetworkSpecifier(specBuilder.build())
             .build()
 
+        val t0 = Diag.uptimeMillis()
         val result = withTimeoutOrNull(25_000) {
             suspendCancellableCoroutine { cont ->
                 val cb = object : ConnectivityManager.NetworkCallback() {
                     override fun onAvailable(network: Network) {
                         boundNetwork = network
                         // Route ALL of this process's sockets (Ktor CIO + Media3) via the camera.
-                        cm.bindProcessToNetwork(network)
+                        runCatching { cm.bindProcessToNetwork(network) }
+                            .onFailure { Diag.error(LogTag.WIFI, "bindProcessToNetwork threw ${Diag.causeChain(it)}") }
+                        Diag.info(LogTag.WIFI, "network AVAILABLE after ${Diag.uptimeMillis() - t0}ms, process bound=${boundNetwork != null}")
                         if (cont.isActive) cont.resume(WifiResult.Connected(ssid))
                     }
                     override fun onLinkPropertiesChanged(network: Network, lp: LinkProperties) {
-                        if (network == boundNetwork) linkProps = lp
+                        if (network == boundNetwork) {
+                            linkProps = lp
+                            Diag.debug(LogTag.WIFI, "link properties: ${lp.summary()}")
+                        }
                     }
                     override fun onCapabilitiesChanged(network: Network, caps: NetworkCapabilities) {
                         val lp = cm.getLinkProperties(network)
@@ -91,6 +106,7 @@ private class AndroidWifiController : WifiController {
                     }
                     override fun onLost(network: Network) {
                         if (network == boundNetwork) {
+                            Diag.warn(LogTag.WIFI, "network LOST after ${Diag.uptimeMillis() - t0}ms — unbinding process")
                             boundNetwork = null
                             linkProps = null
                             // Stop routing process sockets through the dead network, and
@@ -100,14 +116,17 @@ private class AndroidWifiController : WifiController {
                         }
                     }
                     override fun onUnavailable() {
+                        Diag.error(LogTag.WIFI, "requestNetwork reported UNAVAILABLE after ${Diag.uptimeMillis() - t0}ms (wrong password, or the AP vanished)")
                         runCatching { cm.unregisterNetworkCallback(this) }
                         if (cont.isActive) cont.resume(WifiResult.Failed("Camera network unavailable"))
                     }
                 }
                 callback = cb
                 try {
+                    Diag.debug(LogTag.WIFI, "requestNetwork(TRANSPORT_WIFI, specifier for $ssid, no INTERNET capability)")
                     cm.requestNetwork(request, cb)
                 } catch (t: Throwable) {
+                    Diag.error(LogTag.WIFI, "requestNetwork threw ${Diag.causeChain(t)}")
                     if (cont.isActive) cont.resume(WifiResult.Failed(t.message ?: "requestNetwork failed"))
                 }
                 cont.invokeOnCancellation {
@@ -116,10 +135,16 @@ private class AndroidWifiController : WifiController {
             }
         }
         return result ?: run {
+            Diag.error(LogTag.WIFI, "join $ssid timed out after ${Diag.uptimeMillis() - t0}ms")
             disconnect()
             WifiResult.Failed("Timed out joining $ssid")
         }
     }
+
+    private fun LinkProperties?.summary(): String = this?.let { lp ->
+        "addrs=" + (lp.linkAddresses?.joinToString(",") { a -> a.address?.hostAddress ?: "?" } ?: "-") +
+            " gateways=" + (lp.routes?.joinToString(",") { r -> r.gateway?.hostAddress ?: "-" } ?: "-")
+    } ?: "null"
 
     private suspend fun connectLegacy(ssid: String, password: String?): WifiResult {
         return try {
@@ -133,6 +158,7 @@ private class AndroidWifiController : WifiController {
                 }
             }
             val netId = wm.addNetwork(config)
+            Diag.debug(LogTag.WIFI, "legacy addNetwork -> netId=$netId")
             if (netId == -1) return WifiResult.Failed("addNetwork failed")
             wm.disconnect()
             val ok = wm.enableNetwork(netId, true)
@@ -141,6 +167,7 @@ private class AndroidWifiController : WifiController {
             legacyNetId = netId
             // Association is asynchronous; without a real COMPLETED state we have no
             // gateway and no route, so report failure instead of pretending.
+            val t0 = Diag.uptimeMillis()
             val associated = withTimeoutOrNull(8_000) {
                 while (true) {
                     val info = wm.connectionInfo
@@ -152,21 +179,25 @@ private class AndroidWifiController : WifiController {
                 true
             } ?: false
             if (!associated) {
+                Diag.error(LogTag.WIFI, "legacy association never reached COMPLETED in ${Diag.uptimeMillis() - t0}ms")
                 runCatching { wm.removeNetwork(netId) }
                 legacyNetId = -1
                 return WifiResult.Failed("Timed out joining $ssid")
             }
+            Diag.info(LogTag.WIFI, "legacy association completed in ${Diag.uptimeMillis() - t0}ms")
             // Pick up link properties for gateway() even though we didn't bind a socket.
             runCatching {
                 cm.getLinkProperties(cm.activeNetwork)?.let { linkProps = it }
             }
             WifiResult.Connected(ssid)
         } catch (t: Throwable) {
+            Diag.error(LogTag.WIFI, "legacy join threw ${Diag.causeChain(t)}")
             WifiResult.Failed(t.message ?: "legacy connect failed")
         }
     }
 
     override suspend fun disconnect() {
+        Diag.debug(LogTag.WIFI, "disconnect (bound=${boundNetwork != null} legacyNetId=$legacyNetId)")
         runCatching { callback?.let { cm.unregisterNetworkCallback(it) } }
         callback = null
         runCatching { cm.bindProcessToNetwork(null) }
@@ -199,15 +230,18 @@ private class AndroidWifiController : WifiController {
                     ?.takeIf { it.isNotEmpty() && it != "<unknown ssid>" }
                 if (ssid != null && ssid != lastSsid) {
                     lastSsid = ssid
+                    Diag.info(LogTag.WIFI, "watch: active wifi ssid is now $ssid")
                     listener(ssid)
                 }
             }
             override fun onLost(network: Network) {
+                Diag.info(LogTag.WIFI, "watch: default network lost")
                 listener(null)
             }
         }
         wifiWatchCallback = cb
         runCatching { cm.registerDefaultNetworkCallback(cb) }
+            .onFailure { Diag.error(LogTag.WIFI, "registerDefaultNetworkCallback threw ${Diag.causeChain(it)}") }
     }
 }
 
@@ -217,7 +251,8 @@ private class AndroidWifiScanner : WifiScanner {
     @Suppress("DEPRECATION", "MissingPermission")
     override suspend fun scan(prefixes: List<String>): List<CameraNetwork> {
         return try {
-            runCatching { wm.startScan() }
+            val started = runCatching { wm.startScan() }.getOrDefault(false)
+            Diag.debug(LogTag.WIFI, "startScan requested -> $started")
             val results: List<ScanResult> = wm.scanResults ?: emptyList()
             results
                 .filter { r -> prefixes.any { p -> (r.SSID ?: "").startsWith(p, ignoreCase = true) } }
@@ -227,7 +262,9 @@ private class AndroidWifiScanner : WifiScanner {
                     CameraNetwork(r.SSID ?: "", secured, r.level)
                 }
                 .sortedByDescending { it.rssi }
+                .also { Diag.info(LogTag.WIFI, "scan results: ${it.size} camera-like (${results.size} total in range)") }
         } catch (t: Throwable) {
+            Diag.error(LogTag.WIFI, "scan threw ${Diag.causeChain(t)}")
             emptyList()
         }
     }

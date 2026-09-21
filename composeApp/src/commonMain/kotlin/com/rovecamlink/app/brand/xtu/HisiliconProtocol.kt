@@ -15,6 +15,9 @@ import com.rovecamlink.app.core.model.FileType
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.SdCardState
 import com.rovecamlink.app.core.model.WorkMode
+import com.rovecamlink.app.core.log.Diag
+import com.rovecamlink.app.core.log.LogFormat
+import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.ota.zeroPad
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.transport.CameraHttp
@@ -55,31 +58,42 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     // ---------- probe / connect ----------
 
     override suspend fun probe(host: String, port: Int): Boolean {
-        val body = http.getText("${cgi(host, port)}/getdeviceattr.cgi") ?: return false
-        return body.contains("var ") || body.contains("name=") || body.contains("\"name\"")
+        val body = http.getText("${cgi(host, port)}/getdeviceattr.cgi")
+        val verdict = body != null && (body.contains("var ") || body.contains("name=") || body.contains("\"name\""))
+        Diag.d(LogTag.PROTO) {
+            "hi3510 probe $host:$port -> $verdict (body=${body?.length ?: "null"} chars, " +
+                "starts=${LogFormat.safe(body?.take(40))})"
+        }
+        return verdict
     }
 
-    override suspend fun connect(host: String, port: Int): CameraSession {
-        val attr = HiVarParser.parse(http.getText("${cgi(host, port)}/getdeviceattr.cgi"))
-        val name = attr["name"]?.trim().orEmpty()
-        val model = if (name.isNotEmpty()) name else (attr["model"] ?: "XTU Hi35xx")
-        val newApp = attr["hardversion"]?.trim() == "NewAPP"
-        // Current string work-mode (new-app firmware). Falls back to NormalVideo.
-        var strMode = "NormalVideo"
-        if (newApp) {
-            val wm = HiVarParser.parse(http.getText("${cgi(host, port)}/getcurworkmode.cgi"))
-            (wm["workmode"] ?: wm["value"])?.takeIf { it.isNotBlank() }?.let { strMode = it.split(",").first() }
+    override suspend fun connect(host: String, port: Int): CameraSession =
+        Diag.inOp("hi3510-connect", "target=$host:$port") {
+            val attr = HiVarParser.parse(http.getText("${cgi(host, port)}/getdeviceattr.cgi"))
+                ?: error("getdeviceattr.cgi gave no answer at $host:$port")
+            val name = attr["name"]?.trim().orEmpty()
+            val model = if (name.isNotEmpty()) name else (attr["model"] ?: "XTU Hi35xx")
+            val newApp = attr["hardversion"]?.trim() == "NewAPP"
+            // Current string work-mode (new-app firmware). Falls back to NormalVideo.
+            var strMode = "NormalVideo"
+            if (newApp) {
+                val wm = HiVarParser.parse(http.getText("${cgi(host, port)}/getcurworkmode.cgi"))
+                (wm["workmode"] ?: wm["value"])?.takeIf { it.isNotBlank() }?.let { strMode = it.split(",").first() }
+            }
+            Diag.d(LogTag.PROTO) {
+                "deviceattr keys=${attr.keys.joinToString(",")} hardversion=${attr["hardversion"]} " +
+                    "newApp=$newApp strMode=$strMode type=${attr["type"]} softversion=${attr["softversion"]}"
+            }
+            CameraSession(
+                host = host, port = port, platform = platform, brand = Brand.XTU, model = model,
+                extras = mapOf(
+                    "newApp" to newApp.toString(),
+                    "strMode" to strMode,
+                    "softversion" to (attr["softversion"] ?: ""),
+                    "type" to (attr["type"] ?: "117"),
+                ),
+            )
         }
-        return CameraSession(
-            host = host, port = port, platform = platform, brand = Brand.XTU, model = model,
-            extras = mapOf(
-                "newApp" to newApp.toString(),
-                "strMode" to strMode,
-                "softversion" to (attr["softversion"] ?: ""),
-                "type" to (attr["type"] ?: "117"),
-            ),
-        )
-    }
 
     private fun CameraSession.newApp() = extras["newApp"] == "true"
     private fun CameraSession.strMode() = extras["strMode"] ?: "NormalVideo"
@@ -121,46 +135,55 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         if (raw.isNullOrBlank()) return null
         // Integer mode (getallinfo replaceMode / legacy workmode) or string mode.
         raw.trim().toIntOrNull()?.let { code ->
-            return when {
+            val m = when {
                 code in 20..26 -> WorkMode.VIDEO
                 code in 0..12 -> WorkMode.PHOTO
                 else -> null
             }
+            Diag.debug(LogTag.PARSE, "mapMode int $code -> ${m?.name ?: "unmapped"}")
+            return m
         }
         val s = raw.trim()
-        return when {
+        val m = when {
             s.contains("video", true) || s.contains("car", true) ||
                 s.contains("loop", true) || s.contains("slow", true) || s.contains("rec", true) -> WorkMode.VIDEO
             s.contains("photo", true) || s.contains("burst", true) || s.contains("lapse", true) -> WorkMode.PHOTO
             else -> null
         }
+        Diag.debug(LogTag.PARSE, "mapMode string \"$s\" -> ${m?.name ?: "unmapped"}")
+        return m
     }
 
     // ---------- controls ----------
 
     override suspend fun capture(session: CameraSession): CmdResult {
         val r = http.getText("${cgi(session.host, session.port)}/photo.cgi?&-type=photo")
-        return if (r != null && !r.contains("SvrFuncResult")) CmdResult.Ok
-        else CmdResult.Failure(r?.let { extractSvrError(it) } ?: "capture failed")
+        if (r != null && r.contains("SvrFuncResult")) {
+            Diag.w(LogTag.PROTO) { "photo.cgi refused: ${extractSvrError(r)} (body=${LogFormat.bodyField(r, Diag.config.captureSecrets)})" }
+            return CmdResult.Failure(extractSvrError(r))
+        }
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("capture failed (no answer from photo.cgi)")
     }
 
     override suspend fun record(session: CameraSession, start: Boolean): CmdResult {
         val cmd = if (start) "start" else "stop"
         val r = http.getText("${cgi(session.host, session.port)}/record.cgi?&-cmd=$cmd")
         _events.tryEmit(DeviceEvent.RecordingChanged(start))
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("record $cmd failed")
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("record $cmd failed (no answer from record.cgi)")
     }
 
     override suspend fun setMode(session: CameraSession, mode: WorkMode): CmdResult {
         val base = cgi(session.host, session.port)
-        val r = if (session.newApp()) {
+        val (url, how) = if (session.newApp()) {
             val v = if (mode == WorkMode.VIDEO) "NormalVideo" else "NormalPhoto"
-            http.getText("$base/setcurworkmode.cgi?-workmode=${v.replace(" ", "%20")}")
+            "$base/setcurworkmode.cgi?-workmode=${v.replace(" ", "%20")}" to "string-mode(newApp)"
         } else {
             val code = if (mode == WorkMode.VIDEO) 20 else 0
-            http.getText("$base/setworkmode.cgi?&-workmode=$code")
+            "$base/setworkmode.cgi?&-workmode=$code" to "int-mode(legacy)"
         }
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("setMode failed")
+        Diag.d(LogTag.PROTO) { "setMode $mode via $how" }
+        val r = http.getText(url)
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("setMode failed via $how")
     }
 
     private fun extractSvrError(body: String): String {
@@ -205,13 +228,15 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             val primary = HiVarParser.parse(http.getText("$base/getprimarymenuitem.cgi?-workmode=${session.strMode().replace(" ", "%20")}"))
             val items = primary["item"]?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
             val curs = primary["cur"]?.split(",")?.map { it.trim() } ?: emptyList()
+            Diag.d(LogTag.PROTO) { "menu primary items=${items.size} cur=${curs.size} workmode=${session.strMode()}" }
             if (items.isNotEmpty()) {
-                return items.mapIndexed { i, name ->
+                val out = items.mapIndexed { i, name ->
                     val second = HiVarParser.parse(
                         http.getText("$base/getsecondmenuitem.cgi?-workmode=${session.strMode().replace(" ", "%20")}&-name=${name.replace(" ", "%20")}"),
                     )
                     val options = second["item"]?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
                         ?.map { CameraSetting.Option(it, it) } ?: emptyList()
+                    Diag.v(LogTag.PARSE) { "menu item \"$name\" options=${options.size} cur=${curs.getOrNull(i) ?: second["value"]}" }
                     CameraSetting(
                         id = name,
                         title = name,
@@ -219,10 +244,12 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
                         options = options,
                     )
                 }
+                return out
             }
+            Diag.w(LogTag.PROTO) { "newApp menu had no items — falling back to legacy getters" }
         }
         // Legacy fallback: probe each getter; skip ones the firmware doesn't answer.
-        return legacySettings.mapNotNull { ls ->
+        val legacy = legacySettings.mapNotNull { ls ->
             val m = HiVarParser.parse(http.getText("$base/${ls.getCmd}"))
             val v = m[ls.getKey] ?: return@mapNotNull null
             val options = if (ls.boolean) listOf(
@@ -230,6 +257,8 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             ) else emptyList()
             CameraSetting(ls.id, ls.title, v, options)
         }
+        Diag.d(LogTag.PROTO) { "legacy settings answered ${legacy.size}/${legacySettings.size}: ${legacy.joinToString(",") { "${it.id}=${it.value}" }}" }
+        return legacy
     }
 
     override suspend fun setSetting(session: CameraSession, id: String, value: String): CmdResult {
@@ -237,38 +266,62 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         if (session.newApp()) {
             val url = "$base/setcurparameter.cgi?-workmode=${session.strMode().replace(" ", "%20")}" +
                 "&-name=${id.replace(" ", "%20")}&-value=${value.replace(" ", "%20")}"
+            Diag.d(LogTag.PROTO) {
+                "setSetting via setcurparameter name=$id value=${LogFormat.settingValue(id, value, Diag.config.captureSecrets)}"
+            }
             val r = http.getText(url)
-            return if (r != null) CmdResult.Ok else CmdResult.Failure("set $id failed")
+            return if (r != null) CmdResult.Ok
+            else CmdResult.Failure("set $id failed (no answer from setcurparameter.cgi)")
         }
         val ls = legacySettings.firstOrNull { it.id == id }
             ?: return CmdResult.Failure("Unknown setting $id")
         val url = "$base/" + ls.setCmd.replace("%s", value)
+        Diag.d(LogTag.PROTO) {
+            "setSetting via ${ls.setCmd.substringBefore('?')} value=${LogFormat.settingValue(id, value, Diag.config.captureSecrets)}"
+        }
         val r = http.getText(url)
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("set $id failed")
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("set $id failed (no answer from ${LogFormat.endpointKey(url)})")
     }
 
     // ---------- files ----------
 
-    override suspend fun listFiles(session: CameraSession, start: Int, end: Int): List<RemoteFile> {
-        val base = cgi(session.host, session.port)
-        val host = media(session.host, session.port)
-        // Primary: JSON array with metadata.
-        val body = http.getText("$base/getfilelistinfoios.cgi?&-start=$start&-end=$end")
-        if (!body.isNullOrBlank()) {
-            val arr = runCatching { json.parseToJsonElement(body).jsonArray }.getOrNull()
-            if (arr != null) {
-                return arr.mapNotNull { el ->
-                    val o = el.jsonObject
-                    val path = o["path"]?.jsonPrimitive?.content ?: return@mapNotNull null
-                    buildFile(host, path, o["size"]?.jsonPrimitive?.longOrNull ?: 0L, o["create"]?.jsonPrimitive?.content)
+    override suspend fun listFiles(session: CameraSession, start: Int, end: Int): List<RemoteFile> =
+        Diag.inOp("hi3510-list", "range=$start..$end") {
+            val base = cgi(session.host, session.port)
+            val host = media(session.host, session.port)
+            // Primary: JSON array with metadata.
+            val body = http.getText("$base/getfilelistinfoios.cgi?&-start=$start&-end=$end")
+            if (!body.isNullOrBlank()) {
+                val arr = runCatching { json.parseToJsonElement(body).jsonArray }
+                    .onFailure {
+                        // A listing that is not JSON usually means the CGI answered with an
+                        // error page — the body preview on the exchange line says what.
+                        Diag.w(LogTag.PARSE) { "getfilelistinfoios.cgi is not a JSON array: ${it.message}" }
+                    }
+                    .getOrNull()
+                if (arr != null) {
+                    val files = arr.mapNotNull { el ->
+                        val o = el.jsonObject
+                        val path = o["path"]?.jsonPrimitive?.content ?: return@mapNotNull null
+                        buildFile(host, path, o["size"]?.jsonPrimitive?.longOrNull ?: 0L, o["create"]?.jsonPrimitive?.content)
+                    }
+                    Diag.d(LogTag.PARSE) {
+                        "list via json: ${arr.size} entries, ${files.size} usable " +
+                            "(unknown_type=${files.count { it.type == FileType.UNKNOWN }})"
+                    }
+                    return@inOp files
                 }
             }
+            // Fallback: semicolon-separated names.
+            val names = http.getText("$base/getfilelist.cgi?&-start=$start&-end=$end")
+                ?.split(";")?.map { it.trim() }?.filter { it.isNotEmpty() }
+            if (names.isNullOrEmpty()) {
+                Diag.d(LogTag.PARSE) { "list empty (json=${body?.length ?: "none"} chars, plain list=${names?.size ?: "none"})" }
+                return@inOp emptyList()
+            }
+            Diag.d(LogTag.PARSE) { "list via getfilelist fallback: ${names.size} names, no sizes/dates" }
+            names.map { buildFile(host, it, 0L, null) }
         }
-        // Fallback: semicolon-separated names.
-        val names = http.getText("$base/getfilelist.cgi?&-start=$start&-end=$end")
-            ?.split(";")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: return emptyList()
-        return names.map { buildFile(host, it, 0L, null) }
-    }
 
     private fun buildFile(host: String, path: String, size: Long, create: String?): RemoteFile {
         val lower = path.lowercase()
@@ -306,7 +359,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override suspend fun deleteFile(session: CameraSession, file: RemoteFile): CmdResult {
         val r = http.getText("${cgi(session.host, session.port)}/deletefile.cgi?&-name=${file.name}")
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("delete failed")
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("delete failed (deletefile.cgi did not answer)")
     }
 
     override suspend fun thumbnail(session: CameraSession, file: RemoteFile): ByteArray? =
@@ -355,14 +408,16 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val stamp = zeroPad(now.year, 4) + zeroPad(now.monthNumber, 2) + zeroPad(now.dayOfMonth, 2) +
             zeroPad(now.hour, 2) + zeroPad(now.minute, 2) + zeroPad(now.second, 2)
+        Diag.i(LogTag.PROTO) { "setsystime cgi stamp=$stamp (device clock is the phone's local time)" }
         val r = http.getText("${cgi(session.host, session.port)}/setsystime.cgi?-time=$stamp")
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("time sync failed")
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("time sync failed (setsystime.cgi did not answer)")
     }
 
     override suspend fun setWifi(session: CameraSession, ssid: String, password: String): CmdResult {
         val url = "${cgi(session.host, session.port)}/setwifi.cgi?&-wifissid=${urlencode(ssid)}&-wifikey=${urlencode(password)}"
+        Diag.i(LogTag.PROTO) { "setwifi ssid=$ssid keylen=${password.length} (value redacted unless secrets capture is on)" }
         val r = http.getText(url)
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("setwifi failed")
+        return if (r != null) CmdResult.Ok else CmdResult.Failure("setwifi failed (setwifi.cgi did not answer)")
     }
 
     private fun urlencode(s: String): String =

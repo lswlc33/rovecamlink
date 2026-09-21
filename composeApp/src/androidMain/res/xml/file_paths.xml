@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Share-sheet access for exported diagnostics TXT files. Only the log directory is
+  exposed, and only through a temporary grant URI permission (see AndroidLogStore.share).
+-->
+<paths>
+    <external-files-path name="logs" path="logs/" />
+    <files-path name="internal_logs" path="logs/" />
+    <cache-path name="cache_logs" path="logs/" />
+</paths>

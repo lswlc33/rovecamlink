@@ -4,7 +4,11 @@
 
 > 官方 App 臃肿卡顿。RoveCamLink 的目标是精简、快速、可扩展。
 
-[官网](https://lswlc33.github.io/rovecamlink/) · [逆向分析报告](docs/01-APK逆向分析报告.md) · [架构与开发计划](docs/02-KMP架构与开发计划.md) · [品牌型号与协议矩阵](docs/03-品牌型号与协议矩阵.md) · [固件更新与功能差距](docs/04-固件更新与功能差距.md) · [网络 API 与安全评估](docs/05-网络API清单与安全评估.md)
+[官网](https://lswlc33.github.io/rovecamlink/) · [逆向分析报告](docs/01-APK逆向分析报告.md) · [架构与开发计划](docs/02-KMP架构与开发计划.md) · [品牌型号与协议矩阵](docs/03-品牌型号与协议矩阵.md) · [固件更新与功能差距](docs/04-固件更新与功能差距.md) · [网络 API 与安全评估](docs/05-网络API清单与安全评估.md) · [诊断日志系统](docs/06-诊断日志系统.md)
+
+## 出问题先看这里
+
+顶部栏的 **终端图标**（任何页面都在）打开 **Diagnostics**：实时预览本进程记录的全部相机通讯，`Share TXT` / `Save TXT` 导出一份自描述的诊断文件。每一次 HTTP 交换（URL、状态码、耗时、响应头、响应体原文、异常因果链）、每一次阶段迁移与协议判断都在里面；重复轮询自动折叠成带统计的一行，口令类参数默认脱敏。格式语法与排障读法见 [诊断日志系统](docs/06-诊断日志系统.md)。
 
 ## 首个支持的设备
 
@@ -78,6 +82,7 @@ cd iosApp && xcodegen generate && open RoveCamLink.xcodeproj
 - [x] Compose Cupertino UI
 - [x] 桌面相机模拟器
 - [x] 可安装的调试 APK
+- [x] 详细诊断日志（应用内实时预览 + TXT 导出/分享，默认脱敏）
 - [ ] iOS 功能验证（仅壳工程）
 
 ## 许可

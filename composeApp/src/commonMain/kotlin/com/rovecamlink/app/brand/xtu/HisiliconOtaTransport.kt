@@ -3,6 +3,9 @@ package com.rovecamlink.app.brand.xtu
 import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CmdResult
 import com.rovecamlink.app.core.ota.OtaTransport
+import com.rovecamlink.app.core.log.Diag
+import com.rovecamlink.app.core.log.LogFormat
+import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.transport.CameraHttp
 import io.ktor.http.ContentType
 import kotlin.random.Random
@@ -33,17 +36,23 @@ class HisiliconOtaTransport(private val http: CameraHttp) : OtaTransport {
         fileName: String,
         fileBytes: ByteArray,
         onProgress: (Float) -> Unit,
-    ): CmdResult {
+    ): CmdResult = Diag.inOp("hi3510-ota", "package=$fileName size=${fileBytes.size}B") {
         val boundary = "RoveCamLinkFW-" + Random.nextLong().toString(16)
         val body = buildMultipart(fileName, fileBytes, boundary)
         val ct = ContentType.MultiPart.FormData.withParameter("boundary", boundary)
+        Diag.i(LogTag.OTA) { "POST fileupload.cgi field=sd bytes=${body.size} (firmware bytes are never logged)" }
 
         val upload = http.post("${cgi(session)}/fileupload.cgi", body, ct, onProgress = onProgress)
-        if (upload == null) return CmdResult.Failure("fileupload.cgi did not accept the package")
+        if (upload == null) {
+            Diag.e(LogTag.OTA) { "fileupload.cgi did not accept the package" }
+            return@inOp CmdResult.Failure("fileupload.cgi did not accept the package")
+        }
+        Diag.i(LogTag.OTA) { "upload accepted, reply=${LogFormat.bodyField(upload, Diag.config.captureSecrets)}" }
 
         // Once the bytes are on the card, tell the firmware to apply them.
         val trigger = http.getText("${cgi(session)}/upgrade.cgi")
-        return if (trigger != null) CmdResult.Ok
+        Diag.i(LogTag.OTA) { "upgrade.cgi reply=${LogFormat.bodyField(trigger, Diag.config.captureSecrets)}" }
+        if (trigger != null) CmdResult.Ok
         else CmdResult.Failure("upgrade.cgi did not acknowledge the install")
     }
 

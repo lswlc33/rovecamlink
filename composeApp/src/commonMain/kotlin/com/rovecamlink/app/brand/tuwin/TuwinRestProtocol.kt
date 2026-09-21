@@ -12,6 +12,9 @@ import com.rovecamlink.app.core.model.FileType
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.SdCardState
 import com.rovecamlink.app.core.model.WorkMode
+import com.rovecamlink.app.core.log.Diag
+import com.rovecamlink.app.core.log.LogFormat
+import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.transport.CameraHttp
 import kotlinx.coroutines.flow.Flow
@@ -50,25 +53,32 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
     override val events: Flow<DeviceEvent> = _events
 
     override suspend fun probe(host: String, port: Int): Boolean {
-        val body = http.getText("http://$host:$port/api/device/status") ?: return false
-        return body.contains("status", true) || body.trim().startsWith("{")
+        val body = http.getText("http://$host:$port/api/device/status")
+        val verdict = body != null && (body.contains("status", true) || body.trim().startsWith("{"))
+        Diag.d(LogTag.PROTO) { "tuwin probe $host:$port -> $verdict (body=${body?.length ?: "null"} chars, starts=${LogFormat.safe(body?.take(40))})" }
+        return verdict
     }
 
-    override suspend fun connect(host: String, port: Int): CameraSession {
-        val seed = Random.nextLong(Long.MAX_VALUE).toString()
-        // Auth handshake; token may be echoed back. Best-effort.
-        val authBody = http.getText("http://$host:$port/api/authdevice?seed=$seed")
-        val token = authBody?.let { runCatching { json.parseToJsonElement(it) }.getOrNull() }
-            ?.jsonObject?.get("token")?.jsonPrimitiveOrNull()
-        http.getText("http://$host:$port/api/rtspstatus?seed=$seed")
-        val info = http.getText("http://$host:$port/api/device/info")
-        val model = info?.let { runCatching { json.parseToJsonElement(it) }.getOrNull() }
-            ?.jsonObject?.get("model")?.jsonPrimitiveOrNull() ?: "TUWIN"
-        return CameraSession(
-            host = host, port = port, platform = platform, brand = Brand.TUWIN,
-            model = model, authToken = token ?: seed,
-        )
-    }
+    override suspend fun connect(host: String, port: Int): CameraSession =
+        Diag.inOp("tuwin-connect", "target=$host:$port") {
+            val seed = Random.nextLong(Long.MAX_VALUE).toString()
+            // Auth handshake; token may be echoed back. Best-effort.
+            val authBody = http.getText("http://$host:$port/api/authdevice?seed=$seed")
+            val token = authBody?.let { runCatching { json.parseToJsonElement(it) }.getOrNull() }
+                ?.jsonObject?.get("token")?.jsonPrimitiveOrNull()
+            http.getText("http://$host:$port/api/rtspstatus?seed=$seed")
+            val info = http.getText("http://$host:$port/api/device/info")
+            val model = info?.let { runCatching { json.parseToJsonElement(it) }.getOrNull() }
+                ?.jsonObject?.get("model")?.jsonPrimitiveOrNull() ?: "TUWIN"
+            Diag.d(LogTag.PROTO) {
+                "auth answered=${authBody != null} token=${if (token == null) "none (seed reused as token)" else "present(${token.length}ch)"} " +
+                    "info=${info != null} model=$model seed_len=${seed.length}"
+            }
+            CameraSession(
+                host = host, port = port, platform = platform, brand = Brand.TUWIN,
+                model = model, authToken = token ?: seed,
+            )
+        }
 
     override suspend fun getStatus(session: CameraSession): DeviceStatus {
         val base = session.baseUrl
@@ -123,10 +133,16 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override suspend fun listFiles(session: CameraSession, start: Int, end: Int): List<RemoteFile> {
         val body = http.getText("${session.baseUrl}/api/playback/filelist?start=$start&end=$end") ?: return emptyList()
-        val arr = runCatching { json.parseToJsonElement(body) }.getOrNull()
-            ?.let { el -> el.jsonObject["files"]?.jsonArray ?: el.jsonArray } ?: return emptyList()
-        return arr.mapNotNull { el ->
-            val o = el.jsonObject
+        val el = runCatching { json.parseToJsonElement(body) }.getOrNull()
+        val arr = el?.let { it.jsonObject["files"]?.jsonArray ?: it.jsonArray }
+        if (arr == null) {
+            Diag.w(LogTag.PARSE) {
+                "filelist reply is neither {files:[…]} nor […]: ${LogFormat.bodyField(body, Diag.config.captureSecrets)}"
+            }
+            return emptyList()
+        }
+        val files = arr.mapNotNull { e ->
+            val o = e.jsonObject
             val name = o.string("name") ?: o.string("filename") ?: return@mapNotNull null
             val isVideo = (o.string("type")?.contains("video", true) == true) ||
                 name.endsWith(".mp4", true) || name.endsWith(".mov", true)
@@ -140,6 +156,8 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
                 dateMillis = o.long("time") ?: o.long("date"),
             )
         }
+        Diag.d(LogTag.PARSE) { "filelist ${arr.size} entries, ${files.size} usable (keys=${el.jsonObject.keys ?: "array"})" }
+        return files
     }
 
     override suspend fun deleteFile(session: CameraSession, file: RemoteFile): CmdResult {

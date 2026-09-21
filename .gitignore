@@ -42,3 +42,7 @@ DerivedData/
 # Agent scratch & JVM build output (never commit)
 .trae/
 simulator/bin/
+
+# Written by the desktop run and the tests: rolling diagnostic logs + staged media
+logs/
+downloads/

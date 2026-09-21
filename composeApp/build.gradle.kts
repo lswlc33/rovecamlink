@@ -80,6 +80,8 @@ kotlin {
 
         commonTest.dependencies {
             implementation(kotlin("test"))
+            // Diag is an actor with its own dispatcher; asserting on it needs runTest.
+            implementation(libs.kotlinx.coroutines.test)
         }
     }
 }
