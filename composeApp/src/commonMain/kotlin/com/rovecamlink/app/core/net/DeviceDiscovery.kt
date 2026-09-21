@@ -67,12 +67,21 @@ class DeviceDiscovery(
      * the camera it was looking for. A brand that fixes its AP address now gets there
      * in one probe, and everything after that first guess runs on a short budget.
      */
-    suspend fun discover(gatewayHint: String?, preferredHost: String? = null): Pair<String, DevicePlatform>? {
+    suspend fun discover(
+        gatewayHint: String?,
+        preferredHost: String? = null,
+        alreadyTried: List<String> = emptyList(),
+    ): Pair<String, DevicePlatform>? {
         val hosts = buildList {
             preferredHost?.takeIf { isRoutableIpv4(it) }?.let { add(it) }
             gatewayHint?.takeIf { isRoutableIpv4(it) }?.let { add(it) }
             addAll(candidateHosts)
-        }.distinct()
+        }
+            .distinct()
+            // A host the caller already probed must not be probed again: the XTU fixed
+            // address is also `candidateHosts[0]`, so a failed first guess would
+            // otherwise spend its timeout budget twice before the walk even started.
+            .filterNot { alreadyTried.contains(it) }
         Diag.i(LogTag.NET) {
             "discover preferred=${preferredHost ?: "-"} gateway_hint=${gatewayHint ?: "-"} " +
                 "candidates=${hosts.joinToString(",")}"

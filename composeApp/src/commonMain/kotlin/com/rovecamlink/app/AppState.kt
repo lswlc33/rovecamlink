@@ -168,6 +168,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     /** Files whose thumbnail already failed once, so we stop retrying per refresh. */
     private val thumbFailed = mutableSetOf<String>()
 
+    /**
+     * Insertion order of [thumbnails], so eviction drops what the user has scrolled
+     * past rather than what happens to hash first. Only ever touched on the main
+     * thread, like the map itself.
+     */
+    private val thumbSeen = ArrayDeque<String>()
+
     private var pollJob: Job? = null
     private var otaCoordinator: OtaCoordinator? = null
 
@@ -478,7 +485,6 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             // discovery a first address to try instead of walking nine candidates.
             val knownSsid = ssid ?: currentWifiSsid
             val preferredHost = manualHost?.substringBefore(':') ?: graph.registry.fixedHostFor(knownSsid)
-            if (ssid != null && !password.isNullOrBlank()) graph.wifiCredentials.remember(ssid, password)
             // Filled by the fixed-host probe below, so a camera found where its brand
             // says it is does not get identified a second time.
             var identified: DevicePlatform? = null
@@ -500,6 +506,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     when (val r = graph.wifi.connect(ssid, password)) {
                         is WifiResult.Connected -> {
                             Diag.i(LogTag.WIFI) { "joined $ssid in ${Diag.uptimeMillis() - t0}ms" }
+                            // Only a passphrase that actually got us associated is
+                            // worth keeping: caching a typo would let it outrank the
+                            // factory default on every later attempt, forever.
+                            if (!password.isNullOrBlank()) graph.wifiCredentials.remember(ssid, password)
                             statusMessage = localized(Res.string.status_wifi_joined_locating)
                         }
                         is WifiResult.Failed -> {
@@ -525,7 +535,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 if (identified == null) {
                     val gw = graph.wifi.gateway()
                     Diag.d { "gateway resolved to ${gw ?: "(none)"}" }
-                    val found = graph.discovery.discover(gw, preferredHost = direct)
+                    val found = graph.discovery.discover(gw, preferredHost = direct, alreadyTried = listOfNotNull(direct))
                     if (found == null) {
                         Diag.i { "abort: discovery found no camera (preferred=${direct ?: "none"} gateway=${gw ?: "none"})" }
                         fail(localized(Res.string.err_no_camera_found)); return
@@ -553,6 +563,11 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             }
             val s = proto.connect(h, port)
             session = s
+            // Replace the previous session's scope outright. It was cancelled by
+            // disconnect(), but inheriting its (dead) Job meant a connect that never went
+            // through disconnect — an auto-connect racing a manual one — left the old
+            // protocol's event collector subscribed forever.
+            sessionScope?.cancel()
             sessionScope = CoroutineScope(scope.coroutineContext + Job())
             consecutivePollFailures = 0
             Diag.i { "session up ${s.brand.displayName}/${s.platform.displayName} model=\"${s.model}\" host=${s.host}:${s.port} extras=${s.extras}" }
@@ -580,6 +595,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             loadSettings()
             loadDeviceSettings()
             refreshFiles()
+        } catch (t: kotlinx.coroutines.CancellationException) {
+            // A superseded connect is not a failed one. connect() cancels the previous
+            // attempt before starting a new one — the auto-connect on a Settings-joined
+            // hotspot racing a tap on 连接 does exactly that — and reporting it as an
+            // error put a red banner over a connection that was still being made.
+            Diag.info(LogTag.APP, "CONNECT cancelled (superseded or screen gone)")
+            throw t
         } catch (t: Throwable) {
             Diag.at(LogLevel.ERROR, LogTag.APP, "CONNECT threw ${Diag.causeChain(t)}${Diag.stackSuffix(t)}")
             fail(t.message?.let(::raw) ?: localized(Res.string.err_connection_error))
@@ -645,6 +667,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         modes = emptyList()
         deviceSettings = emptyList()
         thumbnails.clear()
+        thumbSeen.clear()
         thumbsInFlight.clear()
         thumbFailed.clear()
         downloads.clear()
@@ -888,6 +911,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val gone = files.map { it.name }.filterNotTo(mutableSetOf()) { present.contains(it) }
         thumbnails.keys.retainAll(present)
         thumbFailed.retainAll(present)
+        thumbSeen.retainAll(present)
         files = listed
         Diag.i(LogTag.FILE) {
             "list ${listed.size} files (was $previous)" +
@@ -918,6 +942,14 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 LogTag.FILE,
                 "thumb queued behind ${thumbsInFlight.size} transfers ${file.name}",
             )
+            // Ask again shortly. `LaunchedEffect(file.name)` in the row only fires once
+            // per row, so dropping the request here would leave that thumbnail blank for
+            // the rest of the visit — which reads exactly like "the camera has no
+            // preview for this file".
+            owner.launch {
+                delay(THUMB_RETRY_MS)
+                loadThumbnail(file)
+            }
             return
         }
         if (!thumbsInFlight.add(file.name)) return
@@ -942,6 +974,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 if (bitmap != null) {
                     trimThumbnails()
                     thumbnails[file.name] = bitmap
+                    thumbSeen.addLast(file.name)
                     Diag.v(LogTag.FILE) { "thumb ok ${file.name} ${bytes.size}B ${bitmap.width}x${bitmap.height}" }
                 } else {
                     Diag.d(LogTag.FILE) { "thumb unavailable ${file.name} (bytes=${bytes?.size ?: "null"})" }
@@ -957,12 +990,18 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     /**
      * Evict before inserting, not after: a cache that trims afterwards has already
-     * paid for the new bitmap, and one decoded 12 MP frame is ~48 MB of ARGB on a
-     * phone this app measured with a 256 MB heap class.
+     * paid for the new bitmap, and one decoded 12 MP frame is ~48 MB of ARGB on a phone
+     * this app measured with a 256 MB heap class.
+     *
+     * Oldest-first comes from [thumbSeen] rather than from `thumbnails.keys`: a
+     * snapshot map has no defined iteration order, so "the first key" is as likely to
+     * be a row on screen as one scrolled past — the visible thumbnails were the ones
+     * disappearing.
      */
     private fun trimThumbnails() {
         while (thumbnails.size >= MAX_CACHED_THUMBNAILS) {
-            thumbnails.remove(thumbnails.keys.firstOrNull() ?: return)
+            val oldest = thumbSeen.removeFirstOrNull() ?: thumbnails.keys.firstOrNull() ?: return
+            thumbnails.remove(oldest)
         }
     }
 
@@ -994,6 +1033,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             files = files.filterNot { it.name == file.name }
             thumbnails.remove(file.name)
             thumbFailed.remove(file.name)
+            thumbSeen.remove(file.name)
         }
         r
     }
@@ -1011,6 +1051,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             if (!proto.deleteFile(s, f).isOk) failed++
             thumbnails.remove(f.name)
             thumbFailed.remove(f.name)
+            thumbSeen.remove(f.name)
         }
         val removed = list.mapTo(mutableSetOf()) { it.name }
         files = files.filterNot { removed.contains(it.name) }
@@ -1045,8 +1086,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             // Formatting wipes the card: drop cached listings and thumbnails, then
             // repull so the UI shows the (empty) card instead of stale files.
             thumbnails.clear()
+            thumbSeen.clear()
             thumbFailed.clear()
-            files = proto.listFiles(s, 0, 999)
+            files = proto.listFiles(s, 0, LISTING_PAGE)
             runCatching { deviceStatus = proto.getStatus(s) }
             Diag.i(LogTag.FILE) { "format done, listing now ${files.size} files" }
         }
@@ -1213,6 +1255,12 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     if (published == null) {
                         errorMessage = localized(Res.string.err_gallery_rejected)
                     }
+                } catch (t: kotlinx.coroutines.CancellationException) {
+                    // Disconnecting cancels the session scope, and this coroutine lives
+                    // in it. Banner-ing "download interrupted" for a transfer the user
+                    // ended on purpose — and then marking the queue entry failed — turned
+                    // every clean disconnect into a red error.
+                    Diag.info(LogTag.DL, "download ${file.name} cancelled (${t.message ?: "scope closed"})")
                 } catch (t: Throwable) {
                     Diag.at(LogLevel.ERROR, LogTag.DL, "download ${file.name} threw ${Diag.causeChain(t)}")
                     markFailed(file, t.message?.let(::raw) ?: localized(Res.string.err_download_failed))
@@ -1317,3 +1365,6 @@ private const val MAX_CACHED_THUMBNAILS = 24
  * firing inside a 110 ms window — the same card with 200 files would have fired 200.
  */
 private const val MAX_THUMBS_IN_FLIGHT = 4
+
+/** How long a thumbnail turned away by the cap waits before asking again. */
+private const val THUMB_RETRY_MS = 400L

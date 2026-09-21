@@ -78,8 +78,17 @@ class NearbyController(
         if (loop?.isActive == true) return
         searching = true
         loop = scope.launch {
-            runCatching { cycle() }
-                .onFailure { Diag.error(LogTag.APP, "nearby loop died ${Diag.causeChain(it)}") }
+            try {
+                cycle()
+            } catch (t: kotlinx.coroutines.CancellationException) {
+                throw t // tab switched away — not a failure, and nothing to report
+            } catch (t: Throwable) {
+                Diag.error(LogTag.APP, "nearby loop died ${Diag.causeChain(t)}")
+            } finally {
+                // The spinner must not outlive the loop: with it stuck on, 刷新 looks
+                // disabled and the lists look "still loading" when nothing is running.
+                searching = false
+            }
         }
     }
 
@@ -103,9 +112,14 @@ class NearbyController(
     }
 
     private suspend fun cycle() {
-        val allowed = permissions()
-        if (allowed) startBluetoothScan()
         while (true) {
+            // Asked inside the loop, not before it: `permissions()` is a no-op once it
+            // has asked, and re-entering it is how 刷新 picks up a permission or a
+            // Bluetooth switch the user just turned on in system settings.
+            val allowed = permissions()
+            // Re-checked every cycle because `startScan` returns early when a scan is
+            // already registered: this is what notices the radio came on mid-visit.
+            if (allowed) startBluetoothScan()
             val started = Diag.uptimeMillis()
             if (allowed) {
                 readWifi(force = nudge)

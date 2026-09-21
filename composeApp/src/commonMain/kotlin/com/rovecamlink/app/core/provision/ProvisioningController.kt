@@ -65,6 +65,10 @@ class ProvisioningController(
             notice = raw("No Bluetooth profile for ${camera.name}")
             return
         }
+        // Stop scanning before connecting: on a combo chip a running LE scan steals
+        // airtime from the connection attempt, and the official client never scans and
+        // transacts at the same time. The device tab restarts it when this ends.
+        graph.ble.stopScan()
         handshake(camera, profile, graph.pairingKeys.keyFor(camera.name))
     }
 

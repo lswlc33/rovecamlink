@@ -121,10 +121,15 @@ fun ConnectScreen(state: AppState) {
     var showQr by remember { mutableStateOf(false) }
     val nearby = state.nearby
     var tick by remember { mutableStateOf(0L) }
+    val isConnected = state.phase == Phase.Connected
 
     // Search while this screen is on screen; stop when it is not, so a backgrounded
-    // tab does not keep the LE scanner busy.
-    LaunchedEffect(Unit) {
+    // tab does not keep the LE scanner busy. Keyed on the connection state as well:
+    // a successful connect stops the loop (the radios have nothing left to find), and
+    // without re-launching on the way back the lists would sit frozen at whatever they
+    // last showed — tappable, and pointing at a camera that has since gone.
+    LaunchedEffect(isConnected) {
+        if (isConnected) return@LaunchedEffect
         nearby.start()
         try {
             awaitCancellation()
@@ -323,6 +328,10 @@ fun ConnectScreen(state: AppState) {
                             label = joinLbl,
                             modifier = Modifier.weight(1f),
                             busy = state.phase == Phase.ConnectingWifi,
+                            // A WPA2 hotspot with an empty passphrase is a join that is
+                            // already known to fail: Android answers `onUnavailable`
+                            // after 1.7 s and the user reads it as "the camera is broken".
+                            enabled = password.isNotBlank(),
                         ) {
                             state.connectToNetwork(network, password.ifBlank { null })
                             password = ""
