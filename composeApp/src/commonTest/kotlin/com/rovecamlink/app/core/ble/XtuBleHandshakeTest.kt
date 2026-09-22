@@ -92,15 +92,47 @@ class XtuBleHandshakeTest {
         )
     }
 
+    /**
+     * Every pairing retry has to offer a **different** code.
+     *
+     * The 2026-09-22 20:46 run is the whole case: this app wrote `R003_6874` — the code
+     * the camera had accepted in an earlier session — twelve times in a row, the stack
+     * confirmed every write with `status=0`, and the camera sent **zero** notifications
+     * in 45 seconds. It answers a code it has not seen; a code it has already refused
+     * or used is dead air, so repeating one is not "patient", it is silence.
+     */
     @Test
-    fun retriesThePendingCommandOnCadenceAndThenStops() {
+    fun pairingRetriesOfferAFreshCodeEveryTime() {
+        val h = handshake("6874")
+        val codes = mutableListOf(sent(h.start()).single())
+        var t = now
+        repeat(6) { t += 1_600L; codes += sent(h.onTick(t)).single() }
+        assertEquals(
+            codes.size,
+            codes.toSet().size,
+            "a repeated pairing code is a code the camera will not answer: $codes",
+        )
+        assertTrue(
+            codes.drop(1).none { it == "R003_6874" },
+            "only the first offer may be the remembered code: $codes",
+        )
+        assertTrue(codes.all { it.startsWith("R003_") && it.length == 9 }, "shape: $codes")
+    }
+
+    @Test
+    fun retriesOnCadenceAndEventuallyStop() {
         val h = handshake()
         h.start()
         assertEquals(emptyList(), sent(h.onTick(now + 1_000L)))
-        assertEquals(listOf("R003_1234"), sent(h.onTick(now + 1_600L)))
-        // MAX_SENDS counts the first write, so this many retries follow, then silence.
+        assertTrue(sent(h.onTick(now + 1_600L)).single().startsWith("R003_"))
+        // Rotating codes are bounded too: once MAX_ROTATIONS is spent the code stops
+        // changing, and then MAX_SENDS ends the writes, so a camera that is switched off
+        // becomes an error instead of an infinite loop.
         var t = now + 1_600L
-        repeat(XtuBleHandshake.MAX_SENDS - 1) { t += 1_600L; sent(h.onTick(t)) }
+        repeat(XtuBleHandshake.MAX_ROTATIONS + XtuBleHandshake.MAX_SENDS + 4) {
+            t += 1_600L
+            sent(h.onTick(t))
+        }
         assertEquals(emptyList(), sent(h.onTick(t + 1_600L)))
     }
 
@@ -115,8 +147,8 @@ class XtuBleHandshakeTest {
     fun keepsWritingWhileTheCameraTakesItsTimeOnTheFirstReply() {
         val slowestFirstReplyMs = 17_000L
         assertTrue(
-            XtuBleHandshake.MAX_SENDS * XtuBleHandshake.RETRY_INTERVAL_MS >= slowestFirstReplyMs,
-            "pairing must still be writing at ${slowestFirstReplyMs}ms",
+            XtuBleHandshake.MAX_ROTATIONS * XtuBleHandshake.RETRY_INTERVAL_MS >= slowestFirstReplyMs,
+            "pairing must still be offering codes at ${slowestFirstReplyMs}ms",
         )
     }
 

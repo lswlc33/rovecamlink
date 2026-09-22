@@ -16,11 +16,13 @@ import kotlin.random.Random
  * 2. `R001_<code>` — open the AP; the camera answers `SSID=..,PWD=..`.
  * 3. `R002_<code>` — confirm; the camera answers `WiFi_Status=1` once the AP is up.
  *
- * Nothing here asks the user for anything: the code is written *into* the camera,
- * which is why the official app connects without a single prompt. When the camera
- * refuses a code the client simply offers a new one — [XtuBleHandshake] does that
- * too, then remembers the accepted code per advertisement name so later connects
- * replay it silently.
+ * Nothing here asks the user for anything: the code is written *into* the camera.
+ * What the 2026-09-22 field logs settled is that a code is good for **one offer**:
+ * the camera answers a fresh one (with `Status=0` until it decides to pair, then
+ * `Status=1`), and answers a code it has already seen with **nothing at all**. So
+ * every retry carries a new code, and [PairingKeyStore] only decides what the very
+ * first offer of a session is — replaying the last accepted code as if it were a
+ * password is what made this camera stop answering Bluetooth entirely.
  */
 class XtuBleProfile(
     private val pairingKeys: PairingKeyStore,
@@ -124,12 +126,13 @@ internal class XtuBleHandshake(
                     BleFailure.PairingRejected,
                 )
             }
-            rotations++
-            pairingKey = XtuBleProfile.newPairingKey()
-            return send(command(PAIR, pairingKey), "pair-retry")
+            return send(command(PAIR, nextPairingCode()), "pair-retry")
         }
         if (status != BleKeys.OK && key != BleKeys.OK) return BleProgress.Waiting
-        onPairingAccepted(reply[BleKeys.PIN]?.takeIf { it.isNotEmpty() } ?: pairingKey)
+        // Remember the code **we** offered, not the `Pin=` in the reply: on this
+        // firmware the two are the same whenever the camera echoes, and when it does
+        // not, the reply is a value that was only valid for that instant.
+        onPairingAccepted(pairingKey)
         stage = Stage.OpeningAp
         return send(command(OPEN_AP, pairingKey), "open-ap")
     }
@@ -177,10 +180,27 @@ internal class XtuBleHandshake(
     }
 
     private fun pendingCommand(): String = when (stage) {
-        Stage.Pairing -> command(PAIR, pairingKey)
+        // A retry of the pairing offer is a **new** offer, not a repeat: the camera
+        // ignores a code it has already seen, which is how the 2026-09-22 20:46 run
+        // spent 12 writes of `R003_6874` and 45 seconds without a single notification.
+        Stage.Pairing -> command(PAIR, nextPairingCode())
         Stage.OpeningAp -> command(OPEN_AP, pairingKey)
         Stage.ConfirmingAp -> command(CONFIRM, pairingKey)
         else -> ""
+    }
+
+    /**
+     * The code for the next `R003_` **retry**: always a fresh one, up to
+     * [MAX_ROTATIONS] of them per attempt.
+     *
+     * Only retries come through here — the session's first offer is [start] or the
+     * accepted-code path, which is where the remembered code is still worth spending.
+     */
+    private fun nextPairingCode(): String {
+        if (rotations >= MAX_ROTATIONS) return pairingKey
+        rotations++
+        pairingKey = XtuBleProfile.newPairingKey()
+        return pairingKey
     }
 
     private fun send(text: String, reason: String): BleProgress {
@@ -218,28 +238,31 @@ internal class XtuBleHandshake(
         const val AP_POLL_INTERVAL_MS = 1_000L
 
         /**
-         * Cap so a dead camera becomes an error instead of an infinite write loop.
+         * Cap on repeating **the same** command, so a dead camera becomes an error
+         * instead of an infinite write loop.
          *
-         * 8 was measured against the wrong clock. The 2026-09-22 log has the camera
-         * taking **7 to 17 seconds** to answer the first `R003_` after the link comes up
-         * (writes from +17.2s, first notification at +32.5s in one attempt; +42.2s to
-         * +49.9s in the next), and eight retries at [RETRY_INTERVAL_MS] stop the writes
-         * at ~12s — so on the slow attempt this app had already gone quiet before the
-         * camera decided to answer, which is exactly what "点了没反应" looks like.
+         * It used to be 8, measured against the wrong clock: the 2026-09-22 log has the
+         * camera taking 7 to 17 seconds to answer the first `R003_`, so eight writes at
+         * [RETRY_INTERVAL_MS] went quiet at ~12 s — before the camera decided to answer.
+         *
+         * For the pairing stage this cap barely applies any more, because
+         * [nextPairingCode] changes the command text on every retry and the counter
+         * resets with it; [MAX_ROTATIONS] and the caller's handshake budget are what
+         * bound pairing now. This one still ends a silent `R001_`/`R002_` wait.
          */
         const val MAX_SENDS = 16
 
         /**
-         * Times we invent a fresh code and re-offer it before telling the user.
+         * How many *distinct* pairing codes one attempt may offer, counting a retry
+         * after a refusal and a retry after silence alike — see [nextPairingCode].
          *
-         * This was 3, and 3 is not enough on the XTU S7PRO: the 2026-09-22 log shows a
-         * first attempt answered `Status=0,Pin=…` four times in a row and ended as
-         * 「相机没有接受配对请求」, while a second attempt three seconds later was
-         * accepted on the **third** reply — so the camera's pairing state machine
-         * settles somewhere inside that window, and a cap of four writes a race with it.
-         * Twelve rotations at the ~1s the camera takes to answer stays well inside the
-         * 25s handshake budget, and [com.rovecamlink.app.core.ble.BleCentral.wakeAndFetch]'s
-         * timeout, not this number, is what ends a camera that is genuinely not there.
+         * This was 3, and 3 is not enough on the XTU S7PRO: one attempt was answered
+         * `Status=0,Pin=…` four times in a row and ended as 「相机没有接受配对请求」, while
+         * another seconds later was accepted on the **third** reply. The camera's
+         * pairing state settles somewhere inside that window, so a cap of four races
+         * with it. Twelve codes at the camera's ~1 s answer time stay well inside
+         * [com.rovecamlink.app.core.ble.BleCentral.wakeAndFetch]'s budget, and that
+         * timeout — not this number — is what ends a camera that is genuinely off.
          */
         const val MAX_ROTATIONS = 12
     }
