@@ -1,0 +1,38 @@
+name: Verify APK signing certificate
+
+# 三道发布链路（nightly / test-release / release）共用的签名闸：
+# 断言 APK 恰好一个、已签名，且证书 SHA-256 与 .github/apk-signer-sha256.txt 登记的一致。
+# 换密钥的正确顺序：先更新 ROVECAMLINK_RELEASE_* secret，再改这个登记文件；
+# 只改一边会在这里红，而不是悄悄发出一个装了就不能覆盖升级的包。
+
+inputs:
+  apk:
+    description: '要校验的 APK 路径'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: apksigner 验签并核对证书指纹
+      shell: bash
+      run: |
+        set -eu
+        apk='${{ inputs.apk }}'
+        if [ ! -f "$apk" ]; then
+          echo "::error::找不到 APK 产物：$apk"; exit 1
+        fi
+        BT=$(ls -d "$ANDROID_HOME/build-tools"/* | sort -V | tail -1)
+        report=$("$BT/apksigner" verify --print-certs "$apk")
+        echo "$report"
+        expected=$(tr -d ' \t\r\n' < .github/apk-signer-sha256.txt | tr 'A-Z' 'a-z')
+        actual=$(printf '%s\n' "$report" \
+          | sed -nE 's/^Signer #1 certificate SHA-256 digest: ([0-9a-fA-F]+).*$/\1/p' \
+          | tr 'A-Z' 'a-z' | head -1)
+        if [ -z "$actual" ]; then
+          echo "::error::apksigner 没打印签名者证书，包未签名或工具链异常"; exit 1
+        fi
+        if [ "$actual" != "$expected" ]; then
+          echo "::error::APK 证书 $actual ≠ 仓库登记的 $expected：装机必报「与已安装应用签名不符」。检查 ROVECAMLINK_RELEASE_* secret 与 .github/apk-signer-sha256.txt 是否同源。"
+          exit 1
+        fi
+        echo "签名证书与仓库登记一致（$actual）"

@@ -2,6 +2,8 @@ name: Release
 
 # 正式版发布：推 `vX.Y.Z` tag 即自动构建签名 APK 并创建正式 Release。
 # 三道闸：tag 格式 / 版本号一致 / tag 在 main 历史里（确保已跑过 CI）。
+# 签名闸：APK 证书必须等于 .github/apk-signer-sha256.txt 登记的那把密钥——与 nightly、
+# test-v 完全同一把，所以用户从任一渠道装的包都能被正式版覆盖升级。
 # test-release.yml 用 `test-v*` tag 走同一套链路做预演，与这里的 `v*.*.*` 互斥。
 on:
   push:
@@ -81,6 +83,7 @@ jobs:
           ROVECAMLINK_RELEASE_STORE_PASSWORD: ${{ secrets.ROVECAMLINK_RELEASE_STORE_PASSWORD }}
           ROVECAMLINK_RELEASE_KEY_ALIAS: ${{ secrets.ROVECAMLINK_RELEASE_KEY_ALIAS }}
           ROVECAMLINK_RELEASE_KEY_PASSWORD: ${{ secrets.ROVECAMLINK_RELEASE_KEY_PASSWORD }}
+          TAG: ${{ needs.verify.outputs.tag }}
         run: |
           set -eu
           # 与 nightly 相反：正式版绝不允许未签名产物。未签名的 release APK 对已装
@@ -92,23 +95,25 @@ jobs:
           export ROVECAMLINK_RELEASE_STORE_FILE=release.keystore
           ./gradlew :composeApp:testDebugUnitTest :composeApp:assembleRelease --console=plain
           # `-name` 全词匹配 `*-release.apk`，既避开 unsigned 中间产物，也不会被
-          # 子串误伤；再用 apksigner 硬校验（AGP 默认 v2/v3 方案，grep META-INF 会假阴性）。
-          apk=$(find composeApp/build/outputs/apk/release -maxdepth 1 -type f -name '*-release.apk' | head -n 1)
-          if [ -z "$apk" ]; then
-            echo "::error::找不到已签名的 release APK 产物"; exit 1
+          # 子串误伤。整个 run 只往外传这一个包。
+          apk=$(find composeApp/build/outputs/apk/release -maxdepth 1 -type f -name '*-release.apk')
+          n=$(printf '%s\n' "$apk" | grep -c .)
+          if [ "$n" != "1" ]; then
+            echo "::error::期望恰好一个已签名的 release APK，实际 $n 个"; exit 1
           fi
-          BT=$(ls -d "$ANDROID_HOME/build-tools"/* | sort -V | tail -1)
-          "$BT/apksigner" verify --print-certs "$apk" || {
-            echo "::error::APK 未签名或验签失败，检查 ROVECAMLINK_RELEASE_* 四项 secret"
-            exit 1
-          }
+          cp "$apk" "RoveCamLink-$TAG.apk"
           rm -f release.keystore
+
+      - name: 核对签名证书
+        uses: ./.github/actions/verify-apk-signature
+        with:
+          apk: RoveCamLink-${{ needs.verify.outputs.tag }}.apk
 
       - uses: actions/upload-artifact@v4
         with:
           # 名字带 run_id：同一 tag 重跑（dispatch 重建）时新旧 artifact 不撞名。
           name: release-apk-${{ github.run_id }}
-          path: composeApp/build/outputs/apk/release/*.apk
+          path: RoveCamLink-*.apk
           if-no-files-found: error
 
   release:
@@ -130,10 +135,12 @@ jobs:
           TAG: ${{ needs.verify.outputs.tag }}
         run: |
           set -eu
-          apk=$(find "artifacts/release-apk-$GITHUB_RUN_ID" -name '*.apk' | head -n 1)
-          if [ -z "$apk" ]; then
-            echo "::error::本次 run 的 APK 产物缺失"; exit 1
+          # 一个 run 只有一个安卓包：不是 1 个就停下，别把两份产物挂到正式版上。
+          n=$(find "artifacts/release-apk-$GITHUB_RUN_ID" -maxdepth 1 -type f -name '*.apk' | wc -l)
+          if [ "$n" != "1" ]; then
+            echo "::error::本次 run 的 APK 产物期望 1 个，实际 $n 个"; exit 1
           fi
+          apk=$(find "artifacts/release-apk-$GITHUB_RUN_ID" -maxdepth 1 -type f -name '*.apk' | head -n 1)
           # --verify-tag：tag 必须已存在——gh 默认行为是"tag 不存在就在默认分支最新
           # 状态补建 tag"，dispatch 传错名字时会静默建错 tag，绝不能发生在正式版上。
           gh release create "$TAG" "$apk" \

@@ -4,6 +4,8 @@ build/
 */build/
 !**/src/**/build/
 local.properties
+# 本机签名配置（指向 _work 里的备份密钥），含密码，绝不提交
+keystore.properties
 
 # Kotlin / IDE
 .kotlin/

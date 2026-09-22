@@ -1,3 +1,5 @@
+import java.io.File
+import java.util.Properties
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -99,16 +101,41 @@ android {
         versionName = "0.1.0"
     }
 
-    // 发布签名由环境变量驱动：CI 里解码 keystore 后导出这四项即可。本地没配就
-    // 跳过签名配置，release 产出未签名包——本地验证 R8/打包链路不需要密钥。
-    val releaseStorePath = System.getenv("ROVECAMLINK_RELEASE_STORE_FILE")
+    // 一把密钥签所有包：debug 与 release 共用同一份签名配置。
+    // 原因：debug 默认走 Android SDK 的 debug.keystore，CI 每次在临时 runner 上现生成
+    // 一把新密钥，于是每个 nightly 的证书都不一样，覆盖安装必然报「签名不符」。
+    // 密钥来源优先环境变量（CI 解码 secret 后导出），其次仓库根的 keystore.properties
+    // （本机开发用，已 gitignore，指回 _work 里的备份密钥）；两者都没有时退回默认的
+    // debug 密钥，保证刚 clone 的人仍能构建，release 则产出未签名包。
+    val signingProps = Properties().apply {
+        val local = rootProject.file("keystore.properties")
+        if (local.isFile) local.inputStream().use { load(it) }
+    }
+    val signingSetting: (String, String) -> String? = { name, env ->
+        (System.getenv(env) ?: signingProps.getProperty(name))?.trim()?.takeIf { it.isNotEmpty() }
+    }
+    val signingStoreFile =
+        signingSetting("keystore.file", "ROVECAMLINK_RELEASE_STORE_FILE")
+    val signingStorePassword =
+        signingSetting("keystore.password", "ROVECAMLINK_RELEASE_STORE_PASSWORD")
+    val signingKeyAlias = signingSetting("key.alias", "ROVECAMLINK_RELEASE_KEY_ALIAS")
+    val signingKeyPassword = signingSetting("key.password", "ROVECAMLINK_RELEASE_KEY_PASSWORD")
+    val hasSharedSigningKey =
+        listOf(signingStoreFile, signingStorePassword, signingKeyAlias, signingKeyPassword)
+            .all { it != null }
+    if (hasSharedSigningKey) {
+        println("RoveCamLink: debug 与 release 共用签名密钥 $signingStoreFile")
+    }
+
     signingConfigs {
-        if (releaseStorePath != null) {
-            create("release") {
-                storeFile = rootProject.file(releaseStorePath)
-                storePassword = System.getenv("ROVECAMLINK_RELEASE_STORE_PASSWORD")
-                keyAlias = System.getenv("ROVECAMLINK_RELEASE_KEY_ALIAS")
-                keyPassword = System.getenv("ROVECAMLINK_RELEASE_KEY_PASSWORD")
+        if (hasSharedSigningKey) {
+            create("rovrecamlink") {
+                val path = signingStoreFile!!
+                val store = File(path)
+                storeFile = if (store.isAbsolute) store else rootProject.file(path)
+                storePassword = signingStorePassword
+                keyAlias = signingKeyAlias
+                keyPassword = signingKeyPassword
             }
         }
     }
@@ -116,11 +143,14 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
+            if (hasSharedSigningKey) {
+                signingConfig = signingConfigs.getByName("rovrecamlink")
+            }
         }
         getByName("release") {
             isMinifyEnabled = false
-            if (releaseStorePath != null) {
-                signingConfig = signingConfigs.getByName("release")
+            if (hasSharedSigningKey) {
+                signingConfig = signingConfigs.getByName("rovrecamlink")
             }
         }
     }

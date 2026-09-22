@@ -1,10 +1,16 @@
 name: Nightly
 
-# 每日构建：定时 / 手动 / 推 main 三种触发。
-# Android 出 debug APK；macOS 上仅编译 iOS 目标，守住「壳工程可编译」这条线
-# （iOS 未做功能验证，不产 IPA、不跑模拟器）。
-# 只有定时 / 手动才发布 nightly 预发布——普通 push 只留 artifact，
-# 避免每次提交都在 Releases 页刷一条。
+# 每日构建：定时 / 手动 / 推 main 三种触发，每次产出「一个」APK 并发成 nightly 预发布。
+# Android 出 debug 包（可调试，但用与正式版同一把密钥签名）；macOS 上仅编译 iOS 目标，
+# 守住「壳工程可编译」这条线（iOS 未做功能验证，不产 IPA、不跑模拟器）。
+#
+# 为什么 debug 也要签名：Android 靠签名证书判定能否覆盖升级。debug 默认用 runner 现场
+# 生成的 Android debug 密钥，等于每个 nightly 换一次签名，装机必报「与已安装应用签名
+# 不符」，只能先卸载。现在 debug 与 release 共用 ROVECAMLINK_RELEASE_* 那把密钥，并由
+# verify-apk-signature 核对证书指纹，nightly / test-v / 正式版三者签名一致，装上就能一路升级。
+#
+# 只有工作流产物这一个包：不再额外 upload-artifact，避免同一个 run 出现两份 APK。
+# push 也发布会让 Releases 页变长，所以只保留最近 KEEP_NIGHTLIES 条 nightly，更早的连 tag 一起删。
 on:
   schedule:
     - cron: '0 0 * * *'
@@ -18,6 +24,9 @@ permissions:
 concurrency:
   group: nightly-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  KEEP_NIGHTLIES: '3'
 
 jobs:
   android:
@@ -38,14 +47,66 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: 构建 debug APK + 单测
-        run: ./gradlew :composeApp:assembleDebug :composeApp:testDebugUnitTest --console=plain
+      - name: 构建签名 debug APK + 单测
+        env:
+          ROVECAMLINK_RELEASE_KEYSTORE_BASE64: ${{ secrets.ROVECAMLINK_RELEASE_KEYSTORE_BASE64 }}
+          ROVECAMLINK_RELEASE_STORE_PASSWORD: ${{ secrets.ROVECAMLINK_RELEASE_STORE_PASSWORD }}
+          ROVECAMLINK_RELEASE_KEY_ALIAS: ${{ secrets.ROVECAMLINK_RELEASE_KEY_ALIAS }}
+          ROVECAMLINK_RELEASE_KEY_PASSWORD: ${{ secrets.ROVECAMLINK_RELEASE_KEY_PASSWORD }}
+        run: |
+          set -eu
+          # 与正式版同一条规矩：宁可不发布，也不发一个「下次换签名就装不上」的包。
+          if [ -z "${ROVECAMLINK_RELEASE_KEYSTORE_BASE64:-}" ]; then
+            echo "::error::缺少 ROVECAMLINK_RELEASE_KEYSTORE_BASE64，nightly 拒产出未统一签名的包"
+            exit 1
+          fi
+          printf '%s' "$ROVECAMLINK_RELEASE_KEYSTORE_BASE64" | base64 -d > nightly.keystore
+          export ROVECAMLINK_RELEASE_STORE_FILE=nightly.keystore
+          ./gradlew :composeApp:assembleDebug :composeApp:testDebugUnitTest --console=plain
+          rm -f nightly.keystore
 
-      - uses: actions/upload-artifact@v4
+      - name: 校验产物唯一并核对签名
+        id: check
+        run: |
+          set -eu
+          out=composeApp/build/outputs/apk/debug
+          n=$(find "$out" -maxdepth 1 -type f -name '*.apk' | wc -l)
+          if [ "$n" != "1" ]; then
+            echo "::error::$out 下期望恰好一个 APK，实际 $n 个"; exit 1
+          fi
+          apk=$(find "$out" -maxdepth 1 -type f -name '*.apk' | head -1)
+          cp "$apk" RoveCamLink-nightly.apk
+          echo "apk=RoveCamLink-nightly.apk" >> "$GITHUB_OUTPUT"
+
+      - name: 核对签名证书
+        uses: ./.github/actions/verify-apk-signature
         with:
-          name: nightly-apk
-          path: composeApp/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
+          apk: RoveCamLink-nightly.apk
+
+      - name: 发布 nightly 预发布
+        env:
+          GH_TOKEN: ${{ github.token }}
+          APK: ${{ steps.check.outputs.apk }}
+        run: |
+          set -eu
+          tag="nightly-$(date -u '+%Y%m%d-%H%M%S')"
+          notes="自动构建于 $GITHUB_SHA（$(date -u '+%Y-%m-%d %H:%M UTC')）。与正式版同一把签名密钥，可直接覆盖升级上一个 nightly。"
+          gh release create "$tag" "$APK" \
+            --prerelease \
+            --latest=false \
+            --title "$tag" \
+            --notes "$notes"
+
+          # Releases 页只留最近 $KEEP_NIGHTLIES 条 nightly（tag 是 UTC 时间戳，
+          # 字典序即时间序，所以倒序取前 N 之外的全部删掉，连 tag 一起清理）。
+          gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
+              --jq '.[].tag_name' \
+            | grep -E '^nightly-[0-9]{8}-[0-9]{6}$' \
+            | sort -r \
+            | tail -n +$((KEEP_NIGHTLIES + 1)) \
+            | while read -r old; do
+                gh release delete "$old" --cleanup-tag --yes
+              done
 
   # iOS 只编译 klib/framework，不做任何设备验证（项目现状：壳工程可编译、未功能验证）。
   # K/N 首次要拉 ~1GB 编译器，~/.konan 缓存后快一大截。
@@ -70,32 +131,3 @@ jobs:
 
       - name: 编译 iOS 目标（真机 arm64 + 模拟器 arm64）
         run: ./gradlew :composeApp:compileKotlinIosArm64 :composeApp:compileKotlinIosSimulatorArm64 --console=plain
-
-  # nightly 预发布：tag 带秒级时间戳，每次唯一（固定名会被仓库 ref 保护锁死，
-  # 纯日期同一天多次构建会撞 tag）。只挂 prerelease，不占 latest。
-  nightly-release:
-    needs: [android]
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: nightly-apk
-          path: nightly
-
-      - name: 发布 nightly 预发布
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -eu
-          apk=$(find nightly -name '*.apk' | head -n 1)
-          if [ -z "$apk" ]; then
-            echo "::error::nightly APK 产物缺失"; exit 1
-          fi
-          tag="nightly-$(date -u '+%Y%m%d-%H%M%S')"
-          gh release create "$tag" "$apk" \
-            --prerelease \
-            --title "$tag" \
-            --notes "自动构建于 $GITHUB_SHA（$(date -u '+%Y-%m-%d %H:%M UTC')）"
