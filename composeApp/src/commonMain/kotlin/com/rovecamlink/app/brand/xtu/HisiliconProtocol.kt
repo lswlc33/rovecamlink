@@ -1162,7 +1162,6 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     override suspend fun setWifi(session: CameraSession, ssid: String, password: String): CmdResult =
         maintenance.setWifi(session, ssid, password)
 
-    override suspend fun getWifi(session: CameraSession): CameraWifi? = maintenance.getWifi(session)
 
     override suspend fun ensureAccessPoint(session: CameraSession): CmdResult =
         maintenance.raiseAccessPoint(session)
