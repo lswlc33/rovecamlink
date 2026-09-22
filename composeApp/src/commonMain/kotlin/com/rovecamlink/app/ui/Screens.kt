@@ -1945,7 +1945,7 @@ private fun LazySectionScope.settingRow(
             checked = s.value.equals("1", true) || s.value.equals("ON", true),
             onCheckedChange = { write(s.toggleValue(it)) },
             enabled = enabled,
-            title = { SettingLabel(zhTitle, firmwareName, help) },
+            title = { InsetEnd { SettingLabel(zhTitle, firmwareName, help) } },
         )
 
         options.isNotEmpty() -> dropdownMenu(
@@ -1963,10 +1963,10 @@ private fun LazySectionScope.settingRow(
                     fontSize = 14.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.widthIn(max = 150.dp),
+                    modifier = Modifier.padding(start = 12.dp).widthIn(max = 150.dp),
                 )
             },
-            title = { SettingLabel(zhTitle, firmwareName, help) },
+            title = { InsetEnd { SettingLabel(zhTitle, firmwareName, help) } },
         ) {
             options.forEach { o ->
                 MenuPickerAction(
@@ -2018,6 +2018,19 @@ private fun LazySectionScope.settingRow(
             }
         }
     }
+}
+
+/**
+ * Keeps a setting's title block clear of the row's trailing slot.
+ *
+ * The 2026-09-23 desktop capture had 「决定画面大小和每秒张数。帧率越高动作越顺滑、文件」
+ * running straight into 「1080P60」, so the current value read as the last word of a
+ * sentence that happened to end in a number. The title gets what is left after this
+ * inset, which is what puts a real column break between the two.
+ */
+@Composable
+private fun InsetEnd(content: @Composable () -> Unit) {
+    Column(Modifier.fillMaxWidth().padding(end = 12.dp)) { content() }
 }
 
 /** Chinese name, the firmware's own name beside it, and one line of explanation. */

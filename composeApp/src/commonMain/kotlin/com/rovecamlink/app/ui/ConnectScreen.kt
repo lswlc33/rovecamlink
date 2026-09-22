@@ -245,65 +245,78 @@ fun ConnectScreen(state: AppState) {
             if (state.vpnActive) infoRow("VPN", vpnNote)
         }
 
-        section(title = { CupertinoText(bleTitle) }) {
-            when {
-                !state.provisioning.supported() -> infoRow(hintLbl, bleUnsupported)
-                nearby.bluetooth.isEmpty() -> infoRow(hintLbl, if (nearby.searching) "…" else bleNone)
-            }
-            nearby.bluetooth.forEach { cam ->
-                val paired = state.provisioning.isPaired(cam)
-                link(
-                    onClick = { if (!busy) state.provisioning.connect(cam) },
-                    title = {
-                        CupertinoText(cam.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
-                    caption = {
-                        CupertinoText(
-                            "蓝牙 ${cam.rssi} dBm" + if (paired) " · $savedLbl" else "",
-                            fontSize = 12.sp,
-                        )
-                    },
-                    trailingIcon = {},
-                )
-            }
-            if (nearby.bluetooth.isNotEmpty()) {
-                item {
-                    Column(Modifier.fillMaxWidth().padding(it)) {
-                        CupertinoText(bleHint, fontSize = 11.sp, color = CupertinoTheme.colorScheme.tertiaryLabel)
+        /*
+         * Both scanner lists exist to *find* something to connect to. Once a camera is
+         * connected they answer 「这台设备没有蓝牙」 and 「附近没有相机热点」 to the person who
+         * came here looking for the way out, and the session card has to be scrolled past
+         * for them. They come back the moment the session drops.
+         */
+        if (!connected) {
+            section(title = { CupertinoText(bleTitle) }) {
+                when {
+                    !state.provisioning.supported() -> infoRow(hintLbl, bleUnsupported)
+                    nearby.bluetooth.isEmpty() -> infoRow(hintLbl, if (nearby.searching) "…" else bleNone)
+                }
+                nearby.bluetooth.forEach { cam ->
+                    val paired = state.provisioning.isPaired(cam)
+                    link(
+                        onClick = { if (!busy) state.provisioning.connect(cam) },
+                        title = {
+                            CupertinoText(cam.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        },
+                        caption = {
+                            CupertinoText(
+                                "蓝牙 ${cam.rssi} dBm" + if (paired) " · $savedLbl" else "",
+                                fontSize = 12.sp,
+                            )
+                        },
+                        trailingIcon = {},
+                    )
+                }
+                if (nearby.bluetooth.isNotEmpty()) {
+                    item {
+                        Column(Modifier.fillMaxWidth().padding(it)) {
+                            CupertinoText(bleHint, fontSize = 11.sp, color = CupertinoTheme.colorScheme.tertiaryLabel)
+                        }
                     }
                 }
             }
+
         }
 
-        section(title = { CupertinoText(wifiTitle) }) {
-            if (nearby.networks.isEmpty()) {
-                infoRow(hintLbl, if (nearby.searching) "…" else wifiNone)
+        /* Same rule as the Bluetooth section above. */
+        if (!connected) {
+            section(title = { CupertinoText(wifiTitle) }) {
+                if (nearby.networks.isEmpty()) {
+                    infoRow(hintLbl, if (nearby.searching) "…" else wifiNone)
+                }
+                nearby.networks.forEach { network ->
+                    val isJoined = joined.equals(network.ssid, ignoreCase = true)
+                    link(
+                        onClick = { if (!busy) state.pickNetwork(network) },
+                        title = {
+                            CupertinoText(
+                                network.ssid + if (isJoined) " ✓" else "",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        caption = {
+                            val credential = if (isJoined || state.hasSavedPassword(network.ssid)) savedLbl else null
+                            CupertinoText(
+                                listOfNotNull(
+                                    if (network.secured) securedLbl else openLbl,
+                                    "${network.rssi} dBm",
+                                    credential,
+                                ).joinToString(" · "),
+                                fontSize = 12.sp,
+                            )
+                        },
+                        trailingIcon = {},
+                    )
+                }
             }
-            nearby.networks.forEach { network ->
-                val isJoined = joined.equals(network.ssid, ignoreCase = true)
-                link(
-                    onClick = { if (!busy) state.pickNetwork(network) },
-                    title = {
-                        CupertinoText(
-                            network.ssid + if (isJoined) " ✓" else "",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    },
-                    caption = {
-                        val credential = if (isJoined || state.hasSavedPassword(network.ssid)) savedLbl else null
-                        CupertinoText(
-                            listOfNotNull(
-                                if (network.secured) securedLbl else openLbl,
-                                "${network.rssi} dBm",
-                                credential,
-                            ).joinToString(" · "),
-                            fontSize = 12.sp,
-                        )
-                    },
-                    trailingIcon = {},
-                )
-            }
+
         }
 
         state.askPasswordFor?.let { network ->
