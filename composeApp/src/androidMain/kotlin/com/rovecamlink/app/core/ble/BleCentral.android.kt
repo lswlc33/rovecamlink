@@ -23,6 +23,7 @@ import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.monotonicMillis
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -210,10 +211,19 @@ actual fun createBleCentral(): BleCentral = AndroidBleCentral()
  * One GATT connection driving one [BleHandshake].
  *
  * The firmware is unforgiving about ordering, and every rule here came from the
- * official client: notifications must be enabled (CCCD written) before the camera
- * answers anything, writes must be serialised (one in flight, advanced by
- * `onCharacteristicWrite`), and a reply can arrive split over two notifications
- * because the MTU exchange has not settled when the first one lands.
+ * official client: connect → **`discoverServices()`** → pick the characteristic →
+ * enable notifications (CCCD written) → only then `requestMtu(512)` → write.
+ * Writes are serialised (one in flight, advanced by `onCharacteristicWrite`), and a
+ * reply can arrive split over two notifications because the MTU exchange has not
+ * settled when the first one lands.
+ *
+ * The `discoverServices()` step is not optional and was the reason Bluetooth
+ * provisioning never sent a single byte: the 2026-09-22 field log reads
+ * `BLE mtu=512 status=0` followed by `no usable BLE characteristic: 0 services`
+ * ten times out of ten. `BluetoothGatt.getServices()` is a *cache* that Android only
+ * fills from the `discoverServices()` round-trip, so reading it after the MTU
+ * exchange (as this class used to) always saw an empty table and gave up before
+ * writing `R003_`.
  */
 private class GattSession(
     private val device: BluetoothDevice,
@@ -225,13 +235,19 @@ private class GattSession(
     private val result = CompletableDeferred<BleOutcome>()
     private var buffer = ByteArray(0)
 
+    /** Captured in [run] so a GATT callback can schedule a delayed retry. */
+    @Volatile private var scope: CoroutineScope? = null
+
     @Volatile private var gatt: BluetoothGatt? = null
     @Volatile private var characteristic: BluetoothGattCharacteristic? = null
     @Volatile private var writeInFlight = false
     @Volatile private var notifyReady = false
+    @Volatile private var started = false
     @Volatile private var closed = false
+    @Volatile private var discoveryAttempts = 0
 
     suspend fun run(timeoutMs: Long): BleOutcome = coroutineScope {
+        scope = this
         val opened = runCatching {
             device.connectGatt(androidContext, false, callback, BluetoothDevice.TRANSPORT_LE)
         }.getOrNull()
@@ -262,18 +278,26 @@ private class GattSession(
     private val callback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(g: BluetoothGatt, status: Int, newState: Int) {
             when (newState) {
-                BluetoothProfile.STATE_CONNECTED ->
-                    if (!runCatching { g.requestMtu(MTU) }.isSuccess) discover(g)
+                BluetoothProfile.STATE_CONNECTED -> {
+                    if (status != BluetoothGatt.GATT_SUCCESS) {
+                        return failOpen("蓝牙链路建立失败（status=$status）")
+                    }
+                    Diag.debug(LogTag.NET, "BLE linked ${camera.name}, discovering services")
+                    discover(g)
+                }
                 BluetoothProfile.STATE_DISCONNECTED -> failOpen("蓝牙连接中断")
             }
         }
 
         override fun onMtuChanged(g: BluetoothGatt, mtu: Int, status: Int) {
             Diag.debug(LogTag.NET, "BLE mtu=$mtu status=$status")
-            discover(g)
+            // The MTU no longer gates discovery — it used to, which is how the empty
+            // service table went unnoticed. It only releases the first write, and the
+            // settle timer covers a stack that never reports back.
+            later(SETTLE_MS) { beginHandshake() }
         }
 
-        override fun onServicesDiscovered(g: BluetoothGatt, status: Int) = discover(g)
+        override fun onServicesDiscovered(g: BluetoothGatt, status: Int) = discovered(g, status)
 
         override fun onDescriptorWrite(
             g: BluetoothGatt,
@@ -282,7 +306,7 @@ private class GattSession(
         ) {
             if (status != BluetoothGatt.GATT_SUCCESS) return failOpen("打不开蓝牙通知")
             notifyReady = true
-            handshake.start().forEach { enqueue(it.bytes) }
+            armMtuAndStart(g)
         }
 
         override fun onCharacteristicWrite(
@@ -340,7 +364,29 @@ private class GattSession(
     }
 
     /**
-     * Pick the characteristic the camera actually talks on.
+     * Ask the stack what the camera exposes. Every answer arrives through
+     * [onServicesDiscovered]; a stack that refuses the call outright is retried here
+     * so a single `false` cannot end the handshake.
+     */
+    private fun discover(g: BluetoothGatt) {
+        if (characteristic != null || closed) return
+        discoveryAttempts++
+        val requested = runCatching { g.discoverServices() }.getOrDefault(false)
+        Diag.debug(LogTag.NET, "BLE discoverServices #$discoveryAttempts requested=$requested")
+        if (requested) return
+        if (discoveryAttempts >= MAX_DISCOVERY_ATTEMPTS) return failOpen("读不到相机的蓝牙服务")
+        later(DISCOVERY_RETRY_MS) { gatt?.let { discover(it) } }
+    }
+
+    /**
+     * Handle one discovery result: pick the characteristic the camera actually talks
+     * on, then enable notifications on it.
+     *
+     * An empty table is retried rather than fatal. Android caches the GATT table per
+     * peer, and a cache left stale by an earlier attempt (or a peripheral that only
+     * allows one central and was still being held) answers status 0 with zero
+     * services — the official client's own reconnect loop is the reason that shape is
+     * survivable.
      *
      * The command channel is `00008888` — `BluetoothConnector.java:242` asks for
      * exactly `getService(0000180a).getCharacteristic(00008888)`, and `8888` is the
@@ -355,9 +401,14 @@ private class GattSession(
      * back to a CCCD-bearing writable characteristic when the camera does not expose
      * it, which is what an earlier version of this file assumed was normal.
      */
-    private fun discover(g: BluetoothGatt) {
+    private fun discovered(g: BluetoothGatt, status: Int) {
         if (characteristic != null || closed) return
         val all = g.services.flatMap { it.characteristics }
+        Diag.debug(
+            LogTag.NET,
+            "BLE services status=$status services=${g.services.size} chars=" +
+                all.joinToString(",") { c -> "${c.uuid}:0x${c.properties.toString(16)}" },
+        )
         val writable = BluetoothGattCharacteristic.PROPERTY_WRITE or
             BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
         fun hasCccd(c: BluetoothGattCharacteristic) = c.descriptors.any { it.uuid == CCCD }
@@ -367,10 +418,19 @@ private class GattSession(
             ?: all.lastOrNull { hasCccd(it) }
             ?: all.firstOrNull { it.properties and writable > 0 }
         if (chosen == null) {
-            val seen = g.services.flatMap { c -> c.characteristics }.joinToString(",") { c -> "${c.uuid}:${c.properties}" }
+            if (discoveryAttempts < MAX_DISCOVERY_ATTEMPTS) {
+                Diag.warn(
+                    LogTag.NET,
+                    "BLE ${camera.name}: nothing usable after $discoveryAttempts discovery round(s) " +
+                        "(${g.services.size} services), discovering again",
+                )
+                later(DISCOVERY_RETRY_MS) { gatt?.let { discover(it) } }
+                return
+            }
             Diag.error(
                 LogTag.NET,
-                "no usable BLE characteristic on ${camera.name}: ${g.services.size} services, chars=$seen",
+                "no usable BLE characteristic on ${camera.name}: ${g.services.size} services, " +
+                    "chars=${all.joinToString(",") { c -> "${c.uuid}:${c.properties}" }}",
             )
             return failOpen("相机的蓝牙服务不认识")
         }
@@ -394,7 +454,7 @@ private class GattSession(
             // handshake instead of failing on a descriptor we cannot write.
             Diag.warn(LogTag.NET, "${ch.uuid} has no CCCD; proceeding on indications")
             notifyReady = true
-            handshake.start().forEach { enqueue(it.bytes) }
+            armMtuAndStart(g)
             return
         }
         // The classic descriptor write still works on every API level we support and
@@ -403,7 +463,42 @@ private class GattSession(
             cccd.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
             g.writeDescriptor(cccd)
         }.getOrDefault(false)
-        if (!written) failOpen("写蓝牙描述符失败")
+        if (!written) return failOpen("写蓝牙描述符失败")
+        // Some stacks complete the write without ever calling us back; without this
+        // the session would sit silent until the caller's 25 s budget expired.
+        later(NOTIFY_CONFIRM_TIMEOUT_MS) {
+            if (!notifyReady) {
+                Diag.warn(LogTag.NET, "BLE ${camera.name}: no CCCD write callback, assuming notifications are on")
+                notifyReady = true
+                gatt?.let { armMtuAndStart(it) }
+            }
+        }
+    }
+
+    /**
+     * Official order: MTU is raised only once notifications are on, and the first
+     * command waits for the link to settle — a 20-byte MTU cannot carry an `R001_`
+     * reply, and commands written during the exchange are dropped.
+     */
+    private fun armMtuAndStart(g: BluetoothGatt) {
+        if (!runCatching { g.requestMtu(MTU) }.getOrDefault(false)) {
+            Diag.debug(LogTag.NET, "BLE requestMtu($MTU) refused; writing at the current MTU")
+        }
+        later(SETTLE_MS) { beginHandshake() }
+    }
+
+    /** Send the first handshake frame exactly once, from whichever event lands first. */
+    private fun beginHandshake() {
+        if (started || closed || !notifyReady) return
+        started = true
+        handshake.start().forEach { enqueue(it.bytes) }
+    }
+
+    private fun later(ms: Long, block: () -> Unit) {
+        scope?.launch {
+            delay(ms)
+            if (!closed) block()
+        }
     }
 
     private fun enqueue(bytes: ByteArray) {
@@ -417,7 +512,10 @@ private class GattSession(
     private fun drain() {
         val g = gatt ?: return
         val ch = characteristic ?: return
-        if (writeInFlight) return
+        // Writing before the CCCD is settled is how the official client reports
+        // "connected but the camera never answers": keep the queue and let
+        // [beginHandshake] release it.
+        if (!notifyReady || writeInFlight) return
         val next = writes.pollFirst() ?: return
         writeInFlight = true
         val ok = runCatching {
@@ -456,6 +554,20 @@ private class GattSession(
         private const val MTU = 512
         private const val TICK_MS = 500L
         private const val MAX_BUFFER = 512
+
+        /**
+         * How long to hold the first command back after the MTU exchange, matching the
+         * official client's `postDelayed(…, 300L)` before its first write.
+         */
+        private const val SETTLE_MS = 300L
+
+        /** A GATT table this empty is a stale cache, so try again before giving up. */
+        private const val DISCOVERY_RETRY_MS = 400L
+        private const val MAX_DISCOVERY_ATTEMPTS = 3
+
+        /** A stack that completes the CCCD write without calling us back. */
+        private const val NOTIFY_CONFIRM_TIMEOUT_MS = 2_000L
+
         private val CCCD: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
         private val XTU_CHAR: UUID = UUID.fromString("00008888-0000-1000-8000-00805f9b34fb")
     }
