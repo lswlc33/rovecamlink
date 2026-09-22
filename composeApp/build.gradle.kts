@@ -97,8 +97,8 @@ android {
         applicationId = "com.rovecamlink.app"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.1.1"
+        versionCode = 3
+        versionName = "0.1.2"
     }
 
     // 一把密钥签所有包：debug 与 release 共用同一份签名配置。
