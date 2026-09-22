@@ -24,13 +24,21 @@ runs:
         BT=$(ls -d "$ANDROID_HOME/build-tools"/* | sort -V | tail -1)
         report=$("$BT/apksigner" verify --print-certs "$apk")
         echo "$report"
-        expected=$(tr -d ' \t\r\n' < .github/apk-signer-sha256.txt | tr 'A-Z' 'a-z')
-        actual=$(printf '%s\n' "$report" \
-          | sed -nE 's/^Signer #1 certificate SHA-256 digest: ([0-9a-fA-F]+).*$/\1/p' \
-          | tr 'A-Z' 'a-z' | head -1)
-        if [ -z "$actual" ]; then
+        # 不同 build-tools 的措辞不一样："Signer #1 certificate SHA-256 digest: ..."
+        # 与 "V2 Signer: certificate SHA-256 digest: ..."，所以只认 64 位十六进制本身。
+        digests=$(printf '%s\n' "$report" \
+          | sed -nE 's/.*certificate SHA-256 digest: *([0-9a-fA-F]{64}).*/\1/p' \
+          | tr 'A-Z' 'a-z' | sort -u)
+        dn=$(printf '%s\n' "$digests" | grep -c . || true)
+        if [ "$dn" = "0" ]; then
           echo "::error::apksigner 没打印签名者证书，包未签名或工具链异常"; exit 1
         fi
+        if [ "$dn" != "1" ]; then
+          echo "::error::包被 $dn 把不同的证书签名，Android 不接受这种包升级"; exit 1
+        fi
+        actual=$digests
+        # 只取十六进制字符：登记文件里混进 BOM/换行/空格时也不该误判成「密钥不同」。
+        expected=$(tr -cd '0-9a-fA-F' < .github/apk-signer-sha256.txt | tr 'A-Z' 'a-z')
         if [ "$actual" != "$expected" ]; then
           echo "::error::APK 证书 $actual ≠ 仓库登记的 $expected：装机必报「与已安装应用签名不符」。检查 ROVECAMLINK_RELEASE_* secret 与 .github/apk-signer-sha256.txt 是否同源。"
           exit 1

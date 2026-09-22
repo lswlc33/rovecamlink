@@ -94,10 +94,11 @@ jobs:
           # `-name` 全词匹配 `*-release.apk`，既避开 unsigned 中间产物，也不会被
           # 子串误伤。整个 run 只往外传这一个包。
           apk=$(find composeApp/build/outputs/apk/release -maxdepth 1 -type f -name '*-release.apk')
-          n=$(printf '%s\n' "$apk" | grep -c .)
+          n=$(find composeApp/build/outputs/apk/release -maxdepth 1 -type f -name '*-release.apk' | wc -l)
           if [ "$n" != "1" ]; then
             echo "::error::期望恰好一个已签名的 release APK，实际 $n 个"; exit 1
           fi
+          apk=$(printf '%s\n' "$apk" | head -1)
           cp "$apk" "RoveCamLink-$TAG.apk"
           rm -f release.keystore
 
