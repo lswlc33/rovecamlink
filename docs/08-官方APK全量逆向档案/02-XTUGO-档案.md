@@ -1811,10 +1811,10 @@ UI 侧只有 3 种 viewType，按 `SettingItemType.ordinal()`（声明顺序 `SE
 | 2 | 判定 BLE 配网机 | `device.getName().toUpperCase().startsWith("XTU_")` | `_work/xtu_src/sources/com/gku/actioncam/sigmastar/newUi/deviceAdd/Fragment/connect/BLEConnectUtils.java:473` |
 | 3 | 连接 | `device.connectGatt(ctx, false, cb, 2 /*TRANSPORT_LE*/)` | `…/BLEConnectUtils.java:466` |
 | 4 | 选特征 | **不匹配 service UUID**：遍历 `getServices()`→`getCharacteristics()`，取带 CCCD `00002902-0000-1000-8000-00805f9b34fb` 或 UUID 等于 `00008888-0000-1000-8000-00805f9b34fb` 的那个 → `setCharacteristicNotification(true)` → `writeDescriptor(CCCD, ENABLE_NOTIFICATION_VALUE)` → `requestMtu(512)`，300ms 后再写 | `…/BLEConnectUtils.java:536-562` |
-| 5 | 配对 | 写 `R001_<code>`；被拒则换码重发（App 自生成 4 位码，用户零输入）；`R001` 裸写是「查已配列表」变体 | `…/BLEConnectUtils.java:184`、`:886`；`_work/xtu_src/sources/com/gku/actioncam/sigmastar/newUi/deviceAdd/Fragment/DeviceAddWaveFragment.java:312` |
-| 6 | 确认/重试 | 写 `R003_<code>`（配对确认）→ 未回则 `postDelayed(…, 300L)` + `sendEmptyDelayed(4096, 300L)` 重试链 | `…/BLEConnectUtils.java:177,268,696,880` |
-| 7 | 开热点 | 写 `R002_<code>`；收到 notify `WiFi_Status=1` 才算 AP 起来；**每 1s 无限重写 `R002`，无最大次数、无总超时** | `…/BLEConnectUtils.java:192,722,752-758` |
-| 8 | 取凭据 | notify 里 `SSID=…;PWD=…`（**明文**）→ App 存 `SP: "bt_pin"+设备名` → 写 `R002_<code>` 进 `Waiting` | `…/BLEConnectUtils.java:717-726`、`:902` |
+| 5 | 配对（只有第一次） | **本地已存过该设备的码就跳过本步**：`onServicesDiscovered` 里 `mListView.onServicesDiscovered(getDevicePin(name))` 若 `isFoundInLocal()` 为真，直接 `startConnect()`（→ 步 6 的 `R001_`），**不写 `R003_`**；只有没存过才写 `R003_<code>`。码由手机生成：`String.format("%04d", System.currentTimeMillis() % 10000)`。**相机要在自己的屏幕上由人确认这个码**——同时弹出的 `DeviceAddSetKeyFragment` 显示这 4 位数字，文案 `match_code = "请在设备上核对验证码"`，只有相机答了（`onKeySetted()`）才关。 | `…/BLEConnectUtils.java:859-880`；`…/deviceAdd/Fragment/DeviceAddDeviceListFragment.java:456-468`；`…/deviceAdd/Fragment/DeviceAddSetKeyFragment.java:64-85`；`res-strings-zh.md:1312` |
+| 6 | 开热点 | 写 `R001_<code>` → notify 回 `SSID=…,PWD=…,KEY=1`；`KEY=0`/`Status=0` 则换一个新码重发 `R003_`（`:692-701`，弹窗不关） | `…/BLEConnectUtils.java:184`、`:646-649`、`:702-708` |
+| 7 | 确认/等待 AP | 写 `R002_<code>`；收到 notify `WiFi_Status=1` 才算 AP 起来；**每 1s 无限重写 `R002`，无最大次数、无总超时** | `…/BLEConnectUtils.java:192,722,752-758` |
+| 8 | 存码 | notify 里 `SSID=…;PWD=…`（**明文**）→ `saveDeviceWithPin` 存 `SP: "bt_pin"+设备名`（存的是相机 `Pin=` 回显的那个码）→ 下次进这台设备直接走步 6 | `…/BLEConnectUtils.java:649`、`:717-726`、`:900-906` |
 | 9 | 反向配网（相机去连手机热点，直播用） | `sendPacket(gatt, ch, String.format("ssid:%s;pwd:%s;", ssid, pwd), "R006")`；`BluetoothLive` 里写死 `sendWifi(…, "gkuvision-5G", "gku88888", …, "R006")` | `…/BLEConnectUtils.java:278`；`_work/xtu_src/sources/com/gku/module_camera/bluetooth/BluetoothLive.java:92,188` |
 | 10 | 直播参数下发 | `String.format("live_type:%s;res:%d;fps:%d;bitrate:%d;rtmp_url:%s;", …)` 标号 `R007` | `…/BLEConnectUtils.java:285` |
 | 11 | 其它命令 | `R004`（`:376`）、`R008_<code>`（`:295`）、`R009`（`:212`，回包前缀 `R009_cap:` → 能力位，`:783`） | 同文件 |

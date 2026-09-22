@@ -20,6 +20,10 @@ class XtuBleHandshakeTest {
     private fun handshake(key: String = "1234") =
         XtuBleHandshake(camera, key, clock) { accepted += it }
 
+    /** What a second visit to the same camera looks like: the store already has a code. */
+    private fun resuming(key: String = "6874") =
+        XtuBleHandshake(camera, key, clock, resumeWithStoredKey = true) { accepted += it }
+
     private fun notify(text: String) = text.encodeToByteArray()
 
     private fun sent(progress: BleProgress): List<String> = when (progress) {
@@ -47,6 +51,24 @@ class XtuBleHandshakeTest {
         assertEquals("abcdefgh", offer.password)
         assertEquals("ready", h.stage())
         assertEquals(listOf("1234"), accepted)
+    }
+
+    /**
+     * Which of the two codes gets kept for next time.
+     *
+     * The store has to hold the code the camera **showed on its screen**, because that
+     * is the one it will recognise on the next visit — `saveDeviceWithPin(name, Pin)` in
+     * the official client (`BLEConnectUtils.java:648-649`). This firmware echoes the code
+     * we wrote, so the two agree in the test above; a camera that answers its own value
+     * is the case this pins down.
+     */
+    @Test
+    fun theCamerasEchoedPinIsWhatGetsStoredForNextTime() {
+        val h = handshake("1234")
+        h.start()
+        val open = h.onNotify(notify("Status=1,Pin=9876"))
+        assertEquals(listOf("9876"), accepted, "the next visit must offer the code the camera displayed")
+        assertEquals(listOf("R001_1234"), sent(open), "this session keeps the code the camera took from us")
     }
 
     /** The camera refusing a code is our problem to retry, not the user.s. */
@@ -173,5 +195,91 @@ class XtuBleHandshakeTest {
         assertIs<BleProgress.Offered>(offer)
         assertEquals("XTU_OPEN", offer.ssid)
         assertEquals(null, offer.password)
+    }
+
+    /**
+     * The fast path the official client uses on a camera it already paired with:
+     * `BLEConnectUtils.java:859-878` never writes `R003_` when it holds a code, it opens
+     * the hotspot with `R001_` straight away — and that is why pairing looks like a
+     * one-time confirmation over there.
+     */
+    @Test
+    fun aKnownCameraOpensItsHotspotWithoutAnyPairingOffer() {
+        val h = resuming("6874")
+        assertEquals(listOf("R001_6874"), sent(h.start()))
+        assertEquals(
+            listOf("R002_6874"),
+            sent(h.onNotify(notify("SSID=XTUCam_f9e5e2,PWD=abcdefgh"))),
+            "the SSID reply must move straight to the confirm step",
+        )
+        val offer = h.onNotify(notify("WiFi_Status=1"))
+        assertIs<BleProgress.Offered>(offer)
+        assertEquals("XTUCam_f9e5e2", offer.ssid)
+        assertEquals("abcdefgh", offer.password)
+        assertEquals("ready", h.stage())
+        assertEquals(emptyList(), accepted, "a resumed session has nothing new to remember")
+    }
+
+    /** Silence, not a refusal, is how a camera that forgot the code answers it. */
+    @Test
+    fun aStoredCodeThatGoesUnansweredFallsBackToPairing() {
+        val h = resuming("6874")
+        val wire = mutableListOf<String>()
+        wire += sent(h.start())
+        var t = now
+        var guard = 0
+        while (wire.last().startsWith("R001_") && guard++ < 20) {
+            t += XtuBleHandshake.RETRY_INTERVAL_MS + 100L
+            wire += sent(h.onTick(t))
+        }
+        assertEquals(
+            XtuBleHandshake.RESUME_PROBE_SENDS,
+            wire.count { it.startsWith("R001_") },
+            "the bet should be called quickly, not after the whole send budget: $wire",
+        )
+        val last = wire.last()
+        assertTrue(
+            last.startsWith("R003_") && last != "R003_6874",
+            "a stale stored code must end in a fresh pairing offer, got $last",
+        )
+        assertEquals("pairing", h.stage())
+    }
+
+    @Test
+    fun aRefusedStoredCodeGoesBackToPairingAtOnce() {
+        val h = resuming("6874")
+        assertEquals(listOf("R001_6874"), sent(h.start()))
+        val retry = h.onNotify(notify("Status=0,Pin=6874"))
+        assertIs<BleProgress.Send>(retry)
+        val text = retry.frames.single().bytes.decodeToString()
+        assertTrue(
+            text.startsWith("R003_") && text != "R003_6874",
+            "a camera that says no to the stored code must be offered a new one, got $text",
+        )
+        assertEquals("pairing", h.stage())
+    }
+
+    /**
+     * The decision is the profile's, not the caller's: only a code that came from the
+     * store may skip the pairing offer.
+     */
+    @Test
+    fun onlyACameraWithAStoredCodeTakesTheFastPath() {
+        val keys = MemoryPairingKeyStore()
+        val profile = XtuBleProfile(keys) { now }
+
+        val first = sent(profile.newSession(camera, null).start()).single()
+        assertTrue(
+            first.startsWith("R003_"),
+            "an unknown camera has never seen a code, so it must be offered one, got $first",
+        )
+
+        keys.remember(camera.name, "4321")
+        assertEquals(listOf("R001_4321"), sent(profile.newSession(camera, null).start()))
+        assertEquals(
+            listOf("R001_9999"),
+            sent(profile.newSession(camera, "9999").start()),
+            "a code handed in by the caller is a remembered code too",
+        )
     }
 }

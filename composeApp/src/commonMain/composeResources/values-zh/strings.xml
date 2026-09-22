@@ -196,7 +196,7 @@
     <string name="label_bluetooth_cameras">附近的相机（蓝牙）</string>
     <string name="label_wifi_cameras">范围内的相机热点</string>
     <string name="label_bluetooth_none">没有找到——相机是否已开机并在附近？</string>
-    <string name="status_waking_camera">正在让相机打开热点…</string>
+    <string name="status_waking_camera">正在让相机打开热点…（第一次连这台相机时，请在相机屏幕上确认配对码）</string>
     <string name="status_credentials_received">相机已报出 %1$s，正在连接…</string>
     <string name="status_adopting_wifi">正在使用你已连上的 WiFi…</string>
     <string name="err_bluetooth_off">手机蓝牙未开启——打开后才能唤醒相机。</string>

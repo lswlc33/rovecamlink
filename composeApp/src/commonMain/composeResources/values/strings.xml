@@ -196,7 +196,7 @@
     <string name="label_bluetooth_cameras">Cameras nearby (Bluetooth)</string>
     <string name="label_wifi_cameras">Camera hotspots in range</string>
     <string name="label_bluetooth_none">none found — is the camera on and nearby?</string>
-    <string name="status_waking_camera">Asking the camera to open its hotspot…</string>
+    <string name="status_waking_camera">Asking the camera to open its hotspot… (the first time, confirm the code on the camera)</string>
     <string name="status_credentials_received">Camera reported %1$s, joining…</string>
     <string name="status_adopting_wifi">Using the Wi-Fi you already joined…</string>
     <string name="err_bluetooth_off">Bluetooth is off on this phone — turn it on to wake the camera.</string>

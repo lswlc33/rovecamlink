@@ -16,13 +16,21 @@ import kotlin.random.Random
  * 2. `R001_<code>` — open the AP; the camera answers `SSID=..,PWD=..`.
  * 3. `R002_<code>` — confirm; the camera answers `WiFi_Status=1` once the AP is up.
  *
- * Nothing here asks the user for anything: the code is written *into* the camera.
- * What the 2026-09-22 field logs settled is that a code is good for **one offer**:
- * the camera answers a fresh one (with `Status=0` until it decides to pair, then
- * `Status=1`), and answers a code it has already seen with **nothing at all**. So
- * every retry carries a new code, and [PairingKeyStore] only decides what the very
- * first offer of a session is — replaying the last accepted code as if it were a
- * password is what made this camera stop answering Bluetooth entirely.
+ * Step 1 is the one a person confirms **on the camera**: it shows the code on its own
+ * screen and waits. The official client says so in its own UI — `DeviceAddSetKeyFragment`
+ * renders the four digits under 「请在设备上核对验证码」 (`res-strings-zh.md:1312`) and is
+ * dismissed only when the camera answers. What makes the official app look
+ * confirmation-free is what happens on the *second* visit to a camera it already knows:
+ * `BLEConnectUtils.java:859-878` skips step 1 entirely and writes `R001_<stored code>`
+ * as its first command. [resumeWithStoredKey] is that same fast path — pair once, with
+ * a confirmation, then never again.
+ *
+ * Nobody is asked for a code on the phone: it is written *into* the camera. What the
+ * 2026-09-22 field logs settled is that a code is good for **one offer**: the camera
+ * answers a fresh one (with `Status=0` until it decides to pair, then `Status=1`), and
+ * answers a code it has already seen with **nothing at all**. So every retry carries a
+ * new code, and a stored code is spent on the fast path above rather than replayed as
+ * if it were a password — which is what made this camera stop answering Bluetooth.
  */
 class XtuBleProfile(
     private val pairingKeys: PairingKeyStore,
@@ -43,12 +51,17 @@ class XtuBleProfile(
     override val expectedGateway: String? get() = "192.168.0.1"
 
     override fun newSession(camera: BleCamera, pairingKey: String?): BleHandshake {
-        val key = pairingKey?.takeIf { it.isNotBlank() }
-            ?: pairingKeys.keyFor(camera.name)
-            ?: newPairingKey()
-        return XtuBleHandshake(camera, key, clock) { accepted ->
-            pairingKeys.remember(camera.name, accepted)
-        }
+        // A code we already hold for this camera is the official client's signal to skip
+        // the pairing offer and open the hotspot with it directly.
+        val remembered = pairingKey?.takeIf { it.isNotBlank() } ?: pairingKeys.keyFor(camera.name)
+        val key = remembered ?: newPairingKey()
+        return XtuBleHandshake(
+            camera = camera,
+            pairingKey = key,
+            clock = clock,
+            resumeWithStoredKey = remembered != null,
+            onPairingAccepted = { accepted -> pairingKeys.remember(camera.name, accepted) },
+        )
     }
 
     companion object {
@@ -72,19 +85,28 @@ internal class XtuBleHandshake(
     private val camera: BleCamera,
     private var pairingKey: String,
     private val clock: () -> Long,
+    /** Open the hotspot with [pairingKey] straight away: the camera agreed to it before. */
+    private val resumeWithStoredKey: Boolean = false,
     private val onPairingAccepted: (String) -> Unit,
 ) : BleHandshake {
 
     private enum class Stage { Pairing, OpeningAp, ConfirmingAp, Done, Failed }
 
-    private var stage = Stage.Pairing
+    private var stage = if (resumeWithStoredKey) Stage.OpeningAp else Stage.Pairing
     private var lastSentAt = clock()
     private var sendsForStage = 0
     private var rotations = 0
     private var ssid: String? = null
     private var password: String? = null
+    /** Still betting on a stored code the camera may have forgotten? */
+    private var resuming = resumeWithStoredKey
+    /** Any notification at all since the link came up — silence is what ends the bet. */
+    private var heardFromCamera = false
 
-    override fun start(): List<BleFrame> = send(command(PAIR, pairingKey), "pair").frames()
+    override fun start(): List<BleFrame> = send(
+        if (stage == Stage.OpeningAp) command(OPEN_AP, pairingKey) else command(PAIR, pairingKey),
+        if (stage == Stage.OpeningAp) "open-ap" else "pair",
+    ).frames()
 
     override fun stage(): String = when (stage) {
         Stage.Pairing -> "pairing"
@@ -98,6 +120,7 @@ internal class XtuBleHandshake(
         if (stage == Stage.Done || stage == Stage.Failed) return BleProgress.Waiting
         val reply = parseBleReply(decodeBlePayload(chunk))
         if (reply.isEmpty()) return BleProgress.Waiting
+        heardFromCamera = true
 
         return when (stage) {
             Stage.Pairing -> onPairingReply(reply)
@@ -129,10 +152,14 @@ internal class XtuBleHandshake(
             return send(command(PAIR, nextPairingCode()), "pair-retry")
         }
         if (status != BleKeys.OK && key != BleKeys.OK) return BleProgress.Waiting
-        // Remember the code **we** offered, not the `Pin=` in the reply: on this
-        // firmware the two are the same whenever the camera echoes, and when it does
-        // not, the reply is a value that was only valid for that instant.
-        onPairingAccepted(pairingKey)
+        // Store what the camera echoed, the way `saveDeviceWithPin(name, Pin)` does
+        // (`BLEConnectUtils.java:648-649`): that is the value the next visit's `R001_`
+        // has to carry. On this firmware it is the code we just wrote — the 2026-09-22
+        // 21:48 log has `R003_8310` answered by `Status=1,Pin=8310` — so the two only
+        // disagree on a firmware that invents its own, and then the camera's is right.
+        onPairingAccepted(reply[BleKeys.PIN]?.takeIf { it.length == 4 } ?: pairingKey)
+        // This session keeps the code the camera agreed to *from us*, which is also what
+        // the official client sends next (`startConnect()` → `R001_ + getCode()`).
         stage = Stage.OpeningAp
         return send(command(OPEN_AP, pairingKey), "open-ap")
     }
@@ -140,7 +167,14 @@ internal class XtuBleHandshake(
     /** The camera reports its own hotspot here — this is the credential we never ask for. */
     private fun onOpeningReply(reply: Map<String, String>): BleProgress {
         val reported = reply[BleKeys.SSID]
-        if (reported.isNullOrEmpty()) return BleProgress.Waiting
+        if (reported.isNullOrEmpty()) {
+            // A camera that was factory-reset, or that kept a different code, answers the
+            // bet on a stored code with a refusal — or with nothing at all, which `onTick`
+            // handles. Both end the bet and fall back to the pairing offer.
+            val refused = reply[BleKeys.STATUS] == BleKeys.REJECTED || reply[BleKeys.KEY] == BleKeys.REJECTED
+            return if (resuming && refused) fallBackToPairing() else BleProgress.Waiting
+        }
+        resuming = false
         ssid = reported
         password = reply[BleKeys.PASSWORD]
         stage = Stage.ConfirmingAp
@@ -172,6 +206,11 @@ internal class XtuBleHandshake(
         if (stage == Stage.Done || stage == Stage.Failed) return emptyList()
         val interval = if (stage == Stage.ConfirmingAp) AP_POLL_INTERVAL_MS else RETRY_INTERVAL_MS
         if (nowMs - lastSentAt < interval) return emptyList()
+        // Silence is the other way a stored code fails: a camera that does not know the
+        // code does not argue, it just stops answering.
+        if (resuming && !heardFromCamera && sendsForStage >= RESUME_PROBE_SENDS) {
+            return fallBackToPairing().frames()
+        }
         // Pairing and AP-open are bounded so a dead camera becomes an error instead of
         // an infinite write loop; the AP-up poll is not, because a slow camera is the
         // normal case rather than a failure.
@@ -193,14 +232,29 @@ internal class XtuBleHandshake(
      * The code for the next `R003_` **retry**: always a fresh one, up to
      * [MAX_ROTATIONS] of them per attempt.
      *
-     * Only retries come through here — the session's first offer is [start] or the
-     * accepted-code path, which is where the remembered code is still worth spending.
+     * Only retries come through here. A remembered code is no longer spent on a pairing
+     * offer at all — [resumeWithStoredKey] spends it on `R001_` instead, and a first-ever
+     * pairing starts from a fresh random code.
      */
     private fun nextPairingCode(): String {
         if (rotations >= MAX_ROTATIONS) return pairingKey
         rotations++
         pairingKey = XtuBleProfile.newPairingKey()
         return pairingKey
+    }
+
+    /**
+     * Give up on the stored code and pair the slow way.
+     *
+     * This is the recovery for a camera that was reset, paired with another phone, or
+     * simply keeps a different code from the one [PairingKeyStore] remembered. It costs
+     * one on-screen confirmation on the camera — the thing the fast path exists to avoid
+     * — and it is what keeps a stale memory from turning into a dead connect.
+     */
+    private fun fallBackToPairing(): BleProgress {
+        resuming = false
+        stage = Stage.Pairing
+        return send(command(PAIR, nextPairingCode()), "pair-after-stale-key")
     }
 
     private fun send(text: String, reason: String): BleProgress {
@@ -236,6 +290,17 @@ internal class XtuBleHandshake(
          * old 8 x 1.5 s budget to start on a cold camera.
          */
         const val AP_POLL_INTERVAL_MS = 1_000L
+
+        /**
+         * How many unanswered `R001_` writes a resumed session tolerates before it stops
+         * betting on the stored code and offers a pairing code instead.
+         *
+         * Four, at [RETRY_INTERVAL_MS], is ~6 s: past the point where a camera that knows
+         * the code has usually answered, and early enough that a reset camera still has
+         * most of [com.rovecamlink.app.core.ble.BleCentral.wakeAndFetch]'s budget left to
+         * pair the slow way.
+         */
+        const val RESUME_PROBE_SENDS = 4
 
         /**
          * Cap on repeating **the same** command, so a dead camera becomes an error
