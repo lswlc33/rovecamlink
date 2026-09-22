@@ -1,6 +1,7 @@
 package com.rovecamlink.app.core.media
 
 import android.net.Uri
+import android.view.TextureView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +24,6 @@ import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.rtsp.RtspMediaSource
 import androidx.media3.exoplayer.source.MediaSource
-import androidx.media3.ui.PlayerView
 import com.robinpcrd.cupertino.CupertinoText
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.core.log.Diag
@@ -181,14 +181,26 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
     Box(modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
         if (player != null) {
             AndroidView(
+                // A `TextureView`, not a `PlayerView`. `PlayerView` hands the video to a
+                // `SurfaceView`, which the system composites in its own layer outside the
+                // view hierarchy — so the `Modifier.rotate` that
+                // [com.rovecamlink.app.ui.CameraPreviewFrame] applies to this view moves
+                // everything *except* the picture. That is the 2026-09-22 report
+                // 「横过来时画面被拉伸，但是没有旋转」: the swapped measure box took effect
+                // (the frame is stretched), the rotation did not. A TextureView draws
+                // through the view, so it turns with the layer it sits in.
+                //
+                // Nothing is given up by dropping PlayerView: the controller was already
+                // off, and the aspect comes from the swapped constraints upstream rather
+                // than from its `AspectRatioFrameLayout`.
                 modifier = Modifier.fillMaxSize(),
                 factory = { ctx ->
-                    PlayerView(ctx).apply {
-                        useController = false
-                        setShutterBackgroundColor(android.graphics.Color.BLACK)
-                    }
+                    TextureView(ctx).apply { setBackgroundColor(android.graphics.Color.BLACK) }
                 },
-                update = { view -> view.player = player },
+                update = { view -> player.setVideoTextureView(view) },
+                onRelease = {
+                    runCatching { player.setVideoTextureView(null) }
+                },
             )
         } else {
             CupertinoText(stringResource(Res.string.preview_none), color = Color(0xFF8E8E93))
