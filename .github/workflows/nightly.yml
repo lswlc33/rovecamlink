@@ -75,22 +75,35 @@ jobs:
             echo "::error::$out 下期望恰好一个 APK，实际 $n 个"; exit 1
           fi
           apk=$(find "$out" -maxdepth 1 -type f -name '*.apk' | head -1)
-          cp "$apk" RoveCamLink-nightly.apk
-          echo "apk=RoveCamLink-nightly.apk" >> "$GITHUB_OUTPUT"
+          # 包名带上 versionName 和这一轮的 UTC 时间戳。以前每个 nightly 都叫
+          # `RoveCamLink-nightly.apk`，下载目录里几个包同名，分不清手上装的是哪一次；
+          # 时间戳在这里算，Release 的 tag 与文件名共用同一个值。
+          ver=$(sed -nE 's/.*versionName\s*=\s*"([^"]+)".*/\1/p' composeApp/build.gradle.kts | head -1)
+          [ -n "$ver" ] || ver=unknown
+          stamp=$(date -u '+%Y%m%d-%H%M%S')
+          out_apk="RoveCamLink-${ver}-nightly-${stamp}.apk"
+          cp "$apk" "$out_apk"
+          {
+            echo "apk=$out_apk"
+            echo "tag=nightly-$stamp"
+            echo "version=$ver"
+          } >> "$GITHUB_OUTPUT"
 
       - name: 核对签名证书
         uses: ./.github/actions/verify-apk-signature
         with:
-          apk: RoveCamLink-nightly.apk
+          apk: ${{ steps.check.outputs.apk }}
 
       - name: 发布 nightly 预发布
         env:
           GH_TOKEN: ${{ github.token }}
           APK: ${{ steps.check.outputs.apk }}
+          TAG: ${{ steps.check.outputs.tag }}
+          VER: ${{ steps.check.outputs.version }}
         run: |
           set -eu
-          tag="nightly-$(date -u '+%Y%m%d-%H%M%S')"
-          notes="自动构建于 $GITHUB_SHA（$(date -u '+%Y-%m-%d %H:%M UTC')）。与正式版同一把签名密钥，可直接覆盖升级上一个 nightly。"
+          tag="$TAG"
+          notes="自动构建于 $GITHUB_SHA（$(date -u '+%Y-%m-%d %H:%M UTC')），版本 $VER。与正式版同一把签名密钥，可直接覆盖升级上一个 nightly。"
           gh release create "$tag" "$APK" \
             --prerelease \
             --latest=false \

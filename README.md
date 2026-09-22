@@ -12,7 +12,7 @@
 
 ## 每日构建包
 
-[Releases](https://github.com/lswlc33/rovecamlink/releases) 里最新的 `nightly-*` 预发布就是 main 最新提交的产物（推 main、每日定时、手动派发都会发一条，页面只保留最近 3 条）。nightly 与正式版共用同一把签名密钥，所以新包能直接覆盖升级上一个包；密钥与 `.github/apk-signer-sha256.txt` 登记不一致时 CI 会红，不会发出装了就不能再升级的包（第一次从旧的 nightly 换过来仍需先卸载一次）。
+[Releases](https://github.com/lswlc33/rovecamlink/releases) 里最新的 `nightly-*` 预发布就是 main 最新提交的产物（推 main、每日定时、手动派发都会发一条，页面只保留最近 3 条）。包名带版本和这一轮的时间戳，形如 `RoveCamLink-0.1.3-nightly-20260922-150000.apk`，下载目录里几个包不会撞名。nightly 与正式版共用同一把签名密钥，所以新包能直接覆盖升级上一个包；密钥与 `.github/apk-signer-sha256.txt` 登记不一致时 CI 会红，不会发出装了就不能再升级的包（第一次从旧的 nightly 换过来仍需先卸载一次）。
 
 CI 只有两条工作流：`Nightly`（日常构建，装测试就认它）和 `Release`（正式版，只在推 `vX.Y.Z` tag 或手动派发时跑，不会随提交出现）。
 
