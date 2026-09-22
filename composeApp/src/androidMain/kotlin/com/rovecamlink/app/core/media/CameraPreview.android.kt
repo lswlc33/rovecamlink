@@ -3,19 +3,27 @@ package com.rovecamlink.app.core.media
 import android.net.Uri
 import android.view.TextureView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -30,6 +38,7 @@ import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.monotonicMillis
 import com.rovecamlink.app.preview_none
+import com.rovecamlink.app.preview_stalled
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -64,6 +73,20 @@ private const val TARGET_BUFFER_BYTES = 256 * 1024
 private class LatencyProbe(var startedAt: Long = 0L, var readyAt: Long = 0L)
 
 /**
+ * How long the picture may stay unplayed before this view rebuilds the player itself.
+ *
+ * ExoPlayer has no such limit of its own for an RTSP source that simply stops sending:
+ * it sits in BUFFERING until its socket timeout fires, and the 2026-09-23 field log
+ * shows a mode switch leaving the view frozen for 7.6 s with no error at all — which
+ * reads as "the app broke the picture", because nothing said otherwise. Rebuilding
+ * after six seconds turns that into a two-second blink instead of a dead frame.
+ */
+private const val STALL_LIMIT_MS = 6_000L
+
+/** How often the watchdog looks at the player. */
+private const val WATCHDOG_TICK_MS = 1_000L
+
+/**
  * How long to wait before rebuilding the player after the n-th failure.
  *
  * A camera that refuses 554 usually needs seconds, not milliseconds: the same field
@@ -93,7 +116,49 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
     // source that failed fatally. So an error now schedules a rebuild with a growing
     // delay, and a stream that reaches READY resets the ladder.
     val retry = remember(rtspUrl) { intArrayOf(0) }
+    // One failed player used to schedule two rebuilds, because releasing it while its
+    // RTSP reader is wedged raises `Detaching surface timed out` and then
+    // `Player release timed out` — two errors, two retries, and the 2026-09-22 log at
+    // 23:21:48 shows the pair arriving 500 ms apart. This flag makes the first one win
+    // and the rest of that player's complaints fall on the floor it is already on.
+    val rebuilding = remember(rtspUrl) { booleanArrayOf(false) }
     var generation by remember(rtspUrl) { mutableIntStateOf(0) }
+    var stalled by remember(rtspUrl) { mutableStateOf(false) }
+
+    /** Schedule the next rebuild, or give up out loud once the ladder is spent. */
+    fun scheduleRebuild(reason: String) {
+        if (rebuilding[0]) {
+            Diag.debug(LogTag.PREV, "rebuild already scheduled — ignoring extra $reason")
+            return
+        }
+        val attempt = retry[0] + 1
+        retry[0] = attempt
+        if (attempt > MAX_PLAYBACK_ATTEMPTS) {
+            if (attempt == MAX_PLAYBACK_ATTEMPTS + 1) {
+                // Said once. The watchdog keeps asking every six seconds for as long as
+                // the picture stays down, and a log that repeats the surrender every tick
+                // buries the one line that explains it.
+                Diag.error(
+                    LogTag.PREV,
+                    "preview given up after $attempt attempt(s) on $rtspUrl ($reason) — " +
+                        "the pill on the picture restarts it",
+                )
+            }
+            stalled = true
+            return
+        }
+        rebuilding[0] = true
+        stalled = true
+        val waitMs = backoffMs(attempt)
+        Diag.warn(LogTag.PREV, "preview retry #$attempt in ${waitMs}ms ($reason)")
+        scope.launch {
+            delay(waitMs)
+            rebuilding[0] = false
+            probe.startedAt = 0L
+            probe.readyAt = 0L
+            generation++
+        }
+    }
 
     val player = remember(rtspUrl, generation) {
         if (rtspUrl.isNullOrBlank()) {
@@ -133,6 +198,8 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                                     val waitedMs = monotonicMillis() - probe.startedAt
                                     probe.startedAt = 0L
                                     retry[0] = 0
+                                    rebuilding[0] = false
+                                    stalled = false
                                     val milestone = if (probe.readyAt == 0L) "first_frame" else "resumed"
                                     probe.readyAt = monotonicMillis()
                                     Diag.info(
@@ -151,24 +218,7 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                                     LogTag.PREV,
                                     "player error code=${error.errorCodeName} msg=${Diag.causeChain(error)} url=$rtspUrl",
                                 )
-                                val attempt = retry[0] + 1
-                                retry[0] = attempt
-                                if (attempt > MAX_PLAYBACK_ATTEMPTS) {
-                                    Diag.error(
-                                        LogTag.PREV,
-                                        "preview given up after $attempt attempt(s) on $rtspUrl — " +
-                                            "leave the screen and reopen to try again",
-                                    )
-                                    return
-                                }
-                                val waitMs = backoffMs(attempt)
-                                Diag.warn(LogTag.PREV, "preview retry #$attempt in ${waitMs}ms")
-                                scope.launch {
-                                    delay(waitMs)
-                                    probe.startedAt = 0L
-                                    probe.readyAt = 0L
-                                    generation++
-                                }
+                                scheduleRebuild("error ${error.errorCodeName}")
                             }
                         },
                     )
@@ -177,6 +227,31 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                     playWhenReady = true
                     prepare()
                 }
+        }
+    }
+
+    // The watchdog. `isPlaying` is the only honest signal that frames are moving: a
+    // source can sit in STATE_READY with nothing arriving, and STATE_BUFFERING is what
+    // every ordinary 30 ms hiccup looks like too, so the test is "has it been playing
+    // at all recently", not "what state is it in right now".
+    val watched = player
+    LaunchedEffect(rtspUrl, generation, watched) {
+        val p = watched ?: return@LaunchedEffect
+        var lastAlive = monotonicMillis()
+        while (true) {
+            delay(WATCHDOG_TICK_MS)
+            val now = monotonicMillis()
+            if (p.isPlaying) {
+                lastAlive = now
+                if (stalled || retry[0] != 0) {
+                    stalled = false
+                    retry[0] = 0
+                }
+            } else if (now - lastAlive >= STALL_LIMIT_MS) {
+                val frozenFor = now - lastAlive
+                lastAlive = now
+                scheduleRebuild("nothing playing for ${frozenFor}ms")
+            }
         }
     }
 
@@ -220,6 +295,31 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                     runCatching { player.setVideoTextureView(null) }
                 },
             )
+            // Said out loud rather than left as a frozen frame: a picture that stops is
+            // indistinguishable from a camera that stopped, and the one thing this view
+            // must not do is let the user shoot blind believing it is still live.
+            if (stalled) {
+                Box(
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 10.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color.Black.copy(alpha = 0.62f))
+                        .clickable {
+                            Diag.info(LogTag.PREV, "preview reconnect requested by tap on $rtspUrl")
+                            retry[0] = 0
+                            rebuilding[0] = false
+                            generation++
+                        }
+                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                ) {
+                    CupertinoText(
+                        stringResource(Res.string.preview_stalled),
+                        color = Color.White,
+                        fontSize = 12.sp,
+                    )
+                }
+            }
         } else {
             CupertinoText(stringResource(Res.string.preview_none), color = Color(0xFF8E8E93))
         }

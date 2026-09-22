@@ -44,11 +44,31 @@ private var softVersion = "1.0.4"
 private var uploadedFirmwareName: String? = null
 private val settings = linkedMapOf(
     "Resolution" to "1080P60",
-    "ImageStabilize" to "ON",
+    "Gyro EIS" to "High",
+    "Exposure" to "-1",
+    "Meter Mode" to "Average",
+    "AWB" to "Auto",
     "AV Out" to "OFF",
 )
 private val resolutionOptions = listOf("720P100", "1080P60", "2.7K30", "4K30")
 private val onOffOptions = listOf("ON", "OFF")
+
+/**
+ * The per-row option lists, for the rows the live page's quick-adjust panel reads.
+ *
+ * `Exposure` is verbatim from the XTU S7PRO's `getsecondmenuitem` answer in the
+ * 2026-09-23 field log — **descending**, which is the ordering the slider exists to
+ * turn around — and the rest use the vocabulary `MenuCatalog` records from the
+ * 2026-09-21 session on the same camera. A fake, but a fake shaped like the real menu,
+ * so a change to that panel can be looked at instead of fielded.
+ */
+private val optionsByName = mapOf(
+    "Resolution" to resolutionOptions,
+    "Exposure" to listOf("+2", "+1.5", "+1", "+0.5", "0", "-0.5", "-1", "-1.5", "-2"),
+    "Meter Mode" to listOf("Average", "Center", "Spot"),
+    "AWB" to listOf("Auto", "Daylight", "Cloudy", "Incandescent", "Fluorescent", "Shade"),
+    "Gyro EIS" to listOf("OFF", "Low", "Middle", "High", "Super"),
+)
 
 private data class SimFile(val path: String, val create: String, val time: Int, val size: Long)
 
@@ -150,10 +170,7 @@ private fun handleCgi(cmd: String, q: io.ktor.http.Parameters): String? = when (
     )
     "getsecondmenuitem" -> {
         val name = q["-name"]
-        val opts = when (name) {
-            "Resolution" -> resolutionOptions
-            else -> onOffOptions
-        }
+        val opts = optionsByName[name] ?: onOffOptions
         varargBody("item" to opts.joinToString(","), "value" to (settings[name] ?: opts.first()))
     }
     "setcurparameter" -> {

@@ -246,7 +246,14 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         return loaded
     }
 
-    /** Drop a resolved firmware table when its session goes away. */
+    /**
+     * Drop a resolved firmware table when its session goes away.
+     *
+     * The completed menu walks go too. They are keyed `host|workmode`, and a second
+     * camera reached at the same 192.168.0.1 would otherwise be served the first one's
+     * menu — the risk grew the moment [readMenu] started trusting those rows instead of
+     * re-reading them on every mode switch.
+     */
     override fun onSessionClosed(session: CameraSession) {
         workModeCache.remove(session.host)
         workModeUnsupported.remove(session.host)
@@ -254,6 +261,11 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         menuCache.remove(session.host)
         deviceMenuCache.remove(session.host)
         liveMode.remove(session.host)
+        val before = menuRows.size
+        menuRows.keys.retainAll { !it.startsWith("${session.host}|") }
+        if (before != menuRows.size) {
+            Diag.debug(LogTag.PROTO, "menu cache for ${session.host} dropped (${before - menuRows.size} walk(s))")
+        }
     }
 
     /** Forget the cached mode/menu for a host after the camera's mode changed. */
@@ -625,11 +637,15 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         val r = http.getText(url)
         return when (val verdict = Cgi.verdict(r)) {
             is CgiReply.Accepted -> {
-                // The menu and the "current mode" both follow the mode, and the
-                // camera's own answer is now stale on both counts.
+                // The "current mode" answer is now stale, and the *item names* of the
+                // current menu with it. The completed walks of both the old and the new
+                // mode stay cached on purpose: their option lists do not change when the
+                // camera moves, and re-reading all twenty of them is twenty-one
+                // sequential requests on the one link that also carries the live view —
+                // which is what starved the preview for 7.6 s in the 2026-09-23 log.
+                // [readMenu] refreshes every row's *value* from the new primary listing.
                 liveMode[session.host] = mode.name
                 menuCache.remove(session.host)
-                forgetMenuRows(session.host)
                 CmdResult.Ok
             }
             is CgiReply.Rejected -> refuse("setNamedMode \"${mode.name}\"", verdict)
@@ -794,9 +810,13 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
      *    picker, not the row. The old code dropped it, which is why the log reads
      *    `menu read 1/20 items` and the user saw an empty settings page on a camera
      *    that had just listed its whole menu.
-     *  - **The walk is cached** per host and work mode ([menuRows]), because it is pure
-     *    reading: the S7PRO log had six full walks — 234 requests — inside three
-     *    minutes, every one of them for rows that had not changed.
+     *  - **The options are cached, the value never is.** Per host and work mode
+     *    ([menuRows]): a row already walked once is refilled from this listing's own
+     *    `cur` and costs nothing. The S7PRO log had six full walks — 234 requests —
+     *    inside three minutes for rows that had not changed, and the 2026-09-23 one
+     *    shows the live view stalling 7.6 s while a mode switch re-walked all twenty.
+     *    The primary listing is still read every time, because that is where the
+     *    *current* value comes from.
      *
      * [nameCache] still records the item names, which is what lets a write be rejected
      * before it is sent. Action rows (`SD Format`, `Information`) have no options to
@@ -808,69 +828,81 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         nameCache: MutableMap<String, List<String>>,
     ): List<CameraSetting> {
         val cacheKey = "${session.host}|$workmode"
-        menuRows[cacheKey]?.let { cached ->
-            Diag.d(LogTag.PROTO) { "menu \"$workmode\" served from cache (n=${cached.size})" }
-            return cached
-        }
+        val cached = menuRows[cacheKey]
         val base = cgi(session.host, session.port)
         val wp = param(workmode)
         val primary = HiMenu.parsePrimaryItems(http.getText("$base/getprimarymenuitem.cgi?-workmode=$wp"))
+        if (primary.isEmpty()) {
+            // An unreadable primary listing is not evidence that the menu changed. Serve
+            // the last walk rather than the empty settings page the user would get.
+            if (cached != null) {
+                Diag.warn(LogTag.PROTO, "menu \"$workmode\": primary listing unreadable — serving last walk (n=${cached.size})")
+                return cached
+            }
+            return emptyList()
+        }
         Diag.d(LogTag.PROTO) {
             "menu primary items=${primary.size} workmode=$workmode " +
                 "names=${primary.take(6).joinToString(",") { it.name }}"
         }
         var optionFailures = 0
+        var reused = 0
         val out = primary.map { row ->
             if (row.isAction) {
                 CameraSetting(id = row.name, title = row.name, value = "")
             } else {
-                val second = HiMenu.parseSecondary(
-                    row.name,
-                    http.getText("$base/getsecondmenuitem.cgi?-workmode=$wp&-name=${param(row.name)}"),
-                )
-                if (second == null) {
-                    optionFailures++
-                    Diag.d(LogTag.PARSE) {
-                        "menu item \"${row.name}\" has no readable options — kept with its primary value"
-                    }
-                    CameraSetting(id = row.name, title = row.name, value = row.value)
+                // The option list is the expensive half of this walk — one request per
+                // row — and it is not what changes when the camera moves. `cur` is. So a
+                // row already walked once is refilled from this listing's own value and
+                // costs nothing, which is what keeps a 视频/照片 switch from putting
+                // twenty-one sequential requests on the link that carries the preview.
+                //
+                // The refill is only trusted when the value is one the menu actually
+                // offers. `cur` is positional and can be off by one, so a value no option
+                // matches re-reads that one row rather than mislabelling it.
+                val known = cached?.firstOrNull { it.id == row.name }
+                if (known != null && known.options.size >= 2 &&
+                    (row.value.isEmpty() || known.options.any { it.value == row.value })
+                ) {
+                    reused++
+                    known.copy(value = row.value.ifEmpty { known.value })
                 } else {
-                    // Prefer the item's own answer; the primary list is positional and
-                    // can be off by one when a name or a value contains a comma.
-                    CameraSetting(
-                        id = row.name,
-                        title = row.name,
-                        value = second.value.ifEmpty { row.value },
-                        options = second.options,
+                    val second = HiMenu.parseSecondary(
+                        row.name,
+                        http.getText("$base/getsecondmenuitem.cgi?-workmode=$wp&-name=${param(row.name)}"),
                     )
+                    if (second == null) {
+                        optionFailures++
+                        Diag.d(LogTag.PARSE) {
+                            "menu item \"${row.name}\" has no readable options — kept with its primary value"
+                        }
+                        CameraSetting(id = row.name, title = row.name, value = row.value)
+                    } else {
+                        // Prefer the item's own answer; the primary list is positional and
+                        // can be off by one when a name or a value contains a comma.
+                        CameraSetting(
+                            id = row.name,
+                            title = row.name,
+                            value = second.value.ifEmpty { row.value },
+                            options = second.options,
+                        )
+                    }
                 }
             }
         }
         nameCache[session.host] = out.map { it.id }
         if (out.isNotEmpty()) {
-            // A walk where nothing answered is not worth caching: the next call should
-            // get a real chance to read the menu rather than replay the failure.
             if (optionFailures < out.size) menuRows[cacheKey] = out
             Diag.i(LogTag.PROTO) {
                 "menu read ${out.size}/${primary.size} items for \"$workmode\"" +
-                    if (optionFailures > 0) " ($optionFailures without options)" else ""
+                    " ($reused from cache, ${out.size - reused - optionFailures} re-read)"
             }
         }
         return out
     }
 
-    /** Completed menu walks, keyed `host|workmode`; dropped when the mode changes. */
+    /** Completed menu walks, keyed `host|workmode`; kept across mode switches, dropped with the session. */
     private val menuRows = mutableMapOf<String, List<CameraSetting>>()
-
-    /**
-     * Forget this host's cached walks. Which items exist, and what their options are,
-     * is a property of the work mode, so a mode switch makes every cached menu wrong.
-     */
-    private suspend fun forgetMenuRows(host: String) {
-        val before = menuRows.size
-        menuRows.keys.retainAll { !it.startsWith("$host|") }
-        if (before != menuRows.size) Diag.d(LogTag.PROTO) { "menu cache for $host dropped (${before - menuRows.size} walk(s))" }
-    }
 
     /** The menu item names the last successful [getSettings] returned, per host. */
     private val menuCache = mutableMapOf<String, List<String>>()
@@ -1129,6 +1161,8 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override suspend fun setWifi(session: CameraSession, ssid: String, password: String): CmdResult =
         maintenance.setWifi(session, ssid, password)
+
+    override suspend fun getWifi(session: CameraSession): CameraWifi? = maintenance.getWifi(session)
 
     override suspend fun ensureAccessPoint(session: CameraSession): CmdResult =
         maintenance.raiseAccessPoint(session)

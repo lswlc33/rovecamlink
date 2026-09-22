@@ -14,7 +14,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -24,8 +23,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -56,7 +53,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
@@ -73,6 +69,7 @@ import com.robinpcrd.cupertino.CupertinoIcon
 import com.robinpcrd.cupertino.CupertinoIconButton
 import com.robinpcrd.cupertino.CupertinoSegmentedControl
 import com.robinpcrd.cupertino.CupertinoSegmentedControlTab
+import com.robinpcrd.cupertino.CupertinoSlider
 import com.robinpcrd.cupertino.CupertinoSwitch
 import com.robinpcrd.cupertino.CupertinoText
 import com.robinpcrd.cupertino.CupertinoTextField
@@ -237,6 +234,7 @@ import com.rovecamlink.app.core.model.SdCardState
 import com.rovecamlink.app.core.model.WorkMode
 import com.rovecamlink.app.core.model.groupFilesByDay
 import com.rovecamlink.app.core.ota.OtaState
+import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -524,14 +522,6 @@ fun LiveScreen(state: AppState) {
                             modifier = Modifier.fillMaxWidth().padding(it),
                         )
                     }
-                    val help = current?.let { ModeCatalog.helpOf(it.name) }
-                    if (help != null) {
-                        item {
-                            Column(Modifier.fillMaxWidth().padding(it)) {
-                                CupertinoText(help, fontSize = 11.sp, color = scheme.tertiaryLabel)
-                            }
-                        }
-                    }
                     if (working) valueItem(lockedLbl, lockedModeMsg)
                 }
 
@@ -668,7 +658,13 @@ private fun PreviewHeader(
 
     BoxWithConstraints(modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
         val wanted = if (swap) maxWidth * 16f / 9f else maxWidth * 9f / 16f
-        val limit = maxHeight * if (swap) 0.50f else 0.42f
+        // The rotated case gets most of the screen on purpose. Turning the phone puts a
+        // 9:16 box in a portrait canvas, and capping it at half the height — which is
+        // what this did — leaves a picture narrower than the phone is wide, so the
+        // framing he turned the phone *for* was smaller than the one he gets holding it
+        // straight (2026-09-23 「画面横屏时太小了 看不清」). Three quarters leaves the
+        // control panel a scrollable strip; the shutter floats, so it stays reachable.
+        val limit = maxHeight * if (swap) 0.76f else 0.42f
         val boxH = minOf(wanted, limit)
         val boxW = if (swap) boxH * 9f / 16f else maxWidth
         Box(
@@ -844,22 +840,23 @@ private fun ShutterButton(
 }
 
 /**
- * A horizontal quick-adjust bar for one ordered camera setting — the shutter-speed
- * style control the 2026-09-22 report asked for (「曝光这些设置项，可以在实时页面底部新增
- * 一个横向 slider」), now one line tall so the panel can hold seven of them.
+ * One draggable quick-adjust slider for one ordered camera setting — the control the
+ * 2026-09-22 report asked for (「曝光这些设置项，可以在实时页面底部新增一个横向 slider」)
+ * and the 2026-09-23 one asked to be made *proper* (「能使用体面的方式吗？比如说滑块，
+ * 进度条可拖动的」). It is the library's own `CupertinoSlider` now, not a row of
+ * clickable blocks, snapped to the firmware's steps.
  *
  * Two rules make this safe to put next to a live view:
  *
  * **One write per gesture.** The camera serves one request at a time and answers a
- * `setcurparameter` in tens of milliseconds while the same link carries RTSP; a
- * slider that wrote on every pixel of a drag would be a self-inflicted denial of
- * service on the preview. The drag moves a local draft, and the value goes out on
- * release (or immediately on a tap, which *is* one gesture).
+ * `setcurparameter` in tens of milliseconds while the same link carries RTSP; a slider
+ * that wrote on every pixel of a drag would be a self-inflicted denial of service on
+ * the preview — the 7.6 s stall in the 2026-09-23 log is what that link looks like when
+ * it is merely busy. The drag moves a local draft; the value goes out on release.
  *
- * **The firmware's own option list, in its own order.** `Exposure` answers
- * `+2,+1.5,+1,+0.5,0,-0.5,-1,-1.5,-2` — descending, so index 0 is the *brightest*
- * end. Sorting or re-deriving these would put the handle on the wrong side of the
- * bar, so the bar is literally the list, left to right.
+ * **Lowest on the left, highest on the right.** See [orderedAdjustOptions]: the
+ * firmware's own order is descending for `Exposure`, which no one reading a slider
+ * would guess.
  */
 @Composable
 private fun QuickAdjustBar(
@@ -867,68 +864,38 @@ private fun QuickAdjustBar(
     enabled: Boolean,
     onCommit: (String) -> Unit,
 ) {
-    val options = setting.options
+    val options = orderedAdjustOptions(setting)
     if (options.size < 2) return
-    val currentIndex = options.indexOfFirst { it.value == setting.value }.coerceAtLeast(0)
+    val lastIndex = options.lastIndex
+    val currentIndex = options.indexOfFirst { it.value == setting.value }.coerceIn(0, lastIndex)
     var draft by remember(setting.value, options) { mutableStateOf(currentIndex) }
-    val scheme = CupertinoTheme.colorScheme
 
     Row(
         Modifier
             .fillMaxWidth()
-            .heightIn(min = 34.dp)
-            .padding(horizontal = 12.dp, vertical = 5.dp),
+            .heightIn(min = 36.dp)
+            .padding(horizontal = 12.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AdjustLabel(setting, Modifier.width(64.dp))
         Spacer(Modifier.width(8.dp))
-        Row(
-            Modifier
-                .weight(1f)
-                .height(22.dp)
-                .clip(RoundedCornerShape(5.dp))
-                .graphicsLayer { alpha = if (enabled) 1f else 0.4f }
-                .pointerInput(options, enabled) {
-                    if (!enabled) return@pointerInput
-                    detectHorizontalDragGestures(
-                        onDragStart = { offset -> draft = segmentAt(offset.x, size.width, options.size) },
-                        onHorizontalDrag = { change, _ ->
-                            draft = segmentAt(change.position.x, size.width, options.size)
-                        },
-                        // The whole point of the draft: this is the only place a drag
-                        // reaches the camera — and not even then if the handle ended up
-                        // back on the value it started from.
-                        onDragEnd = { if (draft != currentIndex) onCommit(options[draft].value) },
-                        onDragCancel = { draft = currentIndex },
-                    )
-                },
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
-        ) {
-            options.forEachIndexed { index, option ->
-                // Each segment is a real target too: a tap is one gesture, so it writes
-                // straight away instead of waiting for a release that never comes.
-                Box(
-                    Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(
-                            if (index == draft) scheme.accent
-                            else scheme.tertiaryLabel.copy(alpha = 0.28f),
-                        )
-                        .clickable(enabled = enabled && index != currentIndex) { onCommit(option.value) },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    if (option.value == setting.value) {
-                        Box(Modifier.size(5.dp).clip(CircleShape).background(Color.White))
-                    }
-                }
-            }
-        }
+        CupertinoSlider(
+            value = draft.toFloat(),
+            onValueChange = { draft = it.roundToInt().coerceIn(0, lastIndex) },
+            modifier = Modifier.weight(1f),
+            enabled = enabled,
+            valueRange = 0f..lastIndex.toFloat(),
+            // `steps` counts the stops *between* the two ends, which is one fewer than
+            // the number of gaps: this puts a tick exactly under each firmware value.
+            steps = lastIndex - 1,
+            onValueChangeFinished = {
+                if (draft != currentIndex) onCommit(options[draft].value)
+            },
+        )
         Spacer(Modifier.width(8.dp))
         Box(Modifier.widthIn(min = 42.dp, max = 78.dp), contentAlignment = Alignment.CenterEnd) {
             CupertinoText(
-                MenuCatalog.valueLabel(setting.id, options[draft].value),
+                MenuCatalog.valueShortLabel(setting.id, options[draft].value),
                 fontSize = 12.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -941,8 +908,8 @@ private fun QuickAdjustBar(
  * One short menu item as a row of tappable chips — 防抖、测光、白平衡 and the rest of
  * [quickChoiceIds], none of which is a scale and so has no business on a bar.
  *
- * The chips are the firmware's option list in its own order, one write per tap, for the
- * same reason the bars above commit on release: this link also carries the preview.
+ * The chips are the firmware's own option list, one write per tap, for the same reason
+ * the sliders above commit on release: this link also carries the preview.
  */
 @Composable
 private fun QuickChoiceRow(
@@ -950,7 +917,7 @@ private fun QuickChoiceRow(
     enabled: Boolean,
     onCommit: (String) -> Unit,
 ) {
-    val options = setting.options
+    val options = orderedAdjustOptions(setting)
     if (options.size < 2) return
     Row(
         Modifier
@@ -992,10 +959,48 @@ private fun AdjustLabel(setting: CameraSetting, modifier: Modifier = Modifier) {
     )
 }
 
-/** Which segment of a [QuickAdjustBar] an x position inside it falls on. */
-private fun segmentAt(x: Float, widthPx: Int, count: Int): Int {
-    if (widthPx <= 0 || count <= 0) return 0
-    return ((x / widthPx) * count).toInt().coerceIn(0, count - 1)
+/**
+ * The firmware's option list, ordered the way a control reads: lowest on the left,
+ * highest on the right (2026-09-23 「其他值按照从低到高的顺序排，最高的在右边」).
+ *
+ * `Exposure` answers `+2,+1.5,+1,+0.5,0,-0.5,-1,-1.5,-2` — **descending**, because that
+ * is the order the CGI happens to list them in, not an order anyone reading a slider
+ * would guess. Only the display order changes; the value sent back is still the
+ * firmware's own string.
+ *
+ * Two cases are left alone on purpose:
+ *
+ *  - A leading non-numeric option — `Auto` on ISO and 快门速度 — is a *mode*, not a
+ *    magnitude, so it stays at the far left where the firmware put it instead of
+ *    sorting into the middle of the scale.
+ *  - A list with no numbers at all (`High,Medium,Low`) keeps the firmware's order.
+ *    There is nothing here to rank it by, and guessing that `High` is the big end is a
+ *    different bug waiting for the next firmware.
+ */
+private fun orderedAdjustOptions(setting: CameraSetting): List<CameraSetting.Option> {
+    val options = setting.options
+    if (options.size < 3) return options
+    val leading = options.takeWhile { parseAdjustValue(it.value) == null }
+    val rest = options.drop(leading.size)
+    if (rest.size < 2 || rest.any { parseAdjustValue(it.value) == null }) return options
+    return leading + rest.sortedBy { parseAdjustValue(it.value) }
+}
+
+/**
+ * The magnitude behind one firmware option string, or null when it names a mode rather
+ * than a quantity. Understands the `+` the exposure steps carry and the `1/1000` form a
+ * shutter list uses.
+ */
+private fun parseAdjustValue(raw: String): Double? {
+    val text = raw.trim().removePrefix("+")
+    if (text.isEmpty()) return null
+    val slash = text.indexOf('/')
+    if (slash > 0) {
+        val numerator = text.substring(0, slash).toDoubleOrNull() ?: return null
+        val denominator = text.substring(slash + 1).toDoubleOrNull() ?: return null
+        return if (denominator == 0.0) null else numerator / denominator
+    }
+    return text.toDoubleOrNull()
 }
 
 /**

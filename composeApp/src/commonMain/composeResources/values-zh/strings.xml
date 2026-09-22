@@ -74,6 +74,7 @@
     <string name="hint_locked_capture">录像中不能拍照或改模式，请先停止录像。</string>
     <string name="hint_photo_needs_photo_mode">请先切到「照片」模式——这台相机在视频模式下不能拍静态照片。</string>
     <string name="preview_none">暂无画面</string>
+    <string name="preview_stalled">图传已中断 · 点按重连</string>
 
     <!-- Files screen -->
     <string name="action_refresh_files">刷新文件列表</string>
@@ -273,7 +274,7 @@
     <string name="section_capture_mode">拍摄模式</string>
     <!-- 实时页上的快速调节：格子条和档位 chip 行。 -->
     <string name="section_quick_adjust">快速调节</string>
-    <string name="hint_quick_adjust">拖动格子或点按档位；松手才写给相机。</string>
+    <string name="hint_quick_adjust">拖动滑块或点按档位；松手才写给相机。</string>
     <string name="hint_locked_adjust">相机正在录制或还在处理，停下来才能改这些。</string>
     <!-- 悬浮快门按钮的三种形态里，录制态在状态格里的那个词。 -->
     <string name="rec_recording">录制中</string>
