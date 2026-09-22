@@ -120,15 +120,24 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                     addListener(
                         object : Player.Listener {
                             override fun onPlaybackStateChanged(playbackState: Int) {
-                                if (playbackState == Player.STATE_BUFFERING && probe.startedAt == 0L) {
+                                if (playbackState == Player.STATE_BUFFERING) {
+                                    // Timed from here to the next READY. Started on every
+                                    // buffering spell rather than only the first, because
+                                    // the field log showed the opposite — one timestamp for
+                                    // the whole visit, so each later READY reported a
+                                    // "first_frame" of 17 s, 21 s… that was the age of the
+                                    // first buffer, not a stall.
                                     probe.startedAt = monotonicMillis()
                                 }
                                 if (playbackState == Player.STATE_READY && probe.startedAt > 0L) {
-                                    probe.readyAt = monotonicMillis()
+                                    val waitedMs = monotonicMillis() - probe.startedAt
+                                    probe.startedAt = 0L
                                     retry[0] = 0
+                                    val milestone = if (probe.readyAt == 0L) "first_frame" else "resumed"
+                                    probe.readyAt = monotonicMillis()
                                     Diag.info(
                                         LogTag.PREV,
-                                        "state=READY first_frame=${probe.readyAt - probe.startedAt}ms " +
+                                        "state=READY $milestone=${waitedMs}ms " +
                                             "buffer=${PLAYBACK_BUFFER_MS}ms url=$rtspUrl",
                                     )
                                     return
@@ -171,10 +180,15 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
         }
     }
 
-    DisposableEffect(rtspUrl) {
+    // Keyed on the player, not on the URL: a retry builds a replacement through
+    // `generation`, and with `rtspUrl` as the only key every retry left its old player
+    // — decoder thread, RTSP socket and all — alive until the screen was left. Six
+    // retries is six players on a camera link that already carries the preview.
+    val livePlayer = player
+    DisposableEffect(livePlayer) {
         onDispose {
-            Diag.info(LogTag.PREV, "player released url=${player?.currentMediaItem?.localConfiguration?.uri}")
-            player?.release()
+            Diag.info(LogTag.PREV, "player released url=${livePlayer?.currentMediaItem?.localConfiguration?.uri}")
+            runCatching { livePlayer?.release() }
         }
     }
 
@@ -194,9 +208,13 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                 // off, and the aspect comes from the swapped constraints upstream rather
                 // than from its `AspectRatioFrameLayout`.
                 modifier = Modifier.fillMaxSize(),
-                factory = { ctx ->
-                    TextureView(ctx).apply { setBackgroundColor(android.graphics.Color.BLACK) }
-                },
+                // No background of its own: `TextureView.setBackgroundDrawable` throws
+                // `UnsupportedOperationException` on every Android version, and
+                // `setBackgroundColor` routes through it — so the line that was here
+                // until now killed the process the moment this view was created, which
+                // is the 2026-09-22 「打开实时页面会闪退」. Black is already painted by
+                // the Box below and by the caller's clipped container.
+                factory = { ctx -> TextureView(ctx) },
                 update = { view -> player.setVideoTextureView(view) },
                 onRelease = {
                     runCatching { player.setVideoTextureView(null) }
