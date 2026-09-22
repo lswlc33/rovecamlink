@@ -2,9 +2,12 @@ name: Release
 
 # 正式版发布：推 `vX.Y.Z` tag 即自动构建签名 APK 并创建正式 Release。
 # 三道闸：tag 格式 / 版本号一致 / tag 在 main 历史里（确保已跑过 CI）。
-# 签名闸：APK 证书必须等于 .github/apk-signer-sha256.txt 登记的那把密钥——与 nightly、
-# test-v 完全同一把，所以用户从任一渠道装的包都能被正式版覆盖升级。
-# test-release.yml 用 `test-v*` tag 走同一套链路做预演，与这里的 `v*.*.*` 互斥。
+# 签名闸：APK 证书必须等于 .github/apk-signer-sha256.txt 登记的那把密钥——与 nightly 完全
+# 同一把，所以从 nightly 装的包能被正式版直接覆盖升级。
+#
+# 本仓库只有两条工作流：nightly.yml（推 main 就构建）和这一条。这一条没有定时、也没有
+# push 触发，只在人主动推 `v*.*.*` tag 或手动派发时才跑——日常提交一律出 nightly，
+# 正式版不会被一次推送顺手带出去。
 on:
   push:
     tags:

@@ -1,6 +1,6 @@
 name: Verify APK signing certificate
 
-# 三道发布链路（nightly / test-release / release）共用的签名闸：
+# 两条发布链路（nightly / release）共用的签名闸：
 # 断言 APK 恰好一个、已签名，且证书 SHA-256 与 .github/apk-signer-sha256.txt 登记的一致。
 # 换密钥的正确顺序：先更新 ROVECAMLINK_RELEASE_* secret，再改这个登记文件；
 # 只改一边会在这里红，而不是悄悄发出一个装了就不能覆盖升级的包。

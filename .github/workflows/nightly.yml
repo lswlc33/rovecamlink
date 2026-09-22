@@ -7,7 +7,7 @@ name: Nightly
 # 为什么 debug 也要签名：Android 靠签名证书判定能否覆盖升级。debug 默认用 runner 现场
 # 生成的 Android debug 密钥，等于每个 nightly 换一次签名，装机必报「与已安装应用签名
 # 不符」，只能先卸载。现在 debug 与 release 共用 ROVECAMLINK_RELEASE_* 那把密钥，并由
-# verify-apk-signature 核对证书指纹，nightly / test-v / 正式版三者签名一致，装上就能一路升级。
+# verify-apk-signature 核对证书指纹，nightly 与正式版签名一致，装上就能一路升级。
 #
 # 只有工作流产物这一个包：不再额外 upload-artifact，避免同一个 run 出现两份 APK。
 # push 也发布会让 Releases 页变长，所以只保留最近 KEEP_NIGHTLIES 条 nightly，更早的连 tag 一起删。
