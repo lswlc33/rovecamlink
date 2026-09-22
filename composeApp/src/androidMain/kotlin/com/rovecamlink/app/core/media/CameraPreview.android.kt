@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +30,8 @@ import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.monotonicMillis
 import com.rovecamlink.app.preview_none
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 private fun playbackStateName(state: Int): String = when (state) {
@@ -57,18 +63,44 @@ private const val TARGET_BUFFER_BYTES = 256 * 1024
 /** Set when the player starts, so the log can say how long live view really takes. */
 private class LatencyProbe(var startedAt: Long = 0L, var readyAt: Long = 0L)
 
+/**
+ * How long to wait before rebuilding the player after the n-th failure.
+ *
+ * A camera that refuses 554 usually needs seconds, not milliseconds: the same field
+ * log that shows `ECONNREFUSED` also shows the device briefly refusing *everything*
+ * while it recovered, so an immediate retry loop would be the app doing to itself what
+ * the previous section describes the camera doing to itself.
+ */
+private fun backoffMs(attempt: Int): Long = when (attempt) {
+    1 -> 1_000L
+    2 -> 2_000L
+    3 -> 5_000L
+    else -> 10_000L
+}
+
+/** Retries per visit to the live view before it stops and says so in the log. */
+private const val MAX_PLAYBACK_ATTEMPTS = 6
+
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
     val context = LocalContext.current
     val probe = remember(rtspUrl) { LatencyProbe() }
+    val scope = rememberCoroutineScope()
+    // The live view used to be a one-shot: after the error the log shows at +128.4 s
+    // (`ECONNREFUSED` on 554) the player sat in IDLE with a black rectangle until the
+    // user left the screen and came back, because REPEAT_MODE_ALL does not re-prepare a
+    // source that failed fatally. So an error now schedules a rebuild with a growing
+    // delay, and a stream that reaches READY resets the ladder.
+    val retry = remember(rtspUrl) { intArrayOf(0) }
+    var generation by remember(rtspUrl) { mutableIntStateOf(0) }
 
-    val player = remember(rtspUrl) {
+    val player = remember(rtspUrl, generation) {
         if (rtspUrl.isNullOrBlank()) {
             Diag.info(LogTag.PREV, "preview: no URL for this platform/session")
             null
         } else {
-            Diag.info(LogTag.PREV, "player start url=$rtspUrl")
+            Diag.info(LogTag.PREV, "player start url=$rtspUrl attempt=${retry[0]}")
             val loadControl = DefaultLoadControl.Builder()
                 .setBufferDurationsMs(
                     MIN_BUFFER_MS,
@@ -93,6 +125,7 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                                 }
                                 if (playbackState == Player.STATE_READY && probe.startedAt > 0L) {
                                     probe.readyAt = monotonicMillis()
+                                    retry[0] = 0
                                     Diag.info(
                                         LogTag.PREV,
                                         "state=READY first_frame=${probe.readyAt - probe.startedAt}ms " +
@@ -109,6 +142,24 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                                     LogTag.PREV,
                                     "player error code=${error.errorCodeName} msg=${Diag.causeChain(error)} url=$rtspUrl",
                                 )
+                                val attempt = retry[0] + 1
+                                retry[0] = attempt
+                                if (attempt > MAX_PLAYBACK_ATTEMPTS) {
+                                    Diag.error(
+                                        LogTag.PREV,
+                                        "preview given up after $attempt attempt(s) on $rtspUrl — " +
+                                            "leave the screen and reopen to try again",
+                                    )
+                                    return
+                                }
+                                val waitMs = backoffMs(attempt)
+                                Diag.warn(LogTag.PREV, "preview retry #$attempt in ${waitMs}ms")
+                                scope.launch {
+                                    delay(waitMs)
+                                    probe.startedAt = 0L
+                                    probe.readyAt = 0L
+                                    generation++
+                                }
                             }
                         },
                     )

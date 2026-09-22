@@ -6,6 +6,8 @@ import android.os.Environment
 import android.provider.MediaStore
 import com.rovecamlink.app.PermissionBridge
 import com.rovecamlink.app.androidContext
+import com.rovecamlink.app.core.log.Diag
+import com.rovecamlink.app.core.log.LogTag
 import okio.Path
 import okio.Path.Companion.toPath
 import java.io.File
@@ -79,15 +81,24 @@ private class AndroidFileSaver : FileSaver {
 
 private class AndroidPermissions : PermissionController {
     override suspend fun ensureWifiPermissions(): Boolean {
-        val perms = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arrayOf(
-                android.Manifest.permission.NEARBY_WIFI_DEVICES,
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-            )
-        } else {
-            arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        val nearby = android.Manifest.permission.NEARBY_WIFI_DEVICES
+        val fineLocation = android.Manifest.permission.ACCESS_FINE_LOCATION
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return PermissionBridge.request(arrayOf(fineLocation))
         }
-        return PermissionBridge.request(perms)
+        // Ask for both, but judge the outcome by the one that actually gates us:
+        // NEARBY_WIFI_DEVICES is what lets the camera's AP be seen at all, while fine
+        // location only adds the SSID *text* to `connectionInfo`. Requiring both turned
+        // "the user granted one" into "cannot connect", with nothing on screen to
+        // explain why.
+        PermissionBridge.request(arrayOf(nearby, fineLocation))
+        if (!PermissionBridge.isGranted(fineLocation)) {
+            Diag.warn(
+                LogTag.WIFI,
+                "no fine location: camera networks stay discoverable but show no SSID",
+            )
+        }
+        return PermissionBridge.isGranted(nearby)
     }
 
     override suspend fun ensureStoragePermissions(): Boolean {

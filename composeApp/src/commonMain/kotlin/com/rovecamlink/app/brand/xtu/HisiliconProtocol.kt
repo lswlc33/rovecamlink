@@ -21,6 +21,7 @@ import com.rovecamlink.app.core.model.WorkMode
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogTag
+import com.rovecamlink.app.core.log.monotonicMillis
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.transport.CameraHttp
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +30,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.longOrNull
 import okio.Path
 
 /**
@@ -107,6 +107,25 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
                 "deviceattr keys=${attr.keys.joinToString(",")} hardversion=${attr["hardversion"]} " +
                     "newApp=$newApp strMode=$strMode type=${attr["type"]} softversion=${attr["softversion"]}"
             }
+            // S7PRO-family only: the official client checks the activation state right
+            // after `getdeviceattr` and blocks its UI on it (`HomeActivity.java:1714-1739`,
+            // archive §1.5 step 6). We *read* it and log it, and deliberately do not
+            // write: the two exits the official app offers are `settrial.cgi` and
+            // `setactivateinfo.cgi?-status=1`, and the second one activates a device for
+            // its owner — which is not ours to decide from a connection routine, and the
+            // archive itself lists `status`/`version` semantics as an open field question
+            // (未解之谜 #7). One GET costs 200 ms and turns "the camera answers nothing"
+            // into a line in the log we get back from the field.
+            val activation = if (name.uppercase().startsWith("XTU S7PRO")) {
+                val info = HiVarParser.parse(http.getText("${cgi(host, port)}/getactivateinfo.cgi"))
+                Diag.i(LogTag.PROTO) {
+                    "getactivateinfo status=${info["status"] ?: "?"} version=${info["version"] ?: "?"} " +
+                        "trials=${info["number"] ?: "?"} macaddr=${info["macaddr"]?.take(6) ?: "?"}"
+                }
+                info["status"] ?: ""
+            } else {
+                ""
+            }
             CameraSession(
                 host = host, port = port, platform = platform, brand = Brand.XTU, model = model,
                 extras = mapOf(
@@ -114,6 +133,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
                     "strMode" to strMode,
                     "softversion" to (attr["softversion"] ?: ""),
                     "type" to (attr["type"] ?: "117"),
+                    "activateStatus" to activation,
                 ),
             )
         }
@@ -163,6 +183,13 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         /** Work-mode strings the NewAPP firmware accepts when it hides `getallworkmode`. */
         const val VIDEO_MODE_STRING = "Normal Video"
         const val PHOTO_MODE_STRING = "Normal Photo"
+
+        /**
+         * How old the battery/card/file-count half of a status may get before it is
+         * re-read. Those three change on the scale of minutes; the camera can serve one
+         * CGI at a time, so the poll that runs every 1.5 s must not pay for them.
+         */
+        const val SLOW_STATUS_TTL_MS = 8_000L
 
         /** The endpoint every video-family mode shoots with; see [HiModes.VIDEO_SHAPE]. */
         const val VIDEO_ENDPOINT = "record.cgi"
@@ -358,14 +385,23 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     // ---------- status ----------
 
+    /**
+     * The cached half of [getStatus] — battery, card, file count — per host, with the
+     * moment it was last fetched.
+     *
+     * These three change on the scale of minutes, but each one used to be a request on
+     * every 1.5 s poll, which is how a poll alone came to occupy most of the camera's
+     * one-connection HTTP server. The live half (`getcurallinfo`) is what the record
+     * button and the timer need promptly, so that is the only request per tick.
+     */
+    private val slowStatus = mutableMapOf<String, DeviceStatus>()
+    private val slowStatusAt = mutableMapOf<String, Long>()
+
     override suspend fun getStatus(session: CameraSession): DeviceStatus {
         val base = cgi(session.host, session.port)
         val allInfo = HiVarParser.parse(
             http.getText("$base/getcurallinfo.cgi") ?: http.getText("$base/getallinfo.cgi"),
         )
-        val batt = HiVarParser.parse(http.getText("$base/getbatterycapacity.cgi?"))
-        val sd = HiVarParser.parse(http.getText("$base/getsdstate.cgi?"))
-        val count = HiVarParser.parse(http.getText("$base/getfilecount.cgi?"))
 
         // `getcamerastatus.cgi` answers `200 OK` with an empty body on the XTU S7PRO
         // (firmware 20.8.6.1.20260710), so it is only worth a request when
@@ -382,25 +418,45 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         // State 20 only means "recording" in a video-family mode; in a photo mode the
         // same code means the camera is mid-capture and must simply not be poked.
         val recording = working && isVideoModeName(modeName, session)
-        val total = sd.mb("total")
-        val used = sd.mb("used")
-        val free = if (total != null && used != null) (total - used).coerceAtLeast(0) else null
+        val busy = working && !recording
 
-        return DeviceStatus(
-            battery = batt.int("capacity")?.coerceIn(0, 100),
-            charging = batt.bool("charge") ?: batt.bool("ac"),
+        val slow = slowStatus[session.host]?.takeIf {
+            monotonicMillis() - (slowStatusAt[session.host] ?: 0L) < SLOW_STATUS_TTL_MS
+        } ?: run {
+            val batt = HiVarParser.parse(http.getText("$base/getbatterycapacity.cgi?"))
+            val sd = HiVarParser.parse(http.getText("$base/getsdstate.cgi?"))
+            val count = HiVarParser.parse(http.getText("$base/getfilecount.cgi?"))
+            val total = sd.mb("total")
+            val used = sd.mb("used")
+            DeviceStatus(
+                battery = batt.int("capacity")?.coerceIn(0, 100),
+                charging = batt.bool("charge") ?: batt.bool("ac"),
+                recording = recording,
+                busy = busy,
+                mode = mapMode(if (modeName.isEmpty()) null else modeName),
+                modeName = modeName.ifEmpty { null },
+                workState = state ?: camStatus.int("status"),
+                videoTimeSec = null,
+                sdTotalMb = total,
+                sdFreeMb = if (total != null && used != null) (total - used).coerceAtLeast(0) else null,
+                sdState = SdCardState.fromRaw(sd["sdstate"]),
+                photoCount = count.int("count"),
+                raw = batt + sd + count,
+            ).also {
+                slowStatus[session.host] = it
+                slowStatusAt[session.host] = monotonicMillis()
+            }
+        }
+
+        return slow.copy(
             recording = recording,
-            busy = working && !recording,
+            busy = busy,
             mode = mapMode(if (modeName.isEmpty()) null else modeName),
             modeName = modeName.ifEmpty { null },
             workState = state ?: camStatus.int("status"),
             videoTimeSec = (allInfo.int("pasttime") ?: camStatus.int("pasttime"))
                 ?.let { it / PASTTIME_TICKS_PER_SECOND },
-            sdTotalMb = total,
-            sdFreeMb = free,
-            sdState = SdCardState.fromRaw(sd["sdstate"]),
-            photoCount = count.int("count"),
-            raw = (camStatus + allInfo + batt + sd + count),
+            raw = camStatus + allInfo + slow.raw,
         )
     }
 
@@ -472,11 +528,19 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     override suspend fun capture(session: CameraSession): CmdResult {
         val base = cgi(session.host, session.port)
         val (state, reportedMode) = peekWorkState(session)
-        if (state != null && state != STATE_STANDBY) {
+        if (state == STATE_WORKING) {
             // Verified on an XTU S7PRO: `photo.cgi` while the camera is working does
             // not take a still — it reset the running recording instead, and no file
             // ever appeared (`getfilecount` stayed put all session).
+            //
+            // Any *other* state is served, not refused: the official client sends the
+            // shutter regardless of `state` (`HaisiPreviewModel.commandOperation`), and
+            // a firmware that reports a code we have never seen must not turn into a
+            // dead button. 21 (STANDBY) is the normal case.
             return CmdResult.Failure("Camera is busy (state $state) — wait for it to go idle before taking a photo")
+        }
+        if (state != null && state != STATE_STANDBY) {
+            Diag.d(LogTag.PROTO) { "capture with unrecognised work state $state — sending anyway, the official client does not gate on it" }
         }
         val modeName = reportedMode?.takeIf { it.isNotEmpty() } ?: currentStrMode(session)
         val family = familyOf(session, modeName) ?: if (session.newApp()) ModeFamily.PHOTO else null
@@ -560,6 +624,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
                 // camera's own answer is now stale on both counts.
                 liveMode[session.host] = mode.name
                 menuCache.remove(session.host)
+                forgetMenuRows(session.host)
                 CmdResult.Ok
             }
             is CgiReply.Rejected -> refuse("setNamedMode \"${mode.name}\"", verdict)
@@ -569,6 +634,25 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override suspend fun record(session: CameraSession, start: Boolean): CmdResult {
         val cmd = if (start) "start" else "stop"
+        val (state, reportedMode) = peekWorkState(session)
+        val modeName = reportedMode?.takeIf { it.isNotEmpty() } ?: currentStrMode(session)
+        val family = familyOf(session, modeName) ?: HiModes.familyOf(modeName)
+        if (family == ModeFamily.PHOTO) {
+            // `record.cgi` in a stills mode is answered and does nothing, which looks
+            // like a broken app. The official client only ever offers the record
+            // button in a video-family mode (`SSExchangeWorkMode.isVideoMode`).
+            return CmdResult.Failure("相机当前是拍照模式「$modeName」，录像需要先切到视频模式")
+        }
+        if (state != null) {
+            // Idempotence from the camera's own answer rather than the UI's belief: a
+            // second `start` while it is already recording restarts the clip on some
+            // firmware, and a `stop` when it is idle answers `Success` for nothing.
+            val recording = state == STATE_WORKING
+            if (recording == start) {
+                Diag.d(LogTag.PROTO) { "record $cmd skipped: camera already reports state $state in \"$modeName\"" }
+                return CmdResult.Ok
+            }
+        }
         val r = http.getText("${cgi(session.host, session.port)}/record.cgi?&-cmd=$cmd")
         return when (val verdict = Cgi.verdict(r)) {
             is CgiReply.Accepted -> {
@@ -668,7 +752,16 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             val modeName = currentStrMode(session, refresh = true)
             val out = readMenu(session, modeName, menuCache)
             if (out.isNotEmpty()) return out
-            Diag.w(LogTag.PROTO) { "newApp menu produced no rows for \"$modeName\" — falling back to legacy getters" }
+            // And do **not** fall back to the eleven legacy getters. They address a CGI
+            // surface this firmware family does not have — the 2026-09-22 log shows the
+            // fallback answering `0/11` after eleven refused connections — so running
+            // it turns one unreadable menu into a request storm on a camera that is
+            // already struggling, and still leaves the page empty.
+            Diag.w(LogTag.PROTO) {
+                "newApp menu for \"$modeName\" returned no rows — leaving the page empty rather than " +
+                    "probing the legacy getters (a NewAPP firmware has no legacy CGI)"
+            }
+            return emptyList()
         }
         // Legacy fallback: probe each getter; skip ones the firmware doesn't answer.
         val legacy = legacySettings.mapNotNull { ls ->
@@ -684,20 +777,36 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     }
 
     /**
-     * Walk one menu: `getprimarymenuitem.cgi?-workmode=<[workmode]>` for the rows,
-     * then one `getsecondmenuitem.cgi` per row for its options and authoritative
-     * value, and record the item names in [nameCache] so a write can be checked
-     * before it is sent.
+     * Walk one menu: `getprimarymenuitem.cgi?-workmode=<[workmode]>` for the rows and
+     * their current values, then one `getsecondmenuitem.cgi` per row for its options.
      *
-     * Shared by the per-mode menu and the device menu (`System`) because they are the
-     * same two endpoints addressed by a different `-workmode=` — see
-     * [getDeviceSettings].
+     * Two rules here come straight out of the 2026-09-22 field log, where this walk ran
+     * 41 requests in parallel with the status poll and the file listing and took the
+     * camera's HTTP server down:
+     *
+     *  - **A row is never dropped because its options did not arrive.** The primary
+     *    listing already carries the value, so a lost second-level read costs the
+     *    picker, not the row. The old code dropped it, which is why the log reads
+     *    `menu read 1/20 items` and the user saw an empty settings page on a camera
+     *    that had just listed its whole menu.
+     *  - **The walk is cached** per host and work mode ([menuRows]), because it is pure
+     *    reading: the S7PRO log had six full walks — 234 requests — inside three
+     *    minutes, every one of them for rows that had not changed.
+     *
+     * [nameCache] still records the item names, which is what lets a write be rejected
+     * before it is sent. Action rows (`SD Format`, `Information`) have no options to
+     * fetch and are served from the primary listing alone.
      */
     private suspend fun readMenu(
         session: CameraSession,
         workmode: String,
         nameCache: MutableMap<String, List<String>>,
     ): List<CameraSetting> {
+        val cacheKey = "${session.host}|$workmode"
+        menuRows[cacheKey]?.let { cached ->
+            Diag.d(LogTag.PROTO) { "menu \"$workmode\" served from cache (n=${cached.size})" }
+            return cached
+        }
         val base = cgi(session.host, session.port)
         val wp = param(workmode)
         val primary = HiMenu.parsePrimaryItems(http.getText("$base/getprimarymenuitem.cgi?-workmode=$wp"))
@@ -705,32 +814,57 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             "menu primary items=${primary.size} workmode=$workmode " +
                 "names=${primary.take(6).joinToString(",") { it.name }}"
         }
-        val out = primary.mapNotNull { row ->
-            val second = HiMenu.parseSecondary(
-                row.name,
-                http.getText("$base/getsecondmenuitem.cgi?-workmode=$wp&-name=${param(row.name)}"),
-            )
-            if (second == null) {
-                // The camera answered `SvrFuncResult="-2222"`. Listing such an
-                // item gives the user a dead row that cannot be read or written —
-                // unless the primary listing already said it has no value, which is
-                // what an action row looks like from here.
-                if (!row.isAction) {
-                    Diag.w(LogTag.PARSE) { "menu item \"${row.name}\" rejected by the camera — dropped" }
-                    return@mapNotNull null
+        var optionFailures = 0
+        val out = primary.map { row ->
+            if (row.isAction) {
+                CameraSetting(id = row.name, title = row.name, value = "")
+            } else {
+                val second = HiMenu.parseSecondary(
+                    row.name,
+                    http.getText("$base/getsecondmenuitem.cgi?-workmode=$wp&-name=${param(row.name)}"),
+                )
+                if (second == null) {
+                    optionFailures++
+                    Diag.d(LogTag.PARSE) {
+                        "menu item \"${row.name}\" has no readable options — kept with its primary value"
+                    }
+                    CameraSetting(id = row.name, title = row.name, value = row.value)
+                } else {
+                    // Prefer the item's own answer; the primary list is positional and
+                    // can be off by one when a name or a value contains a comma.
+                    CameraSetting(
+                        id = row.name,
+                        title = row.name,
+                        value = second.value.ifEmpty { row.value },
+                        options = second.options,
+                    )
                 }
-                Diag.d(LogTag.PARSE) { "menu row \"${row.name}\" is an action (no value) — listed as a button" }
-                return@mapNotNull CameraSetting(id = row.name, title = row.name, value = "")
             }
-            // Prefer the item's own answer; the primary list is positional and
-            // can be off by one when a name or a value contains a comma.
-            val value = second.value.ifEmpty { row.value }
-            Diag.v(LogTag.PARSE) { "menu item \"${row.name}\" options=${second.options.size} cur=$value" }
-            CameraSetting(id = row.name, title = row.name, value = value, options = second.options)
         }
         nameCache[session.host] = out.map { it.id }
-        Diag.i(LogTag.PROTO) { "menu read ${out.size}/${primary.size} items for \"$workmode\"" }
+        if (out.isNotEmpty()) {
+            // A walk where nothing answered is not worth caching: the next call should
+            // get a real chance to read the menu rather than replay the failure.
+            if (optionFailures < out.size) menuRows[cacheKey] = out
+            Diag.i(LogTag.PROTO) {
+                "menu read ${out.size}/${primary.size} items for \"$workmode\"" +
+                    if (optionFailures > 0) " ($optionFailures without options)" else ""
+            }
+        }
         return out
+    }
+
+    /** Completed menu walks, keyed `host|workmode`; dropped when the mode changes. */
+    private val menuRows = mutableMapOf<String, List<CameraSetting>>()
+
+    /**
+     * Forget this host's cached walks. Which items exist, and what their options are,
+     * is a property of the work mode, so a mode switch makes every cached menu wrong.
+     */
+    private suspend fun forgetMenuRows(host: String) {
+        val before = menuRows.size
+        menuRows.keys.retainAll { !it.startsWith("$host|") }
+        if (before != menuRows.size) Diag.d(LogTag.PROTO) { "menu cache for $host dropped (${before - menuRows.size} walk(s))" }
     }
 
     /** The menu item names the last successful [getSettings] returned, per host. */
@@ -869,7 +1003,16 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
                     val files = arr.mapNotNull { el ->
                         val o = el.jsonObject
                         val path = o["path"]?.jsonPrimitive?.content ?: return@mapNotNull null
-                        buildFile(host, path, o["size"]?.jsonPrimitive?.longOrNull ?: 0L, o["create"]?.jsonPrimitive?.content)
+                        buildFile(
+                            host, path,
+                            // **Read `content`, not `longOrNull`.** This firmware quotes
+                            // the number — `"size":"2466285070"` in the 2026-09-22 log —
+                            // and a quoted primitive has no numeric accessor, so the old
+                            // call gave every clip a size of 0 while the card's 4 GB
+                            // files were plainly listed.
+                            o["size"]?.jsonPrimitive?.content?.toLongOrNull() ?: 0L,
+                            o["create"]?.jsonPrimitive?.content,
+                        )
                     }
                     Diag.d(LogTag.PARSE) {
                         "list via json: ${arr.size} entries, ${files.size} usable " +

@@ -31,7 +31,36 @@ private class AndroidWifiController : WifiController {
     @Volatile private var callback: ConnectivityManager.NetworkCallback? = null
     @Volatile private var legacyNetId: Int = -1
 
-    override val isConnectedToCamera: Boolean get() = boundNetwork != null || legacyNetId != -1
+    /**
+     * Whether we still have a live camera network to send sockets through.
+     *
+     * This validates rather than recalls. The second attempt of the 2026-09-22 field
+     * test logged `CONNECT begin ... already_bound=true` after the hotspot had already
+     * gone: a remembered `Network` handle says "we once bound", not "traffic still
+     * reaches the camera", and acting on that skipped both the join and the adopt —
+     * leaving every socket on the default network, which is exactly the failure the
+     * adopt path exists to prevent. Stale handles are cleared here so the next caller
+     * takes the honest path.
+     */
+    override val isConnectedToCamera: Boolean
+        get() {
+            if (legacyNetId != -1) return true
+            val n = boundNetwork ?: return false
+            if (isLiveWifiNetwork(n)) return true
+            Diag.warn(LogTag.WIFI, "bound network handle is stale (was adopted=${adoptedNetwork != null}) — clearing and reporting not connected")
+            boundNetwork = null
+            adoptedNetwork = null
+            linkProps = null
+            runCatching { cm.bindProcessToNetwork(null) }
+            return false
+        }
+
+    private fun isLiveWifiNetwork(n: Network): Boolean = runCatching {
+        val caps = cm.getNetworkCapabilities(n) ?: return@runCatching false
+        caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) &&
+            !caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN) &&
+            (cm.allNetworks?.contains(n) == true)
+    }.getOrDefault(false)
 
     /**
      * The network we adopted (as opposed to one we requested via specifier). Kept
@@ -57,7 +86,7 @@ private class AndroidWifiController : WifiController {
     private fun gatewayInternal(): String? {
         // 1. Link properties captured when we joined the camera network ourselves.
         linkProps?.let { lp ->
-            lp.routes?.firstOrNull { it.isDefaultRoute }?.gateway?.hostAddress?.let { return it }
+            defaultGatewayOf(lp)?.let { return it }
             lp.linkAddresses?.firstOrNull()?.address?.hostAddress?.let { addr ->
                 return addr.substringBeforeLast('.') + ".1"
             }
@@ -66,12 +95,24 @@ private class AndroidWifiController : WifiController {
         //    link properties directly (works without our own requestNetwork).
         val active = boundNetwork ?: cm.activeNetwork ?: return null
         return runCatching {
-            val lp = cm.getLinkProperties(active) ?: return null
-            lp.routes?.firstOrNull { it.isDefaultRoute }?.gateway?.hostAddress
-                ?: lp.linkAddresses?.firstOrNull()?.address?.hostAddress
-                    ?.substringBeforeLast('.')?.plus(".1")
+            cm.getLinkProperties(active)?.let { defaultGatewayOf(it) }
         }.getOrNull()
     }
+
+    /**
+     * The camera's address on [lp]: the IPv4 default-route gateway.
+     *
+     * The 2026-09-22 log shows why the family matters — that AP publishes three
+     * default routes, `::`, `0.0.0.0` and `192.168.0.1`, and taking "the first one"
+     * returned the IPv6 `::`. XTU survives that only because its plugin hard-codes
+     * 192.168.0.1; a brand without a fixed host would fall through to the eight-address
+     * probe walk and read as "camera not found".
+     */
+    private fun defaultGatewayOf(lp: LinkProperties): String? =
+        lp.routes
+            ?.mapNotNull { if (it.isDefaultRoute) it.gateway?.hostAddress else null }
+            ?.firstOrNull { !it.contains(':') }
+            ?: lp.routes?.firstOrNull { it.isDefaultRoute }?.gateway?.hostAddress
 
     override suspend fun connect(ssid: String, password: String?): WifiResult {
         Diag.info(LogTag.WIFI, "join request ssid=$ssid pass=${password?.length ?: 0}ch api=${Build.VERSION.SDK_INT} modern=${Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q}")
@@ -92,7 +133,7 @@ private class AndroidWifiController : WifiController {
             .build()
 
         val t0 = Diag.uptimeMillis()
-        val result = withTimeoutOrNull(25_000) {
+        val result = withTimeoutOrNull(JOIN_BUDGET_MS) {
             suspendCancellableCoroutine { cont ->
                 val cb = object : ConnectivityManager.NetworkCallback() {
                     override fun onAvailable(network: Network) {
@@ -125,10 +166,17 @@ private class AndroidWifiController : WifiController {
                         }
                     }
                     override fun onUnavailable() {
-                        Diag.error(LogTag.WIFI, "requestNetwork reported UNAVAILABLE after ${Diag.uptimeMillis() - t0}ms (wrong password, or the AP vanished)")
+                        Diag.error(LogTag.WIFI, "requestNetwork reported UNAVAILABLE after ${Diag.uptimeMillis() - t0}ms (wrong password, the AP vanished, or the user dismissed the system prompt)")
                         runCatching { cm.unregisterNetworkCallback(this) }
                         if (cont.isActive) cont.resume(WifiResult.Failed("Camera network unavailable"))
                     }
+                    // There is deliberately no `onRejected` hook here: Android 16 (API 36)
+                    // is where `NetworkCallback.onRejected()` exists — verified against
+                    // android-35's `android.jar`, which has only onAvailable/onLost/
+                    // onUnavailable/onCapabilities… — and this module compiles against 36
+                    // would break CI's android job. A dismissed prompt therefore surfaces
+                    // as the join budget expiring, which [JOIN_BUDGET_MS] + the adopt
+                    // fallback below handle honestly.
                 }
                 callback = cb
                 try {
@@ -144,7 +192,21 @@ private class AndroidWifiController : WifiController {
             }
         }
         return result ?: run {
-            Diag.error(LogTag.WIFI, "join $ssid timed out after ${Diag.uptimeMillis() - t0}ms")
+            // The system picker can outlive our budget: a user who takes a moment to
+            // notice it may well join while we are giving up. Checking the SSID before
+            // reporting failure turns that into a working session (the adopt path binds
+            // the sockets just as well as the specifier join would) instead of a red
+            // error on a phone that is already sitting on the camera's hotspot.
+            val joined = currentCameraSsid()
+            if (joined == ssid) {
+                Diag.warn(LogTag.WIFI, "join budget ran out but the phone is on $joined — adopting instead of failing")
+                // Drop the specifier request first: leaving it registered would let a
+                // late system dialog bind sockets we are about to bind ourselves.
+                runCatching { callback?.let { cm.unregisterNetworkCallback(it) } }
+                callback = null
+                return adoptCurrentNetwork(force = true)
+            }
+            Diag.error(LogTag.WIFI, "join $ssid timed out after ${Diag.uptimeMillis() - t0}ms (still on ${joined ?: "no Wi-Fi"})")
             disconnect()
             WifiResult.Failed("Timed out joining $ssid")
         }
@@ -240,18 +302,42 @@ private class AndroidWifiController : WifiController {
         runCatching { cm.bindProcessToNetwork(target) }
             .onFailure { Diag.error(LogTag.WIFI, "adopt bindProcessToNetwork threw ${Diag.causeChain(it)}") }
         linkProps = runCatching { cm.getLinkProperties(target) }.getOrNull()
+        // One watch at a time: adopting twice used to leave two callbacks alive, and
+        // disconnect() only unregistered the last one — the orphan later fired
+        // `bindProcessToNetwork(null)` over a session that had since re-bound.
+        adoptWatch?.let { stale ->
+            runCatching { cm.unregisterNetworkCallback(stale) }
+            Diag.debug(LogTag.WIFI, "adopt replaced a previous watch")
+        }
+        adoptWatch = null
         // If the user walks off this network we must stop routing through it,
-        // otherwise every socket dies with the tunnel that replaced it.
+        // otherwise every socket dies with the tunnel that replaced it. The target is
+        // captured below rather than read back from `adoptedNetwork`, which
+        // disconnect() clears — a guard on that field made the unbind unreachable.
         runCatching {
             val cb = object : ConnectivityManager.NetworkCallback() {
                 override fun onLost(network: Network) {
-                    if (network != adoptedNetwork) return
+                    if (network != target) return
                     Diag.warn(LogTag.WIFI, "adopted Wi-Fi network LOST — unbinding process")
-                    adoptedNetwork = null
-                    if (boundNetwork === network) boundNetwork = null
+                    if (adoptedNetwork === target) adoptedNetwork = null
+                    if (boundNetwork === target) boundNetwork = null
+                    linkProps = null
                     runCatching { cm.bindProcessToNetwork(null) }
                     runCatching { cm.unregisterNetworkCallback(this) }
-                    adoptWatch = null
+                    if (adoptWatch === this) adoptWatch = null
+                }
+
+                override fun onCapabilitiesChanged(network: Network, caps: NetworkCapabilities) {
+                    if (network != target) return
+                    // DHCP can hand out a new address long after we joined; gateway()
+                    // and the fixed-host fallback are the only ways we find the camera,
+                    // so keep the properties current instead of serving the join-time
+                    // snapshot until the network is lost.
+                    cm.getLinkProperties(network)?.let { linkProps = it }
+                }
+
+                override fun onLinkPropertiesChanged(network: Network, lp: LinkProperties) {
+                    if (network == target) linkProps = lp
                 }
             }
             cm.registerNetworkCallback(
@@ -371,6 +457,14 @@ private class AndroidWifiScanner : WifiScanner {
         private const val MIN_SCAN_REQUEST_INTERVAL_MS = 15_000L
     }
 }
+
+/**
+ * How long a specifier join may take. Android shows its own picker for this and
+ * never tells us the user is still looking at it, so the budget has to outlast a
+ * slow tap — the field test that prompted this timed out at 25 s while the hotspot
+ * was already joined, and reported a failure for a connection that had succeeded.
+ */
+private const val JOIN_BUDGET_MS = 60_000L
 
 actual fun createWifiController(): WifiController = AndroidWifiController()
 actual fun createWifiScanner(): WifiScanner = AndroidWifiScanner()
