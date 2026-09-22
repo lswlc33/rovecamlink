@@ -107,15 +107,23 @@ fun Application.simulatorModule() {
     }
 }
 
+/** The firmware's own work state for the situation the fake is in: 20 working, 21 standby. */
+private fun workState(): String = if (recording) "20" else "21"
+
 private fun handleCgi(cmd: String, q: io.ktor.http.Parameters): String? = when (cmd) {
     "getdeviceattr" -> varargBody(
         "model" to "X7Pro", "name" to "XTU X7 Pro (Sim)", "serialnum" to "SIM0000001",
         "softversion" to softVersion, "hardversion" to "NewAPP", "type" to "117",
         "region" to "G", "pcbrevision" to "V1.0",
     )
-    "getcamerastatus" -> varargBody("count" to files.size.toString(), "status" to if (recording) "20" else "1")
+    "getcamerastatus" -> varargBody("count" to files.size.toString(), "status" to workState())
+    // The two codes the firmware actually answers: 20 = working (recording, or
+    // mid-capture), 21 = standby. This used to answer 0 / 3, and `getStatus` reads
+    // `state` first and only falls back to `getcamerastatus` when it is absent — so the
+    // app could never observe a recording at all, and the live page's record state was
+    // untestable without a real camera.
     "getcurallinfo", "getallinfo" -> varargBody(
-        "mode" to workMode, "state" to if (recording) "0" else "3", "event" to "0",
+        "mode" to workMode, "state" to workState(), "event" to "0",
         "pasttime" to if (recording) "12" else "0",
     )
     "getbatterycapacity" -> varargBody("capacity" to "82", "charge" to "0", "ac" to "0")
