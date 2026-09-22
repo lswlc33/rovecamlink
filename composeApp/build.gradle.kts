@@ -124,7 +124,8 @@ android {
         listOf(signingStoreFile, signingStorePassword, signingKeyAlias, signingKeyPassword)
             .all { it != null }
     if (hasSharedSigningKey) {
-        println("RoveCamLink: debug 与 release 共用签名密钥 $signingStoreFile")
+        // ASCII on purpose: a Windows console renders Chinese Gradle log lines as mojibake.
+        println("RoveCamLink: signing debug + release with the shared key $signingStoreFile")
     }
 
     signingConfigs {
