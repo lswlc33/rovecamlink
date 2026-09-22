@@ -16,7 +16,6 @@ import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
-import io.ktor.client.statement.readBytes
 import io.ktor.http.ContentType
 import io.ktor.http.contentLength
 import io.ktor.http.contentType
@@ -41,6 +40,12 @@ import okio.use
  * before any call here, so CIO sockets transparently route to the device even
  * though it has no internet. Camera hosts are always literal IPs, so DNS is
  * never involved.
+ *
+ * **A camera gets one request at a time.** Everything a plugin sends here goes
+ * through a [CameraLane] keyed by `host:port`, ordered by the [CameraRequestClass] in
+ * the caller's context, and throttled while the device is refusing connections — see
+ * [CameraLane] for the field measurement that forced this. Media transfers run in a
+ * separate bulk slot so a multi-gigabyte clip cannot starve the shutter.
  *
  * **Every exchange is logged** (see [Diag]): method, full URL with secret-looking
  * query values masked, status, duration, response headers, a capped body preview,
@@ -113,16 +118,33 @@ class CameraHttp(
      * the original 48 MB photo would otherwise be buffered whole, decoded whole, and
      * the process killed for it — with the heap this app measured on the test phone,
      * one such frame is most of the allowance.
+     *
+     * The body is read in a bounded loop rather than with `resp.readBytes(maxBytes)`,
+     * because that call allocates the whole `maxBytes` up front and treats a **shorter**
+     * body as an error. With the default 1 MiB cap that failed every thumbnail on a real
+     * 6–28 KB `.THM` — the gallery's cells were blank against a camera that was serving
+     * its previews normally. [readCapped] and the desktop test
+     * `thumbnailsComeBackIntactAndOversizedBodiesAreRefused` pin that down.
      */
     suspend fun getBytes(url: String, maxBytes: Int = MAX_SMALL_BODY): ByteArray? =
         exchange("GET", url, note = "cap=${maxBytes}B") { call ->
             try {
                 val resp = client.get { url(url) }
-                val bytes = resp.readBytes(maxBytes)
                 val ok = resp.status.isSuccess()
+                val declared = resp.contentLength()
+                if (declared != null && declared > maxBytes) {
+                    call.reply(resp, 0, null, note = "refused: body ${declared}B over cap ${maxBytes}B")
+                    return@exchange null
+                }
+                val bytes = readCapped(resp.bodyAsChannel(), maxBytes)
                 call.reply(
-                    resp, bytes.size,
-                    bodyPreview = if (ok) null else bytes.decodeToString(0, minOf(bytes.size, 512), throwOnInvalidSequence = false),
+                    resp, bytes?.size ?: 0,
+                    bodyPreview = if (ok || bytes == null) {
+                        null
+                    } else {
+                        bytes.decodeToString(0, minOf(bytes.size, 512), throwOnInvalidSequence = false)
+                    },
+                    note = if (bytes == null) "over cap ${maxBytes}B" else "",
                 )
                 if (ok) bytes else null
             } catch (t: Throwable) {
@@ -182,7 +204,14 @@ class CameraHttp(
         destination: Path,
         alreadyHaveBytes: Long = 0,
         onProgress: (Float) -> Unit = {},
-    ): Long = exchange("GET", url, note = "to=${destination.name} resume=$alreadyHaveBytes") { call ->
+    ): Long = exchange(
+        "GET", url,
+        note = "to=${destination.name} resume=$alreadyHaveBytes",
+        // Media gets the bulk slot: it is the one request that is allowed to hold the
+        // camera for minutes, so it must never sit in — or occupy — the command lane.
+        bulk = true,
+        noAnswer = -1L,
+    ) { call ->
         withContext(Dispatchers.Default) {
             var written = alreadyHaveBytes
             var expectedTotal = -1L
@@ -260,24 +289,49 @@ class CameraHttp(
 
     // ---------- exchange plumbing ----------
 
+    /** Per-target request lanes; see [CameraLanes] for why the key is `host:port`. */
+    private val lanes = CameraLanes()
+
     /**
-     * Wrap one logical exchange: run [block] with a [Call] that reports how it
-     * ended, and shout if it is still hanging after [PENDING_WARN_MS].
+     * Run one exchange, alone against its camera.
+     *
+     * [bulk] moves it out of the command lane into the single media slot (a download
+     * legitimately holds the camera for minutes and must not delay a shutter press);
+     * [noAnswer] is what a request that the lane refused to even start reports back as
+     * — the same value the methods return for "the camera did not answer", so callers
+     * keep one failure path instead of learning about throttling.
      */
-    private suspend fun <T> exchange(method: String, url: String, note: String = "", block: suspend (Call) -> T): T =
-        coroutineScope {
-            val call = Call(method, url, note)
-            val watchdog = launch {
-                delay(PENDING_WARN_MS)
-                Diag.httpPending(method, url, call.elapsedMs())
-            }
-            try {
-                block(call)
-            } finally {
-                watchdog.cancel()
-                if (!call.finished) call.fail(null)
-            }
+    @Suppress("UNCHECKED_CAST")
+    private suspend fun <T> exchange(
+        method: String,
+        url: String,
+        note: String = "",
+        bulk: Boolean = false,
+        noAnswer: Any? = null,
+        block: suspend (Call) -> T,
+    ): T = coroutineScope {
+        val call = Call(method, url, note)
+        val watchdog = launch {
+            delay(PENDING_WARN_MS)
+            Diag.httpPending(method, url, call.elapsedMs())
         }
+        try {
+            val key = targetOf(url)
+            if (bulk) {
+                lanes.withBulk(key) { block(call) }
+            } else {
+                try {
+                    lanes.lane(key).submit(clazz = currentCameraRequest(), block = { block(call) })
+                } catch (t: CameraRefusing) {
+                    Diag.debug(LogTag.HTTP, "${LogFormat.endpointKey(url)} held back while the camera recovers")
+                    noAnswer as T
+                }
+            }
+        } finally {
+            watchdog.cancel()
+            if (!call.finished) call.fail(null)
+        }
+    }
 
     private inner class Call(private val method: String, private val url: String, private val note: String) {
         private val t0 = monotonicMillis()
@@ -335,6 +389,38 @@ class CameraHttp(
             .joinToString("; ") { (name, values) -> "$name=${values.joinToString(",")}" }
             .take(200)
     }.getOrDefault("")
+
+    /**
+     * Read a response body into memory, refusing it once it exceeds [maxBytes].
+     *
+     * Grows the buffer instead of allocating the cap up front: the cap exists to
+     * protect against a 48 MB original arriving where a 20 KB preview was expected, and
+     * pre-allocating it would defeat the point on the low-heap phone this runs on.
+     * Returns null when the body turns out to be bigger than [maxBytes].
+     */
+    private suspend fun readCapped(channel: ByteReadChannel, maxBytes: Int): ByteArray? {
+        // One byte of headroom over the cap is what lets the loop *notice* an
+        // oversized body rather than just stop reading it.
+        val limit = maxBytes + 1
+        var out = ByteArray(minOf(limit, 64 * 1024).coerceAtLeast(1024))
+        var size = 0
+        while (true) {
+            if (size == out.size) {
+                if (size >= limit) break
+                out = out.copyOf(minOf(out.size * 2, limit))
+            }
+            val read = channel.readAvailable(out, size, out.size - size)
+            if (read < 0) break
+            if (read == 0) {
+                // Nothing buffered *yet* — suspend until more arrives or the channel
+                // closes; only -1 from readAvailable means EOF.
+                channel.awaitContent()
+                continue
+            }
+            size += read
+        }
+        return if (size > maxBytes) null else out.copyOf(size)
+    }
 
     private fun rate(bytes: Long, startedMono: Long): Long {
         val ms = (monotonicMillis() - startedMono).coerceAtLeast(1L)

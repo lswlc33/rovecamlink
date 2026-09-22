@@ -20,6 +20,9 @@ import com.rovecamlink.app.core.model.ModeTrigger
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.WorkMode
 import com.rovecamlink.app.core.model.workMode
+import com.rovecamlink.app.core.transport.CameraRequest
+import com.rovecamlink.app.core.transport.CameraRequestClass
+import com.rovecamlink.app.core.transport.withCameraRequest
 import com.rovecamlink.app.core.nearby.NearbyController
 import com.rovecamlink.app.core.ota.OtaCoordinator
 import com.rovecamlink.app.core.ota.OtaState
@@ -165,8 +168,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     val thumbnails = mutableStateMapOf<String, ImageBitmap?>()
     private val thumbsInFlight = mutableSetOf<String>()
 
-    /** Files whose thumbnail already failed once, so we stop retrying per refresh. */
-    private val thumbFailed = mutableSetOf<String>()
+    /**
+     * When a file's thumbnail last failed, by name. A failed fetch is retried after
+     * [THUMB_RETRY_AFTER_MS] rather than dropped for the session: the 2026-09-22 log
+     * shows every `.THM` refused because the camera was briefly overwhelmed, and a
+     * permanent mark turned that into a gallery of blank cells that never came back.
+     */
+    private val thumbFailedAt = mutableMapOf<String, Long>()
 
     /**
      * Insertion order of [thumbnails], so eviction drops what the user has scrolled
@@ -678,7 +686,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         thumbnails.clear()
         thumbSeen.clear()
         thumbsInFlight.clear()
-        thumbFailed.clear()
+        thumbFailedAt.clear()
         downloads.clear()
         busy.clear()
         goPhase(Phase.Idle)
@@ -697,7 +705,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             Diag.i(LogTag.STATE) { "poll loop started (every ${POLL_INTERVAL_MS}ms, gives up after $POLL_FAILURES_BEFORE_LOST failures)" }
             while (true) {
                 val t0 = Diag.uptimeMillis()
-                runCatching { proto.getStatus(s) }
+                // Status polls are bookkeeping, but they must not queue behind a menu
+                // walk: the lane lets them over Enumerate so "is the camera still
+                // here" is answered promptly even while the gallery is filling in.
+                runCatching { withCameraRequest(CameraRequestClass.Status) { proto.getStatus(s) } }
                     .onSuccess {
                         if (consecutivePollFailures > 0) {
                             Diag.i(LogTag.STATE) { "poll recovered after $consecutivePollFailures failure(s)" }
@@ -853,7 +864,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     }
 
     fun loadDeviceSettings() = runOp(Op.Settings) { proto, s ->
-        val listed = proto.getDeviceSettings(s)
+        val listed = withCameraRequest(CameraRequestClass.Enumerate) { proto.getDeviceSettings(s) }
         deviceSettings = listed
         Diag.i(LogTag.PROTO) { "device settings loaded n=${listed.size} ids=${listed.joinToString(",") { it.id }.take(240)}" }
         CmdResult.Ok
@@ -873,7 +884,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     }
 
     fun loadSettings() = runOp(Op.Settings) { proto, s ->
-        settings = proto.getSettings(s)
+        // A menu walk is one request per row, so it rides the bookkeeping queue: the
+        // shutter and the health poll outrank it, and the lane drops it outright while
+        // the camera is refusing.
+        settings = withCameraRequest(CameraRequestClass.Enumerate) { proto.getSettings(s) }
         Diag.i(LogTag.PROTO) { "settings loaded n=${settings.size} ids=${settings.joinToString(",") { it.id }.take(240)}" }
         CmdResult.Ok
     }
@@ -903,7 +917,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     /** Re-read the settings menu, which is a function of the camera's work mode. */
     private suspend fun reloadSettingsForMode(proto: CameraProtocol, s: CameraSession) {
-        runCatching { proto.getSettings(s) }
+        runCatching { withCameraRequest(CameraRequestClass.Enumerate) { proto.getSettings(s) } }
             .onSuccess { loaded ->
                 settings = loaded
                 Diag.i(LogTag.PROTO) { "settings re-read after mode change: n=${loaded.size}" }
@@ -919,7 +933,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val present = listed.mapTo(mutableSetOf()) { it.name }
         val gone = files.map { it.name }.filterNotTo(mutableSetOf()) { present.contains(it) }
         thumbnails.keys.retainAll(present)
-        thumbFailed.retainAll(present)
+        thumbFailedAt.keys.retainAll(present)
         thumbSeen.retainAll(present)
         files = listed
         Diag.i(LogTag.FILE) {
@@ -945,7 +959,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val proto = protocol ?: return
         val s = session ?: return
         val owner = sessionScope ?: return
-        if (thumbnails.containsKey(file.name) || thumbFailed.contains(file.name)) return
+        val failedAt = thumbFailedAt[file.name] ?: 0L
+        if (thumbnails.containsKey(file.name) || Diag.uptimeMillis() - failedAt < THUMB_RETRY_AFTER_MS) return
         if (thumbsInFlight.size >= MAX_THUMBS_IN_FLIGHT) {
             Diag.debug(
                 LogTag.FILE,
@@ -964,7 +979,12 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         if (!thumbsInFlight.add(file.name)) return
         owner.launch {
             try {
-                val bytes = runCatching { proto.thumbnail(s, file) }.getOrNull()
+                // Thumbnails are the most optional traffic in the app, so they ride the
+                // queue the camera gets to breathe on: below the poll, below the
+                // shutter, and dropped outright while the lane is cooling down.
+                val bytes = runCatching {
+                    withCameraRequest(CameraRequestClass.Enumerate) { proto.thumbnail(s, file) }
+                }.getOrNull()
                 val bitmap = bytes?.let {
                     withContext(Dispatchers.Default) {
                         runCatching { it.decodeToImageBitmap() }
@@ -989,7 +1009,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     Diag.d(LogTag.FILE) { "thumb unavailable ${file.name} (bytes=${bytes?.size ?: "null"})" }
                     // Don't cache a permanent null: a transient hotspot failure would
                     // otherwise blank this thumbnail for the rest of the session.
-                    thumbFailed.add(file.name)
+                    thumbFailedAt[file.name] = Diag.uptimeMillis()
                 }
             } finally {
                 thumbsInFlight.remove(file.name)
@@ -1041,7 +1061,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         if (r.isOk) {
             files = files.filterNot { it.name == file.name }
             thumbnails.remove(file.name)
-            thumbFailed.remove(file.name)
+            thumbFailedAt.remove(file.name)
             thumbSeen.remove(file.name)
         }
         r
@@ -1059,7 +1079,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         for (f in list) {
             if (!proto.deleteFile(s, f).isOk) failed++
             thumbnails.remove(f.name)
-            thumbFailed.remove(f.name)
+            thumbFailedAt.remove(f.name)
             thumbSeen.remove(f.name)
         }
         val removed = list.mapTo(mutableSetOf()) { it.name }
@@ -1096,7 +1116,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             // repull so the UI shows the (empty) card instead of stale files.
             thumbnails.clear()
             thumbSeen.clear()
-            thumbFailed.clear()
+            thumbFailedAt.clear()
             files = proto.listFiles(s, 0, LISTING_PAGE)
             runCatching { deviceStatus = proto.getStatus(s) }
             Diag.i(LogTag.FILE) { "format done, listing now ${files.size} files" }
@@ -1313,8 +1333,22 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 Diag.at(LogLevel.WARN, LogTag.APP, "SKIP $op: no live session (phase=${phase.name})")
                 return@launch
             }
-            withContext(OpContext("c${Diag.nextId()}:${op.name.lowercase()}")) { runOperation(op, proto, s, block) }
+            withContext(OpContext("c${Diag.nextId()}:${op.name.lowercase()}") + CameraRequest(op.requestClass())) {
+                runOperation(op, proto, s, block)
+            }
         }
+
+    /**
+     * Which queue this operation's camera requests ride.
+     *
+     * Everything the user pressed is a [CameraRequestClass.Command] — the shutter must
+     * never wait behind a menu walk. Listing and device-info reads are bookkeeping and
+     * yield to both the shutter and the health poll.
+     */
+    private fun Op.requestClass(): CameraRequestClass = when (this) {
+        Op.Refresh, Op.DeviceInfo -> CameraRequestClass.Enumerate
+        else -> CameraRequestClass.Command
+    }
 
     private suspend fun runOperation(
         op: Op,
@@ -1369,11 +1403,19 @@ private const val POLL_INTERVAL_MS = 1_500L
 private const val MAX_CACHED_THUMBNAILS = 24
 
 /**
- * Preview fetches allowed at the same moment. One hotspot serves the status poll,
- * the live view and this list, and the 2026-09-21 session showed ten thumbnail GETs
- * firing inside a 110 ms window — the same card with 200 files would have fired 200.
+ * Preview fetches allowed at the same moment. One hotspot serves the status poll, the
+ * live view and this list; the requests themselves are now serialised by the transport
+ * lane, so this cap is about how many decodes the phone holds at once rather than how
+ * many sockets the camera sees. Two is enough to keep the strip moving.
  */
-private const val MAX_THUMBS_IN_FLIGHT = 4
+private const val MAX_THUMBS_IN_FLIGHT = 2
 
 /** How long a thumbnail turned away by the cap waits before asking again. */
 private const val THUMB_RETRY_MS = 400L
+
+/**
+ * How long a failed thumbnail waits before it is worth asking again. Long enough for
+ * the lane's cooldown to end, short enough that a gallery fills in by itself instead
+ * of staying blank because one request lost a race.
+ */
+private const val THUMB_RETRY_AFTER_MS = 10_000L
