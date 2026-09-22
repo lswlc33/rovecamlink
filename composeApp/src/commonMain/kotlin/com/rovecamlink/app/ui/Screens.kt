@@ -2,13 +2,24 @@
 
 package com.rovecamlink.app.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -35,11 +46,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -136,6 +149,7 @@ import com.rovecamlink.app.file_type_video
 import com.rovecamlink.app.files_none_refresh
 import com.rovecamlink.app.firmware_unsupported
 import com.rovecamlink.app.hint_batch_delete_many
+import com.rovecamlink.app.hint_locked_adjust
 import com.rovecamlink.app.hint_locked_capture
 import com.rovecamlink.app.hint_locked_mode
 import com.rovecamlink.app.hint_new_password
@@ -152,7 +166,6 @@ import com.rovecamlink.app.label_files
 import com.rovecamlink.app.label_firmware
 import com.rovecamlink.app.label_free
 import com.rovecamlink.app.label_hardware
-import com.rovecamlink.app.label_hint
 import com.rovecamlink.app.label_host
 import com.rovecamlink.app.label_installed
 import com.rovecamlink.app.label_locked
@@ -182,6 +195,7 @@ import com.rovecamlink.app.not_connected_title
 import com.rovecamlink.app.note_wifi_restarts
 import com.rovecamlink.app.rec_busy
 import com.rovecamlink.app.rec_idle
+import com.rovecamlink.app.rec_recording
 import com.rovecamlink.app.save
 import com.rovecamlink.app.sd_error
 import com.rovecamlink.app.sd_missing
@@ -189,7 +203,6 @@ import com.rovecamlink.app.sd_ok
 import com.rovecamlink.app.sd_unknown
 import com.rovecamlink.app.section_about
 import com.rovecamlink.app.section_camera_wifi
-import com.rovecamlink.app.section_capture
 import com.rovecamlink.app.section_capture_mode
 import com.rovecamlink.app.section_danger
 import com.rovecamlink.app.section_downloads
@@ -224,6 +237,8 @@ import com.rovecamlink.app.core.model.SdCardState
 import com.rovecamlink.app.core.model.WorkMode
 import com.rovecamlink.app.core.model.groupFilesByDay
 import com.rovecamlink.app.core.ota.OtaState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 /** Section rows follow the library's own minimum row height. */
@@ -329,15 +344,33 @@ private fun LazySectionScope.groupHeader(text: String) {
 // ============================ Live ============================
 
 /**
- * The live view, the shooting-mode strip and the shutter.
+ * The live view: the picture pinned to the top, the camera's controls under it, and a
+ * shutter floating over both.
  *
- * The preview picture rotates with how the phone is held (item 10) — the picture
+ * Four things the 2026-09-22 field page asked for, and what each one cost:
+ *
+ * **The picture does not scroll away.** It used to be the first row of the same list as
+ * every control, so one swipe down to reach 白平衡 took the framing with it. The preview
+ * now sits *outside* the scrolling column, and only the controls move.
+ *
+ * **The shutter is always under the thumb.** It used to be a full-width button at the
+ * bottom of a list you had to find first. It is now a floating button that stays in the
+ * corner while the panel scrolls, and it changes *shape* — a disc to start, a square to
+ * stop — instead of changing its label.
+ *
+ * **Quick adjust has more than exposure in it.** ISO, 快门速度 and the picture-style rows
+ * are bars too, and the short menu items (防抖、测光、白平衡、画质、滤镜) are tappable chip
+ * rows. They used to disappear wholesale while the camera was recording; now they grey
+ * out and say why, which is the rule every other disabled control in this app follows.
+ *
+ * **None of the above is a list this app keeps.** `getallworkmode.cgi` decides which
+ * modes exist and `getprimarymenuitem.cgi` decides which items the current mode has; the
+ * ids named below only say which of whatever comes back is worth a row on *this* page. A
+ * camera that offers neither shows neither section.
+ *
+ * The preview picture still rotates with how the phone is held (item 10) — the picture
  * only: the app's own layout stays put, and the frame swaps 16:9 / 9:16 so a rotated
  * view fills its box instead of turning into a letterbox inside a letterbox.
- *
- * Modes come from the camera, not from a list in this app: `getallworkmode.cgi` (or
- * the modes whose menu the firmware will answer for) is what decides whether 长曝光 or
- * 延时拍照 appears at all.
  */
 @Composable
 fun LiveScreen(state: AppState) {
@@ -361,189 +394,339 @@ fun LiveScreen(state: AppState) {
     // the wrong hour. Best-effort, and silent.
     LaunchedEffect(session.host) { state.syncTime() }
 
+    val scheme = CupertinoTheme.colorScheme
     val family = current?.family ?: st?.mode?.workModeFamily() ?: ModeFamily.VIDEO
     val videoLike = family == ModeFamily.VIDEO
     val toggle = current?.trigger == ModeTrigger.TOGGLE
     val working = recording || busy
-    // One reason, whichever it is, for the shutter being unavailable — a greyed-out
-    // control with no explanation reads as a broken app rather than a busy camera.
-    val captureHint = when {
-        recording -> stringResource(Res.string.hint_locked_capture)
-        busy && !toggle -> stringResource(Res.string.rec_busy)
+    // A 定时/延时 capture is "busy" *and* waiting for a second press to end it, so the
+    // shutter has to stay live in exactly the case the old full-width button switched
+    // itself off in — which left a running timelapse with no way to stop it from here.
+    val lapseRunning = state.captureRunning
+    val commandInFlight = state.isBusy(Op.Capture) || state.isBusy(Op.Record)
+    val shutterEnabled = !commandInFlight &&
+        (videoLike || lapseRunning || (!busy && !state.needsPhotoModeForShutter()))
+    val shutterReason = when {
+        shutterEnabled -> null
         !videoLike && modes.isEmpty() -> stringResource(Res.string.hint_photo_needs_photo_mode)
-        else -> null
+        else -> stringResource(Res.string.rec_busy)
+    }
+    val shutterLabel = when {
+        videoLike && recording -> stringResource(Res.string.action_stop)
+        videoLike -> stringResource(Res.string.action_record)
+        lapseRunning -> stringResource(Res.string.action_stop_lapse)
+        toggle -> stringResource(Res.string.action_start_lapse)
+        else -> stringResource(Res.string.action_photo)
     }
 
     val statusTitle = stringResource(Res.string.section_status).sectionTitle()
     val modeTitle = stringResource(Res.string.section_capture_mode).sectionTitle()
-    val captureTitle = stringResource(Res.string.section_capture).sectionTitle()
     val batteryLbl = stringResource(Res.string.label_battery)
     val modeLbl = stringResource(Res.string.label_mode)
     val recLbl = stringResource(Res.string.label_rec)
     val sdFreeLbl = stringResource(Res.string.label_sd_free)
     val photoCountLbl = stringResource(Res.string.label_photo_count)
-    val hintLbl = stringResource(Res.string.label_hint)
     val lockedLbl = stringResource(Res.string.label_locked)
     val rotateLbl = stringResource(Res.string.hint_rotate_picture)
     val lockedModeMsg = stringResource(Res.string.hint_locked_mode)
-    val photoModeHint = stringResource(Res.string.hint_photo_needs_photo_mode)
     val recBusyLbl = stringResource(Res.string.rec_busy)
-    val startLapseLbl = stringResource(Res.string.action_start_lapse)
-    val stopLapseLbl = stringResource(Res.string.action_stop_lapse)
     val quickAdjustTitle = stringResource(Res.string.section_quick_adjust).sectionTitle()
     val quickAdjustHint = stringResource(Res.string.hint_quick_adjust)
+    val adjustLockedMsg = stringResource(Res.string.hint_locked_adjust)
 
-    LazyColumn(Modifier.fillMaxSize()) {
-        item {
-            // 12.dp of the outer padding is the only margin here: the video box used
-            // to sit inside a full-width Box that added its own inset, which is the
-            // "异常边距" the report called out.
-            Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)) {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(if (orientation.isLandscapeFrame) 9f / 16f else 16f / 9f)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.Black),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CameraPreviewFrame(
-                        previewUrl,
-                        Modifier.fillMaxSize(),
-                        orientation.degrees,
-                        swap = orientation.isLandscapeFrame,
-                    )
-                }
-                Row(
-                    Modifier.fillMaxWidth().padding(top = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    CupertinoSwitch(checked = rotating.value, onCheckedChange = { rotating.value = it })
-                    Spacer(Modifier.width(8.dp))
-                    CupertinoText(rotateLbl, fontSize = 12.sp, color = CupertinoTheme.colorScheme.secondaryLabel)
-                }
+    Box(Modifier.fillMaxSize()) {
+        Column(Modifier.fillMaxSize()) {
+            // ---- pinned: the picture, and the one switch that belongs to it ----
+            PreviewHeader(
+                url = previewUrl,
+                degrees = orientation.degrees,
+                swap = orientation.isLandscapeFrame,
+                recording = recording,
+                busy = busy,
+                recTimeSec = st?.videoTimeSec ?: 0,
+                photos = st?.photoCount,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Row(
+                Modifier.fillMaxWidth().padding(start = 14.dp, end = 14.dp, bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                CupertinoSwitch(checked = rotating.value, onCheckedChange = { rotating.value = it })
+                Spacer(Modifier.width(8.dp))
+                CupertinoText(rotateLbl, fontSize = 12.sp, color = scheme.secondaryLabel)
             }
-        }
 
-        section(title = { CupertinoText(statusTitle) }) {
-            item {
-                Row(
-                    Modifier.fillMaxWidth().padding(it).padding(vertical = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    StatTile(
-                        CupertinoIcons.Filled.Bolt,
-                        batteryLbl,
-                        st?.battery?.let { "$it%" } ?: "—",
-                        CupertinoColors.systemGreen,
-                    )
-                    StatTile(
-                        CupertinoIcons.Filled.RecordCircle,
-                        recLbl,
-                        when {
-                            recording -> formatTime(st?.videoTimeSec ?: 0)
-                            busy -> recBusyLbl
-                            else -> stringResource(Res.string.rec_idle)
-                        },
-                        when {
-                            recording -> CupertinoColors.systemRed
-                            busy -> CupertinoColors.systemOrange
-                            else -> CupertinoTheme.colorScheme.tertiaryLabel
-                        },
-                    )
-                    StatTile(
-                        CupertinoIcons.Filled.Photo,
-                        photoCountLbl,
-                        st?.photoCount?.toString() ?: "—",
-                        CupertinoTheme.colorScheme.secondaryLabel,
-                    )
-                    StatTile(
-                        CupertinoIcons.Filled.Externaldrive,
-                        sdFreeLbl,
-                        st?.sdFreeMb?.let { humanBytes(it * 1024 * 1024) } ?: "—",
-                        CupertinoTheme.colorScheme.secondaryLabel,
-                    )
-                }
-            }
-            infoRow(modeLbl, current?.let { ModeCatalog.titleOf(it.name) } ?: "—")
-        }
-
-        section(title = { CupertinoText(modeTitle) }) {
-            item {
-                ModeStrip(
-                    modes = modes,
-                    selected = current?.name,
-                    locked = working,
-                    videoLabel = stringResource(Res.string.workmode_video),
-                    photoLabel = stringResource(Res.string.workmode_photo),
-                    onSelect = { state.selectMode(it) },
-                    onSelectFamily = { state.setMode(it) },
-                )
-            }
-            val help = current?.let { ModeCatalog.helpOf(it.name) }
-            if (help != null) {
-                item {
-                    Column(Modifier.fillMaxWidth().padding(it)) {
-                        CupertinoText(help, fontSize = 11.sp, color = CupertinoTheme.colorScheme.tertiaryLabel)
-                    }
-                }
-            }
-            if (working) valueItem(lockedLbl, lockedModeMsg)
-        }
-
-        // The quick-adjust bars, straight from the current mode's own menu: whatever
-        // `Exposure` the camera offers is what the bar can write back.
-        val quickAdjust = quickAdjustIds.mapNotNull { id -> state.settings.firstOrNull { it.id == id } }
-        if (quickAdjust.isNotEmpty() && !working) {
-            section(title = { CupertinoText(quickAdjustTitle) }) {
-                quickAdjust.forEach { s ->
+            // ---- scrolling: everything else, clear of the floating shutter ----
+            LazyColumn(
+                Modifier.weight(1f).fillMaxWidth(),
+                contentPadding = PaddingValues(top = 4.dp, bottom = 118.dp),
+            ) {
+                section(title = { CupertinoText(statusTitle) }) {
                     item {
-                        QuickAdjustBar(
-                            setting = s,
-                            enabled = !state.isBusy(Op.Settings),
-                            onCommit = { value -> state.setSetting(s.id, value) },
+                        Row(
+                            Modifier.fillMaxWidth().padding(it).padding(vertical = 6.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                        ) {
+                            StatTile(
+                                CupertinoIcons.Filled.Bolt,
+                                batteryLbl,
+                                st?.battery?.let { "$it%" } ?: "—",
+                                CupertinoColors.systemGreen,
+                            )
+                            // The elapsed time lives on the picture itself now, where it
+                            // is read against the framing; this tile only says which of
+                            // the three states the camera is in.
+                            StatTile(
+                                CupertinoIcons.Filled.RecordCircle,
+                                recLbl,
+                                when {
+                                    recording -> stringResource(Res.string.rec_recording)
+                                    busy -> recBusyLbl
+                                    else -> stringResource(Res.string.rec_idle)
+                                },
+                                when {
+                                    recording -> CupertinoColors.systemRed
+                                    busy -> CupertinoColors.systemOrange
+                                    else -> scheme.tertiaryLabel
+                                },
+                            )
+                            StatTile(
+                                CupertinoIcons.Filled.Photo,
+                                photoCountLbl,
+                                st?.photoCount?.toString() ?: "—",
+                                scheme.secondaryLabel,
+                            )
+                            StatTile(
+                                CupertinoIcons.Filled.Externaldrive,
+                                sdFreeLbl,
+                                st?.sdFreeMb?.let { humanBytes(it * 1024 * 1024) } ?: "—",
+                                scheme.secondaryLabel,
+                            )
+                        }
+                    }
+                    infoRow(modeLbl, current?.let { ModeCatalog.titleOf(it.name) } ?: "—")
+                }
+
+                section(title = { CupertinoText(modeTitle) }) {
+                    item {
+                        // `padding(it)` is the whole fix for the clipped chip row: the
+                        // strip used to be dropped into the card with no inset at all, so
+                        // its last chip was cut off at the card edge while the help line
+                        // under it — which *does* apply the inset — sat 12.dp inside.
+                        ModeStrip(
+                            modes = modes,
+                            selected = current?.name,
+                            locked = working,
+                            videoLabel = stringResource(Res.string.workmode_video),
+                            photoLabel = stringResource(Res.string.workmode_photo),
+                            onSelect = { state.selectMode(it) },
+                            onSelectFamily = { state.setMode(it) },
+                            modifier = Modifier.fillMaxWidth().padding(it),
                         )
                     }
+                    val help = current?.let { ModeCatalog.helpOf(it.name) }
+                    if (help != null) {
+                        item {
+                            Column(Modifier.fillMaxWidth().padding(it)) {
+                                CupertinoText(help, fontSize = 11.sp, color = scheme.tertiaryLabel)
+                            }
+                        }
+                    }
+                    if (working) valueItem(lockedLbl, lockedModeMsg)
                 }
-                valueItem(hintLbl, quickAdjustHint)
+
+                // The quick-adjust rows, straight from the current mode's own menu: an id
+                // named below only earns a row when `getprimarymenuitem` actually sent it.
+                val bars = quickBarIds.mapNotNull { id -> state.settings.firstOrNull { it.id == id } }
+                    .filter { it.options.size >= 2 && !it.isToggle }
+                val chips = quickChoiceIds.mapNotNull { id -> state.settings.firstOrNull { it.id == id } }
+                    .filter { it.options.size >= 2 }
+                if (bars.isNotEmpty() || chips.isNotEmpty()) {
+                    section(title = { CupertinoText(quickAdjustTitle) }) {
+                        bars.forEach { s ->
+                            item {
+                                QuickAdjustBar(
+                                    setting = s,
+                                    enabled = !working && !state.isBusy(Op.Settings),
+                                    onCommit = { value -> state.setSetting(s.id, value) },
+                                )
+                            }
+                        }
+                        chips.forEach { s ->
+                            item {
+                                QuickChoiceRow(
+                                    setting = s,
+                                    enabled = !working && !state.isBusy(Op.Settings),
+                                    onCommit = { value -> state.setSetting(s.id, value) },
+                                )
+                            }
+                        }
+                        // A caption, not a 提示/value row: `valueItem` puts the label in a
+                        // weight(1f) box beside the value, and a two-line hint drew itself
+                        // on top of the word 「提示」 in the 2026-09-22 desktop capture.
+                        item {
+                            Column(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(it)
+                                    .padding(top = 2.dp, bottom = 8.dp),
+                            ) {
+                                CupertinoText(
+                                    if (working) adjustLockedMsg else quickAdjustHint,
+                                    fontSize = 11.sp,
+                                    color = scheme.tertiaryLabel,
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        section(title = { CupertinoText(captureTitle) }) {
-            item {
-                Row(
-                    Modifier.fillMaxWidth().padding(it).padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+        // ---- floating: the shutter, and the one line saying why it is off ----
+        Column(
+            Modifier.align(Alignment.BottomEnd).padding(end = 18.dp, bottom = 18.dp),
+            horizontalAlignment = Alignment.End,
+        ) {
+            shutterReason?.let {
+                Box(
+                    Modifier.padding(bottom = 10.dp)
+                        .clip(RoundedCornerShape(13.dp))
+                        .background(scheme.secondarySystemGroupedBackground)
+                        .border(1.dp, scheme.separator, RoundedCornerShape(13.dp))
+                        .padding(horizontal = 10.dp, vertical = 5.dp),
                 ) {
-                    AccentButton(
-                        label = if (videoLike) {
-                            stringResource(if (recording) Res.string.action_stop else Res.string.action_record)
-                        } else if (toggle) {
-                            stringResource(
-                                if (state.captureRunning) Res.string.action_stop_lapse else Res.string.action_start_lapse,
-                            )
-                        } else {
-                            stringResource(Res.string.action_photo)
-                        },
-                        modifier = Modifier.weight(1f),
-                        busy = state.isBusy(Op.Capture) || state.isBusy(Op.Record),
-                        enabled = !busy && (videoLike || !state.needsPhotoModeForShutter()),
-                        container = if (videoLike) CupertinoColors.systemRed else CupertinoTheme.colorScheme.accent,
-                        onClick = {
-                            if (videoLike) {
-                                state.record(!recording)
-                            } else if (toggle && state.captureRunning) {
-                                state.stopCapture()
-                            } else {
-                                state.capture()
-                            }
-                        },
+                    CupertinoText(
+                        it,
+                        fontSize = 11.sp,
+                        color = scheme.secondaryLabel,
+                        modifier = Modifier.widthIn(max = 196.dp),
                     )
                 }
             }
-            captureHint?.let { valueItem(hintLbl, it) }
+            ShutterButton(
+                stop = shutterStop(videoLike, recording, lapseRunning),
+                videoLike = videoLike,
+                enabled = shutterEnabled,
+                busy = commandInFlight,
+                label = shutterLabel,
+                onClick = {
+                    when {
+                        videoLike -> state.record(!recording)
+                        lapseRunning -> state.stopCapture()
+                        else -> state.capture()
+                    }
+                },
+            )
         }
     }
+}
+
+/** Which of the two shapes the shutter wears: a square to stop, a disc to start. */
+private fun shutterStop(videoLike: Boolean, recording: Boolean, lapseRunning: Boolean): Boolean =
+    (videoLike && recording) || lapseRunning
+
+/**
+ * The pinned preview block: the picture, a badge over it while the camera is working,
+ * and a flash of white when a photo actually lands.
+ *
+ * The box is *sized* rather than left to `aspectRatio` alone because the rotated case is
+ * tall — a 9:16 box on a phone is ~700dp, which on a pinned header would push every
+ * control off the screen. The cap keeps the picture's own proportions and leaves the
+ * panel below something to be scrolled through.
+ *
+ * The flash is keyed to the camera's own photo count rather than to the tap: a shutter
+ * that flashed on request would claim a picture the camera then refused to take.
+ */
+@Composable
+private fun PreviewHeader(
+    url: String?,
+    degrees: Float,
+    swap: Boolean,
+    recording: Boolean,
+    busy: Boolean,
+    recTimeSec: Int,
+    photos: Int?,
+    modifier: Modifier = Modifier,
+) {
+    var flashed by remember { mutableStateOf(false) }
+    var lastPhotos by remember { mutableStateOf<Int?>(null) }
+    LaunchedEffect(photos) {
+        val before = lastPhotos
+        lastPhotos = photos
+        if (before != null && photos != null && photos > before) {
+            flashed = true
+            delay(110)
+            flashed = false
+        }
+    }
+    val flashAlpha by animateFloatAsState(
+        if (flashed) 0.5f else 0f,
+        tween(if (flashed) 40 else 320),
+        label = "flash",
+    )
+
+    BoxWithConstraints(modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+        val wanted = if (swap) maxWidth * 16f / 9f else maxWidth * 9f / 16f
+        val limit = maxHeight * if (swap) 0.50f else 0.42f
+        val boxH = minOf(wanted, limit)
+        val boxW = if (swap) boxH * 9f / 16f else maxWidth
+        Box(
+            Modifier
+                .align(Alignment.Center)
+                .size(boxW, boxH)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color.Black),
+            contentAlignment = Alignment.Center,
+        ) {
+            CameraPreviewFrame(url, Modifier.fillMaxSize(), degrees, swap)
+            // Drawn over the picture, but with no input handler of its own, so it never
+            // stands between the user and the frame underneath.
+            Box(Modifier.fillMaxSize().background(Color.White.copy(alpha = flashAlpha)))
+            if (recording || busy) {
+                Row(
+                    Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.55f))
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    // The pulse lives in its own composable so that the frame loop it
+                    // needs exists only while the camera is actually recording. Left
+                    // running idle it recomposes this subtree sixty times a second
+                    // beside a video decoder, for a dot nobody is looking at.
+                    if (recording) PulsingDot() else SolidDot(CupertinoColors.systemOrange)
+                    Spacer(Modifier.width(6.dp))
+                    CupertinoText(
+                        if (recording) formatTime(recTimeSec) else stringResource(Res.string.rec_busy),
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** The record badge's dot, breathing. */
+@Composable
+private fun PulsingDot() {
+    val pulse = rememberInfiniteTransition(label = "rec")
+    val alpha by pulse.animateFloat(
+        initialValue = 0.35f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(680), RepeatMode.Reverse),
+        label = "dot",
+    )
+    SolidDot(CupertinoColors.systemRed.copy(alpha = alpha))
+}
+
+@Composable
+private fun SolidDot(color: Color) {
+    Box(Modifier.size(8.dp).clip(CircleShape).background(color))
 }
 
 /**
@@ -552,7 +735,7 @@ fun LiveScreen(state: AppState) {
  * Rotating the video layer alone is not enough: a 16:9 stream measured into the tall
  * 9:16 box the rotated frame now needs would be squashed first and turned second. So
  * the child is measured with its width and height swapped, then rotated in place —
- * which is also why [Box] above flips its own aspect ratio at the same moment.
+ * which is also why [PreviewHeader] flips its own box at the same moment.
  */
 @Composable
 private fun CameraPreviewFrame(url: String?, modifier: Modifier, degrees: Float, swap: Boolean) {
@@ -576,9 +759,94 @@ private fun CameraPreviewFrame(url: String?, modifier: Modifier, degrees: Float,
 }
 
 /**
+ * The floating shutter.
+ *
+ * One control for 录像 / 停止 / 拍照 / 停止连拍, told apart by shape rather than by the
+ * word on it: a disc with a ring to start, a small square to stop. That is the iOS
+ * Camera convention this app is already styled after, and it survives the panel
+ * scrolling under the button — a label that had to be read every frame would not.
+ *
+ * The morph is animated so the change is *seen*: a shutter that silently swaps disc for
+ * square reads as the press having done nothing at all.
+ */
+@Composable
+private fun ShutterButton(
+    stop: Boolean,
+    videoLike: Boolean,
+    enabled: Boolean,
+    busy: Boolean,
+    label: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    val scheme = CupertinoTheme.colorScheme
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val press by animateFloatAsState(if (pressed) 0.93f else 1f, tween(110), label = "press")
+    // A single-shot photo gets a squeeze of its own on top of the press: the camera
+    // answers with nothing but a card write, and 「它到底拍没拍」 is the one question a
+    // shutter has to answer. The white flash on the picture confirms the file; this
+    // confirms the press.
+    val shot = remember { Animatable(1f) }
+    val animating = rememberCoroutineScope()
+    val innerSize by animateDpAsState(if (stop) 26.dp else 46.dp, tween(200), label = "inner")
+    val innerRadius by animateDpAsState(if (stop) 7.dp else 23.dp, tween(200), label = "radius")
+    // Colour is chosen, not tweened: `animateColorAsState` is not on this app's compile
+    // classpath (it ships outside `animation.core`), and the morph that has to be *seen*
+    // is the disc becoming a square — which the two sizes above already carry. Colour
+    // only ever changes with the mode, one screen away from being noticed.
+    val innerColor = when {
+        !enabled -> scheme.quaternaryLabel
+        stop || videoLike -> CupertinoColors.systemRed
+        else -> scheme.accent
+    }
+
+    Box(
+        modifier
+            .size(74.dp)
+            .shadow(8.dp, CircleShape)
+            .clip(CircleShape)
+            .background(scheme.secondarySystemGroupedBackground)
+            .border(1.dp, scheme.separator, CircleShape)
+            .graphicsLayer {
+                scaleX = press
+                scaleY = press
+                alpha = if (enabled) 1f else 0.72f
+            }
+            .clickable(
+                interactionSource = interaction,
+                indication = null,
+                enabled = enabled,
+                onClickLabel = label,
+            ) {
+                if (!stop && !videoLike) {
+                    animating.launch {
+                        shot.animateTo(0.78f, tween(80))
+                        shot.animateTo(1f, tween(220))
+                    }
+                }
+                onClick()
+            },
+        contentAlignment = Alignment.Center,
+    ) {
+        if (busy) {
+            CupertinoActivityIndicator(size = 26.dp, color = scheme.secondaryLabel)
+        } else {
+            Box(
+                Modifier
+                    .size(innerSize)
+                    .graphicsLayer { scaleX = shot.value; scaleY = shot.value }
+                    .clip(RoundedCornerShape(innerRadius))
+                    .background(innerColor),
+            )
+        }
+    }
+}
+
+/**
  * A horizontal quick-adjust bar for one ordered camera setting — the shutter-speed
  * style control the 2026-09-22 report asked for (「曝光这些设置项，可以在实时页面底部新增
- * 一个横向 slider」).
+ * 一个横向 slider」), now one line tall so the panel can hold seven of them.
  *
  * Two rules make this safe to put next to a live view:
  *
@@ -603,30 +871,25 @@ private fun QuickAdjustBar(
     if (options.size < 2) return
     val currentIndex = options.indexOfFirst { it.value == setting.value }.coerceAtLeast(0)
     var draft by remember(setting.value, options) { mutableStateOf(currentIndex) }
-    val selectedColor = CupertinoTheme.colorScheme.accent
-    val trackColor = CupertinoTheme.colorScheme.tertiaryLabel
+    val scheme = CupertinoTheme.colorScheme
 
-    Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            CupertinoText(
-                MenuCatalog.titleOf(setting.id, setting.title),
-                fontSize = 13.sp,
-                color = CupertinoTheme.colorScheme.secondaryLabel,
-            )
-            Spacer(Modifier.weight(1f))
-            CupertinoText(
-                MenuCatalog.valueLabel(setting.id, options[draft].value),
-                fontSize = 13.sp,
-                color = CupertinoTheme.colorScheme.label,
-            )
-        }
-        Spacer(Modifier.height(6.dp))
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = 34.dp)
+            .padding(horizontal = 12.dp, vertical = 5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AdjustLabel(setting, Modifier.width(64.dp))
+        Spacer(Modifier.width(8.dp))
         Row(
             Modifier
-                .fillMaxWidth()
-                .height(26.dp)
-                .clip(RoundedCornerShape(6.dp))
-                .pointerInput(options) {
+                .weight(1f)
+                .height(22.dp)
+                .clip(RoundedCornerShape(5.dp))
+                .graphicsLayer { alpha = if (enabled) 1f else 0.4f }
+                .pointerInput(options, enabled) {
+                    if (!enabled) return@pointerInput
                     detectHorizontalDragGestures(
                         onDragStart = { offset -> draft = segmentAt(offset.x, size.width, options.size) },
                         onHorizontalDrag = { change, _ ->
@@ -649,7 +912,10 @@ private fun QuickAdjustBar(
                         .weight(1f)
                         .fillMaxHeight()
                         .clip(RoundedCornerShape(4.dp))
-                        .background(if (index == draft) selectedColor else trackColor.copy(alpha = 0.28f))
+                        .background(
+                            if (index == draft) scheme.accent
+                            else scheme.tertiaryLabel.copy(alpha = 0.28f),
+                        )
                         .clickable(enabled = enabled && index != currentIndex) { onCommit(option.value) },
                     contentAlignment = Alignment.Center,
                 ) {
@@ -659,7 +925,71 @@ private fun QuickAdjustBar(
                 }
             }
         }
+        Spacer(Modifier.width(8.dp))
+        Box(Modifier.widthIn(min = 42.dp, max = 78.dp), contentAlignment = Alignment.CenterEnd) {
+            CupertinoText(
+                MenuCatalog.valueLabel(setting.id, options[draft].value),
+                fontSize = 12.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
+}
+
+/**
+ * One short menu item as a row of tappable chips — 防抖、测光、白平衡 and the rest of
+ * [quickChoiceIds], none of which is a scale and so has no business on a bar.
+ *
+ * The chips are the firmware's option list in its own order, one write per tap, for the
+ * same reason the bars above commit on release: this link also carries the preview.
+ */
+@Composable
+private fun QuickChoiceRow(
+    setting: CameraSetting,
+    enabled: Boolean,
+    onCommit: (String) -> Unit,
+) {
+    val options = setting.options
+    if (options.size < 2) return
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = 38.dp)
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AdjustLabel(setting, Modifier.width(64.dp))
+        Spacer(Modifier.width(8.dp))
+        LazyRow(
+            Modifier.weight(1f).graphicsLayer { alpha = if (enabled) 1f else 0.45f },
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            items(options, key = { it.value }) { option ->
+                Chip(
+                    label = MenuCatalog.valueShortLabel(setting.id, option.value),
+                    selected = option.value == setting.value,
+                    enabled = enabled,
+                    small = true,
+                    onClick = { onCommit(option.value) },
+                )
+            }
+        }
+    }
+}
+
+/** The setting's Chinese name, in the fixed-width column both quick-adjust rows share. */
+@Composable
+private fun AdjustLabel(setting: CameraSetting, modifier: Modifier = Modifier) {
+    CupertinoText(
+        MenuCatalog.titleOf(setting.id, setting.title),
+        fontSize = 12.sp,
+        color = CupertinoTheme.colorScheme.secondaryLabel,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier,
+    )
 }
 
 /** Which segment of a [QuickAdjustBar] an x position inside it falls on. */
@@ -669,14 +999,40 @@ private fun segmentAt(x: Float, widthPx: Int, count: Int): Int {
 }
 
 /**
- * The shooting settings worth a bar on the live page.
+ * The ordered shooting settings worth a bar on the live page, in the order they are
+ * worth reaching for while framing: exposure first, then the two things that trade
+ * brightness against noise and motion blur, then the picture-style trio.
  *
- * Deliberately one entry: `Exposure` is the only item that is both ordered, present
- * across modes, and something anyone wants to nudge while framing. `ISO` and `Shutter`
- * are menus, not scales, and putting them here would turn a quick control into the
- * settings page again.
+ * Only ids the camera actually sent get a row (see [LiveScreen]), so a mode with no
+ * `Shutter` simply shows one bar fewer. A firmware that answers these as a plain
+ * ON/OFF pair is filtered out by the `isToggle` check at the call site rather than
+ * being rendered as a one-step slider.
  */
-private val quickAdjustIds = listOf("Exposure")
+private val quickBarIds = listOf(
+    "Exposure",
+    "ISO",
+    "Shutter",
+    "brightness",
+    "Contrast",
+    "Saturation",
+    "Sharpness",
+)
+
+/**
+ * The short categorical settings worth a chip row.
+ *
+ * `Resolution` and `Segment` are deliberately absent: their option strings are long,
+ * and changing them is a decision rather than a nudge — that is the settings page.
+ * `Filter` is here because it is burned into the file, so it has to be chosen before
+ * the shot, not after.
+ */
+private val quickChoiceIds = listOf(
+    "Gyro EIS",
+    "Meter Mode",
+    "AWB",
+    "Image Quality",
+    "Filter",
+)
 
 /**
  * Video / photo tabs plus the mode chips under the selected one.
@@ -695,13 +1051,14 @@ private fun ModeStrip(
     photoLabel: String,
     onSelect: (com.rovecamlink.app.core.model.CameraMode) -> Unit,
     onSelectFamily: (WorkMode) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val selectedFamily = modes.firstOrNull { it.name == selected }?.family
     var tab by remember(selectedFamily) {
         mutableStateOf(if (selectedFamily == ModeFamily.PHOTO) 1 else 0)
     }
     fun chipsOf(family: ModeFamily) = modes.filter { it.family == family }
-    Column {
+    Column(modifier) {
         CupertinoSegmentedControl(
             selectedTabIndex = tab,
             modifier = Modifier.fillMaxWidth(),
@@ -731,10 +1088,13 @@ private fun ModeStrip(
         }
         val chips = chipsOf(if (tab == 0) ModeFamily.VIDEO else ModeFamily.PHOTO)
         if (chips.isEmpty()) return
-        Spacer(Modifier.height(8.dp))
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Spacer(Modifier.height(10.dp))
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             items(chips, key = { it.name }) { mode ->
-                ModeChip(
+                Chip(
                     label = ModeCatalog.titleOf(mode.name),
                     selected = mode.name == selected,
                     enabled = !locked,
@@ -742,27 +1102,45 @@ private fun ModeStrip(
                 )
             }
         }
+        Spacer(Modifier.height(6.dp))
     }
 }
 
+/**
+ * A rounded label that reads as a choice.
+ *
+ * [small] is the quick-adjust density: same shape, one step tighter, because those rows
+ * carry five or six of them next to a 64.dp title and the mode strip carries four wide
+ * ones with the whole width to itself.
+ */
 @Composable
-private fun ModeChip(label: String, selected: Boolean, enabled: Boolean, onClick: () -> Unit) {
+private fun Chip(
+    label: String,
+    selected: Boolean,
+    enabled: Boolean,
+    small: Boolean = false,
+    onClick: () -> Unit,
+) {
     val scheme = CupertinoTheme.colorScheme
     val background = if (selected) scheme.accent else scheme.tertiarySystemFill
     val content = if (selected) Color.White else scheme.label
     Box(
         Modifier
-            .heightIn(min = 32.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .heightIn(min = if (small) 26.dp else 32.dp)
+            .clip(RoundedCornerShape(if (small) 13.dp else 16.dp))
             .background(background)
             .clickable(enabled = enabled, onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 6.dp),
+            .padding(
+                horizontal = if (small) 9.dp else 12.dp,
+                vertical = if (small) 3.dp else 6.dp,
+            ),
     ) {
         CupertinoText(
             label,
-            fontSize = 13.sp,
+            fontSize = if (small) 12.sp else 13.sp,
             color = if (enabled) content else scheme.tertiaryLabel,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
         )
     }

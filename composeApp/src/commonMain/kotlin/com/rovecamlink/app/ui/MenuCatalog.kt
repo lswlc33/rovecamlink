@@ -427,6 +427,17 @@ object MenuCatalog {
         return "$zh（$value）"
     }
 
+    /**
+     * The Chinese name of one value on its own, with no firmware spelling beside it.
+     *
+     * For the tappable chips on the live page, where a row already carries the item name
+     * and 「360° 全向水平线矫正（360° Horizon Correction）」 would push every other chip
+     * off screen. The raw spelling stays one tap away on the settings page, which uses
+     * [valueLabel] and [valueOptionLabel] instead.
+     */
+    fun valueShortLabel(itemId: String, value: String, device: Boolean = false): String =
+        translated(itemId, value, device) ?: value
+
     private fun translated(itemId: String, value: String, device: Boolean): String? =
         (if (device) deviceOf(itemId)?.zhValues else of(itemId)?.zhValues)?.get(value) ?: shared[value]
 
