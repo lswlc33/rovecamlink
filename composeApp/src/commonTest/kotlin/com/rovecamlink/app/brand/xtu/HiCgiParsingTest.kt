@@ -52,6 +52,31 @@ class HiCgiParsingTest {
     }
 
     @Test
+    fun `a truncated repeat of a key does not erase the complete list`() {
+        // Captured from `getallworkmode.cgi` on the 2026-09-22 field session, all 235
+        // characters of it. The firmware sends the video list twice and its buffer runs
+        // out inside the second copy, which is left unterminated. Reading that as
+        // "last one wins" collapsed eight video modes into one and is the reason the
+        // app "could not get any recording modes" while photo modes looked complete.
+        val allWorkModes =
+            "var photo=\"Normal Photo,Timing Photo,Timelapse Photo,Burst Photo,Long Exposure,Raw Photo\";" +
+                "var video=\"Normal Video,Car Looping,Timelapse Video,Slow Motion,Video and Photo," +
+                "Quick Stories,Under Water,Night Scene\";" +
+                "var video=\"Normal Video,"
+        val vars = HiVarParser.parse(allWorkModes)
+        assertEquals(
+            "Normal Video,Car Looping,Timelapse Video,Slow Motion,Video and Photo," +
+                "Quick Stories,Under Water,Night Scene",
+            vars["video"],
+            "the damaged second `var video=` overwrote the complete one",
+        )
+        assertEquals(6, vars.getValue("photo").split(',').size)
+        // A key the firmware really does re-assign with one value still takes the later
+        // statement, so this rule is about list width, not about first-wins.
+        assertEquals("second", HiVarParser.parse("var k=\"first\";var k=\"second\";")["k"])
+    }
+
+    @Test
     fun `primary menu pairs each item with its own current value`() {
         val menu = HiMenu.parsePrimary(primaryMenuBody)
         assertEquals(20, menu.size)

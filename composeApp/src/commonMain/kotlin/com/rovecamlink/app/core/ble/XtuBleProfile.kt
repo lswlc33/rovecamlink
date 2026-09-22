@@ -217,11 +217,31 @@ internal class XtuBleHandshake(
          */
         const val AP_POLL_INTERVAL_MS = 1_000L
 
-        /** Cap so a dead camera becomes an error instead of an infinite write loop. */
-        const val MAX_SENDS = 8
+        /**
+         * Cap so a dead camera becomes an error instead of an infinite write loop.
+         *
+         * 8 was measured against the wrong clock. The 2026-09-22 log has the camera
+         * taking **7 to 17 seconds** to answer the first `R003_` after the link comes up
+         * (writes from +17.2s, first notification at +32.5s in one attempt; +42.2s to
+         * +49.9s in the next), and eight retries at [RETRY_INTERVAL_MS] stop the writes
+         * at ~12s — so on the slow attempt this app had already gone quiet before the
+         * camera decided to answer, which is exactly what "点了没反应" looks like.
+         */
+        const val MAX_SENDS = 16
 
-        /** Times we invent a fresh code and re-offer it before telling the user. */
-        const val MAX_ROTATIONS = 3
+        /**
+         * Times we invent a fresh code and re-offer it before telling the user.
+         *
+         * This was 3, and 3 is not enough on the XTU S7PRO: the 2026-09-22 log shows a
+         * first attempt answered `Status=0,Pin=…` four times in a row and ended as
+         * 「相机没有接受配对请求」, while a second attempt three seconds later was
+         * accepted on the **third** reply — so the camera's pairing state machine
+         * settles somewhere inside that window, and a cap of four writes a race with it.
+         * Twelve rotations at the ~1s the camera takes to answer stays well inside the
+         * 25s handshake budget, and [com.rovecamlink.app.core.ble.BleCentral.wakeAndFetch]'s
+         * timeout, not this number, is what ends a camera that is genuinely not there.
+         */
+        const val MAX_ROTATIONS = 12
     }
 }
 

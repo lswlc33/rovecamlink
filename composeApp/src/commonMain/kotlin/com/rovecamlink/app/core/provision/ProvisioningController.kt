@@ -109,9 +109,9 @@ class ProvisioningController(
                     notice = raw(outcome.message)
                     // Bluetooth is the route that can wake a sleeping camera, but it is
                     // not the only one that can *reach* a camera that is already
-                    // broadcasting. A 25-second handshake that goes nowhere must not be
-                    // the end of the user's one tap, so the caller gets to try the
-                    // hotspot it can see.
+                    // broadcasting. A handshake that goes nowhere must not be the end of
+                    // the user's one tap, so the caller gets to try the hotspot it can
+                    // see.
                     onHandshakeFailed()
                 }
                 else -> notice = localized(Res.string.err_bluetooth_unsupported)

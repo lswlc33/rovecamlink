@@ -316,6 +316,10 @@ private class GattSession(
         ) {
             writeInFlight = false
             if (status != BluetoothGatt.GATT_SUCCESS) return failOpen("蓝牙写入失败")
+            // Without this the difference between "the stack never confirmed the write"
+            // and "the camera never answered it" is invisible: both look like one write
+            // and then silence.
+            Diag.debug(LogTag.NET, "BLE write confirmed ${camera.name} status=$status")
             drain()
         }
 
@@ -465,7 +469,7 @@ private class GattSession(
         }.getOrDefault(false)
         if (!written) return failOpen("写蓝牙描述符失败")
         // Some stacks complete the write without ever calling us back; without this
-        // the session would sit silent until the caller's 25 s budget expired.
+        // the session would sit silent until the caller's handshake budget expired.
         later(NOTIFY_CONFIRM_TIMEOUT_MS) {
             if (!notifyReady) {
                 Diag.warn(LogTag.NET, "BLE ${camera.name}: no CCCD write callback, assuming notifications are on")
@@ -522,6 +526,18 @@ private class GattSession(
             ch.value = next
             g.writeCharacteristic(ch)
         }.getOrDefault(false)
+        // Log our own side too. Every field of this handshake has been re-derived from
+        // the official APK at least once because the exported logs only ever carried
+        // the camera's notifications: `BLE notify … Status=0,Pin=3056` four times and a
+        // failed handshake said nothing about **which code we had offered**, so a
+        // refused code and a code that never reached the wire looked the same. Same
+        // masking rule as the notify path, and `requested=` separates "the stack refused
+        // to queue it" from "the camera ignored it".
+        Diag.info(
+            LogTag.NET,
+            "BLE write ${camera.name} stage=${handshake.stage()} " +
+                "len=${next.size} ${maskPassphrase(next.decodeToString())} requested=$ok",
+        )
         if (!ok) failOpen("蓝牙写入失败")
     }
 

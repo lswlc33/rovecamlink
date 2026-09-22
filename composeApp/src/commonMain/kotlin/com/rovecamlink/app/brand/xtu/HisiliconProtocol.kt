@@ -295,8 +295,13 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
                 table["video"].orEmpty().forEach { add(HiModes.modeFor(it, ModeFamily.VIDEO)) }
                 table["photo"].orEmpty().forEach { add(HiModes.modeFor(it, ModeFamily.PHOTO)) }
             }.also {
+                // Per-family counts, not just the total: the 2026-09-22 report of
+                // "没有录像模式" was a `video` list truncated to one entry, and
+                // `n=7` alone did not say which family had lost modes.
                 Diag.i(LogTag.PROTO) {
-                    "modes from getallworkmode: n=${it.size} ${it.joinToString(",") { m -> m.name }.take(240)}"
+                    "modes from getallworkmode: n=${it.size} " +
+                        "video=${table["video"].orEmpty().size} photo=${table["photo"].orEmpty().size} " +
+                        it.joinToString(",") { m -> m.name }.take(240)
                 }
             }
         } else {

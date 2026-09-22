@@ -18,6 +18,34 @@ enum class SettingGroup(val zhTitle: String) {
 }
 
 /**
+ * How the settings screen groups the camera's **own** device menu — the pseudo work
+ * mode `-workmode=System`, which is not about shooting but about the box: its
+ * hotspot, its tones, its standby, its card.
+ *
+ * A separate axis from [SettingGroup] on purpose. The two menus are fetched and
+ * written through different calls (see `AppState.loadSettings` and
+ * `AppState.loadDeviceSettings`), they share no item names, and filing the device
+ * page under 「画质与编码」 would be wrong for every row on it.
+ */
+enum class DeviceGroup(val zhTitle: String) {
+    Network("网络"),
+    Power("电源"),
+    Sound("声音"),
+    Display("显示与水印"),
+    General("通用"),
+    Maintenance("存储与维护"),
+    Other("其他"),
+}
+
+/** Presentation for one item of the device (`System`) menu. Mirrors [SettingMeta]. */
+data class DeviceMeta(
+    val zhTitle: String,
+    val zhHelp: String,
+    val group: DeviceGroup,
+    val zhValues: Map<String, String> = emptyMap(),
+)
+
+/**
  * Presentation for one firmware menu item: the Chinese name, an explanation of what
  * changing it does, its group, and translations for the values it can hold.
  */
@@ -67,6 +95,11 @@ object MenuCatalog {
         "1Min" to "1 分钟",
         "3Min" to "3 分钟",
         "5Min" to "5 分钟",
+        // The device menu's own words: `Auto Dormant` answers `60Sec`, and several of
+        // its rows list `Default` as an option beside the explicit ones.
+        "60Sec" to "60 秒",
+        "30Sec" to "30 秒",
+        "Default" to "默认",
         "Average" to "平均测光",
         "Center" to "中央重点测光",
         "Spot" to "点测光",
@@ -202,26 +235,173 @@ object MenuCatalog {
         ),
     )
 
+    /**
+     * The device (`System`) menu, item for item as the camera lists it.
+     *
+     * Same rule as [items]: this only *labels*, and an item the camera stops
+     * sending, or sends with a new name, still renders. The names and current values
+     * below are verbatim from the XTU S7PRO's `getprimarymenuitem.cgi?-workmode=System`
+     * in the 2026-09-22 field log —
+     * `WiFi Frequency,Wi-Fi,Auto Dormant,Auto Power Off,Language,Video Format,Frequency,
+     * Voice Volume,SubScreen Display,LEDs,Date Stamp,Stamp,Power Tone,Key Tone,Cap Tone,
+     * Grid,Quick-Start Switch,Voice Control,SD Format,Factory Reset,Information`
+     * with `cur` = `5G,,60Sec,3Min,简体中文,NTSC,50Hz,Default,Default,ON,ON,OFF,OFF,OFF,
+     * OFF,ON,ON,OFF,,,`.
+     *
+     * Where a help line says 未确证, the wording is ours and the behaviour has not
+     * been checked against the camera — the official app translates these from a
+     * `language.xml` it fetches off the device over port 8080, which this app does not
+     * implement. A label may be imprecise; it must never be load-bearing.
+     */
+    private val deviceItems: Map<String, DeviceMeta> = mapOf(
+        // ---- 网络 ----
+        "WiFi Frequency" to DeviceMeta(
+            zhTitle = "Wi-Fi 频段",
+            zhHelp = "相机热点用 5G 还是 2.4G。5G 更干净但穿墙差，旧手机、部分笔记本和车机直接搜不到 5G 热点；「蓝牙已唤醒但手机连不上」时先把这里切到 2.4G 再试一次。改动会让热点重启。",
+            group = DeviceGroup.Network,
+            zhValues = mapOf("5G" to "5 GHz", "2.4G" to "2.4 GHz"),
+        ),
+        "Wi-Fi" to DeviceMeta(
+            zhTitle = "Wi-Fi 名称",
+            zhHelp = "相机热点广播的名字。这台相机在这一行没有给出可显示的取值，改名会重启热点、需要重新连接；本页「相机 Wi-Fi」分组里有同样的入口。",
+            group = DeviceGroup.Network,
+        ),
+        // ---- 电源 ----
+        "Auto Dormant" to DeviceMeta(
+            zhTitle = "自动休眠",
+            zhHelp = "没有操作多久后进入待机：不断电，唤醒快，靠按键或蓝牙都能叫醒。长时间值守建议调长，频繁休眠会让每次连接都多等几秒。",
+            group = DeviceGroup.Power,
+        ),
+        "Auto Power Off" to DeviceMeta(
+            zhTitle = "自动关机",
+            zhHelp = "待机后再过多久彻底关机。设得短省电，但彻底关机后只能按机身按键开机；上面「自动休眠」那档的待机才是本 App 能用蓝牙叫醒的状态（断电后蓝牙是否还供电尚未在真机上确证）。",
+            group = DeviceGroup.Power,
+        ),
+        // ---- 声音 ----
+        "Voice Volume" to DeviceMeta(
+            zhTitle = "语音音量",
+            zhHelp = "相机外放提示语音（开机提示、操作反馈）的响度，和下面三个提示音开关各自独立。",
+            group = DeviceGroup.Sound,
+        ),
+        "Power Tone" to DeviceMeta(
+            zhTitle = "开关机提示音",
+            zhHelp = "开机、关机时是否发声。和「自动关机」一起用：待机到点自动关机时也会响一声，夜里值守可以关掉。",
+            group = DeviceGroup.Sound,
+        ),
+        "Key Tone" to DeviceMeta(
+            zhTitle = "按键音",
+            zhHelp = "按下机身按键时的「滴」声，只反馈按键，不代表开始或停止录制。",
+            group = DeviceGroup.Sound,
+        ),
+        "Cap Tone" to DeviceMeta(
+            zhTitle = "拍照提示音",
+            zhHelp = "拍照/录制起止时的提示音。部分市场要求这个声音不能关闭；关掉后只能靠指示灯和画面判断是否已经拍下。",
+            group = DeviceGroup.Sound,
+        ),
+        "Voice Control" to DeviceMeta(
+            zhTitle = "语音控制",
+            zhHelp = "用口令开始/停止录制。手持、骑行风噪大的场合识别率有限，默认关闭。",
+            group = DeviceGroup.Sound,
+        ),
+        // ---- 显示与水印 ----
+        "SubScreen Display" to DeviceMeta(
+            zhTitle = "副屏显示",
+            zhHelp = "机身小屏（如果有）显示的内容档位。未确证：这台相机把它和主屏设置并列，取值只给出 Default。",
+            group = DeviceGroup.Display,
+        ),
+        "LEDs" to DeviceMeta(
+            zhTitle = "指示灯",
+            zhHelp = "机身工作指示灯。夜间拍摄或放在稳定器上时关掉可以避免反光和干扰。",
+            group = DeviceGroup.Display,
+        ),
+        "Date Stamp" to DeviceMeta(
+            zhTitle = "日期水印",
+            zhHelp = "把拍摄日期烧进画面。烧进去的无法在后期去掉，素材还要调色或剪辑时建议关掉。",
+            group = DeviceGroup.Display,
+        ),
+        "Stamp" to DeviceMeta(
+            zhTitle = "水印",
+            zhHelp = "与「日期水印」并列的另一档水印开关，按相机自带样式在画面角上叠加信息。未确证两者关系（谁包含谁），先各自试再定档。",
+            group = DeviceGroup.Display,
+        ),
+        "Grid" to DeviceMeta(
+            zhTitle = "参考网格",
+            zhHelp = "取景构图用的参考线，只影响取景画面，不会记录进成片。",
+            group = DeviceGroup.Display,
+        ),
+        // ---- 通用 ----
+        "Language" to DeviceMeta(
+            zhTitle = "相机语言",
+            zhHelp = "相机屏幕菜单与提示音使用的语言，改这里不影响本 App 的界面语言。",
+            group = DeviceGroup.General,
+        ),
+        "Video Format" to DeviceMeta(
+            zhTitle = "视频制式",
+            zhHelp = "NTSC / PAL，决定可用帧率的基准（NTSC 走 30/60，PAL 走 25/50）。与国内电视、投影仪不一致时可能在回放里出现闪烁，成片本身不受影响。",
+            group = DeviceGroup.General,
+        ),
+        "Frequency" to DeviceMeta(
+            zhTitle = "电源频率",
+            zhHelp = "抗频闪档位，与国内 50Hz 电网对应。选错会在灯光下录像出现滚条，和上面的「视频制式」是两件事。",
+            group = DeviceGroup.General,
+            zhValues = mapOf("50Hz" to "50 Hz", "60Hz" to "60 Hz"),
+        ),
+        "Quick-Start Switch" to DeviceMeta(
+            zhTitle = "快速启动",
+            zhHelp = "关机/待机状态下一键进入录制的那套流程。未确证：官方把它放在设备菜单里，具体是长按开录还是短按唤醒需要现场对比。",
+            group = DeviceGroup.General,
+        ),
+        // ---- 存储与维护 ----
+        "SD Format" to DeviceMeta(
+            zhTitle = "存储卡格式化",
+            zhHelp = "清空卡上全部文件，包括还没有下载的视频，删掉的文件无法恢复。本页「存储卡」分组里有同样的按钮。",
+            group = DeviceGroup.Maintenance,
+        ),
+        "Factory Reset" to DeviceMeta(
+            zhTitle = "恢复出厂设置",
+            zhHelp = "把相机菜单恢复到出厂状态，包括热点名称和密码——重置后本 App 里保存的连接记录会失效，需要重新连接。",
+            group = DeviceGroup.Maintenance,
+        ),
+        "Information" to DeviceMeta(
+            zhTitle = "相机信息",
+            zhHelp = "只读条目，固件用它把版本信息排在菜单末尾；本页「关于」分组已经列出同样的内容。",
+            group = DeviceGroup.Maintenance,
+        ),
+    )
+
     /** Every item name this catalogue claims to know — kept public so a test can diff it against a real camera listing. */
     val knownItems: Set<String> get() = items.keys
+
+    /** Every device (`System`) menu name this catalogue claims to know. */
+    val knownDeviceItems: Set<String> get() = deviceItems.keys
 
     /** Presentation for a firmware item name, or null when we have no entry for it. */
     fun of(itemId: String): SettingMeta? = items[itemId.trim()]
 
+    /** Presentation for one device-menu item, or null when we have no entry for it. */
+    fun deviceOf(itemId: String): DeviceMeta? = deviceItems[itemId.trim()]
+
     fun groupOf(itemId: String): SettingGroup = of(itemId)?.group ?: SettingGroup.Other
+
+    fun deviceGroupOf(itemId: String): DeviceGroup = deviceOf(itemId)?.group ?: DeviceGroup.Other
 
     /**
      * The label to show for item [itemId]: our Chinese name when known, otherwise the
      * firmware's own string. Unknown items stay visible on purpose — a camera that
      * gains a menu entry must not silently lose it in this app.
+     *
+     * [device] picks the menu, not just the wording: `System` and a work mode share no
+     * names, and the row that writes the value goes to a different CGI depending on it.
      */
-    fun titleOf(itemId: String, firmwareTitle: String): String = of(itemId)?.zhTitle ?: firmwareTitle
+    fun titleOf(itemId: String, firmwareTitle: String, device: Boolean = false): String =
+        (if (device) deviceOf(itemId)?.zhTitle else of(itemId)?.zhTitle) ?: firmwareTitle
 
-    fun helpOf(itemId: String): String? = of(itemId)?.zhHelp
+    fun helpOf(itemId: String, device: Boolean = false): String? =
+        if (device) deviceOf(itemId)?.zhHelp else of(itemId)?.zhHelp
 
     /** Translate one option value if we know it; resolution-style strings stay as-is. */
-    fun valueLabel(itemId: String, value: String): String {
-        val zh = of(itemId)?.zhValues?.get(value) ?: shared[value]
+    fun valueLabel(itemId: String, value: String, device: Boolean = false): String {
+        val zh = (if (device) deviceOf(itemId)?.zhValues else of(itemId)?.zhValues)?.get(value) ?: shared[value]
         return if (zh == null) value else "$zh（$value）"
     }
 
@@ -233,6 +413,17 @@ object MenuCatalog {
         SettingGroup.Exposure,
         SettingGroup.Colour,
         SettingGroup.Other,
+    )
+
+    /** Group order for the device page, same rule as [groupOrder]. */
+    val deviceGroupOrder: List<DeviceGroup> = listOf(
+        DeviceGroup.Network,
+        DeviceGroup.Power,
+        DeviceGroup.Sound,
+        DeviceGroup.Display,
+        DeviceGroup.General,
+        DeviceGroup.Maintenance,
+        DeviceGroup.Other,
     )
 }
 

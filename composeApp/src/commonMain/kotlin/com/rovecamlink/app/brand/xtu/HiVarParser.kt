@@ -17,6 +17,10 @@ package com.rovecamlink.app.brand.xtu
  * from a 20-item menu because the item list swallowed the current-value list.
  * So this scans `var k="v"` assignments wherever they start, and never assumes
  * a line boundary or a trailing `;`.
+ *
+ * **A key can also appear twice, and the repeat can be damaged.** That is what
+ * [putKeepingRicher] is for; read it there before "simplifying" the map write back
+ * to `out[key] = value`.
  */
 object HiVarParser {
 
@@ -57,10 +61,35 @@ object HiVarParser {
                 value = body.substring(j, end).trim()
                 i = end
             }
-            if (key.isNotEmpty()) out[key] = value
+            if (key.isNotEmpty()) putKeepingRicher(out, key, value)
         }
         return out
     }
+
+    /**
+     * Store one statement, but never let a truncated repeat erase a complete one.
+     *
+     * `getallworkmode.cgi` on the XTU S7PRO (firmware 20.8.6.1.20260710) answers
+     * 235 characters and then repeats itself with its own buffer exhausted:
+     *
+     *     var photo="Normal Photo,…,Raw Photo";var video="Normal Video,Car Looping,…,Night Scene";var video="Normal Video,
+     *
+     * The last statement has no closing quote, so it swallows the rest of the body as
+     * a one-item list. A plain `map[key] = value` therefore let that fragment replace
+     * the eight video modes above it, which is the 2026-09-22 field report of "拍照模式是完
+     * 整的，录像模式全没了" — `modes from getallworkmode: n=7`.
+     *
+     * So a repeated key keeps whichever statement lists more values, and everything
+     * else is unchanged: equal-standing values still take the later statement, which
+     * is what a firmware that genuinely re-assigns a scalar expects.
+     */
+    private fun putKeepingRicher(out: LinkedHashMap<String, String>, key: String, value: String) {
+        val previous = out[key]
+        if (previous == null || value.valueCount() >= previous.valueCount()) out[key] = value
+    }
+
+    /** How many comma-separated values this statement carries (blank counts as none). */
+    private fun String.valueCount(): Int = if (isBlank()) 0 else count { it == ',' } + 1
 
     fun Map<String, String>.int(key: String): Int? = get(key)?.trim()?.toIntOrNull()
     fun Map<String, String>.long(key: String): Long? = get(key)?.trim()?.toLongOrNull()

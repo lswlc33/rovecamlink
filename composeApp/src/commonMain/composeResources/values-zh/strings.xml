@@ -273,6 +273,10 @@
     <string name="section_capture_mode">拍摄模式</string>
     <string name="label_camera_settings">拍摄设置</string>
     <string name="label_device_settings">设备设置</string>
+    <!-- 设置页分成的三页。 -->
+    <string name="tab_camera">相机</string>
+    <string name="tab_device">设备</string>
+    <string name="tab_software">软件</string>
     <string name="label_photo_count">照片数</string>
     <string name="label_sd_state">存储卡</string>
 

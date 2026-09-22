@@ -16,11 +16,12 @@ import android.os.SystemClock
 import com.rovecamlink.app.androidContext
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogTag
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "MissingPermission")
 private class AndroidWifiController : WifiController {
 
     private val cm by lazy { androidContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
@@ -124,6 +125,88 @@ private class AndroidWifiController : WifiController {
     }
 
     private suspend fun connectModern(ssid: String, password: String?): WifiResult {
+        val t0 = Diag.uptimeMillis()
+        var attempt = 0
+        var unavailable = false
+        while (true) {
+            attempt++
+            val left = JOIN_BUDGET_MS - (Diag.uptimeMillis() - t0)
+            if (left <= 0) break
+            when (val join = requestJoin(ssid, password, t0, attempt, left)) {
+                Join.Connected -> return WifiResult.Connected(ssid)
+                is Join.Error -> return WifiResult.Failed(join.message)
+                Join.Expired -> break
+                Join.Unavailable -> {
+                    unavailable = true
+                    val remaining = JOIN_BUDGET_MS - (Diag.uptimeMillis() - t0)
+                    if (attempt >= JOIN_MAX_ATTEMPTS || remaining < JOIN_MIN_RETRY_MS) break
+                    // `onUnavailable` on a hotspot Bluetooth just woke is a *not yet*,
+                    // not a never. The 2026-09-22 field log is explicit about the
+                    // ordering: the camera offered `XTUCam_f9e5e2` at +51.9s, the
+                    // phone's scan list still held 0 camera APs at +54s, the request
+                    // came back UNAVAILABLE at +57.9s — and the same hotspot joined in
+                    // 8.7s once it was actually broadcast. Nudge a fresh scan so the AP
+                    // can surface, then re-request inside the same budget.
+                    runCatching { wm.startScan() }
+                    val visible = runCatching { wm.scanResults.orEmpty().count { it.SSID == ssid } }
+                        .getOrDefault(-1)
+                    Diag.warn(
+                        LogTag.WIFI,
+                        "join attempt $attempt for $ssid came back unavailable " +
+                            "(scan sees $visible of that name, ${remaining}ms of budget left); " +
+                            "retrying in ${JOIN_RETRY_DELAY_MS}ms",
+                    )
+                    delay(JOIN_RETRY_DELAY_MS)
+                }
+            }
+        }
+        val joined = currentCameraSsid()
+        if (joined == ssid) {
+            Diag.warn(LogTag.WIFI, "join budget ran out but the phone is on $joined — adopting instead of failing")
+            // Drop the specifier request first: leaving it registered would let a
+            // late system dialog bind sockets we are about to bind ourselves.
+            runCatching { callback?.let { cm.unregisterNetworkCallback(it) } }
+            callback = null
+            return adoptCurrentNetwork(force = true)
+        }
+        val spent = Diag.uptimeMillis() - t0
+        return if (unavailable) {
+            // The OS said no, $JOIN_MAX_ATTEMPTS times: a password the camera will not
+            // accept, or an access point that never actually started broadcasting.
+            Diag.error(LogTag.WIFI, "join $ssid refused after $attempt attempt(s) in ${spent}ms (still on ${joined ?: "no Wi-Fi"})")
+            disconnect()
+            WifiResult.Failed("Camera network unavailable")
+        } else {
+            Diag.error(LogTag.WIFI, "join $ssid timed out after ${spent}ms (still on ${joined ?: "no Wi-Fi"})")
+            disconnect()
+            WifiResult.Failed("Timed out joining $ssid")
+        }
+    }
+
+    /** What one specifier request amounts to: joined, refused, still waiting, or threw. */
+    private sealed interface Join {
+        object Connected : Join
+        object Unavailable : Join
+        object Expired : Join
+        class Error(val message: String) : Join
+    }
+
+    /**
+     * One `requestNetwork` round for [ssid], ending at the first of
+     * onAvailable / onUnavailable / [budgetMs].
+     *
+     * [attempt] exists only in the log line: a join that needed three rounds has to be
+     * readable as that from the exported TXT, because the alternative diagnosis —
+     * wrong passphrase — looks identical in the frames alone.
+     */
+    @Suppress("DEPRECATION")
+    private suspend fun requestJoin(
+        ssid: String,
+        password: String?,
+        startedAt: Long,
+        attempt: Int,
+        budgetMs: Long,
+    ): Join {
         val specBuilder = WifiNetworkSpecifier.Builder().setSsid(ssid)
         if (!password.isNullOrBlank()) specBuilder.setWpa2Passphrase(password)
         val request = NetworkRequest.Builder()
@@ -133,7 +216,7 @@ private class AndroidWifiController : WifiController {
             .build()
 
         val t0 = Diag.uptimeMillis()
-        val result = withTimeoutOrNull(JOIN_BUDGET_MS) {
+        return withTimeoutOrNull(budgetMs) {
             suspendCancellableCoroutine { cont ->
                 val cb = object : ConnectivityManager.NetworkCallback() {
                     override fun onAvailable(network: Network) {
@@ -142,7 +225,7 @@ private class AndroidWifiController : WifiController {
                         runCatching { cm.bindProcessToNetwork(network) }
                             .onFailure { Diag.error(LogTag.WIFI, "bindProcessToNetwork threw ${Diag.causeChain(it)}") }
                         Diag.info(LogTag.WIFI, "network AVAILABLE after ${Diag.uptimeMillis() - t0}ms, process bound=${boundNetwork != null}")
-                        if (cont.isActive) cont.resume(WifiResult.Connected(ssid))
+                        if (cont.isActive) cont.resume(Join.Connected)
                     }
                     override fun onLinkPropertiesChanged(network: Network, lp: LinkProperties) {
                         if (network == boundNetwork) {
@@ -166,9 +249,9 @@ private class AndroidWifiController : WifiController {
                         }
                     }
                     override fun onUnavailable() {
-                        Diag.error(LogTag.WIFI, "requestNetwork reported UNAVAILABLE after ${Diag.uptimeMillis() - t0}ms (wrong password, the AP vanished, or the user dismissed the system prompt)")
+                        Diag.warn(LogTag.WIFI, "requestNetwork #$attempt reported UNAVAILABLE after ${Diag.uptimeMillis() - t0}ms (wrong password, the AP vanished, or the user dismissed the system prompt)")
                         runCatching { cm.unregisterNetworkCallback(this) }
-                        if (cont.isActive) cont.resume(WifiResult.Failed("Camera network unavailable"))
+                        if (cont.isActive) cont.resume(Join.Unavailable)
                     }
                     // There is deliberately no `onRejected` hook here: Android 16 (API 36)
                     // is where `NetworkCallback.onRejected()` exists — verified against
@@ -180,35 +263,19 @@ private class AndroidWifiController : WifiController {
                 }
                 callback = cb
                 try {
-                    Diag.debug(LogTag.WIFI, "requestNetwork(TRANSPORT_WIFI, specifier for $ssid, no INTERNET capability)")
+                    Diag.debug(LogTag.WIFI, "requestNetwork #$attempt(TRANSPORT_WIFI, specifier for $ssid, no INTERNET capability)")
                     cm.requestNetwork(request, cb)
                 } catch (t: Throwable) {
                     Diag.error(LogTag.WIFI, "requestNetwork threw ${Diag.causeChain(t)}")
-                    if (cont.isActive) cont.resume(WifiResult.Failed(t.message ?: "requestNetwork failed"))
+                    if (cont.isActive) cont.resume(Join.Error(t.message ?: "requestNetwork failed"))
                 }
                 cont.invokeOnCancellation {
                     runCatching { cm.unregisterNetworkCallback(cb) }
                 }
             }
-        }
-        return result ?: run {
-            // The system picker can outlive our budget: a user who takes a moment to
-            // notice it may well join while we are giving up. Checking the SSID before
-            // reporting failure turns that into a working session (the adopt path binds
-            // the sockets just as well as the specifier join would) instead of a red
-            // error on a phone that is already sitting on the camera's hotspot.
-            val joined = currentCameraSsid()
-            if (joined == ssid) {
-                Diag.warn(LogTag.WIFI, "join budget ran out but the phone is on $joined — adopting instead of failing")
-                // Drop the specifier request first: leaving it registered would let a
-                // late system dialog bind sockets we are about to bind ourselves.
-                runCatching { callback?.let { cm.unregisterNetworkCallback(it) } }
-                callback = null
-                return adoptCurrentNetwork(force = true)
-            }
-            Diag.error(LogTag.WIFI, "join $ssid timed out after ${Diag.uptimeMillis() - t0}ms (still on ${joined ?: "no Wi-Fi"})")
-            disconnect()
-            WifiResult.Failed("Timed out joining $ssid")
+        } ?: run {
+            Diag.debug(LogTag.WIFI, "join attempt $attempt still pending at ${Diag.uptimeMillis() - startedAt}ms (budget spent)")
+            Join.Expired
         }
     }
 
@@ -465,6 +532,24 @@ private class AndroidWifiScanner : WifiScanner {
  * was already joined, and reported a failure for a connection that had succeeded.
  */
 private const val JOIN_BUDGET_MS = 60_000L
+
+/**
+ * How many specifier requests one join may spend, and how it waits between them.
+ *
+ * A Bluetooth-woken hotspot needs a few seconds before the phone can see it at all
+ * (see `AndroidWifiController.connectModern`), so the first `onUnavailable` says
+ * nothing about the passphrase. Retrying covers the ~9 s gap the 2026-09-22 field log
+ * measured between "the camera says the AP is up" and "the AP is in the scan list",
+ * while a genuinely wrong password still ends inside [JOIN_BUDGET_MS] rather than
+ * dragging the connection screen on for a minute.
+ */
+private const val JOIN_MAX_ATTEMPTS = 4
+
+/** Pause between attempts, long enough for a forced scan to land. */
+private const val JOIN_RETRY_DELAY_MS = 2_500L
+
+/** Never start an attempt that cannot finish inside [JOIN_BUDGET_MS]. */
+private const val JOIN_MIN_RETRY_MS = 6_000L
 
 actual fun createWifiController(): WifiController = AndroidWifiController()
 actual fun createWifiScanner(): WifiScanner = AndroidWifiScanner()

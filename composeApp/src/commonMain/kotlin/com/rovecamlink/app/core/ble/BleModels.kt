@@ -180,7 +180,18 @@ interface BleCentral {
     companion object {
         /** A camera not heard from for this long is dropped from the list. */
         const val STALE_AFTER_MS = 12_000L
-        const val DEFAULT_HANDSHAKE_MS = 25_000L
+
+        /**
+         * How long one wake attempt gets before it is called a failure.
+         *
+         * 25 s was set from the official client's own timeout, not from this camera.
+         * The 2026-09-22 field log needed 17 s for the first pairing answer plus ~11 s
+         * for the accept, the `R001_` hotspot credentials and the `R002_` confirmation —
+         * which is 28 s for a handshake that **succeeded**, and a slow cold camera would
+         * have been cut off mid-flight. The user is watching a progress line with a 取消
+         * button throughout, so the cost of the headroom is waiting, not a dead end.
+         */
+        const val DEFAULT_HANDSHAKE_MS = 45_000L
     }
 }
 

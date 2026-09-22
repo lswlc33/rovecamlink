@@ -57,13 +57,39 @@ class XtuBleHandshakeTest {
         val retry = h.onNotify(notify("KEY=0"))
         assertIs<BleProgress.Send>(retry)
         assertTrue(retry.frames.single().bytes.decodeToString().startsWith("R003_"))
-        h.onNotify(notify("KEY=0"))
-        h.onNotify(notify("KEY=0"))
+        repeat(XtuBleHandshake.MAX_ROTATIONS - 1) {
+            assertIs<BleProgress.Send>(h.onNotify(notify("KEY=0")), "refusal ${it + 2} must still rotate")
+        }
         val givenUp = h.onNotify(notify("KEY=0"))
         assertIs<BleProgress.Failed>(givenUp)
         // A dead stage must stop producing work, otherwise the caller spins.
         assertEquals(emptyList(), h.onTick(now + 60_000L))
         assertIs<BleProgress.Waiting>(h.onNotify(notify("Status=1,Pin=1234")))
+    }
+
+    /**
+     * The refusal this camera actually sends, in the volume it actually sends it.
+     *
+     * The 2026-09-22 field log shows `Status=0,Pin=3056` … `Pin=5226` … `Pin=1881` …
+     * `Pin=8616` and then a failed handshake, while a retry seconds later was accepted
+     * on the third such reply. Four of these therefore may **not** end the attempt.
+     */
+    @Test
+    fun fourStatusZeroRepliesDoNotEndTheAttempt() {
+        val h = handshake()
+        h.start()
+        listOf("3056", "5226", "1881", "8616").forEach { pin ->
+            assertIs<BleProgress.Send>(
+                h.onNotify(notify("Status=0,Pin=$pin")),
+                "a Status=0 reply must keep the handshake alive, not rotate it out",
+            )
+        }
+        val accepted = h.onNotify(notify("Status=1,Pin=6874"))
+        assertEquals("opening-hotspot", h.stage())
+        assertTrue(
+            sent(accepted).single().startsWith("R001_"),
+            "the accepted reply must open the hotspot, got ${sent(accepted)}",
+        )
     }
 
     @Test
@@ -72,10 +98,26 @@ class XtuBleHandshakeTest {
         h.start()
         assertEquals(emptyList(), sent(h.onTick(now + 1_000L)))
         assertEquals(listOf("R003_1234"), sent(h.onTick(now + 1_600L)))
-        // MAX_SENDS covers the first write, so 7 more retries then silence.
+        // MAX_SENDS counts the first write, so this many retries follow, then silence.
         var t = now + 1_600L
-        repeat(7) { t += 1_600L; sent(h.onTick(t)) }
+        repeat(XtuBleHandshake.MAX_SENDS - 1) { t += 1_600L; sent(h.onTick(t)) }
         assertEquals(emptyList(), sent(h.onTick(t + 1_600L)))
+    }
+
+    /**
+     * The retry budget has to outlast the camera's own answer latency.
+     *
+     * Measured on the XTU S7PRO on 2026-09-22: the first pairing notification landed 7
+     * to 17 seconds after the link was up, and the old budget of eight writes at 1.5 s
+     * went quiet at ~12 s — the camera answered a question this app had stopped asking.
+     */
+    @Test
+    fun keepsWritingWhileTheCameraTakesItsTimeOnTheFirstReply() {
+        val slowestFirstReplyMs = 17_000L
+        assertTrue(
+            XtuBleHandshake.MAX_SENDS * XtuBleHandshake.RETRY_INTERVAL_MS >= slowestFirstReplyMs,
+            "pairing must still be writing at ${slowestFirstReplyMs}ms",
+        )
     }
 
     @Test
