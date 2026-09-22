@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,10 +22,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +43,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
@@ -136,6 +141,7 @@ import com.rovecamlink.app.hint_locked_mode
 import com.rovecamlink.app.hint_new_password
 import com.rovecamlink.app.hint_new_ssid
 import com.rovecamlink.app.hint_photo_needs_photo_mode
+import com.rovecamlink.app.hint_quick_adjust
 import com.rovecamlink.app.hint_rotate_picture
 import com.rovecamlink.app.label_batch
 import com.rovecamlink.app.label_battery
@@ -189,6 +195,7 @@ import com.rovecamlink.app.section_danger
 import com.rovecamlink.app.section_downloads
 import com.rovecamlink.app.section_firmware_update
 import com.rovecamlink.app.section_on_camera
+import com.rovecamlink.app.section_quick_adjust
 import com.rovecamlink.app.section_sd_card
 import com.rovecamlink.app.section_status
 import com.rovecamlink.app.settings_none_reload
@@ -383,6 +390,8 @@ fun LiveScreen(state: AppState) {
     val recBusyLbl = stringResource(Res.string.rec_busy)
     val startLapseLbl = stringResource(Res.string.action_start_lapse)
     val stopLapseLbl = stringResource(Res.string.action_stop_lapse)
+    val quickAdjustTitle = stringResource(Res.string.section_quick_adjust).sectionTitle()
+    val quickAdjustHint = stringResource(Res.string.hint_quick_adjust)
 
     LazyColumn(Modifier.fillMaxSize()) {
         item {
@@ -482,6 +491,24 @@ fun LiveScreen(state: AppState) {
             if (working) valueItem(lockedLbl, lockedModeMsg)
         }
 
+        // The quick-adjust bars, straight from the current mode's own menu: whatever
+        // `Exposure` the camera offers is what the bar can write back.
+        val quickAdjust = quickAdjustIds.mapNotNull { id -> state.settings.firstOrNull { it.id == id } }
+        if (quickAdjust.isNotEmpty() && !working) {
+            section(title = { CupertinoText(quickAdjustTitle) }) {
+                quickAdjust.forEach { s ->
+                    item {
+                        QuickAdjustBar(
+                            setting = s,
+                            enabled = !state.isBusy(Op.Settings),
+                            onCommit = { value -> state.setSetting(s.id, value) },
+                        )
+                    }
+                }
+                valueItem(hintLbl, quickAdjustHint)
+            }
+        }
+
         section(title = { CupertinoText(captureTitle) }) {
             item {
                 Row(
@@ -547,6 +574,109 @@ private fun CameraPreviewFrame(url: String?, modifier: Modifier, degrees: Float,
         )
     }
 }
+
+/**
+ * A horizontal quick-adjust bar for one ordered camera setting — the shutter-speed
+ * style control the 2026-09-22 report asked for (「曝光这些设置项，可以在实时页面底部新增
+ * 一个横向 slider」).
+ *
+ * Two rules make this safe to put next to a live view:
+ *
+ * **One write per gesture.** The camera serves one request at a time and answers a
+ * `setcurparameter` in tens of milliseconds while the same link carries RTSP; a
+ * slider that wrote on every pixel of a drag would be a self-inflicted denial of
+ * service on the preview. The drag moves a local draft, and the value goes out on
+ * release (or immediately on a tap, which *is* one gesture).
+ *
+ * **The firmware's own option list, in its own order.** `Exposure` answers
+ * `+2,+1.5,+1,+0.5,0,-0.5,-1,-1.5,-2` — descending, so index 0 is the *brightest*
+ * end. Sorting or re-deriving these would put the handle on the wrong side of the
+ * bar, so the bar is literally the list, left to right.
+ */
+@Composable
+private fun QuickAdjustBar(
+    setting: CameraSetting,
+    enabled: Boolean,
+    onCommit: (String) -> Unit,
+) {
+    val options = setting.options
+    if (options.size < 2) return
+    val currentIndex = options.indexOfFirst { it.value == setting.value }.coerceAtLeast(0)
+    var draft by remember(setting.value, options) { mutableStateOf(currentIndex) }
+    val selectedColor = CupertinoTheme.colorScheme.accent
+    val trackColor = CupertinoTheme.colorScheme.tertiaryLabel
+
+    Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            CupertinoText(
+                MenuCatalog.titleOf(setting.id, setting.title),
+                fontSize = 13.sp,
+                color = CupertinoTheme.colorScheme.secondaryLabel,
+            )
+            Spacer(Modifier.weight(1f))
+            CupertinoText(
+                MenuCatalog.valueLabel(setting.id, options[draft].value),
+                fontSize = 13.sp,
+                color = CupertinoTheme.colorScheme.label,
+            )
+        }
+        Spacer(Modifier.height(6.dp))
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(26.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .pointerInput(options) {
+                    detectHorizontalDragGestures(
+                        onDragStart = { offset -> draft = segmentAt(offset.x, size.width, options.size) },
+                        onHorizontalDrag = { change, _ ->
+                            draft = segmentAt(change.position.x, size.width, options.size)
+                        },
+                        // The whole point of the draft: this is the only place a drag
+                        // reaches the camera — and not even then if the handle ended up
+                        // back on the value it started from.
+                        onDragEnd = { if (draft != currentIndex) onCommit(options[draft].value) },
+                        onDragCancel = { draft = currentIndex },
+                    )
+                },
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            options.forEachIndexed { index, option ->
+                // Each segment is a real target too: a tap is one gesture, so it writes
+                // straight away instead of waiting for a release that never comes.
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(if (index == draft) selectedColor else trackColor.copy(alpha = 0.28f))
+                        .clickable(enabled = enabled && index != currentIndex) { onCommit(option.value) },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (option.value == setting.value) {
+                        Box(Modifier.size(5.dp).clip(CircleShape).background(Color.White))
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Which segment of a [QuickAdjustBar] an x position inside it falls on. */
+private fun segmentAt(x: Float, widthPx: Int, count: Int): Int {
+    if (widthPx <= 0 || count <= 0) return 0
+    return ((x / widthPx) * count).toInt().coerceIn(0, count - 1)
+}
+
+/**
+ * The shooting settings worth a bar on the live page.
+ *
+ * Deliberately one entry: `Exposure` is the only item that is both ordered, present
+ * across modes, and something anyone wants to nudge while framing. `ISO` and `Shutter`
+ * are menus, not scales, and putting them here would turn a quick control into the
+ * settings page again.
+ */
+private val quickAdjustIds = listOf("Exposure")
 
 /**
  * Video / photo tabs plus the mode chips under the selected one.
@@ -1441,7 +1571,17 @@ private fun LazySectionScope.settingRow(
             onClick = if (expanded) onClose else onOpen,
             enabled = enabled,
             selectedLabel = {
-                CupertinoText(MenuCatalog.valueLabel(s.id, s.value, device), fontSize = 14.sp)
+                // Bounded on purpose. The trailing slot is measured before the title
+                // gets what is left, so an unbounded value — `Gyro EIS` answers
+                // 「360° 全向水平线矫正（360° Horizon Correction）」 — starved the title down
+                // to one character per line in the 2026-09-22 screenshot.
+                CupertinoText(
+                    MenuCatalog.valueLabel(s.id, s.value, device),
+                    fontSize = 14.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.widthIn(max = 150.dp),
+                )
             },
             title = { SettingLabel(zhTitle, firmwareName, help) },
         ) {
@@ -1452,7 +1592,7 @@ private fun LazySectionScope.settingRow(
                         onClose()
                         write(o.value)
                     },
-                    title = { CupertinoText(MenuCatalog.valueLabel(s.id, o.value, device)) },
+                    title = { CupertinoText(MenuCatalog.valueOptionLabel(s.id, o.value, device)) },
                 )
             }
         }

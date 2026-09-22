@@ -63,6 +63,25 @@ class MenuCatalogTest {
         assertEquals("1080P30", MenuCatalog.valueLabel("Resolution", "1080P30"))
     }
 
+    /**
+     * A long value drops the parenthetical in a row's trailing slot but keeps it in the
+     * picker. `Gyro EIS` answering `360° Horizon Correction` is what squeezed
+     * 「陀螺仪防抖」 into one character per line on 2026-09-22.
+     */
+    @Test
+    fun `a long value stays compact on the row and full in the picker`() {
+        val long = "360° Horizon Correction"
+        assertEquals("360° 全向水平线矫正", MenuCatalog.valueLabel("Gyro EIS", long))
+        assertEquals(
+            "360° 全向水平线矫正（360° Horizon Correction）",
+            MenuCatalog.valueOptionLabel("Gyro EIS", long),
+        )
+        assertTrue(
+            MenuCatalog.valueLabel("Gyro EIS", long).length <= 12,
+            "the trailing slot has to stay narrow enough for the title",
+        )
+    }
+
     @Test
     fun `group order covers every group exactly once`() {
         assertEquals(SettingGroup.entries.toList().toSet(), MenuCatalog.groupOrder.toSet())

@@ -271,6 +271,9 @@
 
     <!-- 拍摄模式，以及不属于拍摄模式的设备菜单。 -->
     <string name="section_capture_mode">拍摄模式</string>
+    <!-- 实时页上的横向快速调节条。 -->
+    <string name="section_quick_adjust">快速调节</string>
+    <string name="hint_quick_adjust">拖动或点按格子选择档位；松手才写给相机。</string>
     <string name="label_camera_settings">拍摄设置</string>
     <string name="label_device_settings">设备设置</string>
     <!-- 设置页分成的三页。 -->

@@ -83,6 +83,12 @@ data class SettingMeta(
  */
 object MenuCatalog {
 
+    /**
+     * How wide a row's trailing value may get before the firmware's own spelling is
+     * dropped from it — see [valueLabel].
+     */
+    private const val VALUE_LABEL_BUDGET = 22
+
     /** Values that repeat across items, translated once. */
     private val shared: Map<String, String> = mapOf(
         "ON" to "开",
@@ -399,11 +405,30 @@ object MenuCatalog {
     fun helpOf(itemId: String, device: Boolean = false): String? =
         if (device) deviceOf(itemId)?.zhHelp else of(itemId)?.zhHelp
 
-    /** Translate one option value if we know it; resolution-style strings stay as-is. */
+    /**
+     * The compact form of one option value, for the **trailing slot of a settings row**.
+     *
+     * The firmware's own spelling is kept beside the Chinese only while that fits:
+     * `Gyro EIS` answers `360° Horizon Correction`, and rendering
+     * 「360° 全向水平线矫正（360° Horizon Correction）」 in a row's trailing slot squeezed
+     * the *title* into one character per line — the layout defect in the 2026-09-22
+     * settings screenshot. Past the budget the Chinese alone wins; the raw spelling is
+     * still one tap away in the picker, where every option gets a whole row
+     * ([valueOptionLabel]).
+     */
     fun valueLabel(itemId: String, value: String, device: Boolean = false): String {
-        val zh = (if (device) deviceOf(itemId)?.zhValues else of(itemId)?.zhValues)?.get(value) ?: shared[value]
-        return if (zh == null) value else "$zh（$value）"
+        val zh = translated(itemId, value, device) ?: return value
+        return if (zh.length + value.length + 2 <= VALUE_LABEL_BUDGET) "$zh（$value）" else zh
     }
+
+    /** The full form, for the option list inside a picker. */
+    fun valueOptionLabel(itemId: String, value: String, device: Boolean = false): String {
+        val zh = translated(itemId, value, device) ?: return value
+        return "$zh（$value）"
+    }
+
+    private fun translated(itemId: String, value: String, device: Boolean): String? =
+        (if (device) deviceOf(itemId)?.zhValues else of(itemId)?.zhValues)?.get(value) ?: shared[value]
 
     /** Group order for the screen; an empty group is skipped entirely. */
     val groupOrder: List<SettingGroup> = listOf(

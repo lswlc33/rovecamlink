@@ -271,6 +271,9 @@
 
     <!-- Shooting modes and the device menu that is not part of them. -->
     <string name="section_capture_mode">Shooting mode</string>
+    <!-- The quick-adjust bar on the live view. -->
+    <string name="section_quick_adjust">Quick adjust</string>
+    <string name="hint_quick_adjust">Drag or tap a segment; the value is written to the camera when you let go.</string>
     <string name="label_camera_settings">Capture settings</string>
     <string name="label_device_settings">Device settings</string>
     <!-- The three pages the settings screen is split into. -->
