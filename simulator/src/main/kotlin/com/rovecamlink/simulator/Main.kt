@@ -24,7 +24,13 @@ import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.net.ServerSocket
+import java.net.Socket
+import java.security.MessageDigest
 import javax.imageio.ImageIO
+import kotlin.concurrent.thread
 
 /**
  * Desktop simulator for an XTU Hisilicon Hi35xx ("hi3510") action camera.
@@ -42,6 +48,15 @@ private var workMode = "NormalVideo"
 private var simTime: String? = null
 private var softVersion = "1.0.4"
 private var uploadedFirmwareName: String? = null
+
+/**
+ * The hotspot this fake camera is broadcasting, and the pair `getwifi.cgi` answers with.
+ * Mutated by `setwifi.cgi` so a rename followed by a read-back round-trips the same way
+ * the firmware's does — the alternative (two unrelated constants) would let the app's
+ * read path pass while its write path was broken.
+ */
+private var simWifiSsid = "XTUCam_f9e5e2"
+private var simWifiKey = "12345678"
 private val settings = linkedMapOf(
     "Resolution" to "1080P60",
     "Gyro EIS" to "High",
@@ -84,7 +99,19 @@ private fun varargBody(vararg pairs: Pair<String, String>): String =
 
 fun main() {
     val port = (System.getenv("SIM_PORT")?.toIntOrNull()) ?: 8080
+    // A real camera answers HTTP on 80 and takes firmware on 8080, so its two ports can
+    // never collide. One process on one host cannot have both on 8080, hence the separate
+    // default here. To exercise the pairing the camera actually uses, run
+    // `SIM_PORT=8081 SIM_OTA_TCP_PORT=8080` and connect the app to 127.0.0.1:8081 — the
+    // app always dials 8080 for firmware, exactly as the official client does.
+    val otaPort = (System.getenv("SIM_OTA_TCP_PORT")?.toIntOrNull()) ?: 8081
+    if (otaPort == port) {
+        System.err.println("SIM: SIM_OTA_TCP_PORT must differ from SIM_PORT ($port) — one process cannot bind both.")
+        kotlin.system.exitProcess(2)
+    }
     println("RoveCamLink XTU Hisilicon simulator on http://127.0.0.1:$port  (connect in-app via 127.0.0.1:$port)")
+    println("SIM: firmware RECV_FILE on tcp://127.0.0.1:$otaPort (a real camera uses 8080; the app always dials 8080)")
+    startFirmwareSocketListener(otaPort, port)
     embeddedServer(CIO, port = port, host = "0.0.0.0", module = Application::simulatorModule).start(wait = true)
 }
 
@@ -217,10 +244,22 @@ private fun handleCgi(cmd: String, q: io.ktor.http.Parameters): String? = when (
         "Success"
     }
     "setwifi" -> {
-        val ssid = q["-wifissid"] ?: "<unchanged>"
-        val key = q["-wifikey"] ?: "<unchanged>"
-        println("SIM: camera Wi-Fi set to ssid=$ssid key=${if (key == "<unchanged>") key else "••••"}")
+        val ssid = q["-wifissid"]
+        val key = q["-wifikey"]
+        // Mirror the firmware's own behaviour: whatever was not sent stays as it was, so
+        // `getwifi` below answers with a real round-trip of a rename rather than a
+        // constant, which is the only way the read-back path gets tested honestly.
+        if (!ssid.isNullOrEmpty()) simWifiSsid = ssid
+        if (!key.isNullOrEmpty()) simWifiKey = key
+        println("SIM: camera Wi-Fi set ssid=${ssid ?: "<unchanged>"} key=${if (key.isNullOrEmpty()) "<unchanged>" else "••••"}")
         "Success"
+    }
+    "getwifi" -> {
+        // `getwifi.cgi` is the read half of the rename dialog: the official app's
+        // SetDataUtils.getWifiInfor() calls it and only opens the dialog when both keys
+        // are present (SetDataUIUtils.java:306).
+        println("SIM: getwifi -> $simWifiSsid (key length ${simWifiKey.length})")
+        varargBody("wifissid" to simWifiSsid, "wifikey" to simWifiKey)
     }
     "reset" -> {
         recording = false
@@ -323,4 +362,169 @@ private fun filenameFromMultipart(body: ByteArray): String? {
     val text = body.toString(Charsets.ISO_8859_1)
     val m = Regex("""filename="([^"]+)"""", RegexOption.IGNORE_CASE).find(text) ?: return null
     return m.groupValues[1].takeIf { it.isNotEmpty() }
+}
+
+// ---------- firmware socket: the OTA channel that is not HTTP ----------
+
+/** The XTU frame: int32 cmd, int32 payload length, char[64] name — all little-endian. */
+private const val OTA_FRAME_BYTES = 72
+private const val OTA_NAME_OFFSET = 8
+private const val OTA_NAME_SLOT = 64
+private const val OTA_MD5_CHARS = 32
+
+/** The app's chunk size (`byte[] bArr2 = new byte[65536]`, SendSoftActivity.java:140). */
+private const val OTA_CHUNK_BYTES = 65_536
+
+/**
+ * The camera's firmware channel is a raw TCP socket on port 8080, not a CGI: the official
+ * app dials `createSocket(ip, 8080)` (SendSoftActivity.java:108), writes one [OTA_FRAME_BYTES]-byte
+ * header (TCP_MSG_S.java:11-32) carrying `RECV_FILE`, the file's byte length and its
+ * **name**, waits for the camera to echo a header with the same cmd, then writes the
+ * file's MD5 as 32 ASCII hex characters and streams the package. Nothing comes back at
+ * the end — the camera reboots as it takes the image, and the official client calls the
+ * last write success (SendSoftActivity.java:191-192) — so this listener answers the
+ * handshake, discards the bytes while hashing them, and applies the same version
+ * bookkeeping `upgrade.cgi` does on the CGI channel.
+ *
+ * [com.rovecamlink.app.brand.xtu.TcpMsgS] on the app side defines the same layout. It is
+ * re-typed here rather than imported on purpose: the simulator has no dependency on
+ * `composeApp`, and a fake that shares the client's protocol code cannot disagree with it,
+ * which is the only reason a fake exists.
+ *
+ * **Port:** a real camera serves CGI and this socket on the *same* 8080, which one process
+ * on one host cannot do, so the two are split by default (CGI 8080, this 8081) and refused
+ * when they are set equal. To exercise the socket channel the way the app will use it — it
+ * always dials `host:8080`, like the official client — run
+ * `SIM_PORT=8081 SIM_OTA_TCP_PORT=8080` and connect in-app to `127.0.0.1:8081`.
+ */
+private fun startFirmwareSocketListener(otaPort: Int, cgiPort: Int) {
+    val server = try {
+        ServerSocket(otaPort)
+    } catch (t: IOException) {
+        println("SIM: firmware socket could NOT bind tcp://127.0.0.1:$otaPort — ${t.message}")
+        if (otaPort == cgiPort) {
+            println("SIM:   CGI and the firmware socket both want $otaPort; run the CGI side elsewhere (SIM_PORT=${otaPort + 1})")
+        }
+        return
+    }
+    thread(isDaemon = true, name = "sim-firmware-socket") {
+        println("SIM: firmware socket listening on tcp://127.0.0.1:$otaPort (RECV_FILE)")
+        while (true) {
+            val connection = try {
+                server.accept()
+            } catch (t: IOException) {
+                println("SIM: firmware socket listener stopped: ${t.message}")
+                return@thread
+            }
+            thread(isDaemon = true, name = "sim-firmware-receive") { receiveFirmwarePackage(connection) }
+        }
+    }
+}
+
+/** One firmware push: handshake, then consume the package and report what actually arrived. */
+private fun receiveFirmwarePackage(connection: Socket) {
+    try {
+        connection.use { socket ->
+            // Generous, but armed: without it a client that dies mid-stream parks this
+            // thread forever, and the log would just stop explaining itself.
+            socket.soTimeout = 120_000
+            val input = socket.getInputStream()
+            val output = socket.getOutputStream()
+
+            val header = input.readExactly(OTA_FRAME_BYTES)
+            if (header == null) {
+                println("SIM: firmware socket closed before a full $OTA_FRAME_BYTES-byte header")
+                return
+            }
+            val cmd = littleEndianInt(header, 0)
+            val advertised = littleEndianInt(header, 4)
+            val name = cString(header, OTA_NAME_OFFSET, OTA_NAME_SLOT)
+            println("SIM: firmware push cmd=$cmd name=$name advertised=${advertised}B — answering with the same cmd")
+
+            output.write(encodeFrame(cmd, 0, ""))
+            output.flush()
+
+            val givenMd5 = input.readExactly(OTA_MD5_CHARS)?.toString(Charsets.US_ASCII)
+            if (givenMd5 == null) {
+                println("SIM: firmware push aborted: no $OTA_MD5_CHARS-character MD5 arrived after the handshake")
+                return
+            }
+
+            // The rest is the package. Real images are tens of megabytes, so this hashes as
+            // it goes and keeps none of it — the same depth of "virtual SD card" that
+            // fileupload.cgi has, which also only remembers the name it was given.
+            val digest = MessageDigest.getInstance("MD5")
+            val chunk = ByteArray(OTA_CHUNK_BYTES)
+            var received = 0L
+            while (true) {
+                val read = input.read(chunk)
+                if (read <= 0) break
+                digest.update(chunk, 0, read)
+                received += read
+            }
+            val computed = digest.digest().joinToString("") { (it.toInt() and 0xFF).toString(16).padStart(2, '0') }
+            println("SIM: firmware package received name=$name advertised=${advertised}B actual=${received}B md5(given)=$givenMd5 md5(computed)=$computed")
+            if (givenMd5 != computed) println("SIM:   MD5 MISMATCH — a real camera would reject the image here")
+
+            // This channel has no upgrade.cgi follow-up: the image is applied as it lands, so
+            // the version bookkeeping happens here, off the same yyyyMMdd name token.
+            uploadedFirmwareName = name
+            val next = Regex("\\d{8}").find(name)?.value
+            if (next != null) {
+                softVersion = "$next.0"
+                uploadedFirmwareName = null
+                println("SIM: firmware upgrade applied -> softversion=$softVersion (camera rebooting)")
+            }
+        }
+    } catch (t: IOException) {
+        println("SIM: firmware socket broke mid-transfer: ${t.message}")
+    }
+}
+
+/** Fill-loop read of exactly [n] bytes, or null if the peer stops short of that. */
+private fun InputStream.readExactly(n: Int): ByteArray? {
+    val dst = ByteArray(n)
+    var off = 0
+    while (off < n) {
+        val read = read(dst, off, n - off)
+        if (read <= 0) return null
+        off += read
+    }
+    return dst
+}
+
+private fun littleEndianInt(src: ByteArray, offset: Int): Int =
+    (src[offset].toInt() and 0xFF) or
+        ((src[offset + 1].toInt() and 0xFF) shl 8) or
+        ((src[offset + 2].toInt() and 0xFF) shl 16) or
+        ((src[offset + 3].toInt() and 0xFF) shl 24)
+
+private fun putLittleEndianInt(dst: ByteArray, offset: Int, value: Int) {
+    dst[offset] = (value and 0xFF).toByte()
+    dst[offset + 1] = ((value shr 8) and 0xFF).toByte()
+    dst[offset + 2] = ((value shr 16) and 0xFF).toByte()
+    dst[offset + 3] = ((value shr 24) and 0xFF).toByte()
+}
+
+private fun encodeFrame(cmd: Int, length: Int, name: String): ByteArray {
+    val out = ByteArray(OTA_FRAME_BYTES)
+    putLittleEndianInt(out, 0, cmd)
+    putLittleEndianInt(out, 4, length)
+    val raw = name.toByteArray(Charsets.UTF_8)
+    // One byte short of the slot, so the answer always terminates.
+    raw.copyInto(out, OTA_NAME_OFFSET, 0, minOf(raw.size, OTA_NAME_SLOT - 1))
+    return out
+}
+
+/** The NUL-terminated string in the [offset]..[offset]+[slot] window; the slot may be filled right to its end. */
+private fun cString(src: ByteArray, offset: Int, slot: Int): String {
+    val limit = offset + slot
+    var end = limit
+    for (i in offset until limit) {
+        if (src[i].toInt() == 0) {
+            end = i
+            break
+        }
+    }
+    return src.decodeToString(offset, end, throwOnInvalidSequence = false)
 }

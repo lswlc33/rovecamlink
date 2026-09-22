@@ -7,6 +7,7 @@ import com.rovecamlink.app.brand.xtu.HiVarParser.mb
 import com.rovecamlink.app.core.model.Brand
 import com.rovecamlink.app.core.model.CameraMode
 import com.rovecamlink.app.core.model.CameraSession
+import com.rovecamlink.app.core.model.CameraWifi
 import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.CmdResult
 import com.rovecamlink.app.core.model.DeviceEvent
@@ -1161,6 +1162,8 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override suspend fun setWifi(session: CameraSession, ssid: String, password: String): CmdResult =
         maintenance.setWifi(session, ssid, password)
+
+    override suspend fun getWifi(session: CameraSession): CameraWifi? = maintenance.getWifi(session)
 
 
     override suspend fun ensureAccessPoint(session: CameraSession): CmdResult =

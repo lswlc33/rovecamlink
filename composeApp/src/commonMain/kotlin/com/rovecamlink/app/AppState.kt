@@ -7,8 +7,10 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.graphics.ImageBitmap
 import com.rovecamlink.app.brand.xtu.HisiliconOtaTransport
+import com.rovecamlink.app.brand.xtu.XtuSocketOtaTransport
 import com.rovecamlink.app.core.model.CameraMode
 import com.rovecamlink.app.core.model.CameraSession
+import com.rovecamlink.app.core.model.CameraWifi
 import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.CmdResult
 import com.rovecamlink.app.core.model.DeviceEvent
@@ -24,9 +26,16 @@ import com.rovecamlink.app.core.transport.CameraRequest
 import com.rovecamlink.app.core.transport.CameraRequestClass
 import com.rovecamlink.app.core.transport.withCameraRequest
 import com.rovecamlink.app.core.nearby.NearbyController
+import com.rovecamlink.app.core.ota.ChainedOtaTransport
+import com.rovecamlink.app.core.ota.FirmwareOffer
+import com.rovecamlink.app.core.ota.FirmwarePackage
+import com.rovecamlink.app.core.ota.FirmwareUpdater
 import com.rovecamlink.app.core.ota.OtaCoordinator
 import com.rovecamlink.app.core.ota.OtaState
+import com.rovecamlink.app.core.ota.PackageResult
+import com.rovecamlink.app.core.ota.UpdatePlan
 import com.rovecamlink.app.core.ota.pickCameraFirmwarePackage
+import com.rovecamlink.app.core.ota.firmwareLocalPickerAvailable
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogLevel
@@ -38,6 +47,7 @@ import com.rovecamlink.app.core.storage.sanitizeFileName
 import com.rovecamlink.app.core.wifi.CameraNetwork
 import com.rovecamlink.app.core.wifi.DEFAULT_PREFIXES
 import com.rovecamlink.app.core.wifi.WifiResult
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -45,6 +55,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import okio.Path
 import org.jetbrains.compose.resources.decodeToImageBitmap
 
@@ -67,7 +78,16 @@ enum class Phase {
 }
 
 /** A discrete user/system operation so the UI can grey out only the relevant control. */
-enum class Op { Capture, Record, Mode, Refresh, Delete, Settings, FormatSd, FactoryReset, Reboot, DeviceInfo, AccessPoint }
+enum class Op { Capture, Record, Mode, Refresh, Delete, Settings, FormatSd, FactoryReset, Reboot, DeviceInfo, AccessPoint, Wifi }
+
+/** What the user decided about the running proxy: the two buttons, and what a dismissal means. */
+enum class VpnChoice {
+    /** Ignore the warning and let the attempt run. */
+    Proceed,
+
+    /** Abandon this attempt and take the user to the system screen that stops the proxy. */
+    CloseProxy,
+}
 
 /** Download queue entry. */
 data class DownloadItem(
@@ -136,11 +156,55 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     /**
      * Whether the phone's default network is a VPN tunnel while we talk to the
      * camera. Camera traffic then survives only because sockets are pinned to the
-     * Wi-Fi network (see core.wifi.adoptCurrentNetwork / requestNetwork), so the UI
-     * can say that out loud instead of letting "no camera found" look like a bug.
+     * Wi-Fi network (see core.wifi.adoptCurrentNetwork / requestNetwork) — and the
+     * official apps fail the same way with a proxy up, so a running VPN is worth
+     * asking about out loud *once*, at the start of a connection attempt. That is
+     * what [vpnPromptOpen] exists for; nothing else in the UI mentions VPN.
      */
     var vpnActive by mutableStateOf(false)
         private set
+
+    /**
+     * Shows the connect-time VPN dialog. Set by [askAboutVpn] and cleared by
+     * [answerVpnPrompt] or when the attempt is cancelled — never by a timer in the
+     * UI, because the dialog is a gate on the connection, not a notice.
+     */
+    var vpnPromptOpen by mutableStateOf(false)
+        private set
+
+    /** Resolved by [answerVpnPrompt]; [askAboutVpn] waits on it. */
+    private var vpnGate: CompletableDeferred<VpnChoice>? = null
+
+    /**
+     * Stop a connection attempt and ask the user what to do about a running proxy.
+     *
+     * Called before anything touches Wi-Fi, because the expensive part of a connect
+     * — joining the hotspot, walking candidate gateways — is exactly what a VPN eats,
+     * and a hotspot woken over Bluetooth closes again while the user reads the dialog.
+     * So this waits: [VPN_PROMPT_TIMEOUT_MS] gives the answer budget, after which the
+     * attempt continues as if 忽略 was pressed rather than hanging forever on an
+     * unanswered question.
+     */
+    private suspend fun askAboutVpn(): VpnChoice {
+        val gate = CompletableDeferred<VpnChoice>()
+        vpnGate = gate
+        vpnPromptOpen = true
+        Diag.info(LogTag.NET, "vpn prompt shown, waiting up to ${VPN_PROMPT_TIMEOUT_MS}ms")
+        val answer = try {
+            withTimeoutOrNull(VPN_PROMPT_TIMEOUT_MS) { gate.await() }
+        } finally {
+            vpnPromptOpen = false
+            vpnGate = null
+        }
+        val choice = answer ?: VpnChoice.Proceed
+        Diag.info(LogTag.NET, "vpn prompt answered $choice${if (answer == null) " (nobody answered)" else ""}")
+        return choice
+    }
+
+    /** The dialog's only entry point: [choice] is the button the user pressed. */
+    fun answerVpnPrompt(choice: VpnChoice) {
+        vpnGate?.complete(choice)
+    }
 
     var session by mutableStateOf<CameraSession?>(null)
         private set
@@ -218,7 +282,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val now = graph.wifi.isVpnActive()
         if (now != vpnActive) {
             vpnActive = now
-            Diag.at(LogLevel.INFO, LogTag.NET, "VPN default route ${if (now) "ACTIVE (camera sockets stay pinned to Wi-Fi)" else "gone"}")
+            Diag.at(LogLevel.INFO, LogTag.NET, "VPN default route ${if (now) "ACTIVE" else "gone"}")
         }
     }
 
@@ -268,8 +332,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         add("wifi.gateway" to (graph.wifi.gateway() ?: "-"))
         add("net.vpn" to graph.wifi.isVpnActive().toString())
         add("files" to "${files.size} listed, ${downloads.size} queued transfers, ${thumbnails.size} thumbs")
-        add("ota" to otaState.toString())
-    }
+        add("ota" to otaState.toString())    }
 
     /** Public accessor for the UI (e.g. to build the preview URL). */
     fun protocolOrNull(): CameraProtocol? = protocol
@@ -481,6 +544,18 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             // connect(), so without this every request follows the default route —
             // and when a VPN owns that route the camera simply stops existing.
             refreshVpnState()
+            // The official apps cannot talk to a camera through a running proxy
+            // either, so this is the user's call to make, not ours to guess at: the
+            // dialog pauses the attempt until they answer, and 去关闭代理 leaves the
+            // Wi-Fi alone rather than half-joining a hotspot they just decided to
+            // stop the tunnel for.
+            if (vpnActive && askAboutVpn() == VpnChoice.CloseProxy) {
+                val opened = graph.wifi.openVpnSettings()
+                Diag.info(LogTag.NET, "connect aborted so the proxy can be turned off (settings opened=$opened)")
+                goPhase(Phase.Idle)
+                statusMessage = null
+                return
+            }
             if (!graph.wifi.isConnectedToCamera) {
                 when (val adopt = graph.wifi.adoptCurrentNetwork(force = manualHost != null)) {
                     is WifiResult.Connected ->
@@ -679,6 +754,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         deviceInfo = null
         otaState = OtaState.Idle
         otaCoordinator = null
+        // Belongs to the camera that just went away, and it is a credential: leaving it
+        // set would show the previous camera's hotspot name and passphrase on the next
+        // connect until somebody pressed 读取 again.
+        cameraWifi = null
         files = emptyList()
         settings = emptyList()
         modes = emptyList()
@@ -705,6 +784,17 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             Diag.i(LogTag.STATE) { "poll loop started (every ${POLL_INTERVAL_MS}ms, gives up after $POLL_FAILURES_BEFORE_LOST failures)" }
             while (true) {
                 val t0 = Diag.uptimeMillis()
+                // A firmware check or download holds the **internet** route for its whole
+                // duration (see WifiController.withInternetRoute), so a poll issued now
+                // would leave the phone on the wrong network and come back as "the camera
+                // vanished" — which the pill would report and the user would act on.
+                // Skipping a tick is cheap; the loop resumes the moment the route is back.
+                val s0 = otaState
+                if (s0 is OtaState.Checking || s0 is OtaState.Downloading) {
+                    Diag.d(LogTag.STATE) { "poll skipped: firmware transfer holds the network route" }
+                    delay(POLL_INTERVAL_MS)
+                    continue
+                }
                 // Status polls are bookkeeping, but they must not queue behind a menu
                 // walk: the lane lets them over Enumerate so "is the camera still
                 // here" is answered promptly even while the gallery is filling in.
@@ -1090,9 +1180,54 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     // ---------- device info / maintenance ----------
 
+    /**
+     * The hotspot this camera is broadcasting, name and passphrase, read back from the
+     * camera itself. Null until somebody asks (`读取` on the settings page, or any
+     * 刷新设备信息).
+     */
+    var cameraWifi by mutableStateOf<CameraWifi?>(null)
+        private set
+
+    /** Whether this camera family can answer [readCameraWifi] at all. */
+    fun canReadCameraWifi(): Boolean =
+        session?.platform == DevicePlatform.HISILICON
+
+    /**
+     * Ask the camera what its own hotspot is called and what key it wants.
+     *
+     * This is the read half of 相机 Wi-Fi; without it the rename form below it is the
+     * only thing on the screen, i.e. you can set a password you can never see again.
+     */
+    fun readCameraWifi() = runOp(Op.Wifi) { proto, s ->
+        val wifi = proto.getWifi(s)
+        if (wifi == null) {
+            cameraWifi = null
+            CmdResult.Failure("这台相机没有回读 Wi-Fi 信息（getwifi.cgi 未给出 wifissid）")
+        } else {
+            cameraWifi = wifi
+            // Never the passphrase itself: the log is exported and shared, and unlike
+            // every other field here it is a credential. Length only, matching what
+            // setwifi already logs about the same value.
+            Diag.info(LogTag.DEV, "camera wifi read ssid=${wifi.ssid} keylen=${wifi.password?.length ?: 0}")
+            CmdResult.Ok
+        }
+    }
+
     fun loadDeviceInfo() = runOp(Op.DeviceInfo) { proto, s ->
         val info = proto.getDeviceInfo(s)
         deviceInfo = info
+        // One press of 刷新设备信息 refreshes the identity *and* the hotspot, because the
+        // About group shows the SSID and a rename is exactly the moment a stale one
+        // misleads someone. Kept separate from `cameraWifi`'s own op so the Wi-Fi row
+        // can also be refreshed on its own.
+        runCatching { proto.getWifi(s) }
+            .onSuccess { wifi ->
+                if (wifi != null) {
+                    cameraWifi = wifi
+                    Diag.info(LogTag.DEV, "camera wifi during device-info refresh ssid=${wifi.ssid} keylen=${wifi.password?.length ?: 0}")
+                }
+            }
+            .onFailure { Diag.debug(LogTag.DEV, "getwifi alongside device info threw ${Diag.causeChain(it)}") }
         if (info == null) {
             Diag.at(LogLevel.WARN, LogTag.DEV, "device info unavailable")
         } else {
@@ -1107,6 +1242,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         }
         CmdResult.Ok
     }
+
+    /**
+     * The SSID to show in the About group: the camera's own answer if we have it, and
+     * otherwise whatever `getdeviceattr` happened to include. There is deliberately no
+     * third source — the phone's current Wi-Fi is not evidence about the camera.
+     */
+    fun displayedSsid(): String? = cameraWifi?.ssid ?: deviceInfo?.ssid
 
     fun formatSd() = runOp(Op.FormatSd) { proto, s ->
         Diag.w(LogTag.FILE) { "FORMAT SD requested — this erases the card" }
@@ -1164,23 +1306,172 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     fun firmwareUpdateSupported(): Boolean =
         session?.platform == DevicePlatform.HISILICON
 
+    private val firmwareUpdater: FirmwareUpdater by lazy {
+        FirmwareUpdater(graph.http, graph.wifi, graph.fileSaver.firmwareDir())
+    }
+
+    /** The coroutine behind whichever OTA phase is running — the one thing cancel can act on. */
+    private var otaJob: Job? = null
+
     /**
-     * Pick a local firmware package and run the update. Launched on [sessionScope]
-     * so it dies with the session; state is surfaced through [otaState].
+     * The build the camera is running, preferring what the last full `getDeviceInfo`
+     * read to what `connect` cached, because the user can 刷新设备信息 without
+     * reconnecting and a firmware update is exactly when they would.
      */
-    fun installFirmwareUpdate() {
+    private fun installedFirmware(): String? =
+        deviceInfo?.softVersion?.takeIf { it.isNotBlank() }
+            ?: session?.extras?.get("softversion")?.takeIf { it.isNotBlank() }
+
+    /**
+     * Ask the vendor's public index whether this camera has a newer build.
+     *
+     * Read-only, and the one step of the whole feature that cannot damage anything, so
+     * it is the row the screen offers first. The request goes out on the internet route
+     * while the camera link is parked (see [FirmwareUpdater]).
+     */
+    fun checkForFirmwareUpdate() {
+        val base = session ?: run {
+            otaState = OtaState.Failed("没有连接相机，无法检查更新。")
+            return
+        }
+        val owner = sessionScope ?: return
+        if (!firmwareUpdateSupported()) {
+            Diag.at(LogLevel.WARN, LogTag.OTA, "check unsupported on ${base.platform.displayName}")
+            otaState = OtaState.Failed("暂不支持为 ${base.model} 这个系列的相机检查固件更新。")
+            return
+        }
+        cancelOtaWork("superseded by a new check")
+        val installed = installedFirmware()
+        Diag.info(LogTag.OTA, "check requested for ${base.model} installed=${installed ?: "?"} at ${base.host}")
+        otaState = OtaState.Checking
+        otaJob = owner.launch {
+            val plan = runCatching { firmwareUpdater.check(base.model, installed) }.getOrElse {
+                Diag.at(LogLevel.ERROR, LogTag.OTA, "check threw ${Diag.causeChain(it)}")
+                otaState = OtaState.Failed("检查更新失败：${it.message ?: "网络错误"}")
+                return@launch
+            }
+            otaState = when (plan) {
+                is UpdatePlan.Available -> OtaState.Available(plan.installed, plan.offer)
+                is UpdatePlan.UpToDate -> OtaState.UpToDate(plan.installed)
+                is UpdatePlan.NoEntry -> OtaState.NoEntry(plan.installed)
+                is UpdatePlan.NewerInstalled -> OtaState.Failed(
+                    "相机当前的固件（${plan.installed ?: "?"}）比云端公布的最新包（${plan.newest.version}）更新，" +
+                        "本 App 不做降级。",
+                )
+                is UpdatePlan.CannotCompare -> OtaState.Failed(
+                    "无法比较版本：相机上报的「${plan.installed ?: "无"}」里没有一个可比较的 8 位日期号，" +
+                        "请改用「选择本地固件包」。",
+                )
+            }
+        }
+    }
+
+    /**
+     * Fetch the package the index offered. The whole of [otaState]'s download phase
+     * happens here; the camera is not touched and does not need to be touched, which is
+     * why a download can be resumed after a dropped connection without re-pairing.
+     */
+    fun downloadFirmwareUpdate(offer: FirmwareOffer) {
+        val owner = sessionScope ?: return
+        cancelOtaWork("superseded by a new download")
+        Diag.info(LogTag.OTA, "download requested ${offer.fileName} ${LogFormat.size(offer.sizeBytes)}")
+        otaState = OtaState.Downloading(0f, 0L, offer.sizeBytes)
+        otaJob = owner.launch {
+            // Progress arrives far faster than the frame clock; publishing every chunk
+            // would recompose the settings list ~1,700 times per package for a bar that
+            // can show 1% steps.
+            var lastPublished = 0L
+            val result = firmwareUpdater.download(offer) { fraction, done, total ->
+                val now = Diag.uptimeMillis()
+                if (now - lastPublished >= 250L || (total > 0 && done >= total)) {
+                    lastPublished = now
+                    otaState = OtaState.Downloading(fraction, done, total)
+                }
+            }
+            when (result) {
+                is PackageResult.Ready -> {
+                    Diag.info(LogTag.OTA, "package verified ${result.path.name} ${LogFormat.size(result.bytes)}")
+                    otaState = OtaState.ReadyToInstall(offer, result.path, result.bytes)
+                }
+                is PackageResult.Failed -> {
+                    Diag.at(LogLevel.ERROR, LogTag.OTA, "download failed: ${result.message}")
+                    otaState = OtaState.Failed(result.message)
+                }
+            }
+        }
+    }
+
+    /** Install the package that is already on disk and verified. */
+    fun installPreparedFirmware() {
+        val ready = otaState as? OtaState.ReadyToInstall ?: return
+        startInstall(
+            FirmwarePackage(
+                path = ready.path,
+                sizeBytes = ready.bytes,
+                fileName = ready.offer.fileName,
+                version = ready.offer.normalized ?: ready.offer.version,
+            ),
+        )
+    }
+
+    /** Whether to offer the "install a file I chose myself" row on this platform. */
+    fun supportsLocalFirmwarePackage(): Boolean = firmwareLocalPickerAvailable
+
+    /** Desktop-only escape hatch: install a file the user picked themselves. */
+    fun installChosenFirmwarePackage() {
+        val owner = sessionScope ?: return
+        if (!firmwareUpdateSupported()) {
+            otaState = OtaState.Failed("暂不支持为这台相机更新固件。")
+            return
+        }
+        cancelOtaWork("superseded by a locally chosen package")
+        otaJob = owner.launch {
+            val pkg = runCatching { pickCameraFirmwarePackage() }.getOrElse {
+                Diag.at(LogLevel.ERROR, LogTag.OTA, "firmware picker failed ${Diag.causeChain(it)}")
+                null
+            }
+            if (pkg == null) {
+                Diag.i(LogTag.OTA) { "no package chosen; aborting" }
+                if (!otaState.isTerminal) otaState = OtaState.Cancelled
+                return@launch
+            }
+            startInstall(pkg)
+        }
+    }
+
+    /**
+     * Hand a package to the camera and see the update through its reboot.
+     *
+     * Must not be running while the internet route is held — [FirmwareUpdater] releases
+     * it as soon as the download ends, and the transfers below go back out over the
+     * camera network.
+     */
+    private fun startInstall(pkg: FirmwarePackage) {
         val base = session ?: return
         val proto = protocol ?: return
         val owner = sessionScope ?: return
-        Diag.info(LogTag.OTA, "OTA requested for ${base.platform.displayName} at ${base.host}")
-        if (!firmwareUpdateSupported()) {
-            Diag.at(LogLevel.WARN, LogTag.OTA, "OTA unsupported on ${base.platform.displayName}")
-            otaState = OtaState.Failed("Firmware update is not yet supported for this camera")
-            return
-        }
-        val transport = HisiliconOtaTransport(graph.http)
+        Diag.info(
+            LogTag.OTA,
+            "install ${pkg.fileName} ${LogFormat.size(pkg.sizeBytes)} version=${pkg.version ?: "?"} via ${base.platform.displayName}",
+        )
+        cancelOtaWork("superseded by an install")
         val coord = OtaCoordinator(
-            transport = transport,
+            transport = ChainedOtaTransport(
+                channels = listOf(
+                    // The channel the official app ships for this camera class first, and
+                    // the CGI pair behind it; see ChainedOtaTransport for why that order is
+                    // safe to fall through.
+                    XtuSocketOtaTransport(graph.tcp, graph.http),
+                    HisiliconOtaTransport(graph.http),
+                ),
+                preHandshakeFailures = setOf(
+                    XtuSocketOtaTransport.ERR_CONNECT,
+                    XtuSocketOtaTransport.ERR_HEADER_WRITE,
+                    XtuSocketOtaTransport.ERR_CMD_MISMATCH,
+                    XtuSocketOtaTransport.ERR_HANDSHAKE_READ,
+                    XtuSocketOtaTransport.ERR_MD5_WRITE,
+                ),
+            ),
             connect = { proto.connect(base.host, base.port) },
         )
         coord.onState = {
@@ -1191,24 +1482,27 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             )
         }
         otaCoordinator = coord
-        owner.launch {
-            val pkg = runCatching { pickCameraFirmwarePackage() }.getOrElse {
-                Diag.at(LogLevel.ERROR, LogTag.OTA, "firmware picker failed ${Diag.causeChain(it)}")
-                null
-            }
-            if (pkg == null) {
-                Diag.i(LogTag.OTA) { "no package chosen; aborting" }
-                if (!otaState.isTerminal) otaState = OtaState.Cancelled
-                return@launch
-            }
-            Diag.i(LogTag.OTA) { "package ${pkg.fileName} version=${pkg.version} bytes=${LogFormat.size(pkg.bytes.size.toLong())}" }
-            coord.run(pkg)
+        otaJob = owner.launch { coord.run(pkg) }
+    }
+
+    /** Stop whatever OTA coroutine is running, without announcing a cancellation. */
+    private fun cancelOtaWork(reason: String) {
+        otaCoordinator?.cancel()
+        otaCoordinator = null
+        otaJob?.let {
+            if (it.isActive) Diag.debug(LogTag.OTA, "cancelling the running OTA phase ($reason)")
+            it.cancel()
         }
+        otaJob = null
     }
 
     fun cancelFirmwareUpdate() {
         Diag.warn(LogTag.OTA, "cancel requested at ${otaState::class.simpleName}")
-        otaCoordinator?.cancel()
+        // Cancelling the coordinator only flips its state; the coroutine keeps pushing
+        // bytes until its job goes too, which is the difference between a cancelled
+        // download and a package that finishes downloading into a screen saying 已取消.
+        cancelOtaWork("user pressed 取消")
+        if (!otaState.isTerminal) otaState = OtaState.Cancelled
     }
 
     /** Dismiss a terminal OTA state so the update button returns. */
@@ -1388,6 +1682,15 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 }
 
 private const val POLL_FAILURES_BEFORE_LOST = 3
+
+/**
+ * How long [com.rovecamlink.app.AppState.askAboutVpn] waits for an answer before it
+ * treats silence as 忽略 and carries on. It has to outlast reading a dialog plus
+ * finding the proxy app — but the camera's hotspot was woken over Bluetooth for this
+ * attempt, and sitting on an unanswered question lets it close again, so the wait is
+ * bounded rather than forever.
+ */
+private const val VPN_PROMPT_TIMEOUT_MS = 60_000L
 
 /**
  * Upper bound on one card listing. The camera answers with whatever it has, so this

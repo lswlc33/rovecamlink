@@ -164,6 +164,28 @@ data class DeviceStatus(
 )
 
 /**
+ * The Wi-Fi network the camera is itself broadcasting, read back from the camera.
+ *
+ * Its own type rather than two more [DeviceInfo] fields because one of them is a
+ * passphrase: [DeviceInfo.raw] holds whatever the firmware answered and is echoed into
+ * the diagnostics log, and a secret must not travel in a bag like that. Keeping it here
+ * means there is exactly one place in the app that can print it, and `Diag`'s
+ * `captureSecrets` switch is what decides whether it does.
+ *
+ * [password] is the clear-text key. That is not this app being careless — the camera
+ * serves it over unauthenticated HTTP on its own hotspot, so anyone inside the network
+ * can already read it; showing it to the person holding the camera is the strictly
+ * smaller exposure, and it is the thing they asked for ("回读一下 WiFi 名称和 WiFi 密码
+ * 进行展示"), because the alternative today is reading it off the camera's LCD menu.
+ */
+data class CameraWifi(
+    val ssid: String,
+    val password: String?,
+    /** True when the camera reports this as a client network (STA) rather than its own AP. */
+    val stationMode: Boolean = false,
+)
+
+/**
  * Static device identity for the About screen. Field names mirror what each
  * firmware reports (`softversion`/`swver`, `serialnum`/`uuid`, ...).
  */

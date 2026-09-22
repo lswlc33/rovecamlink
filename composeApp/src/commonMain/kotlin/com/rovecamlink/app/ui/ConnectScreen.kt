@@ -72,7 +72,6 @@ import com.rovecamlink.app.label_saved
 import com.rovecamlink.app.label_wifi_cameras
 import com.rovecamlink.app.label_wifi_count
 import com.rovecamlink.app.not_connected_title
-import com.rovecamlink.app.notice_vpn_active
 import com.rovecamlink.app.phase_connected
 import com.rovecamlink.app.phase_connecting
 import com.rovecamlink.app.phase_detecting_device
@@ -164,7 +163,6 @@ fun ConnectScreen(state: AppState) {
     val noticeNow = nearby.notice?.resolve()
         ?: state.provisioning.notice?.resolve()
         ?: state.errorMessage?.resolve()
-    val vpnNote = stringResource(Res.string.notice_vpn_active)
     val phaseLbl = stringResource(Res.string.label_phase)
     val refreshLbl = stringResource(Res.string.action_refresh)
     val connectLbl = stringResource(Res.string.action_connect)
@@ -242,7 +240,6 @@ fun ConnectScreen(state: AppState) {
             infoRow(phaseLbl, phaseNow)
             if (statusNow.isNotEmpty()) infoRow(hintLbl, statusNow)
             if (noticeNow != null) infoRow("!", noticeNow)
-            if (state.vpnActive) infoRow("VPN", vpnNote)
         }
 
         /*

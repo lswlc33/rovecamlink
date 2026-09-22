@@ -51,10 +51,40 @@ interface WifiController {
 
     /**
      * True when the phone's default network is a VPN tunnel. Camera traffic then
-     * depends on [adoptCurrentNetwork] having worked, so the UI can warn the user
-     * instead of reporting a mysterious "no camera found".
+     * depends on [adoptCurrentNetwork] having worked, so the connect flow asks the
+     * user what to do about it before spending a minute on a doomed join.
      */
     fun isVpnActive(): Boolean
+
+    /**
+     * Run [block] with this process's sockets on the internet instead of on the
+     * camera's hotspot, then put them back.
+     *
+     * This exists because reaching a camera and reaching the internet are mutually
+     * exclusive here on purpose: [connect] and [adoptCurrentNetwork] call
+     * `bindProcessToNetwork` so the camera's isolated, internet-less hotspot cannot
+     * be shadowed by a VPN (`docs/07` P0), and that same binding sends every other
+     * socket into a network with no route off it. A vendor firmware index is
+     * therefore unreachable while a camera is connected unless somebody steps aside.
+     *
+     * Callers must treat this as an **exclusive** window: nothing else may talk to
+     * the camera while it is open, because its traffic would silently go to the wrong
+     * network and fail. That is why the OTA flow takes the route once for the whole
+     * check-and-download and pauses camera polling around it, rather than per request.
+     *
+     * The default implementation just runs [block] — desktop and iOS have no process
+     * binding to lift. [label] is for the log line only.
+     */
+    suspend fun <T> withInternetRoute(label: String, block: suspend () -> T): T = block()
+
+    /**
+     * Hand the user to the system screen where the running VPN can be switched off.
+     *
+     * Only ever called from the one button in the connect-time VPN dialog, so a
+     * platform with no such screen says so with `false` instead of inventing a
+     * gesture the user would have to complete by memory.
+     */
+    fun openVpnSettings(): Boolean
 }
 
 /**

@@ -221,6 +221,29 @@ import com.rovecamlink.app.title_reboot
 import com.rovecamlink.app.workmode_photo
 import com.rovecamlink.app.workmode_video
 import com.rovecamlink.app.resolve
+import com.rovecamlink.app.action_check_update
+import com.rovecamlink.app.action_download_update
+import com.rovecamlink.app.action_hide_password
+import com.rovecamlink.app.action_install_now
+import com.rovecamlink.app.action_read_camera_wifi
+import com.rovecamlink.app.action_recheck_update
+import com.rovecamlink.app.action_show_password
+import com.rovecamlink.app.action_use_read_values
+import com.rovecamlink.app.confirm_install_firmware
+import com.rovecamlink.app.firmware_update_forced
+import com.rovecamlink.app.hint_wifi_read_unsupported
+import com.rovecamlink.app.label_newest_version
+import com.rovecamlink.app.label_package_size
+import com.rovecamlink.app.label_release_notes
+import com.rovecamlink.app.label_wifi_password
+import com.rovecamlink.app.msg_install_firmware
+import com.rovecamlink.app.note_download_needs_internet
+import com.rovecamlink.app.note_release_notes_unavailable
+import com.rovecamlink.app.ota_note_lang
+import com.rovecamlink.app.status_downloading
+import com.rovecamlink.app.status_package_ready
+import com.rovecamlink.app.status_wifi_not_read
+import com.rovecamlink.app.title_install_firmware
 import com.rovecamlink.app.core.media.CameraPreviewView
 import com.rovecamlink.app.core.media.OrientationMode
 import com.rovecamlink.app.core.media.rememberDeviceOrientation
@@ -256,18 +279,32 @@ private fun formatTime(sec: Int): String {
     return "${if (m < 10) "0$m" else "$m"}:${if (s < 10) "0$s" else "$s"}"
 }
 
-/** Firmware OTA state → words. Raw on purpose: this is a developer-visible status. */
-private fun otaLabel(s: OtaState): String = when (s) {
+/**
+ * Firmware OTA state → the one-line status the settings page shows.
+ *
+ * Raw strings on purpose, and Chinese ones: this is a developer-visible status, and the
+ * `docs/06` rule that the exported log has to be readable by the person in the field
+ * applies to the screen that mirrors it. States that carry real content — an offer with a
+ * version and a size, a download with byte counts — render as their own rows instead, and
+ * return "" here rather than repeating themselves.
+ */
+private fun OtaState.otaLabel(): String = when (this) {
     OtaState.Idle -> ""
+    OtaState.Checking -> "正在检查更新…"
+    is OtaState.UpToDate -> "已是最新固件"
+    is OtaState.NoEntry -> "厂商没有公布这个型号的固件包"
+    is OtaState.Available -> "发现新固件 ${offer.version}"
+    is OtaState.Downloading -> ""
+    is OtaState.ReadyToInstall -> ""
     OtaState.WaitingForDevice -> "等待相机…"
     OtaState.Uploading -> "上传中…"
     OtaState.Installing -> "安装中…"
     OtaState.WaitingForReboot -> "相机重启中…"
     OtaState.Reconnecting -> "重新连接中…"
-    is OtaState.ConfirmingVersion -> "核对版本（${s.expected}）…"
+    is OtaState.ConfirmingVersion -> "核对版本（$expected）…"
     OtaState.Completed -> "已更新"
     OtaState.Cancelled -> "已取消"
-    is OtaState.Failed -> s.message
+    is OtaState.Failed -> message
 }
 
 // ============================ shared widgets ============================
@@ -321,6 +358,22 @@ private fun LazySectionScope.valueItem(title: String, value: String) {
         ) {
             Box(Modifier.weight(1f)) { CupertinoText(title) }
             CupertinoText(value, color = CupertinoTheme.colorScheme.secondaryLabel)
+        }
+    }
+}
+
+/**
+ * A value too long for one row: the vendor's release notes arrive as several lines of
+ * prose, and [valueItem] right-aligns its value, which turns three sentences into a
+ * ragged column against the trailing edge of the screen.
+ */
+private fun LazySectionScope.textBlockItem(title: String, body: String) {
+    item {
+        Column(Modifier.fillMaxWidth().padding(it).padding(vertical = 6.dp)) {
+            CupertinoText(title, color = CupertinoTheme.colorScheme.secondaryLabel, fontSize = 12.sp)
+            body.split("\n").forEach { line ->
+                CupertinoText(line, fontSize = 13.sp, color = CupertinoTheme.colorScheme.label)
+            }
         }
     }
 }
@@ -1552,7 +1605,7 @@ private fun FileThumbnail(bitmap: ImageBitmap?, isVideo: Boolean) {
 // ============================ Settings ============================
 
 /** Maintenance actions that permanently alter the device, gated by a confirm dialog. */
-private enum class DangerOp { FormatSd, FactoryReset, Reboot }
+private enum class DangerOp { FormatSd, FactoryReset, Reboot, InstallFirmware }
 
 /**
  * Three pages in one tab: the camera's shooting menu, the **device's** own menu
@@ -1567,6 +1620,9 @@ fun SettingsScreen(state: AppState) {
     var wifiSsid by remember { mutableStateOf("") }
     var wifiPass by remember { mutableStateOf("") }
     var wifiSubmit by remember { mutableStateOf(false) }
+
+    /** Whether the read-back passphrase is shown in clear. Off by default. */
+    var showPass by remember { mutableStateOf(false) }
     var logging by remember { mutableStateOf(com.rovecamlink.app.core.log.Diag.config.fileSink) }
 
     val connected = state.session != null
@@ -1609,6 +1665,20 @@ fun SettingsScreen(state: AppState) {
     val installedLbl = stringResource(Res.string.label_installed)
     val selectFirmwareLbl = stringResource(Res.string.action_select_firmware)
     val firmwareUnsupportedLbl = stringResource(Res.string.firmware_unsupported)
+    val checkLbl = stringResource(Res.string.action_check_update)
+    val newestLbl = stringResource(Res.string.label_newest_version)
+    val sizeLbl = stringResource(Res.string.label_package_size)
+    val notesLbl = stringResource(Res.string.label_release_notes)
+    val noNotesLbl = stringResource(Res.string.note_release_notes_unavailable)
+    val forcedLbl = stringResource(Res.string.firmware_update_forced)
+    val downloadLbl = stringResource(Res.string.action_download_update)
+    val installLbl = stringResource(Res.string.action_install_now)
+    val recheckLbl = stringResource(Res.string.action_recheck_update)
+    val internetNoteLbl = stringResource(Res.string.note_download_needs_internet)
+    // Which language of the vendor's release notes to show. The core layer that fetched
+    // them cannot see the locale this screen resolved to, so the locale travels in as a
+    // resource of its own — `zh` here, `en` in the default bundle.
+    val noteLang = stringResource(Res.string.ota_note_lang)
     val updateAppliedLbl = stringResource(Res.string.status_update_applied)
     val dismissLbl = stringResource(Res.string.action_dismiss)
     val cancelledLbl = stringResource(Res.string.action_cancelled)
@@ -1616,10 +1686,36 @@ fun SettingsScreen(state: AppState) {
     val shortCancelLbl = stringResource(Res.string.action_cancel_short)
     val sdCardTitle = stringResource(Res.string.section_sd_card).sectionTitle()
     val formatSdLbl = stringResource(Res.string.action_format_sd)
+    // The two OTA rows that need formatting are resolved *here*, in the composable part
+    // of the screen: everything inside a `section { }` body runs in a plain
+    // LazySectionScope, where `stringResource` cannot be called.
+    val otaNow = state.otaState
+    val downloadingText = if (otaNow is OtaState.Downloading) {
+        stringResource(
+            Res.string.status_downloading,
+            "${(otaNow.fraction * 100f).roundToInt().coerceIn(0, 100)}%",
+            humanBytes(otaNow.done),
+            if (otaNow.total > 0) humanBytes(otaNow.total) else "?",
+        )
+    } else {
+        ""
+    }
+    val readyText = if (otaNow is OtaState.ReadyToInstall) {
+        stringResource(Res.string.status_package_ready, otaNow.offer.fileName, humanBytes(otaNow.bytes))
+    } else {
+        ""
+    }
     val cameraWifiTitle = stringResource(Res.string.section_camera_wifi).sectionTitle()
     val newSsidHint = stringResource(Res.string.hint_new_ssid)
     val newPassHint = stringResource(Res.string.hint_new_password)
     val wifiRestartNote = stringResource(Res.string.note_wifi_restarts)
+    val wifiPassLbl = stringResource(Res.string.label_wifi_password)
+    val readWifiLbl = stringResource(Res.string.action_read_camera_wifi)
+    val notReadLbl = stringResource(Res.string.status_wifi_not_read)
+    val wifiReadUnsupportedLbl = stringResource(Res.string.hint_wifi_read_unsupported)
+    val showPassLbl = stringResource(Res.string.action_show_password)
+    val hidePassLbl = stringResource(Res.string.action_hide_password)
+    val prefillLbl = stringResource(Res.string.action_use_read_values)
     val dangerTitle = stringResource(Res.string.section_danger).sectionTitle()
     val rebootLbl = stringResource(Res.string.action_reboot_camera)
     val factoryResetLbl = stringResource(Res.string.action_factory_reset)
@@ -1740,7 +1836,10 @@ fun SettingsScreen(state: AppState) {
                     )
                     valueItem(regionLbl, info.regionDash())
                     valueItem(macLbl, info.macDash())
-                    valueItem(wifiLbl, info.ssidDash())
+                    // The read-back from `getwifi.cgi` wins over whatever `getdeviceattr`
+                    // happened to carry, because it is the only answer that is definitely
+                    // about the hotspot rather than about the camera's identity.
+                    valueItem(wifiLbl, state.displayedSsid()?.ifBlank { null } ?: "—")
                     valueItem(hostLbl, state.session?.let { "${it.host}:${it.port}" } ?: "—")
                     valueItem(
                         sdStateTitle,
@@ -1760,28 +1859,92 @@ fun SettingsScreen(state: AppState) {
 
                 section(title = { CupertinoText(firmwareTitle) }) {
                     valueItem(installedLbl, info?.softVersion ?: "—")
-                    when (val ota = state.otaState) {
-                        OtaState.Idle -> actionRow(
-                            label = if (state.firmwareUpdateSupported()) {
-                                selectFirmwareLbl
-                            } else {
-                                firmwareUnsupportedLbl
-                            },
-                            enabled = state.firmwareUpdateSupported(),
-                        ) { state.installFirmwareUpdate() }
+                    val ota = state.otaState
+                    val supported = state.firmwareUpdateSupported()
+                    // One status line for every state that has no rows of its own, so a
+                    // failure or a "no firmware published" answer is never a silent button.
+                    val line = ota.otaLabel()
+                    if (line.isNotEmpty() && ota !is OtaState.Available) valueItem(statusLbl, line)
+                    if (!supported && ota is OtaState.Idle) {
+                        valueItem(noteLbl, firmwareUnsupportedLbl)
+                    }
+                    when (ota) {
+                        OtaState.Idle -> {
+                            actionRow(
+                                checkLbl,
+                                enabled = supported,
+                            ) { state.checkForFirmwareUpdate() }
+                            // Desktop keeps the manual route: it is how the whole install
+                            // flow is exercised against `simulator/` without a vendor
+                            // cloud, and it is the only way to flash a file the index has
+                            // nothing for.
+                            if (state.supportsLocalFirmwarePackage()) {
+                                actionRow(selectFirmwareLbl, enabled = supported) {
+                                    state.installChosenFirmwarePackage()
+                                }
+                            }
+                        }
+
+                        is OtaState.Available -> {
+                            valueItem(newestLbl, ota.offer.version)
+                            if (ota.offer.sizeBytes > 0L) valueItem(sizeLbl, humanBytes(ota.offer.sizeBytes))
+                            if (ota.offer.forced) valueItem(noteLbl, forcedLbl)
+                            val notes = ota.offer.releaseNoteFor(noteLang)
+                            if (notes != null) textBlockItem(notesLbl, notes) else valueItem(notesLbl, noNotesLbl)
+                            valueItem(noteLbl, internetNoteLbl)
+                            actionRow(downloadLbl) { state.downloadFirmwareUpdate(ota.offer) }
+                            actionRow(dismissLbl) { state.resetOtaState() }
+                        }
+
+                        is OtaState.Downloading -> {
+                            valueItem(statusLbl, downloadingText)
+                            // A hand-drawn bar rather than a library progress widget: the
+                            // download runs for minutes and the percentage above already
+                            // moves, so this is orientation, not measurement. It has to sit
+                            // inside `item { }` because the section body itself is not a
+                            // composable scope.
+                            item {
+                                Box(
+                                    Modifier.fillMaxWidth()
+                                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                                        .height(4.dp)
+                                        .background(CupertinoTheme.colorScheme.tertiaryLabel.copy(alpha = 0.25f)),
+                                ) {
+                                    Box(
+                                        Modifier.fillMaxWidth(ota.fraction.coerceIn(0f, 1f)).height(4.dp)
+                                            .background(CupertinoTheme.colorScheme.accent),
+                                    )
+                                }
+                            }
+                            actionRow(cancelLbl) { state.cancelFirmwareUpdate() }
+                        }
+
+                        is OtaState.ReadyToInstall -> {
+                            valueItem(statusLbl, readyText)
+                            // Flashing is the one action in this app that can leave the
+                            // camera unable to boot, and it cannot be undone from here, so
+                            // it goes through the same confirmation the card format does.
+                            actionRow(installLbl) { pending = DangerOp.InstallFirmware }
+                            actionRow(dismissLbl) { state.resetOtaState() }
+                        }
 
                         OtaState.Completed -> {
                             valueItem(statusLbl, updateAppliedLbl)
                             actionRow(dismissLbl) { state.resetOtaState() }
                         }
+
                         OtaState.Cancelled -> actionRow(cancelledLbl) { state.resetOtaState() }
-                        is OtaState.Failed -> {
-                            valueItem(statusLbl, ota.message)
-                            actionRow(dismissLbl) { state.resetOtaState() }
+
+                        is OtaState.Failed -> actionRow(recheckLbl) {
+                            state.resetOtaState()
+                            state.checkForFirmwareUpdate()
                         }
+
                         else -> {
-                            valueItem(statusLbl, otaLabel(ota))
-                            actionRow(cancelLbl) { state.cancelFirmwareUpdate() }
+                            // Checking, and the transfer states: the only useful control
+                            // while bytes are moving is the one that stops.
+                            if (!ota.isTerminal) actionRow(cancelLbl) { state.cancelFirmwareUpdate() }
+                            else actionRow(dismissLbl) { state.resetOtaState() }
                         }
                     }
                 }
@@ -1796,10 +1959,46 @@ fun SettingsScreen(state: AppState) {
                 }
 
                 section(title = { CupertinoText(cameraWifiTitle.sectionTitle()) }) {
+                    // ---- what the camera itself says its hotspot is ----
+                    //
+                    // The read-back rows come first because they are the answer to the
+                    // question this group used to make people guess at: "what is the
+                    // password I set two years ago". Masked by default — this is a screen
+                    // someone may be holding out to another person — and prefilled into
+                    // the rename fields below so a change starts from the truth.
+                    val wifi = state.cameraWifi
+                    if (wifi == null) {
+                        valueItem(
+                            wifiLbl,
+                            if (state.canReadCameraWifi()) notReadLbl else wifiReadUnsupportedLbl,
+                        )
+                    } else {
+                        valueItem(wifiLbl, wifi.ssid)
+                        valueItem(
+                            wifiPassLbl,
+                            if (showPass) wifi.password ?: "—" else "•".repeat(wifi.password?.length ?: 0).ifEmpty { "—" },
+                        )
+                        if (!wifi.password.isNullOrEmpty()) {
+                            actionRow(
+                                if (showPass) hidePassLbl else showPassLbl,
+                            ) { showPass = !showPass }
+                        }
+                        actionRow(prefillLbl) {
+                            wifiSsid = wifi.ssid
+                            wifiPass = wifi.password ?: ""
+                            wifiSubmit = false
+                        }
+                    }
+                    if (state.canReadCameraWifi()) {
+                        actionRow(
+                            readWifiLbl,
+                            busy = state.isBusy(Op.Wifi),
+                        ) { state.readCameraWifi() }
+                    }
                     textField(
                         value = wifiSsid,
                         onValueChange = { wifiSsid = it; wifiSubmit = false },
-                        placeholder = { CupertinoText(info?.ssid?.ifBlank { null } ?: newSsidHint) },
+                        placeholder = { CupertinoText(wifi?.ssid?.ifBlank { null } ?: newSsidHint) },
                         singleLine = true,
                     )
                     textField(
@@ -1877,6 +2076,7 @@ fun SettingsScreen(state: AppState) {
                 DangerOp.FormatSd -> Res.string.title_format_sd
                 DangerOp.FactoryReset -> Res.string.title_factory_reset
                 DangerOp.Reboot -> Res.string.title_reboot
+                DangerOp.InstallFirmware -> Res.string.title_install_firmware
             },
         )
         val message = stringResource(
@@ -1884,6 +2084,7 @@ fun SettingsScreen(state: AppState) {
                 DangerOp.FormatSd -> Res.string.msg_format_sd
                 DangerOp.FactoryReset -> Res.string.msg_factory_reset
                 DangerOp.Reboot -> Res.string.msg_reboot
+                DangerOp.InstallFirmware -> Res.string.msg_install_firmware
             },
         )
         val confirmLabel = stringResource(
@@ -1891,6 +2092,7 @@ fun SettingsScreen(state: AppState) {
                 DangerOp.FormatSd -> Res.string.confirm_format
                 DangerOp.FactoryReset -> Res.string.confirm_reset
                 DangerOp.Reboot -> Res.string.confirm_reboot
+                DangerOp.InstallFirmware -> Res.string.confirm_install_firmware
             },
         )
         CupertinoAlertDialog(
@@ -1907,6 +2109,7 @@ fun SettingsScreen(state: AppState) {
                             DangerOp.FormatSd -> state.formatSd()
                             DangerOp.FactoryReset -> state.factoryReset()
                             DangerOp.Reboot -> state.reboot()
+                            DangerOp.InstallFirmware -> state.installPreparedFirmware()
                         }
                         pending = null
                     },

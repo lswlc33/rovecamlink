@@ -2,12 +2,15 @@ package com.rovecamlink.app.brand.xtu
 
 import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CmdResult
+import com.rovecamlink.app.core.ota.FirmwarePackage
 import com.rovecamlink.app.core.ota.OtaTransport
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
+import com.rovecamlink.app.core.log.LogLevel
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.transport.CameraHttp
 import io.ktor.http.ContentType
+import okio.FileSystem
 import kotlin.random.Random
 
 /**
@@ -27,18 +30,44 @@ class HisiliconOtaTransport(private val http: CameraHttp) : OtaTransport {
     private fun cgi(session: CameraSession) = "http://${session.host}:${session.port}/cgi-bin/hi3510"
 
     override suspend fun readVersion(session: CameraSession): String? {
-        val attr = HiVarParser.parse(http.getText("${cgi(session)}/getdeviceattr.cgi")) ?: return null
+        val attr = HiVarParser.parse(http.getText("${cgi(session)}/getdeviceattr.cgi"))
         return attr["softversion"]?.trim()?.ifEmpty { null }
     }
 
     override suspend fun install(
         session: CameraSession,
-        fileName: String,
-        fileBytes: ByteArray,
+        pkg: FirmwarePackage,
         onProgress: (Float) -> Unit,
-    ): CmdResult = Diag.inOp("hi3510-ota", "package=$fileName size=${fileBytes.size}B") {
+    ): CmdResult = Diag.inOp("hi3510-ota", "package=${pkg.fileName} size=${pkg.sizeBytes}B") {
+        // This channel hands `CameraHttp` one byte array for the whole multipart body,
+        // so its peak cost is twice the package. Every real XTU package measured so far
+        // is 16–54 MB (docs/04 §5), which is why this transport is the *fallback* and the
+        // socket channel is the default; refusing here is honest, and an OOM in the
+        // middle of a firmware push is the one failure mode this app must not offer.
+        if (pkg.sizeBytes > MAX_IN_MEMORY_PACKAGE) {
+            Diag.at(
+                LogLevel.WARN, LogTag.OTA,
+                "cgi channel refuses ${LogFormat.size(pkg.sizeBytes)} package ${pkg.fileName} (cap ${LogFormat.size(MAX_IN_MEMORY_PACKAGE)}); needs the socket channel",
+            )
+            return@inOp CmdResult.Failure(
+                "HTTP 上传通道要把整包读进内存，超过 ${LogFormat.size(MAX_IN_MEMORY_PACKAGE)} 的固件包它接不了",
+            )
+        }
+        val bytes = runCatching { FileSystem.SYSTEM.read(pkg.path) { readByteArray() } }.getOrNull()
+        if (bytes == null) {
+            Diag.at(LogLevel.ERROR, LogTag.OTA, "cannot read ${pkg.path} for upload")
+            return@inOp CmdResult.Failure("读不到本地的固件包（${pkg.fileName}），请重新下载")
+        }
+        if (bytes.size.toLong() != pkg.sizeBytes) {
+            Diag.at(
+                LogLevel.ERROR, LogTag.OTA,
+                "${pkg.path.name} is ${bytes.size}B on disk but was handed as ${pkg.sizeBytes}B",
+            )
+            return@inOp CmdResult.Failure("本地固件包大小与记录不符，请重新下载")
+        }
+
         val boundary = "RoveCamLinkFW-" + Random.nextLong().toString(16)
-        val body = buildMultipart(fileName, fileBytes, boundary)
+        val body = buildMultipart(pkg.fileName, bytes, boundary)
         val ct = ContentType.MultiPart.FormData.withParameter("boundary", boundary)
         Diag.i(LogTag.OTA) { "POST fileupload.cgi field=sd bytes=${body.size} (firmware bytes are never logged)" }
 
@@ -71,5 +100,18 @@ class HisiliconOtaTransport(private val http: CameraHttp) : OtaTransport {
             bytes.copyInto(out, p); p += bytes.size
             tail.copyInto(out, p)
         }
+    }
+
+    companion object {
+        /**
+         * Ceiling for a package this channel will load into memory.
+         *
+         * 24 MB is not a round number chosen for looks: it is roughly what the
+         * smallest real vendor package (idGoLive's 16 MB ja build, `docs/04 §5.3`) plus
+         * its multipart envelope costs, so a hand-picked small image still goes through
+         * this path while the 54 MB S7PRO build is refused with a reason instead of an
+         * OutOfMemoryError halfway through a flash.
+         */
+        const val MAX_IN_MEMORY_PACKAGE: Long = 24L * 1024 * 1024
     }
 }

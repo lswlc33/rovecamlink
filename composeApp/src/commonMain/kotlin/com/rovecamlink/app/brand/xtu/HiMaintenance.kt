@@ -1,9 +1,11 @@
 package com.rovecamlink.app.brand.xtu
 
 import com.rovecamlink.app.core.model.CameraSession
+import com.rovecamlink.app.core.model.CameraWifi
 import com.rovecamlink.app.core.model.CmdResult
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
+import com.rovecamlink.app.core.log.LogLevel
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.ota.zeroPad
 import com.rovecamlink.app.core.transport.CameraHttp
@@ -72,6 +74,50 @@ internal class HiMaintenance(private val http: CameraHttp, private val cgi: (Cam
             is CgiReply.Rejected -> refused("setsystime", verdict)
             CgiReply.NoAnswer -> CmdResult.Failure("time sync failed (setsystime.cgi did not answer)")
         }
+    }
+
+    /**
+     * Read the hotspot's name and passphrase back off the camera.
+     *
+     * `GET /cgi-bin/hi3510/getwifi.cgi` answers two variables, `wifissid` and
+     * `wifikey` — the same pair `setwifi.cgi` takes. Field evidence that this is the
+     * right endpoint and not one of the Wi-Fi neighbours: the official rename dialog is
+     * populated from it (`SetDataUtils.getWifiInfor` at
+     * `_work/xtu_src/sources/com/gku/actioncam/hisilicon/dv/ui/data/SetDataUtils.java:319-332`,
+     * whose `BaseUrl` is set to `http://<ip>/cgi-bin/hi3510/` in `HomeActivity.java:1708`),
+     * and it consumes exactly those two keys —
+     * `if (tempMap.containsKey("wifissid") && tempMap.containsKey("wifikey"))`
+     * (`SetDataUIUtils.java:306-312`), as does the SigmaStar-side parser
+     * (`SSResponseParse.parseGetWiFi`, `:467-485`, `new SSWiFiInfo(map.get("wifissid"), map.get("wifikey"))`).
+     *
+     * Both the name and the key come back in the clear, which is the camera's design
+     * rather than an accident: the endpoint sits on an unauthenticated HTTP server that
+     * every client inside the hotspot can reach. `wifikey` is therefore only ever
+     * written to the log when `Diag.config.captureSecrets` is on.
+     *
+     * A missing `wifissid` is reported as "this camera will not say", not as an empty
+     * name — the difference decides whether the UI offers to overwrite the hotspot with
+     * a blank one.
+     */
+    suspend fun getWifi(session: CameraSession): CameraWifi? {
+        val url = "${cgi(session)}/getwifi.cgi"
+        val body = http.getText(url)
+        val vars = HiVarParser.parse(body)
+        val ssid = vars["wifissid"]?.trim()?.ifEmpty { null }
+        if (ssid == null) {
+            Diag.at(
+                LogLevel.WARN, LogTag.PROTO,
+                "getwifi: no wifissid in reply (body=${LogFormat.bodyField(body, Diag.config.captureSecrets)} chars=${body?.length ?: "null"})",
+            )
+            return null
+        }
+        val key = vars["wifikey"]?.trim()?.ifEmpty { null }
+        Diag.info(
+            LogTag.PROTO,
+            "getwifi ssid=${LogFormat.safe(ssid)} keylen=${key?.length ?: 0} " +
+                "key=${if (Diag.config.captureSecrets) LogFormat.safe(key) else "<redacted>"}",
+        )
+        return CameraWifi(ssid = ssid, password = key)
     }
 
     /**

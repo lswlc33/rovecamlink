@@ -10,6 +10,18 @@ import okio.Path
 interface FileSaver {
     /** Working directory for in-progress / completed downloads. */
     fun downloadsDir(): Path
+
+    /**
+     * Where fetched firmware packages live until they are sent to the camera.
+     *
+     * Separate from [downloadsDir] on purpose: that one holds user media and gets
+     * offered to the gallery, while a 54 MB firmware image is neither media nor
+     * something to leave lying around in a user-visible folder. Defaults to a
+     * subdirectory so no platform has to implement it; the subdirectory is
+     * app-private storage on every platform that has one.
+     */
+    fun firmwareDir(): Path = downloadsDir() / "firmware"
+
     /** Publish a finished file to the public gallery/downloads. Returns a display path or null. */
     suspend fun publishToGallery(localFile: Path, displayName: String, mime: String): String?
 }

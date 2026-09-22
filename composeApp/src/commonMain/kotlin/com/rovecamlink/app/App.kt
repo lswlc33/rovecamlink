@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.robinpcrd.cupertino.CupertinoActivityIndicator
+import com.robinpcrd.cupertino.CupertinoAlertDialog
 import com.robinpcrd.cupertino.CupertinoButtonDefaults
 import com.robinpcrd.cupertino.CupertinoIcon
 import com.robinpcrd.cupertino.CupertinoIconButton
@@ -36,6 +37,8 @@ import com.robinpcrd.cupertino.CupertinoNavigationBarItem
 import com.robinpcrd.cupertino.CupertinoScaffold
 import com.robinpcrd.cupertino.CupertinoText
 import com.robinpcrd.cupertino.CupertinoTopAppBar
+import com.robinpcrd.cupertino.cancel
+import com.robinpcrd.cupertino.default
 import com.robinpcrd.cupertino.icons.CupertinoIcons
 import com.robinpcrd.cupertino.icons.filled.ExclamationmarkCircle
 import com.robinpcrd.cupertino.icons.filled.Folder
@@ -136,7 +139,38 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                 }
             }
         }
+
+        // The connect-time VPN question, hosted here rather than on the connection tab
+        // because the attempt can start from anywhere — an auto-connect fires the moment
+        // a camera hotspot the user joined in Settings appears, and a dialog that only
+        // exists on one tab would leave the attempt waiting behind another.
+        if (state.vpnPromptOpen) VpnPromptDialog(state)
     }
+}
+
+/**
+ * "A proxy is running; the camera will not answer while it owns the route." Two
+ * buttons and a dismissal: 继续连接 lets the attempt run, 去关闭代理 abandons it and
+ * opens the system VPN panel, tapping away ignores the warning and lets it run. This
+ * is the only place in the app that mentions VPN — everywhere else the fix would have
+ * to be understood from a failed connection, which is how it read when the notice sat
+ * on the connection tab permanently.
+ */
+@Composable
+private fun VpnPromptDialog(state: AppState) {
+    CupertinoAlertDialog(
+        onDismissRequest = { state.answerVpnPrompt(VpnChoice.Proceed) },
+        title = { CupertinoText(stringResource(Res.string.vpn_dialog_title)) },
+        message = { CupertinoText(stringResource(Res.string.vpn_dialog_message)) },
+        buttons = {
+            cancel(onClick = { state.answerVpnPrompt(VpnChoice.Proceed) }) {
+                CupertinoText(stringResource(Res.string.vpn_dialog_continue))
+            }
+            default(onClick = { state.answerVpnPrompt(VpnChoice.CloseProxy) }) {
+                CupertinoText(stringResource(Res.string.vpn_dialog_close))
+            }
+        },
+    )
 }
 
 /** Compact connection-state chip shown in the navigation bar. */

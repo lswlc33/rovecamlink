@@ -146,6 +146,21 @@ interface CameraProtocol {
     suspend fun setWifi(session: CameraSession, ssid: String, password: String): CmdResult
 
     /**
+     * Read back the Wi-Fi network the camera is actually broadcasting: name and
+     * passphrase, as [setWifi] wrote them.
+     *
+     * Without this the rename screen is a form with no values in it — you can set a
+     * password you cannot see again, and the camera's own hotspot name is only
+     * guessable from the phone's Wi-Fi list. The command exists on the hi3510 CGI
+     * family (`getwifi.cgi`, see the plugin's note for the field evidence) and the
+     * official app reads it to populate exactly this dialog.
+     *
+     * Null means "this camera cannot tell us", which the UI must show as a reason
+     * rather than as an empty field.
+     */
+    suspend fun getWifi(session: CameraSession): com.rovecamlink.app.core.model.CameraWifi? = null
+
+    /**
      * Put the camera back into **access-point** mode, i.e. raise the hotspot again
      * without Bluetooth.
      *

@@ -12,6 +12,8 @@ import com.rovecamlink.app.core.protocol.CameraProtocolRegistry
 import com.rovecamlink.app.core.storage.createFileSaver
 import com.rovecamlink.app.core.storage.createPermissionController
 import com.rovecamlink.app.core.transport.CameraHttp
+import com.rovecamlink.app.core.transport.CameraTcp
+import com.rovecamlink.app.core.transport.createCameraTcp
 import com.rovecamlink.app.core.wifi.createWifiController
 import com.rovecamlink.app.core.wifi.createWifiScanner
 
@@ -22,6 +24,14 @@ import com.rovecamlink.app.core.wifi.createWifiScanner
  */
 class AppGraph {
     val http: CameraHttp = CameraHttp()
+
+    /**
+     * Raw TCP, for the camera endpoints that are not HTTP. Today that is exactly one:
+     * port 8080 on the XTU hi3510 family, which takes the 72-byte `RECV_FILE` frame the
+     * firmware update is pushed through. It lives here rather than inside the plugin so a
+     * protocol stays constructible without reaching for a platform factory itself.
+     */
+    val tcp: CameraTcp = createCameraTcp()
 
     private val protocolList = listOf(
         HisiliconProtocol(http),   // XTU X7 Pro + most Hi35xx cams (primary target)

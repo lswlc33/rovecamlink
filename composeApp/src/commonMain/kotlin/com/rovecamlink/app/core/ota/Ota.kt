@@ -1,34 +1,105 @@
 package com.rovecamlink.app.core.ota
 
+import com.rovecamlink.app.core.log.Diag
+import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CmdResult
+import okio.Path
 
 /**
  * Firmware-OTA state. Mirrors the 14-state machine TUWIN actually ships
  * (doc 04 §2.2) collapsed to the states that are meaningful and observable
  * without a native OS (install/reconnect/version-confirm), plus terminal states.
+ *
+ * The first five states are the two halves that happen **on the phone** — asking the
+ * vendor, fetching the package — and are driven by [FirmwareUpdater]; the rest is the
+ * transfer to the camera, driven by [OtaCoordinator]. They share one sealed type
+ * because the screen that shows them is one list of rows and the user does not care
+ * which machine produced the line.
  */
 sealed interface OtaState {
     data object Idle : OtaState
+
+    // ---- the phone side: check the vendor index, then fetch what it points at ----
+
+    /** A `getNewestVersion` request is in flight on the internet route. */
+    data object Checking : OtaState
+
+    /** The index knows this model and the camera already has its newest build. */
+    data class UpToDate(val installed: String?) : OtaState
+
+    /** The index answered with nothing for this model — no published firmware at all. */
+    data class NoEntry(val installed: String?) : OtaState
+
+    /** There is a newer build. The user has not agreed to fetch it yet. */
+    data class Available(val installed: String?, val offer: FirmwareOffer) : OtaState
+
+    /** Bytes are flowing from the vendor to the phone. */
+    data class Downloading(val fraction: Float, val done: Long, val total: Long) : OtaState
+
+    /** The package is on disk and verified; installing still needs a tap. */
+    data class ReadyToInstall(val offer: FirmwareOffer, val path: Path, val bytes: Long) : OtaState
+
+    // ---- the camera side ----
+
     /** Package is ready; camera must be connected before transfer starts. */
     data object WaitingForDevice : OtaState
+
     /** Bytes are flowing to the camera. */
     data object Uploading : OtaState
+
     /** Transfer accepted; camera is applying the image (may reboot). */
     data object Installing : OtaState
+
     /** Camera went away after install; waiting for it to come back. */
     data object WaitingForReboot : OtaState
+
     /** Camera is back; negotiating a fresh session. */
     data object Reconnecting : OtaState
+
     /** Re-read the installed version and compare against what we pushed. */
     data class ConfirmingVersion(val expected: String) : OtaState
     data object Completed : OtaState
     data object Cancelled : OtaState
     data class Failed(val message: String) : OtaState
 
+    /**
+     * True when no transfer is in flight — the machine has stopped and is either
+     * waiting for the user to act on the result or has already been dismissed.
+     *
+     * This is deliberately *not* "nothing is happening": [Downloading] is a running
+     * state whose cancel button must work, and [Available] is a stopped state whose
+     * only button is 下载. Getting that wrong is how a download becomes
+     * uncancellable, or a finished check turns into a phantom 取消.
+     */
     val isTerminal: Boolean
-        get() = this is Completed || this is Cancelled || this is Failed
+        get() = this is Completed || this is Cancelled || this is Failed ||
+            this is UpToDate || this is NoEntry || this is Available || this is ReadyToInstall
 }
+
+/**
+ * A firmware package sitting on the phone's disk.
+ *
+ * A path and a length rather than a `ByteArray`, because the smallest real package
+ * measured in this project is 16 MB and the S7PRO's current build is 54,490,165 bytes
+ * (`docs/04 §5`), against a phone whose Java heap the 2026-09-22 field log puts around
+ * 200 MB. A transport that receives bytes would have to hold the whole image in memory
+ * while also building the multipart body around it — the exact shape of the thumbnail
+ * OOM this app has already been bitten by once.
+ */
+data class FirmwarePackage(
+    val path: Path,
+    val sizeBytes: Long,
+    /** What the camera should be told the file is called. */
+    val fileName: String = path.name,
+    /**
+     * The build this package is, as it can be read from the file name or the vendor's
+     * index. Null means "we do not know", and the only thing that is lost is the
+     * post-reboot version confirmation — [OtaCoordinator] reports 已更新 without
+     * claiming it checked, rather than failing a transfer that probably worked.
+     */
+    val version: String? = null,
+)
 
 /**
  * Per-brand the bytes reach the camera differently (doc 04 §4: a unified
@@ -41,23 +112,81 @@ interface OtaTransport {
     suspend fun readVersion(session: CameraSession): String?
 
     /**
-     * Push [fileBytes] to the camera and trigger install. Returns when the camera
-     * has accepted the image — it may reboot afterwards. Progress 0f..1f.
+     * Push the package at [pkg]'s path to the camera and trigger install. Returns when
+     * the camera has accepted the image — it may reboot afterwards. Progress 0f..1f.
+     *
+     * Implementations must read [pkg] incrementally, never whole; see [FirmwarePackage]
+     * for the sizes that make that a requirement rather than a preference.
      */
     suspend fun install(
         session: CameraSession,
-        fileName: String,
-        fileBytes: ByteArray,
+        pkg: FirmwarePackage,
         onProgress: (Float) -> Unit,
     ): CmdResult
 }
 
-/** A resolved update to apply: normalized target version plus the candidate bytes. */
-data class OtaPackage(
-    val version: String,
-    val fileName: String,
-    val bytes: ByteArray,
-)
+/**
+ * Try several transports in order, and fall through **only** while the camera has not
+ * started receiving.
+ *
+ * This exists because the two XTU channels have opposite evidence: port 8080 with the
+ * 72-byte `RECV_FILE` frame is the one the official app actually ships for this camera
+ * class, while `fileupload.cgi` + `upgrade.cgi` is real firmware-facing code whose host
+ * screen was never wired into the vendor's own manifest (`docs/04 §1.2(b)`), so it has no
+ * field evidence either way. Trying both costs nothing on the happy path and turns an
+ * "unreachable" verdict into a usable update without asking anyone to know what a port
+ * number is.
+ *
+ * The gate is what makes it safe. A channel that failed *after* the camera agreed to
+ * receive bytes must not be followed by a second push, because the camera may already be
+ * half-way through an image; [preHandshakeFailures] carries exactly the codes that mean
+ * "nothing of the package reached the camera".
+ */
+class ChainedOtaTransport(
+    private val channels: List<OtaTransport>,
+    private val preHandshakeFailures: Set<Int>,
+) : OtaTransport {
+
+    override suspend fun readVersion(session: CameraSession): String? {
+        for (channel in channels) {
+            val v = runCatching { channel.readVersion(session) }.getOrNull()
+            if (v != null) return v
+        }
+        return null
+    }
+
+    override suspend fun install(
+        session: CameraSession,
+        pkg: FirmwarePackage,
+        onProgress: (Float) -> Unit,
+    ): CmdResult {
+        var last: CmdResult = CmdResult.Failure("没有可用的固件送包通道")
+        for ((index, channel) in channels.withIndex()) {
+            val result = runCatching { channel.install(session, pkg, onProgress) }
+                .getOrElse { CmdResult.Failure(it.message ?: "transfer failed") }
+            if (result is CmdResult.Ok) {
+                if (index > 0) Diag.info(LogTag.OTA, "${channel::class.simpleName} carried the package after a previous channel refused")
+                return result
+            }
+            last = result
+            val code = (result as? CmdResult.Failure)?.code
+            if (code == null || code !in preHandshakeFailures) {
+                Diag.error(
+                    LogTag.OTA,
+                    "${channel::class.simpleName} failed with code=${code ?: "none"}; not trying ${channels.size - index - 1} further channel(s) — the camera may already hold part of the image",
+                )
+                return result
+            }
+            if (index < channels.lastIndex) {
+                Diag.warn(
+                    LogTag.OTA,
+                    "${channel::class.simpleName} refused before any bytes moved (code=$code); falling through to ${channels[index + 1]::class.simpleName}",
+                )
+            }
+        }
+        return last
+    }
+}
 
 /**
  * Drives the OTA state machine around a single [OtaTransport].
@@ -86,7 +215,7 @@ class OtaCoordinator(
      * Run an install. Expected to be launched directly on the UI scope (it is
      * cancelled by the caller swapping its coroutine away). Returns the terminal state.
      */
-    suspend fun run(pkg: OtaPackage, reconnectBefore: Boolean = true): OtaState {
+    suspend fun run(pkg: FirmwarePackage, reconnectBefore: Boolean = true): OtaState {
         state = OtaState.Idle
         var session: CameraSession
         if (reconnectBefore) {
@@ -101,7 +230,7 @@ class OtaCoordinator(
 
         state = OtaState.Uploading
         val install = runCatching {
-            transport.install(session, pkg.fileName.takeLast(120), pkg.bytes) { }
+            transport.install(session, pkg.copy(fileName = pkg.fileName.takeLast(120))) { }
         }.getOrElse { CmdResult.Failure(it.message ?: "Transfer failed") }
 
         if (state.isTerminal) return state
@@ -126,14 +255,27 @@ class OtaCoordinator(
             return state
         }
 
-        state = OtaState.ConfirmingVersion(pkg.version)
+        // A hand-picked file with no date stamp in its name cannot be confirmed, and
+        // "no confirmation available" must not become "the update failed" — the camera
+        // is already running whatever we sent it by this point. `docs/04 §0` conclusion 2
+        // is the other half of the reason this is a warning rather than a wall: none of
+        // the three official apps reads the version back at all, so a package whose
+        // version we cannot name is still further than they go.
+        val want = pkg.version
+        if (want == null) {
+            Diag.warn(LogTag.OTA, "package ${pkg.fileName} carries no identifiable version; skipping confirmation")
+            state = OtaState.Completed
+            return state
+        }
+
+        state = OtaState.ConfirmingVersion(want)
         val installed = runCatching { transport.readVersion(s2) }.getOrNull()
         if (installed == null) {
             state = OtaState.Failed("OTA version confirmation returned no version")
             return state
         }
-        if (FirmwareVersion.normalize(installed) != FirmwareVersion.normalize(pkg.version)) {
-            state = OtaState.Failed("OTA version mismatch: expected=${pkg.version}, got=$installed")
+        if (FirmwareVersion.normalize(installed) != FirmwareVersion.normalize(want)) {
+            state = OtaState.Failed("OTA version mismatch: expected=$want, got=$installed")
             return state
         }
 
@@ -144,9 +286,11 @@ class OtaCoordinator(
     /**
      * Poll [readVersion] until the camera either confirms [target] or stays silent
      * beyond [timeoutMs]. Returning true means the camera answered with the target
-     * version (i.e. it rebooted onto the new firmware).
+     * version (i.e. it rebooted onto the new firmware). A null [target] accepts any
+     * answer, which is the honest best-effort for a hand-picked package whose version
+     * the file name does not state.
      */
-    private suspend fun waitForReboot(target: String, timeoutMs: Long = 60_000): Boolean {
+    private suspend fun waitForReboot(target: String?, timeoutMs: Long = 60_000): Boolean {
         state = OtaState.WaitingForReboot
         val deadline = kotlinx.datetime.Clock.System.now().toEpochMilliseconds() + timeoutMs
         val want = FirmwareVersion.normalize(target)

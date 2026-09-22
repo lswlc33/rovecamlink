@@ -1,6 +1,7 @@
 package com.rovecamlink.app.core.wifi
 
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.Network
@@ -10,6 +11,7 @@ import android.net.wifi.ScanResult
 import android.net.wifi.SupplicantState
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
+import android.provider.Settings
 import android.net.wifi.WifiNetworkSpecifier
 import android.os.Build
 import android.os.SystemClock
@@ -18,6 +20,7 @@ import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 
@@ -31,6 +34,9 @@ private class AndroidWifiController : WifiController {
     @Volatile private var linkProps: LinkProperties? = null
     @Volatile private var callback: ConnectivityManager.NetworkCallback? = null
     @Volatile private var legacyNetId: Int = -1
+
+    /** Holds off a second [withInternetRoute] while one is already open. */
+    private val internetRouteMutex = Mutex()
 
     /**
      * Whether we still have a live camera network to send sockets through.
@@ -424,6 +430,62 @@ private class AndroidWifiController : WifiController {
         val n = cm.activeNetwork ?: return false
         cm.getNetworkCapabilities(n)?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true
     }.getOrDefault(false)
+
+    override fun openVpnSettings(): Boolean {
+        // The VPN panel is the screen the user was sent to, but OEM ROMs own that
+        // decision — the OnePlus this was first field-tested on ships a settings app
+        // that answers some `android.settings.*` actions by throwing. Fall through to
+        // the top-level page rather than reporting failure for a screen that exists.
+        for (action in listOf(Settings.ACTION_VPN_SETTINGS, Settings.ACTION_SETTINGS)) {
+            val intent = Intent(action).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val opened = runCatching { androidContext.startActivity(intent); true }.getOrDefault(false)
+            if (opened) {
+                Diag.info(LogTag.NET, "opened $action so the proxy can be switched off")
+                return true
+            }
+        }
+        Diag.warn(LogTag.NET, "no settings screen would open; the user has to leave the app to stop the proxy")
+        return false
+    }
+
+    /**
+     * Step the process off the camera's hotspot for the duration of [block].
+     *
+     * `bindProcessToNetwork(null)` means "use the system default network", which is
+     * deliberately chosen over hunting for a network that advertises
+     * `NET_CAPABILITY_INTERNET`: on this phone the default *is* the user's proxy or
+     * cellular connection, and picking the default keeps that decision with the
+     * operating system instead of second-guessing it from an app.
+     *
+     * Serialized by [internetRouteMutex] because two overlapping windows would have
+     * the second one restore the binding while the first still expects to be off it.
+     */
+    override suspend fun <T> withInternetRoute(label: String, block: suspend () -> T): T {
+        if (boundNetwork == null) return block()
+        internetRouteMutex.lock()
+        val t0 = Diag.uptimeMillis()
+        val restored = runCatching { cm.bindProcessToNetwork(null) }
+        Diag.info(
+            LogTag.WIFI,
+            "internet route taken for $label after ${Diag.uptimeMillis() - t0}ms " +
+                "(camera sockets parked; bound=${boundNetwork != null})",
+        )
+        return try {
+            block()
+        } finally {
+            // Re-bind only if that same network is still alive; if the hotspot went
+            // away mid-download the onLost callback already cleared it, and binding a
+            // dead Network would strand every subsequent camera request.
+            val stillThere = boundNetwork?.let { isLiveWifiNetwork(it) } == true
+            runCatching { cm.bindProcessToNetwork(if (stillThere) boundNetwork else null) }
+                .onFailure { Diag.error(LogTag.WIFI, "internet route restore threw ${Diag.causeChain(it)}") }
+            Diag.info(
+                LogTag.WIFI,
+                "internet route released after ${Diag.uptimeMillis() - t0}ms, camera route ${if (stillThere) "restored" else "not restored (no live camera network)"}",
+            )
+            internetRouteMutex.unlock()
+        }
+    }
 
     override suspend fun disconnect() {
         Diag.debug(LogTag.WIFI, "disconnect (bound=${boundNetwork != null} adopted=${adoptedNetwork != null} legacyNetId=$legacyNetId)")

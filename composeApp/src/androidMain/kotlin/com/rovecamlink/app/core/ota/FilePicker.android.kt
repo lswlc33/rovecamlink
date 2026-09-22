@@ -1,5 +1,6 @@
 package com.rovecamlink.app.core.ota
 
-// Android firmware upload uses a content-URI picker bridged to the Activity; that
-// bridge is not wired in this pass, so return null (flow still testable on desktop).
-actual suspend fun pickCameraFirmwarePackage(): OtaPackage? = null
+// Android installs the package the vendor index supplied (FirmwareUpdater writes it to the app cache
+// and the settings page offers it), so there is no SAF content-URI bridge here yet; the
+// manual route remains desktop-only, see the expect doc for why.
+actual suspend fun pickCameraFirmwarePackage(): FirmwarePackage? = null
