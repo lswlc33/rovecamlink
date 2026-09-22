@@ -195,7 +195,7 @@ interface CameraProtocolRegistry {
 ---
 
 ## 8. 协议文档化工作流（Phase 1）
-1. 静态逆向（jadx 已就绪）：补全 `01-报告.md` 第 4 节列出的 7 项未知（seed 关系、M3 帧分隔符、Ambarella msg_id 表、Hisilicon set 参数、SigmaStar 报文、SSID 规则、下载 URL 构造）。
+1. 静态逆向（jadx 已就绪）：补全 `01-APK逆向分析报告.md` 第 4 节列出的 7 项未知（seed 关系、M3 帧是否分隔符定界（已定案：不是，见 `docs/08/01-TUWIN-档案.md` 附录一 §4）、Ambarella msg_id 表、Hisilicon set 参数、SigmaStar 报文、SSID 规则、下载 URL 构造）。
 2. 真机抓包：手机连相机 AP，用 mitmproxy/Wireshark/路由器镜像验证 HTTP/CGI/Socket/RTSP 实际报文。
 3. 编写每机型 **Protocol Spec**（端点/命令/字段/时序/错误码）入库 `docs/protocols/`。
 4. 据 Spec 做干净室重实现（不复制官方代码）。

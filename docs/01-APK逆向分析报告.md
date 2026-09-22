@@ -278,13 +278,13 @@ uses-feature：camera(+autofocus)、bluetooth、location、microphone、landscap
 
 | 处 | 改了什么 | 依据（`docs/08-官方APK全量逆向档案/`） |
 |---|---|---|
-| §0 统计/崩溃行 | XTU GO 的「Umeng」删掉：全树无友盟 SDK，只剩一处读自己清单的 `UMENG_CHANNEL`；崩溃上报是 Bugly | `02-XTUGO-档案.md §11`「友盟 SDK」行 + `02-XTUGO-档案-附录-权限组件与域名.md §8 C-08` |
-| §1.3 表格 M3 行 | 「原生 TCP Socket」补「只读事件通道」 | `01-TUWIN-档案-附录-协议面.md §8.2 D-8` |
-| §1.3.1 端点表 | `rtspstatus` 标为「只声明无调用点」，不计入鉴权链；`capture` 同标（官方拍照是播放器截 RTSP 帧） | `§8.1 C-1`、`§8.2 D-3`；`01-TUWIN-档案-附录-设置与操作.md §6` 末段 |
+| §0 统计/崩溃行 | XTU GO 的「Umeng」删掉：全树无友盟 SDK，只剩一处读自己清单的 `UMENG_CHANNEL`；崩溃上报是 Bugly | `02-XTUGO-档案.md §11`「友盟 SDK」行 + `02-XTUGO-档案.md 附录E（权限·组件·域名） §8 C-08` |
+| §1.3 表格 M3 行 | 「原生 TCP Socket」补「只读事件通道」 | `01-TUWIN-档案.md 附录一（协议面） §8.2 D-8` |
+| §1.3.1 端点表 | `rtspstatus` 标为「只声明无调用点」，不计入鉴权链；`capture` 同标（官方拍照是播放器截 RTSP 帧） | `§8.1 C-1`、`§8.2 D-3`；`01-TUWIN-档案.md 附录二（设置与操作） §6` 末段 |
 | §1.3.1 工程细节 | 「相机不接受并发命令」降级为客户端自设；补三层串行的真实分工、`X-Request-Id` 无条件注入、format 超时 60 s × 3 与基线 5/15/15 | `§8.1 C-7`、`§8.2 D-4`、`§8.2 D-5` |
 | §1.3.2 整节 | 解码器类名改 `LegacyReadChunkFrameDecoder`；帧格式改为「一次 read 即一帧、无分隔符无长度前缀、读缓冲 4096 B」，64KB/256KB 标为死代码；补 15 s 连接超时、两个 Flow 的 replay 语义、socket 单向只读且连不上不阻断会话 | `§8.2 D-1/D-2/D-6/D-7/D-8`、`§8.1 C-12` |
 | §1.5 预览鉴权段 | 序列改写为 authdevice → send-time（失败仅告警）→ markReady → setmode；删 rtspstatus；`consume()` 从「一次性」改为「10 分钟内只读探测」；「seed 授权 RTSP」降级为推断 | `§8.1 C-2/C-3`、`§8.3 E-1/E-2` |
 | §1.7 设置系统 | 菜单 XML「当前值」改「默认值」并补当前值的真实来源；补「有会话时菜单走裸 socket」；`id` 取值域收窄为封闭 9 串，`wb`/`fps`/`hdr` 明确不存在 | `§8.3 E-3/E-4/E-5` |
-| §2.4 实时图传 | 从单一 RTSP URL 改为「RTSP + HTTP 两条 + `11`/`12` 码流开关 + SigmaStar/Ambarella 恒 `/12`」；播放器改为在用的 `VideoTextureView`，`SSVideoView` 标死代码 | `02-XTUGO-档案.md §11` 预览行、`02-XTUGO-档案-附录-SigmaStar8080与播放层.md §C.9` #1/#6/#7 |
-| §2.6 权限 | 38 条里 12 条「不可照抄」按两轴重列（6 真死声明 + 4 申请无功能 + 2 只被库检查）；`MODIFY_AUDIO_SETTINGS`/`READ_LOGS` 反例改判；补 4 处申请点彼此不同、`CALL_PHONE` 只在一处 | `02-XTUGO-档案.md §11` 权限行、`02-XTUGO-档案-附录-权限组件与域名.md §8 C-01/C-02/C-10` |
-| §3.5 / §4 | 「友盟」从 XTU 重型 SDK 里去掉；§4 七条待补全逐项标注已关闭/仍开放，其中第 2 条的问题前提（存在分隔符字节）不成立 | 同上，加 `02-XTUGO-档案-附录-SigmaStar8080与播放层.md §C.3` |
+| §2.4 实时图传 | 从单一 RTSP URL 改为「RTSP + HTTP 两条 + `11`/`12` 码流开关 + SigmaStar/Ambarella 恒 `/12`」；播放器改为在用的 `VideoTextureView`，`SSVideoView` 标死代码 | `02-XTUGO-档案.md §11` 预览行、`02-XTUGO-档案.md 附录C（SigmaStar 与播放层） §C.9` #1/#6/#7 |
+| §2.6 权限 | 38 条里 12 条「不可照抄」按两轴重列（6 真死声明 + 4 申请无功能 + 2 只被库检查）；`MODIFY_AUDIO_SETTINGS`/`READ_LOGS` 反例改判；补 4 处申请点彼此不同、`CALL_PHONE` 只在一处 | `02-XTUGO-档案.md §11` 权限行、`02-XTUGO-档案.md 附录E（权限·组件·域名） §8 C-01/C-02/C-10` |
+| §3.5 / §4 | 「友盟」从 XTU 重型 SDK 里去掉；§4 七条待补全逐项标注已关闭/仍开放，其中第 2 条的问题前提（存在分隔符字节）不成立 | 同上，加 `02-XTUGO-档案.md 附录C（SigmaStar 与播放层） §C.3` |
