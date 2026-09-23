@@ -11,9 +11,8 @@ import top.yukonga.miuix.kmp.theme.lightColorScheme
  * `darkColorScheme()` rather than a hand-picked palette: the `Colors` object carries 53
  * tokens and Xiaomi's own values are the point of using this library.
  *
- * It sits *outside* `CupertinoTheme` while the screens are still Cupertino, because the
- * screens resolve `CupertinoTheme.colorScheme` and would throw if that provider went away
- * before they were ported.
+ * Every screen sits inside it — the platform entry points wrap the whole app — so the
+ * `MiuixTheme.colorScheme` a widget resolves is always this one.
  *
  * Requires a Java 21 runtime, not the 17 the rest of this build targets: miuix's desktop
  * jars are compiled to class-file 65, so anything below 21 throws

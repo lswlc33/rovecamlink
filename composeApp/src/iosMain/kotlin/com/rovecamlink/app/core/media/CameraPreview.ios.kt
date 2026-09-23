@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.robinpcrd.cupertino.CupertinoText
+import top.yukonga.miuix.kmp.basic.Text
 
 /**
  * iOS preview scaffold. A real implementation would wrap AVPlayer in a
@@ -17,7 +17,7 @@ import com.robinpcrd.cupertino.CupertinoText
 @Composable
 actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
     Box(modifier.fillMaxSize().background(Color(0xFF1C1C1E)), contentAlignment = Alignment.Center) {
-        CupertinoText(
+        Text(
             text = rtspUrl?.let { "iOS preview (AVPlayer) not wired yet\n$it" } ?: "No preview",
             color = Color(0xFFAEAEB2),
         )

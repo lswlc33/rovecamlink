@@ -2,7 +2,6 @@
 kotlin = "2.4.20"
 compose = "1.12.0"
 agp = "9.4.1"
-cupertino = "3.0.0"
 miuix = "0.9.4"
 ktor = "2.3.12"
 coroutines = "1.9.0"
@@ -30,9 +29,6 @@ ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation",
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
-
-cupertino = { module = "io.github.robinpcrd:cupertino", version.ref = "cupertino" }
-cupertino-icons-extended = { module = "io.github.robinpcrd:cupertino-icons-extended", version.ref = "cupertino" }
 
 miuix-ui = { module = "top.yukonga.miuix.kmp:miuix-ui", version.ref = "miuix" }
 miuix-preference = { module = "top.yukonga.miuix.kmp:miuix-preference", version.ref = "miuix" }
