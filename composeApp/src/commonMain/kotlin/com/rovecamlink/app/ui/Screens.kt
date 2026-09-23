@@ -215,6 +215,15 @@ import com.rovecamlink.app.status_wifi_not_read
 import com.rovecamlink.app.tab_files
 import com.rovecamlink.app.tab_settings
 import com.rovecamlink.app.title_install_firmware
+import com.rovecamlink.app.menu_filter_sort
+import com.rovecamlink.app.filter_type_all
+import com.rovecamlink.app.filter_type_video
+import com.rovecamlink.app.filter_type_photo
+import com.rovecamlink.app.sort_by_name
+import com.rovecamlink.app.sort_by_size
+import com.rovecamlink.app.sort_ascending
+import com.rovecamlink.app.sort_descending
+import com.rovecamlink.app.files_filter_line
 import com.rovecamlink.app.core.media.CameraPreviewView
 import com.rovecamlink.app.core.media.OrientationMode
 import com.rovecamlink.app.core.media.rememberDeviceOrientation
