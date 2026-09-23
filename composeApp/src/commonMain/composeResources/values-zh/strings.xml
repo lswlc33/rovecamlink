@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App-level -->
-    <string name="app_name">RoveCamLink</string>
 
     <!-- Tabs -->
     <string name="tab_devices">设备</string>
@@ -36,23 +35,17 @@
     <!-- Status section labels -->
     <string name="section_status">状态</string>
     <string name="label_phase">阶段</string>
-    <string name="label_info">信息</string>
     <string name="label_model">型号</string>
-    <string name="label_platform">平台</string>
     <string name="label_host">主机</string>
 
     <!-- Devices screen -->
     <string name="action_disconnect">断开连接</string>
     <string name="section_camera_wifi">相机 Wi-Fi</string>
     <string name="action_scan_qr">扫描相机二维码</string>
-    <string name="action_scan_cameras">扫描相机</string>
-    <string name="label_nearby_cameras">附近的相机</string>
-    <string name="nearby_cameras_none">尚未发现</string>
     <string name="wifi_secured">加密</string>
     <string name="wifi_open">开放</string>
     <string name="label_password">密码</string>
     <string name="action_join_connect">加入并连接</string>
-    <string name="section_manual_connect">手动连接</string>
     <string name="action_connect_to_ip">连接到 IP</string>
     <string name="placeholder_ip">192.168.0.1</string>
 
@@ -63,8 +56,6 @@
     <string name="rec_idle">空闲</string>
     <string name="rec_busy">忙</string>
     <string name="label_sd_free">SD 可用</string>
-    <string name="section_mode">模式</string>
-    <string name="section_capture">拍摄</string>
     <string name="action_photo">拍照</string>
     <string name="action_record">录像</string>
     <string name="action_stop">停止</string>
@@ -97,7 +88,6 @@
     <!-- Settings screen -->
     <string name="action_reload_settings">重新加载设置</string>
     <string name="section_about">关于</string>
-    <string name="section_camera_settings">相机设置</string>
     <string name="settings_none_reload">无 — 点击重新加载</string>
     <string name="label_settings">设置</string>
     <string name="label_name">名称</string>
@@ -117,9 +107,6 @@
     <string name="action_select_firmware">选择本地固件包</string>
     <string name="firmware_unsupported">该相机暂不支持固件更新</string>
     <string name="action_check_update">检查更新</string>
-    <string name="status_checking_update">正在向厂商固件索引查询…</string>
-    <string name="status_up_to_date">已是最新固件</string>
-    <string name="status_no_firmware_entry">厂商没有公布这个型号的固件包</string>
     <string name="label_newest_version">最新可用</string>
     <string name="label_package_size">安装包大小</string>
     <string name="label_release_notes">更新说明</string>
@@ -151,7 +138,6 @@
     <string name="hint_wifi_read_unsupported">这台相机不回读 Wi-Fi 信息，只能改名改密码</string>
     <string name="action_show_password">显示</string>
     <string name="action_hide_password">隐藏</string>
-    <string name="note_wifi_prefilled">下面的输入框已按读取到的值填好，改名要与原名称长度一致。</string>
     <string name="action_use_read_values">用读取到的值填好下面的输入框</string>
     <string name="ota_note_lang">zh</string>
     <string name="title_install_firmware">现在给相机刷写固件？</string>
@@ -169,7 +155,6 @@
     <string name="confirm_format">格式化</string>
     <string name="confirm_reset">重置</string>
     <string name="confirm_reboot">重启</string>
-    <string name="menu_for_mode">菜单跟随相机当前模式：%1$s</string>
 
     <!-- WorkMode display names -->
     <string name="workmode_video">视频</string>
@@ -180,7 +165,6 @@
     <string name="qr_hint_point">将镜头对准相机的 Wi-Fi 二维码</string>
     <string name="qr_hint_camera_permission">需要相机权限才能扫码</string>
     <string name="qr_hint_no_wifi">二维码中没有 Wi-Fi 信息(%1$s)</string>
-    <string name="qr_hint_parsing">已识别二维码,正在解析…</string>
 
     <!-- QR scan (Desktop) -->
     <string name="qr_unavailable_desktop">桌面版暂不支持二维码扫描 — 请使用手动连接。</string>
@@ -220,15 +204,11 @@
     <string name="status_syncing_time">正在同步相机时间…</string>
 
     <!-- 一键连接：蓝牙发现、唤醒相机热点、配对码 -->
-    <string name="action_auto_connect">连接相机</string>
     <string name="phase_scanning_bluetooth">正在搜索相机</string>
     <string name="phase_waking_camera">正在唤醒相机</string>
     <string name="label_bluetooth_cameras">附近的相机（蓝牙）</string>
     <string name="label_wifi_cameras">范围内的相机热点</string>
-    <string name="label_bluetooth_none">没有找到——相机是否已开机并在附近？</string>
     <string name="status_waking_camera">正在让相机打开热点…（第一次连这台相机时，请在相机屏幕上确认配对码）</string>
-    <string name="status_credentials_received">相机已报出 %1$s，正在连接…</string>
-    <string name="status_adopting_wifi">正在使用你已连上的 WiFi…</string>
     <string name="err_bluetooth_off">手机蓝牙未开启——打开后才能唤醒相机。</string>
     <string name="err_bluetooth_denied">蓝牙权限被拒绝——允许后才能使用一键连接。</string>
     <string name="err_bluetooth_unsupported">这台设备没有蓝牙——请先在系统设置连上相机 WiFi，再用下面的列表。</string>
@@ -238,10 +218,6 @@
     <string name="vpn_dialog_continue">继续连接</string>
     <string name="vpn_dialog_close">去关闭代理</string>
     <string name="label_other_ways">其他方式</string>
-    <string name="label_current_camera_wifi">已连在 %1$s 上</string>
-    <string name="action_use_this_network">直接用它</string>
-    <string name="label_bluetooth_idle">点上面的「连接相机」，用蓝牙搜索。</string>
-    <string name="hint_auto_connect">用蓝牙找到相机、让它打开热点并自动连上，全程不用输入任何东西。</string>
 
     <!-- 诊断日志页（LogScreen）。只翻译按钮、标题、筛选、占位符与弹窗文案；
          日志内容本身仍是 rovdiag/1 原始格式，供 grep 使用，不翻译。 -->
@@ -251,8 +227,6 @@
     <string name="log_action_share">导出并分享</string>
     <string name="log_action_save">保存到文件</string>
     <string name="log_action_snapshot">刷新环境快照</string>
-    <string name="log_action_share_current">仅分享本次</string>
-    <string name="log_action_save_current">仅保存本次</string>
     <string name="log_export_hint">上面两项会包含本机全部历史记录；只导本次会话：</string>
     <string name="log_busy_preparing">正在生成…</string>
     <string name="log_busy_saving">正在保存…</string>
@@ -265,11 +239,7 @@
     <string name="log_filter_info">信息+</string>
     <string name="log_filter_warn">警告+</string>
     <string name="log_filter_error">错误</string>
-    <string name="log_follow">自动跟随</string>
-    <string name="log_filter_placeholder">按文本、标签或操作筛选…</string>
     <string name="log_settings_title">日志设置</string>
-    <string name="log_show">展开</string>
-    <string name="log_hide">收起</string>
     <string name="log_level_hint">记录级别（低于此级别的会被合并，不保留完整细节）</string>
     <string name="log_switch_bodies">捕获请求/响应正文</string>
     <string name="log_switch_secrets">明文保留密码/令牌（导出的文件可能含相机 Wi-Fi 密码）</string>
@@ -300,7 +270,6 @@
     <string name="label_current_camera_wifi_short">已在该网络</string>
     <string name="label_bluetooth_count">蓝牙 %1$d 台</string>
     <string name="label_wifi_count">热点 %1$d 个</string>
-    <string name="err_passphrase_needed">%1$s 需要密码，请输入一次</string>
     <string name="err_no_camera_nearby">附近没有找到相机：请确认相机已开机，并允许本应用使用蓝牙和 Wi-Fi</string>
 
     <!-- 拍摄模式，以及不属于拍摄模式的设备菜单。 -->
@@ -333,11 +302,9 @@
     <string name="label_clear_selection">取消全选</string>
     <string name="label_unknown_date">日期未知</string>
     <string name="action_raise_access_point">让相机重新开启热点</string>
-    <string name="hint_device_action">相机上有些项是操作而不是设置，请用下方的按钮执行。</string>
 
     <!-- 顶栏「更多」菜单，以及它能到达的页面。 -->
     <string name="action_more">更多</string>
-    <string name="menu_follow">自动跟随</string>
     <string name="menu_filter_sort">筛选与排序</string>
     <string name="menu_log_settings">日志设置</string>
 
