@@ -37,8 +37,10 @@ jobs:
       - uses: android-actions/setup-android@v3
         with:
           # 跟 compileSdk 一起抬到 37：miuix 0.9.4 的 aar 要求 compileSdk >= 37。
+          # 包 id 带小数——API 37 的 sdkmanager 路径是 platforms;android-37.0，
+          # 写 'android-37' 会在 setup-android 这一步就报 Failed to find package。
           # nightly.yml 仍留在 35，那条链跑的是 main，还没接 miuix。
-          packages: 'platforms;android-37 build-tools;37.0.0'
+          packages: 'platforms;android-37.0 build-tools;37.0.0'
 
       - uses: gradle/actions/setup-gradle@v4
 
