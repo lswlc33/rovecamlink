@@ -228,6 +228,7 @@ import com.rovecamlink.app.action_delete_all
 import com.rovecamlink.app.title_delete_all_files
 import com.rovecamlink.app.message_delete_all_files
 import com.rovecamlink.app.download_eta
+import com.rovecamlink.app.permission_title
 import com.rovecamlink.app.core.media.CameraPreviewView
 import com.rovecamlink.app.core.media.OrientationMode
 import com.rovecamlink.app.core.media.rememberDeviceOrientation
@@ -915,6 +916,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
     val viewLogLbl = stringResource(Res.string.action_view_log)
     val logSettingsRowLbl = stringResource(Res.string.action_log_settings)
     val aboutRowLbl = stringResource(Res.string.action_about)
+    val permissionsRowLbl = stringResource(Res.string.permission_title)
     val uiTestLbl = stringResource(Res.string.action_ui_test_mode)
     val uiTestHint = stringResource(Res.string.hint_ui_test_mode)
     val sdStateLbl = when (st?.sdState) {
@@ -1208,6 +1210,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                     actionRow(viewLogLbl) { state.pushPage(com.rovecamlink.app.Page.Log) }
                     actionRow(logSettingsRowLbl) { state.pushPage(com.rovecamlink.app.Page.LogSettings) }
                     actionRow(aboutRowLbl) { state.pushPage(com.rovecamlink.app.Page.About) }
+                    actionRow(permissionsRowLbl) { state.pushPage(com.rovecamlink.app.Page.Permissions) }
                 }
                 // 写入文件 keeps its inline switch — it is the one logging knob a user
                 // reaches for without opening the log at all.

@@ -261,6 +261,10 @@
     <string name="action_stop_lapse">停止</string>
     <string name="hint_connect_choice">附近还没有相机。请先打开相机，再点刷新。</string>
     <string name="hint_ble_wake">蓝牙会替你打开相机热点，并把密码带回来。</string>
+    <string name="label_remedy">可以试试</string>
+    <string name="remedy_not_found">没有相机应答。确认相机已开机、热点已打开；如果手机已经连上它的热点，用「手动连接」直接填 192.168.0.1。</string>
+    <string name="remedy_join_failed">已经看到相机，但 Wi-Fi 没能连上。靠近一些，并关掉 VPN 或代理——它们会把相机挤出路由。</string>
+    <string name="remedy_unidentified">有网络应答，但没有已注册的协议认得它。确认这个型号受支持，或用「手动连接」把地址直接填进去。</string>
     <string name="hint_last_refresh">%1$d 秒前刷新</string>
     <string name="hint_rotate_picture">画面跟随手机方向旋转</string>
     <string name="label_nearby_none">未发现相机</string>
@@ -331,6 +335,17 @@
     <string name="about_protocols">已支持的相机</string>
     <string name="about_licenses">开源许可</string>
     <string name="about_license_body">本应用基于 Compose Multiplatform 与 miuix UI 库（Apache-2.0）构建，并使用了 Ktor、Okio 与 kotlinx.coroutines，各自保留其许可证。</string>
+
+    <!-- 权限说明页：每个权限解锁什么，拒绝后什么会失效。 -->
+    <string name="permission_title">权限说明</string>
+    <string name="permission_locate_title">位置</string>
+    <string name="permission_locate_body">扫描相机热点时使用。部分 Android 版本即使不再索要定位，也会拒绝没有定位权限的 Wi-Fi 扫描——拒绝后相机列表会一直是空的。</string>
+    <string name="permission_bluetooth_title">附近的设备（蓝牙）</string>
+    <string name="permission_bluetooth_body">发现相机，并替你打开它的热点。没有它，可以先在系统设置里连上热点，再用「手动连接」。</string>
+    <string name="permission_storage_title">照片与文件</string>
+    <string name="permission_storage_body">把下载的视频和照片存进相册。没有它，文件只会留在 App 自己的目录里。</string>
+    <string name="permission_camera_title">相机</string>
+    <string name="permission_camera_body">读取相机屏幕上显示的 Wi-Fi 二维码。用热点或蓝牙连接时不需要它。</string>
 
     <!-- 文件筛选/排序。 -->
     <string name="filter_type_all">全部</string>

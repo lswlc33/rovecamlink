@@ -18,6 +18,7 @@ import com.rovecamlink.app.ui.FilesScreen
 import com.rovecamlink.app.ui.LiveScreen
 import com.rovecamlink.app.ui.LogScreen
 import com.rovecamlink.app.ui.LogSettingsScreen
+import com.rovecamlink.app.ui.PermissionsScreen
 import com.rovecamlink.app.ui.SettingsScreen
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -76,6 +77,7 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                 Page.Log -> LogScreen(state, outerPadding = padding, onClose = { state.popPage() })
                 Page.LogSettings -> LogSettingsScreen(state, outerPadding = padding, onClose = { state.popPage() })
                 Page.About -> AboutScreen(state, outerPadding = padding, onClose = { state.popPage() })
+                Page.Permissions -> PermissionsScreen(state, outerPadding = padding, onClose = { state.popPage() })
                 null -> when (tab) {
                     Tab.Devices -> ConnectScreen(state, outerPadding = padding)
                     Tab.Live -> LiveScreen(state, outerPadding = padding)

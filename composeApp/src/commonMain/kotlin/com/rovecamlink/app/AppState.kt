@@ -107,7 +107,7 @@ data class DownloadItem(
  * These are not tabs: nobody looks for the log or the about page on the way to a
  * shooting setting, but both have to be reachable from wherever a failure happened.
  */
-enum class Page { Log, LogSettings, About }
+enum class Page { Log, LogSettings, About, Permissions }
 
 /**
  * Central observable state + orchestration. One instance for the app.
@@ -148,6 +148,12 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     /** Last phase, kept only so a transition line can say where we came from. */
     private var lastPhase: Phase = Phase.Idle
+
+    /**
+     * The step a failed connection died on, so the screen can say what to try next
+     * rather than only that it failed. Reset at the start of every attempt.
+     */
+    private var failedPhase by mutableStateOf<Phase?>(null)
 
     /** Move to [next] and record the transition; phases are the connection timeline. */
     private fun goPhase(next: Phase) {
@@ -637,6 +643,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     private suspend fun connectBlocking(ssid: String?, password: String?, manualHost: String?) {
         errorMessage = null
+        failedPhase = null
         Diag.i { "CONNECT begin ssid=${ssid ?: "-"} manual_host=${manualHost ?: "-"} already_bound=${graph.wifi.isConnectedToCamera}" }
         try {
             // Pin our sockets to the Wi-Fi the phone is on *before* touching the
@@ -1900,7 +1907,25 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         }
     }
 
+    /**
+     * What to try next after a failed connection, keyed by the step it died on.
+     *
+     * The official app carries a "solutions" line for the two dead ends users hit most —
+     * the camera never appearing, and the join timing out — and those dead ends are
+     * exactly where it leaves you watching a spinner. Three groups cover every phase this
+     * app can fail on; null when the last attempt did not fail.
+     */
+    fun connectRemedy(): LocalizedString? = when (failedPhase) {
+        Phase.ScanningWifi, Phase.ScanningBle -> localized(Res.string.remedy_not_found)
+        Phase.WakingAp, Phase.ConnectingWifi -> localized(Res.string.remedy_join_failed)
+        Phase.IdentifyingDevice, Phase.ConnectingProtocol -> localized(Res.string.remedy_unidentified)
+        else -> null
+    }
+
     private fun fail(msg: LocalizedString) {
+        // The phase we were in *before* Error is the step that failed — read here because
+        // goPhase() below overwrites lastPhase.
+        failedPhase = lastPhase
         errorMessage = msg
         goPhase(Phase.Error)
         statusMessage = null

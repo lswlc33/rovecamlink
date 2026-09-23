@@ -40,6 +40,7 @@ import com.rovecamlink.app.label_bluetooth_cameras
 import com.rovecamlink.app.label_bluetooth_count
 import com.rovecamlink.app.label_current_camera_wifi_short
 import com.rovecamlink.app.label_hint
+import com.rovecamlink.app.label_remedy
 import com.rovecamlink.app.label_nearby_none
 import com.rovecamlink.app.label_no_bluetooth_cameras
 import com.rovecamlink.app.label_no_wifi_cameras
@@ -165,6 +166,8 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     val passwordLbl = stringResource(Res.string.label_password)
     val cancelLbl = stringResource(Res.string.cancel)
     val hintLbl = stringResource(Res.string.label_hint)
+    val remedyLbl = stringResource(Res.string.label_remedy)
+    val remedyNow = state.connectRemedy()?.resolve()
     val joinLbl = stringResource(Res.string.action_join_connect)
     val noneLbl = stringResource(Res.string.label_nearby_none)
     val ageSeconds = if (nearby.lastUpdateAt == 0L) -1 else ((tick - nearby.lastUpdateAt) / 1000f).roundToInt()
@@ -227,6 +230,9 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
             // was refused, the join timed out — so it carries the error tone rather than
             // sitting in the same grey as the line above it.
             if (noticeNow != null) noticeLine(noticeNow)
+            // The step it died on, with what to do about it — the one thing a stuck user
+            // needs, and what the official app's "solutions" line exists for.
+            if (remedyNow != null) infoRow(remedyLbl, remedyNow)
         }
 
         /*

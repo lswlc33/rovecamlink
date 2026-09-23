@@ -262,6 +262,10 @@
     <string name="action_stop_lapse">Stop</string>
     <string name="hint_connect_choice">Nothing in range yet. Turn the camera on, then refresh.</string>
     <string name="hint_ble_wake">Bluetooth opens the camera hotspot for you and brings the passphrase back.</string>
+    <string name="label_remedy">What to try</string>
+    <string name="remedy_not_found">No camera answered. Check that it is powered on with its hotspot up; if the phone is already joined to it, use Manual connect and enter 192.168.0.1.</string>
+    <string name="remedy_join_failed">The camera was seen but the Wi-Fi join did not finish. Move closer, and turn off any VPN or proxy — they take the camera off the route.</string>
+    <string name="remedy_unidentified">A network answered but no registered protocol recognised it. Check that this model is supported, or use Manual connect so the address goes straight through.</string>
     <string name="hint_last_refresh">Updated %1$d s ago</string>
     <string name="hint_rotate_picture">Turn the picture with the phone</string>
     <string name="label_nearby_none">No camera found</string>
@@ -332,6 +336,17 @@
     <string name="about_protocols">Supported cameras</string>
     <string name="about_licenses">Open-source licenses</string>
     <string name="about_license_body">This app is built on Compose Multiplatform and the miuix UI library (Apache-2.0), plus Ktor, Okio and kotlinx.coroutines. Each retains its own license.</string>
+
+    <!-- Permissions page: what each one unlocks, and what stops without it. -->
+    <string name="permission_title">Permissions</string>
+    <string name="permission_locate_title">Location</string>
+    <string name="permission_locate_body">Scanning for the camera hotspot. Android refuses a Wi-Fi scan without it, even on versions that no longer ask for location: decline it and the camera list stays empty.</string>
+    <string name="permission_bluetooth_title">Nearby devices (Bluetooth)</string>
+    <string name="permission_bluetooth_body">Finding the camera and opening its hotspot for you. Without it, join the hotspot from system Settings and use Manual connect.</string>
+    <string name="permission_storage_title">Photos and files</string>
+    <string name="permission_storage_body">Saving downloaded clips and photos into your gallery. Without it, files stay inside the app folder instead.</string>
+    <string name="permission_camera_title">Camera</string>
+    <string name="permission_camera_body">Reading the Wi-Fi QR code shown on the camera screen. Not needed when you connect by hotspot or Bluetooth.</string>
 
     <!-- Files filter / sort. -->
     <string name="filter_type_all">All</string>
