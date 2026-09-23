@@ -319,6 +319,16 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     var files by mutableStateOf<List<RemoteFile>>(emptyList())
         private set
 
+    /**
+     * False while the camera may hold files past the ones listed.
+     *
+     * The grid opens on one [LISTING_PAGE]; a card holding more than that used to end at
+     * the cut with no way to reach the rest, because [refreshFiles] replaces the list with
+     * exactly one page and nothing ever asked for page two.
+     */
+    var filesExhausted by mutableStateOf(false)
+        private set
+
     /** Per-operation in-progress flags (so a disabled control can explain itself). */
     val busy = mutableStateListOf<Op>()
 
@@ -1179,12 +1189,35 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         thumbFailedAt.keys.retainAll(present)
         thumbSeen.retainAll(present)
         files = listed
+        filesExhausted = listed.size < LISTING_PAGE
         Diag.i(LogTag.FILE) {
             "list ${listed.size} files (was $previous)" +
                 (if (gone.isEmpty()) "" else " removed=${gone.size} [${gone.joinToString(",") { it.substringAfterLast('/') }.take(160)}]") +
                 (if (listed.isEmpty()) " — empty card or the listing endpoint returned nothing" else "")
         }
         CmdResult.Ok
+    }
+
+    /**
+     * Append the next page of the camera's listing (B15 「加载更多」).
+     *
+     * A separate call rather than a larger [LISTING_PAGE]: a listing is one HTTP request
+     * plus a thumbnail per row, and a card holding thousands of clips should not pay for
+     * all of them just to draw the first screen. Items already listed are dropped by name,
+     * so a file added between the two calls cannot appear twice.
+     */
+    fun loadMoreFiles() {
+        if (filesExhausted || files.isEmpty()) return
+        val from = files.size
+        runOp(Op.Refresh) { proto, s ->
+            val more = proto.listFiles(s, from, from + LISTING_PAGE)
+            val existing = files.mapTo(mutableSetOf()) { it.name }
+            val added = more.filterNot { it.name in existing }
+            files = files + added
+            filesExhausted = more.size < LISTING_PAGE
+            Diag.i(LogTag.FILE) { "load more: +${added.size} (now ${files.size}), exhausted=$filesExhausted" }
+            CmdResult.Ok
+        }
     }
 
     /**
@@ -1449,7 +1482,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             thumbnails.clear()
             thumbSeen.clear()
             thumbFailedAt.clear()
-            files = proto.listFiles(s, 0, LISTING_PAGE)
+            val relisted = proto.listFiles(s, 0, LISTING_PAGE)
+            files = relisted
+            filesExhausted = relisted.size < LISTING_PAGE
             runCatching { deviceStatus = proto.getStatus(s) }
             Diag.i(LogTag.FILE) { "format done, listing now ${files.size} files" }
         }

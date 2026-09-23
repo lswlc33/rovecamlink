@@ -303,6 +303,7 @@
     <string name="title_delete_count">Delete %1$d files?</string>
     <string name="hint_batch_delete_many">The selected files are removed from the camera. This cannot be undone.</string>
     <string name="action_delete_all">Delete all files</string>
+    <string name="action_load_more">Load more</string>
     <string name="title_delete_all_files">Delete all %1$d files?</string>
     <string name="message_delete_all_files">All %1$d files on the camera are removed at once. This cannot be undone.</string>
     <string name="download_eta">About %1$d s left</string>

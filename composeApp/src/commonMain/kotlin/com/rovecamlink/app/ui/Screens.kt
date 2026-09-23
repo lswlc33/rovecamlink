@@ -229,6 +229,7 @@ import com.rovecamlink.app.title_delete_all_files
 import com.rovecamlink.app.message_delete_all_files
 import com.rovecamlink.app.download_eta
 import com.rovecamlink.app.permission_title
+import com.rovecamlink.app.action_load_more
 import com.rovecamlink.app.core.media.CameraPreviewView
 import com.rovecamlink.app.core.media.OrientationMode
 import com.rovecamlink.app.core.media.rememberDeviceOrientation
@@ -345,6 +346,7 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     val cancelLabel = stringResource(Res.string.cancel)
     val deleteLabel = stringResource(Res.string.delete)
     val deleteAllLbl = stringResource(Res.string.action_delete_all)
+    val loadMoreLbl = stringResource(Res.string.action_load_more)
     val doneLabel = stringResource(Res.string.download_done)
     val failedLabel = stringResource(Res.string.download_failed)
     val videoLbl = stringResource(Res.string.file_type_video)
@@ -521,6 +523,15 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
                             onDelete = { pendingDelete = f },
                         )
                     }
+                }
+            }
+
+            // A card holding more than one page stops at the cut; this is the only way to
+            // ask for the rest. Hidden once the listing is exhausted, so an ordinary card
+            // never shows a button that would do nothing.
+            if (!state.filesExhausted && state.files.isNotEmpty()) {
+                section {
+                    actionRow(loadMoreLbl, busy = state.isBusy(Op.Refresh)) { state.loadMoreFiles() }
                 }
             }
 

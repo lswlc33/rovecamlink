@@ -302,6 +302,7 @@
     <string name="title_delete_count">删除 %1$d 个文件？</string>
     <string name="hint_batch_delete_many">选中的文件会从相机上删除，无法恢复。</string>
     <string name="action_delete_all">全部删除</string>
+    <string name="action_load_more">加载更多</string>
     <string name="title_delete_all_files">删除全部 %1$d 个文件？</string>
     <string name="message_delete_all_files">相机上这 %1$d 个文件会被一次性全部删除，无法恢复。</string>
     <string name="download_eta">剩余约 %1$d 秒</string>
