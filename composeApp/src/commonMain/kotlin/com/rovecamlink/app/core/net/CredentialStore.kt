@@ -15,6 +15,25 @@ interface WifiCredentialStore {
     fun passwordFor(ssid: String): String?
     fun remember(ssid: String, password: String)
     fun forget(ssid: String)
+
+    /**
+     * The cameras this phone has joined before, most recent first.
+     *
+     * Cameras, not networks: only an SSID a session was actually completed on is worth
+     * offering again, and the order is the order they were used, so the one that was in
+     * the bag last sits at the top. Blank by default so a platform with no persistence
+     * still compiles and simply remembers nothing across launches.
+     */
+    fun knownCameras(): List<String> = emptyList()
+
+    /** Note a completed connection, moving [ssid] to the front of [knownCameras]. */
+    fun noteConnected(ssid: String) {}
+
+    /** A name the user gave this camera; null means show the SSID. */
+    fun aliasFor(ssid: String): String? = null
+
+    /** Set or clear the alias. Null or blank clears it. */
+    fun setAlias(ssid: String, alias: String?) {}
 }
 
 /** expect factory; Android persists, the others keep memory only. */
@@ -23,6 +42,8 @@ expect fun createWifiCredentialStore(): WifiCredentialStore
 /** Used where there is no persistence backend, and as the common fallback. */
 class MemoryWifiCredentialStore : WifiCredentialStore {
     private val passwords = mutableMapOf<String, String>()
+    private val known = mutableListOf<String>()
+    private val aliases = mutableMapOf<String, String>()
 
     override fun passwordFor(ssid: String): String? = passwords[ssid]?.takeIf { it.isNotEmpty() }
 
@@ -32,5 +53,28 @@ class MemoryWifiCredentialStore : WifiCredentialStore {
 
     override fun forget(ssid: String) {
         passwords.remove(ssid)
+        known.remove(ssid)
+        aliases.remove(ssid)
+    }
+
+    override fun knownCameras(): List<String> = known.toList()
+
+    override fun noteConnected(ssid: String) {
+        known.remove(ssid)
+        known.add(0, ssid)
+        while (known.size > MAX_KNOWN_CAMERAS) known.removeAt(known.lastIndex)
+    }
+
+    override fun aliasFor(ssid: String): String? = aliases[ssid]?.takeIf { it.isNotBlank() }
+
+    override fun setAlias(ssid: String, alias: String?) {
+        if (alias.isNullOrBlank()) aliases.remove(ssid) else aliases[ssid] = alias.trim()
     }
 }
+
+/**
+ * How many previously-used cameras are kept. Enough to cover a shelf of them without the
+ * list growing without bound — and, on Android, without the prefs value growing past what
+ * is comfortable to read in one line.
+ */
+internal const val MAX_KNOWN_CAMERAS: Int = 12

@@ -23,6 +23,7 @@ import com.rovecamlink.app.log_session_file_line
 import com.rovecamlink.app.log_session_opening
 import com.rovecamlink.app.log_settings_title
 import com.rovecamlink.app.log_switch_bodies
+import com.rovecamlink.app.log_switch_recording
 import com.rovecamlink.app.log_switch_filesink
 import com.rovecamlink.app.log_switch_sampling
 import com.rovecamlink.app.log_switch_secrets
@@ -49,6 +50,11 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 @Composable
 fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit) {
     var minLevel by remember { mutableStateOf(Diag.config.minLevel) }
+    // The master switch has been implemented and tested in Diag since the start
+    // (`setRecording`/`toggleRecording`, `LogConfig.paused`) with a note saying "wire this
+    // to one tap" — only the tap was missing. Everything below this row is inert while it
+    // is off, so it is read back from the config rather than assumed on.
+    var recording by remember { mutableStateOf(!Diag.config.paused) }
     var captureBodies by remember { mutableStateOf(Diag.config.captureBodies) }
     var captureSecrets by remember { mutableStateOf(Diag.config.captureSecrets) }
     var fileSink by remember { mutableStateOf(Diag.config.fileSink) }
@@ -108,6 +114,14 @@ fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
             )
         }
         section {
+            SwitchPreference(
+                title = stringResource(Res.string.log_switch_recording),
+                checked = recording,
+                onCheckedChange = {
+                    recording = it
+                    Diag.setRecording(it)
+                },
+            )
             SwitchPreference(
                 title = stringResource(Res.string.log_switch_bodies),
                 checked = captureBodies,

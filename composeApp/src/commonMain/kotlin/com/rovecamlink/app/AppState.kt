@@ -575,6 +575,40 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     /** True when we already hold a passphrase for [ssid], so the row needs no typing. */
     fun hasSavedPassword(ssid: String): Boolean = graph.wifiCredentials.passwordFor(ssid) != null
 
+    // ---------- remembered cameras (A6) ----------
+
+    /** Cameras joined before, most recent first. */
+    fun knownCameras(): List<String> = graph.wifiCredentials.knownCameras()
+
+    /** Whether [ssid] is one we have completed a session with. */
+    fun isKnownCamera(ssid: String): Boolean = ssid in graph.wifiCredentials.knownCameras()
+
+    /**
+     * The name to show for [ssid]: the user's alias when one is set, otherwise the SSID.
+     *
+     * An alias rather than a replacement — two cameras of the same model differ only in
+     * the tail of their SSID, which is exactly the part nobody reads.
+     */
+    fun cameraLabel(ssid: String): String = graph.wifiCredentials.aliasFor(ssid) ?: ssid
+
+    /** Just the user's alias for [ssid], or null — for prefilling the rename field. */
+    fun cameraAlias(ssid: String): String? = graph.wifiCredentials.aliasFor(ssid)
+
+    /** Set or clear the alias shown for [ssid] (null or blank clears it). */
+    fun setCameraAlias(ssid: String, alias: String?) {
+        graph.wifiCredentials.setAlias(ssid, alias)
+        Diag.info(
+            LogTag.WIFI,
+            "alias ${LogFormat.safe(ssid)} -> ${alias?.takeIf { it.isNotBlank() } ?: "(cleared)"}",
+        )
+    }
+
+    /** Forget a camera outright: passphrase, alias and the remembered entry. */
+    fun forgetCamera(ssid: String) {
+        graph.wifiCredentials.forget(ssid)
+        Diag.info(LogTag.WIFI, "forgot camera ${LogFormat.safe(ssid)}")
+    }
+
     /**
      * A row the user tapped in the Wi-Fi list. Open network or a passphrase we hold →
      * join it now; otherwise ask for that one thing. Bluetooth still wins for the
@@ -789,6 +823,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 .onSuccess { r -> Diag.opOutcome("syncTime", r.isOk, if (r is CmdResult.Failure) r.message else "") }
                 .onFailure { Diag.at(LogLevel.WARN, LogTag.PROTO, "syncTime threw ${Diag.causeChain(it)} (ignored)") }
             goPhase(Phase.Connected)
+            // Remembered the moment a session is up, not when the Wi-Fi join succeeded: a
+            // hotspot that answered and then failed to identify is not a camera worth
+            // offering again next time.
+            knownSsid?.let { graph.wifiCredentials.noteConnected(it) }
             // The radios have done their job: an LE scan still running competes with
             // the hotspot for the combo chip on some phones, and a Wi-Fi scan request
             // now costs the camera a deauth cycle for no reason.

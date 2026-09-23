@@ -242,6 +242,7 @@
     <string name="log_filter_error">Error</string>
     <string name="log_settings_title">Logging settings</string>
     <string name="log_level_hint">Recorded level (what the writer keeps at full detail)</string>
+    <string name="log_switch_recording">Record diagnostics</string>
     <string name="log_switch_bodies">Capture request/response bodies</string>
     <string name="log_switch_secrets">Keep passwords/tokens verbatim</string>
     <string name="log_switch_sampling">Collapse identical repeated exchanges</string>
@@ -266,6 +267,10 @@
     <string name="remedy_not_found">No camera answered. Check that it is powered on with its hotspot up; if the phone is already joined to it, use Manual connect and enter 192.168.0.1.</string>
     <string name="remedy_join_failed">The camera was seen but the Wi-Fi join did not finish. Move closer, and turn off any VPN or proxy — they take the camera off the route.</string>
     <string name="remedy_unidentified">A network answered but no registered protocol recognised it. Check that this model is supported, or use Manual connect so the address goes straight through.</string>
+    <string name="label_known_camera">Remembered camera</string>
+    <string name="action_rename_camera">Give this camera a name</string>
+    <string name="action_forget_camera">Forget this camera</string>
+    <string name="hint_camera_alias">Shown instead of the hotspot name. Blank restores the SSID.</string>
     <string name="hint_last_refresh">Updated %1$d s ago</string>
     <string name="hint_rotate_picture">Turn the picture with the phone</string>
     <string name="label_nearby_none">No camera found</string>

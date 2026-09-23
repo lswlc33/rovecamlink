@@ -41,6 +41,11 @@ import com.rovecamlink.app.label_bluetooth_count
 import com.rovecamlink.app.label_current_camera_wifi_short
 import com.rovecamlink.app.label_hint
 import com.rovecamlink.app.label_remedy
+import com.rovecamlink.app.label_known_camera
+import com.rovecamlink.app.action_rename_camera
+import com.rovecamlink.app.action_forget_camera
+import com.rovecamlink.app.hint_camera_alias
+import com.rovecamlink.app.save
 import com.rovecamlink.app.label_nearby_none
 import com.rovecamlink.app.label_no_bluetooth_cameras
 import com.rovecamlink.app.label_no_wifi_cameras
@@ -101,6 +106,9 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     var manualIp by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showQr by remember { mutableStateOf(false) }
+    // Which remembered camera is being renamed, and the text being typed (A6).
+    var renameFor by remember { mutableStateOf<String?>(null) }
+    var renameText by remember { mutableStateOf("") }
     val nearby = state.nearby
     var tick by remember { mutableStateOf(0L) }
     val isConnected = state.phase == Phase.Connected
@@ -165,9 +173,14 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     val ipHint = stringResource(Res.string.placeholder_ip)
     val passwordLbl = stringResource(Res.string.label_password)
     val cancelLbl = stringResource(Res.string.cancel)
+    val saveLbl = stringResource(Res.string.save)
     val hintLbl = stringResource(Res.string.label_hint)
     val remedyLbl = stringResource(Res.string.label_remedy)
     val remedyNow = state.connectRemedy()?.resolve()
+    val knownLbl = stringResource(Res.string.label_known_camera)
+    val renameLbl = stringResource(Res.string.action_rename_camera)
+    val forgetLbl = stringResource(Res.string.action_forget_camera)
+    val aliasHint = stringResource(Res.string.hint_camera_alias)
     val joinLbl = stringResource(Res.string.action_join_connect)
     val noneLbl = stringResource(Res.string.label_nearby_none)
     val ageSeconds = if (nearby.lastUpdateAt == 0L) -1 else ((tick - nearby.lastUpdateAt) / 1000f).roundToInt()
@@ -235,6 +248,48 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
             if (remedyNow != null) infoRow(remedyLbl, remedyNow)
         }
 
+        // The camera we are on: give it a name, or drop everything this phone remembers
+        // about it (A6). Shown while connected, because that is when the SSID in hand is
+        // unambiguously the one the actions should target.
+        val pinned = joined
+        if (connected && pinned != null) {
+            section(title = knownLbl) {
+                if (renameFor == pinned) {
+                    MiuixField(
+                        value = renameText,
+                        onValueChange = { renameText = it },
+                        placeholder = aliasHint,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                    Row(
+                        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Button(
+                            onClick = {
+                                state.setCameraAlias(pinned, renameText.ifBlank { null })
+                                renameFor = null
+                                renameText = ""
+                            },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColorsPrimary(),
+                        ) { Text(saveLbl) }
+                        Button(
+                            onClick = { renameFor = null; renameText = "" },
+                            modifier = Modifier.weight(1f),
+                        ) { Text(cancelLbl) }
+                    }
+                } else {
+                    actionRow(renameLbl) {
+                        renameFor = pinned
+                        renameText = state.cameraAlias(pinned).orEmpty()
+                    }
+                    actionRow(forgetLbl) { state.forgetCamera(pinned) }
+                }
+            }
+        }
+
         /*
          * Both scanner lists exist to *find* something to connect to. Once a camera is
          * connected they answer 「这台设备没有蓝牙」 and 「附近没有相机热点」 to the person who
@@ -269,12 +324,19 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
                 nearby.networks.forEach { network ->
                     val isJoined = joined.equals(network.ssid, ignoreCase = true)
                     val credential = if (isJoined || state.hasSavedPassword(network.ssid)) savedLbl else null
+                    val known = state.isKnownCamera(network.ssid)
+                    val label = state.cameraLabel(network.ssid)
                     ArrowPreference(
-                        title = network.ssid + if (isJoined) " ✓" else "",
+                        // A camera this phone has joined before goes by the name the user
+                        // gave it; the raw SSID moves into the summary, because two units
+                        // of the same model differ only in that tail — the part nobody reads.
+                        title = label + if (isJoined) " ✓" else "",
                         summary = listOfNotNull(
+                            if (label != network.ssid) network.ssid else null,
                             if (network.secured) securedLbl else openLbl,
                             "${network.rssi} dBm",
                             credential,
+                            if (known) knownLbl else null,
                         ).joinToString(" · "),
                         onClick = { state.pickNetwork(network) },
                         enabled = !busy,

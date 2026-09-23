@@ -241,6 +241,7 @@
     <string name="log_filter_error">错误</string>
     <string name="log_settings_title">日志设置</string>
     <string name="log_level_hint">记录级别（低于此级别的会被合并，不保留完整细节）</string>
+    <string name="log_switch_recording">记录诊断日志</string>
     <string name="log_switch_bodies">捕获请求/响应正文</string>
     <string name="log_switch_secrets">明文保留密码/令牌（导出的文件可能含相机 Wi-Fi 密码）</string>
     <string name="log_switch_sampling">合并重复的相同请求</string>
@@ -265,6 +266,10 @@
     <string name="remedy_not_found">没有相机应答。确认相机已开机、热点已打开；如果手机已经连上它的热点，用「手动连接」直接填 192.168.0.1。</string>
     <string name="remedy_join_failed">已经看到相机，但 Wi-Fi 没能连上。靠近一些，并关掉 VPN 或代理——它们会把相机挤出路由。</string>
     <string name="remedy_unidentified">有网络应答，但没有已注册的协议认得它。确认这个型号受支持，或用「手动连接」把地址直接填进去。</string>
+    <string name="label_known_camera">已记住的相机</string>
+    <string name="action_rename_camera">给这台相机起个名字</string>
+    <string name="action_forget_camera">忘记这台相机</string>
+    <string name="hint_camera_alias">用来代替热点名显示。留空恢复为 SSID。</string>
     <string name="hint_last_refresh">%1$d 秒前刷新</string>
     <string name="hint_rotate_picture">画面跟随手机方向旋转</string>
     <string name="label_nearby_none">未发现相机</string>
