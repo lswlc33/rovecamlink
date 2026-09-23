@@ -743,7 +743,13 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     // ---------- settings ----------
 
-    /** Legacy get/set descriptors: id -> (title, getCmd, getKey, setCmd template, boolean?). */
+    /**
+     * Legacy get/set descriptors: id -> (title, getCmd, getKey, setCmd template, boolean?).
+     *
+     * [options] pins the value set of an enum row the firmware spells numerically or as
+     * words, so the picker cannot offer a spelling the camera answers with silence.
+     * [pair] marks the two-parameter endpoint; see [setLegacyPair].
+     */
     private data class LegacySetting(
         val id: String,
         val title: String,
@@ -751,6 +757,8 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         val getKey: String,
         val setCmd: String, // template with %s for value
         val boolean: Boolean = false,
+        val options: List<CameraSetting.Option> = emptyList(),
+        val pair: Boolean = false,
     )
 
     private val legacySettings = listOf(
@@ -765,6 +773,44 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         LegacySetting("videonorm", "Video standard", "getvideonorm.cgi?", "videonorm", "setvideonorm.cgi?&-videonorm=%s"),
         LegacySetting("autoshutdown", "Auto shutdown", "getautoshutdown.cgi?", "time", "setautoshutdown.cgi?&-time=%s"),
         LegacySetting("brightness", "Screen brightness", "getscreenbrightness.cgi?", "brightness", "setscreenbrightness.cgi?&-brightness=%s"),
+        // Rows the official table carries but this legacy list never learned. They are the
+        // old CGI family's own endpoints: a NewAPP firmware answers them with a refused
+        // connection and `getSettings` never reaches the legacy walk for it, so they exist
+        // for the firmware that answers only this surface.
+        //
+        // ⚠️ docs/04 §7.2 (B16–B21) records three of these as unconfirmed — the unit of
+        // `screenautosleep`, the value domain `bootaction` really accepts (the code lists
+        // idle/record/timelapse, a resource array lists six), and whether `timeosd` also
+        // shows up in the NewAPP menu. The labels stay on the firmware's own spelling
+        // rather than inventing a unit we cannot back.
+        LegacySetting("timerinfo", "Timer capture (s)", "gettimerinfo.cgi?", "time", "settimerinfo.cgi?&-time=%s"),
+        LegacySetting("spotmeter", "Spot metering", "getspotmeter.cgi?", "enable", "setspotmeter.cgi?&-enable=%s", true),
+        LegacySetting("timeosd", "Timestamp watermark", "gettimeosd.cgi?", "enable", "settimeosd.cgi?&-enable=%s", true),
+        LegacySetting(
+            "screenautosleep", "Screen auto sleep", "getscreenautosleep.cgi?", "time",
+            "setscreenautosleep.cgi?&-time=%s",
+            options = listOf("0", "1", "3", "5").map { CameraSetting.Option(it, it) },
+        ),
+        LegacySetting(
+            "bootaction", "On power-on", "getbootaction.cgi?", "action",
+            "setbootaction.cgi?&-action=%s",
+            options = listOf(
+                CameraSetting.Option("idle", "Idle"),
+                CameraSetting.Option("record", "Record"),
+                CameraSetting.Option("timelapse", "Time-lapse"),
+            ),
+        ),
+        // Burst is the one legacy setting with **two** parameters — the firmware's
+        // setburstinfo takes interval and count together — so a single-value row cannot
+        // express it. Modelled as two rows over one endpoint, written as a pair.
+        LegacySetting(
+            "burstcount", "Burst count", "getburstinfo.cgi?", "count",
+            "setburstinfo.cgi?&-time={time}&-count={count}", pair = true,
+        ),
+        LegacySetting(
+            "burstinterval", "Burst interval (s)", "getburstinfo.cgi?", "time",
+            "setburstinfo.cgi?&-time={time}&-count={count}", pair = true,
+        ),
     )
 
     override suspend fun getSettings(session: CameraSession): List<CameraSetting> {
@@ -789,9 +835,13 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         val legacy = legacySettings.mapNotNull { ls ->
             val m = HiVarParser.parse(http.getText("$base/${ls.getCmd}"))
             val v = m[ls.getKey] ?: return@mapNotNull null
-            val options = if (ls.boolean) listOf(
-                CameraSetting.Option("1", "On"), CameraSetting.Option("0", "Off"),
-            ) else emptyList()
+            val options = when {
+                ls.boolean -> listOf(
+                    CameraSetting.Option("1", "On"), CameraSetting.Option("0", "Off"),
+                )
+                ls.options.isNotEmpty() -> ls.options
+                else -> emptyList()
+            }
             CameraSetting(ls.id, ls.title, v, options)
         }
         Diag.d(LogTag.PROTO) { "legacy settings answered ${legacy.size}/${legacySettings.size}: ${legacy.joinToString(",") { "${it.id}=${it.value}" }}" }
@@ -957,6 +1007,8 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         }
         val ls = legacySettings.firstOrNull { it.id == id }
             ?: return CmdResult.Failure("Unknown setting $id")
+        // Burst carries interval and count in one request — neither half can go alone.
+        if (ls.pair) return setLegacyPair(base, ls, value)
         val url = "$base/" + ls.setCmd.replace("%s", value)
         Diag.d(LogTag.PROTO) {
             "setSetting via ${ls.setCmd.substringBefore('?')} value=${LogFormat.settingValue(id, value, Diag.config.captureSecrets)}"
@@ -991,6 +1043,39 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             is CgiReply.Accepted -> CmdResult.Ok
             is CgiReply.Rejected -> refuse("set $id", verdict)
             CgiReply.NoAnswer -> CmdResult.Failure("set $id failed (no answer from setcurparameter.cgi)")
+        }
+    }
+
+    /**
+     * Write one half of a two-parameter legacy setting without clobbering the other.
+     *
+     * `setburstinfo` takes the interval and the count in the same request, so a write
+     * carrying only the row the user touched would silently reset its twin. The current
+     * pair is therefore re-read and only this row's slot replaced. The official app
+     * hard-checks both to 0..30 on the client and answers -1 without sending anything;
+     * the same bound is enforced here so an out-of-range value never leaves the phone.
+     */
+    private suspend fun setLegacyPair(base: String, ls: LegacySetting, value: String): CmdResult {
+        val current = HiVarParser.parse(http.getText("$base/${ls.getCmd}"))
+        val time = if (ls.getKey == "time") value else current["time"]
+        val count = if (ls.getKey == "count") value else current["count"]
+        if (time == null || count == null) {
+            return CmdResult.Failure("${ls.title}: the camera reported only one of the burst values — nothing sent")
+        }
+        val t = time.toIntOrNull()
+        val c = count.toIntOrNull()
+        if (t == null || c == null || t !in 0..30 || c !in 0..30) {
+            return CmdResult.Failure("Burst values must be 0..30 (time=$time count=$count)")
+        }
+        val url = "$base/" + ls.setCmd
+            .replace("{time}", param(time))
+            .replace("{count}", param(count))
+        Diag.d(LogTag.PROTO) { "set ${ls.id} via setburstinfo time=$t count=$c" }
+        val r = http.getText(url)
+        return when (val verdict = Cgi.verdict(r)) {
+            is CgiReply.Accepted -> CmdResult.Ok
+            is CgiReply.Rejected -> refuse("set burst", verdict)
+            CgiReply.NoAnswer -> CmdResult.Failure("set burst failed (setburstinfo.cgi did not answer)")
         }
     }
 
