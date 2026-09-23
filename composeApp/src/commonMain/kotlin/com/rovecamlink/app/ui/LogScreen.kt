@@ -38,9 +38,7 @@ import com.rovecamlink.app.core.log.LogRecord
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.createLogStore
 import com.rovecamlink.app.log_action_save
-import com.rovecamlink.app.log_action_save_current
 import com.rovecamlink.app.log_action_share
-import com.rovecamlink.app.log_action_share_current
 import com.rovecamlink.app.log_action_snapshot
 import com.rovecamlink.app.log_busy_preparing
 import com.rovecamlink.app.log_busy_saving
@@ -50,28 +48,17 @@ import com.rovecamlink.app.log_export_hint
 import com.rovecamlink.app.log_filter_all
 import com.rovecamlink.app.log_filter_error
 import com.rovecamlink.app.log_filter_info
-import com.rovecamlink.app.log_filter_placeholder
 import com.rovecamlink.app.log_filter_warn
-import com.rovecamlink.app.log_follow
-import com.rovecamlink.app.log_hide
-import com.rovecamlink.app.label_note
-import com.rovecamlink.app.log_level_hint
 import com.rovecamlink.app.log_no_match
+import com.rovecamlink.app.label_note
 import com.rovecamlink.app.log_note_export_failed
 import com.rovecamlink.app.log_note_save_failed
 import com.rovecamlink.app.log_note_saved
 import com.rovecamlink.app.log_note_share_unavailable
 import com.rovecamlink.app.log_note_shared
 import com.rovecamlink.app.log_records_summary
-import com.rovecamlink.app.log_session_file_line
-import com.rovecamlink.app.log_session_opening
-import com.rovecamlink.app.log_settings_title
-import com.rovecamlink.app.log_show
-import com.rovecamlink.app.log_switch_bodies
-import com.rovecamlink.app.log_switch_filesink
-import com.rovecamlink.app.log_switch_sampling
-import com.rovecamlink.app.log_switch_secrets
 import com.rovecamlink.app.log_title
+import com.rovecamlink.app.menu_log_settings
 // Every generated top-level extension lives in `com.rovecamlink.app` and MUST be
 // imported by name — that, not any real resource-lookup bug, is what made earlier
 // attempts here fail to resolve. (docs/06 and the old note in Screens.kt blamed the
@@ -84,37 +71,36 @@ import org.jetbrains.compose.resources.stringResource
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.HorizontalDivider
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Back
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
-import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
- * Live diagnostic log: the in-app preview of what [Diag] is recording, plus the
- * exits a support request needs.
+ * Live diagnostic log: the in-app preview of what [Diag] is recording, plus the exits a
+ * support request needs.
  *
- * The primary Share/Save action exports *every* persisted run ([Diag.exportFullBundle],
- * replayed off disk), because that is what survives a crash — the previous runs are
- * the reason a user files a report. A secondary, clearly labelled pair exports only
- * the current session ([Diag.exportBundle], the in-memory ring).
+ * This is one of the app's pushed pages — its own bar carries a 返回 arrow (not the
+ * connection chip a tab carries) and a 「更多」 overflow whose one entry opens the
+ * separate [LogSettingsScreen]. The 2026-09-23 redesign stripped three things off this
+ * page: the free-text search box, and the two 仅本次 export buttons. What is left is the
+ * level filter, the two whole-history export buttons, an environment snapshot, and the
+ * record tail — the page is here to be read and exported, and the knobs that shape *what*
+ * gets recorded moved to their own page so they stop competing with the log for the
+ * screen.
  *
- * Labels are localised through [Res.string]; the *records themselves* stay as the
- * on-disk `rovdiag/1` grammar — they are a developer artifact and are grepped.
+ * The primary Share/Save export *every* persisted run ([Diag.exportFullBundle], replayed
+ * off disk), because that is what survives a crash — the previous runs are the reason a
+ * user files a report.
  *
- * This is the app's one pushed page: the bar's leading control is a back arrow rather
- * than the connection chip every tab carries, and the filters stay pinned above the log
- * because they are what you reach for *while* reading it. The export buttons scroll with
- * the records — this page exists to be read, and a 1200-line tail leaves no room for a
- * pinned action block.
+ * Labels are localised through [Res.string]; the *records themselves* stay as the on-disk
+ * `rovdiag/1` grammar — they are a developer artifact and are grepped.
  */
 @Composable
 fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit) {
@@ -124,26 +110,17 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
     var records by remember { mutableStateOf<List<LogRecord>>(emptyList()) }
     var total by remember { mutableStateOf(0) }
     var viewLevel by remember { mutableStateOf<LogLevel?>(null) }
-    var query by remember { mutableStateOf("") }
     var follow by remember { mutableStateOf(true) }
-    var showConfig by remember { mutableStateOf(false) }
     var detail by remember { mutableStateOf<LogRecord?>(null) }
     var busy by remember { mutableStateOf<String?>(null) }
     var note by remember { mutableStateOf<String?>(null) }
-    var minLevel by remember { mutableStateOf(Diag.config.minLevel) }
-    var captureBodies by remember { mutableStateOf(Diag.config.captureBodies) }
-    var captureSecrets by remember { mutableStateOf(Diag.config.captureSecrets) }
-    var fileSink by remember { mutableStateOf(Diag.config.fileSink) }
-    var sampling by remember { mutableStateOf(Diag.config.sampleSteadyTraffic) }
-    var sessionPath by remember { mutableStateOf<String?>(null) }
 
     // Polling (rather than a flow) keeps the preview honest about records that were
     // demoted to TRACE by sampling: every tick re-reads the writer's buffer.
-    LaunchedEffect(viewLevel, query) {
+    LaunchedEffect(viewLevel) {
         while (true) {
-            records = Diag.tail(1_200, viewLevel, query)
+            records = Diag.tail(1_200, viewLevel, null)
             total = Diag.count()
-            sessionPath = Diag.sessionFile()
             state.refreshDiagnosticsEnv()
             delay(400)
         }
@@ -158,9 +135,8 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
         if (follow && last >= 0) listState.scrollToItem(last)
     }
 
-    // [full] picks between the every-run export and the current-run-only export; both
-    // share the same flush + save/share plumbing.
-    fun export(share: Boolean, full: Boolean) {
+    // Whole-history export only now — the 仅本次 pair is gone.
+    fun export(share: Boolean) {
         if (busy != null) return
         scope.launch(NonCancellable) {
             // NonCancellable: this coroutine belongs to the screen, and closing the
@@ -168,8 +144,8 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
             busy = getString(if (share) Res.string.log_busy_preparing else Res.string.log_busy_saving)
             try {
                 Diag.awaitDrained()
-                val text = if (full) Diag.exportFullBundle() else Diag.exportBundle()
-                val name = if (full) Diag.exportFullName() else Diag.exportName()
+                val text = Diag.exportFullBundle()
+                val name = Diag.exportFullName()
                 val size = LogFormat.size(text.length.toLong())
                 val outcome = if (share) {
                     if (store.share(name, text)) {
@@ -201,14 +177,14 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
         stringResource(Res.string.log_filter_warn) to LogLevel.WARN,
         stringResource(Res.string.log_filter_error) to LogLevel.ERROR,
     )
-    val sessionValue = sessionPath ?: Diag.fileSinkError() ?: stringResource(Res.string.log_session_opening)
+    val logSettingsLbl = stringResource(Res.string.menu_log_settings)
 
     MiuixPage(
         title = stringResource(Res.string.log_title),
+        subtitle = stringResource(Res.string.log_records_summary, total, records.size),
         outerPadding = outerPadding,
         state = state,
-        // A pushed page: the leading control goes back, and the record count rides in
-        // the bar where it stays visible however far down the tail you are.
+        // A pushed page: the leading control goes back to whatever pushed this page.
         navigationIcon = {
             IconButton(onClick = onClose) {
                 Icon(
@@ -218,39 +194,27 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
                 )
             }
         },
+        // The one per-page action rides in the overflow — 日志设置 opens the separate page.
+        menuItems = listOf(
+            AppBarMenuItem(label = logSettingsLbl) { state.pushPage(com.rovecamlink.app.Page.LogSettings) },
+        ),
         header = {
             Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
                 // A standard `TabRow` is a sibling of the card, not a child of it: it
-                // sizes itself from its own min/max tab widths and scrolls, so the card's
-                // 16dp row margin was crushing the first segment against the card edge.
+                // sizes itself from its own min/max tab widths and scrolls.
                 TabRow(
                     tabs = levelTabs.map { it.first },
                     selectedTabIndex = levelTabs.map { it.second }.indexOf(viewLevel).coerceAtLeast(0),
                     onTabSelected = { viewLevel = levelTabs[it].second },
                     modifier = Modifier.padding(top = 4.dp, bottom = 8.dp),
                 )
-                Card(Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
-                    MiuixField(
-                        value = query,
-                        onValueChange = { query = it },
-                        placeholder = stringResource(Res.string.log_filter_placeholder),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                    SwitchPreference(
-                        title = stringResource(Res.string.log_follow),
-                        summary = stringResource(Res.string.log_records_summary, total, records.size),
-                        checked = follow,
-                        onCheckedChange = { follow = it },
-                    )
-                }
             }
         },
         listState = listState,
     ) {
         // A button row sits where a card would, inset by the same 12dp — the demo never
-        // wraps one in a card. The three whole-history actions are buttons with one
-        // primary among them; the session-only pair underneath are text buttons, which is
-        // the library's own importance ladder for "same thing, but only this run".
+        // wraps one in a card. The two whole-history actions are buttons with one primary
+        // among them.
         item {
             Row(
                 modifier = Modifier
@@ -259,10 +223,10 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 LogButton(stringResource(Res.string.log_action_share), enabled = exportable, primary = true) {
-                    export(share = true, full = true)
+                    export(share = true)
                 }
                 LogButton(stringResource(Res.string.log_action_save), enabled = exportable) {
-                    export(share = false, full = true)
+                    export(share = false)
                 }
                 LogButton(stringResource(Res.string.log_action_snapshot), enabled = exportable) {
                     state.refreshDiagnosticsEnv()
@@ -288,27 +252,6 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
                     .padding(horizontal = 28.dp, vertical = 10.dp),
             )
         }
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                TextButton(
-                    text = stringResource(Res.string.log_action_share_current),
-                    onClick = { export(share = true, full = false) },
-                    enabled = exportable,
-                    modifier = Modifier.weight(1f),
-                )
-                TextButton(
-                    text = stringResource(Res.string.log_action_save_current),
-                    onClick = { export(share = false, full = false) },
-                    enabled = exportable,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-        }
         if (busy != null || note != null) {
             section {
                 if (busy != null) {
@@ -329,89 +272,6 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
             }
         }
 
-        // No section heading: the switch below carries the block's name, and a
-        // SmallTitle saying the same words above it was one heading too many.
-        section {
-            SwitchPreference(
-                title = stringResource(Res.string.log_settings_title),
-                summary = stringResource(if (showConfig) Res.string.log_hide else Res.string.log_show),
-                checked = showConfig,
-                onCheckedChange = { showConfig = it },
-            )
-        }
-        if (showConfig) {
-            item {
-                Text(
-                    text = stringResource(Res.string.log_level_hint),
-                    fontSize = 13.sp,
-                    color = scheme.onSurfaceVariantSummary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 28.dp, vertical = 4.dp),
-                )
-            }
-            item {
-                TabRow(
-                    // The segment labels are the level tokens themselves — the file is
-                    // keyed on `V D I W E`, so translating them here would break the
-                    // preview's correspondence to the exported log.
-                    tabs = LogLevel.entries.map { it.name.lowercase().take(4) },
-                    selectedTabIndex = LogLevel.entries.indexOf(minLevel),
-                    onTabSelected = { index ->
-                        val l = LogLevel.entries[index]
-                        minLevel = l
-                        Diag.config.minLevel = l
-                        Diag.info(LogTag.LOG, "config minLevel=${l.name}")
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                )
-            }
-            section {
-                SwitchPreference(
-                    title = stringResource(Res.string.log_switch_bodies),
-                    checked = captureBodies,
-                    onCheckedChange = {
-                        captureBodies = it
-                        Diag.config.captureBodies = it
-                        Diag.info(LogTag.LOG, "config bodies=$it")
-                    },
-                )
-                SwitchPreference(
-                    title = stringResource(Res.string.log_switch_secrets),
-                    checked = captureSecrets,
-                    onCheckedChange = {
-                        captureSecrets = it
-                        Diag.config.captureSecrets = it
-                        Diag.warn(
-                            LogTag.LOG,
-                            "config secrets=$it — exported files may contain the camera Wi-Fi password",
-                        )
-                    },
-                )
-                SwitchPreference(
-                    title = stringResource(Res.string.log_switch_sampling),
-                    checked = sampling,
-                    onCheckedChange = {
-                        sampling = it
-                        Diag.config.sampleSteadyTraffic = it
-                        Diag.info(LogTag.LOG, "config sampling=$it")
-                    },
-                )
-                SwitchPreference(
-                    title = stringResource(Res.string.log_switch_filesink),
-                    checked = fileSink,
-                    onCheckedChange = {
-                        fileSink = it
-                        Diag.config.fileSink = it
-                        Diag.info(LogTag.LOG, "config file_sink=$it")
-                    },
-                )
-                hintLine(stringResource(Res.string.log_session_file_line, sessionValue))
-            }
-        }
-
         // The records are the library's other documented list shape — rows outside a
         // card, separated by `HorizontalDivider` — because the tail can be 1 200 lines
         // long and one card holding them all would compose every one of them. Inset by
@@ -426,7 +286,7 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
             item {
                 Text(
                     text = stringResource(
-                        if (query.isBlank() && viewLevel == null) Res.string.log_empty else Res.string.log_no_match,
+                        if (viewLevel == null) Res.string.log_empty else Res.string.log_no_match,
                     ),
                     color = scheme.onSurfaceVariantSummary,
                     fontSize = 13.sp,
@@ -495,8 +355,7 @@ private fun LogLine(rec: LogRecord, onClick: () -> Unit) {
         LogLevel.TRACE -> scheme.disabledOnSurface
         LogLevel.DEBUG -> scheme.onSurfaceVariantSummary
         // INFO has to name its colour: `Color.Unspecified` in a `TextStyle` handed to
-        // `BasicText` resolves to black, which is invisible on this dark page — the
-        // whole tail read as empty while `共 n 条记录` insisted it was there.
+        // `BasicText` resolves to black, which is invisible on this dark page.
         LogLevel.INFO -> scheme.onSurface
     }
     Column(

@@ -90,13 +90,10 @@ import com.rovecamlink.app.workmode_video
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import top.yukonga.miuix.kmp.basic.BasicComponent
-import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.TabRowWithContour
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.preference.SliderPreference
-import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import kotlin.math.roundToInt
 
@@ -206,6 +203,14 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
         outerPadding = outerPadding,
         state = state,
         listBottomInset = shutterBand,
+        // 自动跟随 rides in the overflow now (2026-09-23 「自动跟随移入更多菜单」): the toggle
+        // does not belong in a card under a live video surface, and the ⋯ menu is where
+        // per-page switches live across the app. The check mark reflects the current state.
+        menuItems = listOf(
+            AppBarMenuItem(label = rotateLbl, checked = rotating.value) {
+                rotating.value = !rotating.value
+            },
+        ),
         header = {
             Column {
                 PreviewHeader(
@@ -218,17 +223,6 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
                     photos = st?.photoCount,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
-                ) {
-                    SwitchPreference(
-                        title = rotateLbl,
-                        checked = rotating.value,
-                        onCheckedChange = { rotating.value = it },
-                    )
-                }
             }
         },
         floating = {
@@ -643,6 +637,11 @@ private fun QuickAdjustBar(
         // `steps` counts the stops *between* the two ends, one fewer than the number of
         // gaps: this puts a tick exactly under each firmware value.
         steps = (lastIndex - 1).coerceAtLeast(0),
+        // A tick under every firmware档 (2026-09-23 「每档一个刻度点」): keyPoints lists one
+        // float per option so the dots line up with the values the slider snaps to, rather
+        // than the evenly-spaced defaults `steps` alone would draw.
+        showKeyPoints = true,
+        keyPoints = remember(lastIndex) { (0..lastIndex).map { it.toFloat() } },
         enabled = enabled,
         onValueChangeFinished = {
             if (draft != currentIndex) onCommit(options[draft].value)

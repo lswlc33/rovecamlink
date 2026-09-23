@@ -430,6 +430,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     /** Public accessor for the UI (e.g. to build the preview URL). */
     fun protocolOrNull(): CameraProtocol? = protocol
 
+    /**
+     * The protocol plugins compiled into this build, for the about page's 已支持的相机
+     * list. Read-only: the about page names what the app can talk to, it does not touch
+     * the registry.
+     */
+    fun supportedPlatforms(): Set<DevicePlatform> = graph.registry.platforms()
+
     fun isBusy(op: Op): Boolean = busy.contains(op)
     private fun setBusy(op: Op, on: Boolean) {
         if (on && !busy.contains(op)) busy.add(op)

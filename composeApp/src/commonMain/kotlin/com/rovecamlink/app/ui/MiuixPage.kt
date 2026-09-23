@@ -24,6 +24,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +43,7 @@ import com.rovecamlink.app.LocalizedString
 import com.rovecamlink.app.Phase
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.action_diagnostics
+import com.rovecamlink.app.action_more
 import com.rovecamlink.app.not_connected_note
 import com.rovecamlink.app.not_connected_title
 import com.rovecamlink.app.pill_busy
@@ -51,10 +56,14 @@ import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.DropdownImpl
+import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
+import top.yukonga.miuix.kmp.basic.ListPopupColumn
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
+import top.yukonga.miuix.kmp.basic.PopupPositionProvider
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.Text
@@ -65,11 +74,31 @@ import top.yukonga.miuix.kmp.basic.VerticalScrollBar
 import top.yukonga.miuix.kmp.basic.rememberScrollBarAdapter
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.ListView
+import top.yukonga.miuix.kmp.icon.extended.More
 import top.yukonga.miuix.kmp.icon.extended.Report
 import top.yukonga.miuix.kmp.icon.extended.ScreenMirroring
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
+import top.yukonga.miuix.kmp.overlay.OverlayListPopup
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.overScrollVertical
+
+/**
+ * One entry in a page's top-bar 「更多」 menu.
+ *
+ * The bar has room for exactly one trailing icon, so every per-page action — 自动跟随 on
+ * the live page, 筛选/排序 on the files page, 日志设置 on settings — rides inside a single
+ * dropdown behind the ⋯ button rather than fighting for space in the bar itself. The
+ * app-wide 「查看日志」 is prepended by [AppBarActions], so a page only lists what is its
+ * own.
+ *
+ * [checked] draws the selected indicator; leave it false for a plain action row.
+ */
+data class AppBarMenuItem(
+    val label: String,
+    val checked: Boolean = false,
+    val enabled: Boolean = true,
+    val onClick: () -> Unit,
+)
 
 /** Horizontal inset of a section's card from the page edge. */
 private val CardInset = 12.dp
@@ -97,7 +126,8 @@ fun MiuixPage(
     subtitle: String? = null,
     subtitleColor: Color? = null,
     navigationIcon: @Composable () -> Unit = {},
-    actions: @Composable RowScope.() -> Unit = { AppBarActions(state) },
+    menuItems: List<AppBarMenuItem> = emptyList(),
+    actions: @Composable RowScope.() -> Unit = { AppBarActions(state, menuItems) },
     bottomContent: @Composable () -> Unit = {},
     header: (@Composable () -> Unit)? = null,
     floating: @Composable BoxScope.() -> Unit = {},
@@ -408,31 +438,79 @@ fun LazyListScope.notConnectedItem() {
 }
 
 /**
- * The diagnostics switch, which every page's bar carries.
+ * The bar's trailing controls: the diagnostics switch, and — when a page supplies any —
+ * a 「更多」 overflow behind a single ⋯ button.
  *
  * Diagnostics has to be one tap away from wherever you are: that is where the failure
  * you want to report just happened. One tap also puts it away again — the same button is
  * the close control, so the page never has to be re-found after a screen change.
  *
+ * The overflow is miuix's own [OverlayListPopup] + [ListPopupColumn] + [DropdownImpl],
+ * anchored to the ⋯ button — the same three pieces the library's own
+ * `OverlayDropdownPopup` is built from. 0.9.4 ships no one-call `IconDropdownMenu`, so the
+ * three are assembled here rather than reached for. A page with no per-page action shows
+ * only the diagnostics icon; the app-wide 「查看日志」 is always the last row so it sits in
+ * the same place on every page.
+ *
  * `actions` is the library's icon slot and nothing else, so the connection state is not
  * a chip here — it is the bar's second line. See [connectionStatus].
  */
 @Composable
-fun RowScope.AppBarActions(state: AppState) {
-    IconButton(
-        onClick = {
-            if (state.diagnosticsOpen) state.closeDiagnostics() else state.openDiagnostics()
-        },
-    ) {
-        Icon(
-            MiuixIcons.ListView,
-            contentDescription = stringResource(Res.string.action_diagnostics),
-            tint = if (state.diagnosticsOpen) {
-                MiuixTheme.colorScheme.primary
-            } else {
-                MiuixTheme.colorScheme.onBackground
+fun RowScope.AppBarActions(state: AppState, menuItems: List<AppBarMenuItem> = emptyList()) {
+    if (menuItems.isNotEmpty()) {
+        var expanded by remember { mutableStateOf(false) }
+        val viewLog = AppBarMenuItem(
+            label = stringResource(Res.string.action_diagnostics),
+            checked = state.diagnosticsOpen,
+        ) { state.openDiagnostics() }
+        // 查看日志 always last, so its position never shifts between pages.
+        val rows = menuItems + viewLog
+        Box {
+            IconButton(onClick = { expanded = true }) {
+                Icon(
+                    MiuixIcons.More,
+                    contentDescription = stringResource(Res.string.action_more),
+                    tint = MiuixTheme.colorScheme.onBackground,
+                )
+            }
+            OverlayListPopup(
+                show = expanded,
+                alignment = PopupPositionProvider.Align.End,
+                onDismissRequest = { expanded = false },
+            ) {
+                ListPopupColumn {
+                    rows.forEachIndexed { index, entry ->
+                        DropdownImpl(
+                            item = DropdownItem(text = entry.label, enabled = entry.enabled),
+                            optionSize = rows.size,
+                            isSelected = entry.checked,
+                            index = index,
+                            enabled = entry.enabled,
+                            onSelectedIndexChange = {
+                                expanded = false
+                                entry.onClick()
+                            },
+                        )
+                    }
+                }
+            }
+        }
+    } else {
+        IconButton(
+            onClick = {
+                if (state.diagnosticsOpen) state.closeDiagnostics() else state.openDiagnostics()
             },
-        )
+        ) {
+            Icon(
+                MiuixIcons.ListView,
+                contentDescription = stringResource(Res.string.action_diagnostics),
+                tint = if (state.diagnosticsOpen) {
+                    MiuixTheme.colorScheme.primary
+                } else {
+                    MiuixTheme.colorScheme.onBackground
+                },
+            )
+        }
     }
 }
 

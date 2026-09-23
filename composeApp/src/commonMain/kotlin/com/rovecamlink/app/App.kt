@@ -10,12 +10,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.rovecamlink.app.ui.AboutScreen
 import com.rovecamlink.app.ui.ConfirmDialog
 import com.rovecamlink.app.ui.ConnectScreen
 import com.rovecamlink.app.ui.ErrorBanner
 import com.rovecamlink.app.ui.FilesScreen
 import com.rovecamlink.app.ui.LiveScreen
 import com.rovecamlink.app.ui.LogScreen
+import com.rovecamlink.app.ui.LogSettingsScreen
 import com.rovecamlink.app.ui.SettingsScreen
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -66,10 +68,15 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
         },
     ) { padding ->
         Box(Modifier.fillMaxSize()) {
-            if (state.diagnosticsOpen) {
-                LogScreen(state, outerPadding = padding, onClose = { state.closeDiagnostics() })
-            } else {
-                when (tab) {
+            // The pushed layer wins over the tab underneath: the log, its settings and the
+            // about page each get the whole window and their own back arrow, rather than
+            // being painted over one tab's content. `topPage` is the stack's head; null
+            // means no page is pushed and the selected tab shows through.
+            when (state.topPage) {
+                Page.Log -> LogScreen(state, outerPadding = padding, onClose = { state.popPage() })
+                Page.LogSettings -> LogSettingsScreen(state, outerPadding = padding, onClose = { state.popPage() })
+                Page.About -> AboutScreen(state, outerPadding = padding, onClose = { state.popPage() })
+                null -> when (tab) {
                     Tab.Devices -> ConnectScreen(state, outerPadding = padding)
                     Tab.Live -> LiveScreen(state, outerPadding = padding)
                     Tab.Files -> FilesScreen(state, outerPadding = padding)

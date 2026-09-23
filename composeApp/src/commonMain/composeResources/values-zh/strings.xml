@@ -334,4 +334,40 @@
     <string name="label_unknown_date">日期未知</string>
     <string name="action_raise_access_point">让相机重新开启热点</string>
     <string name="hint_device_action">相机上有些项是操作而不是设置，请用下方的按钮执行。</string>
+
+    <!-- 顶栏「更多」菜单，以及它能到达的页面。 -->
+    <string name="action_more">更多</string>
+    <string name="menu_follow">自动跟随</string>
+    <string name="menu_filter_sort">筛选与排序</string>
+    <string name="menu_log_settings">日志设置</string>
+
+    <!-- 外观选择（软件页）。 -->
+    <string name="section_appearance">外观</string>
+    <string name="appearance_system">跟随系统</string>
+    <string name="appearance_dark">深色</string>
+    <string name="appearance_light">浅色</string>
+
+    <!-- 软件页的行。 -->
+    <string name="action_view_log">查看诊断日志</string>
+    <string name="action_log_settings">日志设置</string>
+    <string name="action_about">关于</string>
+    <string name="action_ui_test_mode">UI 测试模式</string>
+    <string name="hint_ui_test_mode">用一台内置假相机把每个页面填满，没连相机也能走查布局。写操作不会发出去。</string>
+
+    <!-- 关于页。 -->
+    <string name="about_title">关于</string>
+    <string name="about_version">版本</string>
+    <string name="about_protocols">已支持的相机</string>
+    <string name="about_licenses">开源许可</string>
+    <string name="about_license_body">本应用基于 Compose Multiplatform 与 miuix UI 库（Apache-2.0）构建，并使用了 Ktor、Okio 与 kotlinx.coroutines，各自保留其许可证。</string>
+
+    <!-- 文件筛选/排序。 -->
+    <string name="filter_type_all">全部</string>
+    <string name="filter_type_video">视频</string>
+    <string name="filter_type_photo">照片</string>
+    <string name="sort_by_name">名称</string>
+    <string name="sort_by_size">大小</string>
+    <string name="sort_ascending">升序</string>
+    <string name="sort_descending">降序</string>
+    <string name="files_filter_line">%1$s · %2$s %3$s</string>
 </resources>

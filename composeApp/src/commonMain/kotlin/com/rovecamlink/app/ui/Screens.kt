@@ -171,6 +171,17 @@ import com.rovecamlink.app.status_update_applied
 import com.rovecamlink.app.tab_camera
 import com.rovecamlink.app.tab_device
 import com.rovecamlink.app.tab_software
+import com.rovecamlink.app.section_appearance
+import com.rovecamlink.app.appearance_system
+import com.rovecamlink.app.appearance_dark
+import com.rovecamlink.app.appearance_light
+import com.rovecamlink.app.action_view_log
+import com.rovecamlink.app.action_log_settings
+import com.rovecamlink.app.action_about
+import com.rovecamlink.app.action_ui_test_mode
+import com.rovecamlink.app.hint_ui_test_mode
+import com.rovecamlink.app.ui.theme.AppearanceState
+import com.rovecamlink.app.ui.theme.ThemeMode
 import com.rovecamlink.app.title_delete_count
 import com.rovecamlink.app.title_delete_file
 import com.rovecamlink.app.title_factory_reset
@@ -290,7 +301,24 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     var selectMode by remember { mutableStateOf(false) }
     val selected = remember { mutableStateListOf<String>() }
 
-    val groups = remember(state.files) { groupFilesByDay(state.files) }
+    // Filter + sort live behind the top-bar 「更多」 menu (2026-09-23 「筛选/排序移入顶栏
+    // 更多」). `typeFilter` == null means 全部; sorting is a key + direction pair.
+    var typeFilter by remember { mutableStateOf<FileType?>(null) }
+    var sortBySize by remember { mutableStateOf(false) }
+    var sortDescending by remember { mutableStateOf(true) }
+
+    // The list the page actually shows: the camera's files, filtered by type then sorted.
+    // Grouping by day still happens after, so a name/size sort orders *within* each day.
+    val visibleFiles = remember(state.files, typeFilter, sortBySize, sortDescending) {
+        state.files
+            .filter { typeFilter == null || it.type == typeFilter }
+            .sortedWith(
+                if (sortBySize) compareBy { it.sizeBytes } else compareBy { it.name },
+            )
+            .let { if (sortDescending) it.reversed() else it }
+    }
+    val groups = remember(visibleFiles) { groupFilesByDay(visibleFiles) }
+    val filterActive = typeFilter != null || sortBySize || !sortDescending
     val selectedCount = state.files.count { selected.contains(it.name) }
     val allSelected = state.files.isNotEmpty() && state.files.all { selected.contains(it.name) }
 
@@ -315,11 +343,43 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     val clearFinishedLbl = stringResource(Res.string.action_clear_finished)
     val retryFailedLbl = stringResource(Res.string.action_retry_failed)
     val unknownDateLbl = stringResource(Res.string.label_unknown_date)
+    val filterSortLbl = stringResource(Res.string.menu_filter_sort)
+    val filterAllLbl = stringResource(Res.string.filter_type_all)
+    val filterVideoLbl = stringResource(Res.string.filter_type_video)
+    val filterPhotoLbl = stringResource(Res.string.filter_type_photo)
+    val sortByNameLbl = stringResource(Res.string.sort_by_name)
+    val sortBySizeLbl = stringResource(Res.string.sort_by_size)
+    val sortAscLbl = stringResource(Res.string.sort_ascending)
+    val sortDescLbl = stringResource(Res.string.sort_descending)
+    // The one-line current-condition summary, shown only when a filter or sort is active:
+    // "视频 · 大小 降序". The default (全部/名称/升序) shows nothing (正文不塞控件).
+    val filterLine = stringResource(
+        Res.string.files_filter_line,
+        when (typeFilter) {
+            FileType.VIDEO -> filterVideoLbl
+            FileType.PHOTO -> filterPhotoLbl
+            else -> filterAllLbl
+        },
+        if (sortBySize) sortBySizeLbl else sortByNameLbl,
+        if (sortDescending) sortDescLbl else sortAscLbl,
+    )
 
     MiuixPage(
         title = stringResource(Res.string.tab_files),
         outerPadding = outerPadding,
         state = state,
+        // Filter/sort each toggle one facet; the check mark shows the active choice, so the
+        // menu doubles as the state readout. Tapping never closes over the file list — the
+        // recomputation above keys off these flags.
+        menuItems = if (state.session == null) emptyList() else listOf(
+            AppBarMenuItem(label = "$filterSortLbl · $filterAllLbl", checked = typeFilter == null) { typeFilter = null },
+            AppBarMenuItem(label = filterVideoLbl, checked = typeFilter == FileType.VIDEO) { typeFilter = FileType.VIDEO },
+            AppBarMenuItem(label = filterPhotoLbl, checked = typeFilter == FileType.PHOTO) { typeFilter = FileType.PHOTO },
+            AppBarMenuItem(label = sortByNameLbl, checked = !sortBySize) { sortBySize = false },
+            AppBarMenuItem(label = sortBySizeLbl, checked = sortBySize) { sortBySize = true },
+            AppBarMenuItem(label = sortDescLbl, checked = sortDescending) { sortDescending = true },
+            AppBarMenuItem(label = sortAscLbl, checked = !sortDescending) { sortDescending = false },
+        ),
     ) {
         if (state.session == null) {
             notConnectedItem()
@@ -344,6 +404,21 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
                         selectMode = !selectMode
                         if (!selectMode) selected.clear()
                     })
+                }
+            }
+
+            // Only when a filter or sort is in effect: one muted line naming the current
+            // condition, so the body carries no controls of its own.
+            if (filterActive) {
+                item {
+                    Text(
+                        text = filterLine,
+                        fontSize = 13.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 28.dp, vertical = 4.dp),
+                    )
                 }
             }
 
@@ -708,7 +783,6 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
     val freeLbl = stringResource(Res.string.label_free)
     val recordingNote = stringResource(Res.string.hint_locked_capture)
     val loggingLbl = stringResource(Res.string.action_logging)
-    val diagnosticsLbl = stringResource(Res.string.action_diagnostics)
     val syncTimeLbl = stringResource(Res.string.action_sync_camera_time)
     val raiseApLbl = stringResource(Res.string.action_raise_access_point)
     val settingsLbl = stringResource(Res.string.label_settings)
@@ -783,6 +857,15 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
     val dangerTitle = stringResource(Res.string.section_danger)
     val rebootLbl = stringResource(Res.string.action_reboot_camera)
     val factoryResetLbl = stringResource(Res.string.action_factory_reset)
+    val appearanceTitle = stringResource(Res.string.section_appearance)
+    val appearanceSystemLbl = stringResource(Res.string.appearance_system)
+    val appearanceDarkLbl = stringResource(Res.string.appearance_dark)
+    val appearanceLightLbl = stringResource(Res.string.appearance_light)
+    val viewLogLbl = stringResource(Res.string.action_view_log)
+    val logSettingsRowLbl = stringResource(Res.string.action_log_settings)
+    val aboutRowLbl = stringResource(Res.string.action_about)
+    val uiTestLbl = stringResource(Res.string.action_ui_test_mode)
+    val uiTestHint = stringResource(Res.string.hint_ui_test_mode)
     val sdStateLbl = when (st?.sdState) {
         SdCardState.OK -> stringResource(Res.string.sd_ok)
         SdCardState.MISSING -> stringResource(Res.string.sd_missing)
@@ -1043,25 +1126,76 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
             }
 
             // ---- 软件: this app ----
-            TAB_SOFTWARE -> section(title = appSettingsTitle) {
-                BasicRow(
-                    onClick = {
-                        logging = !logging
-                        com.rovecamlink.app.core.log.Diag.setFileLogging(logging)
-                    },
-                    end = {
-                        Switch(
-                            checked = logging,
-                            onCheckedChange = {
-                                logging = it
-                                com.rovecamlink.app.core.log.Diag.setFileLogging(it)
-                            },
-                        )
-                    },
-                ) {
-                    Text(loggingLbl, fontSize = 16.sp, color = MiuixTheme.colorScheme.onBackground)
+            TAB_SOFTWARE -> {
+                // 外观: follow-system / dark / light, and it actually flips the window —
+                // the picker writes AppearanceState, which RoveMiuixTheme reads at each
+                // platform entry point (2026-09-23 「外观…真能切」).
+                section(title = appearanceTitle) {
+                    OverlayDropdownPreference(
+                        items = listOf(appearanceSystemLbl, appearanceDarkLbl, appearanceLightLbl),
+                        selectedIndex = when (AppearanceState.mode) {
+                            ThemeMode.System -> 0
+                            ThemeMode.Dark -> 1
+                            ThemeMode.Light -> 2
+                        },
+                        title = appearanceTitle,
+                        onSelectedIndexChange = { index ->
+                            AppearanceState.mode = when (index) {
+                                1 -> ThemeMode.Dark
+                                2 -> ThemeMode.Light
+                                else -> ThemeMode.System
+                            }
+                            com.rovecamlink.app.core.log.Diag.info(
+                                com.rovecamlink.app.core.log.LogTag.APP,
+                                "appearance=${AppearanceState.mode.name}",
+                            )
+                        },
+                    )
                 }
-                actionRow(diagnosticsLbl) { state.openDiagnostics() }
+                // 查看日志 / 日志设置 / 关于: each pushes its own page onto the shell's stack.
+                section(title = appSettingsTitle) {
+                    actionRow(viewLogLbl) { state.pushPage(com.rovecamlink.app.Page.Log) }
+                    actionRow(logSettingsRowLbl) { state.pushPage(com.rovecamlink.app.Page.LogSettings) }
+                    actionRow(aboutRowLbl) { state.pushPage(com.rovecamlink.app.Page.About) }
+                }
+                // 写入文件 keeps its inline switch — it is the one logging knob a user
+                // reaches for without opening the log at all.
+                section {
+                    BasicRow(
+                        onClick = {
+                            logging = !logging
+                            com.rovecamlink.app.core.log.Diag.setFileLogging(logging)
+                        },
+                        end = {
+                            Switch(
+                                checked = logging,
+                                onCheckedChange = {
+                                    logging = it
+                                    com.rovecamlink.app.core.log.Diag.setFileLogging(it)
+                                },
+                            )
+                        },
+                    ) {
+                        Text(loggingLbl, fontSize = 16.sp, color = MiuixTheme.colorScheme.onBackground)
+                    }
+                }
+                // UI 测试模式: fills every page with a canned camera so a layout can be
+                // walked with nothing connected; writes go nowhere. Off returns the app to
+                // the real, unconnected start.
+                section {
+                    BasicRow(
+                        onClick = { state.setUiTestMode(!state.uiTestMode) },
+                        end = {
+                            Switch(
+                                checked = state.uiTestMode,
+                                onCheckedChange = { state.setUiTestMode(it) },
+                            )
+                        },
+                    ) {
+                        Text(uiTestLbl, fontSize = 16.sp, color = MiuixTheme.colorScheme.onBackground)
+                    }
+                    hintLine(uiTestHint)
+                }
             }
         }
     }
