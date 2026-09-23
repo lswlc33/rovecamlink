@@ -1,0 +1,51 @@
+name: Branch CI
+
+# 分支自检：推 `feat/miuix-ui`（或手动派发）就编一个 debug APK，挂在那次 run 的
+# Artifacts 页上下载。不发 Release、不动 nightly 的保留逻辑——它的定位是「这个分支
+# 编得过、能装手机上看一眼」，要正式产物一律走 nightly.yml / release.yml。
+#
+# 为什么不用 pull_request 触发：GitHub 跑 PR 检查时读的是**目标分支（main）**上的
+# workflow 文件。这一份只存在于 feat 分支，写在 PR 页面里也不会出现任何 check，
+# 所以直接把触发条件定成分支 push。
+#
+# 为什么不接 ROVECAMLINK_RELEASE_* 那把密钥：发布证书只该由过 main 的代码使用。
+# 代价是分支包用的是 runner 现生成的 debug 证书，装过 nightly 的手机覆盖安装会报
+# 「签名不符」，要先卸掉再装。
+on:
+  push:
+    branches: [feat/miuix-ui]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: branch-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-35 build-tools;34.0.0'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: 构建 debug APK
+        run: ./gradlew :composeApp:assembleDebug --console=plain
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: composeApp/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
