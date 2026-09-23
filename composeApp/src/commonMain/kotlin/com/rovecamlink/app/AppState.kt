@@ -13,6 +13,7 @@ import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CameraWifi
 import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.CmdResult
+import com.rovecamlink.app.core.model.UiTestDevice
 import com.rovecamlink.app.core.model.DeviceEvent
 import com.rovecamlink.app.core.model.DeviceInfo
 import com.rovecamlink.app.core.model.DevicePlatform
@@ -101,6 +102,14 @@ data class DownloadItem(
 }
 
 /**
+ * A page pushed over the tab content, with its own bar and back arrow.
+ *
+ * These are not tabs: nobody looks for the log or the about page on the way to a
+ * shooting setting, but both have to be reachable from wherever a failure happened.
+ */
+enum class Page { Log, LogSettings, About }
+
+/**
  * Central observable state + orchestration. One instance for the app.
  * All long-running work is launched on [scope].
  */
@@ -109,9 +118,33 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     var phase by mutableStateOf(Phase.Idle)
         private set
 
-    /** Whether the full-screen diagnostics/log preview is showing. */
-    var diagnosticsOpen by mutableStateOf(false)
-        private set
+    /**
+     * The pushed pages sitting on top of whichever tab is showing.
+     *
+     * A stack rather than a flag because the log page pushes its own settings, and 返回
+     * from there has to land back on the log — the same reason the library's own
+     * sub-pages carry a back arrow instead of a close box.
+     */
+    private val pages = mutableStateListOf<Page>()
+
+    /** The page on top, or null when the tab underneath is reachable. */
+    val topPage: Page? get() = pages.lastOrNull()
+
+    /** Whether any pushed page (the log, its settings, the about page) is showing. */
+    val diagnosticsOpen: Boolean get() = pages.isNotEmpty()
+
+    fun pushPage(page: Page) {
+        if (pages.lastOrNull() == page) return
+        pages += page
+        Diag.info(LogTag.LOG, "page ${page.name} opened (depth ${pages.size})")
+    }
+
+    /** Back one page; the last one out closes the pushed layer entirely. */
+    fun popPage() {
+        if (pages.isEmpty()) return
+        val gone = pages.removeAt(pages.lastIndex)
+        Diag.info(LogTag.LOG, "page ${gone.name} closed (depth ${pages.size})")
+    }
 
     /** Last phase, kept only so a transition line can say where we came from. */
     private var lastPhase: Phase = Phase.Idle
@@ -130,12 +163,72 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     fun openDiagnostics() {
         refreshDiagnosticsEnv()
-        diagnosticsOpen = true
-        Diag.at(LogLevel.INFO, LogTag.LOG, "preview opened")
+        pushPage(Page.Log)
     }
 
     fun closeDiagnostics() {
-        diagnosticsOpen = false
+        pages.clear()
+    }
+
+    /**
+     * The UI test mode: [UiTestDevice] in place of a camera.
+     *
+     * Every page then has real-shaped data to draw — both menus, the mode table, the
+     * status line, a file list — with nothing in the room. Turning it off puts the app
+     * back exactly where an unconnected start would have left it.
+     */
+    private var uiTestModeState by mutableStateOf(false)
+
+    /** Read-only so the only way in is [setUiTestMode], which sets the device up too. */
+    val uiTestMode: Boolean get() = uiTestModeState
+
+    /** Advances the recording clock while the fake camera is "recording". */
+    private var uiTestTicker: Job? = null
+
+    fun setUiTestMode(on: Boolean) {
+        if (on == uiTestModeState) return
+        uiTestModeState = on
+        if (on) {
+            session = UiTestDevice.session()
+            settings = UiTestDevice.settings()
+            deviceSettings = UiTestDevice.deviceSettings()
+            modes = UiTestDevice.modes()
+            files = UiTestDevice.files()
+            deviceStatus = UiTestDevice.status()
+            goPhase(Phase.Connected)
+            Diag.warn(LogTag.APP, "UI TEST MODE on: ${settings.size}+${deviceSettings.size} menu rows, nothing is sent")
+            uiTestTicker = scope.launch {
+                while (true) {
+                    delay(1_000)
+                    val st = deviceStatus ?: continue
+                    if (st.recording || st.busy) {
+                        deviceStatus = st.copy(videoTimeSec = (st.videoTimeSec ?: 0) + 1)
+                    }
+                }
+            }
+        } else {
+            uiTestTicker?.cancel()
+            uiTestTicker = null
+            session = null
+            settings = emptyList()
+            deviceSettings = emptyList()
+            modes = emptyList()
+            files = emptyList()
+            deviceStatus = null
+            goPhase(Phase.Idle)
+            Diag.info(LogTag.APP, "UI TEST MODE off")
+        }
+    }
+
+    /**
+     * True when the caller must not touch the camera. Every write path opens with this:
+     * the mode exists to look at the UI, and a half-sent command would make what is on
+     * screen a lie about the device.
+     */
+    private fun uiTestSkipped(what: String): Boolean {
+        if (!uiTestMode) return false
+        Diag.warn(LogTag.APP, "UI TEST $what (nothing sent)")
+        return true
     }
 
     var statusMessage by mutableStateOf<LocalizedString?>(null)
@@ -873,16 +966,37 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     // ---------- Controls ----------
 
-    fun capture() = runOp(Op.Capture) { proto, s -> proto.capture(s) }
+    fun capture() {
+        if (uiTestSkipped("capture")) {
+            deviceStatus = (deviceStatus ?: UiTestDevice.status())
+                .copy(photoCount = (deviceStatus?.photoCount ?: 0) + 1)
+            return
+        }
+        runOp(Op.Capture) { proto, s -> proto.capture(s) }
+    }
 
     /**
      * End a running start/stop capture sequence (the camera's 延时拍照 / 定时拍照
      * modes). A mode whose shutter is a single shot never needs this, so the UI only
      * offers it while [captureRunning] is true for a [ModeTrigger.TOGGLE] mode.
      */
-    fun stopCapture() = runOp(Op.Capture) { proto, s -> proto.stopCapture(s) }
+    fun stopCapture() {
+        if (uiTestSkipped("stopCapture")) return
+        runOp(Op.Capture) { proto, s -> proto.stopCapture(s) }
+    }
 
-    fun record(start: Boolean) = runOp(Op.Record) { proto, s -> proto.record(s, start) }
+    fun record(start: Boolean) {
+        if (uiTestSkipped("record start=$start")) {
+            deviceStatus = (deviceStatus ?: UiTestDevice.status()).copy(
+                recording = start,
+                busy = start,
+                workState = if (start) 20 else 0,
+                videoTimeSec = if (start) 1 else 0,
+            )
+            return
+        }
+        runOp(Op.Record) { proto, s -> proto.record(s, start) }
+    }
 
     /**
      * The shooting modes this camera offers. Empty until a session is up, or on a
@@ -931,15 +1045,22 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * settings menu: which items exist is a function of the mode, so a stale menu
      * would keep offering video-only settings after the camera moved into a photo mode.
      */
-    fun selectMode(mode: CameraMode) = runOp(Op.Mode) { proto, s ->
-        val r = proto.setNamedMode(s, mode)
-        if (r.isOk) {
-            reloadSettingsForMode(proto, s)
-            // The status poll reads at most every POLL_INTERVAL_MS; without this the
-            // mode strip would keep highlighting the mode we just left.
-            deviceStatus = deviceStatus?.copy(modeName = mode.name, mode = mode.family.workMode())
+    fun selectMode(mode: CameraMode) {
+        if (uiTestSkipped("selectMode ${mode.name}")) {
+            deviceStatus = (deviceStatus ?: UiTestDevice.status())
+                .copy(modeName = mode.name, mode = mode.family.workMode())
+            return
         }
-        r
+        runOp(Op.Mode) { proto, s ->
+            val r = proto.setNamedMode(s, mode)
+            if (r.isOk) {
+                reloadSettingsForMode(proto, s)
+                // The status poll reads at most every POLL_INTERVAL_MS; without this the
+                // mode strip would keep highlighting the mode we just left.
+                deviceStatus = deviceStatus?.copy(modeName = mode.name, mode = mode.family.workMode())
+            }
+            r
+        }
     }
 
     /**
@@ -947,10 +1068,16 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * exist is a function of the mode, so a stale menu would keep offering
      * video-only settings after the camera moved into a photo mode.
      */
-    fun setMode(mode: WorkMode) = runOp(Op.Mode) { proto, s ->
-        val r = proto.setMode(s, mode)
-        if (r.isOk) reloadSettingsForMode(proto, s)
-        r
+    fun setMode(mode: WorkMode) {
+        if (uiTestSkipped("setMode $mode")) {
+            deviceStatus = (deviceStatus ?: UiTestDevice.status()).copy(mode = mode)
+            return
+        }
+        runOp(Op.Mode) { proto, s ->
+            val r = proto.setMode(s, mode)
+            if (r.isOk) reloadSettingsForMode(proto, s)
+            r
+        }
     }
 
     fun loadDeviceSettings() = runOp(Op.Settings) { proto, s ->
@@ -960,17 +1087,23 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         CmdResult.Ok
     }
 
-    fun setDeviceSetting(id: String, value: String) = runOp(Op.Settings) { proto, s ->
-        val before = deviceSettings.firstOrNull { it.id == id }?.value
-        Diag.i(LogTag.PROTO) { "SET(device) $id ${before ?: "?"} -> ${LogFormat.settingValue(id, value, Diag.config.captureSecrets)}" }
-        val r = proto.setDeviceSetting(s, id, value)
-        if (r.isOk) {
+    fun setDeviceSetting(id: String, value: String) {
+        if (uiTestSkipped("SET(device) $id -> $value")) {
             deviceSettings = deviceSettings.map { if (it.id == id) it.copy(value = value) else it }
-            val read = runCatching { proto.readBack(s, id) }.getOrNull()
-            if (read != null) deviceSettings = deviceSettings.map { if (it.id == id) read else it }
+            return
         }
-        if (r is CmdResult.Failure) Diag.at(LogLevel.ERROR, LogTag.PROTO, "SET(device) $id refused: ${LogFormat.field(r.message)}")
-        r
+        runOp(Op.Settings) { proto, s ->
+            val before = deviceSettings.firstOrNull { it.id == id }?.value
+            Diag.i(LogTag.PROTO) { "SET(device) $id ${before ?: "?"} -> ${LogFormat.settingValue(id, value, Diag.config.captureSecrets)}" }
+            val r = proto.setDeviceSetting(s, id, value)
+            if (r.isOk) {
+                deviceSettings = deviceSettings.map { if (it.id == id) it.copy(value = value) else it }
+                val read = runCatching { proto.readBack(s, id) }.getOrNull()
+                if (read != null) deviceSettings = deviceSettings.map { if (it.id == id) read else it }
+            }
+            if (r is CmdResult.Failure) Diag.at(LogLevel.ERROR, LogTag.PROTO, "SET(device) $id refused: ${LogFormat.field(r.message)}")
+            r
+        }
     }
 
     fun loadSettings() = runOp(Op.Settings) { proto, s ->
@@ -982,27 +1115,33 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         CmdResult.Ok
     }
 
-    fun setSetting(id: String, value: String) = runOp(Op.Settings) { proto, s ->
-        val before = settings.firstOrNull { it.id == id }?.value
-        Diag.i(LogTag.PROTO) { "SET $id ${before ?: "?"} -> ${LogFormat.settingValue(id, value, Diag.config.captureSecrets)}" }
-        val r = proto.setSetting(s, id, value)
-        if (r.isOk) {
-            // Show the firmware's answer, not our request. A full getSettings() costs
-            // one request per menu item; see HisiliconProtocol.readBack for why that
-            // is the wrong thing to do after every tap.
+    fun setSetting(id: String, value: String) {
+        if (uiTestSkipped("SET $id -> $value")) {
             settings = settings.map { if (it.id == id) it.copy(value = value) else it }
-            val read = runCatching { proto.readBack(s, id) }
-                .onFailure { Diag.d(LogTag.PROTO) { "read-back of $id failed ${Diag.causeChain(it)}" } }
-                .getOrNull()
-            if (read != null) {
-                settings = settings.map { if (it.id == id) read else it }
-                if (read.value != value) {
-                    Diag.w(LogTag.PROTO) { "SET $id accepted but camera reports ${read.value}; asked $value" }
+            return
+        }
+        runOp(Op.Settings) { proto, s ->
+            val before = settings.firstOrNull { it.id == id }?.value
+            Diag.i(LogTag.PROTO) { "SET $id ${before ?: "?"} -> ${LogFormat.settingValue(id, value, Diag.config.captureSecrets)}" }
+            val r = proto.setSetting(s, id, value)
+            if (r.isOk) {
+                // Show the firmware's answer, not our request. A full getSettings() costs
+                // one request per menu item; see HisiliconProtocol.readBack for why that
+                // is the wrong thing to do after every tap.
+                settings = settings.map { if (it.id == id) it.copy(value = value) else it }
+                val read = runCatching { proto.readBack(s, id) }
+                    .onFailure { Diag.d(LogTag.PROTO) { "read-back of $id failed ${Diag.causeChain(it)}" } }
+                    .getOrNull()
+                if (read != null) {
+                    settings = settings.map { if (it.id == id) read else it }
+                    if (read.value != value) {
+                        Diag.w(LogTag.PROTO) { "SET $id accepted but camera reports ${read.value}; asked $value" }
+                    }
                 }
             }
+            if (r is CmdResult.Failure) Diag.at(LogLevel.ERROR, LogTag.PROTO, "SET $id refused: ${LogFormat.field(r.message)}")
+            r
         }
-        if (r is CmdResult.Failure) Diag.at(LogLevel.ERROR, LogTag.PROTO, "SET $id refused: ${LogFormat.field(r.message)}")
-        r
     }
 
     /** Re-read the settings menu, which is a function of the camera's work mode. */
@@ -1145,16 +1284,22 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         }
     }
 
-    fun deleteFile(file: RemoteFile) = runOp(Op.Delete) { proto, s ->
-        Diag.i(LogTag.FILE) { "DELETE ${file.name} (${file.sizeBytes}B)" }
-        val r = proto.deleteFile(s, file)
-        if (r.isOk) {
+    fun deleteFile(file: RemoteFile) {
+        if (uiTestSkipped("DELETE ${file.name}")) {
             files = files.filterNot { it.name == file.name }
-            thumbnails.remove(file.name)
-            thumbFailedAt.remove(file.name)
-            thumbSeen.remove(file.name)
+            return
         }
-        r
+        runOp(Op.Delete) { proto, s ->
+            Diag.i(LogTag.FILE) { "DELETE ${file.name} (${file.sizeBytes}B)" }
+            val r = proto.deleteFile(s, file)
+            if (r.isOk) {
+                files = files.filterNot { it.name == file.name }
+                thumbnails.remove(file.name)
+                thumbFailedAt.remove(file.name)
+                thumbSeen.remove(file.name)
+            }
+            r
+        }
     }
 
     /**
@@ -1511,6 +1656,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     }
 
     fun download(file: RemoteFile) {
+        if (uiTestSkipped("DOWNLOAD ${file.name}")) return
         val proto = protocol ?: return
         val s = session ?: return
         val owner = sessionScope ?: return
@@ -1621,6 +1767,14 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     private fun runOp(op: Op, block: suspend (CameraProtocol, CameraSession) -> CmdResult) =
         (sessionScope ?: scope).launch {
+            // The backstop for the UI test mode: the write paths that have something to
+            // show for themselves (settings, shutter, mode) return before ever getting
+            // here, and everything else — listings, deletes, time sync, the Wi-Fi and OTA
+            // walks — stops here rather than reaching a camera that is not there.
+            if (uiTestMode) {
+                Diag.warn(LogTag.APP, "UI TEST skipped $op: no camera behind the test device")
+                return@launch
+            }
             val proto = protocol
             val s = session
             if (proto == null || s == null) {
