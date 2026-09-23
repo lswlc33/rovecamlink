@@ -22,36 +22,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.robinpcrd.cupertino.CupertinoActivityIndicator
 import com.robinpcrd.cupertino.CupertinoAlertDialog
-import com.robinpcrd.cupertino.CupertinoButtonDefaults
-import com.robinpcrd.cupertino.CupertinoIcon
-import com.robinpcrd.cupertino.CupertinoIconButton
-import com.robinpcrd.cupertino.CupertinoNavigationBar
-import com.robinpcrd.cupertino.CupertinoNavigationBarItem
-import com.robinpcrd.cupertino.CupertinoScaffold
 import com.robinpcrd.cupertino.CupertinoText
-import com.robinpcrd.cupertino.CupertinoTopAppBar
 import com.robinpcrd.cupertino.cancel
 import com.robinpcrd.cupertino.default
-import com.robinpcrd.cupertino.icons.CupertinoIcons
-import com.robinpcrd.cupertino.icons.filled.ExclamationmarkCircle
-import com.robinpcrd.cupertino.icons.filled.Folder
-import com.robinpcrd.cupertino.icons.filled.Gearshape2
-import com.robinpcrd.cupertino.icons.filled.Terminal
-import com.robinpcrd.cupertino.icons.filled.Video
-import com.robinpcrd.cupertino.icons.filled.WifiRouter
-import com.robinpcrd.cupertino.theme.CupertinoColors
 import com.robinpcrd.cupertino.theme.CupertinoTheme
-import top.yukonga.miuix.kmp.basic.Text
-import com.robinpcrd.cupertino.theme.systemGreen
-import com.robinpcrd.cupertino.theme.systemOrange
-import com.robinpcrd.cupertino.theme.systemRed
 import com.rovecamlink.app.ui.ConnectScreen
 import com.rovecamlink.app.ui.FilesScreen
 import com.rovecamlink.app.ui.LiveScreen
@@ -59,12 +38,28 @@ import com.rovecamlink.app.ui.LogScreen
 import com.rovecamlink.app.ui.SettingsScreen
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.IconButton
+import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
+import top.yukonga.miuix.kmp.basic.NavigationBar
+import top.yukonga.miuix.kmp.basic.NavigationBarItem
+import top.yukonga.miuix.kmp.basic.Scaffold
+import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TopAppBar
+import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.icon.extended.Folder
+import top.yukonga.miuix.kmp.icon.extended.ListView
+import top.yukonga.miuix.kmp.icon.extended.Report
+import top.yukonga.miuix.kmp.icon.extended.ScreenMirroring
+import top.yukonga.miuix.kmp.icon.extended.SearchDevice
+import top.yukonga.miuix.kmp.icon.extended.Settings
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 enum class Tab(val labelRes: StringResource, val icon: ImageVector) {
-    Devices(Res.string.tab_devices, CupertinoIcons.Filled.WifiRouter),
-    Live(Res.string.tab_live, CupertinoIcons.Filled.Video),
-    Files(Res.string.tab_files, CupertinoIcons.Filled.Folder),
-    Settings(Res.string.tab_settings, CupertinoIcons.Filled.Gearshape2),
+    Devices(Res.string.tab_devices, MiuixIcons.SearchDevice),
+    Live(Res.string.tab_live, MiuixIcons.ScreenMirroring),
+    Files(Res.string.tab_files, MiuixIcons.Folder),
+    Settings(Res.string.tab_settings, MiuixIcons.Settings),
 }
 
 @Composable
@@ -75,50 +70,43 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
     CupertinoTheme {
         var tab by remember { mutableStateOf(Tab.Devices) }
 
-        CupertinoScaffold(
-            containerColor = CupertinoTheme.colorScheme.systemGroupedBackground,
+        Scaffold(
+            containerColor = MiuixTheme.colorScheme.background,
             topBar = {
-                CupertinoTopAppBar(
-                    title = {
-                        Text(
-                            stringResource(Res.string.app_name),
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 17.sp,
-                        )
-                    },
+                TopAppBar(
+                    title = stringResource(Res.string.app_name),
                     actions = {
-                ConnectionPill(state)
-                // Diagnostics must be one tap away from any tab: that is where the
-                // failure you want to report just happened. One tap also puts it away
-                // again — the same button is the close control, so the page never has
-                // to be re-found after it was dismissed by a screen change.
-                CupertinoIconButton(
-                    onClick = {
-                        if (state.diagnosticsOpen) state.closeDiagnostics() else state.openDiagnostics()
+                        ConnectionPill(state)
+                        // Diagnostics must be one tap away from any tab: that is where the
+                        // failure you want to report just happened. One tap also puts it away
+                        // again — the same button is the close control, so the page never has
+                        // to be re-found after it was dismissed by a screen change.
+                        IconButton(
+                            onClick = {
+                                if (state.diagnosticsOpen) state.closeDiagnostics() else state.openDiagnostics()
+                            },
+                        ) {
+                            Icon(
+                                MiuixIcons.ListView,
+                                contentDescription = stringResource(Res.string.action_diagnostics),
+                                tint = if (state.diagnosticsOpen) {
+                                    MiuixTheme.colorScheme.primary
+                                } else {
+                                    MiuixTheme.colorScheme.onSurface
+                                },
+                            )
+                        }
                     },
-                    colors = CupertinoButtonDefaults.plainButtonColors(),
-                ) {
-                    CupertinoIcon(
-                        CupertinoIcons.Filled.Terminal,
-                        contentDescription = stringResource(Res.string.action_diagnostics),
-                        tint = if (state.diagnosticsOpen) CupertinoTheme.colorScheme.accent else Color.Unspecified,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-            },
                 )
             },
             bottomBar = {
-                CupertinoNavigationBar {
+                NavigationBar {
                     Tab.entries.forEach { t ->
-                        val label = stringResource(t.labelRes)
-                        CupertinoNavigationBarItem(
+                        NavigationBarItem(
                             selected = t == tab,
                             onClick = { tab = t },
-                            icon = {
-                                CupertinoIcon(t.icon, contentDescription = label)
-                            },
-                            label = { CupertinoText(label) },
+                            icon = t.icon,
+                            label = stringResource(t.labelRes),
                         )
                     }
                 }
@@ -177,15 +165,18 @@ private fun VpnPromptDialog(state: AppState) {
 /** Compact connection-state chip shown in the navigation bar. */
 @Composable
 private fun ConnectionPill(state: AppState) {
-    val scheme = CupertinoTheme.colorScheme
+    val scheme = MiuixTheme.colorScheme
     val busy = state.phase != Phase.Connected &&
         state.phase != Phase.Idle &&
         state.phase != Phase.Error
+    // Connected and busy share the accent: the chip carries one hue for "the app is
+    // doing the right thing" and the spinner is what separates the two. Four hues read
+    // as a legend the user has to learn; the spinner reads without being learnt.
     val tint = when (state.phase) {
-        Phase.Connected -> CupertinoColors.systemGreen
-        Phase.Error -> CupertinoColors.systemRed
-        Phase.Idle -> scheme.secondaryLabel
-        else -> CupertinoColors.systemOrange
+        Phase.Connected -> scheme.primary
+        Phase.Error -> scheme.error
+        Phase.Idle -> scheme.onSurfaceVariantSummary
+        else -> scheme.primary
     }
     val label = stringResource(
         when (state.phase) {
@@ -200,14 +191,19 @@ private fun ConnectionPill(state: AppState) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clip(RoundedCornerShape(50))
-            .background(scheme.quaternarySystemFill)
+            .background(scheme.surfaceVariant)
             .padding(horizontal = 8.dp, vertical = 3.dp),
     ) {
         if (busy) {
-            CupertinoActivityIndicator(size = 10.dp, color = tint)
+            InfiniteProgressIndicator(
+                color = tint,
+                size = 12.dp,
+                strokeWidth = 1.5.dp,
+                orbitingDotSize = 2.dp,
+            )
             Spacer(Modifier.width(4.dp))
         }
-        CupertinoText(
+        Text(
             text = label,
             color = tint,
             fontSize = 11.sp,
@@ -219,6 +215,7 @@ private fun ConnectionPill(state: AppState) {
 /** Dismissible error toast pinned to the bottom of the content area. */
 @Composable
 private fun ErrorBanner(msg: LocalizedString, onDismiss: () -> Unit) {
+    val scheme = MiuixTheme.colorScheme
     Box(
         Modifier.fillMaxSize().padding(16.dp),
         contentAlignment = Alignment.BottomCenter,
@@ -228,20 +225,20 @@ private fun ErrorBanner(msg: LocalizedString, onDismiss: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(14.dp))
-                .background(CupertinoColors.systemRed)
+                .background(scheme.error)
                 .clickable(onClick = onDismiss)
                 .padding(horizontal = 14.dp, vertical = 12.dp),
         ) {
-            CupertinoIcon(
-                CupertinoIcons.Filled.ExclamationmarkCircle,
+            Icon(
+                MiuixIcons.Report,
                 contentDescription = null,
-                tint = Color.White,
+                tint = scheme.onError,
                 modifier = Modifier.size(18.dp),
             )
             Spacer(Modifier.width(8.dp))
-            CupertinoText(
+            Text(
                 text = msg.resolve(),
-                color = Color.White,
+                color = scheme.onError,
                 fontSize = 13.sp,
                 modifier = Modifier.weight(1f),
             )
