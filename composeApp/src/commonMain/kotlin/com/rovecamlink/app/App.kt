@@ -10,6 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalHapticFeedback
 import com.rovecamlink.app.ui.AboutScreen
 import com.rovecamlink.app.ui.ConfirmDialog
 import com.rovecamlink.app.ui.ConnectScreen
@@ -19,7 +20,9 @@ import com.rovecamlink.app.ui.LiveScreen
 import com.rovecamlink.app.ui.LogScreen
 import com.rovecamlink.app.ui.LogSettingsScreen
 import com.rovecamlink.app.ui.PermissionsScreen
+import com.rovecamlink.app.ui.PlatformBackHandler
 import com.rovecamlink.app.ui.SettingsScreen
+import com.rovecamlink.app.ui.tick
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import top.yukonga.miuix.kmp.basic.NavigationBar
@@ -52,6 +55,13 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
     val state = remember { AppState(graph, scope) }
 
     var tab by remember { mutableStateOf(Tab.Devices) }
+    val haptics = LocalHapticFeedback.current
+
+    // The system back gesture is the other way out of a pushed page, and the arrow in its
+    // bar is the first: both land on the same `popPage`, so a pushed page behaves like the
+    // sub-page it looks like. With nothing pushed this stays out of the way and back keeps
+    // its platform meaning (leave the app).
+    PlatformBackHandler(enabled = state.topPage != null) { state.popPage() }
 
     Scaffold(
         containerColor = MiuixTheme.colorScheme.background,
@@ -60,7 +70,13 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                 Tab.entries.forEach { t ->
                     NavigationBarItem(
                         selected = t == tab,
-                        onClick = { tab = t },
+                        onClick = {
+                            if (t != tab || state.topPage != null) haptics.tick()
+                            tab = t
+                            // A pushed page is drawn over the tabs, so without this the
+                            // highlight moved and nothing else did — the page stayed.
+                            state.popToTabs()
+                        },
                         icon = t.icon,
                         label = stringResource(t.labelRes),
                     )

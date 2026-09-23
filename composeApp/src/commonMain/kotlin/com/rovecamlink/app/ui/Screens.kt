@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -724,6 +725,7 @@ private fun ColumnScope.fileItem(
     onDelete: () -> Unit,
 ) {
     val isVideo = f.type == FileType.VIDEO
+    val haptics = LocalHapticFeedback.current
     // Ask for the preview from *inside* the row, not while the list is being built: a
     // section body is materialised eagerly, so the old call site fetched a thumbnail per
     // file on the card — dozens of megabyte JPEGs at once against one hotspot, which is
@@ -792,7 +794,10 @@ private fun ColumnScope.fileItem(
             // camera; the two buttons that talk to it stay where they were.
             val starred = state.isFavorite(f.name)
             IconButton(
-                onClick = { state.toggleFavorite(f.name) },
+                onClick = {
+                    haptics.toggle()
+                    state.toggleFavorite(f.name)
+                },
                 backgroundColor = Color.Transparent,
             ) {
                 Icon(
@@ -1028,6 +1033,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
     }
 
     var tab by remember { mutableStateOf(TAB_CAMERA) }
+    val haptics = LocalHapticFeedback.current
 
     MiuixPage(
         title = stringResource(Res.string.tab_settings),
@@ -1037,7 +1043,10 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
             TabRow(
                 tabs = listOf(cameraTabLbl, deviceTabLbl, appTabLbl),
                 selectedTabIndex = tab,
-                onTabSelected = { tab = it },
+                onTabSelected = {
+                    if (it != tab) haptics.tick()
+                    tab = it
+                },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
             )
         },
@@ -1347,6 +1356,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                         },
                         title = appearanceTitle,
                         onSelectedIndexChange = { index ->
+                            haptics.tick()
                             AppearanceState.mode = when (index) {
                                 1 -> ThemeMode.Dark
                                 2 -> ThemeMode.Light
@@ -1378,6 +1388,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                             Switch(
                                 checked = logging,
                                 onCheckedChange = {
+                                    haptics.toggle()
                                     logging = it
                                     com.rovecamlink.app.core.log.Diag.setFileLogging(it)
                                 },
@@ -1396,7 +1407,10 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                         end = {
                             Switch(
                                 checked = state.uiTestMode,
-                                onCheckedChange = { state.setUiTestMode(it) },
+                                onCheckedChange = {
+                                    haptics.toggle()
+                                    state.setUiTestMode(it)
+                                },
                             )
                         },
                     ) {

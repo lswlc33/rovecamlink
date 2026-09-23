@@ -24,8 +24,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -109,18 +108,6 @@ private val CardInset = 12.dp
 private val SectionGap = 12.dp
 
 /**
- * The content padding [MiuixPage] handed its list, published to the items inside it.
- *
- * An item can ask for the full height of the list it lives in with `fillParentMaxHeight()`,
- * but that height is measured *including* the padding bands — and the item is then placed
- * at `contentPadding.top`. An empty state centred inside that box therefore lands half a
- * bar-height below the middle of the screen, which is exactly what the 2026-09-24 field
- * report showed. Re-publishing the padding lets [notConnectedItem] subtract the bands and
- * centre in what the user can actually see.
- */
-private val LocalListContentPadding = compositionLocalOf { PaddingValues(0.dp) }
-
-/**
  * One page of the app.
  *
  * The upstream demo gives every page its own `Scaffold` and collapsible `TopAppBar`, so
@@ -188,16 +175,21 @@ fun MiuixPage(
             .overScrollVertical()
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .fillMaxHeight()
+            // Width as well as height. A LazyColumn with no width constraint sizes itself to
+            // its *widest item*, so a page whose rows all fill the width was fine while a
+            // page holding only an empty state was not: the list came out 319px wide on a
+            // 500px screen and everything centred inside it landed at x≈158 instead of 250.
+            // That is what 「未连接界面没有居中」 turned out to mean (2026-09-24 emulator
+            // pass) — the block was centred, in a list that was not full width.
+            .fillMaxWidth()
         val list: @Composable () -> Unit = {
             Box(Modifier.fillMaxSize()) {
-                CompositionLocalProvider(LocalListContentPadding provides contentPadding) {
-                    LazyColumn(
-                        state = listState,
-                        contentPadding = contentPadding,
-                        modifier = listModifier,
-                    ) {
-                        content()
-                    }
+                LazyColumn(
+                    state = listState,
+                    contentPadding = contentPadding,
+                    modifier = listModifier,
+                ) {
+                    content()
                 }
                 VerticalScrollBar(
                     adapter = rememberScrollBarAdapter(listState),
@@ -267,9 +259,15 @@ fun BasicRow(
     end: (@Composable RowScope.() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val haptics = LocalHapticFeedback.current
     BasicComponent(
         enabled = enabled,
-        onClick = onClick,
+        onClick = onClick?.let { action ->
+            {
+                haptics.tap()
+                action()
+            }
+        },
         endActions = end,
         content = content,
     )
@@ -341,8 +339,12 @@ fun ColumnScope.actionRow(
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
+    val haptics = LocalHapticFeedback.current
     Button(
-        onClick = onClick,
+        onClick = {
+            haptics.tap()
+            onClick()
+        },
         enabled = enabled && !busy,
         modifier = Modifier
             .fillMaxWidth()
@@ -369,8 +371,12 @@ fun RowScope.actionButton(
     primary: Boolean = false,
     onClick: () -> Unit,
 ) {
+    val haptics = LocalHapticFeedback.current
     Button(
-        onClick = onClick,
+        onClick = {
+            haptics.tap()
+            onClick()
+        },
         enabled = enabled && !busy,
         modifier = Modifier.weight(1f),
         colors = if (primary) ButtonDefaults.buttonColorsPrimary() else ButtonDefaults.buttonColors(),
@@ -432,19 +438,13 @@ fun ProgressLine(progress: Float) {
 /** The app's empty state: nothing is wrong, there is just no camera on the other end. */
 fun LazyListScope.notConnectedItem() {
     item {
-        // `fillParentMaxHeight()` measures the whole list, padding bands included, and the
-        // item is then placed *below* the top band — so without subtracting the bands the
-        // centre of this box sits half a bar-height below the centre of the screen, which
-        // is the 「未连接界面没有居中」 in the 2026-09-24 report.
-        val insets = LocalListContentPadding.current
+        // `fillMaxWidth` is what centres this. Without it the box wraps its own content —
+        // and a box that is exactly as wide as the icon and the two lines puts their centre
+        // at half *that* width, which on a 500px screen landed the whole block at x≈158
+        // instead of 250. That was 「未连接界面没有居中」: the block was centred, in a box
+        // that was not the width of the screen (2026-09-24 emulator pass).
         Box(
-            Modifier
-                .fillParentMaxHeight()
-                .padding(
-                    top = insets.calculateTopPadding(),
-                    bottom = insets.calculateBottomPadding(),
-                )
-                .padding(24.dp),
+            Modifier.fillMaxWidth().fillParentMaxHeight().padding(24.dp),
             contentAlignment = Alignment.Center,
         ) {
             Column(
@@ -493,6 +493,7 @@ fun LazyListScope.notConnectedItem() {
  */
 @Composable
 fun RowScope.AppBarActions(state: AppState, menuItems: List<AppBarMenuItem> = emptyList()) {
+    val haptics = LocalHapticFeedback.current
     if (menuItems.isNotEmpty()) {
         var expanded by remember { mutableStateOf(false) }
         val viewLog = AppBarMenuItem(
@@ -502,7 +503,12 @@ fun RowScope.AppBarActions(state: AppState, menuItems: List<AppBarMenuItem> = em
         // 查看日志 always last, so its position never shifts between pages.
         val rows = menuItems + viewLog
         Box {
-            IconButton(onClick = { expanded = true }) {
+            IconButton(
+                onClick = {
+                    haptics.tap()
+                    expanded = true
+                },
+            ) {
                 Icon(
                     MiuixIcons.More,
                     contentDescription = stringResource(Res.string.action_more),
@@ -523,6 +529,7 @@ fun RowScope.AppBarActions(state: AppState, menuItems: List<AppBarMenuItem> = em
                             index = index,
                             enabled = entry.enabled,
                             onSelectedIndexChange = {
+                                haptics.tap()
                                 expanded = false
                                 entry.onClick()
                             },
@@ -534,6 +541,7 @@ fun RowScope.AppBarActions(state: AppState, menuItems: List<AppBarMenuItem> = em
     } else {
         IconButton(
             onClick = {
+                haptics.tap()
                 if (state.diagnosticsOpen) state.closeDiagnostics() else state.openDiagnostics()
             },
         ) {
@@ -595,6 +603,10 @@ fun ConfirmDialog(
     destructive: Boolean = true,
 ) {
     val scheme = MiuixTheme.colorScheme
+    // The two halves of a confirmation are deliberately different to the touch: the one
+    // that acts gets [confirm], the way out gets an ordinary tap. A box that buzzes the
+    // same either way would be a coin toss you cannot feel.
+    val haptics = LocalHapticFeedback.current
     OverlayDialog(
         show = true,
         title = title,
@@ -610,13 +622,19 @@ fun ConfirmDialog(
         ) {
             TextButton(
                 text = cancelLabel,
-                onClick = onDismiss,
+                onClick = {
+                    haptics.tap()
+                    onDismiss()
+                },
                 modifier = Modifier.weight(1f),
             )
             Spacer(Modifier.width(20.dp))
             TextButton(
                 text = confirmLabel,
-                onClick = onConfirm,
+                onClick = {
+                    haptics.confirm()
+                    onConfirm()
+                },
                 modifier = Modifier.weight(1f),
                 // Red for the button that deletes something: the library has no
                 // destructive pair, and a primary-tinted 「格式化存储卡」 reads as the
@@ -635,6 +653,7 @@ fun ConfirmDialog(
 @Composable
 fun ErrorBanner(msg: LocalizedString, onDismiss: () -> Unit) {
     val scheme = MiuixTheme.colorScheme
+    val haptics = LocalHapticFeedback.current
     Box(
         Modifier.fillMaxSize().padding(16.dp),
         contentAlignment = Alignment.BottomCenter,
@@ -645,7 +664,10 @@ fun ErrorBanner(msg: LocalizedString, onDismiss: () -> Unit) {
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(14.dp))
                 .background(scheme.error)
-                .clickable(onClick = onDismiss)
+                .clickable {
+                    haptics.tap()
+                    onDismiss()
+                }
                 .padding(horizontal = 14.dp, vertical = 12.dp),
         ) {
             Icon(

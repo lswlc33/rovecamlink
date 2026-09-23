@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rovecamlink.app.AppState
@@ -69,6 +70,7 @@ fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
     }
 
     val scheme = MiuixTheme.colorScheme
+    val haptics = LocalHapticFeedback.current
     val sessionValue = sessionPath ?: Diag.fileSinkError() ?: stringResource(Res.string.log_session_opening)
 
     MiuixPage(
@@ -76,7 +78,12 @@ fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
         outerPadding = outerPadding,
         state = state,
         navigationIcon = {
-            IconButton(onClick = onClose) {
+            IconButton(
+                onClick = {
+                    haptics.tap()
+                    onClose()
+                },
+            ) {
                 Icon(
                     MiuixIcons.Back,
                     contentDescription = stringResource(Res.string.log_close),
@@ -104,6 +111,7 @@ fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
                 selectedTabIndex = LogLevel.entries.indexOf(minLevel),
                 onTabSelected = { index ->
                     val l = LogLevel.entries[index]
+                    if (l != minLevel) haptics.tick()
                     minLevel = l
                     Diag.config.minLevel = l
                     Diag.info(LogTag.LOG, "config minLevel=${l.name}")
@@ -118,6 +126,7 @@ fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
                 title = stringResource(Res.string.log_switch_recording),
                 checked = recording,
                 onCheckedChange = {
+                    haptics.toggle()
                     recording = it
                     Diag.setRecording(it)
                 },
@@ -126,6 +135,7 @@ fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
                 title = stringResource(Res.string.log_switch_bodies),
                 checked = captureBodies,
                 onCheckedChange = {
+                    haptics.toggle()
                     captureBodies = it
                     Diag.config.captureBodies = it
                     Diag.info(LogTag.LOG, "config bodies=$it")
@@ -135,6 +145,7 @@ fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
                 title = stringResource(Res.string.log_switch_secrets),
                 checked = captureSecrets,
                 onCheckedChange = {
+                    haptics.toggle()
                     captureSecrets = it
                     Diag.config.captureSecrets = it
                     Diag.warn(
@@ -147,6 +158,7 @@ fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
                 title = stringResource(Res.string.log_switch_sampling),
                 checked = sampling,
                 onCheckedChange = {
+                    haptics.toggle()
                     sampling = it
                     Diag.config.sampleSteadyTraffic = it
                     Diag.info(LogTag.LOG, "config sampling=$it")
@@ -156,6 +168,7 @@ fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
                 title = stringResource(Res.string.log_switch_filesink),
                 checked = fileSink,
                 onCheckedChange = {
+                    haptics.toggle()
                     fileSink = it
                     Diag.setFileLogging(it)
                 },

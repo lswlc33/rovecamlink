@@ -2,6 +2,7 @@ package com.rovecamlink.app.ui
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalHapticFeedback
 import com.rovecamlink.app.AppState
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.log_close
@@ -44,13 +45,19 @@ fun PermissionsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
     val storageBody = stringResource(Res.string.permission_storage_body)
     val cameraTitle = stringResource(Res.string.permission_camera_title)
     val cameraBody = stringResource(Res.string.permission_camera_body)
+    val haptics = LocalHapticFeedback.current
 
     MiuixPage(
         title = stringResource(Res.string.permission_title),
         outerPadding = outerPadding,
         state = state,
         navigationIcon = {
-            IconButton(onClick = onClose) {
+            IconButton(
+                onClick = {
+                    haptics.tap()
+                    onClose()
+                },
+            ) {
                 Icon(
                     MiuixIcons.Back,
                     contentDescription = stringResource(Res.string.log_close),

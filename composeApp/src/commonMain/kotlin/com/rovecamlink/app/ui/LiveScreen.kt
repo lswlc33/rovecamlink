@@ -47,6 +47,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
@@ -526,6 +527,7 @@ private fun ShutterButton(
     onClick: () -> Unit,
 ) {
     val scheme = MiuixTheme.colorScheme
+    val haptics = LocalHapticFeedback.current
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
     val press by animateFloatAsState(if (pressed) 0.93f else 1f, tween(110), label = "press")
@@ -565,6 +567,10 @@ private fun ShutterButton(
                 enabled = enabled,
                 onClickLabel = label,
             ) {
+                // A shutter is the one press in the app with weight behind it, so it gets
+                // the heavy haptic rather than the ordinary tap — and it fires before the
+                // command goes out, so the phone answers even when the camera is slow.
+                haptics.longPress()
                 if (!stop && !videoLike) {
                     animating.launch {
                         shot.animateTo(0.78f, tween(80))
@@ -624,6 +630,7 @@ private fun QuickAdjustBar(
     val lastIndex = options.lastIndex
     val currentIndex = options.indexOfFirst { it.value == setting.value }.coerceIn(0, lastIndex)
     var draft by remember(setting.value, options) { mutableStateOf(currentIndex) }
+    val haptics = LocalHapticFeedback.current
 
     // The library's own stepped-slider row: it puts the label on the title edge and the
     // current stop on the same end edge a switch would occupy, which is the alignment a
@@ -644,7 +651,12 @@ private fun QuickAdjustBar(
         keyPoints = remember(lastIndex) { (0..lastIndex).map { it.toFloat() } },
         enabled = enabled,
         onValueChangeFinished = {
-            if (draft != currentIndex) onCommit(options[draft].value)
+            // Only on a real move: the slider reports "finished" for a tap that did not
+            // change the stop too, and buzzing then would confirm a write that never left.
+            if (draft != currentIndex) {
+                haptics.tick()
+                onCommit(options[draft].value)
+            }
         },
     )
 }
@@ -664,6 +676,7 @@ private fun QuickChoiceRow(
 ) {
     val options = orderedAdjustOptions(setting)
     if (options.size < 2) return
+    val haptics = LocalHapticFeedback.current
     Row(
         Modifier
             .fillMaxWidth()
@@ -684,7 +697,14 @@ private fun QuickChoiceRow(
                     selected = option.value == setting.value,
                     enabled = enabled,
                     small = true,
-                    onClick = { onCommit(option.value) },
+                    onClick = {
+                        // A chip that is already the current stop writes nothing, so it
+                        // does not buzz either — the same rule the bars follow.
+                        if (option.value != setting.value) {
+                            haptics.tick()
+                            onCommit(option.value)
+                        }
+                    },
                 )
             }
         }
@@ -807,6 +827,7 @@ private fun ModeStrip(
     var tab by remember(selectedFamily) {
         mutableStateOf(if (selectedFamily == ModeFamily.PHOTO) 1 else 0)
     }
+    val haptics = LocalHapticFeedback.current
     fun chipsOf(family: ModeFamily) = modes.filter { it.family == family }
     Column(modifier) {
         // The contour variant, because this one lives *inside* a card: the standard
@@ -816,6 +837,7 @@ private fun ModeStrip(
             tabs = listOf(videoLabel, photoLabel),
             selectedTabIndex = tab,
             onTabSelected = { index ->
+                if (index != tab) haptics.tick()
                 tab = index
                 // With a mode table the chip row does the switching, so the tab is only
                 // a filter. Without one it *is* the control, and has to fall back to the
@@ -824,7 +846,10 @@ private fun ModeStrip(
                     onSelectFamily(if (index == 0) WorkMode.VIDEO else WorkMode.PHOTO)
                 }
             },
-            modifier = Modifier.fillMaxWidth(),
+            // Stopped short of the floating shutter for the same reason the chip row below
+            // is: at the top of the scroll the strip and the disc share a row, and 照片 was
+            // sitting underneath the disc — visible through it, but not tappable.
+            modifier = Modifier.fillMaxWidth().padding(end = 88.dp),
         )
         val chips = chipsOf(if (tab == 0) ModeFamily.VIDEO else ModeFamily.PHOTO)
         if (chips.isEmpty()) return@Column
@@ -841,7 +866,12 @@ private fun ModeStrip(
                     label = ModeCatalog.titleOf(mode.name),
                     selected = mode.name == selected,
                     enabled = !locked,
-                    onClick = { onSelect(mode) },
+                    onClick = {
+                        if (mode.name != selected) {
+                            haptics.tick()
+                            onSelect(mode)
+                        }
+                    },
                 )
             }
         }

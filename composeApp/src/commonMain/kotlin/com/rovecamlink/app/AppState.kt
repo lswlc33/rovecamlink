@@ -174,9 +174,21 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         pushPage(Page.Log)
     }
 
-    fun closeDiagnostics() {
+    /**
+     * Leave the pushed layer entirely, whichever page is on top.
+     *
+     * Two things mean this rather than a single [popPage]: the diagnostics button pressed
+     * again, and a bottom-nav tab pressed while a pushed page is covering it. The tab case
+     * is why this is not just "close the log" — tapping 文件 with 关于 open has to land on
+     * the files page, not on 关于 with a new highlight behind it (2026-09-24 emulator pass).
+     */
+    fun popToTabs() {
+        if (pages.isEmpty()) return
+        Diag.info(LogTag.LOG, "page stack cleared (depth ${pages.size})")
         pages.clear()
     }
+
+    fun closeDiagnostics() = popToTabs()
 
     /**
      * The UI test mode: [UiTestDevice] in place of a camera.

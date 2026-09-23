@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalHapticFeedback
 import com.rovecamlink.app.AppState
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.about_feedback
@@ -104,13 +105,19 @@ fun AboutScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Uni
     val licensesLbl = stringResource(Res.string.about_licenses)
     val licenseBody = stringResource(Res.string.about_license_body)
     val platforms = state.supportedPlatforms().joinToString(" · ") { it.displayName }
+    val haptics = LocalHapticFeedback.current
 
     MiuixPage(
         title = stringResource(Res.string.about_title),
         outerPadding = outerPadding,
         state = state,
         navigationIcon = {
-            IconButton(onClick = onClose) {
+            IconButton(
+                onClick = {
+                    haptics.tap()
+                    onClose()
+                },
+            ) {
                 Icon(
                     MiuixIcons.Back,
                     contentDescription = stringResource(Res.string.log_close),
@@ -146,7 +153,13 @@ fun AboutScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Uni
  * A constant rather than a build-config lookup: the version is edited here on release,
  * and threading a `BuildKonfig` field through the three platform targets for one string
  * is more surface than a hand-set constant is worth at this stage.
+ *
+ * ⚠️ **It has to be bumped with `composeApp/build.gradle.kts`'s `versionName`** — that is
+ * the number CI puts in the package name and checks the release tag against, and this is
+ * the number the user reads back to us in a bug report. They drifted: the 2026-09-24
+ * emulator pass found the about page claiming `0.1.0-dev` on a 0.1.3 build, which is a
+ * report we would have chased in the wrong direction.
  */
 object AppInfo {
-    const val version: String = "0.1.0-dev"
+    const val version: String = "0.1.3"
 }

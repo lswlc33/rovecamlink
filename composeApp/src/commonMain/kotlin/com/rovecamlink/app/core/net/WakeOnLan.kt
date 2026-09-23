@@ -86,9 +86,14 @@ internal object WakeOnLan {
         val target = broadcastAddress(host) ?: return Result.failure(
             IllegalArgumentException("cannot derive a broadcast address from \"$host\""),
         )
-        return withContext(Dispatchers.IO) {
+        // `Dispatchers.Default`, not `IO`: this file is commonMain, and `Dispatchers.IO` is
+        // internal in the common coroutines metadata — it only resolves in the android and
+        // desktop source sets (which is why `CameraTcp` has an actual per platform). Five
+        // 102-byte datagrams do not need an I/O-sized pool. Getting this wrong is not a
+        // warning: the iOS target fails to compile (2026-09-24).
+        return withContext(Dispatchers.Default) {
             runCatching {
-                val selector = SelectorManager(Dispatchers.IO)
+                val selector = SelectorManager(Dispatchers.Default)
                 try {
                     val socket = aSocket(selector).udp().bind()
                     try {

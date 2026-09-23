@@ -24,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
@@ -170,6 +171,7 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
     }
 
     val scheme = MiuixTheme.colorScheme
+    val haptics = LocalHapticFeedback.current
     val exportable = busy == null
     val levelTabs = listOf(
         stringResource(Res.string.log_filter_all) to null,
@@ -186,7 +188,12 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
         state = state,
         // A pushed page: the leading control goes back to whatever pushed this page.
         navigationIcon = {
-            IconButton(onClick = onClose) {
+            IconButton(
+                onClick = {
+                    haptics.tap()
+                    onClose()
+                },
+            ) {
                 Icon(
                     MiuixIcons.Back,
                     contentDescription = stringResource(Res.string.log_close),
@@ -205,7 +212,10 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
                 TabRow(
                     tabs = levelTabs.map { it.first },
                     selectedTabIndex = levelTabs.map { it.second }.indexOf(viewLevel).coerceAtLeast(0),
-                    onTabSelected = { viewLevel = levelTabs[it].second },
+                    onTabSelected = {
+                        if (levelTabs[it].second != viewLevel) haptics.tick()
+                        viewLevel = levelTabs[it].second
+                    },
                     modifier = Modifier.padding(top = 4.dp, bottom = 8.dp),
                 )
             }
@@ -327,8 +337,12 @@ private fun RowScope.LogButton(
     primary: Boolean = false,
     onClick: () -> Unit,
 ) {
+    val haptics = LocalHapticFeedback.current
     Button(
-        onClick = onClick,
+        onClick = {
+            haptics.tap()
+            onClick()
+        },
         modifier = Modifier.weight(1f),
         enabled = enabled,
         colors = if (primary) ButtonDefaults.buttonColorsPrimary() else ButtonDefaults.buttonColors(),
@@ -346,6 +360,7 @@ private fun RowScope.LogButton(
 @Composable
 private fun LogLine(rec: LogRecord, onClick: () -> Unit) {
     val scheme = MiuixTheme.colorScheme
+    val haptics = LocalHapticFeedback.current
     val color = when (rec.level) {
         LogLevel.ERROR -> scheme.error
         // The library has no warning tone; the tertiary container is the one hue left
@@ -362,7 +377,10 @@ private fun LogLine(rec: LogRecord, onClick: () -> Unit) {
         Modifier
             .fillMaxWidth()
             .background(scheme.surface)
-            .clickable(onClick = onClick)
+            .clickable {
+                haptics.tap()
+                onClick()
+            }
             .padding(horizontal = 14.dp, vertical = 2.dp),
     ) {
         BasicText(
