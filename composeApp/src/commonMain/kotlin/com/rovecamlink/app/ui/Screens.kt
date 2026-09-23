@@ -224,6 +224,10 @@ import com.rovecamlink.app.sort_by_size
 import com.rovecamlink.app.sort_ascending
 import com.rovecamlink.app.sort_descending
 import com.rovecamlink.app.files_filter_line
+import com.rovecamlink.app.action_delete_all
+import com.rovecamlink.app.title_delete_all_files
+import com.rovecamlink.app.message_delete_all_files
+import com.rovecamlink.app.download_eta
 import com.rovecamlink.app.core.media.CameraPreviewView
 import com.rovecamlink.app.core.media.OrientationMode
 import com.rovecamlink.app.core.media.rememberDeviceOrientation
@@ -307,6 +311,7 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     // Deleting is irreversible on the camera, so it goes through a confirm dialog.
     var pendingDelete by remember { mutableStateOf<RemoteFile?>(null) }
     var pendingBatchDelete by remember { mutableStateOf(false) }
+    var pendingDeleteAll by remember { mutableStateOf(false) }
     var selectMode by remember { mutableStateOf(false) }
     val selected = remember { mutableStateListOf<String>() }
 
@@ -338,6 +343,7 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     val deleteTitle = stringResource(Res.string.title_delete_file)
     val cancelLabel = stringResource(Res.string.cancel)
     val deleteLabel = stringResource(Res.string.delete)
+    val deleteAllLbl = stringResource(Res.string.action_delete_all)
     val doneLabel = stringResource(Res.string.download_done)
     val failedLabel = stringResource(Res.string.download_failed)
     val videoLbl = stringResource(Res.string.file_type_video)
@@ -388,6 +394,11 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
             AppBarMenuItem(label = sortBySizeLbl, checked = sortBySize) { sortBySize = true },
             AppBarMenuItem(label = sortDescLbl, checked = sortDescending) { sortDescending = true },
             AppBarMenuItem(label = sortAscLbl, checked = !sortDescending) { sortDescending = false },
+            // The one irreversible action here, so it sits last and apart: in the menu
+            // rather than beside 刷新/选择, where a stray tap would cost the whole card.
+            AppBarMenuItem(label = deleteAllLbl, enabled = state.files.isNotEmpty()) {
+                pendingDeleteAll = true
+            },
         ),
     ) {
         if (state.session == null) {
@@ -469,6 +480,18 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
 
             if (state.downloads.isNotEmpty()) {
                 section(title = downloadsTitle) {
+                    // One quiet line instead of a bar per row: what a queue in flight owes
+                    // the user is the number no single row can give — the whole wait.
+                    state.downloadEtaSeconds()?.let { eta ->
+                        Text(
+                            text = stringResource(Res.string.download_eta, eta),
+                            fontSize = 13.sp,
+                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 4.dp),
+                        )
+                    }
                     if (state.downloads.any { it.state == DownloadItem.State.Done }) {
                         actionRow(clearFinishedLbl) { state.clearFinishedDownloads() }
                     }
@@ -537,6 +560,25 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
                 pendingBatchDelete = false
             },
             onDismiss = { pendingBatchDelete = false },
+        )
+    }
+
+    if (pendingDeleteAll) {
+        // The device takes no confirmation of its own — the official app treats a bare
+        // 200 as success — so the count in the message is the user's only sight of what
+        // this costs before it is gone.
+        ConfirmDialog(
+            title = stringResource(Res.string.title_delete_all_files),
+            message = stringResource(Res.string.message_delete_all_files, state.files.size),
+            confirmLabel = deleteLabel,
+            cancelLabel = cancelLabel,
+            onConfirm = {
+                state.deleteAllFiles()
+                selected.clear()
+                selectMode = false
+                pendingDeleteAll = false
+            },
+            onDismiss = { pendingDeleteAll = false },
         )
     }
 }

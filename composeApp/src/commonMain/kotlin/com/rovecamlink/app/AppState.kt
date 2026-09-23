@@ -1330,6 +1330,37 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         else CmdResult.Ok
     }
 
+    /**
+     * Empty the card with a single command, for the album's 「全部删除」.
+     *
+     * One request instead of [deleteFiles]'s N: on a card holding hundreds of clips the
+     * per-file walk is minutes of HTTP, and a session that drops midway leaves the grid
+     * half-deleted with no way to tell where it stopped. This is destructive with no
+     * second confirmation on the device side (the official app takes a bare 200 as
+     * success), so the confirm dialog and the "N deleted" readout live in the UI.
+     */
+    fun deleteAllFiles() {
+        val listed = files.size
+        if (uiTestSkipped("DELETE ALL")) {
+            clearFileCaches()
+            return
+        }
+        runOp(Op.Delete) { proto, s ->
+            Diag.i(LogTag.FILE) { "DELETE ALL ($listed listed)" }
+            val r = proto.deleteAllFiles(s)
+            if (r.isOk) clearFileCaches()
+            r
+        }
+    }
+
+    /** Drop every per-file cache the grid reads, after the camera's card is emptied. */
+    private fun clearFileCaches() {
+        files = emptyList()
+        thumbnails.clear()
+        thumbFailedAt.clear()
+        thumbSeen.clear()
+    }
+
     // ---------- device info / maintenance ----------
 
     /**
@@ -1662,7 +1693,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         if (otaState.isTerminal) otaState = OtaState.Idle
     }
 
-    fun download(file: RemoteFile) {
+    fun download(file: RemoteFile, force: Boolean = false) {
         if (uiTestSkipped("DOWNLOAD ${file.name}")) return
         val proto = protocol ?: return
         val s = session ?: return
@@ -1691,6 +1722,16 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     // the staging directory.
                     val dest: Path = dir / sanitizeFileName(file.name)
                     val have = runCatching { okio.FileSystem.SYSTEM.metadata(dest).size }.getOrNull() ?: 0L
+                    // A file the phone already holds in full is not fetched again: the
+                    // old path fell through to a from-zero re-download here (resume only
+                    // engages on a *partial* file), so a batch quietly pulled gigabytes
+                    // the user already had. `force` is the escape hatch for a genuinely
+                    // corrupt local copy.
+                    if (!force && file.sizeBytes > 0L && have == file.sizeBytes) {
+                        Diag.i(LogTag.DL) { "SKIP ${file.name} — already on disk (${LogFormat.size(have)})" }
+                        markDone(file, dest.toString())
+                        return@withContext
+                    }
                     // Resume only into a genuinely partial file; a complete or oversized
                     // leftover has to be re-fetched from zero.
                     val resumeFrom = if (have > 0L && (file.sizeBytes <= 0L || have < file.sizeBytes)) have else 0L
@@ -1720,13 +1761,11 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     val published = runCatching { graph.fileSaver.publishToGallery(dest, file.name, mime) }
                         .onFailure { Diag.at(LogLevel.WARN, LogTag.DL, "gallery publish threw ${Diag.causeChain(it)}") }
                         .getOrNull()
-                    val i = downloads.indexOfFirst { it.file.name == file.name }
-                    if (i >= 0) downloads[i] = downloads[i].copy(
-                        state = DownloadItem.State.Done, progress = 1f, localPath = published ?: dest.toString(),
-                    )
+                    if (ms > 0) lastRateBps = written * 1000 / ms
+                    markDone(file, published ?: dest.toString())
                     Diag.i(LogTag.DL) {
                         "DONE ${file.name} ${LogFormat.size(written)} in ${ms}ms " +
-                            "(${LogFormat.size(if (ms > 0) written * 1000 / ms else 0)}/s) -> ${published ?: dest}"
+                            "(${LogFormat.size(lastRateBps)}/s) -> ${published ?: dest}"
                     }
                     if (published == null) {
                         errorMessage = localized(Res.string.err_gallery_rejected)
@@ -1770,6 +1809,36 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val i = downloads.indexOfFirst { it.file.name == file.name }
         if (i >= 0) downloads[i] = downloads[i].copy(state = DownloadItem.State.Failed, error = reason)
         errorMessage = reason
+    }
+
+    private fun markDone(file: RemoteFile, localPath: String) {
+        val i = downloads.indexOfFirst { it.file.name == file.name }
+        if (i >= 0) downloads[i] = downloads[i].copy(
+            state = DownloadItem.State.Done, progress = 1f, localPath = localPath,
+        )
+    }
+
+    /** Bytes/second from the last completed transfer; 0 until one finishes. */
+    private var lastRateBps: Long = 0
+
+    /**
+     * Seconds left on the queue, from the bytes still owed and the last measured rate.
+     * Null when nothing is running or no transfer has finished yet — a guessed speed
+     * would be a worse answer than no number at all. Files the camera never sized
+     * contribute nothing, so the estimate is a floor, never a fabrication.
+     */
+    fun downloadEtaSeconds(): Int? {
+        val pending = downloads.filter {
+            it.state == DownloadItem.State.Running || it.state == DownloadItem.State.Queued
+        }
+        if (pending.isEmpty()) return null
+        val remaining = pending.sumOf { d ->
+            val total = d.file.sizeBytes
+            if (total <= 0L) 0L else (total - (total * d.progress).toLong()).coerceAtLeast(0L)
+        }
+        val rate = lastRateBps
+        if (remaining <= 0L || rate <= 0L) return null
+        return (remaining / rate).coerceAtLeast(1L).toInt()
     }
 
     private fun runOp(op: Op, block: suspend (CameraProtocol, CameraSession) -> CmdResult) =

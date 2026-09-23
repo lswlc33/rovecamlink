@@ -1107,6 +1107,24 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     }
 
     /**
+     * Clear the whole card with one request. `deleteallfiles.cgi` takes no parameters —
+     * the official app calls it with a bare `?` and judges it by HTTP 200 alone
+     * (`RemoteFileManager.deleteAllFiles`), so there is nothing to percent-encode and no
+     * name to get wrong. The same "an answered CGI is not an accepted command" caveat as
+     * [deleteFile] applies, hence the [Cgi.verdict] check rather than a null test.
+     */
+    override suspend fun deleteAllFiles(session: CameraSession): CmdResult {
+        val url = "${cgi(session.host, session.port)}/deleteallfiles.cgi?"
+        Diag.d(LogTag.PROTO) { "delete all files -> $url" }
+        val r = http.getText(url)
+        return when (val verdict = Cgi.verdict(r)) {
+            is CgiReply.Accepted -> CmdResult.Ok
+            is CgiReply.Rejected -> refuse("delete all", verdict)
+            CgiReply.NoAnswer -> CmdResult.Failure("delete all failed (deleteallfiles.cgi did not answer)")
+        }
+    }
+
+    /**
      * The card's `.THM` preview, capped at [MAX_THUMBNAIL_BYTES].
      *
      * There is deliberately no fallback to `file.downloadUrl`: an old one made every

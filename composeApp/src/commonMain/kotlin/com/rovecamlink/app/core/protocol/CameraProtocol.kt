@@ -109,6 +109,22 @@ interface CameraProtocol {
 
     suspend fun listFiles(session: CameraSession, start: Int, end: Int): List<RemoteFile>
     suspend fun deleteFile(session: CameraSession, file: RemoteFile): CmdResult
+
+    /**
+     * Delete **every** file on the camera's card in one command, for the album's
+     * 「全部删除」.
+     *
+     * The hi3510 CGI family has a single endpoint for this (`deleteallfiles.cgi`), and
+     * the official app treats a bare 200 as success — no second confirmation, no count
+     * echoed back. The UI therefore owns the confirmation and the "N deleted" readout;
+     * this call is the device half only.
+     *
+     * Protocols without such a command report a failure with the reason, and the UI
+     * falls back to the per-file batch delete it already has.
+     */
+    suspend fun deleteAllFiles(session: CameraSession): CmdResult =
+        CmdResult.Failure("This camera has no delete-all command")
+
     suspend fun thumbnail(session: CameraSession, file: RemoteFile): ByteArray?
 
     /**
