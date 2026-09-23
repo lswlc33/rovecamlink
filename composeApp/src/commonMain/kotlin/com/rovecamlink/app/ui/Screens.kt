@@ -230,6 +230,14 @@ import com.rovecamlink.app.message_delete_all_files
 import com.rovecamlink.app.download_eta
 import com.rovecamlink.app.permission_title
 import com.rovecamlink.app.action_load_more
+import com.rovecamlink.app.action_favorites_only
+import com.rovecamlink.app.action_star_file
+import com.rovecamlink.app.action_unstar_file
+import com.rovecamlink.app.action_read_channel
+import com.rovecamlink.app.label_wifi_channel
+import com.rovecamlink.app.sd_format_age
+import com.rovecamlink.app.sd_format_overdue
+import com.rovecamlink.app.sd_format_never
 import com.rovecamlink.app.core.media.CameraPreviewView
 import com.rovecamlink.app.core.media.OrientationMode
 import com.rovecamlink.app.core.media.rememberDeviceOrientation
@@ -259,6 +267,8 @@ import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Delete
 import top.yukonga.miuix.kmp.icon.extended.Download
+import top.yukonga.miuix.kmp.icon.extended.Favorites
+import top.yukonga.miuix.kmp.icon.extended.FavoritesFill
 import top.yukonga.miuix.kmp.icon.extended.Image
 import top.yukonga.miuix.kmp.icon.extended.Ok
 import top.yukonga.miuix.kmp.icon.extended.Play
@@ -322,11 +332,17 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     var typeFilter by remember { mutableStateOf<FileType?>(null) }
     var sortBySize by remember { mutableStateOf(false) }
     var sortDescending by remember { mutableStateOf(true) }
+    // B7: a local, instant filter — starring costs nothing and survives the restart,
+    // so "只看收藏" is the quickest way back to the three clips worth keeping.
+    var favoritesOnly by remember { mutableStateOf(false) }
 
     // The list the page actually shows: the camera's files, filtered by type then sorted.
     // Grouping by day still happens after, so a name/size sort orders *within* each day.
-    val visibleFiles = remember(state.files, typeFilter, sortBySize, sortDescending) {
+    val visibleFiles = remember(
+        state.files, typeFilter, sortBySize, sortDescending, favoritesOnly, state.favorites,
+    ) {
         state.files
+            .filter { !favoritesOnly || state.isFavorite(it.name) }
             .filter { typeFilter == null || it.type == typeFilter }
             .sortedWith(
                 if (sortBySize) compareBy { it.sizeBytes } else compareBy { it.name },
@@ -334,7 +350,7 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
             .let { if (sortDescending) it.reversed() else it }
     }
     val groups = remember(visibleFiles) { groupFilesByDay(visibleFiles) }
-    val filterActive = typeFilter != null || sortBySize || !sortDescending
+    val filterActive = typeFilter != null || sortBySize || !sortDescending || favoritesOnly
     val selectedCount = state.files.count { selected.contains(it.name) }
     val allSelected = state.files.isNotEmpty() && state.files.all { selected.contains(it.name) }
 
@@ -347,6 +363,7 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     val deleteLabel = stringResource(Res.string.delete)
     val deleteAllLbl = stringResource(Res.string.action_delete_all)
     val loadMoreLbl = stringResource(Res.string.action_load_more)
+    val favoritesOnlyLbl = stringResource(Res.string.action_favorites_only)
     val doneLabel = stringResource(Res.string.download_done)
     val failedLabel = stringResource(Res.string.download_failed)
     val videoLbl = stringResource(Res.string.file_type_video)
@@ -397,6 +414,7 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
             AppBarMenuItem(label = sortBySizeLbl, checked = sortBySize) { sortBySize = true },
             AppBarMenuItem(label = sortDescLbl, checked = sortDescending) { sortDescending = true },
             AppBarMenuItem(label = sortAscLbl, checked = !sortDescending) { sortDescending = false },
+            AppBarMenuItem(label = favoritesOnlyLbl, checked = favoritesOnly) { favoritesOnly = !favoritesOnly },
             // The one irreversible action here, so it sits last and apart: in the menu
             // rather than beside 刷新/选择, where a stray tap would cost the whole card.
             AppBarMenuItem(label = deleteAllLbl, enabled = state.files.isNotEmpty()) {
@@ -623,6 +641,38 @@ private fun SmallButton(
     }
 }
 
+/**
+ * The hotspot channel as a strip of the standard numbers (B8).
+ *
+ * The archive recorded the parameter and its type but never the value set the firmware
+ * accepts, so the picker offers the non-overlapping 2.4 GHz channels and the common 5 GHz
+ * ones, marks whichever the camera reported with a ✓, and lets the camera refuse the rest.
+ */
+@Composable
+private fun ChannelStrip(current: Int?, enabled: Boolean, onPick: (Int) -> Unit) {
+    LazyRow(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        items(ChannelChoices, key = { it }) { ch ->
+            SmallButton(
+                label = if (ch == current) "$ch ✓" else ch.toString(),
+                enabled = enabled,
+                modifier = Modifier.widthIn(min = 56.dp),
+            ) { onPick(ch) }
+        }
+    }
+}
+
+/** 2.4 GHz: the three that never overlap. 5 GHz: the ones most routers default to. */
+private val ChannelChoices = listOf(1, 6, 11, 36, 40, 44, 48, 149, 157, 161)
+
+/** B1: past this many days the SD-card hint stops being a fact and becomes a nudge. */
+private const val FORMAT_OVERDUE_DAYS = 30
+
 @Composable
 private fun ColumnScope.downloadItem(d: DownloadItem, doneLabel: String, failedLabel: String) {
     Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
@@ -727,6 +777,23 @@ private fun ColumnScope.fileItem(
         // hidden rather than left there to mis-fire.
         if (!selectMode) {
             Spacer(Modifier.width(6.dp))
+            // Starring is local and instant, so it sits first and never waits on the
+            // camera; the two buttons that talk to it stay where they were.
+            val starred = state.isFavorite(f.name)
+            IconButton(
+                onClick = { state.toggleFavorite(f.name) },
+                backgroundColor = Color.Transparent,
+            ) {
+                Icon(
+                    if (starred) MiuixIcons.FavoritesFill else MiuixIcons.Favorites,
+                    contentDescription = stringResource(
+                        if (starred) Res.string.action_unstar_file else Res.string.action_star_file,
+                        f.name,
+                    ),
+                    tint = if (starred) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
             val transfer = state.downloadState(f.name)
             if (transfer == DownloadItem.State.Running || transfer == DownloadItem.State.Queued) {
                 InfiniteProgressIndicator(size = 20.dp, strokeWidth = 2.5.dp)
@@ -886,6 +953,8 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
     val cancelLbl = stringResource(Res.string.cancel)
     val shortCancelLbl = stringResource(Res.string.action_cancel_short)
     val sdCardTitle = stringResource(Res.string.section_sd_card)
+    val readChannelLbl = stringResource(Res.string.action_read_channel)
+    val channelLbl = stringResource(Res.string.label_wifi_channel)
     val formatSdLbl = stringResource(Res.string.action_format_sd)
     // The two OTA rows that need formatting are resolved *here*, in the composable part
     // of the screen: everything inside a `section { }` body runs in a plain ColumnScope,
@@ -1106,6 +1175,15 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                 section(title = sdCardTitle) {
                     valueItem(totalLbl, st?.sdTotalMb?.let { humanBytes(it * 1024 * 1024) } ?: "—")
                     valueItem(freeLbl, st?.sdFreeMb?.let { humanBytes(it * 1024 * 1024) } ?: "—")
+                    // B1: how long this card has been in continuous use. A worn card fails
+                    // as "card errors" long after the fact, and the one that has run for
+                    // months is exactly the one worth reformatting before a trip.
+                    val days = state.daysSinceFormat()
+                    when {
+                        days == null -> hintLine(stringResource(Res.string.sd_format_never))
+                        days >= FORMAT_OVERDUE_DAYS -> hintLine(stringResource(Res.string.sd_format_overdue, days))
+                        else -> hintLine(stringResource(Res.string.sd_format_age, days))
+                    }
                     actionRow(formatSdLbl, busy = state.isBusy(Op.FormatSd)) { pending = DangerOp.FormatSd }
                 }
 
@@ -1141,6 +1219,15 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                     if (state.canReadCameraWifi()) {
                         actionRow(readWifiLbl, busy = state.isBusy(Op.Wifi)) { state.readCameraWifi() }
                     }
+                    // B8: the hotspot's channel — 2.4G reaches further, 5G is cleaner, and
+                    // which one this room wants is a call only the user can make.
+                    actionRow(readChannelLbl, busy = state.isBusy(Op.Wifi)) { state.readWifiChannel() }
+                    state.cameraWifiChannel?.let { valueItem(channelLbl, it.toString()) }
+                    ChannelStrip(
+                        current = state.cameraWifiChannel,
+                        enabled = !state.isBusy(Op.Wifi),
+                        onPick = { state.setWifiChannel(it) },
+                    )
                     BasicRow {
                         MiuixField(
                             value = wifiSsid,

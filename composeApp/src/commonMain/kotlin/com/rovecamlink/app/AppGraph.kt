@@ -8,6 +8,7 @@ import com.rovecamlink.app.core.ble.createBleCentral
 import com.rovecamlink.app.core.ble.createPairingKeyStore
 import com.rovecamlink.app.core.net.createWifiCredentialStore
 import com.rovecamlink.app.core.net.DeviceDiscovery
+import com.rovecamlink.app.core.prefs.createAppPrefs
 import com.rovecamlink.app.core.protocol.CameraProtocolRegistry
 import com.rovecamlink.app.core.storage.createFileSaver
 import com.rovecamlink.app.core.storage.createPermissionController
@@ -52,6 +53,13 @@ class AppGraph {
      * connect instead of a memory test.
      */
     val wifiCredentials = createWifiCredentialStore()
+
+    /**
+     * Loose bookkeeping that outlives a launch — the last SD format, the starred clips.
+     * Separate from [wifiCredentials] because these are not secrets and clearing one must
+     * never touch the other.
+     */
+    val prefs = createAppPrefs()
 
     /**
      * Bluetooth side of connecting: find the camera before any Wi-Fi exists, wake

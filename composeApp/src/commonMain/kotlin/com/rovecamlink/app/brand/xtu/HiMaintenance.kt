@@ -147,6 +147,33 @@ internal class HiMaintenance(private val http: CameraHttp, private val cgi: (Cam
     }
 
     /**
+     * The hotspot's channel — `getwifichannel.cgi`, key `wifichannel`, read with
+     * `doForIntByKey` (`Setting.java:522`). Null when the firmware does not answer, so a
+     * camera without the endpoint shows nothing rather than a fabricated 0.
+     */
+    suspend fun getWifiChannel(session: CameraSession): Int? {
+        val body = http.getText("${cgi(session)}/getwifichannel.cgi?")
+        return HiVarParser.parse(body)["wifichannel"]?.toIntOrNull()
+    }
+
+    /**
+     * Move the hotspot to [channel] — `setwifichannel.cgi?&-wifichannel=%d`
+     * (`Setting.java:526`). The archive records the parameter and its type but not the
+     * value set the firmware accepts, so the UI offers the standard channel numbers and
+     * lets the camera refuse what it will not take.
+     */
+    suspend fun setWifiChannel(session: CameraSession, channel: Int): CmdResult {
+        val url = "${cgi(session)}/setwifichannel.cgi?&-wifichannel=$channel"
+        Diag.i(LogTag.PROTO) { "setwifichannel -> $channel" }
+        val r = http.getText(url)
+        return when (val verdict = Cgi.verdict(r)) {
+            is CgiReply.Accepted -> CmdResult.Ok
+            is CgiReply.Rejected -> refused("setwifichannel", verdict)
+            CgiReply.NoAnswer -> CmdResult.Failure("setwifichannel failed (setwifichannel.cgi did not answer)")
+        }
+    }
+
+    /**
      * Raise the camera's hotspot again, without Bluetooth.
      *
      * `GET http://<ip>/cgi-bin/setwifista.cgi?` — bare, and **not** under

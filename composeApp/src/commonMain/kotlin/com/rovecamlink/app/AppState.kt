@@ -609,6 +609,57 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         Diag.info(LogTag.WIFI, "forgot camera ${LogFormat.safe(ssid)}")
     }
 
+    // ---------- per-camera bookkeeping (B1 SD format, B7 favourites) ----------
+
+    /**
+     * A stable-enough identity for "this camera" in [AppGraph.prefs]: its hotspot name when
+     * the phone is on its network, otherwise the host that answered. The hotspot name wins
+     * because the same IP can be handed to a different camera on the next trip.
+     */
+    private fun cameraKey(session: CameraSession): String =
+        currentWifiSsid?.takeIf { it.isNotBlank() } ?: session.host
+
+    private fun formatKey(session: CameraSession) = "fmt_" + cameraKey(session)
+    private fun favKey(session: CameraSession) = "fav_" + cameraKey(session)
+
+    /** When the connected camera's card was last formatted, or null if never watched here. */
+    fun lastFormatAt(): Long? = session?.let { graph.prefs.getLong(formatKey(it)) }
+
+    /**
+     * Whole days since that format, or null when we have never seen one.
+     *
+     * A worn card does not announce itself — it shows up later as "card errors" — and the
+     * card that has been in continuous use for months is exactly the one worth reformatting
+     * before a trip. A count of days is enough to make that call; a date is not needed.
+     */
+    fun daysSinceFormat(): Int? = lastFormatAt()?.let { at ->
+        val now = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+        ((now - at) / 86_400_000L).toInt().coerceAtLeast(0)
+    }
+
+    /** Starred file names of the connected camera (B7). */
+    var favorites by mutableStateOf<Set<String>>(emptySet())
+        private set
+
+    fun isFavorite(name: String): Boolean = name in favorites
+
+    /** Star or unstar [name], persisting the set for the camera it belongs to. */
+    fun toggleFavorite(name: String) {
+        val next = if (name in favorites) favorites - name else favorites + name
+        favorites = next
+        session?.let { graph.prefs.putString(favKey(it), next.joinToString("\n")) }
+        Diag.d(LogTag.FILE) {
+            "favourite ${if (name in next) "+" else "-"} ${LogFormat.safe(name)} (${next.size} starred)"
+        }
+    }
+
+    private fun loadFavorites(session: CameraSession): Set<String> =
+        graph.prefs.getString(favKey(session))
+            ?.split('\n')
+            ?.filter { it.isNotBlank() }
+            ?.toSet()
+            ?: emptySet()
+
     /**
      * A row the user tapped in the Wi-Fi list. Open network or a passphrase we hold →
      * join it now; otherwise ask for that one thing. Bluetooth still wins for the
@@ -827,6 +878,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             // hotspot that answered and then failed to identify is not a camera worth
             // offering again next time.
             knownSsid?.let { graph.wifiCredentials.noteConnected(it) }
+            // The starred set belongs to whichever camera is up, so it is read when the
+            // session is, not cached across a swap.
+            favorites = loadFavorites(s)
             // The radios have done their job: an LE scan still running competes with
             // the hotspot for the combo chip on some phones, and a Wi-Fi scan request
             // now costs the camera a deauth cycle for no reason.
@@ -909,6 +963,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         deviceInfo = null
         otaState = OtaState.Idle
         otaCoordinator = null
+        // The starred set belonged to the camera that just went away; leaving it would
+        // star same-named files on the next one.
+        favorites = emptySet()
         // Belongs to the camera that just went away, and it is a credential: leaving it
         // set would show the previous camera's hotspot name and passphrase on the next
         // connect until somebody pressed 读取 again.
@@ -1511,6 +1568,25 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      */
     fun displayedSsid(): String? = cameraWifi?.ssid ?: deviceInfo?.ssid
 
+    /** The hotspot's channel as last read (B8); null when unknown or unsupported. */
+    var cameraWifiChannel by mutableStateOf<Int?>(null)
+        private set
+
+    /** Read the hotspot channel so the picker can show which one is live. */
+    fun readWifiChannel() = runOp(Op.Wifi) { proto, s ->
+        val ch = proto.getWifiChannel(s)
+        cameraWifiChannel = ch
+        if (ch == null) CmdResult.Failure("这台相机没有回读 Wi-Fi 信道（getwifichannel.cgi 未给出 wifichannel）")
+        else CmdResult.Ok
+    }
+
+    /** Move the hotspot to [channel]; on success the row shows it as current. */
+    fun setWifiChannel(channel: Int) = runOp(Op.Wifi) { proto, s ->
+        val r = proto.setWifiChannel(s, channel)
+        if (r.isOk) cameraWifiChannel = channel
+        r
+    }
+
     fun formatSd() = runOp(Op.FormatSd) { proto, s ->
         Diag.w(LogTag.FILE) { "FORMAT SD requested — this erases the card" }
         val r = proto.formatSd(s)
@@ -1523,6 +1599,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             val relisted = proto.listFiles(s, 0, LISTING_PAGE)
             files = relisted
             filesExhausted = relisted.size < LISTING_PAGE
+            // B1: stamp the format so the settings page can say how long the card has run.
+            graph.prefs.putLong(formatKey(s), kotlinx.datetime.Clock.System.now().toEpochMilliseconds())
             runCatching { deviceStatus = proto.getStatus(s) }
             Diag.i(LogTag.FILE) { "format done, listing now ${files.size} files" }
         }

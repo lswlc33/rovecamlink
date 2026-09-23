@@ -177,6 +177,22 @@ interface CameraProtocol {
     suspend fun getWifi(session: CameraSession): com.rovecamlink.app.core.model.CameraWifi? = null
 
     /**
+     * The channel the camera's own hotspot broadcasts on, or null when it cannot say.
+     *
+     * 2.4 GHz reaches further but is crowded by every neighbour's router; 5 GHz is clean
+     * and fast but drops through walls — which one a camera should use is a real decision
+     * a user makes about their own room, and it is invisible unless the app can read it.
+     */
+    suspend fun getWifiChannel(session: CameraSession): Int? = null
+
+    /**
+     * Move the hotspot to [channel]. Protocols without the command report a failure with
+     * the reason, and the UI shows it rather than leaving a silent no-op.
+     */
+    suspend fun setWifiChannel(session: CameraSession, channel: Int): CmdResult =
+        CmdResult.Failure("This camera cannot change its Wi-Fi channel")
+
+    /**
      * Put the camera back into **access-point** mode, i.e. raise the hotspot again
      * without Bluetooth.
      *
