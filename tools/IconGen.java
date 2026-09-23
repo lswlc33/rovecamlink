@@ -6,8 +6,15 @@ import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -28,6 +35,7 @@ import java.util.Map;
  *  - Background colour       res/values/ic_launcher_background.xml   (sampled from art)
  *  - iOS asset catalog       iosApp/iosApp/Assets.xcassets/AppIcon.appiconset/
  *  - Store/marketing PNG     docs/app-icon-512.png
+ *  - Windows launcher ICO    composeApp/icons/RoveCamLink.ico
  */
 public final class IconGen {
 
@@ -89,7 +97,97 @@ public final class IconGen {
         File docs = new File(root, "docs");
         docs.mkdirs();
         writePng(rounded(art, 512, LEGACY_CORNER), new File(docs, "app-icon-512.png"));
+
+        // Windows: one .ico carrying every size the shell asks for. jpackage embeds it into the
+        // launcher exe, so without it the window, the taskbar button and the Start-menu shortcut
+        // all fall back to Java's default cup icon.
+        writeIco(new File(root, "composeApp/icons/RoveCamLink.ico"), art);
         System.out.println("done");
+    }
+
+    /** Largest first: the shell picks the first entry that covers the size it needs. */
+    static final int[] ICO_SIZES = {256, 128, 64, 48, 32, 16};
+
+    /**
+     * ICO container. Entries of 64px and up are PNG-compressed (that is how a 256px entry has to
+     * be stored); the shell's small sizes stay classic 32bpp DIBs, which every reader of an .ico
+     * resource — WiX's resource compiler, Explorer, the taskbar — is guaranteed to accept.
+     */
+    static void writeIco(File f, BufferedImage art) throws Exception {
+        byte[][] images = new byte[ICO_SIZES.length][];
+        for (int i = 0; i < ICO_SIZES.length; i++) {
+            int size = ICO_SIZES[i];
+            BufferedImage img = rounded(art, size, LEGACY_CORNER);
+            ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            if (size >= 64) {
+                if (!ImageIO.write(img, "png", buf)) throw new IllegalStateException("no PNG writer");
+            } else {
+                buf.write(dib(img));
+            }
+            images[i] = buf.toByteArray();
+        }
+
+        f.getParentFile().mkdirs();
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(f))) {
+            le16(out, 0);                    // reserved
+            le16(out, 1);                    // resource type: icon
+            le16(out, ICO_SIZES.length);
+            int offset = 6 + 16 * ICO_SIZES.length;
+            for (int i = 0; i < ICO_SIZES.length; i++) {
+                int dim = ICO_SIZES[i] >= 256 ? 0 : ICO_SIZES[i];   // 0 is how 256 is encoded
+                out.write(dim);              // width
+                out.write(dim);              // height
+                out.write(0);                // palette entries
+                out.write(0);                // reserved
+                le16(out, 1);                // colour planes
+                le16(out, 32);               // bits per pixel
+                le32(out, images[i].length);
+                le32(out, offset);
+                offset += images[i].length;
+            }
+            for (byte[] image : images) out.write(image);
+        }
+        System.out.println("ico: " + ICO_SIZES.length + " sizes");
+    }
+
+    /**
+     * 32bpp BGRA bottom-up DIB followed by the 1bpp AND mask, without a BITMAPFILEHEADER — the
+     * form an ICO entry uses. The mask is left all zero because the alpha channel already
+     * carries the rounded corners.
+     */
+    static byte[] dib(BufferedImage img) {
+        int size = img.getWidth();
+        int maskRow = ((size + 31) / 32) * 4;
+        ByteBuffer buf = ByteBuffer
+            .allocate(40 + size * size * 4 + maskRow * size)
+            .order(ByteOrder.LITTLE_ENDIAN);
+        buf.putInt(40);                       // biSize
+        buf.putInt(size);
+        buf.putInt(size * 2);                 // XOR bitmap stacked with the AND mask
+        buf.putShort((short) 1);              // biPlanes
+        buf.putShort((short) 32);             // biBitCount
+        buf.putInt(0);                        // BI_RGB
+        buf.putInt(size * size * 4 + maskRow * size);
+        for (int i = 0; i < 4; i++) buf.putInt(0);   // ppm x/y, clrUsed, clrImportant
+        for (int y = size - 1; y >= 0; y--) {
+            for (int x = 0; x < size; x++) {
+                int p = img.getRGB(x, y);
+                buf.put((byte) p);                    // B
+                buf.put((byte) (p >> 8));             // G
+                buf.put((byte) (p >> 16));            // R
+                buf.put((byte) (p >> 24));            // A
+            }
+        }
+        return buf.array();
+    }
+
+    static void le16(OutputStream out, int v) throws IOException {
+        out.write(v & 0xFF);
+        out.write((v >> 8) & 0xFF);
+    }
+
+    static void le32(OutputStream out, int v) throws IOException {
+        for (int s = 0; s < 32; s += 8) out.write((v >> s) & 0xFF);
     }
 
     /**

@@ -98,6 +98,10 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 4
+        // 这一行是全仓库唯一的版本号来源：nightly.yml 与 release.yml 都用 sed 从它取
+        // versionName（前者拼进包名，后者比对 tag）。换成变量会让 CI 取到空值：nightly
+        // 包名变成 unknown，release 的 tag 校验直接红。桌面包在下面的 compose.desktop
+        // 块里回读同一个值，不再单独写第二份。
         versionName = "0.1.3"
     }
 
@@ -174,7 +178,34 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Dmg, TargetFormat.Deb)
             packageName = "RoveCamLink"
-            packageVersion = "1.0.0"
+            // 回读 android 那份版本号，桌面包不再单独写死（以前写死 1.0.0，
+            // 「应用和功能」里显示的是一个和 App 无关的版本）。
+            packageVersion = android.defaultConfig.versionName
+                ?: error("android.defaultConfig.versionName is null")
+            vendor = "RoveCamLink"
+            // 只能 ASCII：jpackage.exe 用本机 ANSI 码页（这里是 GBK）读 Gradle 写给它的
+            // @argfile，中文的 UTF-8 字节会让它在 "Input length = 1" 直接失败。
+            // App 界面本身仍是全中文，这里只是安装器元数据。
+            description = "RoveCamLink - action camera connection and media manager"
+            copyright = "Copyright 2026 RoveCamLink contributors"
+
+            windows {
+                // 不打图标的话 exe、任务栏、快捷方式全是 jpackage 默认的 Java 杯子。
+                // .ico 由 tools/IconGen.java 从 相机 app/icon.png 生成。
+                iconFile = project.file("icons/RoveCamLink.ico")
+                // 装到当前用户，不弹 UAC、不需要管理员；这台机器上就是自己用。
+                perUserInstall = true
+                menuGroup = "RoveCamLink"
+                shortcut = true
+            }
+
+            macOS {
+                // Apple 的打包格式要求 MAJOR > 0，而 App 现在还是 0.x.y，所以只有 .dmg
+                // 这两个字段顶成 1.0.0；Windows 与 Debian 包照用 versionName。
+                // 版本到 1.0.0 之后可以连着这两行一起删掉。
+                dmgPackageVersion = "1.0.0"
+                dmgPackageBuildVersion = "1.0.0"
+            }
         }
     }
 }
