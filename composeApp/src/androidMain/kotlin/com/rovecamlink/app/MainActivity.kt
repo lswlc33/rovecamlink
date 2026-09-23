@@ -113,7 +113,9 @@ class MainActivity : ComponentActivity() {
         PermissionBridge.attach { perms -> requestPermissions.launch(perms) }
 
         setContent {
-            App()
+            com.rovecamlink.app.ui.theme.RoveMiuixTheme {
+                App()
+            }
         }
     }
 

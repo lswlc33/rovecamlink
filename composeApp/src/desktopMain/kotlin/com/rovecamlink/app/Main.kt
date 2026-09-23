@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import com.rovecamlink.app.ui.theme.RoveMiuixTheme
 
 fun main() = application {
     Window(
@@ -11,6 +12,8 @@ fun main() = application {
         title = "RoveCamLink",
         state = rememberWindowState(width = 420.dp, height = 860.dp),
     ) {
-        App()
+        RoveMiuixTheme {
+            App()
+        }
     }
 }

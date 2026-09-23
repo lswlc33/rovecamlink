@@ -1,6 +1,6 @@
 # RoveCamLink
 
-开源运动相机连接 App，**Android 优先**。基于 **Kotlin Multiplatform + Compose Multiplatform + Compose Cupertino** 构建，通过 Wi-Fi 直连运动相机，提供 RTSP 实时图传与文件传输；协议层以插件形式组织，接入新相机/新品牌无需改动核心与 UI。
+开源运动相机连接 App，**Android 优先**。基于 **Kotlin Multiplatform + Compose Multiplatform + miuix** 构建，通过 Wi-Fi 直连运动相机，提供 RTSP 实时图传与文件传输；协议层以插件形式组织，接入新相机/新品牌无需改动核心与 UI。
 
 > 官方 App 臃肿卡顿。RoveCamLink 的目标是精简、快速、可扩展。
 
@@ -24,7 +24,7 @@ CI 只有两条工作流：`Nightly`（日常构建，装测试就认它）和 `
 
 ```
 composeApp/
-  commonMain/   共享 UI（Compose Cupertino）、状态、协议、传输
+  commonMain/   共享 UI（miuix）、状态、协议、传输
     core/model      数据模型（会话、状态、设置、文件、事件）
     core/transport  Ktor HTTP 客户端（文本/字节/断点续传下载）
     core/protocol   CameraProtocol 接口 + 注册表（插件点）
@@ -85,7 +85,7 @@ cd iosApp && xcodegen generate && open RoveCamLink.xcodeproj
 - [x] RTSP 实时图传（Media3，Android）
 - [x] 文件传输（列表 / 缩略图 / 断点续传下载 / 发布到相册）
 - [x] 文件缩略图应用内解码，删除前二次确认
-- [x] Compose Cupertino UI
+- [x] miuix UI
 - [x] 桌面相机模拟器
 - [x] 可安装的调试 APK
 - [x] 详细诊断日志（应用内实时预览 + TXT 导出/分享，默认脱敏）

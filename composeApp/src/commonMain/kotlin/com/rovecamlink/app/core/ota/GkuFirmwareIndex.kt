@@ -172,7 +172,7 @@ object GkuFirmwareIndex {
 
     /**
      * HTML fragment → the lines the user actually reads. `<p>` becomes a line break and
-     * every other tag is dropped, because a Cupertino list has no rich text to put them
+     * every other tag is dropped, because the settings rows have no rich text to put them
      * in. Entities are left alone: `docs/08` shows the vendor's notes use plain prose,
      * and inventing an entity table is a guess at content we have not seen.
      */

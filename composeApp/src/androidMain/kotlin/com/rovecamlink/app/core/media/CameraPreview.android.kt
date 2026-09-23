@@ -32,7 +32,7 @@ import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.rtsp.RtspMediaSource
 import androidx.media3.exoplayer.source.MediaSource
-import com.robinpcrd.cupertino.CupertinoText
+import top.yukonga.miuix.kmp.basic.Text
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogTag
@@ -313,7 +313,7 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                         }
                         .padding(horizontal = 12.dp, vertical = 6.dp),
                 ) {
-                    CupertinoText(
+                    Text(
                         stringResource(Res.string.preview_stalled),
                         color = Color.White,
                         fontSize = 12.sp,
@@ -321,7 +321,7 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                 }
             }
         } else {
-            CupertinoText(stringResource(Res.string.preview_none), color = Color(0xFF8E8E93))
+            Text(stringResource(Res.string.preview_none), color = Color(0xFF8E8E93))
         }
     }
 }

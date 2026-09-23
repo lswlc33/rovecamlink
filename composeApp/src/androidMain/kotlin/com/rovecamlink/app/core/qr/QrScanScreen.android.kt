@@ -43,9 +43,9 @@ import com.rovecamlink.app.cancel
 import com.rovecamlink.app.qr_hint_camera_permission
 import com.rovecamlink.app.qr_hint_no_wifi
 import com.rovecamlink.app.qr_hint_point
-import com.robinpcrd.cupertino.CupertinoButton
-import com.robinpcrd.cupertino.CupertinoButtonDefaults
-import com.robinpcrd.cupertino.CupertinoText
+import top.yukonga.miuix.kmp.basic.Button
+import top.yukonga.miuix.kmp.basic.ButtonDefaults
+import top.yukonga.miuix.kmp.basic.Text
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
@@ -116,17 +116,17 @@ actual fun QrScanScreen(onResult: (QrWifiCredentials?) -> Unit, onClose: () -> U
             verticalArrangement = Arrangement.spacedBy(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            CupertinoText(
+            Text(
                 text = hint,
                 color = Color.White,
                 modifier = Modifier
                     .background(Color(0xB3000000), RoundedCornerShape(10.dp))
                     .padding(horizontal = 12.dp, vertical = 8.dp),
             )
-            CupertinoButton(
+            Button(
                 onClick = onClose,
-                colors = CupertinoButtonDefaults.grayButtonColors(),
-            ) { CupertinoText(cancelLabel) }
+                colors = ButtonDefaults.buttonColors(),
+            ) { Text(cancelLabel) }
         }
     }
 }

@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.qr_unavailable_ios
-import com.robinpcrd.cupertino.CupertinoText
+import top.yukonga.miuix.kmp.basic.Text
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -17,6 +17,6 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 actual fun QrScanScreen(onResult: (QrWifiCredentials?) -> Unit, onClose: () -> Unit) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CupertinoText(stringResource(Res.string.qr_unavailable_ios))
+        Text(stringResource(Res.string.qr_unavailable_ios))
     }
 }

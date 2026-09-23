@@ -44,7 +44,15 @@ import kotlin.concurrent.thread
  */
 
 private var recording = false
-private var workMode = "NormalVideo"
+private var workMode = "Normal Video"
+
+/**
+ * The mode names are the firmware's own spellings, spaces included: the app labels the
+ * strip through `ModeCatalog`, which is keyed on what a real camera answers, so a made-up
+ * `NormalVideo` would show the raw token where 普通录像 belongs.
+ */
+private val videoModes = setOf("Normal Video", "Car Looping", "Timelapse Video", "Slow Motion")
+private val photoModes = setOf("Normal Photo", "Timing Photo", "Burst Photo")
 private var simTime: String? = null
 private var softVersion = "1.0.4"
 private var uploadedFirmwareName: String? = null
@@ -186,9 +194,9 @@ private fun handleCgi(cmd: String, q: io.ktor.http.Parameters): String? = when (
     "setcamerastatus" -> { recording = q["-status"] == "20"; "Success" }
 
     "getcurworkmode" -> varargBody("workmode" to workMode, "value" to workMode)
-    "getallworkmode" -> varargBody("photo" to "NormalPhoto,TimerPhoto,Burst", "video" to "NormalVideo,CarMode,VideoLapse,SlowRec")
+    "getallworkmode" -> varargBody("photo" to photoModes.joinToString(","), "video" to videoModes.joinToString(","))
     "setcurworkmode" -> { workMode = q["-workmode"] ?: workMode; "Success" }
-    "getworkmode" -> varargBody("workmode" to if (workMode.contains("Video")) "20" else "0")
+    "getworkmode" -> varargBody("workmode" to if (workMode in videoModes) "20" else "0")
     "setworkmode" -> "Success"
 
     "getprimarymenuitem" -> varargBody(
@@ -263,7 +271,7 @@ private fun handleCgi(cmd: String, q: io.ktor.http.Parameters): String? = when (
     }
     "reset" -> {
         recording = false
-        workMode = "NormalVideo"
+        workMode = "Normal Video"
         settings.clear()
         println("SIM: factory reset")
         "Success"

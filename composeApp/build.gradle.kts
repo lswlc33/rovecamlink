@@ -26,7 +26,9 @@ kotlin {
     }
 
     listOf(
-        iosX64(),
+        // iosX64 (the Intel simulator) is gone: Compose 1.12 publishes no artifact for it,
+        // which makes the whole appleMain source set fail to resolve. Do not add it back
+        // without checking the runtime/foundation variants exist for that version.
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
@@ -45,8 +47,9 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
-            implementation(libs.cupertino)
-            implementation(libs.cupertino.icons.extended)
+            implementation(libs.miuix.ui)
+            implementation(libs.miuix.preference)
+            implementation(libs.miuix.icons)
 
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
@@ -91,7 +94,10 @@ kotlin {
 
 android {
     namespace = "com.rovecamlink.app"
-    compileSdk = 35
+    // miuix 0.9.4 的每个 aar 都在 metadata 里要求 compileSdk >= 37，写在 35 上
+    // :checkDebugAarMetadata 会直接红。targetSdk 留在 35：运行时行为不动，
+    // AAR 检查只卡 compileSdk。
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.rovecamlink.app"

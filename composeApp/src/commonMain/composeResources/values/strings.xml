@@ -75,6 +75,8 @@
     <string name="hint_photo_needs_photo_mode">Switch to Photo mode first — this camera cannot take a still while it is in video mode.</string>
     <string name="preview_none">No preview</string>
     <string name="preview_stalled">Preview stalled · tap to reconnect</string>
+    <string name="preview_no_decoder_desktop">This build does not decode the live stream; preview is on Android.\n%1$s</string>
+    <string name="preview_no_decoder_ios">Live preview is not wired up on iOS yet.\n%1$s</string>
 
     <!-- Files screen -->
     <string name="action_refresh_files">Refresh file list</string>
@@ -333,4 +335,40 @@
     <string name="label_unknown_date">Unknown date</string>
     <string name="action_raise_access_point">Make the camera broadcast its hotspot again</string>
     <string name="hint_device_action">Some items on this camera are actions, not settings — use the buttons below them.</string>
+
+    <!-- Top-bar overflow menu + the pages it reaches. -->
+    <string name="action_more">More</string>
+    <string name="menu_follow">Auto-follow</string>
+    <string name="menu_filter_sort">Filter &amp; sort</string>
+    <string name="menu_log_settings">Logging settings</string>
+
+    <!-- Appearance picker (Software tab). -->
+    <string name="section_appearance">Appearance</string>
+    <string name="appearance_system">Follow system</string>
+    <string name="appearance_dark">Dark</string>
+    <string name="appearance_light">Light</string>
+
+    <!-- Software tab rows. -->
+    <string name="action_view_log">View diagnostics log</string>
+    <string name="action_log_settings">Logging settings</string>
+    <string name="action_about">About</string>
+    <string name="action_ui_test_mode">UI test mode</string>
+    <string name="hint_ui_test_mode">Fills every page with a canned camera so the layout can be checked with nothing connected. Writes go nowhere.</string>
+
+    <!-- About page. -->
+    <string name="about_title">About</string>
+    <string name="about_version">Version</string>
+    <string name="about_protocols">Supported cameras</string>
+    <string name="about_licenses">Open-source licenses</string>
+    <string name="about_license_body">This app is built on Compose Multiplatform and the miuix UI library (Apache-2.0), plus Ktor, Okio and kotlinx.coroutines. Each retains its own license.</string>
+
+    <!-- Files filter / sort. -->
+    <string name="filter_type_all">All</string>
+    <string name="filter_type_video">Video</string>
+    <string name="filter_type_photo">Photo</string>
+    <string name="sort_by_name">Name</string>
+    <string name="sort_by_size">Size</string>
+    <string name="sort_ascending">Ascending</string>
+    <string name="sort_descending">Descending</string>
+    <string name="files_filter_line">%1$s · %2$s %3$s</string>
 </resources>
