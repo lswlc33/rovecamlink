@@ -487,13 +487,8 @@ fun LiveScreen(state: AppState) {
         else -> stringResource(Res.string.action_photo)
     }
 
-    val statusTitle = stringResource(Res.string.section_status).sectionTitle()
     val modeTitle = stringResource(Res.string.section_capture_mode).sectionTitle()
-    val batteryLbl = stringResource(Res.string.label_battery)
     val modeLbl = stringResource(Res.string.label_mode)
-    val recLbl = stringResource(Res.string.label_rec)
-    val sdFreeLbl = stringResource(Res.string.label_sd_free)
-    val photoCountLbl = stringResource(Res.string.label_photo_count)
     val lockedLbl = stringResource(Res.string.label_locked)
     val rotateLbl = stringResource(Res.string.hint_rotate_picture)
     val lockedModeMsg = stringResource(Res.string.hint_locked_mode)
@@ -536,24 +531,27 @@ fun LiveScreen(state: AppState) {
                 Modifier.weight(1f).fillMaxWidth(),
                 contentPadding = PaddingValues(top = 4.dp, bottom = shutterBand),
             ) {
-                section(title = { CupertinoText(statusTitle) }) {
+                // One quiet line instead of a four-tile grid: each value is self-labelling
+                // once it carries its icon (82% / 空闲 / 4 / 18 GB), so the tiles' labels
+                // and the 状态 header only cost height the live screen does not have.
+                // The mode row stays in the same card as its second row.
+                section {
                     item {
                         Row(
-                            Modifier.fillMaxWidth().padding(it).padding(vertical = 6.dp),
+                            Modifier.fillMaxWidth().padding(it).padding(vertical = SectionV),
                             horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            StatTile(
+                            StatChip(
                                 CupertinoIcons.Filled.Bolt,
-                                batteryLbl,
                                 st?.battery?.let { "$it%" } ?: "—",
                                 CupertinoColors.systemGreen,
                             )
                             // The elapsed time lives on the picture itself now, where it
-                            // is read against the framing; this tile only says which of
+                            // is read against the framing; this chip only says which of
                             // the three states the camera is in.
-                            StatTile(
+                            StatChip(
                                 CupertinoIcons.Filled.RecordCircle,
-                                recLbl,
                                 when {
                                     recording -> stringResource(Res.string.rec_recording)
                                     busy -> recBusyLbl
@@ -565,15 +563,13 @@ fun LiveScreen(state: AppState) {
                                     else -> scheme.tertiaryLabel
                                 },
                             )
-                            StatTile(
+                            StatChip(
                                 CupertinoIcons.Filled.Photo,
-                                photoCountLbl,
                                 st?.photoCount?.toString() ?: "—",
                                 scheme.secondaryLabel,
                             )
-                            StatTile(
+                            StatChip(
                                 CupertinoIcons.Filled.Externaldrive,
-                                sdFreeLbl,
                                 st?.sdFreeMb?.let { humanBytes(it * 1024 * 1024) } ?: "—",
                                 scheme.secondaryLabel,
                             )
@@ -1232,19 +1228,14 @@ private fun WorkMode.workModeFamily(): ModeFamily =
     if (this == WorkMode.VIDEO) ModeFamily.VIDEO else ModeFamily.PHOTO
 
 @Composable
-private fun StatTile(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, value: String, tint: Color) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+/** One inline stat: the icon carries the meaning, the word or number carries the value. */
+private fun StatChip(icon: androidx.compose.ui.graphics.vector.ImageVector, value: String, tint: Color) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        CupertinoIcon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(18.dp))
-        CupertinoText(value, fontWeight = FontWeight.SemiBold, fontSize = 15.sp, maxLines = 1)
-        CupertinoText(
-            label,
-            color = CupertinoTheme.colorScheme.secondaryLabel,
-            fontSize = 11.sp,
-            maxLines = 1,
-        )
+        CupertinoIcon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(14.dp))
+        CupertinoText(value, fontWeight = FontWeight.SemiBold, fontSize = 13.sp, maxLines = 1)
     }
 }
 
