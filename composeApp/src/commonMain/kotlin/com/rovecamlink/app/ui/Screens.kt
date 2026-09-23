@@ -559,7 +559,7 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
             // ask for the rest. Hidden once the listing is exhausted, so an ordinary card
             // never shows a button that would do nothing.
             if (!state.filesExhausted && state.files.isNotEmpty()) {
-                section {
+                section(card = false) {
                     actionRow(loadMoreLbl, busy = state.isBusy(Op.Refresh)) { state.loadMoreFiles() }
                 }
             }
@@ -1060,7 +1060,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                         }
                     }
                 }
-                section {
+                section(card = false) {
                     actionRow(reloadLabel, busy = state.isBusy(Op.Settings)) { state.loadSettings() }
                 }
             }
@@ -1077,7 +1077,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                             }
                         }
                     }
-                    section {
+                    section(card = false) {
                         actionRow(reloadLabel, busy = state.isBusy(Op.Settings)) {
                             state.loadDeviceSettings()
                         }
@@ -1322,7 +1322,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                     ) { pending = DangerOp.Sleep }
                 }
 
-                section(title = dangerTitle) {
+                section(title = dangerTitle, card = false) {
                     if (state.canRebootCamera()) {
                         actionRow(rebootLbl, busy = state.isBusy(Op.Reboot)) { pending = DangerOp.Reboot }
                     }
@@ -1360,7 +1360,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                     )
                 }
                 // 查看日志 / 日志设置 / 关于: each pushes its own page onto the shell's stack.
-                section(title = appSettingsTitle) {
+                section(title = appSettingsTitle, card = false) {
                     actionRow(viewLogLbl) { state.pushPage(com.rovecamlink.app.Page.Log) }
                     actionRow(logSettingsRowLbl) { state.pushPage(com.rovecamlink.app.Page.LogSettings) }
                     actionRow(aboutRowLbl) { state.pushPage(com.rovecamlink.app.Page.About) }

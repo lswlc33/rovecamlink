@@ -24,6 +24,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -107,6 +109,18 @@ private val CardInset = 12.dp
 private val SectionGap = 12.dp
 
 /**
+ * The content padding [MiuixPage] handed its list, published to the items inside it.
+ *
+ * An item can ask for the full height of the list it lives in with `fillParentMaxHeight()`,
+ * but that height is measured *including* the padding bands — and the item is then placed
+ * at `contentPadding.top`. An empty state centred inside that box therefore lands half a
+ * bar-height below the middle of the screen, which is exactly what the 2026-09-24 field
+ * report showed. Re-publishing the padding lets [notConnectedItem] subtract the bands and
+ * centre in what the user can actually see.
+ */
+private val LocalListContentPadding = compositionLocalOf { PaddingValues(0.dp) }
+
+/**
  * One page of the app.
  *
  * The upstream demo gives every page its own `Scaffold` and collapsible `TopAppBar`, so
@@ -128,20 +142,19 @@ fun MiuixPage(
     navigationIcon: @Composable () -> Unit = {},
     menuItems: List<AppBarMenuItem> = emptyList(),
     actions: @Composable RowScope.() -> Unit = { AppBarActions(state, menuItems) },
-    bottomContent: @Composable () -> Unit = {},
+    bottomContent: (@Composable () -> Unit)? = null,
     header: (@Composable () -> Unit)? = null,
     floating: @Composable BoxScope.() -> Unit = {},
     listBottomInset: Dp = 0.dp,
     listState: LazyListState = rememberLazyListState(),
     content: LazyListScope.() -> Unit,
 ) {
-    // A pinned [header] sits *above* the list rather than over it, so the list is laid out
-    // below it and nothing scrolls through the band it occupies — content under a pinned
-    // block is content nobody can tap. The bar stops collapsing in that arrangement: a bar
-    // that shrank from under a fixed header would walk the header up the screen a few dp
-    // per gesture, and the live page's header is a video surface that would have to be
-    // measured again each time.
-    val scrollBehavior = if (header == null) MiuixScrollBehavior() else null
+    // The bar always collapses. It used to stop doing so whenever a [header] was pinned,
+    // which left the live page's 「实时」 title and its 40dp-plus line of vertical air
+    // permanently on screen — the 2026-09-24 report asked for it back. The header below
+    // follows the bar up (it is padded by the bar's *current* height) but is laid out
+    // outside the list, so it can never scroll away: 收起顶栏可以，图传不能跟着走。
+    val scrollBehavior = MiuixScrollBehavior()
     // The bar has exactly one documented slot for a textual status — `subtitle` — and
     // `actions` is for icons, so the connection state reads as the bar's second line
     // instead of as a chip bolted on beside the menu button.
@@ -156,34 +169,35 @@ fun MiuixPage(
                 scrollBehavior = scrollBehavior,
                 navigationIcon = navigationIcon,
                 actions = actions,
-                bottomContent = bottomContent,
+                bottomContent = bottomContent ?: {},
             )
         },
     ) { innerPadding ->
         val barHeight = innerPadding.calculateTopPadding()
         val room = outerPadding.calculateBottomPadding() + listBottomInset
+        // A page whose bar carries [bottomContent] — the settings tabs are the only one —
+        // has that block sitting on the list's first row unless the list starts below it.
+        // The bar's own height already covers the block; the gap is the rhythm the rest of
+        // the page keeps, so the first card does not read as attached to the tabs.
+        val underBar = if (bottomContent == null) 0.dp else SectionGap
         val contentPadding = PaddingValues(
-            top = if (header == null) barHeight else 0.dp,
+            top = if (header == null) barHeight + underBar else 0.dp,
             bottom = room,
         )
         val listModifier = Modifier
             .overScrollVertical()
-            .then(
-                if (scrollBehavior == null) {
-                    Modifier
-                } else {
-                    Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-                },
-            )
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
             .fillMaxHeight()
         val list: @Composable () -> Unit = {
             Box(Modifier.fillMaxSize()) {
-                LazyColumn(
-                    state = listState,
-                    contentPadding = contentPadding,
-                    modifier = listModifier,
-                ) {
-                    content()
+                CompositionLocalProvider(LocalListContentPadding provides contentPadding) {
+                    LazyColumn(
+                        state = listState,
+                        contentPadding = contentPadding,
+                        modifier = listModifier,
+                    ) {
+                        content()
+                    }
                 }
                 VerticalScrollBar(
                     adapter = rememberScrollBarAdapter(listState),
@@ -213,17 +227,28 @@ fun MiuixPage(
  * Replaces the two heading levels this app used to have — a section title *and* a
  * coloured group header inside it. Two headings over one list of settings was one
  * heading too many, and the library only has the one.
+ *
+ * [card] is for the blocks that are nothing but buttons. A card is what makes a group of
+ * *rows* read as one control surface; wrapped around a single button it is a border with
+ * nothing to group, and the 2026-09-24 report called it out (「只有按钮一个的时候，按钮还包了
+ * 一个边」). The un-carded branch keeps the card's own insets, so the buttons land on
+ * exactly the same pixels they did inside it.
  */
-fun LazyListScope.section(title: String? = null, content: @Composable ColumnScope.() -> Unit) {
+fun LazyListScope.section(
+    title: String? = null,
+    card: Boolean = true,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     item {
         if (title != null) SmallTitle(title)
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = CardInset)
-                .padding(bottom = SectionGap),
-        ) {
-            content()
+        val modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = CardInset)
+            .padding(bottom = SectionGap)
+        if (card) {
+            Card(modifier) { content() }
+        } else {
+            Column(modifier) { content() }
         }
     }
 }
@@ -407,8 +432,19 @@ fun ProgressLine(progress: Float) {
 /** The app's empty state: nothing is wrong, there is just no camera on the other end. */
 fun LazyListScope.notConnectedItem() {
     item {
+        // `fillParentMaxHeight()` measures the whole list, padding bands included, and the
+        // item is then placed *below* the top band — so without subtracting the bands the
+        // centre of this box sits half a bar-height below the centre of the screen, which
+        // is the 「未连接界面没有居中」 in the 2026-09-24 report.
+        val insets = LocalListContentPadding.current
         Box(
-            Modifier.fillParentMaxHeight().padding(24.dp),
+            Modifier
+                .fillParentMaxHeight()
+                .padding(
+                    top = insets.calculateTopPadding(),
+                    bottom = insets.calculateBottomPadding(),
+                )
+                .padding(24.dp),
             contentAlignment = Alignment.Center,
         ) {
             Column(

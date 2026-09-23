@@ -222,6 +222,16 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     private val workModeUnsupported = mutableSetOf<String>()
 
     /**
+     * Hosts whose `getallworkmode.cgi` answer arrived cut short.
+     *
+     * An odd number of quotes in the body means the firmware's buffer ran out mid
+     * statement, and a list that stops early is indistinguishable from a list that is
+     * genuinely short — so [listModes] treats the whole table as untrustworthy and
+     * asks the read-only probe to complete it. See [workModeNames].
+     */
+    private val workModeTruncated = mutableSetOf<String>()
+
+    /**
      * The named mode list resolved per host — from `getallworkmode.cgi` when the
      * firmware answers it, otherwise from [probeModes]. Static for a camera's life,
      * so it is resolved once per session like [workModeCache].
@@ -237,6 +247,11 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         val loaded = runCatching {
             val body = http.getText("${cgi(session.host, session.port)}/getallworkmode.cgi") ?: return@runCatching emptyMap()
             val parsed = HiVarParser.parse(body)
+            // An unclosed statement is the firmware's buffer giving out mid-answer, and
+            // what it did send is then a *prefix* of the truth — [HiVarParser] keeps the
+            // longest statement per key, but a key whose only statement was the cut one
+            // still holds a short list. Flag the host so [listModes] completes it.
+            if (body.count { it == '"' } % 2 == 1) workModeTruncated.add(session.host)
             mapOf(
                 "video" to parsed["video"].csvOrList(),
                 "photo" to parsed["photo"].csvOrList(),
@@ -259,6 +274,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     override fun onSessionClosed(session: CameraSession) {
         workModeCache.remove(session.host)
         workModeUnsupported.remove(session.host)
+        workModeTruncated.remove(session.host)
         namedModeCache.remove(session.host)
         menuCache.remove(session.host)
         deviceMenuCache.remove(session.host)
@@ -305,17 +321,47 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         namedModeCache[session.host]?.let { return it }
         val table = workModeNames(session)
         val modes = if (table.isNotEmpty()) {
+            // What the firmware's own answer did not cover: a family it left out
+            // altogether, or — when the answer was cut short — everything, because a
+            // truncated list can be short in the middle and no name can be pointed at
+            // as the lost one. A complete answer matches nothing here and costs no
+            // camera request at all.
+            val wanted = if (session.host in workModeTruncated) {
+                HiModes.candidates
+            } else {
+                HiModes.candidates.filter { (family, _) ->
+                    when (family) {
+                        ModeFamily.VIDEO -> table["video"].orEmpty().isEmpty()
+                        ModeFamily.PHOTO -> table["photo"].orEmpty().isEmpty()
+                        else -> false
+                    }
+                }
+            }
+            val recovered = if (wanted.isEmpty()) emptyList() else probeModes(session, wanted).orEmpty()
             buildList {
                 table["video"].orEmpty().forEach { add(HiModes.modeFor(it, ModeFamily.VIDEO)) }
                 table["photo"].orEmpty().forEach { add(HiModes.modeFor(it, ModeFamily.PHOTO)) }
-            }.also {
+                // Appended, never merged into the firmware's own order: what the camera
+                // said comes first and in its spelling, and this only adds what it did
+                // not say. [ModeCatalog] labels an unknown name with the name itself, so
+                // a recovered mode shows the firmware's token rather than nothing.
+                val known = map { it.name }.toSet()
+                recovered.filterNot { it.name in known }.forEach { add(it) }
+            }.also { list ->
                 // Per-family counts, not just the total: the 2026-09-22 report of
                 // "没有录像模式" was a `video` list truncated to one entry, and
                 // `n=7` alone did not say which family had lost modes.
                 Diag.i(LogTag.PROTO) {
-                    "modes from getallworkmode: n=${it.size} " +
-                        "video=${table["video"].orEmpty().size} photo=${table["photo"].orEmpty().size} " +
-                        it.joinToString(",") { m -> m.name }.take(240)
+                    buildString {
+                        append("modes from getallworkmode: n=").append(list.size)
+                        append(" video=").append(table["video"].orEmpty().size)
+                        append(" photo=").append(table["photo"].orEmpty().size)
+                        if (recovered.isNotEmpty()) {
+                            append(" recovered-by-probe=").append(recovered.size)
+                            append(" (").append(recovered.joinToString(",") { m -> m.name }).append(")")
+                        }
+                        append(" ").append(list.joinToString(",") { m -> m.name }.take(240))
+                    }
                 }
             }
         } else {
@@ -344,14 +390,21 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
      * An empty body is not a "no": `getcamerastatus.cgi` answers exactly that on the
      * S7PRO while still being a live endpoint, so one silent candidate is skipped
      * rather than ending the run.
+     *
+     * [candidates] is the full table by default; [listModes] passes a subset when the
+     * firmware's own answer was short, so a table that only lost its photo modes does
+     * not re-ask about all twenty-two.
      */
-    private suspend fun probeModes(session: CameraSession): List<CameraMode>? {
+    private suspend fun probeModes(
+        session: CameraSession,
+        candidates: List<Pair<ModeFamily, String>> = HiModes.candidates,
+    ): List<CameraMode>? {
         val base = cgi(session.host, session.port)
         val found = ArrayList<CameraMode>()
         val absent = ArrayList<String>()
         val silent = ArrayList<String>()
         var stopped: String? = null
-        for ((family, name) in HiModes.candidates) {
+        for ((family, name) in candidates) {
             val body = http.getText("$base/getprimarymenuitem.cgi?-workmode=${param(name)}")
             when (val verdict = Cgi.verdict(body)) {
                 is CgiReply.Accepted -> {

@@ -877,6 +877,10 @@ private fun Chip(
                 horizontal = if (small) 10.dp else 14.dp,
                 vertical = if (small) 3.dp else 6.dp,
             ),
+        // Without this the box defaults to TopStart and the `heightIn` slack all lands
+        // under the label, which is why the quick-adjust rows read as riding high
+        // (2026-09-24 「部分文字没有上下居中」).
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = label,

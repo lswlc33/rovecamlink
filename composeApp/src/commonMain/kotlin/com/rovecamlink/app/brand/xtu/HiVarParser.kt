@@ -49,8 +49,14 @@ object HiVarParser {
             if (body[j] == '"') {
                 val close = body.indexOf('"', j + 1)
                 if (close < 0) {
-                    value = body.substring(j + 1)
-                    i = n
+                    // The firmware's buffer ran out mid-statement and this is all that
+                    // arrived. Take the fragment only as far as the next separator: the
+                    // old code took the *rest of the body*, which both invented values
+                    // and hid statements that had arrived intact behind it.
+                    var end = j + 1
+                    while (end < n && body[end] != ';' && body[end] != '\n' && body[end] != '\r') end++
+                    value = body.substring(j + 1, end)
+                    i = end
                 } else {
                     value = body.substring(j + 1, close)
                     i = close + 1
@@ -74,8 +80,8 @@ object HiVarParser {
      *
      *     var photo="Normal Photo,…,Raw Photo";var video="Normal Video,Car Looping,…,Night Scene";var video="Normal Video,
      *
-     * The last statement has no closing quote, so it swallows the rest of the body as
-     * a one-item list. A plain `map[key] = value` therefore let that fragment replace
+     * The last statement has no closing quote, so it is a fragment — `Normal Video,`
+     * and nothing else. A plain `map[key] = value` therefore let that fragment replace
      * the eight video modes above it, which is the 2026-09-22 field report of "拍照模式是完
      * 整的，录像模式全没了" — `modes from getallworkmode: n=7`.
      *

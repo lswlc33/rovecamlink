@@ -77,6 +77,18 @@ class HiCgiParsingTest {
     }
 
     @Test
+    fun `an unterminated statement stops at the separator, not at the end of the body`() {
+        // The same buffer exhaustion, with a bare assignment behind the cut — the only
+        // shape where this is reachable, because any *quoted* statement further on would
+        // give the unterminated value a closing quote to find. Reading the unterminated
+        // value to the end of the body absorbed the separator into the last mode name
+        // (`Sl;`) and swallowed the statement after it.
+        val vars = HiVarParser.parse("var video=\"Normal Video,Sl;\r\nvar state=21;\r\n")
+        assertEquals("Normal Video,Sl", vars["video"], "the fragment absorbed the separator")
+        assertEquals("21", vars["state"], "the statement after the cut was lost")
+    }
+
+    @Test
     fun `primary menu pairs each item with its own current value`() {
         val menu = HiMenu.parsePrimary(primaryMenuBody)
         assertEquals(20, menu.size)
