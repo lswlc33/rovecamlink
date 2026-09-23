@@ -1360,7 +1360,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                     )
                 }
                 // 查看日志 / 日志设置 / 关于: each pushes its own page onto the shell's stack.
-                section(title = appSettingsTitle, card = false) {
+                section(title = appSettingsTitle) {
                     actionRow(viewLogLbl) { state.pushPage(com.rovecamlink.app.Page.Log) }
                     actionRow(logSettingsRowLbl) { state.pushPage(com.rovecamlink.app.Page.LogSettings) }
                     actionRow(aboutRowLbl) { state.pushPage(com.rovecamlink.app.Page.About) }

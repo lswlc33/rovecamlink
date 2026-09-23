@@ -228,11 +228,11 @@ fun MiuixPage(
  * coloured group header inside it. Two headings over one list of settings was one
  * heading too many, and the library only has the one.
  *
- * [card] is for the blocks that are nothing but buttons. A card is what makes a group of
- * *rows* read as one control surface; wrapped around a single button it is a border with
+ * [card] is false only for a block that is a single action. A card is what makes a group of
+ * *rows* read as one control surface; wrapped around one lone button it is a border with
  * nothing to group, and the 2026-09-24 report called it out (「只有按钮一个的时候，按钮还包了
- * 一个边」). The un-carded branch keeps the card's own insets, so the buttons land on
- * exactly the same pixels they did inside it.
+ * 一个边」). The un-carded branch keeps the card's own insets, so the button lands on
+ * exactly the same pixels it did inside it.
  */
 fun LazyListScope.section(
     title: String? = null,
