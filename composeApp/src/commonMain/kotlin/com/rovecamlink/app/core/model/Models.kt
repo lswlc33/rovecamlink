@@ -114,8 +114,6 @@ data class CameraSession(
     val platform: DevicePlatform,
     val brand: Brand,
     val model: String,
-    /** Opaque auth token / seed where the protocol requires one (TUWIN REST). */
-    val authToken: String? = null,
     val baseUrl: String = "http://$host:$port",
     /** Protocol-specific carried state (e.g. Hisilicon string work-mode, NewAPP flag). */
     val extras: Map<String, String> = emptyMap(),

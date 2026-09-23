@@ -199,6 +199,76 @@ internal class HiMaintenance(private val http: CameraHttp, private val cgi: (Cam
         }
     }
 
+    /**
+     * What the firmware says it can do — `getdevcapabilities.cgi?`, key
+     * `devcapabilities` (`Setting.java:529-531`).
+     *
+     * One comma-separated string. The official client reads exactly one token out of
+     * it — `DV.supportWakeSleep()` looks for `standby` (`DV.java:736-743`) — but the
+     * whole set comes back here, because "which tokens does this firmware actually
+     * emit" is not something this app can answer from the archive alone. An empty set
+     * is "no answer" (older firmware, or the read failed), never "nothing supported".
+     */
+    suspend fun devCapabilities(session: CameraSession): Set<String> {
+        val body = http.getText("${cgi(session)}/getdevcapabilities.cgi?")
+        val raw = HiVarParser.parse(body)["devcapabilities"]
+        val tokens = splitTokens(raw)
+        Diag.info(
+            LogTag.PROTO,
+            "getdevcapabilities -> ${if (raw == null) "no key" else "${tokens.size} token(s)"}" +
+                if (tokens.isEmpty()) "" else " [${tokens.joinToString(",")}]",
+        )
+        return tokens
+    }
+
+    /**
+     * The accepted values for one setting, as the camera itself reports them —
+     * `getcapability.cgi?&-workmode=%d&-type=%d`, key `capability`
+     * (`Setting.java:541-543`).
+     *
+     * The reply is one comma-separated string, which the official client splits on `,`
+     * before comparing it against the current parameter (`DV.java:200`). Empty means
+     * the camera declined, the endpoint is absent, or the firmware is NewAPP — the
+     * official client skips this call entirely there (`DV.getCapability` returns null)
+     * because the self-describing menu already carries the values.
+     */
+    suspend fun capabilities(session: CameraSession, workMode: Int, configType: Int): List<String> {
+        val url = "${cgi(session)}/getcapability.cgi?&-workmode=$workMode&-type=$configType"
+        val body = http.getText(url)
+        val raw = HiVarParser.parse(body)["capability"]
+        val values = splitTokens(raw).toList()
+        Diag.debug(
+            LogTag.PROTO,
+            "getcapability workmode=$workMode type=$configType -> " +
+                if (values.isEmpty()) "no values" else "${values.size} value(s) [${values.joinToString(",")}]",
+        )
+        return values
+    }
+
+    /**
+     * Standby — `wifisleep.cgi?` with no arguments (`Setting.java:463-465`).
+     *
+     * The camera is expected to drop off the network rather than answer, so the reply
+     * is best-effort: a refusal is reported, but a missing answer is not treated as a
+     * failure (the official client's `doForSuccess` cannot tell the two apart either,
+     * since the socket usually dies mid-exchange). The caller must gate this on the
+     * `standby` capability — a camera without it ignores the command, and this call
+     * cannot detect that on its own.
+     */
+    suspend fun sleep(session: CameraSession): CmdResult {
+        Diag.info(LogTag.PROTO, "wifisleep (standby) — the camera is expected to leave the network")
+        val r = http.getText("${cgi(session)}/wifisleep.cgi?")
+        return when (val verdict = Cgi.verdict(r)) {
+            is CgiReply.Accepted -> CmdResult.Ok
+            is CgiReply.Rejected -> refused("wifisleep", verdict)
+            CgiReply.NoAnswer -> CmdResult.Ok
+        }
+    }
+
+    /** One comma-separated firmware string into tokens, dropping blanks. */
+    private fun splitTokens(raw: String?): Set<String> =
+        raw?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }?.toSet().orEmpty()
+
     private suspend fun refused(endpoint: String, verdict: CgiReply.Rejected): CmdResult.Failure {
         val detail = Cgi.explain(verdict.code)
         Diag.w(LogTag.PROTO) { "$endpoint refused: code=${verdict.code} — $detail (body=${LogFormat.bodyField(verdict.body, Diag.config.captureSecrets)})" }

@@ -58,6 +58,7 @@ kotlin {
 
             implementation(libs.ktor.core)
             implementation(libs.ktor.cio)
+            implementation(libs.ktor.network)
             implementation(libs.ktor.content.negotiation)
             implementation(libs.ktor.serialization.json)
         }

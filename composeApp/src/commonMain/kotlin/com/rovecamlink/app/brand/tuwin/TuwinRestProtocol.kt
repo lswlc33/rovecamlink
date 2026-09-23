@@ -77,21 +77,24 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
     override suspend fun connect(host: String, port: Int): CameraSession =
         Diag.inOp("tuwin-connect", "target=$host:$port") {
             val seed = Random.nextLong(Long.MAX_VALUE).toString()
-            // Auth handshake; token may be echoed back. Best-effort.
+            // Auth handshake. Its answer is a notification, not a credential: the official
+            // client declares the payload as `Any?` and reads only
+            // `isSuccess()`/`getResult()`, never `getInfo()` — see
+            // `docs/08-官方APK全量逆向档案/01-TUWIN-档案.md` §3.1 「响应字段怎么被用：只用
+            // `result`，`info` 完全丢弃」. So nothing is parsed out of the body here. The
+            // `authToken = token ?: seed` this replaces was a field we wrote and never
+            // sent: a claim about the session that no request backed up.
             val authBody = http.getText("http://$host:$port/api/authdevice?seed=$seed")
-            val token = authBody?.let { runCatching { json.parseToJsonElement(it) }.getOrNull() }
-                ?.jsonObject?.get("token")?.jsonPrimitiveOrNull()
             http.getText("http://$host:$port/api/rtspstatus?seed=$seed")
             val info = http.getText("http://$host:$port/api/device/info")
             val model = info?.let { runCatching { json.parseToJsonElement(it) }.getOrNull() }
                 ?.jsonObject?.get("model")?.jsonPrimitiveOrNull() ?: "TUWIN"
             Diag.d(LogTag.PROTO) {
-                "auth answered=${authBody != null} token=${if (token == null) "none (seed reused as token)" else "present(${token.length}ch)"} " +
-                    "info=${info != null} model=$model seed_len=${seed.length}"
+                "auth answered=${authBody != null} info=${info != null} model=$model seed_len=${seed.length}"
             }
             CameraSession(
                 host = host, port = port, platform = platform, brand = Brand.TUWIN,
-                model = model, authToken = token ?: seed,
+                model = model,
             )
         }
 
@@ -159,8 +162,15 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
         val files = arr.mapNotNull { e ->
             val o = e.jsonObject
             val name = o.string("name") ?: o.string("filename") ?: return@mapNotNull null
+            // The extension set is the vendor's own video predicate, verbatim: its
+            // `ViewClickKt.isVideoPath()` accepts .mp4/.avi/.mov (`_work/tuwin_src/
+            // sources/com/tuwinsmart/tuwin/core/ext/ViewClickKt.java:38-46`). `.avi` is
+            // the one that matters here — Ride3Pro names its clips `MOVI<ts>.avi`
+            // (`…/data/source/remote/api/ride3pro/Ride3ProApiServiceKt.java:78-84`), so
+            // leaving it out classified every Ride3Pro video as a photo.
             val isVideo = (o.string("type")?.contains("video", true) == true) ||
-                name.endsWith(".mp4", true) || name.endsWith(".mov", true)
+                name.endsWith(".mp4", true) || name.endsWith(".avi", true) ||
+                name.endsWith(".mov", true)
             RemoteFile(
                 name = name,
                 type = if (isVideo) FileType.VIDEO else FileType.PHOTO,

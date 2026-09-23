@@ -326,6 +326,27 @@
     <string name="label_unknown_date">Unknown date</string>
     <string name="action_raise_access_point">Make the camera broadcast its hotspot again</string>
 
+    <!-- A16: what the firmware says it can do, and the one token the app acts on. -->
+    <string name="section_camera_capabilities">Camera features</string>
+    <string name="action_read_capabilities">Read the features this camera reports</string>
+    <string name="label_standby_support">Standby (sleep / wake)</string>
+    <string name="status_standby_supported">Supported</string>
+    <string name="status_standby_unsupported">This camera does not support it</string>
+    <string name="status_capabilities_unknown">Unknown — not read yet</string>
+    <string name="label_capability_tokens">Tokens the camera reported</string>
+    <string name="status_capabilities_empty">The camera did not report any feature token.</string>
+
+    <!-- B10: standby, and the Wake-on-LAN packet that ends it. -->
+    <string name="action_sleep_camera">Put the camera to sleep</string>
+    <string name="title_sleep_camera">Put the camera to sleep?</string>
+    <string name="message_sleep_camera">The camera enters standby and leaves the network. Until it is woken it will not answer this app.</string>
+    <string name="confirm_sleep">Sleep</string>
+    <string name="notice_camera_sleeping">The camera is going into standby; it will drop off the hotspot list.</string>
+    <string name="action_wake_camera">Wake a sleeping camera</string>
+    <string name="notice_wake_sent">Wake packet sent to %1$s. Nothing answers one — refresh the hotspot list in a few seconds to see if the camera is back.</string>
+    <string name="err_wake_not_on_camera_network">The phone is not on a camera hotspot, so a wake packet has nowhere to go. Join the camera's Wi-Fi first.</string>
+    <string name="hint_wake_needs_bssid">The hotspot's own MAC address could not be read, so the wake packet cannot be addressed.</string>
+
     <!-- Top-bar overflow menu + the pages it reaches. -->
     <string name="action_more">More</string>
     <string name="menu_filter_sort">Filter &amp; sort</string>
@@ -348,6 +369,9 @@
     <string name="about_title">About</string>
     <string name="about_version">Version</string>
     <string name="about_protocols">Supported cameras</string>
+    <string name="about_feedback">Report a problem</string>
+    <string name="about_feedback_body">The file that opens carries everything a report needs and nothing you have to type: this phone\'s model, Android version and ABI, the app version, the camera\'s model, firmware, hardware, serial and the clock this app last set, the live session, and every log run stored on the device. Attach it to an issue at github.com/lswlc33/rovecamlink/issues.</string>
+    <string name="about_feedback_action">Attach diagnostics and share</string>
     <string name="about_licenses">Open-source licenses</string>
     <string name="about_license_body">This app is built on Compose Multiplatform and the miuix UI library (Apache-2.0), plus Ktor, Okio and kotlinx.coroutines. Each retains its own license.</string>
 

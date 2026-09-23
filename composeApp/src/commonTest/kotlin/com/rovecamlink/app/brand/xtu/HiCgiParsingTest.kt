@@ -184,6 +184,24 @@ class HiCgiParsingTest {
     }
 
     @Test
+    fun `the operation codes the camera really sends are explained`() {
+        // The one that prompted this table: the official client's own error constants
+        // (`Common.ERR_*`) name the state the user has to change, so "code -1560182777"
+        // becomes something actionable instead of a number to search for.
+        val busy = Cgi.explain("-1560182777")
+        assertTrue(busy.contains("busy", ignoreCase = true), "the channel-busy code must say so: $busy")
+        // This refusal is the protocol's *only* contention signal — there is no client
+        // count to read — so the message has to carry the whole hint: that another client
+        // can be the holder, and what the user can do about it.
+        assertTrue(busy.contains("another client", ignoreCase = true), "the contention has to be named: $busy")
+        assertTrue(busy.contains("try again", ignoreCase = true), "a failure without a way out is not a hint: $busy")
+        assertTrue(Cgi.explain("-1560182784").contains("SD card", ignoreCase = true))
+        assertTrue(Cgi.explain("-2222").contains("parameter", ignoreCase = true))
+        // A code nobody has seen still names itself rather than being swallowed.
+        assertTrue(Cgi.explain("-9999").contains("-9999"))
+    }
+
+    @Test
     fun `query values are encoded the way the camera's thttpd expects`() {
         assertEquals("Normal%20Video", Cgi.param("Normal Video"))
         assertEquals("Pre-Recording", Cgi.param("Pre-Recording"))

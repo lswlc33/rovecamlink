@@ -152,8 +152,29 @@ interface CameraProtocol {
     /** Restore factory settings. The camera may reboot or drop the session. */
     suspend fun factoryReset(session: CameraSession): CmdResult
 
-    /** Remote reboot. Returns a Failure on cameras without a reboot command. */
-    suspend fun reboot(session: CameraSession): CmdResult
+    /**
+     * Remote reboot. The default reports the failure, which is what a family with no
+     * reboot endpoint should do — it overrides [supportsReboot] instead of this.
+     */
+    suspend fun reboot(session: CameraSession): CmdResult =
+        CmdResult.Failure("This camera has no remote reboot command")
+
+    /**
+     * Whether [reboot] is wired up for this family, so the settings page can decide
+     * whether to offer the button **before** it is pressed.
+     *
+     * The hi3510 family has no reboot endpoint at all: the archive found no
+     * `reboot.cgi` / `restart.cgi` / `poweroff.cgi` / `shutdown.cgi` among the 22,620
+     * own-string literals and 405 recovered URL literals, and the nearest commands are
+     * *scheduled* power actions (`getautoshutdown.cgi`, `setscreenautosleep.cgi`) —
+     * see `docs/08-官方APK全量逆向档案/02-XTUGO-档案.md` §8.4 and §12, which reached the
+     * same dead end on the official `reset.cgi` naming.
+     *
+     * This exists so the UI asks the protocol rather than naming a brand: the danger
+     * section used to hide the button behind `platform == DevicePlatform.TUWIN_REST`,
+     * which is the kind of branch that has to be edited every time a family is added.
+     */
+    val supportsReboot: Boolean get() = true
 
     /** Set the camera clock to the phone's current local time. */
     suspend fun syncTime(session: CameraSession): CmdResult
@@ -216,23 +237,72 @@ interface CameraProtocol {
      */
     fun onSessionClosed(session: CameraSession) {}
 
+    /**
+     * What this camera says it can do, as the firmware's own tokens.
+     *
+     * The hi3510 family answers `getdevcapabilities.cgi?` with one comma-separated
+     * string (`Setting.getDevCapabilities` → key `devcapabilities`,
+     * `Setting.java:529-531`) and the official client reads exactly one token out of it:
+     * `DV.supportWakeSleep()` returns true when the string contains `standby`
+     * (`DV.java:736-743`), which is what gates its sleep/wake buttons.
+     *
+     * That one token is the whole reason this exists — it is the difference between
+     * offering a sleep button that works and offering one the camera ignores. Tokens
+     * this app does not know are still returned, verbatim, because the set is the
+     * firmware's answer and not ours to trim.
+     *
+     * Empty means "the camera did not say" (an older firmware, or the read failed), and
+     * the UI must treat that as unknown rather than as "cannot".
+     */
+    suspend fun deviceCapabilities(session: CameraSession): Set<String> = emptySet()
+
+    /**
+     * The values this camera accepts for one setting, asked of the camera itself:
+     * `getcapability.cgi?&-workmode=%d&-type=%d`, key `capability`
+     * (`Setting.java:541-543`). The reply is one comma-separated string — the official
+     * client splits it on `,` (`DV.java:200`) and treats it as the option list for the
+     * matching parameter read.
+     *
+     * [workMode] and [configType] are the firmware's numeric work mode and `CONFIG_*`
+     * slot (`Common.java:12-26`), not app enums. Empty means the camera declined or the
+     * endpoint is absent — note that the official client skips this call entirely on
+     * NewAPP firmware (`DV.getCapability` returns null), where the self-describing menu
+     * already carries the values.
+     */
+    suspend fun capabilities(session: CameraSession, workMode: Int, configType: Int): List<String> =
+        emptyList()
+
+    /**
+     * Put the camera to sleep — the battery-powered models' standby.
+     *
+     * `wifisleep.cgi?` with no arguments (`Setting.java:463-465`, `doForSuccess`), which
+     * means the body verdict is the only evidence: the camera drops off the network
+     * without answering. A protocol without the command reports a failure with the
+     * reason, and the UI must show it rather than pretend the camera slept.
+     */
+    suspend fun sleep(session: CameraSession): CmdResult =
+        CmdResult.Failure("This camera cannot be put to sleep from the app")
+
+    /**
+     * Wake a sleeping camera over the network.
+     *
+     * The hi3510 family has **no wake command** — the official client sends a Wake-on-LAN
+     * magic packet instead (`Setting.wakeupDevice`, `Setting.java:483-511`): 102 bytes of
+     * `0xFF×6` followed by the MAC sixteen times, UDP to `<first three octets>.255:9`,
+     * five bursts, fire-and-forget. If the camera's Wi-Fi chip does not implement WoL the
+     * packet is silently ignored, which is why [deviceCapabilities] is consulted first.
+     *
+     * [mac] is the camera AP's BSSID, read off the phone's own Wi-Fi association — not a
+     * camera endpoint (the official client does the same: `TelevisionActivity.java:170`
+     * feeds `connectionInfo.getBSSID()` into `DV.setMacAddress`). Null or malformed means
+     * there is nothing to send, and the failure says so.
+     */
+    suspend fun wake(session: CameraSession, mac: String?): CmdResult =
+        CmdResult.Failure("This camera cannot be woken over the network")
+
     /** Optional event stream. */
     val events: Flow<com.rovecamlink.app.core.model.DeviceEvent>
 }
-
-/**
- * Static metadata describing how to reach/identify a device family before a
- * protocol is chosen: candidate ports, probe paths, expected model strings.
- */
-data class CameraProfile(
-    val platform: DevicePlatform,
-    val brand: com.rovecamlink.app.core.model.Brand,
-    val candidatePorts: List<Int>,
-    val probePaths: List<String>,
-    val previewPort: Int,
-    val previewPath: String,
-    val expectedModels: Set<String> = emptySet(),
-)
 
 /** Registry of available protocol plugins, keyed by platform. */
 class CameraProtocolRegistry(protocols: List<CameraProtocol>) {

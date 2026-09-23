@@ -89,6 +89,42 @@ object Cgi {
         "sd is not ready" -> "SD card not ready — insert or format a card"
         "sd is full" -> "SD card full"
         "-2222" -> "Camera rejected the parameter (code -2222): unknown name/value, or not allowed in the current mode"
-        else -> "Camera refused the command (code $code)"
+        else -> OPERATION_CODES[code] ?: "Camera refused the command (code $code)"
     }
+
+    /**
+     * The firmware's own operation-result codes, which arrive in the same
+     * `SvrFuncResult` field as `-2222` but mean something far more specific.
+     *
+     * These constants are the ones the official client defines and then maps to its own
+     * strings (`Common.java:28-39` → `error_channel_busy`「录像忙」, `error_sd_full`
+     * 「SD卡满」, `error_no_sd`「无SD卡」 …). Two of them answer the multi-client
+     * question the app used to have no way to ask: `ERR_CHANNEL_BUSY` is what the
+     * camera says when the recording channel is already held — which in practice is
+     * the other phone live-previewing the same camera — and `ERR_GET_CHANNEL_STATE_FAIL`
+     * is the camera admitting it cannot tell. Before this table both arrived as
+     * "Camera refused the command (code -1560182777)", which named the problem in a
+     * way nobody could act on.
+     *
+     * `ERR_CHANNEL_BUSY` is the only contention signal this whole protocol has. The
+     * family offers no client count and no station list, `getcamerastatus.cgi` answers
+     * an empty body on the XTU S7PRO, and the official client never reads its `count`
+     * field — so "someone else is previewing" can only ever be inferred from this
+     * refusal, which is why its text names both holders of the channel *and* the way
+     * out. The firmware's own string for the same code is just 「录像忙」.
+     */
+    private val OPERATION_CODES = mapOf(
+        "-1560182774" to "Camera rejected the shot parameters (抓拍参数错误)",
+        "-1560182775" to "Stopping the recording failed (停止录像失败)",
+        "-1560182776" to "Starting the recording failed (启动录像失败)",
+        "-1560182777" to "Recording channel busy (录像忙) — another client is previewing, or the camera is already recording. Stop the recording, or take the camera back from the other client, then try again",
+        "-1560182778" to "Camera could not read its own recording state (获取录像状态失败)",
+        "-1560182779" to "No space left for snapshots (抓拍空间满)",
+        "-1560182780" to "No space left for loop recording (循环录像空间满)",
+        "-1560182781" to "No space left for recording (录像空间满)",
+        "-1560182782" to "SD card error (SD卡错误) — the card may need a reformat",
+        "-1560182783" to "SD card full (SD卡满)",
+        "-1560182784" to "No SD card in the camera (无SD卡)",
+        "-1610579967" to "No space left for recording (录像空间满)",
+    )
 }

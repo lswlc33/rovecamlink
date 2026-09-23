@@ -31,6 +31,8 @@ import com.rovecamlink.app.action_disconnect
 import com.rovecamlink.app.action_join_connect
 import com.rovecamlink.app.action_refresh
 import com.rovecamlink.app.action_scan_qr
+import com.rovecamlink.app.action_wake_camera
+import com.rovecamlink.app.hint_wake_needs_bssid
 import com.rovecamlink.app.cancel
 import com.rovecamlink.app.err_bluetooth_unsupported
 import com.rovecamlink.app.hint_ble_wake
@@ -183,6 +185,8 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     val aliasHint = stringResource(Res.string.hint_camera_alias)
     val joinLbl = stringResource(Res.string.action_join_connect)
     val noneLbl = stringResource(Res.string.label_nearby_none)
+    val wakeLbl = stringResource(Res.string.action_wake_camera)
+    val wakeNeedsBssidLbl = stringResource(Res.string.hint_wake_needs_bssid)
     val ageSeconds = if (nearby.lastUpdateAt == 0L) -1 else ((tick - nearby.lastUpdateAt) / 1000f).roundToInt()
 
     val canConnect = joined != null || nearby.hasCandidate
@@ -394,6 +398,12 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
 
         section(title = otherTitle) {
             actionRow(qrLbl) { showQr = true }
+            // B10: the way back from standby. It belongs here rather than with the other
+            // power actions because a sleeping camera has no session — the device page is
+            // showing "not connected" by the time anyone needs this.
+            val canWake = state.canWakeCamera()
+            actionRow(wakeLbl, enabled = canWake) { state.wakeCamera() }
+            if (!canWake) hintLine(wakeNeedsBssidLbl)
             MiuixField(
                 value = manualIp,
                 onValueChange = { manualIp = it },

@@ -90,6 +90,23 @@ private class AndroidWifiController : WifiController {
         return g
     }
 
+    /**
+     * The hotspot's own MAC, used only as the Wake-on-LAN target (B10).
+     *
+     * `02:00:00:00:00:00` is what Android answers when the SSID/BSSID is not readable
+     * (no location permission, or the system redacting it) — it is not a real address and
+     * a magic packet aimed at it wakes nothing, so it is reported as "unavailable" rather
+     * than passed on.
+     */
+    override fun currentCameraBssid(): String? {
+        return runCatching {
+            val info = wm.connectionInfo ?: return null
+            val bssid = info.bssid?.takeIf { it.isNotEmpty() }
+            Diag.debug(LogTag.WIFI, "bssid read ssid=${info.ssid} bssid=${bssid ?: "(none)"}")
+            bssid?.takeIf { it != REDACTED_BSSID }
+        }.getOrNull()
+    }
+
     private fun gatewayInternal(): String? {
         // 1. Link properties captured when we joined the camera network ourselves.
         linkProps?.let { lp ->
@@ -586,6 +603,9 @@ private class AndroidWifiScanner : WifiScanner {
         private const val MIN_SCAN_REQUEST_INTERVAL_MS = 15_000L
     }
 }
+
+/** What Android returns for a BSSID it will not disclose — never a real address. */
+private const val REDACTED_BSSID = "02:00:00:00:00:00"
 
 /**
  * How long a specifier join may take. Android shows its own picker for this and

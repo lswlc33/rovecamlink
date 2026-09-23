@@ -325,6 +325,27 @@
     <string name="label_unknown_date">日期未知</string>
     <string name="action_raise_access_point">让相机重新开启热点</string>
 
+    <!-- A16：固件自报的能力，以及 App 唯一真正据以行动的那个标记。 -->
+    <string name="section_camera_capabilities">相机能力</string>
+    <string name="action_read_capabilities">读取相机自报的能力</string>
+    <string name="label_standby_support">休眠 / 唤醒</string>
+    <string name="status_standby_supported">支持</string>
+    <string name="status_standby_unsupported">这台相机不支持</string>
+    <string name="status_capabilities_unknown">未知（尚未读取）</string>
+    <string name="label_capability_tokens">相机自报的标记</string>
+    <string name="status_capabilities_empty">相机没有报告任何能力标记。</string>
+
+    <!-- B10：待机，以及结束待机的网络唤醒包。 -->
+    <string name="action_sleep_camera">让相机休眠</string>
+    <string name="title_sleep_camera">让相机休眠？</string>
+    <string name="message_sleep_camera">相机会进入待机并离开网络；在被唤醒之前，它不会再响应本 App。</string>
+    <string name="confirm_sleep">休眠</string>
+    <string name="notice_camera_sleeping">相机正在进入待机，稍后会从热点列表里消失。</string>
+    <string name="action_wake_camera">唤醒休眠中的相机</string>
+    <string name="notice_wake_sent">唤醒包已发往 %1$s。相机不会回执，几秒后刷新热点列表看看它是否回来。</string>
+    <string name="err_wake_not_on_camera_network">手机当前不在相机的热点上，唤醒包无处可发。请先连上相机的 Wi-Fi。</string>
+    <string name="hint_wake_needs_bssid">读不到热点自身的 MAC 地址，唤醒包无法编址。</string>
+
     <!-- 顶栏「更多」菜单，以及它能到达的页面。 -->
     <string name="action_more">更多</string>
     <string name="menu_filter_sort">筛选与排序</string>
@@ -347,6 +368,9 @@
     <string name="about_title">关于</string>
     <string name="about_version">版本</string>
     <string name="about_protocols">已支持的相机</string>
+    <string name="about_feedback">反馈问题</string>
+    <string name="about_feedback_body">分享出去的这份文件包含反馈所需的全部信息，不需要你再打一个字：本机机型、Android 版本与 ABI、App 版本、相机型号/固件/硬件/序列号与上次对时时间、当前连接情况，以及本机保存的全部日志。请把它附在 github.com/lswlc33/rovecamlink/issues 的问题里。</string>
+    <string name="about_feedback_action">附上诊断信息并分享</string>
     <string name="about_licenses">开源许可</string>
     <string name="about_license_body">本应用基于 Compose Multiplatform 与 miuix UI 库（Apache-2.0）构建，并使用了 Ktor、Okio 与 kotlinx.coroutines，各自保留其许可证。</string>
 

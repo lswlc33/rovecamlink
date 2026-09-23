@@ -18,6 +18,19 @@ interface WifiController {
     fun currentCameraSsid(): String?
     /** Gateway IP of the connected camera network (usually the camera itself). */
     fun gateway(): String?
+
+    /**
+     * The BSSID — the access point's own MAC — of the network the phone is joined to, or
+     * null when it cannot be read (not on Wi-Fi, no permission, or a platform that has no
+     * such concept).
+     *
+     * Its one consumer is Wake-on-LAN (B10): a sleeping camera has no address to be asked
+     * for a MAC, so the magic packet has to be addressed from the phone's side of the link.
+     * The official client takes exactly this value for the same purpose
+     * (`TelevisionActivity.java:170` hands `connectionInfo.getBSSID()` to `DV.setMacAddress`).
+     */
+    fun currentCameraBssid(): String? = null
+
     suspend fun connect(ssid: String, password: String?): WifiResult
     suspend fun disconnect()
 

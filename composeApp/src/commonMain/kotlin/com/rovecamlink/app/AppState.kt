@@ -42,6 +42,7 @@ import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogLevel
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.OpContext
+import com.rovecamlink.app.core.net.WakeOnLan
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.provision.ProvisioningController
 import com.rovecamlink.app.core.storage.sanitizeFileName
@@ -57,6 +58,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.datetime.Clock
 import okio.Path
 import org.jetbrains.compose.resources.decodeToImageBitmap
 
@@ -79,7 +81,7 @@ enum class Phase {
 }
 
 /** A discrete user/system operation so the UI can grey out only the relevant control. */
-enum class Op { Capture, Record, Mode, Refresh, Delete, Settings, FormatSd, FactoryReset, Reboot, DeviceInfo, AccessPoint, Wifi }
+enum class Op { Capture, Record, Mode, Refresh, Delete, Settings, FormatSd, FactoryReset, Reboot, DeviceInfo, AccessPoint, Wifi, TimeSync, Capabilities, Power }
 
 /** What the user decided about the running proxy: the two buttons, and what a dismissal means. */
 enum class VpnChoice {
@@ -406,6 +408,16 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      */
     private var envSnapshot: List<Pair<String, String>> = emptyList()
 
+    /**
+     * Wall clock of the last `setsystime` this app got an OK for, or null if this run
+     * never set it. The camera's own clock is otherwise unreadable on the hi3510 family —
+     * there is no read-back endpoint (`HiMaintenance.syncTime`) — so "what time does the
+     * camera think it is" can only ever be answered as "what we last told it, and when".
+     * That pair is what decides whether a wrong file timestamp is a clock that was never
+     * set or one that drifted after being set.
+     */
+    private var cameraClockSetMillis: Long? = null
+
     fun refreshDiagnosticsEnv() {
         envSnapshot = runCatching { buildDiagnosticsEnv() }
             .getOrElse { listOf("session_env_error" to (it.message ?: "?")) }
@@ -424,6 +436,14 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             add("camera.host" to "${s.host}:${s.port}")
             add("camera.session_extras" to s.extras.entries.joinToString(",") { (k, v) -> "$k=$v" })
             add("camera.preview_url" to (graph.registry.protocolFor(s.platform)?.previewUrl(s) ?: "-"))
+            // The camera's clock, to the only precision this protocol allows: reported
+            // even when it was never set, because "never this run" is itself an answer.
+            add(
+                "camera.clock_set_at" to (
+                    cameraClockSetMillis?.let { LogFormat.wall(it, Diag.timeZone()) }
+                        ?: "never this run"
+                    ),
+            )
             deviceInfo?.let {
                 add("camera.firmware" to (it.softVersion ?: "-"))
                 add("camera.hardware" to (it.hardVersion ?: "-"))
@@ -973,6 +993,11 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         // set would show the previous camera's hotspot name and passphrase on the next
         // connect until somebody pressed 读取 again.
         cameraWifi = null
+        // Same rule as the hotspot: the capability set is the *camera's* answer, and the
+        // next one on this IP is a different unit. Keeping it would offer a standby button
+        // the new camera never claimed.
+        deviceCapabilities = emptySet()
+        capabilitiesRead = false
         files = emptyList()
         settings = emptyList()
         modes = emptyList()
@@ -1624,7 +1649,17 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         r
     }
 
-    fun syncTime() = runOp(Op.Settings) { proto, s -> proto.syncTime(s) }
+    /**
+     * One tap on 对时, plus the automatic sync the live screen runs on every new session
+     * (`LiveScreen.kt:152`). It used to ride [Op.Settings], which greyed out every control
+     * on the settings and Wi-Fi sections — a control that is greyed without saying why is
+     * exactly what the UI rule forbids, and a time sync touches none of them.
+     */
+    fun syncTime() = runOp(Op.TimeSync) { proto, s ->
+        val r = proto.syncTime(s)
+        if (r.isOk) cameraClockSetMillis = Clock.System.now().toEpochMilliseconds()
+        r
+    }
 
     /** Change the camera's own Wi-Fi name/password (A4). */
     fun setCameraWifi(ssid: String, password: String) =
@@ -1641,6 +1676,96 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     fun canRaiseAccessPoint(): Boolean =
         session?.platform == DevicePlatform.HISILICON
 
+    // ---------- A16: what the camera says it can do ----------
+
+    /**
+     * The firmware's own capability tokens, as last read. Empty means "not read" or
+     * "the camera did not answer" — this app has no other source for it, so the UI shows
+     * the difference between the two through [capabilitiesRead].
+     */
+    var deviceCapabilities by mutableStateOf<Set<String>>(emptySet())
+        private set
+
+    /** True once [readDeviceCapabilities] has completed, whatever it found. */
+    var capabilitiesRead by mutableStateOf(false)
+        private set
+
+    /**
+     * Ask the camera which features its firmware has.
+     *
+     * Read-only, and the only way to tell a camera that *will* accept a standby command
+     * from one that silently ignores it — the official client gates its own sleep button
+     * on the `standby` token (`DV.supportWakeSleep`, `DV.java:736-743`) rather than
+     * discovering the difference by pressing it.
+     */
+    fun readDeviceCapabilities() = runOp(Op.Capabilities) { proto, s ->
+        val tokens = proto.deviceCapabilities(s)
+        deviceCapabilities = tokens
+        capabilitiesRead = true
+        if (tokens.isEmpty()) {
+            CmdResult.Failure("相机没有报告自身能力（getdevcapabilities.cgi 未给出 devcapabilities）")
+        } else {
+            CmdResult.Ok
+        }
+    }
+
+    /**
+     * Whether the camera's firmware claims standby.
+     *
+     * Deliberately not "unknown means yes": the command has no acknowledgement (the
+     * camera leaves the network instead of answering), so a wrong guess costs the user
+     * their connection and gains nothing.
+     */
+    fun supportsStandby(): Boolean = deviceCapabilities.contains(STANDBY_TOKEN)
+
+    /**
+     * Put the camera into standby.
+     *
+     * The camera is expected to stop answering, which is the point of the command rather
+     * than a failure — the note the UI shows before the press says so. It is gated on
+     * [supportsStandby] because the endpoint exists on every firmware but only does
+     * something where the hardware supports it.
+     */
+    fun sleepCamera() = runOp(Op.Power) { proto, s ->
+        Diag.w(LogTag.APP) { "STANDBY requested — the camera is expected to leave the network" }
+        val r = proto.sleep(s)
+        if (r.isOk) errorMessage = localized(Res.string.notice_camera_sleeping)
+        r
+    }
+
+    // ---------- B10: waking a sleeping camera ----------
+
+    /**
+     * Whether the phone could address a wake packet right now: it needs the hotspot's own
+     * MAC (the BSSID), because the camera has no address to be asked for.
+     */
+    fun canWakeCamera(): Boolean = !graph.wifi.currentCameraBssid().isNullOrBlank()
+
+    /**
+     * Send a Wake-on-LAN magic packet at the camera's hotspot.
+     *
+     * Not a session operation: the camera is off the network, so there is nothing to
+     * talk to and nothing to wait for. The packet goes to the phone's own gateway —
+     * which on this hardware *is* the camera — at the subnet broadcast address
+     * (`Setting.wakeupDevice`, `Setting.java:483-511`). Success means "sent", never
+     * "awake": no camera answers a magic packet.
+     */
+    fun wakeCamera() {
+        val mac = graph.wifi.currentCameraBssid()
+        val host = graph.wifi.gateway()
+        Diag.info(LogTag.APP, "wake requested host=${host ?: "(none)"} mac=${mac ?: "(none)"}")
+        if (host.isNullOrBlank()) {
+            errorMessage = localized(Res.string.err_wake_not_on_camera_network)
+            return
+        }
+        scope.launch {
+            WakeOnLan.send(host, mac).fold(
+                onSuccess = { statusMessage = localized(Res.string.notice_wake_sent, host) },
+                onFailure = { errorMessage = raw(it.message ?: "wake-on-LAN failed") },
+            )
+        }
+    }
+
     // ---------- firmware OTA ----------
 
     /**
@@ -1649,6 +1774,17 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      */
     fun firmwareUpdateSupported(): Boolean =
         session?.platform == DevicePlatform.HISILICON
+
+    /**
+     * Whether the danger section should offer 重启相机.
+     *
+     * The answer comes from the protocol, not from the brand: the hi3510 family has no
+     * reboot endpoint at all, so it declares `supportsReboot = false` alongside the
+     * absence that justifies it. The section used to spell that out itself as
+     * `platform == DevicePlatform.TUWIN_REST`, a branch that would silently start lying
+     * the moment a third family arrived.
+     */
+    fun canRebootCamera(): Boolean = protocol?.supportsReboot == true
 
     private val firmwareUpdater: FirmwareUpdater by lazy {
         FirmwareUpdater(graph.http, graph.wifi, graph.fileSaver.firmwareDir())
@@ -1918,7 +2054,20 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                         markFailed(file, localized(Res.string.err_download_incomplete, written, file.sizeBytes))
                         return@withContext
                     }
-                    val mime = if (file.type == com.rovecamlink.app.core.model.FileType.PHOTO) "image/jpeg" else "video/mp4"
+                    // Naming the container we actually hand over. Publishing every clip as
+                    // "video/mp4" made the gallery try to play a vendor AVI as MP4 — a
+                    // guaranteed failure rather than a maybe. TUWIN never shows the user
+                    // that file: `Ride3ProDownloadTranscodePolicy.shouldTranscode()` converts
+                    // `.avi` (RIDE3PRO) and `.mov` (RIDE6) with a bundled native FFmpeg
+                    // (`naTranscodeAviToMp4`, `…/album/Ride3ProLocalVideoTranscoder.java:116`)
+                    // before it lands in the album. We don't convert (see `.workbuddy/memory`
+                    // B6), so the least we owe the user is a mime that matches the bytes.
+                    val mime = when {
+                        file.type == com.rovecamlink.app.core.model.FileType.PHOTO -> "image/jpeg"
+                        file.name.endsWith(".avi", true) -> "video/x-msvideo"
+                        file.name.endsWith(".mov", true) -> "video/quicktime"
+                        else -> "video/mp4"
+                    }
                     val published = runCatching { graph.fileSaver.publishToGallery(dest, file.name, mime) }
                         .onFailure { Diag.at(LogLevel.WARN, LogTag.DL, "gallery publish threw ${Diag.causeChain(it)}") }
                         .getOrNull()
@@ -2031,7 +2180,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * yield to both the shutter and the health poll.
      */
     private fun Op.requestClass(): CameraRequestClass = when (this) {
-        Op.Refresh, Op.DeviceInfo -> CameraRequestClass.Enumerate
+        Op.Refresh, Op.DeviceInfo, Op.Capabilities -> CameraRequestClass.Enumerate
         else -> CameraRequestClass.Command
     }
 
@@ -2113,6 +2262,13 @@ private const val POLL_INTERVAL_MS = 1_500L
 
 /** Decoded thumbnails held at once; beyond this the oldest are evicted. */
 private const val MAX_CACHED_THUMBNAILS = 24
+
+/**
+ * The one capability token this app acts on: `DV.supportWakeSleep()` returns true when
+ * the firmware's `devcapabilities` string contains it (`DV.java:736-743`), and that is
+ * what decides whether a standby button is offered.
+ */
+private const val STANDBY_TOKEN = "standby"
 
 /**
  * Preview fetches allowed at the same moment. One hotspot serves the status poll, the

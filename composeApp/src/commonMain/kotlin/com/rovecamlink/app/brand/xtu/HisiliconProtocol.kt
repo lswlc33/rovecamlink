@@ -23,6 +23,7 @@ import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.monotonicMillis
+import com.rovecamlink.app.core.net.WakeOnLan
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.transport.CameraHttp
 import kotlinx.coroutines.flow.Flow
@@ -1258,8 +1259,12 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         return if (r != null) CmdResult.Ok else CmdResult.Failure("factory reset failed")
     }
 
-    override suspend fun reboot(session: CameraSession): CmdResult =
-        CmdResult.Failure("Reboot is not supported on this camera")
+    /**
+     * No reboot endpoint exists on this family — the archive's literal sweep found none
+     * (`docs/08-官方APK全量逆向档案/02-XTUGO-档案.md` §8.4, §12). Declaring it here is
+     * what keeps `reboot()` on the interface default and the button out of the UI.
+     */
+    override val supportsReboot: Boolean = false
 
     override suspend fun syncTime(session: CameraSession): CmdResult = maintenance.syncTime(session)
 
@@ -1277,4 +1282,38 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override suspend fun ensureAccessPoint(session: CameraSession): CmdResult =
         maintenance.raiseAccessPoint(session)
+
+    override suspend fun deviceCapabilities(session: CameraSession): Set<String> =
+        maintenance.devCapabilities(session)
+
+    override suspend fun capabilities(session: CameraSession, workMode: Int, configType: Int): List<String> =
+        maintenance.capabilities(session, workMode, configType)
+
+    override suspend fun sleep(session: CameraSession): CmdResult = maintenance.sleep(session)
+
+    /**
+     * Wake a sleeping camera with a Wake-on-LAN magic packet.
+     *
+     * There is no CGI for this — the camera has no IP to answer on while asleep, which
+     * is why the official app drops to [WakeOnLan] (`Setting.wakeupDevice`,
+     * `Setting.java:483-511`, 102 bytes to `<subnet>.255:9`, five times). [mac] is the
+     * camera's BSSID as the *phone's* Wi-Fi stack reports it
+     * (`TelevisionActivity.java:170` sets it from `connectionInfo.getBSSID()`), because
+     * `getdeviceattr.cgi` does not return a MAC.
+     *
+     * A missing MAC is reported, not worked around: a magic packet without the right
+     * address is indistinguishable from no packet at all, and silently "succeeding"
+     * would leave the user waiting for a camera that never comes back.
+     */
+    override suspend fun wake(session: CameraSession, mac: String?): CmdResult {
+        if (mac.isNullOrBlank()) {
+            return CmdResult.Failure(
+                "唤醒需要相机网卡的 MAC 地址，而本机没能从当前 Wi-Fi 连接里读到它（相机自身不提供该字段）",
+            )
+        }
+        return WakeOnLan.send(session.host, mac).fold(
+            onSuccess = { CmdResult.Ok },
+            onFailure = { CmdResult.Failure(it.message ?: "wake-on-LAN failed") },
+        )
+    }
 }

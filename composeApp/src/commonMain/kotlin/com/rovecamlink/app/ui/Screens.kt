@@ -235,6 +235,18 @@ import com.rovecamlink.app.action_star_file
 import com.rovecamlink.app.action_unstar_file
 import com.rovecamlink.app.action_read_channel
 import com.rovecamlink.app.label_wifi_channel
+import com.rovecamlink.app.section_camera_capabilities
+import com.rovecamlink.app.action_read_capabilities
+import com.rovecamlink.app.label_standby_support
+import com.rovecamlink.app.status_standby_supported
+import com.rovecamlink.app.status_standby_unsupported
+import com.rovecamlink.app.status_capabilities_unknown
+import com.rovecamlink.app.label_capability_tokens
+import com.rovecamlink.app.status_capabilities_empty
+import com.rovecamlink.app.action_sleep_camera
+import com.rovecamlink.app.title_sleep_camera
+import com.rovecamlink.app.message_sleep_camera
+import com.rovecamlink.app.confirm_sleep
 import com.rovecamlink.app.sd_format_age
 import com.rovecamlink.app.sd_format_overdue
 import com.rovecamlink.app.sd_format_never
@@ -242,7 +254,6 @@ import com.rovecamlink.app.core.media.CameraPreviewView
 import com.rovecamlink.app.core.media.OrientationMode
 import com.rovecamlink.app.core.media.rememberDeviceOrientation
 import com.rovecamlink.app.core.model.CameraSetting
-import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.model.FileType
 import com.rovecamlink.app.core.model.ModeFamily
 import com.rovecamlink.app.core.model.ModeTrigger
@@ -868,7 +879,7 @@ private fun FileThumbnail(bitmap: ImageBitmap?, isVideo: Boolean) {
 // ============================ Settings ============================
 
 /** Maintenance actions that permanently alter the device, gated by a confirm dialog. */
-private enum class DangerOp { FormatSd, FactoryReset, Reboot, InstallFirmware }
+private enum class DangerOp { FormatSd, FactoryReset, Reboot, InstallFirmware, Sleep }
 
 /**
  * Three pages in one tab: the camera's shooting menu, the **device's** own menu
@@ -986,6 +997,16 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
     val showPassLbl = stringResource(Res.string.action_show_password)
     val hidePassLbl = stringResource(Res.string.action_hide_password)
     val prefillLbl = stringResource(Res.string.action_use_read_values)
+    // A16: the firmware's own capability tokens, and the standby row they gate (B10).
+    val capabilitiesTitle = stringResource(Res.string.section_camera_capabilities)
+    val readCapabilitiesLbl = stringResource(Res.string.action_read_capabilities)
+    val standbyLbl = stringResource(Res.string.label_standby_support)
+    val standbyYesLbl = stringResource(Res.string.status_standby_supported)
+    val standbyNoLbl = stringResource(Res.string.status_standby_unsupported)
+    val capabilitiesUnknownLbl = stringResource(Res.string.status_capabilities_unknown)
+    val capabilityTokensLbl = stringResource(Res.string.label_capability_tokens)
+    val capabilitiesEmptyLbl = stringResource(Res.string.status_capabilities_empty)
+    val sleepLbl = stringResource(Res.string.action_sleep_camera)
     val dangerTitle = stringResource(Res.string.section_danger)
     val rebootLbl = stringResource(Res.string.action_reboot_camera)
     val factoryResetLbl = stringResource(Res.string.action_factory_reset)
@@ -1087,7 +1108,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                     valueItem(sdStateTitle, if (st?.sdState == null) "—" else sdStateLbl)
                     actionRow(
                         syncTimeLbl,
-                        busy = state.isBusy(Op.Settings),
+                        busy = state.isBusy(Op.TimeSync),
                         onClick = { state.syncTime() },
                     )
                     actionRow(
@@ -1266,8 +1287,43 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                     ) { state.raiseAccessPoint() }
                 }
 
+                section(title = capabilitiesTitle) {
+                    // A16. The tokens are the firmware's own words, so they are shown
+                    // verbatim rather than mapped into this app's idea of a feature list:
+                    // an unknown token is a fact about the camera, not a gap to hide.
+                    valueItem(
+                        standbyLbl,
+                        when {
+                            !state.capabilitiesRead -> capabilitiesUnknownLbl
+                            state.supportsStandby() -> standbyYesLbl
+                            else -> standbyNoLbl
+                        },
+                    )
+                    if (state.capabilitiesRead) {
+                        val tokens = state.deviceCapabilities
+                        if (tokens.isEmpty()) {
+                            valueItem(noteLbl, capabilitiesEmptyLbl)
+                        } else {
+                            valueItem(capabilityTokensLbl, tokens.sorted().joinToString(", "))
+                        }
+                    }
+                    actionRow(
+                        readCapabilitiesLbl,
+                        busy = state.isBusy(Op.Capabilities),
+                    ) { state.readDeviceCapabilities() }
+                    // B10. Offered only where the firmware claimed standby: the endpoint
+                    // exists everywhere and does nothing on hardware without it (the
+                    // official client gates its own button on the same token), and the
+                    // cost of guessing wrong is the user's connection.
+                    actionRow(
+                        sleepLbl,
+                        busy = state.isBusy(Op.Power),
+                        enabled = state.supportsStandby(),
+                    ) { pending = DangerOp.Sleep }
+                }
+
                 section(title = dangerTitle) {
-                    if (state.session?.platform == DevicePlatform.TUWIN_REST) {
+                    if (state.canRebootCamera()) {
                         actionRow(rebootLbl, busy = state.isBusy(Op.Reboot)) { pending = DangerOp.Reboot }
                     }
                     actionRow(factoryResetLbl, busy = state.isBusy(Op.FactoryReset)) {
@@ -1360,6 +1416,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                 DangerOp.FactoryReset -> Res.string.title_factory_reset
                 DangerOp.Reboot -> Res.string.title_reboot
                 DangerOp.InstallFirmware -> Res.string.title_install_firmware
+                DangerOp.Sleep -> Res.string.title_sleep_camera
             },
         )
         val message = stringResource(
@@ -1368,6 +1425,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                 DangerOp.FactoryReset -> Res.string.msg_factory_reset
                 DangerOp.Reboot -> Res.string.msg_reboot
                 DangerOp.InstallFirmware -> Res.string.msg_install_firmware
+                DangerOp.Sleep -> Res.string.message_sleep_camera
             },
         )
         val confirmLabel = stringResource(
@@ -1376,6 +1434,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                 DangerOp.FactoryReset -> Res.string.confirm_reset
                 DangerOp.Reboot -> Res.string.confirm_reboot
                 DangerOp.InstallFirmware -> Res.string.confirm_install_firmware
+                DangerOp.Sleep -> Res.string.confirm_sleep
             },
         )
         OverlayDialog(
@@ -1400,6 +1459,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                             DangerOp.FactoryReset -> state.factoryReset()
                             DangerOp.Reboot -> state.reboot()
                             DangerOp.InstallFirmware -> state.installPreparedFirmware()
+                            DangerOp.Sleep -> state.sleepCamera()
                         }
                         pending = null
                     },
