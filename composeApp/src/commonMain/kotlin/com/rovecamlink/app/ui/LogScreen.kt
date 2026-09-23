@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.robinpcrd.cupertino.CupertinoActivityIndicator
@@ -219,6 +220,9 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
         }
 
         // ---------- actions ----------
+        // Three equal columns, one line each. Left at their natural size the row wrapped
+        // 「导出并分享」and「保存到文件」onto two lines at 420.dp while the third button
+        // stayed single-line, so the row read as two different heights.
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
@@ -227,13 +231,27 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
                 onClick = { export(share = true, full = true) },
                 modifier = Modifier.weight(1f),
                 enabled = busy == null,
-            ) { CupertinoText(stringResource(Res.string.log_action_share)) }
+            ) {
+                CupertinoText(
+                    stringResource(Res.string.log_action_share),
+                    fontSize = 14.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
             CupertinoButton(
                 onClick = { export(share = false, full = true) },
                 modifier = Modifier.weight(1f),
                 enabled = busy == null,
                 colors = CupertinoButtonDefaults.grayButtonColors(),
-            ) { CupertinoText(stringResource(Res.string.log_action_save)) }
+            ) {
+                CupertinoText(
+                    stringResource(Res.string.log_action_save),
+                    fontSize = 14.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
             CupertinoButton(
                 onClick = {
                     state.refreshDiagnosticsEnv()
@@ -242,23 +260,32 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
                         .getOrNull()
                         ?.forEach { (k, v) -> Diag.info(LogTag.DEV, "env $k=$LogFormat.field(v, Diag.config.captureSecrets)") }
                 },
+                modifier = Modifier.weight(1f),
                 enabled = busy == null,
                 colors = CupertinoButtonDefaults.grayButtonColors(),
-            ) { CupertinoText(stringResource(Res.string.log_action_snapshot)) }
+            ) {
+                CupertinoText(
+                    stringResource(Res.string.log_action_snapshot),
+                    fontSize = 14.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
         // Secondary, explicitly current-run-only path so the every-run default above is
-        // never mistaken for "this session only".
+        // never mistaken for "this session only". The explanation gets its own line: sharing
+        // one Row with the two buttons squeezed it into two ragged lines that the buttons
+        // then sat in the middle of.
+        CupertinoText(
+            text = stringResource(Res.string.log_export_hint),
+            color = CupertinoTheme.colorScheme.tertiaryLabel,
+            fontSize = 10.sp,
+            modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, top = 6.dp),
+        )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
         ) {
-            CupertinoText(
-                text = stringResource(Res.string.log_export_hint),
-                color = CupertinoTheme.colorScheme.tertiaryLabel,
-                fontSize = 10.sp,
-                modifier = Modifier.weight(1f),
-            )
             CupertinoButton(
                 onClick = { export(share = true, full = false) },
                 enabled = busy == null,
@@ -405,6 +432,9 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
         // ---------- records ----------
         LazyColumn(
             state = listState,
+            // The body has no other vertical air, so without this the first log line starts
+            // level with the 日志设置 disclosure row right above it.
+            contentPadding = PaddingValues(vertical = 6.dp),
             modifier = Modifier.fillMaxWidth().weight(1f).background(CupertinoTheme.colorScheme.secondarySystemBackground),
         ) {
             itemsIndexed(records) { _, rec ->
@@ -418,7 +448,7 @@ fun LogScreen(state: AppState, onClose: () -> Unit) {
                         ),
                         color = CupertinoTheme.colorScheme.tertiaryLabel,
                         fontSize = 13.sp,
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
                     )
                 }
             }
@@ -472,7 +502,7 @@ private fun LogLine(rec: LogRecord, onClick: () -> Unit) {
         Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 8.dp, vertical = 2.dp),
+            .padding(horizontal = 12.dp, vertical = 2.dp),
     ) {
         BasicText(
             text = LogFormat.line(rec, Diag.timeZone()),

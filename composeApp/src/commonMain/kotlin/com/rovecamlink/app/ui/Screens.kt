@@ -265,6 +265,17 @@ import org.jetbrains.compose.resources.stringResource
 /** Section rows follow the library's own minimum row height. */
 private val RowMinHeight = 45.dp
 
+/**
+ * The inset every library section row (`link`, `switch`, `textField`, …) applies to itself
+ * through `padding(it)` — cupertino 3.0.0's `CupertinoSectionTokens.HorizontalPadding` /
+ * `.VerticalPadding`, which are internal so they cannot be referenced. Custom rows drawn
+ * inside a `section { }` have to repeat them, and going through these two names instead of
+ * typing a number is what keeps the two kinds of row on the same edge: the 12/14/16/18.dp
+ * families found here were all hand-typed drift.
+ */
+internal val SectionH = 18.dp
+internal val SectionV = 8.dp
+
 private fun humanBytes(b: Long): String = when {
     b <= 0 -> "—"
     b < 1024 -> "$b B"
@@ -499,7 +510,7 @@ fun LiveScreen(state: AppState) {
                 modifier = Modifier.fillMaxWidth(),
             )
             Row(
-                Modifier.fillMaxWidth().padding(start = 14.dp, end = 14.dp, bottom = 4.dp),
+                Modifier.fillMaxWidth().padding(start = SectionH, end = SectionH, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 CupertinoSwitch(checked = rotating.value, onCheckedChange = { rotating.value = it })
@@ -508,9 +519,15 @@ fun LiveScreen(state: AppState) {
             }
 
             // ---- scrolling: everything else, clear of the floating shutter ----
+            // The viewport itself stops where the shutter band begins. Reserving that space
+            // with `contentPadding` alone only kept the *last* row clear: every other row
+            // scrolled underneath the shutter, and the exposure slider's right half plus the
+            // mode chips sat un-tappable while they were in that band. The optional
+            // "why is it off" chip grows the band by its own height + 10.dp margin.
+            val shutterBand = 108.dp + if (shutterReason != null) 36.dp else 0.dp
             LazyColumn(
-                Modifier.weight(1f).fillMaxWidth(),
-                contentPadding = PaddingValues(top = 4.dp, bottom = 118.dp),
+                Modifier.weight(1f).fillMaxWidth().padding(bottom = shutterBand),
+                contentPadding = PaddingValues(top = 4.dp, bottom = 8.dp),
             ) {
                 section(title = { CupertinoText(statusTitle) }) {
                     item {
@@ -709,7 +726,7 @@ private fun PreviewHeader(
         label = "flash",
     )
 
-    BoxWithConstraints(modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+    BoxWithConstraints(modifier.padding(horizontal = SectionH, vertical = SectionV)) {
         val wanted = if (swap) maxWidth * 16f / 9f else maxWidth * 9f / 16f
         // The rotated case gets most of the screen on purpose. Turning the phone puts a
         // 9:16 box in a portrait canvas, and capping it at half the height — which is
@@ -927,7 +944,7 @@ private fun QuickAdjustBar(
         Modifier
             .fillMaxWidth()
             .heightIn(min = 36.dp)
-            .padding(horizontal = 12.dp, vertical = 4.dp),
+            .padding(horizontal = SectionH, vertical = SectionV),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AdjustLabel(setting, Modifier.width(64.dp))
@@ -976,7 +993,7 @@ private fun QuickChoiceRow(
         Modifier
             .fillMaxWidth()
             .heightIn(min = 38.dp)
-            .padding(horizontal = 12.dp, vertical = 4.dp),
+            .padding(horizontal = SectionH, vertical = SectionV),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AdjustLabel(setting, Modifier.width(64.dp))
@@ -1743,7 +1760,7 @@ fun SettingsScreen(state: AppState) {
         CupertinoSegmentedControl(
             selectedTabIndex = tab,
             modifier = Modifier.fillMaxWidth(),
-            paddingValues = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+            paddingValues = PaddingValues(horizontal = SectionH, vertical = 6.dp),
         ) {
             listOf(cameraTabLbl, deviceTabLbl, appTabLbl).forEachIndexed { index, label ->
                 CupertinoSegmentedControlTab(
@@ -1906,7 +1923,7 @@ fun SettingsScreen(state: AppState) {
                             item {
                                 Box(
                                     Modifier.fillMaxWidth()
-                                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                                        .padding(it)
                                         .height(4.dp)
                                         .background(CupertinoTheme.colorScheme.tertiaryLabel.copy(alpha = 0.25f)),
                                 ) {

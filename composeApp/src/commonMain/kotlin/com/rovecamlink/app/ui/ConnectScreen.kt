@@ -318,16 +318,15 @@ fun ConnectScreen(state: AppState) {
 
         state.askPasswordFor?.let { network ->
             section(title = { CupertinoText(network.ssid.sectionTitle()) }) {
-                item {
-                    Column(Modifier.fillMaxWidth().padding(it)) {
-                        textField(
-                            value = password,
-                            onValueChange = { password = it },
-                            placeholder = { CupertinoText(passwordLbl) },
-                            singleLine = true,
-                        )
-                    }
-                }
+                // No `item { Column(padding(it)) } }` wrapper: the library's `textField`
+                // already applies the section's own PaddingValues internally, so wrapping it
+                // inset the field twice (36.dp) while the Wi-Fi rows beside it sit at 18.dp.
+                textField(
+                    value = password,
+                    onValueChange = { password = it },
+                    placeholder = { CupertinoText(passwordLbl) },
+                    singleLine = true,
+                )
                 item {
                     Row(
                         Modifier.fillMaxWidth().padding(it),
@@ -357,16 +356,17 @@ fun ConnectScreen(state: AppState) {
 
         section(title = { CupertinoText(otherTitle) }) {
             actionRow(qrLbl) { showQr = true }
-            item {
-                Column(Modifier.fillMaxWidth().padding(it)) {
-                    textField(
-                        value = manualIp,
-                        onValueChange = { manualIp = it },
-                        placeholder = { CupertinoText(ipHint) },
-                        singleLine = true,
-                    )
-                }
-            }
+            // Same double-inset as the password field above: wrapped in
+            // `item { Column(padding(it)) }` the field rendered as an empty band — no
+            // placeholder, no value, no caret — while the identical bare call in the Wi-Fi
+            // rename dialog (Screens.kt) shows its text. `textField` is a section row and
+            // insets itself.
+            textField(
+                value = manualIp,
+                onValueChange = { manualIp = it },
+                placeholder = { CupertinoText(ipHint) },
+                singleLine = true,
+            )
             actionRow(ipLbl, busy = state.phase == Phase.IdentifyingDevice) {
                 val ip = manualIp.trim()
                 if (ip.isNotEmpty()) state.connect(manualHost = ip)
@@ -410,7 +410,7 @@ private fun ConnectHero(
     Column(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = SectionH, vertical = SectionV)
             .clip(RoundedCornerShape(16.dp))
             .background(scheme.secondarySystemBackground)
             .padding(16.dp),
