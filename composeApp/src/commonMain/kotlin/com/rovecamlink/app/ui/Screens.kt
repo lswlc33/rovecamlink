@@ -4,7 +4,6 @@ package com.rovecamlink.app.ui
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
@@ -276,6 +275,13 @@ private val RowMinHeight = 45.dp
 internal val SectionH = 18.dp
 internal val SectionV = 8.dp
 
+/**
+ * The floating shutter's box. Fixed on purpose: every label on it is two characters, and a
+ * control that resized between 录像 and 停止 would move out from under the thumb pressing it.
+ */
+private val ShutterWidth = 96.dp
+private val ShutterHeight = 52.dp
+
 private fun humanBytes(b: Long): String = when {
     b <= 0 -> "—"
     b < 1024 -> "$b B"
@@ -518,16 +524,17 @@ fun LiveScreen(state: AppState) {
                 CupertinoText(rotateLbl, fontSize = 12.sp, color = scheme.secondaryLabel)
             }
 
-            // ---- scrolling: everything else, clear of the floating shutter ----
-            // The viewport itself stops where the shutter band begins. Reserving that space
-            // with `contentPadding` alone only kept the *last* row clear: every other row
-            // scrolled underneath the shutter, and the exposure slider's right half plus the
-            // mode chips sat un-tappable while they were in that band. The optional
-            // "why is it off" chip grows the band by its own height + 10.dp margin.
-            val shutterBand = 108.dp + if (shutterReason != null) 36.dp else 0.dp
+            // ---- scrolling: everything else, under the floating shutter ----
+            // The shutter really floats: the panel runs to the bottom of the window and
+            // rows pass underneath it, which is what makes it read as a control on top of
+            // the screen rather than another bar. Only the *end* of the list is reserved
+            // (via contentPadding), so the last row can always be scrolled up out from
+            // under it. The optional "why is it off" chip grows the reservation by its
+            // own height + 10.dp margin.
+            val shutterBand = ShutterHeight + 26.dp + if (shutterReason != null) 36.dp else 0.dp
             LazyColumn(
-                Modifier.weight(1f).fillMaxWidth().padding(bottom = shutterBand),
-                contentPadding = PaddingValues(top = 4.dp, bottom = 8.dp),
+                Modifier.weight(1f).fillMaxWidth(),
+                contentPadding = PaddingValues(top = 4.dp, bottom = shutterBand),
             ) {
                 section(title = { CupertinoText(statusTitle) }) {
                     item {
@@ -827,13 +834,12 @@ private fun CameraPreviewFrame(url: String?, modifier: Modifier, degrees: Float,
 /**
  * The floating shutter.
  *
- * One control for 录像 / 停止 / 拍照 / 停止连拍, told apart by shape rather than by the
- * word on it: a disc with a ring to start, a small square to stop. That is the iOS
- * Camera convention this app is already styled after, and it survives the panel
- * scrolling under the button — a label that had to be read every frame would not.
- *
- * The morph is animated so the change is *seen*: a shutter that silently swaps disc for
- * square reads as the press having done nothing at all.
+ * A solid rounded rectangle with the action written on it — 录像 / 停止 / 拍照 / 开始 —
+ * rather than the iOS Camera disc-and-square the app used to copy. Every label here is two
+ * characters, so the word fits without wrapping and the box can stay a fixed size: state is
+ * carried by the fill (red while a capture owns the button, accent when it is free, grey when
+ * it cannot be used) and by the word, and the word is the part that never has to be guessed
+ * from a shape seen at the edge of a scrolling panel.
  */
 @Composable
 private fun ShutterButton(
@@ -855,28 +861,27 @@ private fun ShutterButton(
     // confirms the press.
     val shot = remember { Animatable(1f) }
     val animating = rememberCoroutineScope()
-    val innerSize by animateDpAsState(if (stop) 26.dp else 46.dp, tween(200), label = "inner")
-    val innerRadius by animateDpAsState(if (stop) 7.dp else 23.dp, tween(200), label = "radius")
     // Colour is chosen, not tweened: `animateColorAsState` is not on this app's compile
-    // classpath (it ships outside `animation.core`), and the morph that has to be *seen*
-    // is the disc becoming a square — which the two sizes above already carry. Colour
-    // only ever changes with the mode, one screen away from being noticed.
-    val innerColor = when {
+    // classpath (it ships outside `animation.core`). The fill is the whole state change now,
+    // but it only ever flips with the mode or a press, which the label says anyway.
+    val face = when {
         !enabled -> scheme.quaternaryLabel
         stop || videoLike -> CupertinoColors.systemRed
         else -> scheme.accent
     }
+    val text = if (enabled) Color.White else scheme.secondaryLabel
+    val shape = RoundedCornerShape(16.dp)
 
     Box(
         modifier
-            .size(74.dp)
-            .shadow(8.dp, CircleShape)
-            .clip(CircleShape)
-            .background(scheme.secondarySystemGroupedBackground)
-            .border(1.dp, scheme.separator, CircleShape)
+            .size(width = ShutterWidth, height = ShutterHeight)
+            .shadow(8.dp, shape)
+            .clip(shape)
+            .background(face)
             .graphicsLayer {
-                scaleX = press
-                scaleY = press
+                val scale = press * shot.value
+                scaleX = scale
+                scaleY = scale
                 alpha = if (enabled) 1f else 0.72f
             }
             .clickable(
@@ -896,14 +901,16 @@ private fun ShutterButton(
         contentAlignment = Alignment.Center,
     ) {
         if (busy) {
-            CupertinoActivityIndicator(size = 26.dp, color = scheme.secondaryLabel)
+            CupertinoActivityIndicator(size = 22.dp, color = text)
         } else {
-            Box(
-                Modifier
-                    .size(innerSize)
-                    .graphicsLayer { scaleX = shot.value; scaleY = shot.value }
-                    .clip(RoundedCornerShape(innerRadius))
-                    .background(innerColor),
+            // Fixed box, so switching 录像 ↔ 停止 never resizes the control under a thumb
+            // that is already aiming at it.
+            CupertinoText(
+                label,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = text,
+                maxLines = 1,
             )
         }
     }
