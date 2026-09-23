@@ -133,8 +133,29 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     /** The page on top, or null when the tab underneath is reachable. */
     val topPage: Page? get() = pages.lastOrNull()
 
+    /**
+     * How deep the pushed layer is; 0 means a tab is showing.
+     *
+     * The transition needs it because [topPage] alone cannot say which way a move went: 日志 →
+     * 日志设置 is a push and the reverse is a pop, and both ends are non-null pages. Depth is the
+     * only thing that differs.
+     */
+    val pageDepth: Int get() = pages.size
+
     /** Whether any pushed page (the log, its settings, the about page) is showing. */
     val diagnosticsOpen: Boolean get() = pages.isNotEmpty()
+
+    /**
+     * Which of the settings page's three tabs is showing.
+     *
+     * Held here rather than in `SettingsScreen` because a pushed page *replaces* the tab
+     * content while it is open: with the sub-tab remembered inside the screen, opening 关于
+     * from 软件 and coming back landed on 相机, which reads as "it forgot where I was". The
+     * 2026-09-24 page-transition work made that visible; the state simply outlives the screen
+     * now, the same way [favorites] and the page stack do.
+     */
+    var settingsTab by mutableStateOf(0)
+        internal set
 
     fun pushPage(page: Page) {
         if (pages.lastOrNull() == page) return

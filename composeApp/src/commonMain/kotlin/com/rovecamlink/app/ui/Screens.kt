@@ -1032,7 +1032,9 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
         SdCardState.UNKNOWN, null -> stringResource(Res.string.sd_unknown)
     }
 
-    var tab by remember { mutableStateOf(TAB_CAMERA) }
+    // The sub-tab lives in AppState, not here: a pushed page replaces this screen while it is
+    // open, so a `remember`ed index would come back as 相机 every time (see `settingsTab`).
+    val tab = state.settingsTab
     val haptics = LocalHapticFeedback.current
 
     MiuixPage(
@@ -1045,7 +1047,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                 selectedTabIndex = tab,
                 onTabSelected = {
                     if (it != tab) haptics.tick()
-                    tab = it
+                    state.settingsTab = it
                 },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
             )
