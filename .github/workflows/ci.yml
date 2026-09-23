@@ -36,7 +36,9 @@ jobs:
 
       - uses: android-actions/setup-android@v3
         with:
-          packages: 'platforms;android-35 build-tools;34.0.0'
+          # 跟 compileSdk 一起抬到 37：miuix 0.9.4 的 aar 要求 compileSdk >= 37。
+          # nightly.yml 仍留在 35，那条链跑的是 main，还没接 miuix。
+          packages: 'platforms;android-37 build-tools;37.0.0'
 
       - uses: gradle/actions/setup-gradle@v4
 
