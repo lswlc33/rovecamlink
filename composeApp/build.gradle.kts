@@ -50,6 +50,10 @@ kotlin {
             implementation(libs.cupertino)
             implementation(libs.cupertino.icons.extended)
 
+            implementation(libs.miuix.ui)
+            implementation(libs.miuix.preference)
+            implementation(libs.miuix.icons)
+
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)

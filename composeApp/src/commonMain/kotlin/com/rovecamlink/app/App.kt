@@ -48,6 +48,7 @@ import com.robinpcrd.cupertino.icons.filled.Video
 import com.robinpcrd.cupertino.icons.filled.WifiRouter
 import com.robinpcrd.cupertino.theme.CupertinoColors
 import com.robinpcrd.cupertino.theme.CupertinoTheme
+import top.yukonga.miuix.kmp.basic.Text
 import com.robinpcrd.cupertino.theme.systemGreen
 import com.robinpcrd.cupertino.theme.systemOrange
 import com.robinpcrd.cupertino.theme.systemRed
@@ -79,8 +80,8 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
             topBar = {
                 CupertinoTopAppBar(
                     title = {
-                        CupertinoText(
-                            text = stringResource(Res.string.app_name),
+                        Text(
+                            stringResource(Res.string.app_name),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 17.sp,
                         )
