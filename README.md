@@ -44,7 +44,7 @@ simulator/      Ktor 桌面服务器，模拟海思 CGI 协议
 
 ## 构建与运行
 
-环境要求：JDK 21、Android SDK（compileSdk 35）。在 `local.properties` 中配置 `sdk.dir`。
+环境要求：JDK 17 以上、Android SDK（compileSdk 37）。在 `local.properties` 中配置 `sdk.dir`。
 
 ```bash
 # Android 调试 APK

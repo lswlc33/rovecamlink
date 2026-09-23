@@ -1,9 +1,11 @@
 package com.rovecamlink.app.core.ota
 
 import com.rovecamlink.app.core.log.Diag
+import com.rovecamlink.app.core.log.LogLevel
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CmdResult
+import okio.FileSystem
 import okio.Path
 
 /**
@@ -197,6 +199,17 @@ class ChainedOtaTransport(
 class OtaCoordinator(
     private val transport: OtaTransport,
     private val connect: suspend () -> CameraSession,
+    private val fileSystem: FileSystem = FileSystem.SYSTEM,
+    /**
+     * Whether a package whose header cannot be read may still be sent.
+     *
+     * True only for the hand-picked local-file route (`docs/04 §6.1` R9): a user choosing
+     * an arbitrary file off their own disk is the one case where "we do not recognise
+     * this" is not the same as "this is wrong" — it may be a rescue image the vendor never
+     * published. The index route has no such excuse: we know what that endpoint serves, so
+     * an unrecognised header there means the download is not what it claims.
+     */
+    private val allowUnverifiedPackage: Boolean = false,
 ) {
     private var _state: OtaState = OtaState.Idle
     var state: OtaState
@@ -221,21 +234,31 @@ class OtaCoordinator(
         if (reconnectBefore) {
             state = OtaState.WaitingForDevice
             session = runCatching { connect() }.getOrElse {
-                state = OtaState.Failed("Camera unreachable: ${it.message}")
+                state = OtaState.Failed("连不上相机：${it.message ?: "没有应答"}")
                 return state
             }
         } else {
             session = runCatching { connect() }.getOrElse { state = OtaState.Cancelled; return state }
         }
 
+        // R1/R2 of `docs/04 §6.1`, and the last moment they can be applied: the image is
+        // read here, on the phone, *before* the camera is told anything. Refusing a package
+        // that is for another model or is short a few megabytes costs one 256-byte read;
+        // discovering it afterwards is the bricking scenario the whole section is about.
+        val refusal = verifyImage(pkg, session.model)
+        if (refusal != null) {
+            state = OtaState.Failed(refusal)
+            return state
+        }
+
         state = OtaState.Uploading
         val install = runCatching {
             transport.install(session, pkg.copy(fileName = pkg.fileName.takeLast(120))) { }
-        }.getOrElse { CmdResult.Failure(it.message ?: "Transfer failed") }
+        }.getOrElse { CmdResult.Failure(it.message ?: "transfer failed") }
 
         if (state.isTerminal) return state
         if (install !is CmdResult.Ok) {
-            val msg = (install as? CmdResult.Failure)?.message ?: "Upload failed"
+            val msg = (install as? CmdResult.Failure)?.message ?: "上传失败"
             state = OtaState.Failed(msg)
             return state
         }
@@ -245,13 +268,13 @@ class OtaCoordinator(
         val back = waitForReboot(pkg.version)
         if (state.isTerminal) return state
         if (!back) {
-            state = OtaState.Failed("Camera did not come back after the update")
+            state = OtaState.Failed("相机在更新后没有回来（等待 60 秒无应答）")
             return state
         }
 
         state = OtaState.Reconnecting
         val s2 = runCatching { connect() }.getOrElse {
-            state = OtaState.Failed("Reconnect failed: ${it.message}")
+            state = OtaState.Failed("重连失败：${it.message ?: "没有应答"}")
             return state
         }
 
@@ -271,16 +294,74 @@ class OtaCoordinator(
         state = OtaState.ConfirmingVersion(want)
         val installed = runCatching { transport.readVersion(s2) }.getOrNull()
         if (installed == null) {
-            state = OtaState.Failed("OTA version confirmation returned no version")
+            state = OtaState.Failed("回读版本时相机没有给出固件版本，无法确认是否更新成功")
             return state
         }
         if (FirmwareVersion.normalize(installed) != FirmwareVersion.normalize(want)) {
-            state = OtaState.Failed("OTA version mismatch: expected=$want, got=$installed")
+            state = OtaState.Failed("版本核对不符：期望 $want，相机自报 $installed")
             return state
         }
 
         state = OtaState.Completed
         return state
+    }
+
+    /**
+     * Read the package's own header and judge it against the camera it would be sent to.
+     *
+     * Returns the reason to refuse, or null when the package may go. The messages are
+     * Chinese because [OtaState.Failed] is rendered verbatim on the settings page — the
+     * diagnostic detail (model found vs model expected, declared vs actual bytes) goes to
+     * the log as well, in English, where the rest of the OTA trail lives.
+     */
+    private fun verifyImage(pkg: FirmwarePackage, cameraModel: String): String? {
+        val read = FirmwareImage.read(fileSystem, pkg.path)
+        if (read == null) {
+            return if (allowUnverifiedPackage) {
+                Diag.warn(LogTag.OTA, "image header unreadable for ${pkg.fileName}; sending anyway (hand-picked file)")
+                null
+            } else {
+                "读不到固件包的头部，无法确认它是不是给这台相机的；已拒绝送包"
+            }
+        }
+        val (bytes, actualBytes) = read
+        val expected = GkuFirmwareIndex.firmwareModelOf(cameraModel)
+        return when (val check = FirmwareImage.judge(FirmwareImage.parse(bytes), actualBytes, expected)) {
+            is FirmwareImage.Check.Ok -> {
+                Diag.info(
+                    LogTag.OTA,
+                    "image header ok model=${check.model} version=${check.version ?: "-"} bytes=$actualBytes",
+                )
+                null
+            }
+
+            is FirmwareImage.Check.WrongModel -> {
+                Diag.at(
+                    LogLevel.ERROR, LogTag.OTA,
+                    "image header model=${check.found} but camera is ${check.expected ?: "unknown"}; refusing to send ${pkg.fileName}",
+                )
+                "这个固件包是给 ${check.found} 的，相机自报 ${check.expected ?: "未知型号"}。" +
+                    "型号不符的镜像刷进去可能再也开不了机，已拒绝送包。"
+            }
+
+            is FirmwareImage.Check.Truncated -> {
+                Diag.at(
+                    LogLevel.ERROR, LogTag.OTA,
+                    "image header declares ${check.declaredBytes}B but the file is ${check.actualBytes}B",
+                )
+                "固件包不完整：头部声明 ${check.declaredBytes} 字节，实际 ${check.actualBytes} 字节；已拒绝送包。"
+            }
+
+            is FirmwareImage.Check.Unrecognised -> {
+                if (allowUnverifiedPackage) {
+                    Diag.warn(LogTag.OTA, "${check.reason}; sending anyway (hand-picked file)")
+                    null
+                } else {
+                    Diag.at(LogLevel.ERROR, LogTag.OTA, "refusing ${pkg.fileName}: ${check.reason}")
+                    "${check.reason}；已拒绝送包。"
+                }
+            }
+        }
     }
 
     /**

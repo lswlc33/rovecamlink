@@ -1174,10 +1174,21 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
 
                         is OtaState.ReadyToInstall -> {
                             valueItem(statusLbl, readyText)
-                            // Flashing is the one action in this app that can leave the
-                            // camera unable to boot, and it cannot be undone from here, so
-                            // it goes through the same confirmation the card format does.
-                            actionRow(installLbl) { pending = DangerOp.InstallFirmware }
+                            // R5 (`docs/04 §6.1`): the precondition is checked before the
+                            // button, and the reason is shown *instead of* a dead button —
+                            // a greyed control that does not say why is what this app's own
+                            // UI rule forbids.
+                            val blocker = state.firmwareInstallBlocker()
+                            if (blocker != null) {
+                                valueItem(noteLbl, blocker)
+                                actionRow(installLbl, enabled = false) {}
+                            } else {
+                                // Flashing is the one action in this app that can leave the
+                                // camera unable to boot, and it cannot be undone from here,
+                                // so it goes through the same confirmation the card format
+                                // does — which also carries the factory-reset warning (R12).
+                                actionRow(installLbl) { pending = DangerOp.InstallFirmware }
+                            }
                             actionRow(dismissLbl) { state.resetOtaState() }
                         }
 

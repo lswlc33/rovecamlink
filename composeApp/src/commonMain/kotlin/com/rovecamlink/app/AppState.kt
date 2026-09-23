@@ -20,6 +20,7 @@ import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.model.DeviceStatus
 import com.rovecamlink.app.core.model.ModeFamily
 import com.rovecamlink.app.core.model.ModeTrigger
+import com.rovecamlink.app.core.model.SdCardState
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.WorkMode
 import com.rovecamlink.app.core.model.workMode
@@ -1909,6 +1910,35 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     /** Whether to offer the "install a file I chose myself" row on this platform. */
     fun supportsLocalFirmwarePackage(): Boolean = firmwareLocalPickerAvailable
 
+    /**
+     * Why flashing is not allowed right now, or null when it is.
+     *
+     * Guard R5 of `docs/04 §6.1`: the three official apps either check nothing or throw the
+     * answer away (XTU reads battery and card, then discards both), and the failure mode is
+     * the one that cannot be undone — power lost mid-erase. Everything needed is already in
+     * [deviceStatus], so the check is free; the point is to refuse *before* the transfer
+     * starts rather than report it afterwards.
+     *
+     * A null [deviceStatus] means the camera has not answered yet, which is not evidence of
+     * anything, so nothing is blocked on it.
+     */
+    fun firmwareInstallBlocker(): String? {
+        val st = deviceStatus ?: return null
+        if (st.recording) return "相机正在录像。先停止录像，再更新固件。"
+        val battery = st.battery
+        if (battery != null && battery < FIRMWARE_MIN_BATTERY && st.charging != true) {
+            return "相机电量 $battery%，低于 $FIRMWARE_MIN_BATTERY%。刷写中途掉电会让相机停在半刷状态，" +
+                "请先充电或接上电源。"
+        }
+        return when (st.sdState) {
+            // The Hisilicon route stages the image on the card (`docs/04 §6.1` R7), so a
+            // missing or unreadable card is a hard stop rather than a warning.
+            SdCardState.MISSING -> "相机里没有存储卡。这条刷写通道把镜像暂存在卡上，没有卡无法开始。"
+            SdCardState.ERROR -> "相机的存储卡状态异常。先处理存储卡（必要时格式化），再更新固件。"
+            else -> null
+        }
+    }
+
     /** Desktop-only escape hatch: install a file the user picked themselves. */
     fun installChosenFirmwarePackage() {
         val owner = sessionScope ?: return
@@ -1927,7 +1957,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 if (!otaState.isTerminal) otaState = OtaState.Cancelled
                 return@launch
             }
-            startInstall(pkg)
+            startInstall(pkg, handPicked = true)
         }
     }
 
@@ -1938,7 +1968,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * it as soon as the download ends, and the transfers below go back out over the
      * camera network.
      */
-    private fun startInstall(pkg: FirmwarePackage) {
+    private fun startInstall(pkg: FirmwarePackage, handPicked: Boolean = false) {
         val base = session ?: return
         val proto = protocol ?: return
         val owner = sessionScope ?: return
@@ -1965,6 +1995,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 ),
             ),
             connect = { proto.connect(base.host, base.port) },
+            // A file the user picked themselves may be a rescue image the vendor never
+            // published, so an unrecognised header is a warning there and a refusal on the
+            // index route. A *model mismatch* is refused on both — that is R1.
+            allowUnverifiedPackage = handPicked,
         )
         coord.onState = {
             otaState = it
@@ -2252,6 +2286,17 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 }
 
 private const val POLL_FAILURES_BEFORE_LOST = 3
+
+/**
+ * The charge a camera must report before this app will flash firmware into it.
+ *
+ * The vendor's own failure strings list a battery case (`gku_firmware_update_failed_battery`)
+ * but no threshold, and neither they nor the other two check anything before starting
+ * (`docs/04 §6.1` R5). 30% is chosen to leave room for a 50 MB transfer and the erase that
+ * follows it, and a camera that reports no battery at all is not blocked — an unknown value
+ * is not a low one.
+ */
+private const val FIRMWARE_MIN_BATTERY = 30
 
 /**
  * How long [com.rovecamlink.app.AppState.askAboutVpn] waits for an answer before it

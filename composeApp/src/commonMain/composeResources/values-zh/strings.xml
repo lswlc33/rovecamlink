@@ -141,7 +141,7 @@
     <string name="action_use_read_values">用读取到的值填好下面的输入框</string>
     <string name="ota_note_lang">zh</string>
     <string name="title_install_firmware">现在给相机刷写固件？</string>
-    <string name="msg_install_firmware">相机会重启并自己烧写，这期间不能断电、不能关屏幕、也不能靠近相机以外的网络。刷写中断有可能让相机开不了机，本 App 无法把固件刷回去。请确认电量充足并已插好存储卡。</string>
+    <string name="msg_install_firmware">相机会重启并自己烧写，这期间不能断电、不能关屏幕、也不能靠近相机以外的网络。刷写中断有可能让相机开不了机，本 App 无法把固件刷回去。请确认电量充足并已插好存储卡。\n\n另外：刷完固件相机会恢复出厂设置 —— 热点名与密码、对时、以及你在相机上改过的各项设置都会回到默认值，需要重新设置一遍。</string>
     <string name="confirm_install_firmware">开始刷写</string>
     <string name="section_danger">危险操作</string>
     <string name="action_reboot_camera">重启相机</string>

@@ -86,25 +86,40 @@ class CameraLaneTest {
     @Test
     fun cancelledWaiterNeverStrandsTheLane(): Unit = runBlocking {
         val lane = CameraLane("192.168.0.1:80")
+        val holderStarted = CompletableDeferred<Unit>()
         val releaseHolder = CompletableDeferred<Unit>()
         withContext(Dispatchers.Default) {
             val held = async {
-                lane.submit(CameraRequestClass.Command) { releaseHolder.await(); "held" }
+                lane.submit(CameraRequestClass.Command) {
+                    holderStarted.complete(Unit)
+                    releaseHolder.await()
+                    "held"
+                }
             }
-            delay(30)
+            // Every wait below is on an observable fact rather than a sleep: this test used
+            // to sequence four coroutines with `delay(30)` and lost the race whenever the
+            // machine was busy (see CameraLane.waitingCount).
+            holderStarted.await()
             // Queued behind it, then abandoned before it ever gets the slot.
             val abandoned = async { lane.submit(CameraRequestClass.Enumerate) { "never" } }
-            delay(30)
+            awaitWaiting(lane, 1)
             abandoned.cancel()
+            awaitWaiting(lane, 0)
             val finished = CompletableDeferred<Unit>()
             val followUp = async {
                 lane.submit(CameraRequestClass.Enumerate) { finished.complete(Unit); "ok" }
             }
-            delay(30)
             releaseHolder.complete(Unit)
             held.await()
             withTimeout(5_000) { finished.await() }
             assertEquals("ok", followUp.await())
+        }
+    }
+
+    /** Spin until [lane] has exactly [expected] requests queued, or fail after a second. */
+    private suspend fun awaitWaiting(lane: CameraLane, expected: Int) {
+        withTimeout(1_000) {
+            while (lane.waitingCount() != expected) delay(1)
         }
     }
 

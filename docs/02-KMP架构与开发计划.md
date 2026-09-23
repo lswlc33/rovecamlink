@@ -1,8 +1,15 @@
 # 自研开源相机连接 App —— KMP 架构与开发计划
 
-> 技术基线：**Kotlin Multiplatform (KMP)** + **Compose Multiplatform** + **Compose Cupertino**（iOS 风格 UI）
+> 技术基线：**Kotlin Multiplatform (KMP)** + **Compose Multiplatform** + **miuix**（`top.yukonga.miuix.kmp`，见下方 2026-09-24 注）
 > 核心诉求：**可扩展**（未来新相机/新品牌可直接接入）、WiFi 直连 + RTSP 实时图传 + 文件传输、多机型配对。
 > 配套阅读：`01-APK逆向分析报告.md`
+
+> ⚠️ **2026-09-24 注：本文档的 UI 选型已过时。** 落地时没有采用 Compose Cupertino（`io.github.alexzhirkevich:cupertino*`），
+> 而是在 2026-09-23 整体迁到 **miuix**（`top.yukonga.miuix.kmp:miuix-ui/-preference/-icons` 0.9.4）：
+> 全仓 `Cupertino` 引用为 0，7 个主屏全部 miuix 化，UI 骨架是 `composeApp/.../ui/MiuixPage.kt`，
+> 主题是 `ui/theme/RoveMiuixTheme.kt`。迁移同时把 `Screens.kt` 拆出 `LiveScreen.kt`/`LogScreen.kt` 等，
+> 并把工具链抬到 Kotlin 2.4.20 / Compose 1.12.0 / AGP 9.4.1 / compileSdk 37。
+> 下面 §2 表格里的 Cupertino、Decompose、Koin、SQLDelight 等**均未采用**，保留原文只为记录当时的判断。
 
 ## 0. 最新决策（2026-09-20，已与用户确认方向）
 1. **平台优先级：Android 优先并先可用**；**iOS 仅同步搭壳**（保留 `iosApp` 模块 + `expect/actual` 占位与编译通过），用户**无 iOS 设备、不测 iOS**，故 iOS 不做功能验证，只保证不破坏共享代码编译。

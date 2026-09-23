@@ -67,6 +67,16 @@ internal class CameraLane(private val key: String) {
     private val lock = Mutex()
     private var holder: Waiter? = null
 
+    /**
+     * How many requests are queued right now.
+     *
+     * Exists for `CameraLaneTest`: a test that wants to cancel a *queued* request has to
+     * know it is queued, and the only alternative is sleeping and hoping — which is how
+     * `cancelledWaiterNeverStrandsTheLane` became a coin toss under load (it failed once in
+     * the 2026-09-24 verification run and passed on the next, with no code change).
+     */
+    internal suspend fun waitingCount(): Int = lock.withLock { waiting.size }
+
     /** Refusal streak → cooldown. Guarded by [lock], like everything above. */
     private var failures = 0
     private var refusedUntil = 0L
