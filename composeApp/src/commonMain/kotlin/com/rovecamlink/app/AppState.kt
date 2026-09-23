@@ -648,9 +648,12 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val next = if (name in favorites) favorites - name else favorites + name
         favorites = next
         session?.let { graph.prefs.putString(favKey(it), next.joinToString("\n")) }
-        Diag.d(LogTag.FILE) {
-            "favourite ${if (name in next) "+" else "-"} ${LogFormat.safe(name)} (${next.size} starred)"
-        }
+        // Diag.debug, not the shorthand Diag.d — that one is suspend, and starring must
+        // stay callable from a plain click handler.
+        Diag.debug(
+            LogTag.FILE,
+            "favourite ${if (name in next) "+" else "-"} ${LogFormat.safe(name)} (${next.size} starred)",
+        )
     }
 
     private fun loadFavorites(session: CameraSession): Set<String> =
