@@ -75,6 +75,8 @@
     <string name="hint_photo_needs_photo_mode">请先切到「照片」模式——这台相机在视频模式下不能拍静态照片。</string>
     <string name="preview_none">暂无画面</string>
     <string name="preview_stalled">图传已中断 · 点按重连</string>
+    <string name="preview_no_decoder_desktop">本版本不解码实时图传，预览请在 Android 端查看。\n%1$s</string>
+    <string name="preview_no_decoder_ios">iOS 端尚未接入实时预览。\n%1$s</string>
 
     <!-- Files screen -->
     <string name="action_refresh_files">刷新文件列表</string>

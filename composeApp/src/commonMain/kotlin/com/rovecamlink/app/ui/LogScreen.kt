@@ -85,11 +85,13 @@ import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.HorizontalDivider
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Back
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
@@ -217,19 +219,22 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
             }
         },
         header = {
-            Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)) {
-                Card(Modifier.fillMaxWidth()) {
-                    TabRow(
-                        tabs = levelTabs.map { it.first },
-                        selectedTabIndex = levelTabs.map { it.second }.indexOf(viewLevel).coerceAtLeast(0),
-                        onTabSelected = { viewLevel = levelTabs[it].second },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                    )
+            Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
+                // A standard `TabRow` is a sibling of the card, not a child of it: it
+                // sizes itself from its own min/max tab widths and scrolls, so the card's
+                // 16dp row margin was crushing the first segment against the card edge.
+                TabRow(
+                    tabs = levelTabs.map { it.first },
+                    selectedTabIndex = levelTabs.map { it.second }.indexOf(viewLevel).coerceAtLeast(0),
+                    onTabSelected = { viewLevel = levelTabs[it].second },
+                    modifier = Modifier.padding(top = 4.dp, bottom = 8.dp),
+                )
+                Card(Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
                     MiuixField(
                         value = query,
                         onValueChange = { query = it },
                         placeholder = stringResource(Res.string.log_filter_placeholder),
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                     )
                     SwitchPreference(
                         title = stringResource(Res.string.log_follow),
@@ -242,10 +247,16 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
         },
         listState = listState,
     ) {
-        section {
+        // A button row sits where a card would, inset by the same 12dp — the demo never
+        // wraps one in a card. The three whole-history actions are buttons with one
+        // primary among them; the session-only pair underneath are text buttons, which is
+        // the library's own importance ladder for "same thing, but only this run".
+        item {
             Row(
-                Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 LogButton(stringResource(Res.string.log_action_share), enabled = exportable, primary = true) {
                     export(share = true, full = true)
@@ -266,37 +277,56 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
                         }
                 }
             }
-            hintLine(stringResource(Res.string.log_export_hint))
+        }
+        item {
+            Text(
+                text = stringResource(Res.string.log_export_hint),
+                fontSize = 13.sp,
+                color = scheme.onSurfaceVariantSummary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 28.dp, vertical = 10.dp),
+            )
+        }
+        item {
             Row(
-                Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                LogButton(
-                    stringResource(Res.string.log_action_share_current),
+                TextButton(
+                    text = stringResource(Res.string.log_action_share_current),
+                    onClick = { export(share = true, full = false) },
                     enabled = exportable,
-                    small = true,
-                ) { export(share = true, full = false) }
-                LogButton(
-                    stringResource(Res.string.log_action_save_current),
+                    modifier = Modifier.weight(1f),
+                )
+                TextButton(
+                    text = stringResource(Res.string.log_action_save_current),
+                    onClick = { export(share = false, full = false) },
                     enabled = exportable,
-                    small = true,
-                ) { export(share = false, full = false) }
+                    modifier = Modifier.weight(1f),
+                )
             }
-            if (busy != null) {
-                BasicComponent {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        InfiniteProgressIndicator(
-                            color = scheme.primary,
-                            size = 15.dp,
-                            strokeWidth = 2.dp,
-                            orbitingDotSize = 2.5.dp,
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(busy!!, fontSize = 12.sp, color = scheme.onSurfaceVariantSummary)
+        }
+        if (busy != null || note != null) {
+            section {
+                if (busy != null) {
+                    BasicComponent {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            InfiniteProgressIndicator(
+                                color = scheme.primary,
+                                size = 15.dp,
+                                strokeWidth = 2.dp,
+                                orbitingDotSize = 2.5.dp,
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(busy!!, fontSize = 12.sp, color = scheme.onSurfaceVariantSummary)
+                        }
                     }
                 }
+                note?.let { infoRow(stringResource(Res.string.label_note), it) }
             }
-            note?.let { infoRow(stringResource(Res.string.label_note), it) }
         }
 
         // No section heading: the switch below carries the block's name, and a
@@ -308,8 +338,19 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
                 checked = showConfig,
                 onCheckedChange = { showConfig = it },
             )
-            if (showConfig) {
-                hintLine(stringResource(Res.string.log_level_hint))
+        }
+        if (showConfig) {
+            item {
+                Text(
+                    text = stringResource(Res.string.log_level_hint),
+                    fontSize = 13.sp,
+                    color = scheme.onSurfaceVariantSummary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 28.dp, vertical = 4.dp),
+                )
+            }
+            item {
                 TabRow(
                     // The segment labels are the level tokens themselves — the file is
                     // keyed on `V D I W E`, so translating them here would break the
@@ -322,8 +363,12 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
                         Diag.config.minLevel = l
                         Diag.info(LogTag.LOG, "config minLevel=${l.name}")
                     },
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
                 )
+            }
+            section {
                 SwitchPreference(
                     title = stringResource(Res.string.log_switch_bodies),
                     checked = captureBodies,
@@ -367,11 +412,15 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
             }
         }
 
-        // The records themselves, outside a card: this is dense monospace read line by
-        // line, and a card's outer inset would only take width away from it. The count
-        // above them lives in the pinned switch's summary, so it is not repeated here.
-        itemsIndexed(records) { _, rec ->
-            LogLine(rec) { detail = rec }
+        // The records are the library's other documented list shape — rows outside a
+        // card, separated by `HorizontalDivider` — because the tail can be 1 200 lines
+        // long and one card holding them all would compose every one of them. Inset by
+        // the card's own 12dp so the block lines up with the sections above it.
+        itemsIndexed(records) { index, rec ->
+            Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
+                if (index > 0) HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                LogLine(rec) { detail = rec }
+            }
         }
         if (records.isEmpty()) {
             item {
@@ -410,13 +459,12 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
     }
 }
 
-/** One of the export actions: equal width, one line each, spinner while it runs. */
+/** One of the export actions: equal width, one line each. */
 @Composable
 private fun RowScope.LogButton(
     label: String,
     enabled: Boolean = true,
     primary: Boolean = false,
-    small: Boolean = false,
     onClick: () -> Unit,
 ) {
     Button(
@@ -424,12 +472,10 @@ private fun RowScope.LogButton(
         modifier = Modifier.weight(1f),
         enabled = enabled,
         colors = if (primary) ButtonDefaults.buttonColorsPrimary() else ButtonDefaults.buttonColors(),
-        minHeight = if (small) 34.dp else 40.dp,
-        insideMargin = PaddingValues(horizontal = 8.dp, vertical = if (small) 7.dp else 11.dp),
     ) {
         Text(
             text = label,
-            fontSize = if (small) 12.sp else 14.sp,
+            fontSize = 14.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

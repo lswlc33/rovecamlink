@@ -93,9 +93,9 @@ import org.jetbrains.compose.resources.stringResource
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
-import top.yukonga.miuix.kmp.basic.Slider
-import top.yukonga.miuix.kmp.basic.TabRow
+import top.yukonga.miuix.kmp.basic.TabRowWithContour
 import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.preference.SliderPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import kotlin.math.roundToInt
@@ -631,38 +631,23 @@ private fun QuickAdjustBar(
     val currentIndex = options.indexOfFirst { it.value == setting.value }.coerceIn(0, lastIndex)
     var draft by remember(setting.value, options) { mutableStateOf(currentIndex) }
 
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .heightIn(min = 40.dp)
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        AdjustLabel(setting, Modifier.width(64.dp))
-        Spacer(Modifier.width(10.dp))
-        Slider(
-            value = draft.toFloat(),
-            onValueChange = { draft = it.roundToInt().coerceIn(0, lastIndex) },
-            modifier = Modifier.weight(1f),
-            enabled = enabled,
-            valueRange = 0f..lastIndex.toFloat(),
-            // `steps` counts the stops *between* the two ends, which is one fewer than
-            // the number of gaps: this puts a tick exactly under each firmware value.
-            steps = lastIndex - 1,
-            onValueChangeFinished = {
-                if (draft != currentIndex) onCommit(options[draft].value)
-            },
-        )
-        Spacer(Modifier.width(10.dp))
-        Box(Modifier.widthIn(min = 42.dp, max = 78.dp), contentAlignment = Alignment.CenterEnd) {
-            Text(
-                MenuCatalog.valueShortLabel(setting.id, options[draft].value),
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
+    // The library's own stepped-slider row: it puts the label on the title edge and the
+    // current stop on the same end edge a switch would occupy, which is the alignment a
+    // hand-built label + slider + value `Row` could not hold when a label wrapped.
+    SliderPreference(
+        value = draft.toFloat(),
+        onValueChange = { draft = it.roundToInt().coerceIn(0, lastIndex) },
+        title = MenuCatalog.titleOf(setting.id, setting.title, false),
+        valueText = MenuCatalog.valueShortLabel(setting.id, options[draft].value),
+        valueRange = 0f..lastIndex.toFloat(),
+        // `steps` counts the stops *between* the two ends, one fewer than the number of
+        // gaps: this puts a tick exactly under each firmware value.
+        steps = (lastIndex - 1).coerceAtLeast(0),
+        enabled = enabled,
+        onValueChangeFinished = {
+            if (draft != currentIndex) onCommit(options[draft].value)
+        },
+    )
 }
 
 /**
@@ -825,7 +810,10 @@ private fun ModeStrip(
     }
     fun chipsOf(family: ModeFamily) = modes.filter { it.family == family }
     Column(modifier) {
-        TabRow(
+        // The contour variant, because this one lives *inside* a card: the standard
+        // `TabRow` is a sibling of the card in the demo and sizes its segments from
+        // different min/max widths than the in-card shape does.
+        TabRowWithContour(
             tabs = listOf(videoLabel, photoLabel),
             selectedTabIndex = tab,
             onTabSelected = { index ->
@@ -845,6 +833,9 @@ private fun ModeStrip(
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
+            // Stop the strip short of the floating shutter: at the top of the scroll the
+            // two share a row, and the last mode was sitting under the disc.
+            modifier = Modifier.padding(end = 88.dp),
         ) {
             items(chips, key = { it.name }) { mode ->
                 Chip(

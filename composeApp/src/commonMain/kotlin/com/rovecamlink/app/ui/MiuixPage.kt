@@ -2,7 +2,6 @@ package com.rovecamlink.app.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -29,10 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,6 +58,8 @@ import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextField
+import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.basic.VerticalScrollBar
 import top.yukonga.miuix.kmp.basic.rememberScrollBarAdapter
@@ -73,6 +73,9 @@ import top.yukonga.miuix.kmp.utils.overScrollVertical
 
 /** Horizontal inset of a section's card from the page edge. */
 private val CardInset = 12.dp
+
+/** The gap one section leaves before the next; the demo puts it under the card, never above. */
+private val SectionGap = 12.dp
 
 /**
  * One page of the app.
@@ -91,6 +94,8 @@ fun MiuixPage(
     title: String,
     outerPadding: PaddingValues,
     state: AppState,
+    subtitle: String? = null,
+    subtitleColor: Color? = null,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = { AppBarActions(state) },
     bottomContent: @Composable () -> Unit = {},
@@ -107,10 +112,17 @@ fun MiuixPage(
     // per gesture, and the live page's header is a video surface that would have to be
     // measured again each time.
     val scrollBehavior = if (header == null) MiuixScrollBehavior() else null
+    // The bar has exactly one documented slot for a textual status — `subtitle` — and
+    // `actions` is for icons, so the connection state reads as the bar's second line
+    // instead of as a chip bolted on beside the menu button.
+    val (statusLabel, statusColor) = connectionStatus(state)
     Scaffold(
         topBar = {
             TopAppBar(
                 title = title,
+                subtitle = subtitle ?: statusLabel,
+                subtitleColor = subtitleColor
+                    ?: if (subtitle == null) statusColor else MiuixTheme.colorScheme.onSurfaceVariantSummary,
                 scrollBehavior = scrollBehavior,
                 navigationIcon = navigationIcon,
                 actions = actions,
@@ -125,7 +137,6 @@ fun MiuixPage(
             bottom = room,
         )
         val listModifier = Modifier
-            .fillMaxHeight()
             .overScrollVertical()
             .then(
                 if (scrollBehavior == null) {
@@ -134,6 +145,7 @@ fun MiuixPage(
                     Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
                 },
             )
+            .fillMaxHeight()
         val list: @Composable () -> Unit = {
             Box(Modifier.fillMaxSize()) {
                 LazyColumn(
@@ -178,7 +190,8 @@ fun LazyListScope.section(title: String? = null, content: @Composable ColumnScop
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = CardInset, vertical = 4.dp),
+                .padding(horizontal = CardInset)
+                .padding(bottom = SectionGap),
         ) {
             content()
         }
@@ -289,11 +302,39 @@ fun ColumnScope.actionRow(
 }
 
 /**
- * A single-line text field wearing the library's colours.
+ * A row of actions, laid out the way the demo lays a button pair out: equal weight, 12dp
+ * apart, inset by the card's own 12dp, and *not* inside a card. One of them may carry the
+ * primary colour — the row is allowed exactly one.
+ */
+@Composable
+fun RowScope.actionButton(
+    label: String,
+    busy: Boolean = false,
+    enabled: Boolean = true,
+    primary: Boolean = false,
+    onClick: () -> Unit,
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled && !busy,
+        modifier = Modifier.weight(1f),
+        colors = if (primary) ButtonDefaults.buttonColorsPrimary() else ButtonDefaults.buttonColors(),
+    ) {
+        if (busy) {
+            InfiniteProgressIndicator(size = 15.dp, strokeWidth = 2.dp, orbitingDotSize = 2.5.dp)
+            Spacer(Modifier.width(8.dp))
+        }
+        Text(label, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    }
+}
+
+/**
+ * A single-line input wearing the library's own field.
  *
- * `miuix`'s own `TextField` is built on the new `TextFieldState` and carries a floating
- * label; these fields are for a camera setting's raw value and for the hotspot's name
- * and passphrase, where a plain box is the whole requirement.
+ * The wrapper exists so a page can keep its `String` state: [TextField] draws the label
+ * as the placeholder when the box is empty, which is what every one of these fields
+ * wants, and it brings the fill, the corner radius and the focus ring that a hand-built
+ * box did not — a `surfaceVariant` plate is invisible on a card of the same colour.
  */
 @Composable
 fun MiuixField(
@@ -303,32 +344,15 @@ fun MiuixField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    Box(
-        modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(MiuixTheme.colorScheme.surfaceVariant)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-    ) {
-        if (value.isEmpty()) {
-            Text(
-                text = placeholder,
-                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
-                fontSize = 16.sp,
-            )
-        }
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            enabled = enabled,
-            singleLine = true,
-            textStyle = TextStyle(
-                color = MiuixTheme.colorScheme.onSurface,
-                fontSize = 16.sp,
-            ),
-            cursorBrush = SolidColor(MiuixTheme.colorScheme.primary),
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier,
+        label = placeholder,
+        useLabelAsPlaceholder = placeholder.isNotEmpty(),
+        enabled = enabled,
+        singleLine = true,
+    )
 }
 
 /** Thin progress line used by the download rows. */
@@ -384,15 +408,17 @@ fun LazyListScope.notConnectedItem() {
 }
 
 /**
- * The connection chip and the diagnostics switch, which every page's bar carries.
+ * The diagnostics switch, which every page's bar carries.
  *
  * Diagnostics has to be one tap away from wherever you are: that is where the failure
  * you want to report just happened. One tap also puts it away again — the same button is
  * the close control, so the page never has to be re-found after a screen change.
+ *
+ * `actions` is the library's icon slot and nothing else, so the connection state is not
+ * a chip here — it is the bar's second line. See [connectionStatus].
  */
 @Composable
 fun RowScope.AppBarActions(state: AppState) {
-    ConnectionPill(state)
     IconButton(
         onClick = {
             if (state.diagnosticsOpen) state.closeDiagnostics() else state.openDiagnostics()
@@ -404,28 +430,22 @@ fun RowScope.AppBarActions(state: AppState) {
             tint = if (state.diagnosticsOpen) {
                 MiuixTheme.colorScheme.primary
             } else {
-                MiuixTheme.colorScheme.onSurface
+                MiuixTheme.colorScheme.onBackground
             },
         )
     }
 }
 
-/** Compact connection-state chip shown in the navigation bar. */
+/**
+ * The bar's `subtitle`: what the connection is doing, in the two hues a status line gets.
+ *
+ * The accent for "connected, or getting there" and the error tone for "it broke", with
+ * the summary grey for the idle case. Connected and busy deliberately share a hue — the
+ * words differ, and a fourth colour would be a legend to learn.
+ */
 @Composable
-private fun ConnectionPill(state: AppState) {
+fun connectionStatus(state: AppState): Pair<String, Color> {
     val scheme = MiuixTheme.colorScheme
-    val busy = state.phase != Phase.Connected &&
-        state.phase != Phase.Idle &&
-        state.phase != Phase.Error
-    // Connected and busy share the accent: the chip carries one hue for "the app is
-    // doing the right thing" and the spinner is what separates the two. Four hues read
-    // as a legend the user has to learn; the spinner reads without being learnt.
-    val tint = when (state.phase) {
-        Phase.Connected -> scheme.primary
-        Phase.Error -> scheme.error
-        Phase.Idle -> scheme.onSurfaceVariantSummary
-        else -> scheme.primary
-    }
     val label = stringResource(
         when (state.phase) {
             Phase.Connected -> Res.string.pill_connected
@@ -434,30 +454,13 @@ private fun ConnectionPill(state: AppState) {
             else -> Res.string.pill_busy
         },
     )
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clip(RoundedCornerShape(50))
-            .background(scheme.surfaceVariant)
-            .padding(horizontal = 8.dp, vertical = 3.dp),
-    ) {
-        if (busy) {
-            InfiniteProgressIndicator(
-                color = tint,
-                size = 12.dp,
-                strokeWidth = 1.5.dp,
-                orbitingDotSize = 2.dp,
-            )
-            Spacer(Modifier.width(4.dp))
-        }
-        Text(
-            text = label,
-            color = tint,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.SemiBold,
-        )
+    val color = when (state.phase) {
+        Phase.Connected -> scheme.primary
+        Phase.Error -> scheme.error
+        Phase.Idle -> scheme.onSurfaceVariantSummary
+        else -> scheme.primary
     }
+    return label to color
 }
 
 /**
@@ -484,27 +487,32 @@ fun ConfirmDialog(
         summary = message,
         onDismissRequest = onDismiss,
     ) {
+        // A dialog has no button slot in this library — the documented shape is a pair of
+        // `TextButton`s in a SpaceBetween row, the affirmative one carrying the primary
+        // text-button colours.
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Button(onClick = onDismiss, modifier = Modifier.weight(1f)) {
-                Text(cancelLabel)
-            }
-            Button(
+            TextButton(
+                text = cancelLabel,
+                onClick = onDismiss,
+                modifier = Modifier.weight(1f),
+            )
+            Spacer(Modifier.width(20.dp))
+            TextButton(
+                text = confirmLabel,
                 onClick = onConfirm,
                 modifier = Modifier.weight(1f),
-                // Red for the button that deletes something: the library's own button
-                // colours have no destructive pair, and a primary-tinted "format the
-                // card" reads as the safe choice.
+                // Red for the button that deletes something: the library has no
+                // destructive pair, and a primary-tinted 「格式化存储卡」 reads as the
+                // safe choice.
                 colors = if (destructive) {
-                    ButtonDefaults.buttonColors(color = scheme.error, contentColor = scheme.onError)
+                    ButtonDefaults.textButtonColors(color = scheme.error, textColor = scheme.onError)
                 } else {
-                    ButtonDefaults.buttonColorsPrimary()
+                    ButtonDefaults.textButtonColorsPrimary()
                 },
-            ) {
-                Text(confirmLabel)
-            }
+            )
         }
     }
 }

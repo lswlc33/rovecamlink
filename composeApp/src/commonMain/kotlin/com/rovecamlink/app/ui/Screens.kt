@@ -227,6 +227,7 @@ import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Switch
+import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.icon.MiuixIcons
@@ -323,23 +324,38 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
         if (state.session == null) {
             notConnectedItem()
         } else {
-            section {
-                actionRow(
-                    refreshLabel,
-                    busy = state.isBusy(Op.Refresh),
-                    onClick = { state.refreshFiles() },
-                )
-                actionRow(selectLbl, onClick = {
-                    selectMode = !selectMode
-                    if (!selectMode) selected.clear()
-                })
+            // Two actions, side by side, outside a card: the demo lays a button pair out
+            // in a Row inset by the card's own 12dp rather than stacking two full-width
+            // buttons inside one.
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    actionButton(
+                        refreshLabel,
+                        busy = state.isBusy(Op.Refresh),
+                        primary = true,
+                        onClick = { state.refreshFiles() },
+                    )
+                    actionButton(selectLbl, onClick = {
+                        selectMode = !selectMode
+                        if (!selectMode) selected.clear()
+                    })
+                }
             }
 
             if (selectMode) {
-                section(title = batchTitle) {
+                item {
+                    SmallTitle(text = batchTitle)
                     Row(
-                        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp)
+                            .padding(bottom = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         SmallButton(selectAllLbl, modifier = Modifier.weight(1f)) {
                             if (allSelected) {
@@ -785,6 +801,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                 tabs = listOf(cameraTabLbl, deviceTabLbl, appTabLbl),
                 selectedTabIndex = tab,
                 onTabSelected = { tab = it },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
             )
         },
     ) {
@@ -1136,7 +1153,22 @@ private fun ColumnScope.settingRow(
     val zhTitle = MenuCatalog.titleOf(s.id, s.title, device)
     val firmwareName = s.title.takeIf { it != zhTitle }
     val help = MenuCatalog.helpOf(s.id, device)
-    val summary = listOfNotNull(firmwareName, help).joinToString(" · ").ifBlank { null }
+    // A row's summary is one short line — here, the firmware's own spelling, which is
+    // also the name every diagnostic line uses. The paragraph of explanation goes into
+    // the row's `bottomAction`, the library's slot for text under the title, so the
+    // value on the right edge stays level with the title instead of floating in the
+    // middle of a wrapped four-line block.
+    val summary = firmwareName
+    val helpBlock: (@Composable () -> Unit)? = help?.let { body ->
+        @Composable {
+            Text(
+                text = body,
+                fontSize = 13.sp,
+                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                modifier = Modifier.padding(top = 6.dp),
+            )
+        }
+    }
     val write: (String) -> Unit = { value ->
         if (device) state.setDeviceSetting(s.id, value) else state.setSetting(s.id, value)
     }
@@ -1149,6 +1181,7 @@ private fun ColumnScope.settingRow(
                 onCheckedChange = { write(s.toggleValue(it)) },
                 title = zhTitle,
                 summary = summary,
+                bottomAction = helpBlock,
                 enabled = enabled,
             )
         }
@@ -1158,6 +1191,7 @@ private fun ColumnScope.settingRow(
             selectedIndex = options.indexOfFirst { it.value == s.value },
             title = zhTitle,
             summary = summary,
+            bottomAction = helpBlock,
             enabled = enabled,
             onSelectedIndexChange = { index ->
                 options.getOrNull(index)?.let { write(it.value) }

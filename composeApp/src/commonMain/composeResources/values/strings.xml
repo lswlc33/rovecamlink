@@ -75,6 +75,8 @@
     <string name="hint_photo_needs_photo_mode">Switch to Photo mode first — this camera cannot take a still while it is in video mode.</string>
     <string name="preview_none">No preview</string>
     <string name="preview_stalled">Preview stalled · tap to reconnect</string>
+    <string name="preview_no_decoder_desktop">This build does not decode the live stream; preview is on Android.\n%1$s</string>
+    <string name="preview_no_decoder_ios">Live preview is not wired up on iOS yet.\n%1$s</string>
 
     <!-- Files screen -->
     <string name="action_refresh_files">Refresh file list</string>
