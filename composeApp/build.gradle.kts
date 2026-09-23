@@ -26,7 +26,9 @@ kotlin {
     }
 
     listOf(
-        iosX64(),
+        // iosX64 (the Intel simulator) is gone: Compose 1.12 publishes no artifact for it,
+        // which makes the whole appleMain source set fail to resolve. Do not add it back
+        // without checking the runtime/foundation variants exist for that version.
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
