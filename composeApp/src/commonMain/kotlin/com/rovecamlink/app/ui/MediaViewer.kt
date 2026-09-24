@@ -124,6 +124,17 @@ fun MediaViewer(state: AppState) {
             }
         }
 
+        // The swipe layer goes here, between the picture and the chrome: above the stages, because
+        // they want the same drag for panning a zoomed photo and a layer *under* them would never
+        // see it; below every control, because a full-size node carrying a `pointerInput` wins
+        // hit-testing over its siblings whether or not it goes on to consume what it is sent.
+        // Last in the Box — where this used to be — meant the close button, the retry button and
+        // the photo's own tap-to-zoom never received a press at all (2026-09-24 field report).
+        SwipeToStep(state, enabled = !zoomed) { delta ->
+            haptics.tick()
+            state.stepViewer(delta)
+        }
+
         // Chrome floats over the picture on its own row so a tap on the photo cannot hit
         // the close button, and the counter stays readable over a bright frame.
         Row(
@@ -174,14 +185,6 @@ fun MediaViewer(state: AppState) {
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 18.dp, start = 16.dp, end = 16.dp),
         )
-
-        // The swipe layer is last so it sits above the image but below nothing else that
-        // matters; a drag shorter than the threshold is left to the stages themselves,
-        // which is what lets a zoomed photo pan without also changing frames.
-        SwipeToStep(state, enabled = !zoomed) { delta ->
-            haptics.tick()
-            state.stepViewer(delta)
-        }
     }
 }
 
