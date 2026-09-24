@@ -518,19 +518,26 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     fun closeViewer() {
         viewer?.let { Diag.info(LogTag.FILE, "viewer close at index ${it.index}") }
         viewer = null
-        // Drop what the look staged. The bytes went to app storage, not the gallery, and
-        // they do not outlive the viewer (2026-09-24 report: previews were landing in the
-        // album, because this used to go through the ordinary download).
-        if (previewStaged.isNotEmpty()) {
-            val staged = previewStaged.toList()
-            previewStaged.clear()
-            for ((name, path) in staged) {
-                downloads.removeAll { it.file.name == name }
-                runCatching { okio.FileSystem.SYSTEM.delete(path) }
-                    .onFailure { Diag.at(LogLevel.DEBUG, LogTag.FILE, "preview cleanup failed $name ${Diag.causeChain(it)}") }
-            }
-            Diag.at(LogLevel.DEBUG, LogTag.FILE, "viewer closed, dropped ${staged.size} preview file(s)")
+        clearPreviewFiles()
+    }
+
+    /**
+     * Delete every preview file the viewer staged and drop its download entry.
+     *
+     * Called when the viewer closes, and again at the two moments a stale preview cannot
+     * help anyone: opening a connection and leaving one. A preview is never something the
+     * user asked to keep, so nothing here is deleted from under them (2026-09-24 request).
+     */
+    private fun clearPreviewFiles() {
+        if (previewStaged.isEmpty()) return
+        val staged = previewStaged.toList()
+        previewStaged.clear()
+        for ((name, path) in staged) {
+            downloads.removeAll { it.file.name == name }
+            runCatching { okio.FileSystem.SYSTEM.delete(path) }
+                .onFailure { Diag.at(LogLevel.DEBUG, LogTag.FILE, "preview cleanup failed $name ${Diag.causeChain(it)}") }
         }
+        Diag.at(LogLevel.DEBUG, LogTag.FILE, "dropped ${staged.size} staged preview file(s)")
     }
 
     /** Move within the open run, clamped at both ends. */
@@ -972,6 +979,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     /** Full auto-connect: join WiFi (or use current), find device, pick protocol, connect. */
     fun connect(ssid: String? = null, password: String? = null, manualHost: String? = null) {
         connectJob?.cancel()
+        // A connection is a new session's worth of media: whatever the last one staged is
+        // stale on disk and nobody is looking at it any more.
+        clearPreviewFiles()
         val job = scope.launch {
             val op = "c${Diag.nextId()}:connect"
             withContext(OpContext(op)) { connectBlocking(ssid, password, manualHost) }
@@ -1234,6 +1244,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         thumbsInFlight.clear()
         thumbFailedAt.clear()
         downloads.clear()
+        // Leaving the camera must leave nothing of it behind on disk either.
+        clearPreviewFiles()
         busy.clear()
         goPhase(Phase.Idle)
         statusMessage = null
