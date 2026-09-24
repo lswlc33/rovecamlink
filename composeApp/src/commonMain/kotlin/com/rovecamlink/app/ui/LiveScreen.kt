@@ -11,10 +11,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,10 +32,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +50,9 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -199,11 +205,113 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
     // its own height + margin.
     val shutterBand = 108.dp + if (shutterReason != null) 36.dp else 0.dp
 
+    // The bar's second line used to read 已连接 — a fact the picture right under it already
+    // states, and states louder when it is wrong. What the bar is uniquely placed to carry
+    // is the camera's own vitals, which used to be a row of three numbers inside the status
+    // card below: reading them there cost a glance away from the frame on a page whose whole
+    // subject is the frame (2026-09-24 「实时页面的已连接几个字用处不大 替换为电量、SD 卡、
+    // 照片」).
+    val barStatus = buildString {
+        append(batteryLbl).append(' ')
+        append(st?.battery?.let { "$it%" } ?: "—")
+        append("  ·  ")
+        append(sdFreeLbl).append(' ')
+        append(st?.sdFreeMb?.let { humanBytes(it * 1024 * 1024) } ?: "—")
+        append("  ·  ")
+        append(photoCountLbl).append(' ')
+        append(st?.photoCount?.toString() ?: "—")
+    }
+
+    val listState = rememberLazyListState()
+    val shrinkDistancePx = with(LocalDensity.current) { PreviewShrinkDistance.toPx() }
+    // How far down the page has been scrolled, 0 at the top and 1 once the first
+    // [PreviewShrinkDistance] is behind it. The picture gives height back as this grows:
+    // a rotated frame pinned at three quarters of the screen leaves the quick-adjust rows
+    // in a strip too short to drag a slider in (2026-09-24 「图传图像横屏时 图传因为占用过大，
+    // 会影响下方快速设置使用，所以图像横屏时可以随着滚动最多缩小至半屏」).
+    val scrolled by remember(shrinkDistancePx) {
+        derivedStateOf {
+            if (listState.firstVisibleItemIndex > 0) {
+                1f
+            } else {
+                (listState.firstVisibleItemScrollOffset / shrinkDistancePx).coerceIn(0f, 1f)
+            }
+        }
+    }
+
+    val shutter: @Composable BoxScope.() -> Unit = {
+        Column(
+            Modifier
+                .align(Alignment.BottomEnd)
+                .padding(
+                    end = 18.dp,
+                    bottom = outerPadding.calculateBottomPadding() + 18.dp,
+                ),
+            horizontalAlignment = Alignment.End,
+        ) {
+            shutterReason?.let {
+                Box(
+                    Modifier
+                        .padding(bottom = 10.dp)
+                        .clip(RoundedCornerShape(13.dp))
+                        .background(scheme.surfaceVariant)
+                        .border(1.dp, scheme.outline, RoundedCornerShape(13.dp))
+                        .padding(horizontal = 10.dp, vertical = 5.dp),
+                ) {
+                    Text(
+                        it,
+                        fontSize = 11.sp,
+                        color = scheme.onSurfaceVariantSummary,
+                        modifier = Modifier.widthIn(max = 196.dp),
+                    )
+                }
+            }
+            ShutterButton(
+                stop = shutterStop(videoLike, recording, lapseRunning),
+                videoLike = videoLike,
+                enabled = shutterEnabled,
+                busy = commandInFlight,
+                label = shutterLabel,
+                onClick = {
+                    when {
+                        videoLike -> state.record(!recording)
+                        lapseRunning -> state.stopCapture()
+                        else -> state.capture()
+                    }
+                },
+            )
+        }
+    }
+
+    // The full-screen picture: no bar, no list, no scroll — just the frame and the shutter
+    // that has to stay reachable while it is up. It is the same picture composable, so the
+    // rotation, the flash and the stream rebuild all behave identically; what changes is
+    // only how much room it is given (2026-09-24 「图传部分可以通过长按变成全屏预览状态（此时
+    // 会保留录制键依旧悬浮）再次长按退出」).
+    if (state.previewFullscreen) {
+        Box(Modifier.fillMaxSize().background(Color.Black)) {
+            CameraPreviewFrame(previewUrl, Modifier.fillMaxSize(), orientation.degrees, orientation.isLandscapeFrame)
+            // A long press anywhere on the picture puts it back. No tap handler: the shutter
+            // below is the only thing on this screen that a tap should reach.
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTapGestures(onLongPress = { state.setFullscreenPreview(false) })
+                    },
+            )
+            shutter()
+        }
+        return
+    }
+
     MiuixPage(
         title = liveTitle,
         outerPadding = outerPadding,
         state = state,
+        subtitle = barStatus,
         listBottomInset = shutterBand,
+        listState = listState,
         // 自动跟随 rides in the overflow now (2026-09-23 「自动跟随移入更多菜单」): the toggle
         // does not belong in a card under a live video surface, and the ⋯ menu is where
         // per-page switches live across the app. The check mark reflects the current state.
@@ -222,85 +330,43 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
                     busy = busy,
                     recTimeSec = st?.videoTimeSec ?: 0,
                     photos = st?.photoCount,
+                    shrink = scrolled,
+                    onLongPress = { state.setFullscreenPreview(true) },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
         },
-        floating = {
-            Column(
-                Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(
-                        end = 18.dp,
-                        bottom = outerPadding.calculateBottomPadding() + 18.dp,
-                    ),
-                horizontalAlignment = Alignment.End,
-            ) {
-                shutterReason?.let {
-                    Box(
-                        Modifier
-                            .padding(bottom = 10.dp)
-                            .clip(RoundedCornerShape(13.dp))
-                            .background(scheme.surfaceVariant)
-                            .border(1.dp, scheme.outline, RoundedCornerShape(13.dp))
-                            .padding(horizontal = 10.dp, vertical = 5.dp),
-                    ) {
-                        Text(
-                            it,
-                            fontSize = 11.sp,
-                            color = scheme.onSurfaceVariantSummary,
-                            modifier = Modifier.widthIn(max = 196.dp),
-                        )
-                    }
-                }
-                ShutterButton(
-                    stop = shutterStop(videoLike, recording, lapseRunning),
-                    videoLike = videoLike,
-                    enabled = shutterEnabled,
-                    busy = commandInFlight,
-                    label = shutterLabel,
-                    onClick = {
-                        when {
-                            videoLike -> state.record(!recording)
-                            lapseRunning -> state.stopCapture()
-                            else -> state.capture()
-                        }
-                    },
-                )
-            }
-        },
+        floating = shutter,
     ) {
         section(title = statusTitle) {
-            // One line of plain numbers rather than the tile grid this page used to carry:
-            // the picture above is the thing being looked at, and four tiles with a label
-            // under each value took a fifth of the screen to say four short things.
+            // One line, two facts. 录制 and 模式 used to be two full-width rows — the same
+            // shape as a settings row, which is what made this card read as a form; they are
+            // both short values, so they sit side by side the way the vitals line above the
+            // bar does (2026-09-24 「至于录制和模式 这两个写到一块去」).
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Stat(batteryLbl, st?.battery?.let { "$it%" } ?: "—")
-                Stat(sdFreeLbl, st?.sdFreeMb?.let { humanBytes(it * 1024 * 1024) } ?: "—")
-                Stat(photoCountLbl, st?.photoCount?.toString() ?: "—")
+                // The elapsed time lives on the picture itself, where it is read against the
+                // framing; this only says which of the three states the camera is in.
+                Stat(
+                    recLbl,
+                    when {
+                        recording -> stringResource(Res.string.rec_recording)
+                        busy -> recBusyLbl
+                        else -> stringResource(Res.string.rec_idle)
+                    },
+                    valueColor = when {
+                        recording -> scheme.error
+                        busy -> scheme.primary
+                        else -> null
+                    },
+                )
+                Stat(modeLbl, current?.let { ModeCatalog.titleOf(it.name) } ?: "—")
             }
-            // The elapsed time lives on the picture itself, where it is read against the
-            // framing; this row only says which of the three states the camera is in.
-            valueItem(
-                recLbl,
-                when {
-                    recording -> stringResource(Res.string.rec_recording)
-                    busy -> recBusyLbl
-                    else -> stringResource(Res.string.rec_idle)
-                },
-                valueColor = when {
-                    recording -> scheme.error
-                    busy -> scheme.primary
-                    else -> null
-                },
-            )
-            valueItem(modeLbl, current?.let { ModeCatalog.titleOf(it.name) } ?: "—")
         }
 
         section(title = modeTitle) {
@@ -349,15 +415,15 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
 
 /** One number in the status line: a muted label and the value it names. */
 @Composable
-private fun Stat(label: String, value: String) {
+private fun Stat(label: String, value: String, valueColor: Color? = null) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(label, fontSize = 11.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
-        Spacer(Modifier.width(4.dp))
+        Text(label, fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
+        Spacer(Modifier.width(6.dp))
         Text(
             text = value,
-            fontSize = 14.sp,
+            fontSize = 15.sp,
             fontWeight = FontWeight.Medium,
-            color = MiuixTheme.colorScheme.onBackground,
+            color = valueColor ?: MiuixTheme.colorScheme.onBackground,
             maxLines = 1,
         )
     }
@@ -376,6 +442,16 @@ private fun shutterStop(videoLike: Boolean, recording: Boolean, lapseRunning: Bo
  * control off the screen. The cap keeps the picture's own proportions and leaves the
  * panel below something to be scrolled through.
  *
+ * [shrink] is that cap moving, 0 for the full height and 1 for the small one: the rotated
+ * picture takes three quarters of the screen, which is right for framing and wrong for the
+ * sliders underneath it, so scrolling trades the picture's height for theirs and scrolling
+ * back gives it up again (2026-09-24 「图传图像横屏时可以随着滚动最多缩小至半屏」). Only the
+ * rotated case shrinks — the upright picture is already a third of the screen.
+ *
+ * A long press asks for the full-screen view. The gesture is on the picture because the
+ * picture is the thing that goes full screen; it is not on the frame itself (that is a
+ * `TextureView`, which does not consume touches) but on the Compose box drawn over it.
+ *
  * The flash is keyed to the camera's own photo count rather than to the tap: a shutter
  * that flashed on request would claim a picture the camera then refused to take.
  */
@@ -388,6 +464,8 @@ private fun PreviewHeader(
     busy: Boolean,
     recTimeSec: Int,
     photos: Int?,
+    shrink: Float = 0f,
+    onLongPress: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     var flashed by remember { mutableStateOf(false) }
@@ -415,7 +493,9 @@ private fun PreviewHeader(
         // framing he turned the phone *for* was smaller than the one he gets holding it
         // straight (2026-09-23 「画面横屏时太小了 看不清」). Three quarters leaves the
         // control panel a scrollable strip; the shutter floats, so it stays reachable.
-        val limit = maxHeight * if (swap) 0.76f else 0.42f
+        // Scrolling walks that three quarters down to a half — the two thirds the slider
+        // rows need — and the shutter keeps floating over whatever is left.
+        val limit = maxHeight * if (swap) (0.76f - 0.26f * shrink.coerceIn(0f, 1f)) else 0.42f
         val boxH = minOf(wanted, limit)
         val boxW = if (swap) boxH * 9f / 16f else maxWidth
         Box(
@@ -423,7 +503,10 @@ private fun PreviewHeader(
                 .align(Alignment.Center)
                 .size(boxW, boxH)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color.Black),
+                .background(Color.Black)
+                .pointerInput(Unit) {
+                    detectTapGestures(onLongPress = { onLongPress() })
+                },
             contentAlignment = Alignment.Center,
         ) {
             CameraPreviewFrame(url, Modifier.fillMaxSize(), degrees, swap)
@@ -769,6 +852,16 @@ private fun parseAdjustValue(raw: String): Double? {
 }
 
 /**
+ * How much of a scroll the picture is allowed to spend its height on.
+ *
+ * The shrink is driven by the list's own offset, so it needs a distance to divide by:
+ * [LiveScreen] maps 0…this many pixels of scroll onto a 0…1 factor that [PreviewHeader]
+ * turns into height. One short flick is enough to get there, and the reverse gesture
+ * gives the height straight back, so the picture never gets stuck small.
+ */
+private val PreviewShrinkDistance = 120.dp
+
+/**
  * The ordered shooting settings worth a bar on the live page, in the order they are
  * worth reaching for while framing: exposure first, then the two things that trade
  * brightness against noise and motion blur, then the picture-style trio.
@@ -846,10 +939,7 @@ private fun ModeStrip(
                     onSelectFamily(if (index == 0) WorkMode.VIDEO else WorkMode.PHOTO)
                 }
             },
-            // Stopped short of the floating shutter for the same reason the chip row below
-            // is: at the top of the scroll the strip and the disc share a row, and 照片 was
-            // sitting underneath the disc — visible through it, but not tappable.
-            modifier = Modifier.fillMaxWidth().padding(end = 88.dp),
+            modifier = Modifier.fillMaxWidth(),
         )
         val chips = chipsOf(if (tab == 0) ModeFamily.VIDEO else ModeFamily.PHOTO)
         if (chips.isEmpty()) return@Column
@@ -857,9 +947,6 @@ private fun ModeStrip(
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            // Stop the strip short of the floating shutter: at the top of the scroll the
-            // two share a row, and the last mode was sitting under the disc.
-            modifier = Modifier.padding(end = 88.dp),
         ) {
             items(chips, key = { it.name }) { mode ->
                 Chip(

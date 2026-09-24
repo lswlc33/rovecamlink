@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +54,13 @@ import com.rovecamlink.app.pill_error
 import com.rovecamlink.app.pill_offline
 import com.rovecamlink.app.resolve
 import org.jetbrains.compose.resources.stringResource
+import top.yukonga.miuix.kmp.blur.BlendColorEntry
+import top.yukonga.miuix.kmp.blur.BlurDefaults
+import top.yukonga.miuix.kmp.blur.LayerBackdrop
+import top.yukonga.miuix.kmp.blur.isRuntimeShaderSupported
+import top.yukonga.miuix.kmp.blur.layerBackdrop
+import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
+import top.yukonga.miuix.kmp.blur.textureBlur
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
@@ -107,6 +115,62 @@ private val CardInset = 12.dp
 /** The gap one section leaves before the next; the demo puts it under the card, never above. */
 private val SectionGap = 12.dp
 
+/** The blur radius the miuix demo blurs its bars with. */
+private const val BarBlurRadius = 25f
+
+/**
+ * The layer a bar samples, or null on a device that cannot blur at all.
+ *
+ * `textureBlur` is a `RuntimeShader` (API 33), which is why miuix-blur's Android artifact
+ * declares minSdk 32 while this app ships to 24 — see the `uses-sdk` override in
+ * androidMain/AndroidManifest.xml. The library exposes this gate for exactly that case, and
+ * the miuix demo uses it the same way: no shader, no blur, and the bars keep the flat colour
+ * they have always had.
+ *
+ * The surface colour is painted under the recorded content so the blur samples the bar's own
+ * tint wherever the page behind it is transparent, which is the demo's own recipe.
+ */
+@Composable
+fun rememberBarBackdrop(): LayerBackdrop? {
+    if (!isRuntimeShaderSupported()) return null
+    val surface = MiuixTheme.colorScheme.surface
+    return rememberLayerBackdrop {
+        drawRect(surface)
+        drawContent()
+    }
+}
+
+/**
+ * Puts [backdrop] on the content a bar samples. Both bars sit *over* the content — miuix's
+ * `Scaffold` places the body at the window origin and the bars on top of it — so the rows that
+ * scroll under them are exactly what the blur reads.
+ */
+fun Modifier.sampleBackdrop(backdrop: LayerBackdrop?): Modifier =
+    if (backdrop == null) this else layerBackdrop(backdrop)
+
+/**
+ * Makes a bar translucent enough to see the content behind it, blurred. A null [backdrop] — an
+ * old device — returns the modifier untouched, so the bar stays a solid plate.
+ */
+@Composable
+fun Modifier.barBlur(backdrop: LayerBackdrop?): Modifier {
+    if (backdrop == null) return this
+    val surface = MiuixTheme.colorScheme.surface
+    return textureBlur(
+        backdrop = backdrop,
+        shape = RectangleShape,
+        blurRadius = BarBlurRadius,
+        colors = BlurDefaults.blurColors(
+            blendColors = listOf(BlendColorEntry(surface.copy(alpha = 0.8f))),
+        ),
+    )
+}
+
+/** The colour a bar paints when it cannot blur: its own surface, as before. */
+@Composable
+fun barColor(backdrop: LayerBackdrop?): Color =
+    if (backdrop == null) MiuixTheme.colorScheme.surface else Color.Transparent
+
 /**
  * One page of the app.
  *
@@ -146,6 +210,11 @@ fun MiuixPage(
     // `actions` is for icons, so the connection state reads as the bar's second line
     // instead of as a chip bolted on beside the menu button.
     val (statusLabel, statusColor) = connectionStatus(state)
+    // The bar floats over the list rather than pushing it down — miuix's `Scaffold` places the
+    // body at the window origin and the bar on top — so the rows scrolling under it are what
+    // the blur reads. On a device without the shader [backdrop] is null and the bar goes back
+    // to being the solid plate it always was.
+    val backdrop = rememberBarBackdrop()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -153,6 +222,8 @@ fun MiuixPage(
                 subtitle = subtitle ?: statusLabel,
                 subtitleColor = subtitleColor
                     ?: if (subtitle == null) statusColor else MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                color = barColor(backdrop),
+                modifier = Modifier.barBlur(backdrop),
                 scrollBehavior = scrollBehavior,
                 navigationIcon = navigationIcon,
                 actions = actions,
@@ -198,7 +269,7 @@ fun MiuixPage(
                 )
             }
         }
-        Box(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize().sampleBackdrop(backdrop)) {
             if (header == null) {
                 list()
             } else {

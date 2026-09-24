@@ -114,7 +114,6 @@ import com.rovecamlink.app.hint_photo_needs_photo_mode
 import com.rovecamlink.app.hint_quick_adjust
 import com.rovecamlink.app.hint_rotate_picture
 import com.rovecamlink.app.label_batch
-import com.rovecamlink.app.label_battery
 import com.rovecamlink.app.label_camera_settings
 import com.rovecamlink.app.label_clear_selection
 import com.rovecamlink.app.label_device_settings
@@ -126,14 +125,10 @@ import com.rovecamlink.app.label_host
 import com.rovecamlink.app.label_installed
 import com.rovecamlink.app.label_locked
 import com.rovecamlink.app.label_mac
-import com.rovecamlink.app.label_mode
 import com.rovecamlink.app.label_model
 import com.rovecamlink.app.label_name
 import com.rovecamlink.app.label_note
-import com.rovecamlink.app.label_photo_count
-import com.rovecamlink.app.label_rec
 import com.rovecamlink.app.label_region
-import com.rovecamlink.app.label_sd_free
 import com.rovecamlink.app.label_sd_state
 import com.rovecamlink.app.label_select_all
 import com.rovecamlink.app.label_serial
@@ -286,6 +281,7 @@ import top.yukonga.miuix.kmp.icon.extended.Ok
 import top.yukonga.miuix.kmp.icon.extended.Play
 import top.yukonga.miuix.kmp.icon.extended.Refresh
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
+import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.preference.OverlayDropdownPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -1382,12 +1378,29 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                         },
                     )
                 }
-                // 查看日志 / 日志设置 / 关于: each pushes its own page onto the shell's stack.
+                // 查看日志 / 日志设置 / 关于 / 权限说明: each pushes its own page onto the
+                // shell's stack. Entries, not buttons — these four navigate somewhere and
+                // change nothing here, so they wear the same right-arrow row the device page
+                // uses for the same kind of move; a filled button in a settings list reads as
+                // an action that does something to the camera (2026-09-24 「应用设置里面几个
+                // 为什么是按钮啊？应该是入口啊，右箭头那种」).
                 section(title = appSettingsTitle) {
-                    actionRow(viewLogLbl) { state.pushPage(com.rovecamlink.app.Page.Log) }
-                    actionRow(logSettingsRowLbl) { state.pushPage(com.rovecamlink.app.Page.LogSettings) }
-                    actionRow(aboutRowLbl) { state.pushPage(com.rovecamlink.app.Page.About) }
-                    actionRow(permissionsRowLbl) { state.pushPage(com.rovecamlink.app.Page.Permissions) }
+                    ArrowPreference(
+                        title = viewLogLbl,
+                        onClick = { state.pushPage(com.rovecamlink.app.Page.Log) },
+                    )
+                    ArrowPreference(
+                        title = logSettingsRowLbl,
+                        onClick = { state.pushPage(com.rovecamlink.app.Page.LogSettings) },
+                    )
+                    ArrowPreference(
+                        title = aboutRowLbl,
+                        onClick = { state.pushPage(com.rovecamlink.app.Page.About) },
+                    )
+                    ArrowPreference(
+                        title = permissionsRowLbl,
+                        onClick = { state.pushPage(com.rovecamlink.app.Page.Permissions) },
+                    )
                 }
                 // 写入文件 keeps its inline switch — it is the one logging knob a user
                 // reaches for without opening the log at all.
@@ -1538,6 +1551,13 @@ private fun ColumnScope.settingRow(
                 text = body,
                 fontSize = 13.sp,
                 color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                // Two lines is the ceiling: every help string in [MenuCatalog] is written to
+                // fit one, and the second is the slack a long firmware name or a narrow phone
+                // may take. A row that grows a paragraph pushes the next setting off screen
+                // and makes the list unreadable at a glance (2026-09-24 「尽量控制在一行内
+                // 最多两行」).
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(top = 6.dp),
             )
         }

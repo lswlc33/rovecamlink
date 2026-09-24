@@ -123,23 +123,23 @@ object MenuCatalog {
             // (pref_res_image_size)；同一条目名在两种模式下共用，所以这里取不带上下文的
             // 「分辨率」，把上下文交给说明讲清楚。
             zhTitle = "分辨率",
-            zhHelp = "决定画面大小和每秒张数。帧率越高动作越顺滑、文件越大；4K 与高帧率互斥，选不了就是当前模式不支持。分辨率也限定可用的防抖档位。",
+            zhHelp = "决定画面大小与帧率；也限定可用的防抖档位。",
             group = SettingGroup.Quality,
         ),
         "VideoEncode" to SettingMeta(
             zhTitle = "编码格式",
-            zhHelp = "H.265 同画质更省卡、但部分电脑和剪辑软件解码吃力；H.264 兼容性最好、文件更大。",
+            zhHelp = "H.265 更省卡，H.264 兼容性最好、文件更大。",
             group = SettingGroup.Quality,
         ),
         "Image Quality" to SettingMeta(
             zhTitle = "画质",
-            zhHelp = "机内决定的码率档位，越高越清晰、体积越大。和分辨率叠在一起影响最终文件大小。",
+            zhHelp = "机内码率档位，越高越清晰、文件越大。",
             group = SettingGroup.Quality,
         ),
         // ---- 防抖与稳定 ----
         "Gyro EIS" to SettingMeta(
             zhTitle = "陀螺仪防抖",
-            zhHelp = "用机身陀螺仪数据补偿抖动，档位越高裁边越多、视角越窄。「超级增强/水平线锁定」适合行走和骑行；固定在三脚架时应关掉，否则画面会被反向拖动。",
+            zhHelp = "档位越高裁边越多、视角越窄；固定在三脚架上时应关掉。",
             zhValues = mapOf(
                 "Super" to "超级",
                 "Super Enhance" to "超级增强",
@@ -152,12 +152,12 @@ object MenuCatalog {
         ),
         "LDC" to SettingMeta(
             zhTitle = "镜头畸变校正",
-            zhHelp = "把广角的鱼眼边缘拉直，代价是裁掉一圈画面。拍 Vlog 人脸靠前时明显；需要超广角视野时关掉。",
+            zhHelp = "把鱼眼边缘拉直，代价是裁掉一圈画面。",
             group = SettingGroup.Stabilization,
         ),
         "EIS Anti-Blur" to SettingMeta(
             zhTitle = "防抖抗模糊",
-            zhHelp = "相机把它和防抖放在同一组里，未公开细节；按命名是防抖开启时抑制运动模糊的开关。不清楚就保持默认，它只影响画面观感，不影响能否录制。",
+            zhHelp = "未确证：按命名是防抖时抑制运动模糊，不影响能否录制。",
             group = SettingGroup.Stabilization,
         ),
         // ---- 录制方式 ----
@@ -166,67 +166,67 @@ object MenuCatalog {
             // pref_res_video_file_length 又译作「循环录影」——两名一实，容易和「录满覆盖」
             // 的循环录像混淆，所以取不带歧义的那个。
             zhTitle = "视频文件长度",
-            zhHelp = "把一段长录像切成固定时长的多个文件，防止单个文件过大导致读卡或剪辑出问题。「自动」由相机决定切分点。这不是循环录像：录满不会回头覆盖。",
+            zhHelp = "把长录像切成多个文件，避免单文件过大。不是循环录像。",
             group = SettingGroup.Capture,
         ),
         "Audio" to SettingMeta(
             zhTitle = "录影音频",
-            zhHelp = "关掉了视频就没有环境声；风噪大的场合可以先关，后期再配乐。",
+            zhHelp = "关掉后视频里就没有环境声了。",
             group = SettingGroup.Capture,
         ),
         "Pre-Recording" to SettingMeta(
             zhTitle = "预录制",
-            zhHelp = "按下快门前先缓存若干秒画面，避免错过动作开头，代价是更耗电、更占卡。部分高分辨率下相机不允许与防抖同时开启。",
+            zhHelp = "按下快门前先缓存几秒，避免错过开头；更耗电占卡。",
             group = SettingGroup.Capture,
         ),
         // ---- 曝光 ----
         "Meter Mode" to SettingMeta(
             zhTitle = "测光模式",
-            zhHelp = "相机以哪块区域判断亮度。平均测光最稳；拍逆光人像或需要保住主体亮度时改用点测光。",
+            zhHelp = "相机按哪块区域判断亮度；逆光人像用点测光。",
             group = SettingGroup.Exposure,
         ),
         "Exposure" to SettingMeta(
             zhTitle = "曝光补偿",
-            zhHelp = "在相机自动判定的亮度上加减：往正数画面更亮、往负数更暗。自动档下雪景偏暗、夜景偏亮时用它微调最直接。",
+            zhHelp = "在自动亮度上加减：正数更亮、负数更暗。",
             group = SettingGroup.Exposure,
         ),
         "Shutter" to SettingMeta(
             zhTitle = "快门速度",
-            zhHelp = "越快越能冻结动作、运动画面越清晰，但进光变少会起噪点；夜间或室内保持自动。",
+            zhHelp = "越快越能冻结动作，但进光少、噪点多。",
             group = SettingGroup.Exposure,
         ),
         "ISO" to SettingMeta(
             zhTitle = "感光度",
-            zhHelp = "越高越亮也越有噪点。光线充足时保持自动，只在需要锁定亮度时手动压低。",
+            zhHelp = "越高越亮、噪点越多；光线充足时保持自动。",
             group = SettingGroup.Exposure,
         ),
         // ---- 色彩 ----
         "AWB" to SettingMeta(
             zhTitle = "白平衡",
-            zhHelp = "决定「白色」被还原成什么色温。自动会在场景切换时变色，固定一项可以避免一段素材里忽黄忽蓝。",
+            zhHelp = "自动会在场景切换时变色；固定一项可避免忽黄忽蓝。",
             zhValues = mapOf("Auto" to "自动"),
             group = SettingGroup.Colour,
         ),
         "Scene Mode" to SettingMeta(
             zhTitle = "场景模式",
-            zhHelp = "相机预设的一组曝光与色彩组合。没有匹配的场合时保持自动。",
+            zhHelp = "预设的曝光与色彩组合；没有合适的就保持自动。",
             group = SettingGroup.Colour,
         ),
         "Sharpness" to SettingMeta(
             zhTitle = "锐度",
-            zhHelp = "边缘的清晰程度。调高看着利落但会放大噪点，后期还要调色建议调低。",
+            zhHelp = "调高看着利落但会放大噪点，后期调色建议调低。",
             group = SettingGroup.Colour,
         ),
         "Filter" to SettingMeta(
             zhTitle = "滤镜",
-            zhHelp = "机内色彩滤镜，直接烧进画面、后期无法还原成原始色彩，拿不准就选标准。",
+            zhHelp = "烧进画面、后期无法还原；拿不准选标准。",
             group = SettingGroup.Colour,
         ),
         "brightness" to SettingMeta(
             // 官方就叫「亮度」。注意它是色彩风格那组里的画面亮度，不是屏幕亮度
             // (老海思的屏幕亮度是另一条 getscreenbrightness.cgi)。
             zhTitle = "亮度",
-            zhHelp = "与「对比度」「饱和度」同属机内画面风格的一组调整，改的是成像曲线，和上面的曝光补偿不是一回事，也不影响屏幕亮度。",
+            zhHelp = "机内画面风格调整，改成像曲线，不是曝光补偿。",
             group = SettingGroup.Colour,
         ),
         "Contrast" to SettingMeta(
@@ -263,114 +263,114 @@ object MenuCatalog {
         // ---- 网络 ----
         "WiFi Frequency" to DeviceMeta(
             zhTitle = "Wi-Fi 频段",
-            zhHelp = "相机热点用 5G 还是 2.4G。5G 更干净但穿墙差，旧手机、部分笔记本和车机直接搜不到 5G 热点；「蓝牙已唤醒但手机连不上」时先把这里切到 2.4G 再试一次。改动会让热点重启。",
+            zhHelp = "5G 更快但穿墙差，连不上时切 2.4G；改动会重启热点。",
             group = DeviceGroup.Network,
             zhValues = mapOf("5G" to "5 GHz", "2.4G" to "2.4 GHz"),
         ),
         "Wi-Fi" to DeviceMeta(
             zhTitle = "Wi-Fi 名称",
-            zhHelp = "相机热点广播的名字。这台相机在这一行没有给出可显示的取值，改名会重启热点、需要重新连接；本页「相机 Wi-Fi」分组里有同样的入口。",
+            zhHelp = "热点名称，改名会重启热点并需要重连。",
             group = DeviceGroup.Network,
         ),
         // ---- 电源 ----
         "Auto Dormant" to DeviceMeta(
             zhTitle = "自动休眠",
-            zhHelp = "没有操作多久后进入待机：不断电，唤醒快，靠按键或蓝牙都能叫醒。长时间值守建议调长，频繁休眠会让每次连接都多等几秒。",
+            zhHelp = "无操作后进入待机：不断电、唤醒快。值守建议调长。",
             group = DeviceGroup.Power,
         ),
         "Auto Power Off" to DeviceMeta(
             zhTitle = "自动关机",
-            zhHelp = "待机后再过多久彻底关机。设得短省电，但彻底关机后只能按机身按键开机；上面「自动休眠」那档的待机才是本 App 能用蓝牙叫醒的状态（断电后蓝牙是否还供电尚未在真机上确证）。",
+            zhHelp = "待机后再过多久彻底关机；彻底关机后只能按机身按键开机。",
             group = DeviceGroup.Power,
         ),
         // ---- 声音 ----
         "Voice Volume" to DeviceMeta(
             zhTitle = "语音音量",
-            zhHelp = "相机外放提示语音（开机提示、操作反馈）的响度，和下面三个提示音开关各自独立。",
+            zhHelp = "相机外放提示语音的响度，与提示音开关各自独立。",
             group = DeviceGroup.Sound,
         ),
         "Power Tone" to DeviceMeta(
             zhTitle = "开关机提示音",
-            zhHelp = "开机、关机时是否发声。和「自动关机」一起用：待机到点自动关机时也会响一声，夜里值守可以关掉。",
+            zhHelp = "开关机时是否发声；夜里值守可以关掉。",
             group = DeviceGroup.Sound,
         ),
         "Key Tone" to DeviceMeta(
             zhTitle = "按键音",
-            zhHelp = "按下机身按键时的「滴」声，只反馈按键，不代表开始或停止录制。",
+            zhHelp = "按键时的提示音，不代表开始或停止录制。",
             group = DeviceGroup.Sound,
         ),
         "Cap Tone" to DeviceMeta(
             zhTitle = "拍照提示音",
-            zhHelp = "拍照/录制起止时的提示音。部分市场要求这个声音不能关闭；关掉后只能靠指示灯和画面判断是否已经拍下。",
+            zhHelp = "拍照/录制起止的提示音；部分市场不允许关闭。",
             group = DeviceGroup.Sound,
         ),
         "Voice Control" to DeviceMeta(
             zhTitle = "语音控制",
-            zhHelp = "用口令开始/停止录制。手持、骑行风噪大的场合识别率有限，默认关闭。",
+            zhHelp = "用口令开始/停止录制；风噪大时识别率有限。",
             group = DeviceGroup.Sound,
         ),
         // ---- 显示与水印 ----
         "SubScreen Display" to DeviceMeta(
             zhTitle = "副屏显示",
-            zhHelp = "机身小屏（如果有）显示的内容档位。未确证：这台相机把它和主屏设置并列，取值只给出 Default。",
+            zhHelp = "机身小屏显示的内容档位；未确证。",
             group = DeviceGroup.Display,
         ),
         "LEDs" to DeviceMeta(
             zhTitle = "指示灯",
-            zhHelp = "机身工作指示灯。夜间拍摄或放在稳定器上时关掉可以避免反光和干扰。",
+            zhHelp = "机身工作指示灯；夜间或上稳定器时可关掉。",
             group = DeviceGroup.Display,
         ),
         "Date Stamp" to DeviceMeta(
             zhTitle = "日期水印",
-            zhHelp = "把拍摄日期烧进画面。烧进去的无法在后期去掉，素材还要调色或剪辑时建议关掉。",
+            zhHelp = "把日期烧进画面，后期无法去掉。",
             group = DeviceGroup.Display,
         ),
         "Stamp" to DeviceMeta(
             zhTitle = "水印",
-            zhHelp = "与「日期水印」并列的另一档水印开关，按相机自带样式在画面角上叠加信息。未确证两者关系（谁包含谁），先各自试再定档。",
+            zhHelp = "另一档水印开关，与日期水印的关系未确证。",
             group = DeviceGroup.Display,
         ),
         "Grid" to DeviceMeta(
             zhTitle = "参考网格",
-            zhHelp = "取景构图用的参考线，只影响取景画面，不会记录进成片。",
+            zhHelp = "取景参考线，不会记录进成片。",
             group = DeviceGroup.Display,
         ),
         // ---- 通用 ----
         "Language" to DeviceMeta(
             zhTitle = "相机语言",
-            zhHelp = "相机屏幕菜单与提示音使用的语言，改这里不影响本 App 的界面语言。",
+            zhHelp = "相机屏幕菜单的语言，不影响本 App 界面。",
             group = DeviceGroup.General,
         ),
         "Video Format" to DeviceMeta(
             zhTitle = "视频制式",
-            zhHelp = "NTSC / PAL，决定可用帧率的基准（NTSC 走 30/60，PAL 走 25/50）。与国内电视、投影仪不一致时可能在回放里出现闪烁，成片本身不受影响。",
+            zhHelp = "决定帧率基准：NTSC 走 30/60，PAL 走 25/50。",
             group = DeviceGroup.General,
         ),
         "Frequency" to DeviceMeta(
             zhTitle = "电源频率",
-            zhHelp = "抗频闪档位，与国内 50Hz 电网对应。选错会在灯光下录像出现滚条，和上面的「视频制式」是两件事。",
+            zhHelp = "抗频闪档位，国内电网选 50 Hz；选错灯光下会有滚条。",
             group = DeviceGroup.General,
             zhValues = mapOf("50Hz" to "50 Hz", "60Hz" to "60 Hz"),
         ),
         "Quick-Start Switch" to DeviceMeta(
             zhTitle = "快速启动",
-            zhHelp = "关机/待机状态下一键进入录制的那套流程。未确证：官方把它放在设备菜单里，具体是长按开录还是短按唤醒需要现场对比。",
+            zhHelp = "待机下一键进入录制；具体触发方式未确证。",
             group = DeviceGroup.General,
         ),
         // ---- 存储与维护 ----
         "SD Format" to DeviceMeta(
             zhTitle = "存储卡格式化",
-            zhHelp = "清空卡上全部文件，包括还没有下载的视频，删掉的文件无法恢复。本页「存储卡」分组里有同样的按钮。",
+            zhHelp = "清空卡上全部文件，删掉无法恢复。",
             group = DeviceGroup.Maintenance,
         ),
         "Factory Reset" to DeviceMeta(
             zhTitle = "恢复出厂设置",
-            zhHelp = "把相机菜单恢复到出厂状态，包括热点名称和密码——重置后本 App 里保存的连接记录会失效，需要重新连接。",
+            zhHelp = "恢复出厂设置，热点名称与密码也会重置。",
             group = DeviceGroup.Maintenance,
         ),
         "Information" to DeviceMeta(
             zhTitle = "相机信息",
-            zhHelp = "只读条目，固件用它把版本信息排在菜单末尾；本页「关于」分组已经列出同样的内容。",
+            zhHelp = "只读条目，内容见本页「关于」。",
             group = DeviceGroup.Maintenance,
         ),
     )

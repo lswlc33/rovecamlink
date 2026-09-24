@@ -55,7 +55,7 @@
     <string name="label_rec">REC</string>
     <string name="rec_idle">idle</string>
     <string name="rec_busy">busy</string>
-    <string name="label_sd_free">SD free</string>
+    <string name="label_sd_free">Storage</string>
     <string name="action_photo">Photo</string>
     <string name="action_record">Record</string>
     <string name="action_stop">Stop</string>

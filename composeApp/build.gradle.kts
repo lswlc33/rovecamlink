@@ -50,6 +50,12 @@ kotlin {
             implementation(libs.miuix.ui)
             implementation(libs.miuix.preference)
             implementation(libs.miuix.icons)
+            // The bar blur. Its Android artifact declares minSdk 32 (RuntimeShader), while
+            // this app ships to 24, so the manifest overrides that library — see the
+            // `uses-sdk` note in androidMain/AndroidManifest.xml — and every call site is
+            // gated on `isRuntimeShaderSupported()`. On anything older the bars simply stay
+            // solid, which is what they look like today.
+            implementation(libs.miuix.blur)
 
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)

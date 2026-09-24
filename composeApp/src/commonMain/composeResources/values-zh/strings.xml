@@ -55,7 +55,7 @@
     <string name="label_rec">录制</string>
     <string name="rec_idle">空闲</string>
     <string name="rec_busy">忙</string>
-    <string name="label_sd_free">SD 可用</string>
+    <string name="label_sd_free">储存</string>
     <string name="action_photo">拍照</string>
     <string name="action_record">录像</string>
     <string name="action_stop">停止</string>
@@ -295,7 +295,7 @@
     <string name="tab_camera">相机</string>
     <string name="tab_device">设备</string>
     <string name="tab_software">软件</string>
-    <string name="label_photo_count">照片数</string>
+    <string name="label_photo_count">照片</string>
     <string name="label_sd_state">存储卡</string>
 
     <!-- 文件页里原先写死英文的操作。 -->

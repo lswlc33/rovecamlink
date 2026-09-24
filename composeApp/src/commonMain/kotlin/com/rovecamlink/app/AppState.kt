@@ -343,6 +343,34 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     var session by mutableStateOf<CameraSession?>(null)
         private set
+
+    /**
+     * Whether the live session runs over the camera's own Wi-Fi hotspot.
+     *
+     * Captured when the session comes up, not read when it matters: once the hotspot drops,
+     * `isConnectedToCamera` is already false, so asking then cannot tell "this link just
+     * died" apart from "this session never had one" — a manual-IP connection over a normal
+     * network would look identical and be torn down for no reason.
+     */
+    private var sessionOverCameraWifi = false
+
+    /**
+     * True while the live page is showing the picture alone, full screen.
+     *
+     * It lives here rather than inside `LiveScreen` because the *shell* has to know: the
+     * bottom navigation bar and the page's own top bar both step aside for it, and neither
+     * is inside the live page's composable (2026-09-24 「图传部分可以通过长按变成全屏预览状态」).
+     */
+    var previewFullscreen by mutableStateOf(false)
+        private set
+
+    fun setFullscreenPreview(on: Boolean) {
+        if (previewFullscreen != on) {
+            Diag.info(LogTag.STATE, "preview fullscreen=$on")
+        }
+        previewFullscreen = on
+    }
+
     var deviceStatus by mutableStateOf<DeviceStatus?>(null)
         private set
     var deviceInfo by mutableStateOf<DeviceInfo?>(null)
@@ -914,6 +942,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             }
             val s = proto.connect(h, port)
             session = s
+            sessionOverCameraWifi = graph.wifi.isConnectedToCamera
             // Replace the previous session's scope outright. It was cancelled by
             // disconnect(), but inheriting its (dead) Job meant a connect that never went
             // through disconnect — an auto-connect racing a manual one — left the old
@@ -1016,6 +1045,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val closing = session
         if (closing != null) runCatching { protocol?.onSessionClosed(closing) }
         session = null
+        sessionOverCameraWifi = false
+        previewFullscreen = false
         deviceStatus = null
         deviceInfo = null
         otaState = OtaState.Idle
@@ -1068,6 +1099,19 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     Diag.d(LogTag.STATE) { "poll skipped: firmware transfer holds the network route" }
                     delay(POLL_INTERVAL_MS)
                     continue
+                }
+                // Wi-Fi gone means the camera is gone, and the link knows it at once. The
+                // failure ladder below takes three rounds to say the same thing, and in
+                // between the picture is frozen and the pill still reads 已连接 — which is
+                // exactly the state the 2026-09-24 report called out (「如果相机 WiFi 已经断开
+                // 了 那么就视为已断开」). Only checked for sessions that were established over
+                // the camera's own hotspot: a manual-IP session on a normal network never had
+                // one to lose.
+                if (sessionOverCameraWifi && !graph.wifi.isConnectedToCamera) {
+                    Diag.at(LogLevel.WARN, LogTag.STATE, "camera Wi-Fi is gone — the camera is treated as disconnected")
+                    errorMessage = localized(Res.string.err_camera_stopped)
+                    disconnect()
+                    return@launch
                 }
                 // Status polls are bookkeeping, but they must not queue behind a menu
                 // walk: the lane lets them over Enumerate so "is the camera still

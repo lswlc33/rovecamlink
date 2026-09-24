@@ -41,7 +41,6 @@ import com.rovecamlink.app.hint_last_refresh
 import com.rovecamlink.app.label_bluetooth_cameras
 import com.rovecamlink.app.label_bluetooth_count
 import com.rovecamlink.app.label_current_camera_wifi_short
-import com.rovecamlink.app.label_hint
 import com.rovecamlink.app.label_remedy
 import com.rovecamlink.app.label_known_camera
 import com.rovecamlink.app.action_rename_camera
@@ -53,7 +52,6 @@ import com.rovecamlink.app.label_no_bluetooth_cameras
 import com.rovecamlink.app.label_no_wifi_cameras
 import com.rovecamlink.app.label_other_ways
 import com.rovecamlink.app.label_password
-import com.rovecamlink.app.label_phase
 import com.rovecamlink.app.label_saved
 import com.rovecamlink.app.label_wifi_cameras
 import com.rovecamlink.app.label_wifi_count
@@ -154,7 +152,6 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     val phaseNow = phaseText(state.phase)
     val statusNow = state.statusMessage?.resolve().orEmpty()
     val noticeNow: String? = (nearby.notice ?: state.provisioning.notice ?: state.errorMessage)?.resolve()
-    val phaseLbl = stringResource(Res.string.label_phase)
     val refreshLbl = stringResource(Res.string.action_refresh)
     val connectLbl = stringResource(Res.string.action_connect)
     val disconnectLbl = stringResource(Res.string.action_disconnect)
@@ -176,7 +173,6 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     val passwordLbl = stringResource(Res.string.label_password)
     val cancelLbl = stringResource(Res.string.cancel)
     val saveLbl = stringResource(Res.string.save)
-    val hintLbl = stringResource(Res.string.label_hint)
     val remedyLbl = stringResource(Res.string.label_remedy)
     val remedyNow = state.connectRemedy()?.resolve()
     val knownLbl = stringResource(Res.string.label_known_camera)
@@ -202,10 +198,19 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
         else -> noneLbl
     }
 
+    // The bar's second line replaces the bare 已连接 with the same word plus what the
+    // connect flow is doing right now, and the 状态/提示 card below keeps only the things
+    // that went *wrong* — the two rows it used to spend on the happy path said what the
+    // bar already says, and pushing them up is what leaves the page's own content at the
+    // top (2026-09-24 「设备页面的状态和提示两行，能不能也放到顶栏中的已连接位置处，代替
+    // 原本已连接的位置」).
+    val barStatus = listOfNotNull(phaseNow, statusNow.takeIf { it.isNotEmpty() }).joinToString(" · ")
+
     MiuixPage(
         title = stringResource(Res.string.tab_devices),
         outerPadding = outerPadding,
         state = state,
+        subtitle = barStatus,
     ) {
         section {
             ConnectHero(
@@ -240,16 +245,16 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
             )
         }
 
-        section(title = statusTitle) {
-            valueItem(phaseLbl, phaseNow)
-            if (statusNow.isNotEmpty()) infoRow(hintLbl, statusNow)
-            // Every notice this app raises is a failure — the radio is off, the permission
-            // was refused, the join timed out — so it carries the error tone rather than
-            // sitting in the same grey as the line above it.
-            if (noticeNow != null) noticeLine(noticeNow)
-            // The step it died on, with what to do about it — the one thing a stuck user
-            // needs, and what the official app's "solutions" line exists for.
-            if (remedyNow != null) infoRow(remedyLbl, remedyNow)
+        if (noticeNow != null || remedyNow != null) {
+            section(title = statusTitle) {
+                // Every notice this app raises is a failure — the radio is off, the permission
+                // was refused, the join timed out — so it carries the error tone rather than
+                // sitting in the same grey as ordinary prose.
+                if (noticeNow != null) noticeLine(noticeNow)
+                // The step it died on, with what to do about it — the one thing a stuck user
+                // needs, and what the official app's "solutions" line exists for.
+                if (remedyNow != null) infoRow(remedyLbl, remedyNow)
+            }
         }
 
         // The camera we are on: give it a name, or drop everything this phone remembers
