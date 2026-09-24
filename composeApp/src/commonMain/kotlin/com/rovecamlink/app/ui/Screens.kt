@@ -549,7 +549,13 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
             },
             // The one irreversible action here, so it sits last and apart: in the menu
             // rather than beside 刷新/选择, where a stray tap would cost the whole card.
-            AppBarMenuItem(label = deleteAllLbl, enabled = state.files.isNotEmpty()) {
+            // The divider is what makes 「apart」 visible — everything above it is a way of
+            // looking at the card, everything below it acts on the card.
+            AppBarMenuItem(
+                label = deleteAllLbl,
+                enabled = state.files.isNotEmpty(),
+                dividerAbove = true,
+            ) {
                 pendingDeleteAll = true
             },
         ),
@@ -626,7 +632,7 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
         // 200 as success — so the count in the message is the user's only sight of what
         // this costs before it is gone.
         ConfirmDialog(
-            title = stringResource(Res.string.title_delete_all_files),
+            title = stringResource(Res.string.title_delete_all_files, state.files.size),
             message = stringResource(Res.string.message_delete_all_files, state.files.size),
             confirmLabel = deleteLabel,
             cancelLabel = cancelLabel,
