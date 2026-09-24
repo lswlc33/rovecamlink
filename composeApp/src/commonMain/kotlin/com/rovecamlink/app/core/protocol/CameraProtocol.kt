@@ -20,6 +20,17 @@ import okio.Path
  * [CameraProtocolRegistry]; nothing else in the app needs to change.
  */
 interface CameraProtocol {
+
+    /**
+     * The camera's own sensor rotation right now, in degrees clockwise (90 = turned
+     * clockwise, 270 = counter-clockwise), or null when this protocol cannot say.
+     *
+     * The live preview turns for it in addition to the phone's own orientation: the stream
+     * is rotated by the camera, and counter-rotated by how the phone is held, so the box has
+     * to account for both. Defaults to null — a protocol with no such read simply leaves the
+     * preview following the phone alone.
+     */
+    suspend fun currentRotation(session: CameraSession): Int? = null
     val platform: DevicePlatform
 
     /**

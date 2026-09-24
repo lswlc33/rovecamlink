@@ -551,6 +551,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     var deviceStatus by mutableStateOf<DeviceStatus?>(null)
         private set
+
+    /**
+     * The camera's own sensor rotation in degrees clockwise, or null while unknown. The live
+     * preview turns for it in addition to the phone's orientation (2026-09-24 request).
+     */
+    var cameraRotation by mutableStateOf<Int?>(null)
+        private set
     var deviceInfo by mutableStateOf<DeviceInfo?>(null)
         private set
     var otaState by mutableStateOf<OtaState>(OtaState.Idle)
@@ -1246,6 +1253,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         downloads.clear()
         // Leaving the camera must leave nothing of it behind on disk either.
         clearPreviewFiles()
+        cameraRotation = null
         busy.clear()
         goPhase(Phase.Idle)
         statusMessage = null
@@ -1261,6 +1269,18 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             val proto = protocol ?: return@launch
             val s = session ?: return@launch
             Diag.i(LogTag.STATE) { "poll loop started (every ${POLL_INTERVAL_MS}ms, gives up after $POLL_FAILURES_BEFORE_LOST failures)" }
+            // The camera's own rotation rides its own slow loop: it only moves when someone
+            // physically turns the camera, so an extra CGI on every status tick is pure load.
+            owner.launch {
+                while (true) {
+                    cameraRotation = runCatching {
+                        withCameraRequest(CameraRequestClass.Enumerate) { proto.currentRotation(s) }
+                    }.onFailure {
+                        Diag.d(LogTag.STATE) { "camera rotation read failed ${Diag.causeChain(it)}" }
+                    }.getOrNull()
+                    delay(CAMERA_ROTATION_POLL_MS)
+                }
+            }
             while (true) {
                 val t0 = Diag.uptimeMillis()
                 // A firmware check or download holds the **internet** route for its whole
@@ -2665,6 +2685,9 @@ private const val LISTING_PAGE = 300
 
 /** Status polling interval; it is a load characteristic of the camera, so it belongs in the log. */
 private const val POLL_INTERVAL_MS = 1_500L
+
+/** How often the camera's own sensor rotation is re-read; it only moves when someone turns it. */
+private const val CAMERA_ROTATION_POLL_MS = 2_000L
 
 /**
  * Extra status reads after a shutter press, so the white flash (keyed to the camera's own

@@ -165,7 +165,11 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
         val delta = ((orientation.degrees - from + 540f) % 360f) - 180f
         spin.animateTo(from + delta, spring(dampingRatio = 1f, stiffness = 260f))
     }
-    val spinDegrees = spin.value
+    // The camera's own rotation adds to the phone's. The stream is rotated by the camera and
+    // counter-rotated by how the phone is held, so the box has to turn for both at once —
+    // turning the camera to portrait makes it portrait, and turning the phone still works on
+    // top of that (2026-09-24 request). Clockwise degrees: 90 and 270 both mean portrait.
+    val spinDegrees = spin.value + (state.cameraRotation ?: 0).toFloat()
     val spinSwap = ((spinDegrees % 360f + 360f) % 360f / 90f).roundToInt() % 2 == 1
 
     // The official client syncs the clock every time the preview screen is built

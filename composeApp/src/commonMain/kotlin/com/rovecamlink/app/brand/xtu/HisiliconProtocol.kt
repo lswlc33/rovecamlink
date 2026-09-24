@@ -1342,6 +1342,20 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         onProgress: (Float) -> Unit,
     ): Long = http.download(file.downloadUrl, dest, alreadyHaveBytes, onProgress)
 
+    /**
+     * `getcurrotation.cgi` answers `var rotation="0";`. The value is the camera's own sensor
+     * rotation in degrees clockwise — 90 when it was turned clockwise, 270 counter-clockwise
+     * (field probe, 2026-09-24) — so either odd value means the preview should be portrait.
+     * Null when the CGI does not answer: the preview then keeps following the phone alone.
+     */
+    override suspend fun currentRotation(session: CameraSession): Int? {
+        val base = cgi(session.host, session.port)
+        val body = http.getText("$base/getcurrotation.cgi") ?: return null
+        return Regex("""rotation\s*=\s*"?(\d{1,3})""")
+            .find(body)
+            ?.groupValues?.get(1)?.toIntOrNull()
+    }
+
     override fun previewUrl(session: CameraSession): String =
         "rtsp://${session.host}:554/livestream/12"
 
