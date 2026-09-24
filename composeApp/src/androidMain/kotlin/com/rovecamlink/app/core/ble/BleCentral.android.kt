@@ -198,12 +198,19 @@ private fun blePermissions(): Array<String> =
     }
 
 /**
- * Log-safe form of a notification: the keys and the shape stay, the passphrase
- * becomes its length. The diagnostics TXT leaves the phone through a share sheet,
- * and `PWD=` is the one field in the whole handshake that grants network access.
+ * Log-safe form of a notification: the keys and the shape stay, the secret values
+ * become their length. The diagnostics TXT leaves the phone through a share sheet,
+ * and both `PWD=` (the hotspot passphrase) and `Pin=` (the pairing code the camera
+ * accepted) grant access to the camera's network — the earlier mask covered only
+ * `PWD=`, so the field corpus's `Status=0,Pin=3056` shipped the code in the clear.
+ * `=` and `:` are both delimiters, because the Ambarella branch answers `Pin:1234`.
  */
+private val SECRET_FIELDS = Regex(
+    "(${BleKeys.PASSWORD}|${BleKeys.PIN})\\s*[=:]\\s*([^,]*)",
+)
+
 private fun maskPassphrase(text: String): String =
-    text.replace(Regex("PWD=([^,]*)")) { "PWD=<${it.groupValues[1].length}ch>" }
+    SECRET_FIELDS.replace(text) { "${it.groupValues[1]}=<${it.groupValues[2].length}ch>" }
 
 actual fun createBleCentral(): BleCentral = AndroidBleCentral()
 
@@ -231,7 +238,17 @@ private class GattSession(
     private val handshake: BleHandshake,
     private val expectedGateway: String?,
 ) {
+    /**
+     * Pending writes and the flag that says one is in flight.
+     *
+     * Touched from three places that are genuinely different threads: the ticker
+     * coroutine, the notify callback (the BLE binder thread), and the write-complete
+     * callback. [writeLock] guards them together, because `if (writeInFlight) return;
+     * writeInFlight = true` was a non-atomic test-and-set that let two drains write
+     * concurrently, and `ArrayDeque` is not safe for that either way.
+     */
     private val writes = ArrayDeque<ByteArray>()
+    private val writeLock = Any()
     private val result = CompletableDeferred<BleOutcome>()
     private var buffer = ByteArray(0)
 
@@ -507,7 +524,7 @@ private class GattSession(
 
     private fun enqueue(bytes: ByteArray) {
         if (closed) return
-        writes.addLast(bytes)
+        synchronized(writeLock) { writes.addLast(bytes) }
         drain()
     }
 
@@ -518,10 +535,15 @@ private class GattSession(
         val ch = characteristic ?: return
         // Writing before the CCCD is settled is how the official client reports
         // "connected but the camera never answers": keep the queue and let
-        // [beginHandshake] release it.
-        if (!notifyReady || writeInFlight) return
-        val next = writes.pollFirst() ?: return
-        writeInFlight = true
+        // [beginHandshake] release it. The claim on the slot is taken and the next
+        // frame polled under [writeLock] so two callers cannot both start a write.
+        if (!notifyReady) return
+        val next: ByteArray
+        synchronized(writeLock) {
+            if (writeInFlight) return
+            next = writes.pollFirst() ?: return
+            writeInFlight = true
+        }
         val ok = runCatching {
             ch.value = next
             g.writeCharacteristic(ch)
@@ -559,7 +581,7 @@ private class GattSession(
 
     fun shutdown() {
         closed = true
-        writes.clear()
+        synchronized(writeLock) { writes.clear() }
         val g = gatt ?: return
         gatt = null
         runCatching { g.close() }
