@@ -477,6 +477,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * Only ever filled after a real fetch, so a file the user already owned is never touched.
      */
     private val previewStaged = mutableMapOf<String, Path>()
+    private var previewEpoch = 0L
 
     /**
      * The local path a viewer needs, and whether it is on disk yet.
@@ -529,6 +530,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * user asked to keep, so nothing here is deleted from under them (2026-09-24 request).
      */
     private fun clearPreviewFiles() {
+        previewEpoch++
         if (previewStaged.isEmpty()) return
         val staged = previewStaged.toList()
         previewStaged.clear()
@@ -2381,6 +2383,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         if (current != null) downloads.remove(current)
         downloads.add(DownloadItem(file, state = DownloadItem.State.Running))
         owner.launch {
+            // A preview is only wanted while its look lasts. Recording the epoch here lets a
+            // fetch that finishes *after* the viewer closed (or the session moved on) delete
+            // itself instead of being staged into a cache nobody will drain — see below.
+            val previewEpochAtStart = if (publish) 0L else previewEpoch
             val op = "c${Diag.nextId()}:download"
             withContext(OpContext(op)) {
                 val t0 = Diag.uptimeMillis()
@@ -2422,6 +2428,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                             "FAILED ${file.name} after ${ms}ms (partial file kept for resume)",
                         )
                         markFailed(file, localized(Res.string.err_download_interrupted))
+                        if (!publish) dropPreviewLeftover(file, dest)
                         return@withContext
                     }
                     if (file.sizeBytes > 0L && written != file.sizeBytes) {
@@ -2430,6 +2437,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                             "SIZE MISMATCH ${file.name} wrote=$written expected=${file.sizeBytes} in ${ms}ms",
                         )
                         markFailed(file, localized(Res.string.err_download_incomplete, written, file.sizeBytes))
+                        if (!publish) dropPreviewLeftover(file, dest)
                         return@withContext
                     }
                     // Naming the container we actually hand over. Publishing every clip as
@@ -2454,9 +2462,18 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                         runCatching { graph.fileSaver.publishToGallery(dest, file.name, mime) }
                             .onFailure { Diag.at(LogLevel.WARN, LogTag.DL, "gallery publish threw ${Diag.causeChain(it)}") }
                             .getOrNull()
-                    } else {
+                    } else if (previewEpoch == previewEpochAtStart) {
                         previewStaged[file.name] = dest
                         null
+                    } else {
+                        // The look ended while this was still downloading, so nothing will
+                        // ever drain it: deleting here is the only thing that keeps app
+                        // storage from slowly filling with orphaned previews.
+                        Diag.d(LogTag.FILE) { "preview ${file.name} finished after its look ended — deleting" }
+                        downloads.removeAll { it.file.name == file.name }
+                        runCatching { okio.FileSystem.SYSTEM.delete(dest) }
+                            .onFailure { Diag.at(LogLevel.DEBUG, LogTag.FILE, "late preview cleanup failed ${Diag.causeChain(it)}") }
+                        return@withContext
                     }
                     if (ms > 0) lastRateBps = written * 1000 / ms
                     markDone(file, dest.toString(), published)
@@ -2474,6 +2491,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     // ended on purpose — and then marking the queue entry failed — turned
                     // every clean disconnect into a red error.
                     Diag.info(LogTag.DL, "download ${file.name} cancelled (${t.message ?: "scope closed"})")
+                    // A preview that was cut off is dropped here: unlike a user download,
+                    // there is no partial file worth resuming, and a cancelled preview would
+                    // otherwise sit in app storage with nothing left to clean it up.
+                    if (!publish) dropPreviewLeftover(file, previewPathFor(file))
                     // Rethrown, not swallowed: cancellation is the coroutine's own exit
                     // signal and must keep propagating. The queue entry is deliberately
                     // left as-is (not marked failed) — disconnect clears the queue anyway.
@@ -2481,9 +2502,21 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 } catch (t: Throwable) {
                     Diag.at(LogLevel.ERROR, LogTag.DL, "download ${file.name} threw ${Diag.causeChain(t)}")
                     markFailed(file, t.message?.let(::raw) ?: localized(Res.string.err_download_failed))
+                    if (!publish) dropPreviewLeftover(file, previewPathFor(file))
                 }
             }
         }
+    }
+
+    /** The staging path a preview of [file] is written to, for cleanup when the look ended. */
+    private fun previewPathFor(file: RemoteFile): Path =
+        graph.fileSaver.downloadsDir() / sanitizeFileName(file.name)
+
+    /** Drop a preview that failed or was cut short; nothing resumes one, so it is just litter. */
+    private fun dropPreviewLeftover(file: RemoteFile, dest: Path) {
+        downloads.removeAll { it.file.name == file.name }
+        runCatching { okio.FileSystem.SYSTEM.delete(dest) }
+            .onFailure { Diag.at(LogLevel.DEBUG, LogTag.FILE, "preview leftover cleanup failed ${Diag.causeChain(it)}") }
     }
 
     /** True while this file has a queued/running transfer. */
