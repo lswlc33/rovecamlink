@@ -528,7 +528,12 @@ private fun PreviewHeader(
         // control panel a scrollable strip; the shutter floats, so it stays reachable.
         // Scrolling walks that three quarters down to a half — the two thirds the slider
         // rows need — and the shutter keeps floating over whatever is left.
-        val limit = maxHeight * if (swap) (0.76f - 0.26f * shrink.coerceIn(0f, 1f)) else 0.42f
+        val rotatedCap = maxHeight * (0.76f - 0.26f * shrink.coerceIn(0f, 1f))
+        val limit = if (swap) {
+            minOf(rotatedCap, (maxHeight - PanelFloor).coerceAtLeast(0.dp))
+        } else {
+            maxHeight * 0.42f
+        }
         val boxH = minOf(wanted, limit)
         val boxW = if (swap) boxH / aspect else minOf(maxWidth, boxH * aspect)
         Box(
@@ -902,6 +907,18 @@ private fun parseAdjustValue(raw: String): Double? {
  * gives the height straight back, so the picture never gets stuck small.
  */
 private val PreviewShrinkDistance = 120.dp
+
+/**
+ * Shortest the panel under a rotated picture may get.
+ *
+ * The picture is pinned above the list, so every dp it takes is a dp the list does not have.
+ * At the rotated cap the list was left ~167dp tall: enough for the 拍摄模式 block (~160dp) but
+ * not for it to clear the floating shutter, whose band is the bottom ~108dp of that same
+ * panel — so the chip row sat under the shutter and was reported untappable (2026-09-24
+ * 「拍摄模式无法被点击，很快被遮住」). The floor is the block plus the band, so the row starts
+ * above the shutter instead of inside it.
+ */
+private val PanelFloor = 280.dp
 
 /**
  * The ordered shooting settings worth a bar on the live page, in the order they are
