@@ -1410,15 +1410,29 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
         outerPadding = outerPadding,
         state = state,
         bottomContent = {
-            TabRow(
-                tabs = listOf(cameraTabLbl, deviceTabLbl, appTabLbl),
-                selectedTabIndex = tab,
-                onTabSelected = {
-                    if (it != tab) haptics.tick()
-                    state.settingsTab = it
-                },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
-            )
+            // Three fixed sub-tabs, one third of the width each. miuix's TabRow is a LazyRow
+            // under the hood and sizes its tabs from a min/max dp range (76/98 in 0.9.4), so
+            // on a narrow phone the third label slides out of view and the bar scrolls. These
+            // three are a fixed set — 相机/设备/软件 always exist — so there is nothing to
+            // scroll *to*; pin them by handing in the measured width as both bounds. The
+            // spacing and the 12dp inset are subtracted first so the three really do divide
+            // the row rather than overflow it.
+            BoxWithConstraints(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)) {
+                val spacing = 8.dp
+                val tabWidth = (maxWidth - spacing * (SETTINGS_TABS - 1)) / SETTINGS_TABS
+                TabRow(
+                    tabs = listOf(cameraTabLbl, deviceTabLbl, appTabLbl),
+                    selectedTabIndex = tab,
+                    onTabSelected = {
+                        if (it != tab) haptics.tick()
+                        state.settingsTab = it
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    minWidth = tabWidth,
+                    maxWidth = tabWidth,
+                    itemSpacing = spacing,
+                )
+            }
         },
     ) {
         when (tab) {
@@ -2069,6 +2083,9 @@ private fun groupDeviceSettingsForDisplay(
 private const val TAB_CAMERA = 0
 private const val TAB_DEVICE = 1
 private const val TAB_SOFTWARE = 2
+
+/** How many sub-tabs that segmented control holds; it divides the row evenly between them. */
+private const val SETTINGS_TABS = 3
 
 private fun String?.dashOr(fallback: String?): String = this?.takeIf { it.isNotBlank() } ?: fallback ?: "—"
 private fun com.rovecamlink.app.core.model.DeviceInfo?.softVersionDash(): String = this?.softVersion.dashOr(null)
