@@ -82,16 +82,11 @@ import com.rovecamlink.app.hint_quick_adjust
 import com.rovecamlink.app.hint_rotate_picture
 import com.rovecamlink.app.label_battery
 import com.rovecamlink.app.label_locked
-import com.rovecamlink.app.label_mode
 import com.rovecamlink.app.label_photo_count
-import com.rovecamlink.app.label_rec
 import com.rovecamlink.app.label_sd_free
 import com.rovecamlink.app.rec_busy
-import com.rovecamlink.app.rec_idle
-import com.rovecamlink.app.rec_recording
 import com.rovecamlink.app.section_capture_mode
 import com.rovecamlink.app.section_quick_adjust
-import com.rovecamlink.app.section_status
 import com.rovecamlink.app.tab_live
 import com.rovecamlink.app.workmode_photo
 import com.rovecamlink.app.workmode_video
@@ -204,17 +199,13 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
         else -> stringResource(Res.string.action_photo)
     }
 
-    val statusTitle = stringResource(Res.string.section_status)
     val modeTitle = stringResource(Res.string.section_capture_mode)
     val batteryLbl = stringResource(Res.string.label_battery)
-    val modeLbl = stringResource(Res.string.label_mode)
-    val recLbl = stringResource(Res.string.label_rec)
     val sdFreeLbl = stringResource(Res.string.label_sd_free)
     val photoCountLbl = stringResource(Res.string.label_photo_count)
     val lockedLbl = stringResource(Res.string.label_locked)
     val rotateLbl = stringResource(Res.string.hint_rotate_picture)
     val lockedModeMsg = stringResource(Res.string.hint_locked_mode)
-    val recBusyLbl = stringResource(Res.string.rec_busy)
     val quickAdjustTitle = stringResource(Res.string.section_quick_adjust)
     val quickAdjustHint = stringResource(Res.string.hint_quick_adjust)
     val adjustLockedMsg = stringResource(Res.string.hint_locked_adjust)
@@ -376,37 +367,13 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
         // Every card on this page shields horizontal drags: the tab pager underneath would
         // otherwise take a drag that began on a card's padding or on the label beside a slider,
         // and change tab instead of moving the control under the finger.
-        section(title = statusTitle, swipeShield = true) {
-            // One line, two facts. 录制 and 模式 used to be two full-width rows — the same
-            // shape as a settings row, which is what made this card read as a form; they are
-            // both short values, so they sit side by side the way the vitals line above the
-            // bar does (2026-09-24 「至于录制和模式 这两个写到一块去」).
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(24.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                // The elapsed time lives on the picture itself, where it is read against the
-                // framing; this only says which of the three states the camera is in.
-                Stat(
-                    recLbl,
-                    when {
-                        recording -> stringResource(Res.string.rec_recording)
-                        busy -> recBusyLbl
-                        else -> stringResource(Res.string.rec_idle)
-                    },
-                    valueColor = when {
-                        recording -> scheme.error
-                        busy -> scheme.primary
-                        else -> null
-                    },
-                )
-                Stat(modeLbl, current?.let { ModeCatalog.titleOf(it.name) } ?: "—")
-            }
-        }
-
+        //
+        // There used to be a 状态 card above this one, repeating 录制 and 模式 as a two-value
+        // line. Both facts are already on screen and in a better place: the camera is in
+        // whatever mode the chip below is lit for, and 录制 is the picture's own badge — a
+        // pulsing dot with the elapsed time — plus the shutter turning into a square. A row
+        // that only ever repeated the two controls under it was a card that cost a screenful
+        // and said nothing (2026-09-24 「去掉状态一块，反正拍摄模式也能看出状态」).
         section(title = modeTitle, swipeShield = true) {
             ModeStrip(
                 modes = modes,
@@ -448,22 +415,6 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
                 hintLine(if (working) adjustLockedMsg else quickAdjustHint)
             }
         }
-    }
-}
-
-/** One number in the status line: a muted label and the value it names. */
-@Composable
-private fun Stat(label: String, value: String, valueColor: Color? = null) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(label, fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
-        Spacer(Modifier.width(6.dp))
-        Text(
-            text = value,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Medium,
-            color = valueColor ?: MiuixTheme.colorScheme.onBackground,
-            maxLines = 1,
-        )
     }
 }
 

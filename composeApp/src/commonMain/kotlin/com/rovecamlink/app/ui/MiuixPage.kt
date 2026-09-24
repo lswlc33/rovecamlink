@@ -1,5 +1,8 @@
 package com.rovecamlink.app.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -12,9 +15,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -77,6 +83,7 @@ import top.yukonga.miuix.kmp.basic.DividerDefaults
 import top.yukonga.miuix.kmp.basic.DropdownEntry
 import top.yukonga.miuix.kmp.basic.DropdownImpl
 import top.yukonga.miuix.kmp.basic.DropdownItem
+import top.yukonga.miuix.kmp.basic.FloatingToolbar
 import top.yukonga.miuix.kmp.basic.HorizontalDivider
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -89,6 +96,7 @@ import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.basic.TextButton
+import top.yukonga.miuix.kmp.basic.ToolbarPosition
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.basic.VerticalScrollBar
 import top.yukonga.miuix.kmp.basic.rememberScrollBarAdapter
@@ -146,12 +154,18 @@ data class AppBarMenuItem(
  * open state and closes itself on a pick. Both halves of the files page's bar work this way,
  * so neither needs a flag in the screen — and the icon can never be left showing "open" after
  * the menu has closed. An icon with neither [dropdown] nor [onClick] is inert.
+ *
+ * [busy] swaps the glyph for the library's orbiting spinner. It exists for 刷新, which is the
+ * one bar action whose effect is not visible until it lands: without it a tap on a bar icon
+ * looks like it did nothing at all, which is what the big 刷新文件列表 button used to say with
+ * its own spinner.
  */
 data class AppBarIcon(
     val icon: ImageVector,
     val contentDescription: String,
     val checked: Boolean = false,
     val dropdown: DropdownSpec? = null,
+    val busy: Boolean = false,
     val onClick: (() -> Unit)? = null,
 )
 
@@ -184,15 +198,24 @@ private val CardInset = 12.dp
 /**
  * Columns in a gallery grid.
  *
- * Three is the album convention and the count that keeps a thumbnail big enough to
- * recognise: on a 360dp phone each cell is ~112dp, so a 4:3 photo cover-cropped to a
- * square still reads as the shot it is. Four would fit a third more clips per screen and
- * make every one of them a stamp.
+ * Four, gapless and square: the album-grid convention the system gallery uses, and what the
+ * 2026-09-24 report asked for on the files page (「依照 miui 官方相册，是一行 4 个」). The earlier
+ * three left a 2dp gutter and rounded each cell, which is a *card* grid — it reads as a set of
+ * separate objects, and at three across the page fits a third fewer shots. Four still leaves a
+ * thumbnail legible: on a 360dp phone a cell is 90dp, enough to pick a clip out of a day.
+ *
+ * The cell's own shape lives with the cell (see `MediaTile`); this is only the count.
  */
-internal const val GalleryColumns = 3
+internal const val GalleryColumns = 4
 
 /** The gap one section leaves before the next; the demo puts it under the card, never above. */
 private val SectionGap = 12.dp
+
+/** How far a floating toolbar's capsule sits from the window's sides. */
+private val ToolbarSideInset = 12.dp
+
+/** ...and from whatever is below it, before the shell's bar is accounted for. */
+private val ToolbarBottomInset = 12.dp
 
 /** The blur radius the miuix demo blurs its bars with. */
 private const val BarBlurRadius = 25f
@@ -261,6 +284,20 @@ fun barColor(backdrop: LayerBackdrop?): Color =
  *
  * [outerPadding] is the shell's padding — its bottom is the navigation bar's height. The
  * page's own bar looks after the top inset.
+ *
+ * The bar's controls split in two, and the split is the point: [navigationIcon] and
+ * [leadingIcons] go on the left, [appBarIcons] and the ⋯ overflow on the right. The files
+ * page is why — 筛选 and 排序 are ways of *reading* the list and belong beside the title
+ * where the eye starts, while 刷新 acts on it and sits with the overflow.
+ *
+ * [showDiagnostics] is on the leading side too, and off for a pushed page: the log is the
+ * place a failure gets reported from, so every tab keeps it one tap away, but a page that is
+ * itself inside the log has nothing to open and gets no entry at all.
+ *
+ * [floatingToolbar] is the library's own `Scaffold` slot, docked [ToolbarPosition.BottomEnd].
+ * A page supplies its content and nothing else; whether it is "shown" is expressed by what it
+ * emits, which is how the library expects it — an empty slot measures to nothing and the
+ * `Scaffold` then treats the toolbar as absent.
  */
 @Composable
 fun MiuixPage(
@@ -270,9 +307,12 @@ fun MiuixPage(
     subtitle: String? = null,
     subtitleColor: Color? = null,
     navigationIcon: @Composable () -> Unit = {},
+    leadingIcons: List<AppBarIcon> = emptyList(),
+    showDiagnostics: Boolean = true,
     menuItems: List<AppBarMenuItem> = emptyList(),
     appBarIcons: List<AppBarIcon> = emptyList(),
-    actions: @Composable RowScope.() -> Unit = { AppBarActions(state, menuItems, appBarIcons) },
+    actions: @Composable RowScope.() -> Unit = { AppBarActions(menuItems, appBarIcons) },
+    floatingToolbar: (@Composable () -> Unit)? = null,
     bottomContent: (@Composable () -> Unit)? = null,
     header: (@Composable () -> Unit)? = null,
     floating: @Composable BoxScope.() -> Unit = {},
@@ -301,6 +341,14 @@ fun MiuixPage(
     // the list and the gallery without either losing its scroll position — a grid state
     // made inside the `else` branch would be recreated on every style switch.
     val gridState = rememberLazyGridState()
+    // The floating toolbar is docked at the window's bottom edge by the library, and this
+    // page's `Scaffold` has no idea that the shell's navigation bar floats over that same
+    // edge — its insets are the *system* bars. So the bar's height is handed to the toolbar
+    // as outside padding, which lifts the capsule clear of it. The system inset is taken back
+    // out first, because the `Scaffold` subtracts that one itself when it places the slot;
+    // counting it twice would leave the toolbar floating a gesture-bar too high.
+    val navBarInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val toolbarLift = (outerPadding.calculateBottomPadding() - navBarInset).coerceAtLeast(0.dp)
     Scaffold(
         topBar = {
             TopAppBar(
@@ -311,10 +359,42 @@ fun MiuixPage(
                 color = barColor(backdrop),
                 modifier = Modifier.barBlur(backdrop),
                 scrollBehavior = scrollBehavior,
-                navigationIcon = navigationIcon,
+                navigationIcon = {
+                    AppBarLeading(
+                        state = state,
+                        navigationIcon = navigationIcon,
+                        icons = leadingIcons,
+                        showDiagnostics = showDiagnostics,
+                    )
+                },
                 actions = actions,
                 bottomContent = bottomContent ?: {},
             )
+        },
+        floatingToolbarPosition = ToolbarPosition.BottomEnd,
+        floatingToolbar = {
+            // The official demo's own pattern: the library gives the toolbar no visibility flag,
+            // so whether it is up is expressed by what the slot measures. The fade therefore has
+            // to wrap the capsule rather than sit inside it — an empty `FloatingToolbar` still
+            // measures its own outside padding, and a non-zero slot is a toolbar as far as the
+            // `Scaffold` is concerned. `AnimatedVisibility(false)` emits nothing, so the slot
+            // collapses to zero and the toolbar is genuinely absent until a page offers content.
+            AnimatedVisibility(
+                visible = floatingToolbar != null,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                FloatingToolbar(
+                    outSidePadding = PaddingValues(
+                        start = ToolbarSideInset,
+                        end = ToolbarSideInset,
+                        top = ToolbarBottomInset,
+                        bottom = ToolbarBottomInset + toolbarLift,
+                    ),
+                ) {
+                    floatingToolbar?.invoke()
+                }
+            }
         },
     ) { innerPadding ->
         val barHeight = innerPadding.calculateTopPadding()
@@ -562,37 +642,6 @@ fun ColumnScope.actionRow(
 }
 
 /**
- * A row of actions, laid out the way the demo lays a button pair out: equal weight, 12dp
- * apart, inset by the card's own 12dp, and *not* inside a card. One of them may carry the
- * primary colour — the row is allowed exactly one.
- */
-@Composable
-fun RowScope.actionButton(
-    label: String,
-    busy: Boolean = false,
-    enabled: Boolean = true,
-    primary: Boolean = false,
-    onClick: () -> Unit,
-) {
-    val haptics = LocalHapticFeedback.current
-    Button(
-        onClick = {
-            haptics.tap()
-            onClick()
-        },
-        enabled = enabled && !busy,
-        modifier = Modifier.weight(1f),
-        colors = if (primary) ButtonDefaults.buttonColorsPrimary() else ButtonDefaults.buttonColors(),
-    ) {
-        if (busy) {
-            InfiniteProgressIndicator(size = 15.dp, strokeWidth = 2.dp, orbitingDotSize = 2.5.dp)
-            Spacer(Modifier.width(8.dp))
-        }
-        Text(label, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-    }
-}
-
-/**
  * A single-line input wearing the library's own field.
  *
  * The wrapper exists so a page can keep its `String` state: [TextField] draws the label
@@ -677,15 +726,43 @@ fun LazyListScope.notConnectedItem() {
 }
 
 /**
- * The bar's trailing controls: the app-wide diagnostics switch, any per-page icons the
- * page asked for, and — when it supplies menu rows — a 「更多」 overflow behind a ⋯ button.
+ * The bar's leading controls: the page's own back arrow (pushed pages only), the icons the
+ * page put on the left, and the app-wide diagnostics switch.
  *
- * Diagnostics has to be one tap away from wherever you are: that is where the failure
- * you want to report just happened. On a page with no icons of its own it is the bar's
- * single trailing control, and the same button puts it away again — so the page never has
- * to be re-found after a screen change. A page that *does* carry icons ([appBarIcons],
- * the files page's 筛选/排序/样式) keeps that toggle in its overflow instead, because a
- * row of four icons would push the title off a 360dp bar.
+ * Diagnostics lives here rather than on the right because it is not an action on the page —
+ * it is a way out of it, and it is what a user reaches for when the page in front of them is
+ * misbehaving. On the left it sits where the back arrow sits, which is the same kind of
+ * control. A page that is itself part of the log passes [showDiagnostics] as false: there is
+ * nothing for it to open, and on those pages the switch used to read as "already on" because
+ * the page stack was non-empty.
+ */
+@Composable
+fun AppBarLeading(
+    state: AppState,
+    navigationIcon: @Composable () -> Unit = {},
+    icons: List<AppBarIcon> = emptyList(),
+    showDiagnostics: Boolean = true,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        navigationIcon()
+        icons.forEach { AppBarIconButton(it) }
+        if (showDiagnostics) {
+            AppBarIconButton(
+                AppBarIcon(
+                    icon = MiuixIcons.ListView,
+                    contentDescription = stringResource(Res.string.action_diagnostics),
+                    checked = state.diagnosticsOpen,
+                ) {
+                    if (state.diagnosticsOpen) state.closeDiagnostics() else state.openDiagnostics()
+                },
+            )
+        }
+    }
+}
+
+/**
+ * The bar's trailing controls: the icons the page asked for and — when it supplies menu rows —
+ * a 「更多」 overflow behind a ⋯ button.
  *
  * An icon that offers choices uses miuix's own [OverlayIconDropdownMenu], which owns the
  * open state and closes itself on a pick. The ⋯ overflow has no one-call equivalent, so its
@@ -697,81 +774,12 @@ fun LazyListScope.notConnectedItem() {
  */
 @Composable
 fun RowScope.AppBarActions(
-    state: AppState,
     menuItems: List<AppBarMenuItem> = emptyList(),
     appBarIcons: List<AppBarIcon> = emptyList(),
 ) {
     val haptics = LocalHapticFeedback.current
-    val diagnosticsIcon = AppBarIcon(
-        icon = MiuixIcons.ListView,
-        contentDescription = stringResource(Res.string.action_diagnostics),
-        checked = state.diagnosticsOpen,
-    ) {
-        if (state.diagnosticsOpen) state.closeDiagnostics() else state.openDiagnostics()
-    }
-    // With icons on the bar, diagnostics moves into the overflow so there is room for them;
-    // the label is the same row the menu-driven pages already show.
-    val rows = if (appBarIcons.isEmpty()) {
-        menuItems
-    } else {
-        menuItems + AppBarMenuItem(
-            label = stringResource(Res.string.action_diagnostics),
-            checked = state.diagnosticsOpen,
-        ) { state.openDiagnostics() }
-    }
-    appBarIcons.forEach { entry ->
-        val dropdown = entry.dropdown
-        if (dropdown != null) {
-            // The library anchors and toggles the popup itself, so there is no local `expanded`
-            // to get out of step with it.
-            OverlayIconDropdownMenu(
-                entries = dropdown.groups.map { group ->
-                    DropdownEntry(
-                        items = group.items.mapIndexed { index, label ->
-                            DropdownItem(
-                                text = label,
-                                selected = index == group.selected,
-                                onClick = {
-                                    haptics.tick()
-                                    group.onSelected(index)
-                                },
-                            )
-                        },
-                    )
-                },
-                collapseOnSelection = !dropdown.stayOpen,
-            ) {
-                Icon(
-                    entry.icon,
-                    contentDescription = entry.contentDescription,
-                    tint = if (entry.checked) {
-                        MiuixTheme.colorScheme.primary
-                    } else {
-                        MiuixTheme.colorScheme.onBackground
-                    },
-                )
-            }
-        } else {
-            val onClick = entry.onClick ?: return@forEach
-            IconButton(
-                onClick = {
-                    haptics.tap()
-                    onClick()
-                },
-            ) {
-                Icon(
-                    entry.icon,
-                    contentDescription = entry.contentDescription,
-                    tint = if (entry.checked) {
-                        MiuixTheme.colorScheme.primary
-                    } else {
-                        MiuixTheme.colorScheme.onBackground
-                    },
-                )
-            }
-        }
-    }
-    if (rows.isNotEmpty()) {
+    appBarIcons.forEach { AppBarIconButton(it) }
+    if (menuItems.isNotEmpty()) {
         var expanded by remember { mutableStateOf(false) }
         Box {
             IconButton(
@@ -797,9 +805,9 @@ fun RowScope.AppBarActions(
                     // composables: a divider between rows must not shift either or the last
                     // action loses its bottom corners. Hence the running index below rather
                     // than `forEachIndexed`.
-                    val optionCount = rows.size
+                    val optionCount = menuItems.size
                     var optionIndex = 0
-                    rows.forEach { entry ->
+                    menuItems.forEach { entry ->
                         if (entry.dividerAbove) {
                             HorizontalDivider(
                                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -825,28 +833,70 @@ fun RowScope.AppBarActions(
             }
         }
     }
-    if (appBarIcons.isEmpty()) {
-        // No icons of its own: diagnostics is the bar's single trailing control, one tap
-        // both opens and closes it. This stands beside the ⋯ overflow rather than being
-        // its `else`: a page with menu rows but no icons (Live's 自动跟随, Log's 日志设置)
-        // took the overflow branch, and the switch was then reachable from nowhere.
-        diagnosticsIcon.onClick?.let { toggle ->
-            IconButton(
-                onClick = {
-                    haptics.tap()
-                    toggle()
-                },
-            ) {
-                Icon(
-                    diagnosticsIcon.icon,
-                    contentDescription = diagnosticsIcon.contentDescription,
-                    tint = if (diagnosticsIcon.checked) {
-                        MiuixTheme.colorScheme.primary
-                    } else {
-                        MiuixTheme.colorScheme.onBackground
+}
+
+/**
+ * One bar icon, in either group.
+ *
+ * Shared so a control behaves the same wherever it is put: the files page's 筛选/排序 moved
+ * from the trailing group to the leading one, and the dropdown they open must not have moved
+ * with them.
+ */
+@Composable
+private fun AppBarIconButton(entry: AppBarIcon) {
+    val haptics = LocalHapticFeedback.current
+    val dropdown = entry.dropdown
+    if (dropdown != null) {
+        // The library anchors and toggles the popup itself, so there is no local `expanded`
+        // to get out of step with it.
+        OverlayIconDropdownMenu(
+            entries = dropdown.groups.map { group ->
+                DropdownEntry(
+                    items = group.items.mapIndexed { index, label ->
+                        DropdownItem(
+                            text = label,
+                            selected = index == group.selected,
+                            onClick = {
+                                haptics.tick()
+                                group.onSelected(index)
+                            },
+                        )
                     },
                 )
-            }
+            },
+            collapseOnSelection = !dropdown.stayOpen,
+        ) {
+            Icon(
+                entry.icon,
+                contentDescription = entry.contentDescription,
+                tint = if (entry.checked) {
+                    MiuixTheme.colorScheme.primary
+                } else {
+                    MiuixTheme.colorScheme.onBackground
+                },
+            )
+        }
+        return
+    }
+    val onClick = entry.onClick ?: return
+    IconButton(
+        onClick = {
+            haptics.tap()
+            onClick()
+        },
+    ) {
+        if (entry.busy) {
+            InfiniteProgressIndicator(size = 20.dp, strokeWidth = 2.dp, orbitingDotSize = 3.dp)
+        } else {
+            Icon(
+                entry.icon,
+                contentDescription = entry.contentDescription,
+                tint = if (entry.checked) {
+                    MiuixTheme.colorScheme.primary
+                } else {
+                    MiuixTheme.colorScheme.onBackground
+                },
+            )
         }
     }
 }

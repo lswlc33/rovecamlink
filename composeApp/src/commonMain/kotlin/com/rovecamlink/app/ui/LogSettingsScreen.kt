@@ -77,6 +77,8 @@ fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
         title = stringResource(Res.string.log_settings_title),
         outerPadding = outerPadding,
         state = state,
+        // Pushed page: the bar carries 返回 and nothing else.
+        showDiagnostics = false,
         navigationIcon = {
             IconButton(
                 onClick = {

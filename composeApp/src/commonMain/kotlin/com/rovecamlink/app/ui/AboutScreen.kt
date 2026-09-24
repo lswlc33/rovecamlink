@@ -119,6 +119,9 @@ fun AboutScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Uni
         title = stringResource(Res.string.about_title),
         outerPadding = outerPadding,
         state = state,
+        // No diagnostics switch: this page is reached from inside the app's own stack, and the
+        // bar on a pushed page carries the way *out* of it, not a second way into the log.
+        showDiagnostics = false,
         navigationIcon = {
             IconButton(
                 onClick = {

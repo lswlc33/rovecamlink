@@ -51,9 +51,6 @@
 
     <!-- Live screen -->
     <string name="label_battery">Battery</string>
-    <string name="label_mode">Mode</string>
-    <string name="label_rec">REC</string>
-    <string name="rec_idle">idle</string>
     <string name="rec_busy">busy</string>
     <string name="label_sd_free">Storage</string>
     <string name="action_photo">Photo</string>
@@ -105,6 +102,7 @@
     <string name="section_firmware_update">Firmware update</string>
     <string name="label_installed">Installed</string>
     <string name="action_select_firmware">Install a local package</string>
+    <string name="action_download">Download</string>
     <string name="firmware_unsupported">Firmware update unsupported</string>
     <string name="action_check_update">Check for updates</string>
     <string name="label_newest_version">Newest available</string>
@@ -301,11 +299,8 @@
     <string name="label_sd_state">Card</string>
 
     <!-- Files tab actions that used to be hardcoded English. -->
-    <string name="action_select">Select</string>
     <string name="action_clear_finished">Clear finished</string>
     <string name="action_retry_failed">Retry failed</string>
-    <string name="action_download_count">Download (%1$d)</string>
-    <string name="action_delete_count">Delete (%1$d)</string>
     <string name="title_delete_count">Delete %1$d files?</string>
     <string name="hint_batch_delete_many">The selected files are removed from the camera. This cannot be undone.</string>
     <string name="action_delete_all">Delete all files</string>
@@ -319,6 +314,7 @@
     <string name="message_delete_all_files">All %1$d files on the camera are removed at once. This cannot be undone.</string>
     <string name="download_eta">About %1$d s left</string>
     <string name="label_batch">Batch</string>
+    <string name="label_selected_count">%1$d selected</string>
     <string name="label_select_all">Select all</string>
     <string name="label_clear_selection">Clear</string>
     <string name="label_unknown_date">Unknown date</string>

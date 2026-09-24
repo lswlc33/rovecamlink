@@ -186,6 +186,9 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
         subtitle = stringResource(Res.string.log_records_summary, total, records.size),
         outerPadding = outerPadding,
         state = state,
+        // No diagnostics switch: this *is* the log. The switch used to sit here reading as
+        // "already on" — its state is "is a pushed page showing", and on this page one is.
+        showDiagnostics = false,
         // A pushed page: the leading control goes back to whatever pushed this page.
         navigationIcon = {
             IconButton(

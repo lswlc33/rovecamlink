@@ -11,7 +11,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
@@ -74,12 +75,10 @@ import com.rovecamlink.app.action_app_settings
 import com.rovecamlink.app.action_cancel_short
 import com.rovecamlink.app.action_cancelled
 import com.rovecamlink.app.action_clear_finished
-import com.rovecamlink.app.action_delete_count
 import com.rovecamlink.app.action_delete_file
 import com.rovecamlink.app.action_diagnostics
 import com.rovecamlink.app.action_dismiss
-import com.rovecamlink.app.action_done
-import com.rovecamlink.app.action_download_count
+import com.rovecamlink.app.action_download
 import com.rovecamlink.app.action_download_file
 import com.rovecamlink.app.action_factory_reset
 import com.rovecamlink.app.action_format_sd
@@ -93,7 +92,6 @@ import com.rovecamlink.app.action_refresh_files
 import com.rovecamlink.app.action_reload_settings
 import com.rovecamlink.app.action_retry_failed
 import com.rovecamlink.app.action_retry_file
-import com.rovecamlink.app.action_select
 import com.rovecamlink.app.action_select_firmware
 import com.rovecamlink.app.action_start_lapse
 import com.rovecamlink.app.action_stop
@@ -124,7 +122,6 @@ import com.rovecamlink.app.hint_new_ssid
 import com.rovecamlink.app.hint_photo_needs_photo_mode
 import com.rovecamlink.app.hint_quick_adjust
 import com.rovecamlink.app.hint_rotate_picture
-import com.rovecamlink.app.label_batch
 import com.rovecamlink.app.label_camera_settings
 import com.rovecamlink.app.label_clear_selection
 import com.rovecamlink.app.label_device_settings
@@ -142,6 +139,7 @@ import com.rovecamlink.app.label_note
 import com.rovecamlink.app.label_region
 import com.rovecamlink.app.label_sd_state
 import com.rovecamlink.app.label_select_all
+import com.rovecamlink.app.label_selected_count
 import com.rovecamlink.app.label_serial
 import com.rovecamlink.app.label_settings
 import com.rovecamlink.app.label_status
@@ -155,9 +153,6 @@ import com.rovecamlink.app.msg_reboot
 import com.rovecamlink.app.not_connected_note
 import com.rovecamlink.app.not_connected_title
 import com.rovecamlink.app.note_wifi_restarts
-import com.rovecamlink.app.rec_busy
-import com.rovecamlink.app.rec_idle
-import com.rovecamlink.app.rec_recording
 import com.rovecamlink.app.save
 import com.rovecamlink.app.sd_error
 import com.rovecamlink.app.sd_missing
@@ -281,6 +276,7 @@ import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.icon.extended.Close
 import top.yukonga.miuix.kmp.icon.extended.Delete
 import top.yukonga.miuix.kmp.icon.extended.Download
 import top.yukonga.miuix.kmp.icon.extended.Filter
@@ -288,6 +284,7 @@ import top.yukonga.miuix.kmp.icon.extended.Image
 import top.yukonga.miuix.kmp.icon.extended.Ok
 import top.yukonga.miuix.kmp.icon.extended.Play
 import top.yukonga.miuix.kmp.icon.extended.Refresh
+import top.yukonga.miuix.kmp.icon.extended.SelectAll
 import top.yukonga.miuix.kmp.icon.extended.Sort
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
 import top.yukonga.miuix.kmp.preference.ArrowPreference
@@ -378,16 +375,16 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     val cancelLabel = stringResource(Res.string.cancel)
     val deleteLabel = stringResource(Res.string.delete)
     val deleteAllLbl = stringResource(Res.string.action_delete_all)
+    val downloadLbl = stringResource(Res.string.action_download)
     val loadMoreLbl = stringResource(Res.string.action_load_more)
     val doneLabel = stringResource(Res.string.download_done)
     val failedLabel = stringResource(Res.string.download_failed)
     val videoLbl = stringResource(Res.string.file_type_video)
     val photoLbl = stringResource(Res.string.file_type_photo)
-    val selectLbl = stringResource(if (selectMode) Res.string.action_done else Res.string.action_select)
     val selectAllLbl = stringResource(
         if (allSelected) Res.string.label_clear_selection else Res.string.label_select_all,
     )
-    val batchTitle = stringResource(Res.string.label_batch)
+    val diagnosticsLbl = stringResource(Res.string.action_diagnostics)
     val hintDeleteMany = stringResource(Res.string.hint_batch_delete_many)
     val filesLbl = stringResource(Res.string.label_files)
     val clearFinishedLbl = stringResource(Res.string.action_clear_finished)
@@ -431,6 +428,13 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
         onToggle = { name ->
             if (selected.contains(name)) selected.remove(name) else selected.add(name)
         },
+        // A long press is the way *into* selection: it is what a list of media does
+        // everywhere else on the phone, and it costs the bar a control it used to need.
+        // Once selecting, it does what a tap does — one more way to tick a row.
+        onLongPress = { name ->
+            selectMode = true
+            if (!selected.contains(name)) selected.add(name)
+        },
         onDelete = { pendingDelete = it },
         onOpen = { state.openViewer(it, state.files) },
         emptyTitle = onCameraTitle,
@@ -438,31 +442,8 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
         emptyNote = filesNone,
     )
     val chromeArgs = ChromeArgs(
-        refreshLabel = refreshLabel,
-        selectLabel = selectLbl,
-        onToggleSelect = {
-            selectMode = !selectMode
-            if (!selectMode) selected.clear()
-        },
-        selectMode = selectMode,
         viewLineVisible = viewLineVisible,
         viewLine = viewLine,
-        batchTitle = batchTitle,
-        selectAllLabel = selectAllLbl,
-        selectedCount = selectedCount,
-        allSelected = allSelected,
-        deleteBusy = state.isBusy(Op.Delete),
-        onSelectAll = {
-            if (allSelected) {
-                selected.clear()
-            } else {
-                state.files.forEach { f -> if (!selected.contains(f.name)) selected.add(f.name) }
-            }
-        },
-        onDownloadSelected = {
-            state.files.filter { selected.contains(it.name) }.forEach { state.download(it) }
-        },
-        onRequestBatchDelete = { pendingBatchDelete = true },
         downloadsTitle = downloadsTitle,
         clearFinishedLabel = clearFinishedLbl,
         retryFailedLabel = retryFailedLbl,
@@ -475,16 +456,20 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
         title = stringResource(Res.string.tab_files),
         outerPadding = outerPadding,
         state = state,
-        // Two bar buttons, each opening its own dropdown: 筛选 picks a facet, 排序 picks a
+        // While selecting, the bar's second line counts what is selected instead of naming the
+        // connection: it is the one reading the user needs at that moment, and it is where the
+        // count lives now that the toolbar is four icons (2026-09-24 「FloatingToolbar 只要图标
+        // 不要文字」).
+        subtitle = if (selectMode) stringResource(Res.string.label_selected_count, selectedCount) else null,
+        // Two bar buttons lead, each opening its own dropdown: 筛选 picks a facet, 排序 picks a
         // key and a direction. The dropdown marks the active choice, so it doubles as that
         // control's state readout — which is why the summary line below the bar only has to
         // name what is *not* the default.
         //
-        // 样式 is deliberately *not* a third button. It was, until 2026-09-24, and it drove
-        // exactly the same flag the ⋯ menu's 画廊/列表 rows drive — two bar controls for one
-        // decision. The toggle now lives only in 更多, so the bar reads as "how the list is
-        // filtered and ordered" and nothing else.
-        appBarIcons = if (state.session == null) emptyList() else listOf(
+        // They are on the *left* because they describe the list rather than act on it: the
+        // whole page is this list, and its two readings belong where the bar starts, next to
+        // the title (2026-09-24 「左边是筛选和排序」).
+        leadingIcons = if (state.session == null) emptyList() else listOf(
             AppBarIcon(
                 icon = MiuixIcons.Filter,
                 contentDescription = filterLbl,
@@ -531,10 +516,23 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
                 ),
             ),
         ),
-        // The ⋯ sheet used to hold all six actions, 删除全部 among them — so the two
-        // controls the list is *read through* shared a menu with the one that wipes the
-        // card. What is left is what is genuinely occasional: the list style, the log
-        // (prepended by [AppBarActions]), and 删除全部.
+        // The log takes the bar's left edge only while nothing else wants it. With a session
+        // that edge belongs to 筛选 and 排序, and the log moves into this page's ⋯ instead —
+        // where the row is written out below, so the placement is visible here rather than
+        // decided behind the page's back. Without a session the bar has no other control at
+        // all, and a page with an empty bar would be the one page the log could not be
+        // reached from.
+        showDiagnostics = state.session == null,
+        // 刷新 trails, because it acts on the list rather than describing it, and it is the
+        // one action here whose effect is invisible until it lands — hence `busy`, which is
+        // what the big 刷新文件列表 button used to say with a spinner.
+        appBarIcons = if (state.session == null) emptyList() else listOf(
+            AppBarIcon(
+                icon = MiuixIcons.Refresh,
+                contentDescription = refreshLabel,
+                busy = state.isBusy(Op.Refresh),
+            ) { state.refreshFiles() },
+        ),
         menuItems = if (state.session == null) emptyList() else listOf(
             AppBarMenuItem(label = galleryLbl, checked = layout == FileLayout.Gallery) {
                 state.fileLayout = FileLayout.Gallery
@@ -542,9 +540,10 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
             AppBarMenuItem(label = listLbl, checked = layout == FileLayout.List) {
                 state.fileLayout = FileLayout.List
             },
+            AppBarMenuItem(label = diagnosticsLbl) { state.openDiagnostics() },
             // The one irreversible action here, so it sits last and apart: in the menu
-            // rather than beside 刷新/选择, where a stray tap would cost the whole card.
-            // The divider is what makes 「apart」 visible — everything above it is a way of
+            // rather than on the bar, where a stray tap would cost the whole card. The
+            // divider is what makes 「apart」 visible — everything above it is a way of
             // looking at the card, everything below it acts on the card.
             AppBarMenuItem(
                 label = deleteAllLbl,
@@ -554,9 +553,47 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
                 pendingDeleteAll = true
             },
         ),
+        // The batch actions float over the list instead of occupying a row above it: the
+        // four of them used to be a whole card — a title, three equal buttons — that pushed
+        // the media down while in use, and the two buttons that *entered* them were a second
+        // card on top of that (2026-09-24 「删掉两个巨大的按钮」). The bar is miuix's own
+        // `FloatingToolbar` in the `Scaffold`'s bottom-end slot, so it clears the shell's
+        // navigation bar without either page knowing about the other.
+        floatingToolbar = if (selectMode) {
+            {
+                SelectToolbar(
+                    selectAllLabel = selectAllLbl,
+                    cancelLabel = cancelLabel,
+                    downloadLabel = downloadLbl,
+                    deleteLabel = deleteLabel,
+                    selectedCount = selectedCount,
+                    deleteBusy = state.isBusy(Op.Delete),
+                    onSelectAll = {
+                        if (allSelected) {
+                            selected.clear()
+                        } else {
+                            state.files.forEach { f ->
+                                if (!selected.contains(f.name)) selected.add(f.name)
+                            }
+                        }
+                    },
+                    onDownloadSelected = {
+                        state.files.filter { selected.contains(it.name) }
+                            .forEach { state.download(it) }
+                    },
+                    onRequestBatchDelete = { pendingBatchDelete = true },
+                    onCancel = {
+                        selectMode = false
+                        selected.clear()
+                    },
+                )
+            }
+        } else {
+            null
+        },
         // The gallery needs a grid container, which a LazyListScope cannot express — a list
         // scope has no cross-axis span. So when the gallery is on the whole content area is
-        // handed over here, and 文件页 lays its chrome (刷新/选择, the transfers, 加载更多)
+        // handed over here, and 文件页 lays its remaining chrome (the transfers, 加载更多)
         // out in grid items instead of sections. Both paths go through the same two
         // composables below, so a style switch moves nothing but the media itself.
         gridCells = if (state.session != null && layout == FileLayout.Gallery) {
@@ -656,6 +693,7 @@ private class MediaArgs(
     val selectMode: Boolean,
     val selected: List<String>,
     val onToggle: (String) -> Unit,
+    val onLongPress: (String) -> Unit,
     val onDelete: (RemoteFile) -> Unit,
     val onOpen: (RemoteFile) -> Unit,
     val emptyTitle: String,
@@ -665,20 +703,8 @@ private class MediaArgs(
 
 /** The strings and callbacks for the chrome that sits above the media, in both layouts. */
 private class ChromeArgs(
-    val refreshLabel: String,
-    val selectLabel: String,
-    val onToggleSelect: () -> Unit,
-    val selectMode: Boolean,
     val viewLineVisible: Boolean,
     val viewLine: String,
-    val batchTitle: String,
-    val selectAllLabel: String,
-    val selectedCount: Int,
-    val allSelected: Boolean,
-    val deleteBusy: Boolean,
-    val onSelectAll: () -> Unit,
-    val onDownloadSelected: () -> Unit,
-    val onRequestBatchDelete: () -> Unit,
     val downloadsTitle: String,
     val clearFinishedLabel: String,
     val retryFailedLabel: String,
@@ -692,44 +718,25 @@ private fun dayHeading(g: DayGroup, unknownDateLabel: String) =
     (g.key?.toString() ?: unknownDateLabel) + " · " + g.files.size
 
 /**
- * 刷新 / 选择, the current-condition line, the batch bar and the transfer queue.
+ * The current-condition line and the transfer queue.
  *
  * Shared by both layouts so that switching style changes only the media below: a user who
- * has just selected twelve clips and then taps 列表样式 must not lose the batch bar or see
- * it move. `LazyListScope` and `LazyGridScope` have no common supertype, so this exists as
+ * has just selected twelve clips and then taps 列表 must not see the selection or the
+ * queue move. `LazyListScope` and `LazyGridScope` have no common supertype, so this exists as
  * two thin adapters over one body rather than one function taking either.
+ *
+ * There is no longer a row of buttons at the top of this: 刷新 and 选择 were two full-width
+ * buttons that took a card's worth of height on every visit to the page, and 刷新 is a bar
+ * icon while selection is a long press (2026-09-24 「删掉两个巨大的按钮」).
  */
 private fun LazyListScope.filesChrome(state: AppState, chrome: ChromeArgs) {
-    item { ChromeHeader(state, chrome) }
     if (chrome.viewLineVisible) item { ViewLine(chrome.viewLine) }
-    if (chrome.selectMode) item { BatchBar(chrome) }
     if (state.downloads.isNotEmpty()) item { TransferCard(state, chrome) }
 }
 
 private fun LazyGridScope.filesChrome(state: AppState, chrome: ChromeArgs) {
-    item(span = { GridItemSpan(maxLineSpan) }) { ChromeHeader(state, chrome) }
     if (chrome.viewLineVisible) item(span = { GridItemSpan(maxLineSpan) }) { ViewLine(chrome.viewLine) }
-    if (chrome.selectMode) item(span = { GridItemSpan(maxLineSpan) }) { BatchBar(chrome) }
     if (state.downloads.isNotEmpty()) item(span = { GridItemSpan(maxLineSpan) }) { TransferCard(state, chrome) }
-}
-
-/** Two actions, side by side, outside a card — the demo's button-pair layout. */
-@Composable
-private fun ChromeHeader(state: AppState, chrome: ChromeArgs) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        actionButton(
-            chrome.refreshLabel,
-            busy = state.isBusy(Op.Refresh),
-            primary = true,
-            onClick = { state.refreshFiles() },
-        )
-        actionButton(chrome.selectLabel, onClick = chrome.onToggleSelect)
-    }
 }
 
 /** One muted line naming what is off its default — the body carries no controls itself. */
@@ -745,30 +752,83 @@ private fun ViewLine(text: String) {
     )
 }
 
-/** 全选 / 下载 ( n ) / 删除 ( n ); the three are equal in weight. */
+/**
+ * The batch actions, as a floating bar over the list's bottom corner.
+ *
+ * Four icons in one capsule: 全选 / 下载 / 删除 / 取消, the destructive one in the error hue.
+ * They replace a card that sat *above* the media — a title, three equal buttons, and the two
+ * buttons that got you into selection in the first place — so the list is never pushed down by
+ * its own controls, and the actions sit under a thumb while the user looks at what is selected.
+ *
+ * Icons rather than words, which is also what makes the row unbreakable: four labelled buttons
+ * are wider than a phone once the counts are in them (「下载（12）」 beside 删除（12） beside
+ * 取消), and in English they overflow further still. Four [IconButton]s are ~170dp in every
+ * locale. Each carries its label as a `contentDescription`, so nothing is lost to a screen
+ * reader, and the *count* is not lost at all — it is the bar's second line while selecting
+ * ([FilesScreen] hands it over).
+ *
+ * 取消 is here rather than implied by a 完成 in the bar: with the entry point moved to a long
+ * press, the way out has to be findable inside the mode, not only at its edge.
+ */
 @Composable
-private fun BatchBar(chrome: ChromeArgs) {
-    SmallTitle(text = chrome.batchTitle)
+private fun SelectToolbar(
+    selectAllLabel: String,
+    cancelLabel: String,
+    downloadLabel: String,
+    deleteLabel: String,
+    selectedCount: Int,
+    deleteBusy: Boolean,
+    onSelectAll: () -> Unit,
+    onDownloadSelected: () -> Unit,
+    onRequestBatchDelete: () -> Unit,
+    onCancel: () -> Unit,
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp)
-            .padding(bottom = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        SmallButton(chrome.selectAllLabel, modifier = Modifier.weight(1f), onClick = chrome.onSelectAll)
-        SmallButton(
-            stringResource(Res.string.action_download_count, chrome.selectedCount),
-            modifier = Modifier.weight(1f),
-            enabled = chrome.selectedCount > 0,
-            onClick = chrome.onDownloadSelected,
+        SelectToolbarIcon(icon = MiuixIcons.SelectAll, label = selectAllLabel, onClick = onSelectAll)
+        SelectToolbarIcon(
+            icon = MiuixIcons.Download,
+            label = downloadLabel,
+            enabled = selectedCount > 0,
+            onClick = onDownloadSelected,
         )
-        SmallButton(
-            stringResource(Res.string.action_delete_count, chrome.selectedCount),
-            modifier = Modifier.weight(1f),
-            enabled = chrome.selectedCount > 0 && !chrome.deleteBusy,
-            destructive = true,
-            onClick = chrome.onRequestBatchDelete,
+        SelectToolbarIcon(
+            icon = MiuixIcons.Delete,
+            label = deleteLabel,
+            enabled = selectedCount > 0 && !deleteBusy,
+            tint = MiuixTheme.colorScheme.error,
+            onClick = onRequestBatchDelete,
+        )
+        SelectToolbarIcon(icon = MiuixIcons.Close, label = cancelLabel, onClick = onCancel)
+    }
+}
+
+/** One icon of [SelectToolbar]. */
+@Composable
+private fun SelectToolbarIcon(
+    icon: ImageVector,
+    label: String,
+    enabled: Boolean = true,
+    tint: Color? = null,
+    onClick: () -> Unit,
+) {
+    val haptics = LocalHapticFeedback.current
+    IconButton(
+        onClick = {
+            haptics.tap()
+            onClick()
+        },
+        enabled = enabled,
+        backgroundColor = Color.Transparent,
+    ) {
+        Icon(
+            icon,
+            contentDescription = label,
+            tint = tint ?: MiuixTheme.colorScheme.onSurface,
+            modifier = Modifier.size(22.dp),
         )
     }
 }
@@ -874,6 +934,7 @@ private fun LazyListScope.filesList(
                     selectMode = media.selectMode,
                     selected = media.selected.contains(f.name),
                     onToggle = { media.onToggle(f.name) },
+                    onLongPress = { media.onLongPress(f.name) },
                     onOpen = { media.onOpen(f) },
                     onDelete = { media.onDelete(f) },
                 )
@@ -904,6 +965,7 @@ private fun LazyGridScope.filesGrid(
                 selectMode = media.selectMode,
                 selected = media.selected.contains(f.name),
                 onToggle = { media.onToggle(f.name) },
+                onLongPress = { media.onLongPress(f.name) },
                 onOpen = { media.onOpen(f) },
             )
         }
@@ -912,6 +974,12 @@ private fun LazyGridScope.filesGrid(
 
 /**
  * One gallery cell: the decoded preview filling a square, cropped to cover.
+ *
+ * Square and flush against its neighbours — no gutter, no rounded corner. A gutter and a corner
+ * radius are what make a grid read as separate cards rather than as one sheet of pictures, which
+ * is the arrangement the system gallery uses and what the 2026-09-24 report asked for
+ * (「一行 4 个，无间距」). At four across with no gap, a radius would leave a notch at every
+ * corner junction, so the cell is a plain rectangle of pixels.
  *
  * The fill is deliberately only asked for from inside the cell — the same reason
  * [fileItem] does it there. In the gallery it matters more: a grid materialises every
@@ -929,23 +997,26 @@ private fun MediaTile(
     selectMode: Boolean,
     selected: Boolean,
     onToggle: () -> Unit,
+    onLongPress: () -> Unit,
     onOpen: () -> Unit,
 ) {
     val isVideo = f.type == FileType.VIDEO
     LaunchedEffect(f.name) { state.loadThumbnail(f) }
     Box(
         Modifier
-            .padding(2.dp)
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(10.dp))
             .background(
                 if (isVideo) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.secondary,
             )
-            // Outside select mode a tap opens the media; inside it the tap is the selection,
-            // which is why the two are alternatives rather than nested handlers.
+            // Outside select mode a tap opens the media and a long press starts selecting;
+            // inside it both tick the cell, which is why the two are alternatives rather than
+            // nested handlers.
             .then(
-                if (selectMode) Modifier.clickable(onClick = onToggle)
-                else Modifier.clickable(onClick = onOpen),
+                if (selectMode) {
+                    Modifier.combinedClickable(onClick = onToggle, onLongClick = onLongPress)
+                } else {
+                    Modifier.combinedClickable(onClick = onOpen, onLongClick = onLongPress)
+                },
             ),
     ) {
         val bitmap = state.thumbnails[f.name]
@@ -1100,6 +1171,7 @@ private fun ColumnScope.fileItem(
     selectMode: Boolean,
     selected: Boolean,
     onToggle: () -> Unit,
+    onLongPress: () -> Unit,
     onOpen: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -1114,8 +1186,13 @@ private fun ColumnScope.fileItem(
         Modifier
             .fillMaxWidth()
             // A row is tappable either way; *what* the tap does is the difference —
-            // selection in select mode, opening the media otherwise.
-            .clickable(onClick = if (selectMode) onToggle else onOpen)
+            // selection in select mode, opening the media otherwise. The long press is the
+            // way into selection, and `combinedClickable` gives it the platform's own
+            // long-press haptic without this row having to ask for one.
+            .combinedClickable(
+                onClick = if (selectMode) onToggle else onOpen,
+                onLongClick = onLongPress,
+            )
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
