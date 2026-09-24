@@ -3,251 +3,351 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RoveCamLink — 开源运动相机连接 App</title>
-<meta name="description" content="RoveCamLink：基于 Kotlin Multiplatform + Compose Multiplatform + Compose Cupertino 的开源运动相机连接 App。Wi-Fi 直连、RTSP 实时图传、文件传输，协议插件化，轻松接入新相机。">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322d3ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M23 7l-7 5 7 5V7z'/%3E%3Crect x='1' y='5' width='15' height='14' rx='2'/%3E%3C/svg%3E">
+<title>RoveCamLink — 让运动相机在手机上变得好用</title>
+<meta name="description" content="RoveCamLink 是一个开源相机客户端：相机开机就能自动连上，手机上实时看画面、随手拍照录像、下载和管理素材。支持多个品牌的运动相机与记录仪，Android / 桌面 / iOS，Apache-2.0 开源。">
+<meta name="theme-color" content="#0a0a0b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffb020' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M23 7l-7 5 7 5V7z'/%3E%3Crect x='1' y='5' width='15' height='14' rx='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
 <style>
-  :root {
-    --bg: #0a0e16;
-    --bg-soft: #0e1420;
-    --surface: #111827;
-    --surface-2: #151e2e;
-    --border: rgba(148, 163, 184, .16);
-    --border-strong: rgba(148, 163, 184, .3);
-    --text: #e2e8f0;
-    --text-muted: #94a3b8;
-    --accent: #22d3ee;
-    --accent-2: #818cf8;
-    --accent-soft: rgba(34, 211, 238, .12);
-    --ok: #34d399;
-    --radius: 14px;
-    --maxw: 1080px;
-    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
-    --mono: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, "Courier New", monospace;
+  :root{
+    --ink:#0a0a0b;
+    --ink-2:#0f0f11;
+    --ink-3:#17171b;
+    --ink-4:#202027;
+    --line:rgba(244,240,230,.10);
+    --line-2:rgba(244,240,230,.22);
+    --paper:#f4f0e6;
+    --paper-2:#b9b4a8;
+    --muted:#8b877d;
+    --amber:#ffb020;
+    --amber-2:#ff8a00;
+    --amber-soft:rgba(255,176,32,.12);
+    --rec:#ff3b30;
+    --ok:#7bd88f;
+    --r:3px;
+    --maxw:1140px;
+    --display:"Archivo","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+    --body:"Archivo","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,"Cascadia Code",Consolas,"Courier New",monospace;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 16px;
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);color:var(--paper);font-family:var(--body);
+    font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden;
   }
-  ::selection { background: rgba(34, 211, 238, .3); }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
-  .skip-link {
-    position: absolute; left: -9999px; top: 0; z-index: 100;
-    background: var(--accent); color: #06202a; padding: 8px 16px; border-radius: 0 0 8px 0; font-weight: 600;
-  }
-  .skip-link:focus { left: 0; }
+  ::selection{background:rgba(255,176,32,.28)}
+  a{color:var(--amber);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
 
-  header {
-    position: sticky; top: 0; z-index: 50;
-    background: rgba(10, 14, 22, .82);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-  nav {
-    max-width: var(--maxw); margin: 0 auto; padding: 0 24px;
-    height: 60px; display: flex; align-items: center; gap: 24px;
-  }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: var(--text); }
-  .brand:hover { text-decoration: none; }
-  .brand svg { color: var(--accent); }
-  .nav-links { display: flex; gap: 4px; margin-left: 8px; }
-  .nav-links a {
-    color: var(--text-muted); font-size: 15px; padding: 6px 12px; border-radius: 8px;
-    transition: color .18s, background-color .18s;
-  }
-  .nav-links a:hover { color: var(--text); background: rgba(148,163,184,.1); text-decoration: none; }
-  .nav-cta { margin-left: auto; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 9px 16px; border-radius: 10px; font-size: 15px; font-weight: 600;
-    border: 1px solid var(--border-strong); color: var(--text);
-    background: var(--surface-2); cursor: pointer;
-    transition: border-color .18s, background-color .18s, transform .1s;
-  }
-  .btn:hover { text-decoration: none; border-color: var(--accent); background: rgba(34,211,238,.08); }
-  .btn:active { transform: translateY(1px); }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    color: #06202a; border: none;
-  }
-  .btn-primary:hover { background: linear-gradient(135deg, #4adee8, #94a3f8); }
-
-  .hero {
-    padding: 88px 0 72px;
+  /* ── atmosphere ─────────────────────────────── */
+  .bg{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
-      radial-gradient(900px 420px at 15% -10%, rgba(34,211,238,.12), transparent 60%),
-      radial-gradient(800px 400px at 90% 0%, rgba(129,140,248,.14), transparent 60%);
+      radial-gradient(58rem 40rem at 10% -10%, rgba(255,176,32,.10), transparent 62%),
+      radial-gradient(46rem 30rem at 102% 2%, rgba(255,59,48,.055), transparent 60%);
   }
-  .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
-  .badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 13px; font-weight: 600; color: var(--accent);
-    background: var(--accent-soft); border: 1px solid rgba(34,211,238,.35);
-    padding: 5px 12px; border-radius: 999px; margin-bottom: 20px;
+  .grain{
+    position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.05;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  .badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
-  h1 { font-size: clamp(34px, 5.2vw, 54px); line-height: 1.15; letter-spacing: -.02em; font-weight: 800; }
-  h1 .grad {
-    background: linear-gradient(120deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .hero-sub { margin-top: 20px; color: var(--text-muted); font-size: 17px; max-width: 540px; }
-  .hero-cta { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
-  .chips { margin-top: 30px; display: flex; gap: 8px; flex-wrap: wrap; }
-  .chip {
-    font-family: var(--mono); font-size: 13px; color: var(--text-muted);
-    border: 1px solid var(--border); background: var(--surface);
-    padding: 4px 12px; border-radius: 8px;
-  }
-  .terminal {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    box-shadow: 0 24px 60px rgba(0,0,0,.45); overflow: hidden;
-  }
-  .term-bar {
-    display: flex; align-items: center; gap: 8px; padding: 12px 16px;
-    border-bottom: 1px solid var(--border); background: var(--surface-2);
-  }
-  .term-bar i { width: 11px; height: 11px; border-radius: 50%; display: block; }
-  .term-bar .r { background: #f87171; } .term-bar .y { background: #fbbf24; } .term-bar .g { background: #34d399; }
-  .term-bar span { margin-left: 8px; font-family: var(--mono); font-size: 12.5px; color: var(--text-muted); }
-  .term-body { padding: 18px 20px; font-family: var(--mono); font-size: 13.5px; line-height: 1.85; overflow-x: auto; }
-  .term-body .p { color: var(--ok); } .term-body .d { color: var(--text-muted); }
-  .term-body .c { color: var(--accent); } .term-body .w { color: var(--text); }
+  header,main,footer{position:relative;z-index:1}
 
-  section { padding: 72px 0; }
-  .sec-head { margin-bottom: 40px; }
-  .kicker { font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
-  h2 { font-size: clamp(26px, 3.4vw, 34px); font-weight: 800; letter-spacing: -.01em; margin-top: 6px; }
-  .sec-head p { color: var(--text-muted); margin-top: 10px; max-width: 640px; }
+  .skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--amber);color:#1a1205;
+    padding:9px 16px;font-weight:600;border-radius:0 0 3px 0}
+  .skip:focus{left:0}
 
-  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .feat {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 24px; transition: border-color .18s, transform .18s;
+  /* ── header ─────────────────────────────────── */
+  header.top{
+    position:sticky;top:0;z-index:20;
+    background:rgba(10,10,11,.78);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
   }
-  .feat:hover { border-color: var(--border-strong); transform: translateY(-2px); }
-  .feat .ic {
-    width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center;
-    background: var(--accent-soft); color: var(--accent); margin-bottom: 14px;
-  }
-  .feat h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
-  .feat p { color: var(--text-muted); font-size: 14.5px; }
+  nav{max-width:var(--maxw);margin:0 auto;padding:0 26px;height:62px;display:flex;align-items:center;gap:22px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;
+    font-size:17px;letter-spacing:-.01em;color:var(--paper)}
+  .brand:hover{text-decoration:none}
+  .brand svg{color:var(--amber)}
+  .nav{display:flex;gap:2px;margin-left:10px}
+  .nav a{font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;color:var(--paper-2);
+    padding:7px 12px;border-radius:var(--r);transition:color .18s,background-color .18s}
+  .nav a:hover{color:var(--amber);background:rgba(255,176,32,.08);text-decoration:none}
+  .nav-cta{margin-left:auto}
 
-  .arch-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 28px; align-items: start; }
-  .code {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 22px 24px; font-family: var(--mono); font-size: 13.5px; line-height: 1.9; overflow-x: auto;
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;padding:10px 18px;border-radius:var(--r);
+    font-family:var(--display);font-weight:600;font-size:14.5px;letter-spacing:.01em;
+    border:1px solid var(--line-2);color:var(--paper);background:transparent;cursor:pointer;
+    transition:border-color .18s,background-color .18s,color .18s,transform .1s;
   }
-  .code .k { color: var(--accent-2); } .code .m { color: var(--text-muted); } .code .b { color: var(--accent); }
-  .steps { display: flex; flex-direction: column; gap: 14px; }
-  .step {
-    display: flex; gap: 14px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px;
-  }
-  .step .n {
-    flex: none; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #06202a;
-    font-weight: 800; font-size: 14px;
-  }
-  .step h4 { font-size: 15.5px; margin-bottom: 2px; }
-  .step p { color: var(--text-muted); font-size: 14px; }
+  .btn:hover{text-decoration:none;border-color:var(--amber);color:var(--amber);background:var(--amber-soft)}
+  .btn:active{transform:translateY(1px)}
+  .btn--primary{background:var(--amber);border-color:var(--amber);color:#1a1205}
+  .btn--primary:hover{background:#ffc24d;border-color:#ffc24d;color:#1a1205}
 
-  .quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px;
+  /* ── hero ───────────────────────────────────── */
+  .hero{padding:78px 0 62px}
+  .hero__grid{display:grid;grid-template-columns:1.04fr .96fr;gap:54px;align-items:center}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--amber);
+    border:1px solid rgba(255,176,32,.4);background:var(--amber-soft);
+    padding:6px 13px;border-radius:999px;
   }
-  .card h3 { font-size: 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-  .card h3 .n {
-    width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center;
-    background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 800;
+  .eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--rec);
+    box-shadow:0 0 0 3px rgba(255,59,48,.18)}
+  h1{
+    font-family:var(--display);font-weight:800;font-size:clamp(38px,6.1vw,68px);
+    line-height:1.06;letter-spacing:-.03em;margin-top:22px;
   }
-  .cmd {
-    display: block; background: var(--bg-soft); border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 14px; font-family: var(--mono); font-size: 13px;
-    color: var(--accent); overflow-x: auto; white-space: nowrap;
-  }
-  .card p { color: var(--text-muted); font-size: 14px; margin-top: 10px; }
-  .card ul { list-style: none; margin-top: 10px; }
-  .card li { color: var(--text-muted); font-size: 14px; padding-left: 20px; position: relative; margin-top: 4px; }
-  .card li::before { content: "›"; position: absolute; left: 4px; color: var(--accent); font-weight: 700; }
-  code { font-family: var(--mono); font-size: .92em; color: var(--accent); }
-
-  .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
-  .checklist { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .checklist li {
-    display: flex; align-items: flex-start; gap: 12px;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px;
-    font-size: 15px;
-  }
-  .checklist li svg { flex: none; margin-top: 3px; }
-  .checklist li.done svg { color: var(--ok); }
-  .checklist li.pending { color: var(--text-muted); }
-  .checklist li.pending svg { color: var(--text-muted); }
-  .note {
-    border: 1px solid rgba(34,211,238,.3); background: var(--accent-soft);
-    border-radius: 10px; padding: 16px 18px; font-size: 14.5px; color: var(--text);
-  }
-  .note strong { color: var(--accent); }
-
-  .docs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .doc {
-    display: flex; flex-direction: column; gap: 8px;
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 22px; transition: border-color .18s, transform .18s;
-  }
-  .doc:hover { border-color: var(--accent); transform: translateY(-2px); text-decoration: none; }
-  .doc .tag { font-family: var(--mono); font-size: 12px; color: var(--accent); }
-  .doc h3 { font-size: 16.5px; color: var(--text); }
-  .doc p { color: var(--text-muted); font-size: 14px; }
-
-  footer { border-top: 1px solid var(--border); padding: 36px 0 44px; margin-top: 24px; }
-  .foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-  .foot .brand { font-size: 15px; }
-  .foot p { color: var(--text-muted); font-size: 13.5px; }
-
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .hero-grid, .feat, .step, .card, .doc, .code, .terminal, .checklist li { animation: rise .5s ease both; }
-    .feat:nth-child(2), .card:nth-child(2) { animation-delay: .06s; }
-    .feat:nth-child(3), .card:nth-child(3) { animation-delay: .12s; }
-    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  h1 em{font-style:normal;color:var(--amber);display:inline-block}
+  .lede{margin-top:22px;color:var(--paper-2);font-size:17px;max-width:35em}
+  .cta{margin-top:32px;display:flex;gap:12px;flex-wrap:wrap}
+  .specs{margin-top:30px;display:flex;flex-wrap:wrap;gap:8px;list-style:none}
+  .specs li{
+    font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--paper-2);
+    border:1px solid var(--line);background:var(--ink-2);padding:5px 11px;border-radius:var(--r);
   }
 
-  @media (max-width: 900px) {
-    .hero { padding: 56px 0 48px; }
-    .hero-grid, .arch-grid, .status-grid { grid-template-columns: 1fr; }
-    .features, .quick, .docs-grid { grid-template-columns: 1fr; }
-    .nav-links { display: none; }
-    section { padding: 52px 0; }
+  /* viewfinder */
+  .vf{
+    position:relative;aspect-ratio:4/3;border:1px solid var(--line-2);border-radius:6px;
+    overflow:hidden;background:#000;box-shadow:0 40px 90px -30px rgba(0,0,0,.85);
   }
-  @media (max-width: 480px) {
-    .hero-cta .btn { width: 100%; justify-content: center; }
+  .vf__scene{position:absolute;inset:0;background:
+    radial-gradient(circle at 73% 25%, rgba(255,214,150,.6), rgba(255,168,74,.16) 20%, transparent 44%),
+    linear-gradient(180deg,#0d1920 0%,#16323a 30%,#26362c 52%,#3a3126 68%,#141110 100%);}
+  .vf__grid{position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.10) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.10) 1px,transparent 1px);
+    background-size:33.334% 33.334%;}
+  .vf__scan{position:absolute;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,176,32,.75),transparent);
+    animation:scan 4.6s ease-in-out infinite}
+  @keyframes scan{0%,100%{top:16%}50%{top:84%}}
+  .vf__cross,.vf__cross::before,.vf__cross::after{position:absolute}
+  .vf__cross{left:50%;top:50%;width:30px;height:30px;transform:translate(-50%,-50%)}
+  .vf__cross::before{content:"";left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,.55);transform:translateX(-50%)}
+  .vf__cross::after{content:"";top:50%;left:0;right:0;height:1px;background:rgba(255,255,255,.55);transform:translateY(-50%)}
+  .br{position:absolute;width:24px;height:24px;border:2px solid rgba(255,255,255,.72)}
+  .br.tl{top:14px;left:14px;border-right:0;border-bottom:0}
+  .br.tr{top:14px;right:14px;border-left:0;border-bottom:0}
+  .br.bl{bottom:60px;left:14px;border-right:0;border-top:0}
+  .br.brr{bottom:60px;right:14px;border-left:0;border-top:0}
+  .vf__rec{
+    position:absolute;top:16px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.12em;
+    color:#fff;background:rgba(0,0,0,.5);padding:5px 11px;border-radius:999px}
+  .vf__rec i{width:8px;height:8px;border-radius:50%;background:var(--rec);
+    animation:pulse 1.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .vf__rec b{font-weight:600}
+  .vf__hint{
+    position:absolute;left:16px;bottom:74px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+  .vf__bar{
+    position:absolute;left:0;right:0;bottom:0;display:flex;gap:18px;
+    padding:11px 16px;background:linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.72));
+    border-top:1px solid rgba(255,255,255,.12);
+    font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.62)}
+  .vf__bar b{color:#fff;font-weight:500}
+
+  /* ── ticker ─────────────────────────────────── */
+  .ticker{
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    background:var(--ink-2);overflow:hidden}
+  .ticker__track{display:flex;width:max-content;animation:slide 32s linear infinite}
+  .ticker:hover .ticker__track{animation-play-state:paused}
+  .ticker__group{display:flex}
+  .ticker__group span{
+    display:flex;align-items:center;font-family:var(--mono);font-size:13px;letter-spacing:.10em;
+    color:var(--paper-2);padding:14px 0;white-space:nowrap}
+  .ticker__group span::before{content:"";width:5px;height:5px;background:var(--amber);
+    transform:rotate(45deg);margin:0 22px}
+  @keyframes slide{to{transform:translateX(-50%)}}
+
+  /* ── sections ───────────────────────────────── */
+  section{padding:76px 0}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--amber)}
+  h2{font-family:var(--display);font-weight:800;font-size:clamp(27px,3.7vw,40px);
+    line-height:1.14;letter-spacing:-.025em;margin-top:10px}
+  h2 em{font-style:normal;color:var(--amber)}
+  .sec-head{margin-bottom:44px;max-width:44em}
+  .sec-head p{color:var(--paper-2);margin-top:14px}
+
+  /* ── why ────────────────────────────────────── */
+  .why__grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .stat{border:1px solid var(--line);background:var(--ink-2);border-radius:var(--r);padding:22px 20px}
+  .stat b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(24px,3vw,32px);
+    letter-spacing:-.02em;color:var(--amber)}
+  .stat span{display:block;margin-top:6px;font-size:13.5px;color:var(--muted);line-height:1.5}
+
+  /* ── features ───────────────────────────────── */
+  #features{background:var(--ink-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .feat{
+    position:relative;overflow:hidden;background:var(--ink);border:1px solid var(--line);
+    border-radius:var(--r);padding:26px 24px 24px;transition:border-color .22s,background-color .22s,transform .22s}
+  .feat::before{content:"";position:absolute;top:0;left:0;height:2px;width:34px;background:var(--amber);
+    transition:width .38s cubic-bezier(.6,0,.2,1)}
+  .feat:hover{border-color:var(--line-2);background:var(--ink-3);transform:translateY(-3px)}
+  .feat:hover::before{width:100%}
+  .feat .idx{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;color:var(--muted)}
+  .feat .tag{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--amber);margin-top:14px}
+  .feat h3{font-family:var(--display);font-weight:700;font-size:18.5px;letter-spacing:-.01em;margin-top:7px}
+  .feat p{color:var(--paper-2);font-size:14.5px;margin-top:10px;line-height:1.68}
+
+  /* ── screens ────────────────────────────────── */
+  .phones{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;align-items:start}
+  .phone{background:var(--ink-3);border:1px solid var(--line-2);border-radius:24px;padding:11px;
+    box-shadow:0 30px 70px -34px rgba(0,0,0,.9)}
+  .phone figcaption{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);text-align:center;margin-top:14px}
+  .screen{background:var(--ink);border:1px solid var(--line);border-radius:15px;overflow:hidden;
+    aspect-ratio:9/19;padding:14px;display:flex;flex-direction:column;gap:9px}
+  .scr-bar{display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .pill{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--ok);
+    border:1px solid rgba(123,216,143,.4);background:rgba(123,216,143,.1);padding:2px 8px;border-radius:999px}
+  .row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--ink-2);
+    border-radius:var(--r);padding:10px 11px}
+  .dot{width:26px;height:26px;border-radius:var(--r);flex:none;
+    background:linear-gradient(135deg,var(--amber),var(--amber-2))}
+  .row b{display:block;font-size:12.5px;font-weight:600}
+  .row small{display:block;font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .mini{position:relative;border-radius:var(--r);overflow:hidden;flex:1;min-height:0;
+    background:
+      radial-gradient(circle at 70% 26%, rgba(255,214,150,.5), transparent 42%),
+      linear-gradient(180deg,#0d1920,#16323a 34%,#26362c 58%,#141110)}
+  .mini::after{content:"";position:absolute;left:50%;top:50%;width:18px;height:18px;
+    transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,.5);border-radius:50%}
+  .readout{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chips i{font-family:var(--mono);font-size:10px;font-style:normal;color:var(--paper-2);
+    border:1px solid var(--line);padding:3px 8px;border-radius:999px}
+  .chips i.on{background:var(--amber);border-color:var(--amber);color:#1a1205}
+  .grid3{display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:1}
+  .thumb{border-radius:var(--r);position:relative;overflow:hidden}
+  .thumb:nth-child(1){background:linear-gradient(140deg,#2b3a2e,#5b6b3f)}
+  .thumb:nth-child(2){background:linear-gradient(140deg,#1d3540,#3f6b74)}
+  .thumb:nth-child(3){background:linear-gradient(140deg,#3a3126,#7a5c33)}
+  .thumb:nth-child(4){background:linear-gradient(140deg,#2a2436,#5a4a72)}
+  .thumb:nth-child(5){background:linear-gradient(140deg,#3d2626,#7a3d33)}
+  .thumb:nth-child(6){background:linear-gradient(140deg,#233240,#42566b)}
+  .thumb.play::after{content:"";position:absolute;left:50%;top:50%;width:0;height:0;
+    transform:translate(-50%,-50%);border-left:9px solid rgba(255,255,255,.85);
+    border-top:6px solid transparent;border-bottom:6px solid transparent}
+  .prog{height:5px;border-radius:999px;background:var(--ink-3);overflow:hidden}
+  .prog i{display:block;height:100%;width:62%;background:linear-gradient(90deg,var(--amber-2),var(--amber))}
+  .shutter{width:40px;height:40px;border-radius:50%;border:2px solid var(--line-2);
+    display:grid;place-items:center;margin:2px auto 0}
+  .shutter i{width:26px;height:26px;border-radius:50%;background:var(--rec)}
+
+  /* ── start / steps ──────────────────────────── */
+  #start{background:var(--ink-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .step{border:1px solid var(--line);background:var(--ink);border-radius:var(--r);padding:24px 22px}
+  .step .n{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--amber)}
+  .step h3{font-family:var(--display);font-weight:700;font-size:17.5px;margin-top:12px}
+  .step p{color:var(--paper-2);font-size:14.5px;margin-top:8px}
+  .note{margin-top:18px;border:1px solid rgba(255,176,32,.32);background:var(--amber-soft);
+    border-radius:var(--r);padding:16px 18px;font-size:14.5px;color:var(--paper)}
+  .note strong{color:var(--amber)}
+
+  /* ── roadmap ────────────────────────────────── */
+  .road{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .road .step{border-left:2px solid var(--amber)}
+  .road .n{color:var(--muted)}
+
+  /* ── dev ────────────────────────────────────── */
+  #dev{background:var(--ink-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .dev__grid{display:grid;grid-template-columns:1.06fr .94fr;gap:30px;align-items:start}
+  .code{
+    background:var(--ink);border:1px solid var(--line);border-radius:var(--r);
+    padding:22px 24px;font-family:var(--mono);font-size:13px;line-height:1.9;overflow-x:auto;color:var(--paper-2)}
+  .code .k{color:var(--paper)}
+  .code .m{color:var(--muted)}
+  .code .b{color:var(--amber)}
+  .cmdbox{display:flex;flex-direction:column;gap:12px}
+  .cmd{display:block;background:var(--ink);border:1px solid var(--line);border-radius:var(--r);
+    padding:12px 15px;font-family:var(--mono);font-size:12.5px;color:var(--amber);overflow-x:auto;white-space:nowrap}
+  .cmdbox p{color:var(--paper-2);font-size:14px}
+
+  /* ── docs ───────────────────────────────────── */
+  .docs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .doc{display:flex;flex-direction:column;gap:8px;background:var(--ink-2);border:1px solid var(--line);
+    border-radius:var(--r);padding:22px;transition:border-color .2s,transform .2s,background-color .2s}
+  .doc:hover{border-color:var(--amber);transform:translateY(-3px);background:var(--ink-3);text-decoration:none}
+  .doc .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;color:var(--amber)}
+  .doc h3{font-family:var(--display);font-weight:700;font-size:16.5px;color:var(--paper)}
+  .doc p{color:var(--paper-2);font-size:14px;line-height:1.65}
+
+  /* ── footer ─────────────────────────────────── */
+  footer{border-top:1px solid var(--line);padding:40px 0 52px;margin-top:20px}
+  .foot{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+  .foot .brand{font-size:15px}
+  .foot p{color:var(--muted);font-size:13px}
+
+  :focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:2px}
+
+  /* ── reveal ─────────────────────────────────── */
+  .js [data-reveal]{opacity:0;transform:translateY(16px);
+    transition:opacity .7s ease,transform .7s cubic-bezier(.22,.61,.36,1)}
+  .js [data-reveal].in{opacity:1;transform:none}
+  .js .hero__copy>*{opacity:0;animation:rise .7s cubic-bezier(.22,.61,.36,1) forwards}
+  .js .hero__copy>:nth-child(1){animation-delay:.05s}
+  .js .hero__copy>:nth-child(2){animation-delay:.13s}
+  .js .hero__copy>:nth-child(3){animation-delay:.21s}
+  .js .hero__copy>:nth-child(4){animation-delay:.29s}
+  .js .hero__copy>:nth-child(5){animation-delay:.37s}
+  .js .vf{opacity:0;animation:rise .8s .18s cubic-bezier(.22,.61,.36,1) forwards}
+  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important}
+    .js [data-reveal],.js .hero__copy>*,.js .vf{opacity:1;transform:none}
+  }
+
+  /* ── responsive ─────────────────────────────── */
+  @media (max-width:960px){
+    .hero__grid,.why__grid,.dev__grid{grid-template-columns:1fr;gap:40px}
+    .feats,.docs,.steps3,.road{grid-template-columns:1fr}
+    .phones{grid-template-columns:1fr;max-width:360px;margin:0 auto}
+    .nav{display:none}
+    .vf{max-width:520px}
+    section{padding:56px 0}
+    .hero{padding:52px 0 46px}
+  }
+  @media (max-width:520px){
+    .cta .btn{width:100%;justify-content:center}
+    .stats{grid-template-columns:1fr}
   }
 </style>
 </head>
 <body>
-<a class="skip-link" href="#main">跳到主要内容</a>
+<div class="bg" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<a class="skip" href="#main">跳到主要内容</a>
 
-<header>
+<header class="top">
   <nav aria-label="主导航">
     <a class="brand" href="#top" aria-label="RoveCamLink 首页">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
       RoveCamLink
     </a>
-    <div class="nav-links">
-      <a href="#features">特性</a>
-      <a href="#architecture">架构</a>
-      <a href="#quickstart">快速开始</a>
-      <a href="#status">状态</a>
+    <div class="nav">
+      <a href="#features">特色</a>
+      <a href="#screens">界面</a>
+      <a href="#start">上手</a>
+      <a href="#roadmap">路线</a>
       <a href="#docs">文档</a>
     </div>
     <div class="nav-cta">
@@ -261,192 +361,270 @@
 
 <main id="main">
   <!-- Hero -->
-  <div class="hero" id="top">
-    <div class="wrap hero-grid">
-      <div>
-        <span class="badge">Kotlin Multiplatform · 开源 · Android 优先</span>
-        <h1>开源的运动相机<br><span class="grad">连接伴侣</span></h1>
-        <p class="hero-sub">官方 App 臃肿卡顿？RoveCamLink 用 Wi-Fi 直连、RTSP 实时图传与文件传输，替代官方应用——精简、快速，且协议以插件形式组织，接入新相机无需改动核心。</p>
-        <div class="hero-cta">
-          <a class="btn btn-primary" href="https://github.com/lswlc33/rovecamlink" target="_blank" rel="noopener">查看源码</a>
-          <a class="btn" href="#quickstart">快速开始</a>
+  <section class="hero" id="top">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <span class="eyebrow">开源 · 多品牌 · Android / 桌面 / iOS</span>
+        <h1>让运动相机<br><em>像手机一样好用</em></h1>
+        <p class="lede">开机、点一下，画面就在手机上。自动连相机、实时看画面、随手拍照录像、下载和管理素材——官方 App 又大又卡，RoveCamLink 更轻、更快、更顺手。</p>
+        <div class="cta">
+          <a class="btn btn--primary" href="https://github.com/lswlc33/rovecamlink/releases" target="_blank" rel="noopener">下载体验</a>
+          <a class="btn" href="#features">看看能做什么</a>
         </div>
-        <div class="chips">
-          <span class="chip">Kotlin 2.2</span>
-          <span class="chip">Compose Multiplatform 1.9</span>
-          <span class="chip">Compose Cupertino 3.0</span>
-          <span class="chip">Media3 RTSP</span>
-          <span class="chip">Ktor · okio</span>
+        <ul class="specs">
+          <li>Apache-2.0 开源</li>
+          <li>安装包约 3.6 MB</li>
+          <li>本地直连 · 无需账号</li>
+          <li>Kotlin Multiplatform</li>
+        </ul>
+      </div>
+
+      <div class="vf" role="img" aria-label="RoveCamLink 实时取景界面示意">
+        <div class="vf__scene"></div>
+        <div class="vf__grid"></div>
+        <div class="vf__scan"></div>
+        <div class="vf__cross"></div>
+        <span class="br tl"></span><span class="br tr"></span><span class="br bl"></span><span class="br brr"></span>
+        <div class="vf__rec"><i></i> REC <b id="tc">00:12</b></div>
+        <div class="vf__hint">实时画面</div>
+        <div class="vf__bar">
+          <span>电量 <b>86%</b></span>
+          <span>储存 <b>42.1 GB</b></span>
+          <span>照片 <b>128</b></span>
         </div>
       </div>
-      <div class="terminal" role="img" aria-label="连接模拟器的终端演示">
-        <div class="term-bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>rovecamlink — simulator</span></div>
-        <div class="term-body">
-          <div><span class="p">$</span> <span class="w">./gradlew :simulator:run</span></div>
-          <div><span class="c">RoveCamLink simulator</span> <span class="d">@ 0.0.0.0:8080</span></div>
-          <div><span class="d">  → hi3510 CGI 已就绪（模拟 XTU X7 Pro）</span></div>
-          <div>&nbsp;</div>
-          <div><span class="p">$</span> <span class="w">App：手动连接 → 10.0.2.2:8080</span></div>
-          <div><span class="c">✓ 连接成功</span> <span class="d">· 电池 86% · SD 正常</span></div>
-          <div><span class="c">✓ 文件列表</span> <span class="d">· 12 个文件 · 缩略图已加载</span></div>
-          <div><span class="c">✓ 下载完成</span> <span class="d">· 已发布到相册</span></div>
-        </div>
+    </div>
+  </section>
+
+  <!-- Ticker -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      <div class="ticker__group">
+        <span>一键连接</span><span>实时图传</span><span>相机控制</span><span>素材管理</span><span>多机型适配</span><span>多端可用</span><span>完全开源</span><span>诊断日志</span>
+      </div>
+      <div class="ticker__group">
+        <span>一键连接</span><span>实时图传</span><span>相机控制</span><span>素材管理</span><span>多机型适配</span><span>多端可用</span><span>完全开源</span><span>诊断日志</span>
       </div>
     </div>
   </div>
 
+  <!-- Why -->
+  <section id="why">
+    <div class="wrap why__grid">
+      <div class="why__lead" data-reveal>
+        <div class="kicker">Why</div>
+        <h2>官方 App 越做越重，<br>我们只想要<em>接上就能用</em></h2>
+        <p>拍一段就走的运动相机、记录仪，不该被一个塞满用不上组件、越装越大的 App 拖住。RoveCamLink 把「连上、看清、拍好、拿走」这四件事做到最顺手，其余的都省掉。</p>
+      </div>
+      <div class="stats" data-reveal>
+        <div class="stat"><b>约 3.6 MB</b><span>安装包大小，官方 App 约 153 MB</span></div>
+        <div class="stat"><b>4 种</b><span>连接方式：自动、扫码、Wi-Fi 列表、手填地址</span></div>
+        <div class="stat"><b>2 个品牌</b><span>已适配的运动相机与记录仪，持续增加</span></div>
+        <div class="stat"><b>100%</b><span>代码开源，Apache-2.0 协议</span></div>
+      </div>
+    </div>
+  </section>
+
   <!-- Features -->
   <section id="features">
     <div class="wrap">
-      <div class="sec-head">
+      <div class="sec-head" data-reveal>
         <div class="kicker">Features</div>
-        <h2>为替代官方 App 而生</h2>
-        <p>直连、预览、传输，全链路精简实现；协议层插件化，为扩展而设计。</p>
+        <h2>该有的都有，多余的没有</h2>
+        <p>连接、预览、控制、素材这四件事做到最顺手，其余的也都替你想到。</p>
       </div>
-      <div class="features">
-        <div class="feat">
-          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
-          <h3>RTSP 实时图传</h3>
-          <p>基于 Media3 的低延迟实时预览，画面流畅，替代官方卡的图传体验。</p>
+      <div class="feats">
+        <div class="feat" data-reveal>
+          <span class="idx">01</span><span class="tag">Connect</span>
+          <h3>相机开机，它自己找上来</h3>
+          <p>不用先研究说明书里的网关地址。打开 App，它会搜到附近的相机、替你连上热点、把密码带回来；第一次连接只要在相机屏幕上点一下确认。想扫二维码、从 Wi-Fi 列表里连、或干脆手填地址，也都行。</p>
         </div>
-        <div class="feat">
-          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2z"/><path d="M12 10v6"/><path d="M9 13h6"/></svg></div>
-          <h3>文件传输</h3>
-          <p>文件列表、应用内解码缩略图、断点续传下载，一键发布到系统相册。</p>
+        <div class="feat" data-reveal>
+          <span class="idx">02</span><span class="tag">Live</span>
+          <h3>手机立刻变取景器</h3>
+          <p>实时画面几乎看不到延迟。横着拿、竖着拿，画面都会自动摆正；长按一下进入全屏，取景、摆机位看得清清楚楚。</p>
         </div>
-        <div class="feat">
-          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg></div>
-          <h3>Wi-Fi 直连</h3>
-          <p>相机热点直连与局域网扫描（API 24+ / 29+ 双路径），不依赖外网。</p>
+        <div class="feat" data-reveal>
+          <span class="idx">03</span><span class="tag">Control</span>
+          <h3>想调什么，拖一下就好</h3>
+          <p>电量、剩余空间、已录时长一屏看清。曝光、ISO、快门、防抖、白平衡……想调哪个拖哪个，松手才发给相机，怎么调都不会把画面卡住。</p>
         </div>
-        <div class="feat">
-          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
-          <h3>协议插件化</h3>
-          <p>实现 CameraProtocol 并注册即可接入新相机，核心与 UI 零改动。</p>
+        <div class="feat" data-reveal>
+          <span class="idx">04</span><span class="tag">Files</span>
+          <h3>素材在手机上一次搞定</h3>
+          <p>相机里的照片和视频在线预览，勾一批一起下载，网断了还能接着传；下载完直接进手机相册，不想要的在手机上就能删掉。</p>
         </div>
-        <div class="feat">
-          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M8 11l2 2 4-4"/></svg></div>
-          <h3>运行时自动探测</h3>
-          <p>逐个探测已注册协议并读取真实型号，不依赖写死的机型表。</p>
+        <div class="feat" data-reveal>
+          <span class="idx">05</span><span class="tag">Devices</span>
+          <h3>不只是运动相机</h3>
+          <p>多个品牌的运动相机和记录仪都能用，还能自动认出型号，不用手动选。新机型一直在加。</p>
         </div>
-        <div class="feat">
-          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></div>
-          <h3>精简轻量</h3>
-          <p>没有高德、全景、友盟等重型 SDK——相比官方 153MB 的安装包，保持克制。</p>
+        <div class="feat" data-reveal>
+          <span class="idx">06</span><span class="tag">Multi</span>
+          <h3>你的设备都能装</h3>
+          <p>Android 手机是主力；桌面端装上就能在电脑上连相机；iOS 版正在做。</p>
+        </div>
+        <div class="feat" data-reveal>
+          <span class="idx">07</span><span class="tag">Light</span>
+          <h3>装得下、不添乱</h3>
+          <p>安装包只有几 MB，没有夹带地图、广告之类的重型组件，能省的地方都省了。</p>
+        </div>
+        <div class="feat" data-reveal>
+          <span class="idx">08</span><span class="tag">Open</span>
+          <h3>完全开源</h3>
+          <p>Apache-2.0 协议，代码全部公开，可以自由使用、修改、二次分发，也包括商用。</p>
+        </div>
+        <div class="feat" data-reveal>
+          <span class="idx">09</span><span class="tag">Support</span>
+          <h3>出问题也不抓瞎</h3>
+          <p>万一连不上，App 自带诊断日志，一键导出，把这个文件附到反馈里，问题出在哪一目了然。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Architecture -->
-  <section id="architecture" style="background: var(--bg-soft); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <!-- Screens -->
+  <section id="screens">
     <div class="wrap">
-      <div class="sec-head">
-        <div class="kicker">Architecture</div>
-        <h2>KMP 模块化架构</h2>
-        <p>共享 UI、状态、协议与传输；Android 为第一平台，桌面端便于调试，iOS 壳工程已就位。</p>
+      <div class="sec-head" data-reveal>
+        <div class="kicker">Screens</div>
+        <h2>先看看它长什么样</h2>
+        <p>连接、实时、素材三块，用起来一眼就懂。</p>
       </div>
-      <div class="arch-grid">
+      <div class="phones">
+        <figure class="phone" data-reveal>
+          <div class="screen">
+            <div class="scr-bar"><span>设备</span><span>刷新</span></div>
+            <div class="row">
+              <span class="dot"></span>
+              <span><b>TUWIN_R3P_8A21</b><small>Ride3 Pro · 已记住</small></span>
+            </div>
+            <div class="row">
+              <span class="dot"></span>
+              <span><b>XTUCam_X7Pro</b><small>附近的热点</small></span>
+            </div>
+            <div class="scr-bar" style="margin-top:2px"><span>状态</span><span class="pill">已连接</span></div>
+            <div class="row"><span class="dot"></span><span><b>正在同步相机时间</b><small>电量 86% · SD 正常</small></span></div>
+          </div>
+          <figcaption>连接</figcaption>
+        </figure>
+
+        <figure class="phone" data-reveal>
+          <div class="screen">
+            <div class="scr-bar"><span>实时</span><span>电量 86% · 42 GB</span></div>
+            <div class="mini"></div>
+            <div class="chips"><i class="on">视频</i><i>照片</i><i>延时</i></div>
+            <div class="readout"><span>曝光 +0.5</span><span>ISO 400</span><span>防抖 开</span></div>
+            <div class="shutter"><i></i></div>
+          </div>
+          <figcaption>拍摄</figcaption>
+        </figure>
+
+        <figure class="phone" data-reveal>
+          <div class="screen">
+            <div class="scr-bar"><span>文件</span><span>共 128 项</span></div>
+            <div class="grid3">
+              <span class="thumb play"></span><span class="thumb"></span>
+              <span class="thumb"></span><span class="thumb play"></span>
+              <span class="thumb"></span><span class="thumb play"></span>
+            </div>
+            <div class="readout"><span>正在下载 3 项</span><span>62%</span></div>
+            <div class="prog"><i></i></div>
+          </div>
+          <figcaption>素材</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Start -->
+  <section id="start">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div class="kicker">Get started</div>
+        <h2>三步就能开拍</h2>
+        <p>不需要注册账号，也不需要看教程。</p>
+      </div>
+      <div class="steps3">
+        <div class="step" data-reveal>
+          <span class="n">STEP 01</span>
+          <h3>下载安装</h3>
+          <p>到 Releases 下载最新的 nightly 包，装上就能用。它和正式版同签名，可以覆盖升级。</p>
+        </div>
+        <div class="step" data-reveal>
+          <span class="n">STEP 02</span>
+          <h3>打开相机，点一下</h3>
+          <p>App 会自己发现附近的相机。第一次连接时，在相机屏幕上确认一下配对码即可。</p>
+        </div>
+        <div class="step" data-reveal>
+          <span class="n">STEP 03</span>
+          <h3>连上就开拍</h3>
+          <p>实时画面、拍照录像、下载素材都在一个 App 里，连上那一刻全部就绪。</p>
+        </div>
+      </div>
+      <div class="note" data-reveal>
+        <strong>关于 nightly：</strong>每天自动构建的就是最新的 main，但它不可调试——真机排障时请用 App 内的诊断日志导出一份 TXT。换包时若遇到签名不一致，先卸载旧包再装即可。
+      </div>
+    </div>
+  </section>
+
+  <!-- Roadmap -->
+  <section id="roadmap">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div class="kicker">Roadmap</div>
+        <h2>接下来要做的事</h2>
+        <p>已经在路上，还没做完的部分。</p>
+      </div>
+      <div class="road">
+        <div class="step" data-reveal>
+          <span class="n">开发中</span>
+          <h3>直播推流</h3>
+          <p>把相机画面直接推流到直播平台，出门直播不用再背电脑。</p>
+        </div>
+        <div class="step" data-reveal>
+          <span class="n">开发中</span>
+          <h3>更多品类与机型</h3>
+          <p>行车记录仪等更多设备陆续加入，覆盖的型号会越来越多。</p>
+        </div>
+        <div class="step" data-reveal>
+          <span class="n">开发中</span>
+          <h3>iOS 版</h3>
+          <p>目前是能编译的壳工程，实时图传等功能正在补齐。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dev -->
+  <section id="dev">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div class="kicker">Developers</div>
+        <h2>想自己改？</h2>
+        <p>一套 Compose Multiplatform 代码同时构建 Android、桌面与 iOS，协议以插件形式组织——接入新相机，写一个插件注册进去就行。</p>
+      </div>
+      <div class="dev__grid">
         <div class="code" aria-label="项目目录结构">
 <span class="k">composeApp/</span>
   <span class="m">commonMain/</span>    <span class="b">共享 UI、状态、协议、传输</span>
-    <span class="m">core/model</span>       <span class="b">数据模型</span>
-    <span class="m">core/transport</span>  <span class="b">Ktor HTTP / 断点续传</span>
     <span class="m">core/protocol</span>   <span class="b">CameraProtocol 接口 + 注册表</span>
-    <span class="m">core/net</span>         <span class="b">运行时设备发现 / 识别</span>
-    <span class="m">core/wifi</span>       <span class="b">Wi-Fi 控制（expect/actual）</span>
-    <span class="m">core/storage</span>    <span class="b">文件保存 + 权限</span>
-    <span class="m">core/media</span>      <span class="b">实时预览（expect/actual）</span>
-    <span class="m">brand/xtu</span>       <span class="b">海思 hi3510 CGI 插件</span>
-    <span class="m">brand/tuwin</span>    <span class="b">TUWIN REST 插件</span>
+    <span class="m">core/transport</span>  <span class="b">Ktor HTTP / 断点续传</span>
+    <span class="m">core/wifi</span>       <span class="b">Wi-Fi 直连（expect/actual）</span>
+    <span class="m">brand/xtu</span>       <span class="b">XTU 海思插件</span>
+    <span class="m">brand/tuwin</span>     <span class="b">TUWIN REST 插件</span>
   <span class="m">androidMain/</span>  <span class="b">Wi-Fi 直连 · Media3 · MediaStore</span>
-  <span class="m">desktopMain/</span>  <span class="b">桌面端入口（连模拟器调试）</span>
-  <span class="m">iosMain/</span>      <span class="b">iOS 壳工程（可编译）</span>
-<span class="k">simulator/</span>      <span class="b">Ktor 桌面模拟器（hi3510 CGI）</span>
+  <span class="m">desktopMain/</span>  <span class="b">桌面端入口</span>
+  <span class="m">iosMain/</span>      <span class="b">iOS 壳工程</span>
+<span class="k">simulator/</span>      <span class="b">Ktor 桌面模拟器，无相机也能联调</span>
         </div>
-        <div class="steps">
-          <div class="step">
-            <div class="n">1</div>
-            <div><h4>实现 CameraProtocol</h4><p>定义探测、连接、状态、控制与文件接口，各品牌协议各不相同，插件内自包含。</p></div>
-          </div>
-          <div class="step">
-            <div class="n">2</div>
-            <div><h4>注册到 AppGraph</h4><p>在依赖注入图中注册新插件，一行接入。</p></div>
-          </div>
-          <div class="step">
-            <div class="n">3</div>
-            <div><h4>运行时自动识别</h4><p>发现流程逐个探测已注册协议，新设备无需改 UI 即可工作。</p></div>
-          </div>
-          <div class="note">首个落地：<strong>XTU X7 Pro</strong>（海思 Hi35xx <code>hi3510</code> CGI）。TUWIN 作为第二个品牌用于验证扩展性。</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Quick start -->
-  <section id="quickstart">
-    <div class="wrap">
-      <div class="sec-head">
-        <div class="kicker">Quick Start</div>
-        <h2>快速开始</h2>
-        <p>环境要求：JDK 21、Android SDK（compileSdk 35）。在 local.properties 中配置 sdk.dir。</p>
-      </div>
-      <div class="quick">
-        <div class="card">
-          <h3><span class="n">1</span>构建 Android APK</h3>
-          <code class="cmd">./gradlew :composeApp:assembleDebug</code>
-          <p>产物：composeApp/build/outputs/apk/debug/composeApp-debug.apk</p>
-        </div>
-        <div class="card">
-          <h3><span class="n">2</span>启动模拟器</h3>
-          <code class="cmd">./gradlew :simulator:run</code>
-          <ul>
-            <li>模拟完整 hi3510 CGI：状态、电量、拍照/录像、文件列表、缩略图、下载</li>
-            <li>用 <code>SIM_PORT=8081</code> 可换端口</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h3><span class="n">3</span>连接并体验</h3>
-          <code class="cmd">./gradlew :composeApp:run</code>
-          <p>App 内「手动连接」输入 host:port：模拟器 10.0.2.2:8080，真机用局域网 IP。</p>
-        </div>
-      </div>
-      <div class="note" style="margin-top: 16px;">
-        真机注意：Wi-Fi 扫描需要<strong>位置权限</strong>——Android 在 API 33+ 声明 NEARBY_WIFI_DEVICES 时仍会拒绝无定位权限的 startScan，App 会在首次扫描时主动申请。
-      </div>
-    </div>
-  </section>
-
-  <!-- Status -->
-  <section id="status" style="background: var(--bg-soft); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-    <div class="wrap">
-      <div class="sec-head">
-        <div class="kicker">Roadmap</div>
-        <h2>项目状态</h2>
-        <p>v0.1.3 —— 连接、预览、录制、下载这条主链路已经在真机上跑通；蓝牙配网仍在现场调试中，尚未逐台验证。</p>
-      </div>
-      <div class="status-grid">
-        <ul class="checklist">
-          <li class="done"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>可扩展的协议插件架构</li>
-          <li class="done"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>XTU X7 Pro（海思 CGI）+ 运行时自动探测</li>
-          <li class="done"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Wi-Fi 直连（API 24+ / 29+ 两条路径）</li>
-          <li class="done"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>RTSP 实时图传（Media3，Android）</li>
-          <li class="done"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>文件传输（列表 / 缩略图 / 断点续传 / 发布到相册）</li>
-          <li class="done"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Compose Cupertino UI + 桌面模拟器</li>
-          <li class="pending"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>iOS 功能验证（当前仅壳工程）</li>
-        </ul>
-        <div class="steps">
-          <div class="step">
-            <div class="n">→</div>
-            <div><h4>接入 TUWIN 作为第二品牌</h4><p>验证「协议即插件」的扩展性：Ride3/5/6 与 M3 的端口、路径与鉴权差异。</p></div>
-          </div>
-          <div class="step">
-            <div class="n">→</div>
-            <div><h4>真机抓包补全协议细节</h4><p>seed 校验、帧分隔符、msg_id 对照表等待验证项，见逆向分析报告第 4 节。</p></div>
-          </div>
-          <div class="step">
-            <div class="n">→</div>
-            <div><h4>设置项与拍摄控制</h4><p>基于设备下发的菜单动态渲染，避免写死参数表。</p></div>
+        <div>
+          <div class="cmdbox" data-reveal>
+            <p>环境要求：JDK 17 以上、Android SDK（compileSdk 37），在 <code>local.properties</code> 里配置 <code>sdk.dir</code>。</p>
+            <code class="cmd">./gradlew :composeApp:assembleDebug</code>
+            <code class="cmd">./gradlew :simulator:run</code>
+            <code class="cmd">./gradlew :composeApp:run</code>
+            <p>第一条产出调试 APK；第二条起一个桌面模拟器，用「手动连接」连到 10.0.2.2:8080 即可在无相机的情况下走完全流程。</p>
           </div>
         </div>
       </div>
@@ -456,33 +634,53 @@
   <!-- Docs -->
   <section id="docs">
     <div class="wrap">
-      <div class="sec-head">
+      <div class="sec-head" data-reveal>
         <div class="kicker">Docs</div>
         <h2>文档</h2>
         <p>协议细节与架构决策都记录在仓库 docs 目录中。</p>
       </div>
-      <div class="docs-grid">
-        <a class="doc" href="01-APK逆向分析报告.md">
+      <div class="docs">
+        <a class="doc" href="01-APK逆向分析报告.md" data-reveal>
           <span class="tag">docs/01</span>
           <h3>APK 逆向分析报告</h3>
-          <p>TUWIN、XTU GO、idGoLive 三个官方 App 的连接协议要点：端口、路径、RTSP 地址、鉴权与配网方式。</p>
+          <p>三个官方 App 的连接协议要点：端口、路径、RTSP 地址、鉴权与配网方式。</p>
         </a>
-        <a class="doc" href="02-KMP架构与开发计划.md">
+        <a class="doc" href="02-KMP架构与开发计划.md" data-reveal>
           <span class="tag">docs/02</span>
           <h3>KMP 架构与开发计划</h3>
           <p>模块划分、协议插件设计与分阶段实施计划。</p>
         </a>
-        <a class="doc" href="03-品牌型号与协议矩阵.md">
+        <a class="doc" href="03-品牌型号与协议矩阵.md" data-reveal>
           <span class="tag">docs/03</span>
           <h3>品牌型号与协议矩阵</h3>
-          <p>三家品牌逐机型的识别方式、端口路径、命令与设置项对照速查。</p>
+          <p>各品牌逐机型的识别方式、端口路径、命令与设置项对照速查。</p>
         </a>
-        <a class="doc" href="08-官方APK全量逆向档案/00-总览与方法.md">
+        <a class="doc" href="04-固件更新与功能差距.md" data-reveal>
+          <span class="tag">docs/04</span>
+          <h3>固件更新与功能差距</h3>
+          <p>固件 OTA 通道、版本比对，以及与官方 App 的功能差距清单。</p>
+        </a>
+        <a class="doc" href="05-网络API清单与安全评估.md" data-reveal>
+          <span class="tag">docs/05</span>
+          <h3>网络 API 与安全评估</h3>
+          <p>各品牌端口与 HTTP 接口清单，兼记录厂商侧安全缺陷（用于指导自身实现）。</p>
+        </a>
+        <a class="doc" href="06-诊断日志系统.md" data-reveal>
+          <span class="tag">docs/06</span>
+          <h3>诊断日志系统</h3>
+          <p>日志格式语法、重复轮询折叠规则与排障读法。</p>
+        </a>
+        <a class="doc" href="07-蓝牙发现与自动连网及VPN共存研究报告.md" data-reveal>
+          <span class="tag">docs/07</span>
+          <h3>蓝牙配网与 VPN 共存</h3>
+          <p>蓝牙发现、自动连网与 VPN / 代理共存的研究结论与现场经验。</p>
+        </a>
+        <a class="doc" href="08-官方APK全量逆向档案/00-总览与方法.md" data-reveal>
           <span class="tag">docs/08</span>
           <h3>官方 APK 全量逆向档案</h3>
-          <p>证据层：逐类、逐字符串、逐参数值的完整档案，附可重跑的提取脚本与机器生成的全量表格。</p>
+          <p>证据层：逐类、逐字符串、逐参数值的完整档案，附可重跑的提取脚本。</p>
         </a>
-        <a class="doc" href="https://github.com/lswlc33/rovecamlink/blob/main/README.md" target="_blank" rel="noopener">
+        <a class="doc" href="https://github.com/lswlc33/rovecamlink/blob/main/README.md" target="_blank" rel="noopener" data-reveal>
           <span class="tag">README</span>
           <h3>使用说明</h3>
           <p>构建、运行、模拟器联调与权限注意事项。</p>
@@ -498,12 +696,41 @@
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
       RoveCamLink
     </a>
-    <p>开源运动相机连接伴侣 · Kotlin Multiplatform</p>
+    <p>开源相机客户端 · Apache-2.0 · <span id="year">2026</span></p>
     <a class="btn" href="https://github.com/lswlc33/rovecamlink" target="_blank" rel="noopener">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12 0 1.53-.01 2.76-.01 3.14 0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
       GitHub
     </a>
   </div>
 </footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('[data-reveal]');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+    reveals.forEach((el) => io.observe(el));
+  } else {
+    reveals.forEach((el) => el.classList.add('in'));
+  }
+
+  // Hero REC timecode
+  const tc = document.getElementById('tc');
+  if (tc) {
+    let t = 12;
+    setInterval(() => {
+      t += 1;
+      tc.textContent = String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0');
+    }, 1000);
+  }
+
+  // Footer year
+  const y = document.getElementById('year');
+  if (y) y.textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
