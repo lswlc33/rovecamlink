@@ -70,9 +70,11 @@ import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.DividerDefaults
 import top.yukonga.miuix.kmp.basic.DropdownEntry
 import top.yukonga.miuix.kmp.basic.DropdownImpl
 import top.yukonga.miuix.kmp.basic.DropdownItem
+import top.yukonga.miuix.kmp.basic.HorizontalDivider
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
@@ -108,11 +110,16 @@ import top.yukonga.miuix.kmp.utils.overScrollVertical
  * own.
  *
  * [checked] draws the selected indicator; leave it false for a plain action row.
+ *
+ * [dividerAbove] draws a hairline between this row and the one before it. It is how a menu
+ * separates 「ways of looking at the data」 from 「verbs on it」 without splitting into two
+ * menus — the files page uses it to set 全部删除 apart from 画廊/列表.
  */
 data class AppBarMenuItem(
     val label: String,
     val checked: Boolean = false,
     val enabled: Boolean = true,
+    val dividerAbove: Boolean = false,
     val onClick: () -> Unit,
 )
 
@@ -758,10 +765,25 @@ fun RowScope.AppBarActions(
                 onDismissRequest = { expanded = false },
             ) {
                 ListPopupColumn {
-                    rows.forEachIndexed { index, entry ->
+                    // DropdownImpl's `optionSize` / `index` drive the first/last-row corner
+                    // rounding and the arrow-key walk, so they have to count *options*, not
+                    // composables: a divider between rows must not shift either or the last
+                    // action loses its bottom corners. Hence the running index below rather
+                    // than `forEachIndexed`.
+                    val optionCount = rows.size
+                    var optionIndex = 0
+                    rows.forEach { entry ->
+                        if (entry.dividerAbove) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                thickness = DividerDefaults.Thickness,
+                                color = DividerDefaults.DividerColor,
+                            )
+                        }
+                        val index = optionIndex++
                         DropdownImpl(
                             item = DropdownItem(text = entry.label, enabled = entry.enabled),
-                            optionSize = rows.size,
+                            optionSize = optionCount,
                             isSelected = entry.checked,
                             index = index,
                             enabled = entry.enabled,
