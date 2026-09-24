@@ -944,13 +944,20 @@ private fun ModeStrip(
                 // A locked camera refuses the family switch the same way the chips below
                 // do: without a mode table this tab *is* the control that writes workmode.
                 if (locked) return@TabRowWithContour
-                if (index != tab) haptics.tick()
+                val switching = index != tab
+                if (switching) haptics.tick()
                 tab = index
-                // With a mode table the chip row does the switching, so the tab is only
-                // a filter. Without one it *is* the control, and has to fall back to the
-                // coarse family switch this app used before.
-                if (chipsOf(if (index == 0) ModeFamily.VIDEO else ModeFamily.PHOTO).isEmpty()) {
+                // The chip row under the tab is a different family now, so the tab has to
+                // move the *mode* into it as well — selecting the family's first mode.
+                // Merely filtering the rows left the camera on the old mode until a second
+                // tap, which read as "the switch did nothing" (2026-09-24 report).
+                val family = if (index == 0) ModeFamily.VIDEO else ModeFamily.PHOTO
+                val familyChips = chipsOf(family)
+                if (familyChips.isEmpty()) {
                     onSelectFamily(if (index == 0) WorkMode.VIDEO else WorkMode.PHOTO)
+                } else if (switching) {
+                    val first = familyChips.first()
+                    if (first.name != selected) onSelect(first)
                 }
             },
             modifier = Modifier.fillMaxWidth(),
