@@ -1333,6 +1333,11 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     // ---------- Controls ----------
 
     fun capture() {
+        // Flash the preview on the press itself. The count-driven flash in
+        // `LiveScreen.PreviewHeader` still runs as the "the file really landed"
+        // confirmation, but waiting for it left the shutter silent for 2–3 s because the
+        // camera only publishes the new count after `photo.cgi` returns (2026-09-24 report).
+        captureFlash++
         if (uiTestSkipped("capture")) {
             deviceStatus = (deviceStatus ?: UiTestDevice.status())
                 .copy(photoCount = (deviceStatus?.photoCount ?: 0) + 1)
@@ -1374,6 +1379,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
 
     /** The mode the camera reports right now, in its own spelling. */
     val currentMode: CameraMode? get() = modes.firstOrNull { it.name == deviceStatus?.modeName?.trim() }
+
+    /**
+     * Bumped on every shutter press, so the preview can flash the moment the button is
+     * touched instead of waiting for the camera to publish its new photo count.
+     */
+    var captureFlash by mutableStateOf(0)
+        private set
 
     /**
      * True while a [ModeTrigger.TOGGLE] capture sequence is running. `getcurallinfo`

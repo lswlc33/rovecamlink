@@ -51,6 +51,21 @@ object HiFiles {
     }
 
     /**
+     * The firmware's downscaled preview under `/thumb`, for files whose `.THM` sibling
+     * does not answer. The S7PRO's card serves `.THM` for video but answers `500` for a
+     * photo's (2026-09-24 log: `GET …/SING0001.THM -> 500`) — and the official app carries
+     * a second endpoint for exactly that case, `http://<ip>/thumb/<path without
+     * extension>.jpg` (`docs/08 …/02-XTUGO-档案.md` §2.4, the SigmaStar branch of
+     * `Hisi_CameraPicFragment`). Null when there is no extension to swap.
+     */
+    fun thumbJpgPath(path: String): String? {
+        val name = path.substringAfterLast('/')
+        val dot = name.lastIndexOf('.')
+        if (dot <= 0 || dot == name.length - 1) return null
+        return "thumb/" + path.substring(0, path.length - (name.length - dot)) + ".jpg"
+    }
+
+    /**
      * A firmware timestamp as epoch millis, local time (camera file names are local
      * too), or null when the string is not a timestamp at all.
      *

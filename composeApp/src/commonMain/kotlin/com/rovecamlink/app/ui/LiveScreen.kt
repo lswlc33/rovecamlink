@@ -356,6 +356,7 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
                     busy = busy,
                     recTimeSec = st?.videoTimeSec ?: 0,
                     photos = st?.photoCount,
+                    flashNonce = state.captureFlash,
                     shrink = scrolled,
                     onLongPress = { state.setFullscreenPreview(true) },
                     modifier = Modifier.fillMaxWidth(),
@@ -461,16 +462,29 @@ private fun PreviewHeader(
     busy: Boolean,
     recTimeSec: Int,
     photos: Int?,
+    flashNonce: Int = 0,
     shrink: Float = 0f,
     onLongPress: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     var flashed by remember { mutableStateOf(false) }
     var lastPhotos by remember { mutableStateOf<Int?>(null) }
+    var lastFlash by remember { mutableStateOf(flashNonce) }
     LaunchedEffect(photos) {
         val before = lastPhotos
         lastPhotos = photos
         if (before != null && photos != null && photos > before) {
+            flashed = true
+            delay(110)
+            flashed = false
+        }
+    }
+    // The press flash. Fires the moment the shutter is touched instead of when the camera
+    // publishes its new photo count — waiting for that count is what made the old feedback
+    // read as 2–3 s late, because `photo.cgi` answers before the card is updated.
+    LaunchedEffect(flashNonce) {
+        if (flashNonce != lastFlash) {
+            lastFlash = flashNonce
             flashed = true
             delay(110)
             flashed = false

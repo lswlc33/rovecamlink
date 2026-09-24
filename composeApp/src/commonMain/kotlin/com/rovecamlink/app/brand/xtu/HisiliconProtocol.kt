@@ -1256,8 +1256,9 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     private fun buildFile(host: String, path: String, size: Long, create: String?): RemoteFile {
         val type = HiFiles.typeOf(path)
-        // Every file on this protocol has a `.THM` sibling — video *and* photo — and
-        // the original is never an acceptable preview URL: see [HiFiles.thumbnailPath].
+        // The card's own `.THM` sibling is the first choice; the original is never a
+        // preview URL (a 48 MP JPEG decoded into a grid cell is an OOM). It is not
+        // always there — see [thumbnail], which falls back to `/thumb`.
         val thumbPath = HiFiles.thumbnailPath(path)
         return RemoteFile(
             name = path,
@@ -1321,7 +1322,17 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             Diag.d(LogTag.PROTO) { "no thumbnail for ${LogFormat.safe(file.name)}: the card has no .THM sibling" }
             return null
         }
-        return http.getBytes(url, MAX_THUMBNAIL_BYTES)
+        val bytes = http.getBytes(url, MAX_THUMBNAIL_BYTES)
+        if (bytes != null) return bytes
+        // A `.THM` that does not answer is the normal case for a photo on this firmware
+        // (`GET …/SING0001.THM -> 500`), and without a second try every photo tile stays
+        // blank while the videos beside it work. The official app has a downscaled
+        // endpoint for exactly this: `GET http://<ip>/thumb/<path without
+        // extension>.jpg` (`docs/08 …/02-XTUGO-档案.md` §2.4). Try it before giving up.
+        val alt = HiFiles.thumbJpgPath(file.name) ?: return null
+        val altUrl = "${media(session.host, session.port)}/$alt"
+        Diag.d(LogTag.PROTO) { "thumb .THM failed for ${LogFormat.safe(file.name)}, retrying $altUrl" }
+        return http.getBytes(altUrl, MAX_THUMBNAIL_BYTES)
     }
 
     override suspend fun download(
