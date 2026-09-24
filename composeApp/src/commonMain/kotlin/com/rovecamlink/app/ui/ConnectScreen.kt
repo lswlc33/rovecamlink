@@ -1,15 +1,22 @@
 package com.rovecamlink.app.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,6 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -79,9 +88,12 @@ import org.jetbrains.compose.resources.stringResource
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
+import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
+import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.icon.extended.Ok
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.theme.LocalContentColor
@@ -223,11 +235,14 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
         state = state,
         subtitle = barStatus,
     ) {
-        section {
+        // The connected camera paints its own surface, so it must not also get `section`'s
+        // Card — that would be two backgrounds and a border around a card that already is one.
+        section(card = !connected) {
             if (connected) {
-                ArrowPreference(
+                ConnectedCameraCard(
                     title = summary,
-                    summary = state.session?.platform?.displayName.orEmpty(),
+                    subtitle = state.session?.platform?.displayName.orEmpty(),
+                    tag = connectedCameraTitle,
                     onClick = { showConnectedDetails = true },
                 )
             } else {
@@ -511,6 +526,81 @@ private fun nearbyCountLine(ble: Int, wifi: Int, joined: Boolean, searching: Boo
         if (wifi > 0) add(stringResource(Res.string.label_wifi_count, wifi))
     }
     return parts.joinToString(" · ").ifBlank { if (searching) "…" else none }
+}
+
+/**
+ * The connected camera, as the page's one hero card: a soft gradient surface, the camera's
+ * name large, its protocol under it, a small state chip, and an oversized translucent tick
+ * bled off the right edge.
+ *
+ * Modelled on the big status card the 2026-09-24 report pointed at
+ * (「学习一下他的风格和实现」) — that card answers "what is this app doing right now" in one
+ * glance, which is exactly the question this tab gets asked. It replaces a plain arrow row,
+ * which answered it with one grey line. Generous padding on all four sides is deliberate:
+ * the row it replaces sat tighter than the cards below it, which is the 「上下边距」 the same
+ * report called out.
+ */
+@Composable
+private fun ConnectedCameraCard(
+    title: String,
+    subtitle: String,
+    tag: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val scheme = MiuixTheme.colorScheme
+    Box(
+        modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(scheme.surfaceVariant)
+            .background(
+                Brush.verticalGradient(
+                    listOf(scheme.primary.copy(alpha = 0.30f), scheme.primary.copy(alpha = 0.04f)),
+                ),
+            )
+            .clickable(onClick = onClick),
+    ) {
+        // Decoration only, and drawn after the clickable: it must never take a touch that
+        // belongs to the card. Bled past the edge so the tick reads as a watermark rather
+        // than as an icon laid out next to the text.
+        Icon(
+            imageVector = MiuixIcons.Ok,
+            contentDescription = null,
+            tint = scheme.primary.copy(alpha = 0.22f),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .size(132.dp)
+                .offset(x = 26.dp),
+        )
+        Column(Modifier.fillMaxWidth().padding(20.dp)) {
+            Text(
+                text = title,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = scheme.onSurface,
+            )
+            if (subtitle.isNotEmpty()) {
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = subtitle,
+                    fontSize = 14.sp,
+                    color = scheme.onSurfaceVariantSummary,
+                )
+            }
+            Spacer(Modifier.height(18.dp))
+            Text(
+                text = tag,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                color = scheme.onSurface,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(9.dp))
+                    .background(scheme.primary.copy(alpha = 0.20f))
+                    .padding(horizontal = 10.dp, vertical = 5.dp),
+            )
+        }
+    }
 }
 
 /**
