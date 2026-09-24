@@ -18,8 +18,10 @@ private class IosFileSaver : FileSaver {
     }
     private fun NSTemporaryDirectorySafe(): String = platform.Foundation.NSTemporaryDirectory()
     override fun downloadsDir(): Path = documents()
-    override suspend fun publishToGallery(localFile: Path, displayName: String, mime: String): String =
-        localFile.toString()
+    // iOS has no system gallery to publish into: the file stays in the app's Documents
+    // directory. Reporting that as "published" made the shared UI claim a save that never
+    // happened, so this is an honest null and the caller keeps the file in app storage.
+    override suspend fun publishToGallery(localFile: Path, displayName: String, mime: String): String? = null
 }
 
 private class IosPermissions : PermissionController {

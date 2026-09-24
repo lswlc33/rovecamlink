@@ -5,6 +5,8 @@ import com.rovecamlink.app.core.log.LogLevel
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CmdResult
+import com.rovecamlink.app.core.storage.sanitizeFileName
+import kotlin.coroutines.cancellation.CancellationException
 import okio.FileSystem
 import okio.Path
 
@@ -233,12 +235,17 @@ class OtaCoordinator(
         var session: CameraSession
         if (reconnectBefore) {
             state = OtaState.WaitingForDevice
-            session = runCatching { connect() }.getOrElse {
-                state = OtaState.Failed("连不上相机：${it.message ?: "没有应答"}")
+            session = runCatching { connect() }.getOrElse { e ->
+                if (e is CancellationException) throw e
+                state = OtaState.Failed("连不上相机：${e.message ?: "没有应答"}")
                 return state
             }
         } else {
-            session = runCatching { connect() }.getOrElse { state = OtaState.Cancelled; return state }
+            session = runCatching { connect() }.getOrElse { e ->
+                if (e is CancellationException) throw e
+                state = OtaState.Cancelled
+                return state
+            }
         }
 
         // R1/R2 of `docs/04 §6.1`, and the last moment they can be applied: the image is
@@ -252,9 +259,17 @@ class OtaCoordinator(
         }
 
         state = OtaState.Uploading
+        // The file name is server- or user-supplied and lands verbatim in the multipart
+        // `filename="..."` of the transports, so it is sanitised here, on the last hop
+        // before it becomes a protocol string: control characters, quotes and separators
+        // are neutralised and the length is capped (the previous `takeLast` kept the tail
+        // and could drop the extension instead of a prefix).
         val install = runCatching {
-            transport.install(session, pkg.copy(fileName = pkg.fileName.takeLast(120))) { }
-        }.getOrElse { CmdResult.Failure(it.message ?: "transfer failed") }
+            transport.install(session, pkg.copy(fileName = sanitizeFileName(pkg.fileName))) { }
+        }.getOrElse { e ->
+            if (e is CancellationException) throw e
+            CmdResult.Failure(e.message ?: "transfer failed")
+        }
 
         if (state.isTerminal) return state
         if (install !is CmdResult.Ok) {
@@ -273,8 +288,9 @@ class OtaCoordinator(
         }
 
         state = OtaState.Reconnecting
-        val s2 = runCatching { connect() }.getOrElse {
-            state = OtaState.Failed("重连失败：${it.message ?: "没有应答"}")
+        val s2 = runCatching { connect() }.getOrElse { e ->
+            if (e is CancellationException) throw e
+            state = OtaState.Failed("重连失败：${e.message ?: "没有应答"}")
             return state
         }
 
@@ -290,14 +306,27 @@ class OtaCoordinator(
             state = OtaState.Completed
             return state
         }
+        // A non-null `want` is not by itself comparable: if neither side normalises to a
+        // date stamp, comparing them would be `null == null` and a failed update would pass
+        // silently. Only a usable stamp counts as evidence, so a package whose version
+        // cannot be normalised takes the same "cannot confirm" branch as a null version.
+        val w = FirmwareVersion.normalize(want)
+        if (w == null) {
+            Diag.warn(LogTag.OTA, "package ${pkg.fileName} version $want has no comparable date stamp; skipping confirmation")
+            state = OtaState.Completed
+            return state
+        }
 
         state = OtaState.ConfirmingVersion(want)
-        val installed = runCatching { transport.readVersion(s2) }.getOrNull()
+        val installed = runCatching { transport.readVersion(s2) }.getOrElse { e ->
+            if (e is CancellationException) throw e
+            null
+        }
         if (installed == null) {
             state = OtaState.Failed("回读版本时相机没有给出固件版本，无法确认是否更新成功")
             return state
         }
-        if (FirmwareVersion.normalize(installed) != FirmwareVersion.normalize(want)) {
+        if (FirmwareVersion.normalize(installed) != w) {
             state = OtaState.Failed("版本核对不符：期望 $want，相机自报 $installed")
             return state
         }
@@ -378,7 +407,16 @@ class OtaCoordinator(
         while (!state.isTerminal) {
             kotlinx.coroutines.delay(2_000)
             if (kotlinx.datetime.Clock.System.now().toEpochMilliseconds() > deadline) return false
-            val v = runCatching { transport.readVersion(connect()) }.getOrNull()
+            // A fresh [connect] per poll is deliberate, not a leak: the camera is rebooting,
+            // so a session captured before the reboot would be stale, and [connect] only
+            // performs the attribute read into an immutable [CameraSession] — there is no
+            // session handle to close (the shared HTTP machinery lives in the graph, not in
+            // the session). The one thing that *is* wrong here is swallowing cancellation,
+            // which would turn a user's 取消 into one more probe and a bogus result.
+            val v = runCatching { transport.readVersion(connect()) }.getOrElse { e ->
+                if (e is CancellationException) throw e
+                null
+            }
             if (v == null) continue
             if (want == null) return true      // no usable target — any answer is a reboot ack
             if (FirmwareVersion.normalize(v) == want) return true

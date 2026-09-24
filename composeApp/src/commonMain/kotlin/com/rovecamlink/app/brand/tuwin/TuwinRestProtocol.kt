@@ -23,12 +23,12 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
-import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.longOrNull
@@ -168,7 +168,9 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
     override suspend fun listFiles(session: CameraSession, start: Int, end: Int): List<RemoteFile> {
         val body = http.getText("${session.baseUrl}/api/playback/filelist?start=$start&end=$end") ?: return emptyList()
         val el = runCatching { json.parseToJsonElement(body) }.getOrNull()
-        val arr = el?.let { it.jsonObject["files"]?.jsonArray ?: it.jsonArray }
+        val arr = el?.let { e ->
+            (e as? JsonObject)?.get("files")?.let { it as? JsonArray } ?: (e as? JsonArray)
+        }
         if (arr == null) {
             Diag.w(LogTag.PARSE) {
                 "filelist reply is neither {files:[…]} nor […]: ${LogFormat.bodyField(body, Diag.config.captureSecrets)}"
@@ -176,7 +178,7 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
             return emptyList()
         }
         val files = arr.mapNotNull { e ->
-            val o = e.jsonObject
+            val o = e as? JsonObject ?: return@mapNotNull null
             val name = o.string("name") ?: o.string("filename") ?: return@mapNotNull null
             // The extension set is the vendor's own video predicate, verbatim: its
             // `ViewClickKt.isVideoPath()` accepts .mp4/.avi/.mov (`_work/tuwin_src/
@@ -192,8 +194,8 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
                 type = if (isVideo) FileType.VIDEO else FileType.PHOTO,
                 sizeBytes = o.long("size") ?: 0L,
                 downloadUrl = o.string("url")?.let { absolute(session, it) }
-                    ?: "${session.baseUrl}/api/playback/download?file=$name",
-                thumbnailUrl = "${session.baseUrl}/api/playback/thumbnail?file=$name",
+                    ?: "${session.baseUrl}/api/playback/download?file=${urlEnc(name)}",
+                thumbnailUrl = "${session.baseUrl}/api/playback/thumbnail?file=${urlEnc(name)}",
                 dateMillis = o.long("time") ?: o.long("date"),
             )
         }
@@ -202,12 +204,12 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
     }
 
     override suspend fun deleteFile(session: CameraSession, file: RemoteFile): CmdResult {
-        val r = http.getText("${session.baseUrl}/api/playback/delete?file=${file.name}")
+        val r = http.getText("${session.baseUrl}/api/playback/delete?file=${urlEnc(file.name)}")
         return if (r.accepted()) CmdResult.Ok else CmdResult.Failure("delete failed")
     }
 
     override suspend fun thumbnail(session: CameraSession, file: RemoteFile): ByteArray? =
-        http.getBytes(file.thumbnailUrl ?: "${session.baseUrl}/api/playback/thumbnail?file=${file.name}")
+        http.getBytes(file.thumbnailUrl ?: "${session.baseUrl}/api/playback/thumbnail?file=${urlEnc(file.name)}")
 
     override suspend fun download(
         session: CameraSession,
@@ -275,8 +277,16 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
         else CmdResult.Failure("setwifi failed")
     }
 
-    private fun urlEnc(s: String): String =
-        s.replace(" ", "%20").replace("&", "%26").replace("=", "%3D")
+    private val HEX = "0123456789ABCDEF".toCharArray()
+
+    private fun urlEnc(s: String): String = buildString(s.length) {
+        for (byte in s.encodeToByteArray()) {
+            val b = byte.toInt() and 0xFF
+            val isUnreserved = b in 'a'.code..'z'.code || b in 'A'.code..'Z'.code ||
+                b in '0'.code..'9'.code || b == '-'.code || b == '.'.code || b == '_'.code || b == '~'.code
+            if (isUnreserved) append(b.toChar()) else append("%").append(HEX[b shr 4]).append(HEX[b and 0x0F])
+        }
+    }
 
     /**
      * Whether a REST reply means the camera accepted the command.

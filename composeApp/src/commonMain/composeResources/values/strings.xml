@@ -27,6 +27,7 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
+    <string name="action_back">Back</string>
 
     <!-- NotConnected widget -->
     <string name="not_connected_title">Not connected</string>
@@ -211,6 +212,7 @@
     <string name="err_bluetooth_off">Bluetooth is off on this phone — turn it on to wake the camera.</string>
     <string name="err_bluetooth_denied">Bluetooth permission was denied — allow it to use one-tap connect.</string>
     <string name="err_bluetooth_unsupported">This device has no Bluetooth — join the camera\'s Wi-Fi and use the list below.</string>
+    <string name="err_bluetooth_no_profile">No Bluetooth profile for %1$s</string>
     <!-- The only VPN wording in the app: the dialog a connect attempt raises when it
          starts while a proxy owns the default route. Nothing else mentions it. -->
     <string name="vpn_dialog_title">A VPN or proxy is running</string>

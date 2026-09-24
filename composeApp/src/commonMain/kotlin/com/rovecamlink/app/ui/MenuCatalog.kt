@@ -64,8 +64,8 @@ data class SettingMeta(
  * `getprimarymenuitem`/`getsecondmenuitem` in the 2026-09-21 field session.
  *
  * Where the official XTU GO app has a Chinese label for an item, its wording is
- * reused rather than retranslating — the strings below marked *(官方)* come from
- * `_work/xtu_res/resources/res/values-zh-rCN/strings.xml`. That covers about half
+ * reused rather than retranslating — the entries below carrying a `// 官方` note come
+ * from `_work/xtu_res/resources/res/values-zh-rCN/strings.xml`. That covers about half
  * the menu: `Resolution`, `Audio`, `Meter Mode`, `Exposure`, `ISO`, `AWB`,
  * `Sharpness`, `Image Quality`, `Filter`, `brightness`, `Contrast`, `Saturation`.
  * For `Gyro EIS`, `LDC`, `VideoEncode`, `Pre-Recording`, `Shutter`, `Scene Mode`
@@ -75,19 +75,13 @@ data class SettingMeta(
  * (`hisilicon/dv/ui/data/connect/ConnectDevice.java:51`,
  * `hisilicon/dv/ui/data/FileUtils.java:126`), so the authoritative Chinese for the
  * remaining items lives on the device, not in the APK. Until that is fetched, the
- * unmarked labels below are ours and are guessable-but-unverified wording — they
- * must never gate behaviour, only describe it.
+ * labels below without that note are ours and are guessable-but-unverified wording —
+ * they must never gate behaviour, only describe it.
  *
  * Keep this a pure lookup: it must never decide whether an item exists. A camera
  * that gains or drops a menu entry has to render correctly with no change here.
  */
 object MenuCatalog {
-
-    /**
-     * How wide a row's trailing value may get before the firmware's own spelling is
-     * dropped from it — see [valueLabel].
-     */
-    private const val VALUE_LABEL_BUDGET = 22
 
     /** Values that repeat across items, translated once. */
     private val shared: Map<String, String> = mapOf(
@@ -405,22 +399,6 @@ object MenuCatalog {
     fun helpOf(itemId: String, device: Boolean = false): String? =
         if (device) deviceOf(itemId)?.zhHelp else of(itemId)?.zhHelp
 
-    /**
-     * The compact form of one option value, for the **trailing slot of a settings row**.
-     *
-     * The firmware's own spelling is kept beside the Chinese only while that fits:
-     * `Gyro EIS` answers `360° Horizon Correction`, and rendering
-     * 「360° 全向水平线矫正（360° Horizon Correction）」 in a row's trailing slot squeezed
-     * the *title* into one character per line — the layout defect in the 2026-09-22
-     * settings screenshot. Past the budget the Chinese alone wins; the raw spelling is
-     * still one tap away in the picker, where every option gets a whole row
-     * ([valueOptionLabel]).
-     */
-    fun valueLabel(itemId: String, value: String, device: Boolean = false): String {
-        val zh = translated(itemId, value, device) ?: return value
-        return if (zh.length + value.length + 2 <= VALUE_LABEL_BUDGET) "$zh（$value）" else zh
-    }
-
     /** The full form, for the option list inside a picker. */
     fun valueOptionLabel(itemId: String, value: String, device: Boolean = false): String {
         val zh = translated(itemId, value, device) ?: return value
@@ -433,7 +411,7 @@ object MenuCatalog {
      * For the tappable chips on the live page, where a row already carries the item name
      * and 「360° 全向水平线矫正（360° Horizon Correction）」 would push every other chip
      * off screen. The raw spelling stays one tap away on the settings page, which uses
-     * [valueLabel] and [valueOptionLabel] instead.
+     * [valueOptionLabel] instead.
      */
     fun valueShortLabel(itemId: String, value: String, device: Boolean = false): String =
         translated(itemId, value, device) ?: value
@@ -477,7 +455,8 @@ object MenuCatalog {
  * (`_work/xtu_src/.../sigmastar/data/connect/ConnectDevice.java:44-56`,
  * `hisilicon/dv/ui/data/FileUtils.java:126`), which this app cannot reach without a
  * socket transport it does not have. Where an official Chinese string *does* exist in
- * the APK it is reused, and marked *(官方)*.
+ * the APK it is reused, and recorded as a `// 官方` comment beside the entry rather than
+ * as a marker inside the string — the shape the `SettingMeta` entries above already use.
  */
 object ModeCatalog {
 
@@ -497,22 +476,26 @@ object ModeCatalog {
         "Time Stretch" to ModeMeta("变速录像", "同一段素材里改变播放速度。"),
         "Manual Recsnap" to ModeMeta("手动录像快照", "录像中由你按下的瞬间存一张照片。"),
         "Normal Photo" to ModeMeta("拍照", "按一下拍一张。"),
-        "Raw Photo" to ModeMeta("Raw 拍照", "*(官方)* 保存未处理的原始画面，后期空间最大、文件最大。"),
-        "Burst Photo" to ModeMeta("连拍", "*(官方)* 一次按下拍出连续多张，张数由设置里的张数项决定。"),
-        "Timing Photo" to ModeMeta("定时拍照", "*(官方)* 按设定的间隔持续拍一张又一张，需要再按一次才停。"),
-        "Timelapse Photo" to ModeMeta("延时拍照", "*(官方)* 按间隔拍照并可用于合成延时画面，需要再按一次才停。"),
+        // 官方 zh 串，直接复用。
+        "Raw Photo" to ModeMeta("Raw 拍照", "保存未处理的原始画面，后期空间最大、文件最大。"),
+        // 官方 zh 串，直接复用。
+        "Burst Photo" to ModeMeta("连拍", "一次按下拍出连续多张，张数由设置里的张数项决定。"),
+        // 官方 zh 串，直接复用。
+        "Timing Photo" to ModeMeta("定时拍照", "按设定的间隔持续拍一张又一张，需要再按一次才停。"),
+        // 官方 zh 串，直接复用。
+        "Timelapse Photo" to ModeMeta("延时拍照", "按间隔拍照并可用于合成延时画面，需要再按一次才停。"),
         "Lapse Photo" to ModeMeta("延时拍照", "同上，另一版固件的写法。"),
-        "Night Timelapse Photo" to ModeMeta("夜景延时", "*(官方)* 夜间长曝光连拍。"),
+        // 官方 zh 串，直接复用。
+        "Night Timelapse Photo" to ModeMeta("夜景延时", "夜间长曝光连拍。"),
         "Night Photo" to ModeMeta("夜景拍照", "夜间单张，曝光时间更长。"),
         "Night Scene" to ModeMeta("夜景模式", "夜间场景预设。"),
-        "Long Exposure" to ModeMeta("长曝光拍照", "*(官方)* 快门长时间打开，拍车灯轨迹、星轨。需要把相机固定住。"),
+        // 官方 zh 串，直接复用。
+        "Long Exposure" to ModeMeta("长曝光拍照", "快门长时间打开，拍车灯轨迹、星轨。需要把相机固定住。"),
         "Lapse Burst" to ModeMeta("延时连拍", "每个间隔连拍一组。"),
     )
 
     /** The firmware's own name when we have no label for it — never hide a mode. */
     fun titleOf(name: String): String = items[name.trim()]?.zhTitle ?: name
-
-    fun helpOf(name: String): String? = items[name.trim()]?.zhHelp
 
     /** Every mode name this catalogue knows, so a test can diff it against a real listing. */
     val knownModes: Set<String> get() = items.keys

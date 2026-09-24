@@ -2,6 +2,7 @@ package com.rovecamlink.app.core.log
 
 import okio.Path
 import okio.Path.Companion.toPath
+import com.rovecamlink.app.ui.AppInfo
 import java.io.File
 
 actual fun monotonicMillis(): Long = System.nanoTime() / 1_000_000L
@@ -9,7 +10,7 @@ actual fun monotonicMillis(): Long = System.nanoTime() / 1_000_000L
 actual fun platformDiagnostics(): List<Pair<String, String>> {
     val p = System.getProperties()
     return listOf(
-        "app.version" to "dev",
+        "app.version" to AppInfo.version.ifBlank { "dev" },
         "app.build" to "desktop",
         "platform" to "desktop",
         "os.name" to (p.getProperty("os.name") ?: "?"),

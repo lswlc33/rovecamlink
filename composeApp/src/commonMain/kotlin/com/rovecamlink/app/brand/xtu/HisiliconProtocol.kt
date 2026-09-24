@@ -31,9 +31,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import okio.Path
 
 /**
@@ -1108,7 +1108,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             ?: return CmdResult.Failure("Unknown setting $id")
         // Burst carries interval and count in one request — neither half can go alone.
         if (ls.pair) return setLegacyPair(base, ls, value)
-        val url = "$base/" + ls.setCmd.replace("%s", value)
+        val url = "$base/" + ls.setCmd.replace("%s", param(value))
         Diag.d(LogTag.PROTO) {
             "setSetting via ${ls.setCmd.substringBefore('?')} value=${LogFormat.settingValue(id, value, Diag.config.captureSecrets)}"
         }
@@ -1223,8 +1223,8 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
                     .getOrNull()
                 if (arr != null) {
                     val files = arr.mapNotNull { el ->
-                        val o = el.jsonObject
-                        val path = o["path"]?.jsonPrimitive?.content ?: return@mapNotNull null
+                        val o = el as? JsonObject ?: return@mapNotNull null
+                        val path = (o["path"] as? JsonPrimitive)?.content ?: return@mapNotNull null
                         buildFile(
                             host, path,
                             // **Read `content`, not `longOrNull`.** This firmware quotes
@@ -1232,8 +1232,8 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
                             // and a quoted primitive has no numeric accessor, so the old
                             // call gave every clip a size of 0 while the card's 4 GB
                             // files were plainly listed.
-                            o["size"]?.jsonPrimitive?.content?.toLongOrNull() ?: 0L,
-                            o["create"]?.jsonPrimitive?.content,
+                            (o["size"] as? JsonPrimitive)?.content?.toLongOrNull() ?: 0L,
+                            (o["create"] as? JsonPrimitive)?.content,
                         )
                     }
                     Diag.d(LogTag.PARSE) {

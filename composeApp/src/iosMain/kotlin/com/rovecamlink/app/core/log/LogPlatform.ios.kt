@@ -5,6 +5,7 @@ package com.rovecamlink.app.core.log
 import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
+import platform.Foundation.NSBundle
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSProcessInfo
@@ -14,8 +15,12 @@ import platform.Foundation.NSUserDomainMask
 /** `systemUptime` is the monotonic clock on Darwin (it does not follow clock updates). */
 actual fun monotonicMillis(): Long = (NSProcessInfo.processInfo.systemUptime * 1000.0).toLong()
 
+/** A string from the main bundle's Info.plist, or null when the key is absent or blank. */
+private fun bundleString(key: String): String? =
+    (NSBundle.mainBundle.infoDictionary?.get(key) as? String)?.takeIf { it.isNotBlank() }
+
 /**
- * iOS facts, deliberately limited to `NSProcessInfo` and the sandbox path:
+ * iOS facts, deliberately limited to `NSProcessInfo`, `NSBundle` and the sandbox path:
  *
  *  - this runs on the logger's writer thread, and `UIDevice` is main-thread-only, so
  *    the marketing model name is left out;
@@ -28,8 +33,8 @@ actual fun monotonicMillis(): Long = (NSProcessInfo.processInfo.systemUptime * 1
 actual fun platformDiagnostics(): List<Pair<String, String>> {
     val info = NSProcessInfo.processInfo
     return listOf(
-        "app.version" to "dev",
-        "app.build" to "ios",
+        "app.version" to (bundleString("CFBundleShortVersionString") ?: "dev"),
+        "app.build" to (bundleString("CFBundleVersion") ?: "dev"),
         "platform" to "ios",
         "process.name" to info.processName,
         "process.uptime_s" to info.systemUptime.toLong().toString(),

@@ -18,16 +18,17 @@ import com.rovecamlink.app.about_licenses
 import com.rovecamlink.app.about_protocols
 import com.rovecamlink.app.about_title
 import com.rovecamlink.app.about_version
+import com.rovecamlink.app.action_back
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.createLogStore
 import com.rovecamlink.app.label_note
-import com.rovecamlink.app.log_close
 import com.rovecamlink.app.log_note_export_failed
 import com.rovecamlink.app.log_note_saved
 import com.rovecamlink.app.log_note_share_unavailable
 import com.rovecamlink.app.log_note_shared
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -79,7 +80,7 @@ fun AboutScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Uni
                 // composition, so a back gesture cancels it — and a bundle cut off
                 // mid-share is worse than no bundle. NonCancellable lets the one-shot
                 // export finish even after the screen is gone.
-                withContext(NonCancellable) {
+                withContext(Dispatchers.IO + NonCancellable) {
                     // The header has to describe the session as it is now: the snapshot is
                     // otherwise only refreshed while the log page is open.
                     state.refreshDiagnosticsEnv()
@@ -131,7 +132,7 @@ fun AboutScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Uni
             ) {
                 Icon(
                     MiuixIcons.Back,
-                    contentDescription = stringResource(Res.string.log_close),
+                    contentDescription = stringResource(Res.string.action_back),
                     tint = scheme.onSurface,
                 )
             }

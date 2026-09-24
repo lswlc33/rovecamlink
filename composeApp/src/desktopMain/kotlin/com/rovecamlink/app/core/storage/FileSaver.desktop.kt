@@ -10,8 +10,10 @@ private class DesktopFileSaver : FileSaver {
         FileSystem.SYSTEM.createDirectories(dir)
         return dir
     }
-    override suspend fun publishToGallery(localFile: Path, displayName: String, mime: String): String =
-        localFile.toString()
+    // Desktop has no system gallery: the file lives in the downloads directory. Reporting
+    // that as "published" made the shared UI claim a save that never happened, so this is
+    // an honest null and the caller keeps the file where it already is.
+    override suspend fun publishToGallery(localFile: Path, displayName: String, mime: String): String? = null
 }
 
 private class DesktopPermissions : PermissionController {

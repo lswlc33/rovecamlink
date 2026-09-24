@@ -2,9 +2,7 @@ package com.rovecamlink.app.core.ota
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class FirmwareVersionTest {
 
@@ -32,12 +30,11 @@ class FirmwareVersionTest {
         assertNull(FirmwareVersion.from("Jun 31 2025"))
     }
 
-    @Test fun `comparison is chronological and null-safe`() {
-        assertTrue(FirmwareVersion.isNewer("20240315", "20240101"))
-        assertFalse(FirmwareVersion.isNewer("20240101", "20240315"))
-        assertFalse(FirmwareVersion.isNewer("20240315", "20240315")) // equal → not newer
-        assertFalse(FirmwareVersion.isNewer(null, "20240101"))
-        assertFalse(FirmwareVersion.isNewer("20240101", null))
-        assertFalse(FirmwareVersion.isNewer(null, null))
+    @Test fun `a longer digit run is not read as a truncated date`() {
+        // Taking the first eight digits of a longer number would fabricate a date stamp.
+        assertNull(FirmwareVersion.from("123456789"))
+        assertEquals("20240315", FirmwareVersion.from("123456789_20240315_v12"))
+        // `normalize` is the same rule under the name production callers use.
+        assertEquals("20240101", FirmwareVersion.normalize("20.8.6.1.20240101"))
     }
 }

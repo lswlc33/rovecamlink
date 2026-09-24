@@ -42,6 +42,8 @@ import com.rovecamlink.app.preview_stalled
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 private fun playbackStateName(state: Int): String = when (state) {
     Player.STATE_IDLE -> "IDLE"
@@ -115,24 +117,24 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
     // user left the screen and came back, because REPEAT_MODE_ALL does not re-prepare a
     // source that failed fatally. So an error now schedules a rebuild with a growing
     // delay, and a stream that reaches READY resets the ladder.
-    val retry = remember(rtspUrl) { intArrayOf(0) }
+    val retry = remember(rtspUrl) { AtomicInteger(0) }
     // One failed player used to schedule two rebuilds, because releasing it while its
     // RTSP reader is wedged raises `Detaching surface timed out` and then
     // `Player release timed out` — two errors, two retries, and the 2026-09-22 log at
     // 23:21:48 shows the pair arriving 500 ms apart. This flag makes the first one win
     // and the rest of that player's complaints fall on the floor it is already on.
-    val rebuilding = remember(rtspUrl) { booleanArrayOf(false) }
+    val rebuilding = remember(rtspUrl) { AtomicBoolean(false) }
     var generation by remember(rtspUrl) { mutableIntStateOf(0) }
     var stalled by remember(rtspUrl) { mutableStateOf(false) }
 
     /** Schedule the next rebuild, or give up out loud once the ladder is spent. */
     fun scheduleRebuild(reason: String) {
-        if (rebuilding[0]) {
+        if (rebuilding.get()) {
             Diag.debug(LogTag.PREV, "rebuild already scheduled — ignoring extra $reason")
             return
         }
-        val attempt = retry[0] + 1
-        retry[0] = attempt
+        val attempt = retry.get() + 1
+        retry.set(attempt)
         if (attempt > MAX_PLAYBACK_ATTEMPTS) {
             if (attempt == MAX_PLAYBACK_ATTEMPTS + 1) {
                 // Said once. The watchdog keeps asking every six seconds for as long as
@@ -147,13 +149,13 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
             stalled = true
             return
         }
-        rebuilding[0] = true
+        rebuilding.set(true)
         stalled = true
         val waitMs = backoffMs(attempt)
         Diag.warn(LogTag.PREV, "preview retry #$attempt in ${waitMs}ms ($reason)")
         scope.launch {
             delay(waitMs)
-            rebuilding[0] = false
+            rebuilding.set(false)
             probe.startedAt = 0L
             probe.readyAt = 0L
             generation++
@@ -165,7 +167,7 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
             Diag.info(LogTag.PREV, "preview: no URL for this platform/session")
             null
         } else {
-            Diag.info(LogTag.PREV, "player start url=$rtspUrl attempt=${retry[0]}")
+            Diag.info(LogTag.PREV, "player start url=$rtspUrl attempt=${retry.get()}")
             val loadControl = DefaultLoadControl.Builder()
                 .setBufferDurationsMs(
                     MIN_BUFFER_MS,
@@ -197,8 +199,8 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                                 if (playbackState == Player.STATE_READY && probe.startedAt > 0L) {
                                     val waitedMs = monotonicMillis() - probe.startedAt
                                     probe.startedAt = 0L
-                                    retry[0] = 0
-                                    rebuilding[0] = false
+                                    retry.set(0)
+                                    rebuilding.set(false)
                                     stalled = false
                                     val milestone = if (probe.readyAt == 0L) "first_frame" else "resumed"
                                     probe.readyAt = monotonicMillis()
@@ -243,9 +245,9 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
             val now = monotonicMillis()
             if (p.isPlaying) {
                 lastAlive = now
-                if (stalled || retry[0] != 0) {
+                if (stalled || retry.get() != 0) {
                     stalled = false
-                    retry[0] = 0
+                    retry.set(0)
                 }
             } else if (now - lastAlive >= STALL_LIMIT_MS) {
                 val frozenFor = now - lastAlive
@@ -307,8 +309,8 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
                         .background(Color.Black.copy(alpha = 0.62f))
                         .clickable {
                             Diag.info(LogTag.PREV, "preview reconnect requested by tap on $rtspUrl")
-                            retry[0] = 0
-                            rebuilding[0] = false
+                            retry.set(0)
+                            rebuilding.set(false)
                             generation++
                         }
                         .padding(horizontal = 12.dp, vertical = 6.dp),

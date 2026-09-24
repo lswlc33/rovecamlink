@@ -1,19 +1,9 @@
 package com.rovecamlink.app.ui
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -26,7 +16,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -47,7 +36,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -248,22 +236,14 @@ import com.rovecamlink.app.confirm_sleep
 import com.rovecamlink.app.sd_format_age
 import com.rovecamlink.app.sd_format_overdue
 import com.rovecamlink.app.sd_format_never
-import com.rovecamlink.app.core.media.CameraPreviewView
-import com.rovecamlink.app.core.media.OrientationMode
-import com.rovecamlink.app.core.media.rememberDeviceOrientation
 import com.rovecamlink.app.core.model.CameraSetting
 import com.rovecamlink.app.core.model.DayGroup
 import com.rovecamlink.app.core.model.FileType
-import com.rovecamlink.app.core.model.ModeFamily
-import com.rovecamlink.app.core.model.ModeTrigger
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.SdCardState
-import com.rovecamlink.app.core.model.WorkMode
 import com.rovecamlink.app.core.model.groupFilesByDay
 import com.rovecamlink.app.core.ota.OtaState
 import kotlin.math.roundToInt
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
@@ -365,7 +345,9 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     val groups = remember(visibleFiles) { groupFilesByDay(visibleFiles) }
     val filterActive = typeFilter != null || sortBySize || !sortDescending
     val selectedCount = state.files.count { selected.contains(it.name) }
-    val allSelected = state.files.isNotEmpty() && state.files.all { selected.contains(it.name) }
+    // 全选 is the visible list's, not the camera's: with a type filter on, a 全选 that also
+    // ticked the filtered-out files would hand a batch delete rows the user cannot see.
+    val allSelected = visibleFiles.isNotEmpty() && visibleFiles.all { selected.contains(it.name) }
 
     val refreshLabel = stringResource(Res.string.action_refresh_files)
     val downloadsTitle = stringResource(Res.string.section_downloads)
@@ -572,7 +554,7 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
                         if (allSelected) {
                             selected.clear()
                         } else {
-                            state.files.forEach { f ->
+                            visibleFiles.forEach { f ->
                                 if (!selected.contains(f.name)) selected.add(f.name)
                             }
                         }
@@ -1345,6 +1327,14 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
     /** Whether the read-back passphrase is shown in clear. Off by default. */
     var showPass by remember { mutableStateOf(false) }
     var logging by remember { mutableStateOf(com.rovecamlink.app.core.log.Diag.config.fileSink) }
+    // 写入文件 is also switched on the pushed log-settings page, which leaves this screen
+    // composed underneath it — so the read above cannot be the only one, or the switch
+    // comes back showing what it was when the page was first built. Re-read the config
+    // whenever this page is uncovered again.
+    val onTop = state.topPage == null
+    LaunchedEffect(onTop) {
+        if (onTop) logging = com.rovecamlink.app.core.log.Diag.config.fileSink
+    }
 
     val connected = state.session != null
     val info = state.deviceInfo

@@ -123,14 +123,31 @@ data class CameraSession(
 enum class SdCardState { OK, MISSING, ERROR, UNKNOWN;
 
     companion object {
+        /** Words that mean a healthy card, matched whole before any loose `contains` test. */
+        private val OK_WORDS = setOf("OK", "SDOK", "SD_OK", "NORMAL", "SUCCESS")
+
+        /** Words that mean no card is inserted. */
+        private val MISSING_WORDS =
+            setOf("NO", "NONE", "NOSD", "NO_SD", "SDNO", "ABSENT", "SD_ABSENT", "无", "无卡")
+
+        /** Words that mean "not known yet"; whole-word, so `UNKNOWN` is not read as `NO` + … */
+        private val UNKNOWN_WORDS = setOf("UNKNOWN", "UNKNOW", "NA", "N/A", "INVALID")
+
         /** Maps a firmware-reported state string (e.g. `SDOK`, `NOSD`) to the enum. */
-        fun fromRaw(raw: String?): SdCardState = when {
-            raw == null -> UNKNOWN
-            raw.contains("OK", ignoreCase = true) -> OK
-            raw.contains("NO", ignoreCase = true) || raw.contains("NONE", ignoreCase = true) ||
-                raw.contains("ABSENT", ignoreCase = true) || raw.contains("无", ignoreCase = true) -> MISSING
-            raw.isBlank() -> UNKNOWN
-            else -> ERROR
+        fun fromRaw(raw: String?): SdCardState {
+            if (raw == null) return UNKNOWN
+            val token = raw.trim().uppercase()
+            if (token.isEmpty()) return UNKNOWN
+            // Whole-word matches first: a loose `contains("NO")` reads `UNKNOWN` as MISSING.
+            if (token in OK_WORDS) return OK
+            if (token in MISSING_WORDS) return MISSING
+            if (token in UNKNOWN_WORDS) return UNKNOWN
+            // Loose fallback for compound answers like `SdState:SDOK` or `无存储卡`.
+            return when {
+                token.contains("OK") -> OK
+                token.contains("NO") || token.contains("ABSENT") || raw.contains("无") -> MISSING
+                else -> ERROR
+            }
         }
     }
 }
@@ -229,7 +246,7 @@ data class CameraSetting(
     fun toggleValue(on: Boolean): String {
         fun meansOn(v: String) = v.trim() == "1" || v.trim().equals("ON", ignoreCase = true)
         return (if (on) options.firstOrNull { meansOn(it.value) } else options.firstOrNull { !meansOn(it.value) })
-            ?.value ?: options[if (on) 1 else 0].value
+            ?.value ?: options.getOrNull(if (on) 1 else 0)?.value ?: value
     }
 
     companion object {

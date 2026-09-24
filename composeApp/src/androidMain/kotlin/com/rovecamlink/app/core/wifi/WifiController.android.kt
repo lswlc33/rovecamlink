@@ -21,6 +21,7 @@ import com.rovecamlink.app.core.log.LogTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 
@@ -46,21 +47,35 @@ private class AndroidWifiController : WifiController {
      * gone: a remembered `Network` handle says "we once bound", not "traffic still
      * reaches the camera", and acting on that skipped both the join and the adopt —
      * leaving every socket on the default network, which is exactly the failure the
-     * adopt path exists to prevent. Stale handles are cleared here so the next caller
-     * takes the honest path.
+     * adopt path exists to prevent. A stale handle is dropped by [clearStaleCameraBinding]
+     * so the next caller takes the honest path; this getter itself only reports, so a
+     * diagnostics read can never unbind the process out from under a caller.
      */
     override val isConnectedToCamera: Boolean
         get() {
             if (legacyNetId != -1) return true
             val n = boundNetwork ?: return false
-            if (isLiveWifiNetwork(n)) return true
-            Diag.warn(LogTag.WIFI, "bound network handle is stale (was adopted=${adoptedNetwork != null}) — clearing and reporting not connected")
-            boundNetwork = null
-            adoptedNetwork = null
-            linkProps = null
-            runCatching { cm.bindProcessToNetwork(null) }
-            return false
+            return isLiveWifiNetwork(n)
         }
+
+    /**
+     * Drops a [boundNetwork] handle that no longer points at a live Wi-Fi network.
+     *
+     * Split out of [isConnectedToCamera] on purpose: that is a property getter any
+     * thread may read any number of times, and a getter must not have side effects. The
+     * read never needed this mutation to answer honestly, so callers that are about to
+     * (re)bind the route — [adoptCurrentNetwork] — ask for the cleanup explicitly.
+     */
+    private fun clearStaleCameraBinding() {
+        if (legacyNetId != -1) return
+        val n = boundNetwork ?: return
+        if (isLiveWifiNetwork(n)) return
+        Diag.warn(LogTag.WIFI, "bound network handle is stale (was adopted=${adoptedNetwork != null}) — clearing and reporting not connected")
+        boundNetwork = null
+        adoptedNetwork = null
+        linkProps = null
+        runCatching { cm.bindProcessToNetwork(null) }
+    }
 
     private fun isLiveWifiNetwork(n: Network): Boolean = runCatching {
         val caps = cm.getNetworkCapabilities(n) ?: return@runCatching false
@@ -284,6 +299,7 @@ private class AndroidWifiController : WifiController {
                     // as the join budget expiring, which [JOIN_BUDGET_MS] + the adopt
                     // fallback below handle honestly.
                 }
+                callback?.let { runCatching { cm.unregisterNetworkCallback(it) } }
                 callback = cb
                 try {
                     Diag.debug(LogTag.WIFI, "requestNetwork #$attempt(TRANSPORT_WIFI, specifier for $ssid, no INTERNET capability)")
@@ -373,6 +389,9 @@ private class AndroidWifiController : WifiController {
     }
 
     override suspend fun adoptCurrentNetwork(force: Boolean): WifiResult {
+        // We are about to take over the route: drop a handle that is no longer live
+        // first, so it cannot be reported back as "still bound" afterwards.
+        clearStaleCameraBinding()
         val target = findWifiNetwork()
             ?: return WifiResult.Failed("phone is not on a Wi-Fi network").also {
                 Diag.warn(LogTag.WIFI, "adopt refused: no plain Wi-Fi network (cellular only, or Wi-Fi off)")
@@ -477,32 +496,31 @@ private class AndroidWifiController : WifiController {
      * Serialized by [internetRouteMutex] because two overlapping windows would have
      * the second one restore the binding while the first still expects to be off it.
      */
-    override suspend fun <T> withInternetRoute(label: String, block: suspend () -> T): T {
-        if (boundNetwork == null) return block()
-        internetRouteMutex.lock()
-        val t0 = Diag.uptimeMillis()
-        val restored = runCatching { cm.bindProcessToNetwork(null) }
-        Diag.info(
-            LogTag.WIFI,
-            "internet route taken for $label after ${Diag.uptimeMillis() - t0}ms " +
-                "(camera sockets parked; bound=${boundNetwork != null})",
-        )
-        return try {
-            block()
-        } finally {
-            // Re-bind only if that same network is still alive; if the hotspot went
-            // away mid-download the onLost callback already cleared it, and binding a
-            // dead Network would strand every subsequent camera request.
-            val stillThere = boundNetwork?.let { isLiveWifiNetwork(it) } == true
-            runCatching { cm.bindProcessToNetwork(if (stillThere) boundNetwork else null) }
-                .onFailure { Diag.error(LogTag.WIFI, "internet route restore threw ${Diag.causeChain(it)}") }
+    override suspend fun <T> withInternetRoute(label: String, block: suspend () -> T): T =
+        internetRouteMutex.withLock {
+            if (boundNetwork == null) return@withLock block()
+            val t0 = Diag.uptimeMillis()
+            runCatching { cm.bindProcessToNetwork(null) }
             Diag.info(
                 LogTag.WIFI,
-                "internet route released after ${Diag.uptimeMillis() - t0}ms, camera route ${if (stillThere) "restored" else "not restored (no live camera network)"}",
+                "internet route taken for $label after ${Diag.uptimeMillis() - t0}ms " +
+                    "(camera sockets parked; bound=${boundNetwork != null})",
             )
-            internetRouteMutex.unlock()
+            try {
+                block()
+            } finally {
+                // Re-bind only if that same network is still alive; if the hotspot went
+                // away mid-download the onLost callback already cleared it, and binding a
+                // dead Network would strand every subsequent camera request.
+                val stillThere = boundNetwork?.let { isLiveWifiNetwork(it) } == true
+                runCatching { cm.bindProcessToNetwork(if (stillThere) boundNetwork else null) }
+                    .onFailure { Diag.error(LogTag.WIFI, "internet route restore threw ${Diag.causeChain(it)}") }
+                Diag.info(
+                    LogTag.WIFI,
+                    "internet route released after ${Diag.uptimeMillis() - t0}ms, camera route ${if (stillThere) "restored" else "not restored (no live camera network)"}",
+                )
+            }
         }
-    }
 
     override suspend fun disconnect() {
         Diag.debug(LogTag.WIFI, "disconnect (bound=${boundNetwork != null} adopted=${adoptedNetwork != null} legacyNetId=$legacyNetId)")

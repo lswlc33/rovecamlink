@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rovecamlink.app.AppState
 import com.rovecamlink.app.Res
+import com.rovecamlink.app.action_back
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogLevel
@@ -64,9 +65,11 @@ import com.rovecamlink.app.menu_log_settings
 // imported by name — that, not any real resource-lookup bug, is what made earlier
 // attempts here fail to resolve. (docs/06 and the old note in Screens.kt blamed the
 // resolver; ConnectScreen proves ~40 of these resolve fine once imported.)
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import top.yukonga.miuix.kmp.basic.BasicComponent
@@ -122,7 +125,6 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
         while (true) {
             records = Diag.tail(1_200, viewLevel, null)
             total = Diag.count()
-            state.refreshDiagnosticsEnv()
             delay(400)
         }
     }
@@ -132,40 +134,42 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
     // so the size stops changing after a couple of minutes of polling while the
     // content keeps moving.
     LaunchedEffect(follow, records.lastOrNull()?.seq) {
-        val last = records.lastIndex
+        val last = listState.layoutInfo.totalItemsCount - 1
         if (follow && last >= 0) listState.scrollToItem(last)
     }
 
     // Whole-history export only now — the 仅本次 pair is gone.
     fun export(share: Boolean) {
         if (busy != null) return
-        scope.launch(NonCancellable) {
-            // NonCancellable: this coroutine belongs to the screen, and closing the
-            // preview mid-export would otherwise discard the bundle it just built.
-            busy = getString(if (share) Res.string.log_busy_preparing else Res.string.log_busy_saving)
-            try {
-                Diag.awaitDrained()
-                val text = Diag.exportFullBundle()
-                val name = Diag.exportFullName()
-                val size = LogFormat.size(text.length.toLong())
-                val outcome = if (share) {
-                    if (store.share(name, text)) {
-                        getString(Res.string.log_note_shared, name, size)
+        scope.launch {
+            withContext(Dispatchers.IO + NonCancellable) {
+                // NonCancellable: this coroutine belongs to the screen, and closing the
+                // preview mid-export would otherwise discard the bundle it just built.
+                busy = getString(if (share) Res.string.log_busy_preparing else Res.string.log_busy_saving)
+                try {
+                    Diag.awaitDrained()
+                    val text = Diag.exportFullBundle()
+                    val name = Diag.exportFullName()
+                    val size = LogFormat.size(text.length.toLong())
+                    val outcome = if (share) {
+                        if (store.share(name, text)) {
+                            getString(Res.string.log_note_shared, name, size)
+                        } else {
+                            getString(Res.string.log_note_share_unavailable)
+                        }
                     } else {
-                        getString(Res.string.log_note_share_unavailable)
+                        val saved = store.save(name, text)
+                        if (saved != null) getString(Res.string.log_note_saved, saved)
+                        else getString(Res.string.log_note_save_failed)
                     }
-                } else {
-                    val saved = store.save(name, text)
-                    if (saved != null) getString(Res.string.log_note_saved, saved)
-                    else getString(Res.string.log_note_save_failed)
+                    note = outcome
+                    Diag.info(LogTag.LOG, "export ${if (share) "shared" else "saved"}: $outcome")
+                } catch (t: Throwable) {
+                    note = getString(Res.string.log_note_export_failed, t.message ?: "?")
+                    Diag.error(LogTag.LOG, "export failed ${Diag.causeChain(t)}")
+                } finally {
+                    busy = null
                 }
-                note = outcome
-                Diag.info(LogTag.LOG, "export ${if (share) "shared" else "saved"}: $outcome")
-            } catch (t: Throwable) {
-                note = getString(Res.string.log_note_export_failed, t.message ?: "?")
-                Diag.error(LogTag.LOG, "export failed ${Diag.causeChain(t)}")
-            } finally {
-                busy = null
             }
         }
     }
@@ -199,7 +203,7 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
             ) {
                 Icon(
                     MiuixIcons.Back,
-                    contentDescription = stringResource(Res.string.log_close),
+                    contentDescription = stringResource(Res.string.action_back),
                     tint = scheme.onSurface,
                 )
             }

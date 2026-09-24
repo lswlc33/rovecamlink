@@ -2,6 +2,8 @@ package com.rovecamlink.app.core.ble
 
 import android.content.Context
 import com.rovecamlink.app.androidContext
+import com.rovecamlink.app.core.log.Diag
+import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.security.SecretCodec
 
 /**
@@ -24,7 +26,10 @@ private class SharedPrefsPairingKeyStore : PairingKeyStore {
         prefs.getString(KEY_PREFIX + cameraName, null)?.let { SecretCodec.decrypt(it) }?.takeIf { it.isNotEmpty() }
 
     override fun remember(cameraName: String, key: String) {
-        val stored = SecretCodec.encrypt(key) ?: key
+        val stored = SecretCodec.encrypt(key) ?: run {
+            Diag.warn(LogTag.NET, "keystore unavailable — the pairing code for $cameraName is stored in the clear")
+            SecretCodec.plaintextFallback(key)
+        }
         prefs.edit().putString(KEY_PREFIX + cameraName, stored).apply()
     }
 

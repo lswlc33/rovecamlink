@@ -31,6 +31,21 @@ object AppearanceState {
 }
 
 /**
+ * Whether the app is painting in its dark palette right now — the same answer
+ * [RoveMiuixTheme] hands the colour scheme.
+ *
+ * Public because a widget sometimes has to branch on the mode rather than read a token:
+ * the vendored iOS-style navigation bar picks its drop shadow and its indicator tint
+ * from it, because neither is a `Colors` entry (`ui/glass/LiquidGlassNavigationBar.kt`).
+ */
+@Composable
+fun isInDarkTheme(): Boolean = when (AppearanceState.mode) {
+    ThemeMode.System -> isSystemInDarkTheme()
+    ThemeMode.Dark -> true
+    ThemeMode.Light -> false
+}
+
+/**
  * The HyperOS ambient that every miuix widget reads. Stock `lightColorScheme()` /
  * `darkColorScheme()` rather than a hand-picked palette: the `Colors` object carries 53
  * tokens and Xiaomi's own values are the point of using this library.
@@ -46,21 +61,6 @@ object AppearanceState {
  * Kotlin does not complain, so it only shows up when the window opens. The `jvmTarget =
  * JVM_17` in the build file and the comment above it predate this dependency.
  */
-/**
- * Whether the app is painting in its dark palette right now — the same answer
- * [RoveMiuixTheme] hands the colour scheme.
- *
- * Public because a widget sometimes has to branch on the mode rather than read a token:
- * the vendored iOS-style navigation bar picks its drop shadow and its indicator tint
- * from it, because neither is a `Colors` entry (`ui/glass/LiquidGlassNavigationBar.kt`).
- */
-@Composable
-fun isInDarkTheme(): Boolean = when (AppearanceState.mode) {
-    ThemeMode.System -> isSystemInDarkTheme()
-    ThemeMode.Dark -> true
-    ThemeMode.Light -> false
-}
-
 @Composable
 fun RoveMiuixTheme(content: @Composable () -> Unit) {
     val dark = isInDarkTheme()

@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalHapticFeedback
 import com.rovecamlink.app.AppState
 import com.rovecamlink.app.Res
-import com.rovecamlink.app.log_close
+import com.rovecamlink.app.action_back
 import com.rovecamlink.app.permission_bluetooth_body
 import com.rovecamlink.app.permission_bluetooth_title
 import com.rovecamlink.app.permission_camera_body
@@ -62,7 +62,7 @@ fun PermissionsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
             ) {
                 Icon(
                     MiuixIcons.Back,
-                    contentDescription = stringResource(Res.string.log_close),
+                    contentDescription = stringResource(Res.string.action_back),
                     tint = scheme.onSurface,
                 )
             }

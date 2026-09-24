@@ -23,6 +23,7 @@ import okio.FileSystem
 import okio.Path
 import okio.buffer
 import okio.use
+import kotlin.concurrent.Volatile
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
@@ -100,12 +101,14 @@ object Diag {
     /** State owned exclusively by the consumer coroutine. */
     private class Writer {
         val ring = ArrayDeque<LogRecord>()
-        val stats = LogStats()
+        var stats = LogStats()
         val runs = HashMap<String, Run>()
         var seq = 0
         var sinceFlush = 0
         var file: BufferedSink? = null
         var filePath: Path? = null
+
+        @Volatile
         var fileError: String? = null
 
         fun ensureFile(dir: Path?) {
@@ -195,6 +198,7 @@ object Diag {
                             // an id already printed must never describe a different line.
                             w.ring.clear()
                             w.runs.clear()
+                            w.stats = LogStats()
                             m.reply.complete(Unit)
                         }
 
@@ -204,7 +208,7 @@ object Diag {
                         }
                     }
                 } catch (t: Throwable) {
-                    failQuietly(m, t)
+                    runCatching { failQuietly(m, t) }
                 }
             }
         }
@@ -251,9 +255,6 @@ object Diag {
 
     /** Milliseconds since the process started, from the monotonic clock. */
     fun uptimeMillis(): Long = monotonicMillis() - startMono
-
-    /** Wall clock of the process start, for "when did this session happen". */
-    fun startedAtMillis(): Long = startWallMillis
 
     /** Device time zone, so a renderer can print the same stamps the file carries. */
     fun timeZone(): TimeZone = tz
@@ -462,20 +463,29 @@ object Diag {
     suspend fun tail(n: Int = 2_000, level: LogLevel? = null, query: String? = null): List<LogRecord> {
         val reply = CompletableDeferred<List<LogRecord>>()
         inbox.trySend(Msg.Tail(n, level, query, reply))
-        return runCatching { reply.await() }.getOrDefault(emptyList())
+        return runCatching { reply.await() }.getOrElse { e ->
+            if (e is CancellationException) throw e
+            emptyList()
+        }
     }
 
     suspend fun count(): Int {
         val reply = CompletableDeferred<Int>()
         inbox.trySend(Msg.Count(reply))
-        return runCatching { reply.await() }.getOrDefault(0)
+        return runCatching { reply.await() }.getOrElse { e ->
+            if (e is CancellationException) throw e
+            0
+        }
     }
 
     /** Path of the rolling session file, or null when the file sink is off/failed. */
     suspend fun sessionFile(): String? {
         val reply = CompletableDeferred<String?>()
         inbox.trySend(Msg.SessionFile(reply))
-        return runCatching { reply.await() }.getOrNull()
+        return runCatching { reply.await() }.getOrElse { e ->
+            if (e is CancellationException) throw e
+            null
+        }
     }
 
     /** Why the file sink isn't writing (null when it is). */
@@ -485,20 +495,27 @@ object Diag {
     suspend fun awaitDrained() {
         val reply = CompletableDeferred<Unit>()
         inbox.trySend(Msg.Drain(reply))
-        runCatching { reply.await() }
+        runCatching { reply.await() }.getOrElse { e ->
+            if (e is CancellationException) throw e
+        }
     }
 
     suspend fun clear() {
         val reply = CompletableDeferred<Unit>()
         inbox.trySend(Msg.Clear(reply))
-        runCatching { reply.await() }
+        runCatching { reply.await() }.getOrElse { e ->
+            if (e is CancellationException) throw e
+        }
     }
 
     /** The TXT a user submits: environment header, records, summary. */
     suspend fun exportBundle(): String {
         val reply = CompletableDeferred<String>()
         inbox.trySend(Msg.Bundle(reply))
-        return runCatching { reply.await() }.getOrElse { "export failed: ${it.message}" }
+        return runCatching { reply.await() }.getOrElse { e ->
+            if (e is CancellationException) throw e
+            "export failed: ${e.message}"
+        }
     }
 
     /** File name for an export of the current session. */
@@ -514,7 +531,10 @@ object Diag {
     suspend fun exportFullBundle(): String {
         val reply = CompletableDeferred<String>()
         inbox.trySend(Msg.FullBundle(reply))
-        return runCatching { reply.await() }.getOrElse { "export failed: " + it.message }
+        return runCatching { reply.await() }.getOrElse { e ->
+            if (e is CancellationException) throw e
+            "export failed: ${e.message}"
+        }
     }
 
     /**

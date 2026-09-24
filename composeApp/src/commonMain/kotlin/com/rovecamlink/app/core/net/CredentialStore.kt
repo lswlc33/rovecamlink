@@ -1,5 +1,8 @@
 package com.rovecamlink.app.core.net
 
+import kotlin.concurrent.atomics.AtomicReference
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+
 /**
  * Remembers the passphrase that worked for each camera hotspot, keyed by SSID.
  *
@@ -39,36 +42,58 @@ interface WifiCredentialStore {
 /** expect factory; Android persists, the others keep memory only. */
 expect fun createWifiCredentialStore(): WifiCredentialStore
 
-/** Used where there is no persistence backend, and as the common fallback. */
+/**
+ * Used where there is no persistence backend, and as the common fallback.
+ *
+ * Sessions read and write this from whichever thread happens to be running them, so the
+ * collections are held as immutable snapshots swapped by compare-and-set rather than as a
+ * mutable [HashMap] / [ArrayList] that two threads could corrupt mid-resize.
+ */
+@OptIn(ExperimentalAtomicApi::class)
 class MemoryWifiCredentialStore : WifiCredentialStore {
-    private val passwords = mutableMapOf<String, String>()
-    private val known = mutableListOf<String>()
-    private val aliases = mutableMapOf<String, String>()
+    private val passwords = AtomicReference<Map<String, String>>(emptyMap())
+    private val known = AtomicReference<List<String>>(emptyList())
+    private val aliases = AtomicReference<Map<String, String>>(emptyMap())
 
-    override fun passwordFor(ssid: String): String? = passwords[ssid]?.takeIf { it.isNotEmpty() }
+    override fun passwordFor(ssid: String): String? = passwords.load()[ssid]?.takeIf { it.isNotEmpty() }
 
+    /** An empty [password] is not a credential: it clears the entry, like [passwordFor] reads it. */
     override fun remember(ssid: String, password: String) {
-        passwords[ssid] = password
+        if (password.isEmpty()) {
+            update(passwords) { it - ssid }
+        } else {
+            update(passwords) { it + (ssid to password) }
+        }
     }
 
     override fun forget(ssid: String) {
-        passwords.remove(ssid)
-        known.remove(ssid)
-        aliases.remove(ssid)
+        update(passwords) { it - ssid }
+        update(known) { it - ssid }
+        update(aliases) { it - ssid }
     }
 
-    override fun knownCameras(): List<String> = known.toList()
+    override fun knownCameras(): List<String> = known.load()
 
     override fun noteConnected(ssid: String) {
-        known.remove(ssid)
-        known.add(0, ssid)
-        while (known.size > MAX_KNOWN_CAMERAS) known.removeAt(known.lastIndex)
+        update(known) { (listOf(ssid) + it.filterNot { name -> name == ssid }).take(MAX_KNOWN_CAMERAS) }
     }
 
-    override fun aliasFor(ssid: String): String? = aliases[ssid]?.takeIf { it.isNotBlank() }
+    override fun aliasFor(ssid: String): String? = aliases.load()[ssid]?.takeIf { it.isNotBlank() }
 
     override fun setAlias(ssid: String, alias: String?) {
-        if (alias.isNullOrBlank()) aliases.remove(ssid) else aliases[ssid] = alias.trim()
+        if (alias.isNullOrBlank()) {
+            update(aliases) { it - ssid }
+        } else {
+            update(aliases) { it + (ssid to alias.trim()) }
+        }
+    }
+
+    /** Swap in a new snapshot, retrying when another thread got there first. */
+    private fun <T : Any> update(ref: AtomicReference<T>, transform: (T) -> T) {
+        while (true) {
+            val current = ref.load()
+            if (ref.compareAndSet(current, transform(current))) return
+        }
     }
 }
 

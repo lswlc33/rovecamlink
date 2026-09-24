@@ -27,6 +27,7 @@
     <string name="cancel">取消</string>
     <string name="save">保存</string>
     <string name="delete">删除</string>
+    <string name="action_back">返回</string>
 
     <!-- NotConnected widget -->
     <string name="not_connected_title">未连接</string>
@@ -211,6 +212,7 @@
     <string name="err_bluetooth_off">手机蓝牙未开启——打开后才能唤醒相机。</string>
     <string name="err_bluetooth_denied">蓝牙权限被拒绝——允许后才能使用一键连接。</string>
     <string name="err_bluetooth_unsupported">这台设备没有蓝牙——请先在系统设置连上相机 WiFi，再用下面的列表。</string>
+    <string name="err_bluetooth_no_profile">找不到 %1$s 对应的蓝牙配置</string>
     <!-- 全 App 唯一一处提到 VPN/代理的文案：连接时检测到代理才弹的这一次。 -->
     <string name="vpn_dialog_title">检测到 VPN/代理正在运行</string>
     <string name="vpn_dialog_message">开着代理连不上相机，官方 App 也一样。建议先关掉代理再连；也可以继续试，但很可能失败。</string>

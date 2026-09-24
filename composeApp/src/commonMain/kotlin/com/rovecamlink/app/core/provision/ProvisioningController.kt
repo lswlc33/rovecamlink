@@ -7,6 +7,7 @@ import com.rovecamlink.app.AppGraph
 import com.rovecamlink.app.LocalizedString
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.err_bluetooth_denied
+import com.rovecamlink.app.err_bluetooth_no_profile
 import com.rovecamlink.app.err_bluetooth_off
 import com.rovecamlink.app.err_bluetooth_unsupported
 import com.rovecamlink.app.raw
@@ -16,6 +17,7 @@ import com.rovecamlink.app.core.ble.BleCameraProfile
 import com.rovecamlink.app.core.ble.BleOutcome
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogTag
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -64,7 +66,10 @@ class ProvisioningController(
         notice = null
         val profile = graph.bleProfileFor(camera.profileId)
         if (profile == null) {
-            notice = raw("No Bluetooth profile for ${camera.name}")
+            notice = localized(Res.string.err_bluetooth_no_profile, camera.name)
+            // No profile means this route can never deliver, exactly as a failed
+            // handshake does: the caller still gets to try the hotspot in range.
+            onHandshakeFailed()
             return
         }
         // Stop scanning before connecting: on a combo chip a running LE scan steals
@@ -85,7 +90,10 @@ class ProvisioningController(
         onStage("ble-wake")
         scope.launch {
             val outcome = runCatching { graph.ble.wakeAndFetch(camera, profile, code) }
-                .onFailure { Diag.error(LogTag.NET, "BLE wake threw ${Diag.causeChain(it)}") }
+                .onFailure {
+                    if (it is CancellationException) throw it
+                    Diag.error(LogTag.NET, "BLE wake threw ${Diag.causeChain(it)}")
+                }
                 .getOrElse { BleOutcome.Failed("蓝牙握手异常：${it.message ?: it::class.simpleName}") }
             busy = false
             onStage("")

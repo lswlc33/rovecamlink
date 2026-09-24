@@ -1,5 +1,7 @@
 package com.rovecamlink.app.core.log
 
+import kotlin.concurrent.Volatile
+
 /**
  * Severity of a [LogRecord].
  *
@@ -113,24 +115,29 @@ class LogRecord(
 /**
  * Runtime switches, all reachable from the in-app diagnostics screen.
  *
- * Written from the UI thread and read from arbitrary producer threads; every
- * field is a single value whose staleness for one record is harmless, and the
- * writer never mutates them, so no lock is taken.
+ * Written from the UI thread and read from arbitrary producer threads. Every
+ * field is a single value whose staleness for one record is harmless, so no
+ * lock is taken; each mutable field is `@Volatile` so a change is published to
+ * the reader threads that poll it (the writer never mutates them).
  */
 class LogConfig {
     /** Records below this level are dropped before their message is built. */
+    @Volatile
     var minLevel: LogLevel = LogLevel.DEBUG
 
     /** Capture request/response bodies (capped by [bodyPreviewChars]). */
+    @Volatile
     var captureBodies: Boolean = true
 
     /**
      * Keep query params whose name looks secret (passwords, tokens, seeds).
      * Off by default because exported files leave the phone via share sheets.
      */
+    @Volatile
     var captureSecrets: Boolean = false
 
     /** Append records to the rolling session file on disk. */
+    @Volatile
     var fileSink: Boolean = true
 
     /**
@@ -138,14 +145,18 @@ class LogConfig {
      * reaches the ring or the file — the whole capture goes quiet, not just the
      * disk copy. Used by the one-tap toggle so "logging off" means off.
      */
+    @Volatile
     var paused: Boolean = false
 
     /** Collapse steady, repeating HTTP exchanges into sampled lines (see [LogRecord.sampleKey]). */
+    @Volatile
     var sampleSteadyTraffic: Boolean = true
 
     /** Max characters of a body kept inline before a truncation marker. */
+    @Volatile
     var bodyPreviewChars: Int = 1_024
 
     /** Records held in memory for preview + export. */
+    @Volatile
     var ringCapacity: Int = 12_000
 }

@@ -24,8 +24,8 @@ private class JvmCameraTcp : CameraTcp {
             }
             // Nagle off on purpose: the firmware channel's first act is a 72-byte header
             // followed immediately by a reply read. Coalescing that write with a later one
-            // only delays the handshake, which is exactly what the flush() in the contract
-            // is there to prevent.
+            // only delays the handshake, and tcpNoDelay is what prevents it — the contract's
+            // flush() is a no-op here, because `SocketOutputStream.flush()` does nothing.
             socket.tcpNoDelay = true
             // The handshake read is bounded by the same budget the connect got — the
             // official client's setSoTimeout(5000) (SendSoftActivity.java:109). Bulk

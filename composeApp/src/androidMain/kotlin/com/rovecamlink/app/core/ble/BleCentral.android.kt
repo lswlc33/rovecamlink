@@ -194,7 +194,14 @@ private fun blePermissions(): Array<String> =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT)
     } else {
-        arrayOf(Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN)
+        // BLUETOOTH/BLUETOOTH_ADMIN are install-time permissions (`maxSdkVersion=30`);
+        // below API 31 the BLE scan itself is gated on the runtime ACCESS_FINE_LOCATION,
+        // which the manifest already declares for the whole API range.
+        arrayOf(
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        )
     }
 
 /**

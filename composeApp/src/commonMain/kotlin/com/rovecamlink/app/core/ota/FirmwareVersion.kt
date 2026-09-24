@@ -15,8 +15,9 @@ internal fun zeroPad(value: Int, width: Int): String = value.toString().padStart
  * families (unlike semver, none of them use it). Rules, in order:
  *  - trim surrounding whitespace; if nothing remains → null.
  *  - if the string is a "Mon DD YYYY" build stamp → convert to `yyyyMMdd` (TUWIN M3).
- *  - otherwise extract the first 8-digit `yyyyMMdd`; if absent → null (not a version we
- *    can compare, so treat as "no usable version").
+ *  - otherwise extract an 8-digit `yyyyMMdd` (a run of exactly eight digits, so a longer number
+ *    is never read as a truncated date); if absent → null (not a version we can compare, so
+ *    treat as "no usable version").
  *
  * Comparison is lexicographic on the returned 8-digit string, which is equivalent to
  * numeric/date comparison.
@@ -30,7 +31,9 @@ object FirmwareVersion {
 
     /** "Mon DD YYYY" (e.g. "Jun 15 2025") → yyyyMMdd. */
     private val monDdYyyy = Regex("""([A-Za-z]{3})\s+(\d{1,2})\s+(\d{4})""")
-    private val digits8 = Regex("""\d{8}""")
+
+    /** Candidate numeric date stamps: eight or more digits, never fewer. */
+    private val digitRuns = Regex("""\d{8,}""")
 
     fun from(raw: String?): String? {
         val s = raw?.trim() ?: return null
@@ -47,18 +50,16 @@ object FirmwareVersion {
             }
         }
 
-        // First 8-digit date stamp anywhere in the string (XTU `\d{8}`, idGoLive `_YYYYMMDD_`).
-        return digits8.find(s)?.value
+        // First date stamp anywhere in the string (XTU `\d{8}`, idGoLive `_YYYYMMDD_`). Only a
+        // run of exactly eight digits is accepted: a longer run means those eight digits are
+        // not the whole number, so reading their prefix would fabricate a date from, say, a
+        // serial number. A string whose only numeric run is longer than eight digits therefore
+        // has no usable date stamp — null, not a truncated guess.
+        return digitRuns.findAll(s).firstOrNull { it.value.length == 8 }?.value
     }
 
     /** Alias so callers that don't care about the parse rule read clearly. */
     fun normalize(raw: String?): String? = from(raw)
-
-    /** True when [newer] strictly supersedes [older]; null versions are never newer. */
-    fun isNewer(newer: String?, older: String?): Boolean {
-        if (newer == null || older == null) return false
-        return newer > older
-    }
 
     private fun daysInMonth(mon: Int, year: Int): Int = when (mon) {
         2 -> if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) 29 else 28

@@ -64,10 +64,12 @@ actual fun QrScanScreen(onResult: (QrWifiCredentials?) -> Unit, onClose: () -> U
                 PackageManager.PERMISSION_GRANTED,
         )
     }
-    // pending == null ⇒ 还未扫到;非 null 但 second == null ⇒ 扫到了但无法解析出 Wi-Fi。
-    // hint 是这两个状态的派生文本,在 Composable 主体中按当前 locale 解析,避免在
-    // LaunchedEffect 协程里调用 stringResource。
+    // pending 只在解析出 creds 前短暂承载结果;解析失败时把文案挪到独立的 parseFailed,
+    // 否则清空 pending 会让「二维码里没有 Wi-Fi 信息」提示在下一帧立即消失。
+    // hint 是派生文本,在 Composable 主体中按当前 locale 解析,避免在 LaunchedEffect
+    // 协程里调用 stringResource。
     var pending by remember { mutableStateOf<Pair<String, QrWifiCredentials?>?>(null) }
+    var parseFailed by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(hasCameraPermission) {
         if (!hasCameraPermission) {
@@ -75,12 +77,12 @@ actual fun QrScanScreen(onResult: (QrWifiCredentials?) -> Unit, onClose: () -> U
         }
     }
 
-    // 扫到内容后:creds 解析出就直接回调出去;为 null 则清掉 pending 回到默认态,
-    // 派生 hint 会自动重算为「二维码里没有 Wi-Fi 信息」。
+    // 扫到内容后:creds 解析出就直接回调出去;为 null 则记下文案,提示由 parseFailed 派生。
     LaunchedEffect(pending) {
         val pair = pending ?: return@LaunchedEffect
         val creds = pair.second
         if (creds == null) {
+            parseFailed = pair.first
             pending = null
         } else {
             onResult(creds)
@@ -92,11 +94,10 @@ actual fun QrScanScreen(onResult: (QrWifiCredentials?) -> Unit, onClose: () -> U
     val cancelLabel = stringResource(Res.string.cancel)
 
     // 派生 hint:扫码解析失败时显示带 label 的提示;否则按权限状态展示默认引导。
-    // 把 pending 取到 local val 才能 smart cast 到非空类型。
-    val pendingSnapshot = pending
+    // 把 parseFailed 取到 local val 才能 smart cast 到非空类型。
+    val failedLabel = parseFailed
     val hint = when {
-        pendingSnapshot != null && pendingSnapshot.second == null ->
-            stringResource(Res.string.qr_hint_no_wifi, pendingSnapshot.first)
+        failedLabel != null -> stringResource(Res.string.qr_hint_no_wifi, failedLabel)
         !hasCameraPermission -> hintCameraPermission
         else -> hintPoint
     }
@@ -142,8 +143,16 @@ private fun CameraQrScanner(lifecycleOwner: LifecycleOwner, onText: (String) -> 
 
     DisposableEffect(Unit) {
         onDispose {
-            analyzerExecutor.shutdown()
-            runCatching { ProcessCameraProvider.getInstance(context).get().unbindAll() }
+            // 先解绑再关闭分析线程池:线程池先 shutdown 而相机仍在投递帧时,
+            // ImageAnalysis 会往已关闭的 executor 提交而抛 RejectedExecutionException。
+            // 用 addListener 回调取 provider,不在主线程用 get() 阻塞等待。
+            ProcessCameraProvider.getInstance(context).addListener(
+                {
+                    runCatching { ProcessCameraProvider.getInstance(context).get().unbindAll() }
+                    analyzerExecutor.shutdown()
+                },
+                ContextCompat.getMainExecutor(context),
+            )
         }
     }
 

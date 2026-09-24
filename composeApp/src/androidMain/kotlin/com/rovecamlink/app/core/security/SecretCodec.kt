@@ -24,6 +24,9 @@ import javax.crypto.spec.GCMParameterSpec
  * Storage format: `enc1:<b64 iv>:<b64 ciphertext+tag>`. A value **without** the
  * prefix is treated as legacy plaintext and returned as-is, so prefs written by an
  * older build still read back; the next [encrypt] rewrites them in the new form.
+ * A fallback plaintext written after [encrypt] returned null carries [PLAIN_PREFIX]
+ * instead, so it is distinguishable from both an encrypted value and an unprefixed
+ * legacy one.
  * A value that fails to decrypt (key lost after a restore, corrupt data) reads as
  * `null` — "re-enter the password", never "the app crashed".
  */
@@ -34,6 +37,14 @@ internal object SecretCodec {
     private const val TRANSFORM = "AES/GCM/NoPadding"
     private const val TAG_BITS = 128
     private const val PREFIX = "enc1:"
+
+    /**
+     * Marks a value the keystore refused to encrypt, which therefore reaches disk in
+     * the clear. Without a marker such a value is indistinguishable from a legacy
+     * unprefixed one, so neither [decrypt] nor a later migration could tell them apart.
+     * An encrypted value never carries this prefix.
+     */
+    const val PLAIN_PREFIX = "plain:"
 
     /** Encrypt [plain], or return null when the keystore is unavailable. */
     fun encrypt(plain: String): String? = runCatching {
@@ -48,8 +59,16 @@ internal object SecretCodec {
         }
     }.getOrNull()
 
-    /** Decrypt a stored value; legacy plaintext passes through, garbage reads as null. */
+    /**
+     * Wrap [plain] with [PLAIN_PREFIX] for storage, for the [encrypt] == null downgrade.
+     * Callers must log the downgrade themselves: a value built here reaches disk in the
+     * clear, and only the caller knows which secret it is.
+     */
+    fun plaintextFallback(plain: String): String = PLAIN_PREFIX + plain
+
+    /** Decrypt a stored value; legacy plaintext and [PLAIN_PREFIX] fallbacks pass through. */
     fun decrypt(stored: String): String? {
+        if (stored.startsWith(PLAIN_PREFIX)) return stored.removePrefix(PLAIN_PREFIX)
         if (!stored.startsWith(PREFIX)) return stored
         return runCatching {
             val payload = stored.removePrefix(PREFIX)

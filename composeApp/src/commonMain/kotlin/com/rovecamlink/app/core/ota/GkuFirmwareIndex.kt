@@ -115,7 +115,18 @@ object GkuFirmwareIndex {
         val mine = entries.filter {
             it.firmWareModel?.replace(Regex("\\s+"), "")?.uppercase() == wanted
         }
-        return (if (mine.isEmpty()) entries else mine).mapNotNull { entry ->
+        if (mine.isEmpty()) {
+            // The response carried entries, but not one of them is this camera's model. Falling
+            // back to "all entries" would push another model's build into the update flow — the
+            // exact bricking case the model guard exists to prevent — so the honest answer is
+            // "nothing published for this model", not "here, flash whatever the server sent".
+            Diag.warn(
+                LogTag.OTA,
+                "firmware index: no entry for $wantModel among ${entries.size} returned; ignoring the other model(s)",
+            )
+            return emptyList()
+        }
+        return mine.mapNotNull { entry ->
             val url = secureDownloadUrl(entry.fileUrl)
             if (entry.version.isNullOrBlank() || url == null) {
                 Diag.at(
@@ -220,7 +231,12 @@ object GkuFirmwareIndex {
     private fun encode(value: String): String {
         val sb = StringBuilder(value.length)
         for (ch in value) {
-            if (ch.isLetterOrDigit() || ch in ".-_" || ch == '~') sb.append(ch) else {
+            // Explicit ASCII-only unreserved set. `ch.isLetterOrDigit()` also accepts non-ASCII
+            // letters (CJK, etc.), which would be spliced into the URL raw and let a camera-
+            // supplied name put bytes on the wire that the ASCII-only protocol never expects.
+            val unreserved = (ch in 'A'..'Z') || (ch in 'a'..'z') || (ch in '0'..'9') ||
+                ch == '.' || ch == '-' || ch == '_' || ch == '~'
+            if (unreserved) sb.append(ch) else {
                 for (byte in ch.toString().encodeToByteArray()) {
                     val v = byte.toInt() and 0xFF
                     sb.append('%').append(HEX[v shr 4]).append(HEX[v and 0x0F])

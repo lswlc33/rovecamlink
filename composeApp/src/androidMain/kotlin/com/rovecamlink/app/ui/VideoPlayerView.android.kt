@@ -25,6 +25,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogTag
 import java.io.File
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.delay
 import top.yukonga.miuix.kmp.basic.Text
 import androidx.compose.ui.unit.sp
@@ -56,8 +58,8 @@ private const val MAX_ATTEMPTS = 3
 @Composable
 actual fun VideoPlayerView(localPath: String, displayName: String, modifier: Modifier) {
     val context = LocalContext.current
-    val retry = remember(localPath) { intArrayOf(0) }
-    val rebuilding = remember(localPath) { booleanArrayOf(false) }
+    val retry = remember(localPath) { AtomicInteger(0) }
+    val rebuilding = remember(localPath) { AtomicBoolean(false) }
     var generation by remember(localPath) { mutableIntStateOf(0) }
     var notice by remember(localPath) { mutableStateOf<String?>(null) }
 
@@ -69,14 +71,14 @@ actual fun VideoPlayerView(localPath: String, displayName: String, modifier: Mod
             Diag.warn(LogTag.FILE, "video: missing or empty $localPath (${file.length()}B)")
             null
         } else {
-            Diag.info(LogTag.FILE, "video open $displayName ${file.length()}B attempt=${retry[0]}")
+            Diag.info(LogTag.FILE, "video open $displayName ${file.length()}B attempt=${retry.get()}")
             ExoPlayer.Builder(context).build().apply {
                 addListener(
                     object : Player.Listener {
                         override fun onPlaybackStateChanged(playbackState: Int) {
                             if (playbackState == Player.STATE_READY) {
-                                retry[0] = 0
-                                rebuilding[0] = false
+                                retry.set(0)
+                                rebuilding.set(false)
                                 notice = null
                                 Diag.info(LogTag.FILE, "video READY $displayName")
                             }
@@ -93,13 +95,13 @@ actual fun VideoPlayerView(localPath: String, displayName: String, modifier: Mod
                                 "video error code=${error.errorCodeName} msg=${Diag.causeChain(error)} " +
                                     "file=$displayName",
                             )
-                            val attempt = retry[0] + 1
-                            retry[0] = attempt
-                            if (attempt > MAX_ATTEMPTS || rebuilding[0]) {
+                            val attempt = retry.get() + 1
+                            retry.set(attempt)
+                            if (attempt > MAX_ATTEMPTS || rebuilding.get()) {
                                 notice = error.errorCodeName
                                 return
                             }
-                            rebuilding[0] = true
+                            rebuilding.set(true)
                             // Off the player's own callback thread: rebuilding inside it
                             // deadlocks against the release of the player being replaced.
                             delay0 { generation++ }

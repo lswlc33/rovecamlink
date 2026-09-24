@@ -418,9 +418,17 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
     }
 }
 
-/** Which of the two shapes the shutter wears: a square to stop, a disc to start. */
+/**
+ * Which of the two shapes the shutter wears: a square to stop, a disc to start.
+ *
+ * Same priority as the label and the click branch further up: a video family follows the
+ * camera's own `recording` flag — a timelapse the camera has not reported as recording
+ * keeps the disc its 录制 label names — and only a photo family lets a running lapse
+ * decide it. Reading `lapseRunning` first here drew a square over a button that was
+ * labelled 录制 and would have started one.
+ */
 private fun shutterStop(videoLike: Boolean, recording: Boolean, lapseRunning: Boolean): Boolean =
-    (videoLike && recording) || lapseRunning
+    if (videoLike) recording else lapseRunning
 
 /**
  * The pinned preview block: the picture, a badge over it while the camera is working,
@@ -919,6 +927,9 @@ private fun ModeStrip(
             tabs = listOf(videoLabel, photoLabel),
             selectedTabIndex = tab,
             onTabSelected = { index ->
+                // A locked camera refuses the family switch the same way the chips below
+                // do: without a mode table this tab *is* the control that writes workmode.
+                if (locked) return@TabRowWithContour
                 if (index != tab) haptics.tick()
                 tab = index
                 // With a mode table the chip row does the switching, so the tab is only

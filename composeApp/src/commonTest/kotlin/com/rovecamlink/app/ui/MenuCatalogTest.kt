@@ -56,29 +56,25 @@ class MenuCatalogTest {
 
     @Test
     fun `values are translated with the firmware spelling kept alongside`() {
-        assertEquals("开（ON）", MenuCatalog.valueLabel("Audio", "ON"))
-        assertEquals("自动（Auto）", MenuCatalog.valueLabel("Segment", "Auto"))
-        assertEquals("超级增强（Super Enhance）", MenuCatalog.valueLabel("Gyro EIS", "Super Enhance"))
+        assertEquals("开（ON）", MenuCatalog.valueOptionLabel("Audio", "ON"))
+        assertEquals("自动（Auto）", MenuCatalog.valueOptionLabel("Segment", "Auto"))
+        assertEquals("超级增强（Super Enhance）", MenuCatalog.valueOptionLabel("Gyro EIS", "Super Enhance"))
         // Resolutions are specifications, not words — leave them alone.
-        assertEquals("1080P30", MenuCatalog.valueLabel("Resolution", "1080P30"))
+        assertEquals("1080P30", MenuCatalog.valueOptionLabel("Resolution", "1080P30"))
     }
 
     /**
-     * A long value drops the parenthetical in a row's trailing slot but keeps it in the
-     * picker. `Gyro EIS` answering `360° Horizon Correction` is what squeezed
-     * 「陀螺仪防抖」 into one character per line on 2026-09-22.
+     * The live page's chips take the Chinese alone. `Gyro EIS` answering
+     * `360° Horizon Correction` is the long case where the parenthetical would push every
+     * other chip off screen.
      */
     @Test
-    fun `a long value stays compact on the row and full in the picker`() {
+    fun `a long value keeps only the Chinese on a chip`() {
         val long = "360° Horizon Correction"
-        assertEquals("360° 全向水平线矫正", MenuCatalog.valueLabel("Gyro EIS", long))
+        assertEquals("360° 全向水平线矫正", MenuCatalog.valueShortLabel("Gyro EIS", long))
         assertEquals(
             "360° 全向水平线矫正（360° Horizon Correction）",
             MenuCatalog.valueOptionLabel("Gyro EIS", long),
-        )
-        assertTrue(
-            MenuCatalog.valueLabel("Gyro EIS", long).length <= 12,
-            "the trailing slot has to stay narrow enough for the title",
         )
     }
 
@@ -134,11 +130,11 @@ class MenuCatalogTest {
 
     @Test
     fun `device values are translated and the firmware spelling stays beside them`() {
-        assertEquals("5 GHz（5G）", MenuCatalog.valueLabel("WiFi Frequency", "5G", device = true))
-        assertEquals("60 秒（60Sec）", MenuCatalog.valueLabel("Auto Dormant", "60Sec", device = true))
-        assertEquals("开（ON）", MenuCatalog.valueLabel("LEDs", "ON", device = true))
+        assertEquals("5 GHz（5G）", MenuCatalog.valueOptionLabel("WiFi Frequency", "5G", device = true))
+        assertEquals("60 秒（60Sec）", MenuCatalog.valueOptionLabel("Auto Dormant", "60Sec", device = true))
+        assertEquals("开（ON）", MenuCatalog.valueOptionLabel("LEDs", "ON", device = true))
         // A language name is already what the user reads; do not decorate it.
-        assertEquals("简体中文", MenuCatalog.valueLabel("Language", "简体中文", device = true))
+        assertEquals("简体中文", MenuCatalog.valueOptionLabel("Language", "简体中文", device = true))
     }
 
     @Test

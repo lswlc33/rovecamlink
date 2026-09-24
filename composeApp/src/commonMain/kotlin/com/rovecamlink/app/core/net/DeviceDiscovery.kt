@@ -5,6 +5,7 @@ import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.protocol.CameraProtocolRegistry
 import com.rovecamlink.app.core.transport.CameraHttp
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withTimeoutOrNull
 
 /**
@@ -38,7 +39,11 @@ class DeviceDiscovery(
         Diag.inOp("identify", "target=$host:$port plugins=${registry.platforms().joinToString(",")}") {
             for (protocol in registry.all()) {
                 val t0 = Diag.uptimeMillis()
+                // Swallowing a cancellation here would defeat the `withTimeoutOrNull`
+                // budget around [discover]: a probe that timed out must end the host,
+                // not be reported as "no".
                 val verdict = runCatching { protocol.probe(host, port) }
+                    .onFailure { if (it is CancellationException) throw it }
                 val ms = Diag.uptimeMillis() - t0
                 Diag.d(LogTag.NET) {
                     "probe ${protocol.platform.displayName} $host:$port -> " +
@@ -107,8 +112,12 @@ class DeviceDiscovery(
             val octets = parts.map { it.toIntOrNull() ?: return false }
             if (octets.any { it !in 0..255 }) return false
             // 0.0.0.0 is what ConnectivityManager reports when it has no route;
-            // 169.254.x is link-local, which no camera CGI answers on.
-            return octets[0] != 0 && !(octets[0] == 169 && octets[1] == 254)
+            // 169.254.x is link-local, which no camera CGI answers on. Loopback and the
+            // all-ones broadcast address are never a camera either.
+            if (octets[0] == 0) return false
+            if (octets[0] == 127) return false
+            if (octets[0] == 169 && octets[1] == 254) return false
+            return !octets.all { it == 255 }
         }
 
         private const val FIRST_HOST_BUDGET_MS = 12_000L

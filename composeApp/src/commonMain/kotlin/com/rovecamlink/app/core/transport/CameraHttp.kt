@@ -15,7 +15,6 @@ import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentLength
 import io.ktor.http.contentType
@@ -102,12 +101,23 @@ class CameraHttp(
     suspend fun getText(url: String): String? = exchange("GET", url) { call ->
         try {
             val resp: HttpResponse = client.get { url(url) }
-            val body = resp.bodyAsText()
             val ok = resp.status.isSuccess()
-            call.reply(resp, body.length, body)
+            val declared = resp.contentLength()
+            if (declared != null && declared > MAX_SMALL_BODY) {
+                call.reply(resp, 0, null, note = "refused: body ${declared}B over cap ${MAX_SMALL_BODY}B")
+                return@exchange null
+            }
+            // Same cap as [getBytes]: a text reply is parsed in memory, so a body that
+            // turns out to be a firmware image would be buffered whole without it.
+            val body = readCapped(resp.bodyAsChannel(), MAX_SMALL_BODY)?.decodeToString()
+            call.reply(
+                resp, body?.length ?: 0, body,
+                note = if (body == null) "over cap ${MAX_SMALL_BODY}B" else "",
+            )
             if (ok) body else null
         } catch (t: Throwable) {
             call.fail(t)
+            if (t is CancellationException) throw t
             null
         }
     }
@@ -149,6 +159,7 @@ class CameraHttp(
                 if (ok) bytes else null
             } catch (t: Throwable) {
                 call.fail(t)
+                if (t is CancellationException) throw t
                 null
             }
         }
@@ -175,10 +186,18 @@ class CameraHttp(
                 this.contentType(contentType)
                 setBody(body)
             }
-            val text = resp.bodyAsText()
             val ok = resp.status.isSuccess()
-            call.reply(resp, text.length, text)
-            if (ok) {
+            val declared = resp.contentLength()
+            if (declared != null && declared > MAX_SMALL_BODY) {
+                call.reply(resp, 0, null, note = "refused: body ${declared}B over cap ${MAX_SMALL_BODY}B")
+                return@exchange null
+            }
+            val text = readCapped(resp.bodyAsChannel(), MAX_SMALL_BODY)?.decodeToString()
+            call.reply(
+                resp, text?.length ?: 0, text,
+                note = if (text == null) "over cap ${MAX_SMALL_BODY}B" else "",
+            )
+            if (ok && text != null) {
                 onProgress(1f)
                 text
             } else {
@@ -186,6 +205,7 @@ class CameraHttp(
             }
         } catch (t: Throwable) {
             call.fail(t)
+            if (t is CancellationException) throw t
             null
         }
     }
@@ -282,6 +302,7 @@ class CameraHttp(
             } catch (t: Throwable) {
                 call.fail(t, note = "after ${LogFormat.size(written)}" +
                     if (expectedTotal > 0) " of ${LogFormat.size(expectedTotal)}" else "")
+                if (t is CancellationException) throw t
                 -1L
             }
         }

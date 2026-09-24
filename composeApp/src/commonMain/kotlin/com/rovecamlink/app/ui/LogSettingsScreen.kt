@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rovecamlink.app.AppState
 import com.rovecamlink.app.Res
+import com.rovecamlink.app.action_back
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogLevel
 import com.rovecamlink.app.core.log.LogTag
-import com.rovecamlink.app.log_close
 import com.rovecamlink.app.log_level_hint
 import com.rovecamlink.app.log_session_file_line
 import com.rovecamlink.app.log_session_opening
@@ -88,7 +88,7 @@ fun LogSettingsScreen(state: AppState, outerPadding: PaddingValues, onClose: () 
             ) {
                 Icon(
                     MiuixIcons.Back,
-                    contentDescription = stringResource(Res.string.log_close),
+                    contentDescription = stringResource(Res.string.action_back),
                     tint = scheme.onSurface,
                 )
             }

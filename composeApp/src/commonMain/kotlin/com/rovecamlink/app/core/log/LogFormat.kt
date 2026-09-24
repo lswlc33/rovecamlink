@@ -44,8 +44,8 @@ object LogFormat {
         // be quoted (the quote is consumed with the separator, so spaces inside survive masked).
         // Everything inside the key alternation is non-capturing: a stray group there would
         // shift the group indices the redactor below reads back.
-        """(?i)\b(wifikey|wifi_?pass(?:word)?|wifi_passwd|passphrase|passwd|password|passkey|psk|pwd|token|secret|seed|credential|auth|key)\b""" +
-            """(\s*=\s*"?|"\s*:\s*")([^"&;\r\n]{1,128})""",
+        """(?i)\b(wifi_?key|wifi_?pass(?:word)?|wifi_passwd|passphrase|passwd|password|passkey|psk|pwd|token|secret|seed|credential|auth|key)\b""" +
+            """(\s*=\s*"?|"\s*:\s*")([^"&;\r\n]+)""",
     )
 
     /** Render one record (its own line plus any `|  ` continuation lines). */

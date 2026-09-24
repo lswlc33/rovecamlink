@@ -2,6 +2,8 @@ package com.rovecamlink.app.core.net
 
 import android.content.Context
 import com.rovecamlink.app.androidContext
+import com.rovecamlink.app.core.log.Diag
+import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.security.SecretCodec
 
 /**
@@ -28,7 +30,10 @@ private class SharedPrefsCredentialStore : WifiCredentialStore {
         prefs.getString(KEY_PREFIX + ssid, null)?.let { SecretCodec.decrypt(it) }?.takeIf { it.isNotEmpty() }
 
     override fun remember(ssid: String, password: String) {
-        val stored = SecretCodec.encrypt(password) ?: password
+        val stored = SecretCodec.encrypt(password) ?: run {
+            Diag.warn(LogTag.WIFI, "keystore unavailable — the passphrase for $ssid is stored in the clear")
+            SecretCodec.plaintextFallback(password)
+        }
         prefs.edit().putString(KEY_PREFIX + ssid, stored).apply()
     }
 

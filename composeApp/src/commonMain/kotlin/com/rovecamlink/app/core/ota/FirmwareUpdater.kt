@@ -4,6 +4,7 @@ import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogLevel
 import com.rovecamlink.app.core.log.LogTag
+import com.rovecamlink.app.core.storage.sanitizeFileName
 import com.rovecamlink.app.core.transport.CameraHttp
 import com.rovecamlink.app.core.wifi.WifiController
 import okio.FileSystem
@@ -97,8 +98,12 @@ class FirmwareUpdater(
         pruneOtherPackages(dest)
         val fs = FileSystem.SYSTEM
         val already = runCatching { fs.metadata(dest).size }.getOrNull() ?: 0L
-        // Only resume into something that is genuinely a prefix of this package. A
-        // leftover from another build, or one that is already complete, restarts at 0.
+        // Resume only into a file that is *shorter* than the size the index declared (or into
+        // one whose declared size is unknown): that length is the only evidence a leftover is a
+        // genuine prefix of this package. The bytes are never re-verified against the server —
+        // there is no cheap way to hash a URL prefix — so this rests on the file name being
+        // build-specific: a different build lands under a different name and is never resumed
+        // into. A file that is already complete restarts at 0.
         val resumable = already > 0L && (offer.sizeBytes <= 0L || already < offer.sizeBytes)
         if (already > 0L && !resumable) {
             Diag.info(LogTag.OTA, "${dest.name} already holds $already bytes; restarting from zero")
@@ -167,24 +172,42 @@ class FirmwareUpdater(
 
     companion object {
         /**
+         * Windows reserves these device names even with an extension attached (`CON.zip` is
+         * still the console), so a cache file must not be allowed to take one. Unreachable on
+         * the Android/iOS file systems this app runs on day to day, but the desktop JVM build
+         * shares the same cache code.
+         */
+        private val WINDOWS_RESERVED_NAMES: Set<String> = buildSet {
+            addAll(listOf("CON", "PRN", "AUX", "NUL"))
+            for (i in 1..9) {
+                add("COM$i")
+                add("LPT$i")
+            }
+        }
+
+        /**
          * Keep a server-supplied file name inside the cache directory.
          *
-         * The name is the last path segment of a URL the vendor controls, so it is
-         * treated as untrusted input (`docs/05` C-3 is the vendor making exactly this
-         * mistake on their side). Separators and traversal are removed, but **dots that
-         * are part of a real name survive**: the extension is load-bearing here — the
-         * camera is handed `XTUS7PRO_20.8.6.1.20260910.G.zip` verbatim by the official
-         * client, and this app sends that same string in the 8080 header, so stripping
-         * the `.zip` would be a change of protocol, not a hardening step.
+         * The name is the last path segment of a URL the vendor controls, so it is treated as
+         * untrusted input (`docs/05` C-3 is the vendor making exactly this mistake on their
+         * side). It is reduced by the shared [sanitizeFileName] — the single place where a
+         * device- or server-supplied name becomes a safe basename — so the media path and the
+         * firmware path can never disagree about what "safe" means, and the Windows-illegal set
+         * (`< > : " / \ | ? *`) plus control characters are all covered. **Dots that are part of
+         * a real name survive** (only `..` becomes `_`): the extension is load-bearing here — the
+         * camera is handed `XTUS7PRO_20.8.6.1.20260910.G.zip` verbatim by the official client,
+         * and this app sends that same string in the 8080 header, so stripping the `.zip` would
+         * be a change of protocol, not a hardening step.
+         *
+         * Two deltas on top of [sanitizeFileName]: a blank name falls back to `firmware` (this is
+         * a firmware cache, not a downloads folder), and a name that would land on a Windows
+         * reserved device name gets a `_` prefix.
          */
         fun safePackageName(raw: String): String {
-            val base = raw.replace('\\', '/').substringAfterLast('/').trim()
-            val allowed = base.filter { !it.isISOControl() && it != '/' && it != ':' }
-            // Collapse every dot run to a single dot so ".." cannot survive as traversal,
-            // then drop leading/trailing dots left over from that collapse.
-            val collapsed = allowed.replace(Regex("\\.{2,}"), ".").trim('.')
-            val name = if (collapsed.isBlank()) "firmware" else collapsed
-            return name.take(80)
+            val cleaned = sanitizeFileName(raw)
+            val name = if (cleaned == "download") "firmware" else cleaned
+            val stem = name.substringBefore('.').uppercase()
+            return if (stem in WINDOWS_RESERVED_NAMES) "_$name" else name
         }
     }
 }

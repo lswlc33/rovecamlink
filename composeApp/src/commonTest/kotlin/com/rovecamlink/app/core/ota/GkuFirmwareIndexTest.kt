@@ -179,8 +179,10 @@ class GkuFirmwareIndexTest {
         assertEquals("a", FirmwareUpdater.safePackageName("../../a"))
         assertEquals("firmware", FirmwareUpdater.safePackageName(""))
         assertEquals("firmware", FirmwareUpdater.safePackageName("///"))
-        // A control character and a drive-style colon are dropped outright, not
-        // substituted — nothing a server sends can become a separator on any platform.
-        assertEquals("azip", FirmwareUpdater.safePackageName("a\u0000:zip"))
+        // The shared sanitiser replaces a control character and a drive-style colon with "_"
+        // rather than dropping them — either way nothing a server sends survives as a separator.
+        assertEquals("a__zip", FirmwareUpdater.safePackageName("a\u0000:zip"))
+        // A Windows reserved device name cannot be taken as a cache file name either.
+        assertEquals("_CON.zip", FirmwareUpdater.safePackageName("CON.zip"))
     }
 }

@@ -28,7 +28,7 @@ object PermissionBridge {
     private class Waiter(val permissions: Array<String>, val deliver: (Boolean) -> Unit)
 
     fun attach(l: (Array<String>) -> Unit) {
-        val restart = synchronized(lock) { launcher = l; inFlight }
+        val restart = synchronized(lock) { launcher = l; inFlight.also { inFlight = null } }
         // A request made before the Activity existed (or after it came back) can only
         // be answered once a launcher exists again.
         restart?.let { deliver(it, granted = false) }
@@ -75,7 +75,11 @@ object PermissionBridge {
                     false
                 }
             }
-            if (launchNow) try { l(needed) } catch (t: Throwable) { deliver(waiter, false); startNext() }
+            if (launchNow) try { l(needed) } catch (t: Throwable) {
+                deliver(waiter, false)
+                synchronized(lock) { if (inFlight === waiter) inFlight = null }
+                startNext()
+            }
         }
     }
 
@@ -89,6 +93,7 @@ object PermissionBridge {
             l(next.permissions)
         } catch (t: Throwable) {
             deliver(next, false)
+            synchronized(lock) { if (inFlight === next) inFlight = null }
             startNext()
         }
     }

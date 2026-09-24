@@ -18,11 +18,15 @@ fun parseWifiQr(raw: String): QrWifiCredentials? {
 
     // Android standard: WIFI:T:WPA;S:XTUCam_f9e5e2;P:12345678;;
     if (text.startsWith("WIFI:", ignoreCase = true)) {
-        val fields = text.substringAfter(':')
-            .split(';')
+        val fields = splitUnescaped(text.substringAfter(':'), ';')
             .mapNotNull { part ->
                 val idx = part.indexOf(':')
-                if (idx <= 0) null else part.substring(0, idx).trim().uppercase() to part.substring(idx + 1).trim()
+                if (idx <= 0) {
+                    null
+                } else {
+                    part.substring(0, idx).trim().uppercase() to
+                        unescapeWifiField(part.substring(idx + 1)).trim()
+                }
             }
             .toMap()
         val ssid = fields["S"]?.takeIf { it.isNotEmpty() } ?: return null
@@ -64,4 +68,54 @@ private fun JsonObject.string(vararg keys: String): String? {
         if (element is JsonPrimitive && element.isString) return element.content
     }
     return null
+}
+
+/**
+ * Splits on [delimiter] only where it is not escaped, leaving the escape sequences in
+ * place. The Android `WIFI:` scheme escapes `\`, `;`, `,`, `:` and `"` inside a value, so
+ * `S:My\;Cam` is one field and not two; decoding first would lose the difference between a
+ * literal `;` and the field separator, which is why [unescapeWifiField] runs afterwards.
+ */
+private fun splitUnescaped(text: String, delimiter: Char): List<String> {
+    val parts = mutableListOf<String>()
+    val current = StringBuilder()
+    var i = 0
+    while (i < text.length) {
+        val c = text[i]
+        when {
+            c == '\\' && i + 1 < text.length -> {
+                current.append(c).append(text[i + 1])
+                i += 2
+            }
+            c == delimiter -> {
+                parts += current.toString()
+                current.clear()
+                i++
+            }
+            else -> {
+                current.append(c)
+                i++
+            }
+        }
+    }
+    parts += current.toString()
+    return parts
+}
+
+/** Decodes the `WIFI:` escapes: `\;` `\,` `\:` `\"` `\\` become the literal character. */
+private fun unescapeWifiField(value: String): String {
+    if ('\\' !in value) return value
+    val out = StringBuilder(value.length)
+    var i = 0
+    while (i < value.length) {
+        val c = value[i]
+        if (c == '\\' && i + 1 < value.length) {
+            out.append(value[i + 1])
+            i += 2
+        } else {
+            out.append(c)
+            i++
+        }
+    }
+    return out.toString()
 }

@@ -36,7 +36,11 @@ import okio.openZip
  */
 object FirmwareImage {
 
-    /** Bytes that must be read to cover the header: `0x54` + 32. */
+    /**
+     * Bytes read to cover the header. The `0x10` field says the header block is 256 bytes,
+     * and the last field we read (version, at `0x54` for 32 bytes) ends at offset 116 — so
+     * 256 covers the whole block with room to spare.
+     */
     const val HEADER_BYTES = 256
 
     private val MAGIC = byteArrayOf(
@@ -109,14 +113,22 @@ object FirmwareImage {
      *
      * [expectedModel] is the camera's own model in the same whitespace-stripped form the
      * firmware index uses ([GkuFirmwareIndex.firmwareModelOf]); null means the camera did
-     * not report one, in which case the model cannot be checked and only the length is —
-     * which is reported honestly rather than treated as a pass.
+     * not report one, in which case the model cannot be checked, only the length is, and
+     * the result is [Check.Ok] — a null model is "not checkable", not "mismatched" (pinned
+     * by `a model mismatch outranks nothing` in the tests).
+     *
+     * The length check can never be skipped: a declared total of 0 means the field the
+     * image uses to describe its own size is missing or unset, so the file cannot be shown
+     * to be complete and is refused rather than waved through on a technicality.
      */
     fun judge(header: Header?, actualBytes: Long, expectedModel: String?): Check {
         if (header == null) {
             return Check.Unrecognised("文件里没有可识别的固件头（前 256 字节不是已知的镜像头）")
         }
-        if (header.declaredBytes > 0L && actualBytes > 0L && header.declaredBytes != actualBytes) {
+        if (header.declaredBytes <= 0L) {
+            return Check.Unrecognised("固件头的总长字段不可信（为 0），无法确认文件是否完整")
+        }
+        if (actualBytes > 0L && header.declaredBytes != actualBytes) {
             return Check.Truncated(header.declaredBytes, actualBytes)
         }
         if (expectedModel != null && header.model.uppercase() != expectedModel.uppercase()) {
@@ -152,6 +164,8 @@ object FirmwareImage {
         // holds several, the largest is the image and the rest are notes. The entry's
         // *uncompressed* length is what the header's total-length field describes, which is
         // why this is the metadata size and not the zip's size on disk.
+        // No close(): okio's common `FileSystem` exposes no close(), so the ZipFileSystem
+        // handle cannot be released from commonMain. Noted, not silently ignored.
         val image = zip.listRecursively("/".toPath())
             .mapNotNull { entry ->
                 val meta = zip.metadataOrNull(entry) ?: return@mapNotNull null
@@ -165,7 +179,7 @@ object FirmwareImage {
     private fun head(fs: FileSystem, path: Path, total: Long): ByteArray =
         fs.read(path) { readByteArray(minOf(HEADER_BYTES.toLong(), total)) }
 
-    /** Little-endian u32; 0 when the field is absent, which the judge treats as "unstated". */
+    /** Little-endian u32; 0 when the field is absent from [bytes]. */
     private fun readU32(bytes: ByteArray, at: Int): Long {
         if (at + 4 > bytes.size) return 0L
         return (bytes[at].toLong() and 0xFF) or

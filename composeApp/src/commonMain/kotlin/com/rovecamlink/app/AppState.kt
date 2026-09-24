@@ -62,6 +62,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.datetime.Clock
 import okio.Path
+import kotlin.concurrent.Volatile
 import org.jetbrains.compose.resources.decodeToImageBitmap
 
 /** High-level connection lifecycle phase, surfaced in the UI. */
@@ -631,6 +632,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * thread that builds the export. So the UI refreshes this snapshot and the logger
      * only ever reads the already-built list.
      */
+    @Volatile
     private var envSnapshot: List<Pair<String, String>> = emptyList()
 
     /**
@@ -1176,14 +1178,23 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         // Let the plugin forget firmware facts it cached for this host, so swapping
         // cameras on the same 192.168.0.1 cannot serve the previous model's tables.
         val closing = session
-        if (closing != null) runCatching { protocol?.onSessionClosed(closing) }
+        if (closing != null) {
+            runCatching { protocol?.onSessionClosed(closing) }
+                .onFailure {
+                    if (it is kotlinx.coroutines.CancellationException) throw it
+                    Diag.at(LogLevel.WARN, LogTag.PROTO, "onSessionClosed failed ${Diag.causeChain(it)}")
+                }
+        }
         session = null
         sessionOverCameraWifi = false
         previewFullscreen = false
         deviceStatus = null
         deviceInfo = null
         otaState = OtaState.Idle
-        otaCoordinator = null
+        // Tear the coordinator (and any in-flight OTA job) down explicitly, exactly like
+        // every other exit from OTA does: dropping the reference alone would leave its
+        // state machine and the transport it holds running.
+        cancelOtaWork("disconnect")
         // Belongs to the camera that just went away, and it is a credential: leaving it
         // set would show the previous camera's hotspot name and passphrase on the next
         // connect until somebody pressed 读取 again.
@@ -1591,6 +1602,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 // shutter, and dropped outright while the lane is cooling down.
                 val bytes = runCatching {
                     withCameraRequest(CameraRequestClass.Enumerate) { proto.thumbnail(s, file) }
+                }.onFailure { err ->
+                    if (err is kotlinx.coroutines.CancellationException) throw err
+                    Diag.d(LogTag.FILE) { "thumb fetch failed ${file.name} ${Diag.causeChain(err)}" }
                 }.getOrNull()
                 val bitmap = bytes?.let {
                     withContext(Dispatchers.Default) {
@@ -1801,7 +1815,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     "ssid=${info.ssid} keys=${info.raw.size}"
             }
             Diag.v(LogTag.DEV) {
-                "device raw ${info.raw.entries.joinToString(",") { (k, v) -> "$k=${LogFormat.safe(v)}" }}"
+                "device raw ${info.raw.entries.joinToString(",") { (k, v) -> "$k=${LogFormat.field(v, Diag.config.captureSecrets)}" }}"
             }
         }
         CmdResult.Ok
@@ -1842,12 +1856,28 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             thumbnails.clear()
             thumbSeen.clear()
             thumbFailedAt.clear()
-            val relisted = proto.listFiles(s, 0, LISTING_PAGE)
-            files = relisted
-            filesExhausted = relisted.size < LISTING_PAGE
             // B1: stamp the format so the settings page can say how long the card has run.
+            // Written before the re-list: the format itself succeeded, and a failed
+            // re-list must neither read as "format failed" nor lose the timestamp.
             graph.prefs.putLong(formatKey(s), kotlinx.datetime.Clock.System.now().toEpochMilliseconds())
+            // Re-listing is best-effort: the erase already happened, so a listing error is
+            // logged and the grid is left empty rather than bubbling up to runOp.
+            runCatching { proto.listFiles(s, 0, LISTING_PAGE) }
+                .onSuccess { relisted ->
+                    files = relisted
+                    filesExhausted = relisted.size < LISTING_PAGE
+                }
+                .onFailure {
+                    if (it is kotlinx.coroutines.CancellationException) throw it
+                    Diag.at(LogLevel.WARN, LogTag.FILE, "format ok but re-list failed ${Diag.causeChain(it)}")
+                    files = emptyList()
+                    filesExhausted = true
+                }
             runCatching { deviceStatus = proto.getStatus(s) }
+                .onFailure {
+                    if (it is kotlinx.coroutines.CancellationException) throw it
+                    Diag.d(LogTag.STATE) { "post-format status refresh failed ${Diag.causeChain(it)}" }
+                }
             Diag.i(LogTag.FILE) { "format done, listing now ${files.size} files" }
         }
         r
