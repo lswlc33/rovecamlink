@@ -371,14 +371,16 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                     MediaViewer(state)
                 }
             }
+
+            // Inside the shell's own Box, and last so it sits above the viewer too: the
+            // connect attempt is blocked on this answer, so it has to be the topmost thing
+            // on screen. It used to be emitted *after* the theme, as a sibling of the whole
+            // shell — and in that position it never appeared at all: the 2026-09-24 log says
+            // "vpn prompt shown, waiting up to 60000ms" while the screen stayed empty and the
+            // connect sat for 36s until the app was restarted.
+            if (state.vpnPromptOpen) VpnPromptDialog(state)
         }
     }
-
-    // The connect-time VPN question, hosted here rather than on the connection tab
-    // because the attempt can start from anywhere — an auto-connect fires the moment
-    // a camera hotspot the user joined in Settings appears, and a dialog that only
-    // exists on one tab would leave the attempt waiting behind another.
-    if (state.vpnPromptOpen) VpnPromptDialog(state)
 }
 
 /**
