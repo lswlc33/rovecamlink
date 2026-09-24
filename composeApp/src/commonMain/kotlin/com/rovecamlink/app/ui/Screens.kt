@@ -31,6 +31,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -314,6 +315,10 @@ private fun OtaState.otaLabel(): String = when (this) {
 
 @Composable
 fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
+    // Leaving the page drops the decoded previews with it. They are the largest thing this
+    // app holds (a session's worth of 3 MP bitmaps), and they are only useful while this
+    // grid is the one on screen (2026-09-24 request).
+    DisposableEffect(Unit) { onDispose { state.clearThumbnailCache() } }
     // Deleting is irreversible on the camera, so it goes through a confirm dialog.
     var pendingDelete by remember { mutableStateOf<RemoteFile?>(null) }
     var pendingBatchDelete by remember { mutableStateOf(false) }

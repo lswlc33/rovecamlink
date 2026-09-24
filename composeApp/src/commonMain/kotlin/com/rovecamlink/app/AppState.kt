@@ -1813,6 +1813,18 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         }
     }
 
+    /**
+     * Drop the decoded previews, their eviction/failure bookkeeping, and the staged preview
+     * files. Called when the files page leaves the composition: the bitmaps are the largest
+     * thing this app holds and a session's worth is only useful while that grid is on screen.
+     */
+    fun clearThumbnailCache() {
+        thumbnails.clear()
+        thumbSeen.clear()
+        thumbFailedAt.clear()
+        clearPreviewFiles()
+    }
+
     /** Drop every per-file cache the grid reads, after the camera's card is emptied. */
     private fun clearFileCaches() {
         files = emptyList()
