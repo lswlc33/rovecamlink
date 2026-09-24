@@ -86,6 +86,7 @@ fun MediaViewer(state: AppState) {
     val transfer = state.downloadState(file.name)
     var failed by remember(file.name) { mutableStateOf(false) }
     var retryNonce by remember(file.name) { mutableStateOf(0) }
+    var zoomed by remember(file.name) { mutableStateOf(false) }
 
     Box(
         Modifier
@@ -94,14 +95,7 @@ fun MediaViewer(state: AppState) {
             .systemBarsPadding(),
     ) {
         when {
-            localPath != null -> {
-                if (file.type == FileType.VIDEO) {
-                    VideoStage(localPath, file)
-                } else {
-                    PhotoStage(localPath, file, retryNonce) { failed = it }
-                }
-            }
-            transfer == com.rovecamlink.app.DownloadItem.State.Failed || failed -> {
+            failed || transfer == com.rovecamlink.app.DownloadItem.State.Failed -> {
                 ViewerNotice(
                     text = stringResource(Res.string.viewer_cannot_open),
                     actionLabel = stringResource(Res.string.viewer_retry),
@@ -111,6 +105,19 @@ fun MediaViewer(state: AppState) {
                         state.download(file, force = true)
                     },
                 )
+            }
+            localPath != null -> {
+                if (file.type == FileType.VIDEO) {
+                    VideoStage(localPath, file)
+                } else {
+                    PhotoStage(
+                        localPath = localPath,
+                        file = file,
+                        retryNonce = retryNonce,
+                        onFailed = { failed = it },
+                        onZoomChanged = { zoomed = it },
+                    )
+                }
             }
             else -> {
                 ViewerSpinner(stringResource(Res.string.viewer_loading))
@@ -171,7 +178,7 @@ fun MediaViewer(state: AppState) {
         // The swipe layer is last so it sits above the image but below nothing else that
         // matters; a drag shorter than the threshold is left to the stages themselves,
         // which is what lets a zoomed photo pan without also changing frames.
-        SwipeToStep(state) { delta ->
+        SwipeToStep(state, enabled = !zoomed) { delta ->
             haptics.tick()
             state.stepViewer(delta)
         }
@@ -187,21 +194,27 @@ fun MediaViewer(state: AppState) {
  * [SWIPE_STEP_PX], and lets everything else through.
  */
 @Composable
-private fun SwipeToStep(state: AppState, onStep: (Int) -> Unit) {
+private fun SwipeToStep(state: AppState, enabled: Boolean, onStep: (Int) -> Unit) {
     var drag by remember { mutableFloatStateOf(0f) }
     Box(
         Modifier
             .fillMaxSize()
-            .pointerInput(state.viewer?.index) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                        val step = if (drag <= -SWIPE_STEP_PX) 1 else if (drag >= SWIPE_STEP_PX) -1 else 0
-                        if (step != 0) onStep(step)
-                        drag = 0f
-                    },
-                    onDragCancel = { drag = 0f },
-                ) { _, amount -> drag += amount }
-            },
+            .then(
+                if (enabled) {
+                    Modifier.pointerInput(state.viewer?.index) {
+                        detectHorizontalDragGestures(
+                            onDragEnd = {
+                                val step = if (drag <= -SWIPE_STEP_PX) 1 else if (drag >= SWIPE_STEP_PX) -1 else 0
+                                if (step != 0) onStep(step)
+                                drag = 0f
+                            },
+                            onDragCancel = { drag = 0f },
+                        ) { _, amount -> drag += amount }
+                    }
+                } else {
+                    Modifier
+                },
+            ),
     )
 }
 
@@ -226,6 +239,7 @@ private fun PhotoStage(
     file: RemoteFile,
     retryNonce: Int,
     onFailed: (Boolean) -> Unit,
+    onZoomChanged: (Boolean) -> Unit,
 ) {
     var bitmap by remember(localPath, retryNonce) { mutableStateOf<ImageBitmap?>(null) }
     var scale by remember(localPath) { mutableFloatStateOf(1f) }
@@ -277,6 +291,7 @@ private fun PhotoStage(
                     detectTransformGestures { _, pan, zoom, _ ->
                         val next = (scale * zoom).coerceIn(1f, 6f)
                         scale = next
+                        onZoomChanged(next > 1f)
                         if (next > 1f) {
                             offsetX += pan.x
                             offsetY += pan.y
@@ -296,6 +311,7 @@ private fun PhotoStage(
                     // useful on a phone and needs no second control on screen.
                     val next = if (scale > 1f) 1f else 2f
                     scale = next
+                    onZoomChanged(next > 1f)
                     if (next == 1f) {
                         offsetX = 0f
                         offsetY = 0f

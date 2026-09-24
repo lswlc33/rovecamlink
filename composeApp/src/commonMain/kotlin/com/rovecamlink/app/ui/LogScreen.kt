@@ -286,7 +286,10 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
         // card, separated by `HorizontalDivider` — because the tail can be 1 200 lines
         // long and one card holding them all would compose every one of them. Inset by
         // the card's own 12dp so the block lines up with the sections above it.
-        itemsIndexed(records) { index, rec ->
+        // Keyed by the record's own sequence number: the tail is re-read as it grows, and
+        // index keys would let a new line steal the previous row's state and force every
+        // row below it to recompose.
+        itemsIndexed(records, key = { _, rec -> rec.seq }) { index, rec ->
             Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
                 if (index > 0) HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 LogLine(rec) { detail = rec }

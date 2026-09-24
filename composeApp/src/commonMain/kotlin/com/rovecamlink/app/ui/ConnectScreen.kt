@@ -38,6 +38,7 @@ import com.rovecamlink.app.err_bluetooth_unsupported
 import com.rovecamlink.app.hint_ble_wake
 import com.rovecamlink.app.hint_connect_choice
 import com.rovecamlink.app.hint_last_refresh
+import com.rovecamlink.app.label_ble_rssi
 import com.rovecamlink.app.label_bluetooth_cameras
 import com.rovecamlink.app.label_bluetooth_count
 import com.rovecamlink.app.label_current_camera_wifi_short
@@ -315,7 +316,8 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
                     val paired = state.provisioning.isPaired(cam)
                     ArrowPreference(
                         title = cam.name,
-                        summary = "蓝牙 ${cam.rssi} dBm" + if (paired) " · $savedLbl" else "",
+                        summary = stringResource(Res.string.label_ble_rssi, cam.rssi) +
+                            if (paired) " · $savedLbl" else "",
                         onClick = { state.provisioning.connect(cam) },
                         enabled = !busy,
                     )

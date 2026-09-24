@@ -659,10 +659,10 @@ fun LazyListScope.notConnectedItem() {
  * the files page's 筛选/排序/样式) keeps that toggle in its overflow instead, because a
  * row of four icons would push the title off a 360dp bar.
  *
- * The overflow is miuix's own [OverlayListPopup] + [ListPopupColumn] + [DropdownImpl],
- * anchored to the ⋯ button — the same three pieces the library's own
- * `OverlayDropdownPopup` is built from. 0.9.4 ships no one-call `IconDropdownMenu`, so the
- * three are assembled here rather than reached for.
+ * An icon that offers choices uses miuix's own [OverlayIconDropdownMenu], which owns the
+ * open state and closes itself on a pick. The ⋯ overflow has no one-call equivalent, so its
+ * rows are assembled here from [OverlayListPopup] + [ListPopupColumn] + [DropdownImpl] —
+ * the same three pieces the library's own `OverlayDropdownPopup` is built from.
  *
  * `actions` is the library's icon slot and nothing else, so the connection state is not
  * a chip here — it is the bar's second line. See [connectionStatus].
@@ -683,7 +683,6 @@ fun RowScope.AppBarActions(
     }
     // With icons on the bar, diagnostics moves into the overflow so there is room for them;
     // the label is the same row the menu-driven pages already show.
-    val icons = if (appBarIcons.isEmpty()) emptyList() else appBarIcons
     val rows = if (appBarIcons.isEmpty()) {
         menuItems
     } else {
@@ -692,7 +691,7 @@ fun RowScope.AppBarActions(
             checked = state.diagnosticsOpen,
         ) { state.openDiagnostics() }
     }
-    icons.forEach { entry ->
+    appBarIcons.forEach { entry ->
         val dropdown = entry.dropdown
         if (dropdown != null) {
             // The library anchors and toggles the popup itself, so there is no local `expanded`
@@ -797,9 +796,12 @@ fun RowScope.AppBarActions(
                 }
             }
         }
-    } else if (appBarIcons.isEmpty()) {
-        // No rows and no icons: diagnostics *is* the bar, and one tap both opens and closes
-        // it. Checked above rather than below so the icon's tint reflects [state.diagnosticsOpen].
+    }
+    if (appBarIcons.isEmpty()) {
+        // No icons of its own: diagnostics is the bar's single trailing control, one tap
+        // both opens and closes it. This stands beside the ⋯ overflow rather than being
+        // its `else`: a page with menu rows but no icons (Live's 自动跟随, Log's 日志设置)
+        // took the overflow branch, and the switch was then reachable from nowhere.
         diagnosticsIcon.onClick?.let { toggle ->
             IconButton(
                 onClick = {

@@ -28,7 +28,9 @@ import com.rovecamlink.app.log_note_export_failed
 import com.rovecamlink.app.log_note_saved
 import com.rovecamlink.app.log_note_share_unavailable
 import com.rovecamlink.app.log_note_shared
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import top.yukonga.miuix.kmp.basic.Icon
@@ -73,21 +75,27 @@ fun AboutScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Uni
         scope.launch {
             busy = true
             try {
-                // The header has to describe the session as it is now: the snapshot is
-                // otherwise only refreshed while the log page is open.
-                state.refreshDiagnosticsEnv()
-                Diag.awaitDrained()
-                val text = Diag.exportFullBundle()
-                val name = Diag.exportFullName()
-                val size = LogFormat.size(text.length.toLong())
-                val outcome = if (store.share(name, text)) {
-                    getString(Res.string.log_note_shared, name, size)
-                } else {
-                    store.save(name, text)?.let { getString(Res.string.log_note_saved, it) }
-                        ?: getString(Res.string.log_note_share_unavailable)
+                // The export has to survive leaving the page: this scope is tied to the
+                // composition, so a back gesture cancels it — and a bundle cut off
+                // mid-share is worse than no bundle. NonCancellable lets the one-shot
+                // export finish even after the screen is gone.
+                withContext(NonCancellable) {
+                    // The header has to describe the session as it is now: the snapshot is
+                    // otherwise only refreshed while the log page is open.
+                    state.refreshDiagnosticsEnv()
+                    Diag.awaitDrained()
+                    val text = Diag.exportFullBundle()
+                    val name = Diag.exportFullName()
+                    val size = LogFormat.size(text.length.toLong())
+                    val outcome = if (store.share(name, text)) {
+                        getString(Res.string.log_note_shared, name, size)
+                    } else {
+                        store.save(name, text)?.let { getString(Res.string.log_note_saved, it) }
+                            ?: getString(Res.string.log_note_share_unavailable)
+                    }
+                    note = outcome
+                    Diag.info(LogTag.LOG, "report bundle: $outcome")
                 }
-                note = outcome
-                Diag.info(LogTag.LOG, "report bundle: $outcome")
             } catch (t: Throwable) {
                 note = getString(Res.string.log_note_export_failed, t.message ?: "?")
                 Diag.error(LogTag.LOG, "report bundle failed ${Diag.causeChain(t)}")

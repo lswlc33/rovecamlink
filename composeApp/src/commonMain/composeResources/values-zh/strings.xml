@@ -207,6 +207,7 @@
     <string name="phase_scanning_bluetooth">正在搜索相机</string>
     <string name="phase_waking_camera">正在唤醒相机</string>
     <string name="label_bluetooth_cameras">附近的相机（蓝牙）</string>
+    <string name="label_ble_rssi">蓝牙 %1$d dBm</string>
     <string name="label_wifi_cameras">范围内的相机热点</string>
     <string name="status_waking_camera">正在让相机打开热点…（第一次连这台相机时，请在相机屏幕上确认配对码）</string>
     <string name="err_bluetooth_off">手机蓝牙未开启——打开后才能唤醒相机。</string>

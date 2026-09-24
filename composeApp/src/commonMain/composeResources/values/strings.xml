@@ -207,6 +207,7 @@
     <string name="phase_scanning_bluetooth">Looking for cameras</string>
     <string name="phase_waking_camera">Waking the camera</string>
     <string name="label_bluetooth_cameras">Cameras nearby (Bluetooth)</string>
+    <string name="label_ble_rssi">Bluetooth %1$d dBm</string>
     <string name="label_wifi_cameras">Camera hotspots in range</string>
     <string name="status_waking_camera">Asking the camera to open its hotspot… (the first time, confirm the code on the camera)</string>
     <string name="err_bluetooth_off">Bluetooth is off on this phone — turn it on to wake the camera.</string>
