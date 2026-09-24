@@ -198,7 +198,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * content while it is open: with the sub-tab remembered inside the screen, opening 关于
      * from 软件 and coming back landed on 相机, which reads as "it forgot where I was". The
      * 2026-09-24 page-transition work made that visible; the state simply outlives the screen
-     * now, the same way [favorites] and the page stack do.
+     * now, the same way the page stack does.
      */
     var settingsTab by mutableStateOf(0)
         internal set
@@ -845,7 +845,6 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         currentWifiSsid?.takeIf { it.isNotBlank() } ?: session.host
 
     private fun formatKey(session: CameraSession) = "fmt_" + cameraKey(session)
-    private fun favKey(session: CameraSession) = "fav_" + cameraKey(session)
 
     /** When the connected camera's card was last formatted, or null if never watched here. */
     fun lastFormatAt(): Long? = session?.let { graph.prefs.getLong(formatKey(it)) }
@@ -861,32 +860,6 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val now = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
         ((now - at) / 86_400_000L).toInt().coerceAtLeast(0)
     }
-
-    /** Starred file names of the connected camera (B7). */
-    var favorites by mutableStateOf<Set<String>>(emptySet())
-        private set
-
-    fun isFavorite(name: String): Boolean = name in favorites
-
-    /** Star or unstar [name], persisting the set for the camera it belongs to. */
-    fun toggleFavorite(name: String) {
-        val next = if (name in favorites) favorites - name else favorites + name
-        favorites = next
-        session?.let { graph.prefs.putString(favKey(it), next.joinToString("\n")) }
-        // Diag.debug, not the shorthand Diag.d — that one is suspend, and starring must
-        // stay callable from a plain click handler.
-        Diag.debug(
-            LogTag.FILE,
-            "favourite ${if (name in next) "+" else "-"} ${LogFormat.safe(name)} (${next.size} starred)",
-        )
-    }
-
-    private fun loadFavorites(session: CameraSession): Set<String> =
-        graph.prefs.getString(favKey(session))
-            ?.split('\n')
-            ?.filter { it.isNotBlank() }
-            ?.toSet()
-            ?: emptySet()
 
     /**
      * A row the user tapped in the Wi-Fi list. Open network or a passphrase we hold →
@@ -1107,9 +1080,6 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             // hotspot that answered and then failed to identify is not a camera worth
             // offering again next time.
             knownSsid?.let { graph.wifiCredentials.noteConnected(it) }
-            // The starred set belongs to whichever camera is up, so it is read when the
-            // session is, not cached across a swap.
-            favorites = loadFavorites(s)
             // The radios have done their job: an LE scan still running competes with
             // the hotspot for the combo chip on some phones, and a Wi-Fi scan request
             // now costs the camera a deauth cycle for no reason.
@@ -1194,9 +1164,6 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         deviceInfo = null
         otaState = OtaState.Idle
         otaCoordinator = null
-        // The starred set belonged to the camera that just went away; leaving it would
-        // star same-named files on the next one.
-        favorites = emptySet()
         // Belongs to the camera that just went away, and it is a credential: leaving it
         // set would show the previous camera's hotspot name and passphrase on the next
         // connect until somebody pressed 读取 again.

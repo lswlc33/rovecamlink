@@ -55,7 +55,7 @@ class AppGraph {
     val wifiCredentials = createWifiCredentialStore()
 
     /**
-     * Loose bookkeeping that outlives a launch — the last SD format, the starred clips.
+     * Loose bookkeeping that outlives a launch — currently just the last SD format.
      * Separate from [wifiCredentials] because these are not secrets and clearing one must
      * never touch the other.
      */

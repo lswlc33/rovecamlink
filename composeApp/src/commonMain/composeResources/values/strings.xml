@@ -309,9 +309,6 @@
     <string name="hint_batch_delete_many">The selected files are removed from the camera. This cannot be undone.</string>
     <string name="action_delete_all">Delete all files</string>
     <string name="action_load_more">Load more</string>
-    <string name="action_favorites_only">Starred only</string>
-    <string name="action_star_file">Star %1$s</string>
-    <string name="action_unstar_file">Unstar %1$s</string>
     <string name="sd_format_age">Last formatted %1$d days ago.</string>
     <string name="sd_format_overdue">Last formatted %1$d days ago — worth reformatting before a trip.</string>
     <string name="sd_format_never">No format recorded on this phone yet.</string>

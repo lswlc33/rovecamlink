@@ -70,6 +70,7 @@ import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.DropdownEntry
 import top.yukonga.miuix.kmp.basic.DropdownImpl
 import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.Icon
@@ -91,6 +92,7 @@ import top.yukonga.miuix.kmp.icon.extended.ListView
 import top.yukonga.miuix.kmp.icon.extended.More
 import top.yukonga.miuix.kmp.icon.extended.Report
 import top.yukonga.miuix.kmp.icon.extended.ScreenMirroring
+import top.yukonga.miuix.kmp.menu.OverlayIconDropdownMenu
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
 import top.yukonga.miuix.kmp.overlay.OverlayListPopup
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -127,12 +129,42 @@ data class AppBarMenuItem(
  * menu rows already do. Icons still have to be few — past three the title runs out of
  * room on a 360dp phone — and any action that is a *verb on data* rather than a way of
  * looking at it still belongs in the overflow.
+ *
+ * [dropdown] is the choice list this icon opens, if it opens one. When present the icon is
+ * not a button at all: it is the anchor of a miuix [OverlayIconDropdownMenu], which owns the
+ * open state and closes itself on a pick. Both halves of the files page's bar work this way,
+ * so neither needs a flag in the screen — and the icon can never be left showing "open" after
+ * the menu has closed. An icon with neither [dropdown] nor [onClick] is inert.
  */
 data class AppBarIcon(
     val icon: ImageVector,
     val contentDescription: String,
     val checked: Boolean = false,
-    val onClick: () -> Unit,
+    val dropdown: DropdownSpec? = null,
+    val onClick: (() -> Unit)? = null,
+)
+
+/**
+ * The choice list behind an [AppBarIcon], as one or more groups.
+ *
+ * Groups are drawn with a divider between them, which is how a menu states that it asks two
+ * questions — 排序 picks a key *and* a direction, and one flat list of four would read as four
+ * alternatives to one question. A single-group dropdown is the common case.
+ *
+ * [DropdownGroup.selected] is the index of the ticked row within that group. [stayOpen] leaves
+ * the menu up after a pick, for a menu whose groups are answered independently; otherwise it
+ * closes, which is what a one-question menu should do.
+ */
+data class DropdownSpec(
+    val groups: List<DropdownGroup>,
+    val stayOpen: Boolean = false,
+)
+
+/** One group of choices inside a [DropdownSpec]. */
+data class DropdownGroup(
+    val items: List<String>,
+    val selected: Int,
+    val onSelected: (Int) -> Unit,
 )
 
 /** Horizontal inset of a section's card from the page edge. */
@@ -654,21 +686,55 @@ fun RowScope.AppBarActions(
         ) { state.openDiagnostics() }
     }
     icons.forEach { entry ->
-        IconButton(
-            onClick = {
-                haptics.tap()
-                entry.onClick()
-            },
-        ) {
-            Icon(
-                entry.icon,
-                contentDescription = entry.contentDescription,
-                tint = if (entry.checked) {
-                    MiuixTheme.colorScheme.primary
-                } else {
-                    MiuixTheme.colorScheme.onBackground
+        val dropdown = entry.dropdown
+        if (dropdown != null) {
+            // The library anchors and toggles the popup itself, so there is no local `expanded`
+            // to get out of step with it.
+            OverlayIconDropdownMenu(
+                entries = dropdown.groups.map { group ->
+                    DropdownEntry(
+                        items = group.items.mapIndexed { index, label ->
+                            DropdownItem(
+                                text = label,
+                                selected = index == group.selected,
+                                onClick = {
+                                    haptics.tick()
+                                    group.onSelected(index)
+                                },
+                            )
+                        },
+                    )
                 },
-            )
+                collapseOnSelection = !dropdown.stayOpen,
+            ) {
+                Icon(
+                    entry.icon,
+                    contentDescription = entry.contentDescription,
+                    tint = if (entry.checked) {
+                        MiuixTheme.colorScheme.primary
+                    } else {
+                        MiuixTheme.colorScheme.onBackground
+                    },
+                )
+            }
+        } else {
+            val onClick = entry.onClick ?: return@forEach
+            IconButton(
+                onClick = {
+                    haptics.tap()
+                    onClick()
+                },
+            ) {
+                Icon(
+                    entry.icon,
+                    contentDescription = entry.contentDescription,
+                    tint = if (entry.checked) {
+                        MiuixTheme.colorScheme.primary
+                    } else {
+                        MiuixTheme.colorScheme.onBackground
+                    },
+                )
+            }
         }
     }
     if (rows.isNotEmpty()) {
@@ -712,21 +778,23 @@ fun RowScope.AppBarActions(
     } else if (appBarIcons.isEmpty()) {
         // No rows and no icons: diagnostics *is* the bar, and one tap both opens and closes
         // it. Checked above rather than below so the icon's tint reflects [state.diagnosticsOpen].
-        IconButton(
-            onClick = {
-                haptics.tap()
-                diagnosticsIcon.onClick()
-            },
-        ) {
-            Icon(
-                diagnosticsIcon.icon,
-                contentDescription = diagnosticsIcon.contentDescription,
-                tint = if (diagnosticsIcon.checked) {
-                    MiuixTheme.colorScheme.primary
-                } else {
-                    MiuixTheme.colorScheme.onBackground
+        diagnosticsIcon.onClick?.let { toggle ->
+            IconButton(
+                onClick = {
+                    haptics.tap()
+                    toggle()
                 },
-            )
+            ) {
+                Icon(
+                    diagnosticsIcon.icon,
+                    contentDescription = diagnosticsIcon.contentDescription,
+                    tint = if (diagnosticsIcon.checked) {
+                        MiuixTheme.colorScheme.primary
+                    } else {
+                        MiuixTheme.colorScheme.onBackground
+                    },
+                )
+            }
         }
     }
 }

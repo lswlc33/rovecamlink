@@ -3,7 +3,7 @@ package com.rovecamlink.app.core.prefs
 /**
  * Flat key-value store for the app's own bookkeeping — facts that must survive a restart
  * but are neither the user's content nor a credential: when the SD card was last
- * formatted, which clips are starred.
+ * formatted, and similar one-liners.
  *
  * Deliberately narrow (strings and longs, one namespace, no schema) so every platform
  * actual is a few lines and nothing here can quietly grow into a database. Anything that

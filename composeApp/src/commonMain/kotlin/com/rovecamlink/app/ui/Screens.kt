@@ -237,9 +237,6 @@ import com.rovecamlink.app.message_delete_all_files
 import com.rovecamlink.app.download_eta
 import com.rovecamlink.app.permission_title
 import com.rovecamlink.app.action_load_more
-import com.rovecamlink.app.action_favorites_only
-import com.rovecamlink.app.action_star_file
-import com.rovecamlink.app.action_unstar_file
 import com.rovecamlink.app.action_read_channel
 import com.rovecamlink.app.label_wifi_channel
 import com.rovecamlink.app.section_camera_capabilities
@@ -287,8 +284,6 @@ import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Delete
 import top.yukonga.miuix.kmp.icon.extended.Download
-import top.yukonga.miuix.kmp.icon.extended.Favorites
-import top.yukonga.miuix.kmp.icon.extended.FavoritesFill
 import top.yukonga.miuix.kmp.icon.extended.Filter
 import top.yukonga.miuix.kmp.icon.extended.GridView
 import top.yukonga.miuix.kmp.icon.extended.Image
@@ -297,7 +292,6 @@ import top.yukonga.miuix.kmp.icon.extended.Ok
 import top.yukonga.miuix.kmp.icon.extended.Play
 import top.yukonga.miuix.kmp.icon.extended.Refresh
 import top.yukonga.miuix.kmp.icon.extended.Sort
-import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.preference.OverlayDropdownPreference
@@ -352,33 +346,22 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     var pendingDeleteAll by remember { mutableStateOf(false) }
     var selectMode by remember { mutableStateOf(false) }
     val selected = remember { mutableStateListOf<String>() }
-    // Every top-bar button opens its own sheet, so each holds its own flag; two open at
-    // once is not a state that exists.
-    var filterOpen by remember { mutableStateOf(false) }
-    var sortOpen by remember { mutableStateOf(false) }
-    var styleOpen by remember { mutableStateOf(false) }
 
     // The list style lives in AppState: a pushed page replaces this screen while it is
     // open, so a `remember`ed style came back as 列表 after every visit to the log. It
     // also picks the thumbnail cache depth, which is read outside the composition.
     val layout = state.fileLayout
 
-    // Filter + sort are the two bar buttons (2026-09-24 「筛选和排序、诊断这三个按钮拆成三个
-    // 按钮」). `typeFilter` == null means 全部; sorting is a key + direction pair.
+    // Filter + sort are the two bar buttons. `typeFilter` == null means 全部; sorting is a
+    // key + direction pair.
     var typeFilter by remember { mutableStateOf<FileType?>(null) }
     var sortBySize by remember { mutableStateOf(false) }
     var sortDescending by remember { mutableStateOf(true) }
-    // B7: a local, instant filter — starring costs nothing and survives the restart,
-    // so "只看收藏" is the quickest way back to the three clips worth keeping.
-    var favoritesOnly by remember { mutableStateOf(false) }
 
     // The list the page actually shows: the camera's files, filtered by type then sorted.
     // Grouping by day still happens after, so a name/size sort orders *within* each day.
-    val visibleFiles = remember(
-        state.files, typeFilter, sortBySize, sortDescending, favoritesOnly, state.favorites,
-    ) {
+    val visibleFiles = remember(state.files, typeFilter, sortBySize, sortDescending) {
         state.files
-            .filter { !favoritesOnly || state.isFavorite(it.name) }
             .filter { typeFilter == null || it.type == typeFilter }
             .sortedWith(
                 if (sortBySize) compareBy { it.sizeBytes } else compareBy { it.name },
@@ -386,7 +369,7 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
             .let { if (sortDescending) it.reversed() else it }
     }
     val groups = remember(visibleFiles) { groupFilesByDay(visibleFiles) }
-    val filterActive = typeFilter != null || sortBySize || !sortDescending || favoritesOnly
+    val filterActive = typeFilter != null || sortBySize || !sortDescending
     val selectedCount = state.files.count { selected.contains(it.name) }
     val allSelected = state.files.isNotEmpty() && state.files.all { selected.contains(it.name) }
 
@@ -399,7 +382,6 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     val deleteLabel = stringResource(Res.string.delete)
     val deleteAllLbl = stringResource(Res.string.action_delete_all)
     val loadMoreLbl = stringResource(Res.string.action_load_more)
-    val favoritesOnlyLbl = stringResource(Res.string.action_favorites_only)
     val doneLabel = stringResource(Res.string.download_done)
     val failedLabel = stringResource(Res.string.download_failed)
     val videoLbl = stringResource(Res.string.file_type_video)
@@ -498,34 +480,66 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
         title = stringResource(Res.string.tab_files),
         outerPadding = outerPadding,
         state = state,
-        // Three bar buttons, each opening its own sheet: 筛选 picks a facet, 排序 picks a
-        // key and a direction, 样式 toggles the layout. Every row shows a check mark on the
-        // active choice, so each sheet doubles as that control's state readout — which is
-        // why the summary line below the bar only has to name what is *not* the default.
+        // Two bar buttons, each opening its own dropdown: 筛选 picks a facet, 排序 picks a
+        // key and a direction. The dropdown marks the active choice, so it doubles as that
+        // control's state readout — which is why the summary line below the bar only has to
+        // name what is *not* the default.
         //
-        // 诊断 left the bar to make room (the bar holds three icons before the title runs
-        // out on a 360dp phone) and rejoined 更多, where it sits under 切换列表样式.
+        // 样式 is deliberately *not* a third button. It was, until 2026-09-24, and it drove
+        // exactly the same flag the ⋯ menu's 画廊/列表 rows drive — two bar controls for one
+        // decision. The toggle now lives only in 更多, so the bar reads as "how the list is
+        // filtered and ordered" and nothing else.
         appBarIcons = if (state.session == null) emptyList() else listOf(
             AppBarIcon(
                 icon = MiuixIcons.Filter,
                 contentDescription = filterLbl,
-                checked = typeFilter != null || favoritesOnly,
-            ) { filterOpen = true },
+                checked = typeFilter != null,
+                dropdown = DropdownSpec(
+                    groups = listOf(
+                        DropdownGroup(
+                            items = listOf(filterAllLbl, filterVideoLbl, filterPhotoLbl),
+                            selected = when (typeFilter) {
+                                FileType.VIDEO -> 1
+                                FileType.PHOTO -> 2
+                                else -> 0
+                            },
+                        ) { index ->
+                            typeFilter = when (index) {
+                                1 -> FileType.VIDEO
+                                2 -> FileType.PHOTO
+                                else -> null
+                            }
+                        },
+                    ),
+                ),
+            ),
             AppBarIcon(
                 icon = MiuixIcons.Sort,
                 contentDescription = sortLbl,
                 checked = sortBySize || !sortDescending,
-            ) { sortOpen = true },
-            AppBarIcon(
-                icon = if (layout == FileLayout.Gallery) MiuixIcons.GridView else MiuixIcons.ListView,
-                contentDescription = styleLbl,
-                checked = layout == FileLayout.Gallery,
-            ) { styleOpen = true },
+                dropdown = DropdownSpec(
+                    // Two groups, not four rows: the key and the direction are independent
+                    // choices, and a flat list of four would read as four alternatives to one
+                    // question. The divider says "two questions", and because they are answered
+                    // independently the menu stays up so both ticks can be set in one visit.
+                    groups = listOf(
+                        DropdownGroup(
+                            items = listOf(sortByNameLbl, sortBySizeLbl),
+                            selected = if (sortBySize) 1 else 0,
+                        ) { index -> sortBySize = index == 1 },
+                        DropdownGroup(
+                            items = listOf(sortAscLbl, sortDescLbl),
+                            selected = if (sortDescending) 1 else 0,
+                        ) { index -> sortDescending = index == 1 },
+                    ),
+                    stayOpen = true,
+                ),
+            ),
         ),
         // The ⋯ sheet used to hold all six actions, 删除全部 among them — so the two
         // controls the list is *read through* shared a menu with the one that wipes the
-        // card. What is left is what is genuinely occasional: the other list style, the
-        // log, and 删除全部.
+        // card. What is left is what is genuinely occasional: the list style, the log
+        // (prepended by [AppBarActions]), and 删除全部.
         menuItems = if (state.session == null) emptyList() else listOf(
             AppBarMenuItem(label = galleryLbl, checked = layout == FileLayout.Gallery) {
                 state.fileLayout = FileLayout.Gallery
@@ -573,66 +587,6 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
             }
             filesTail(state = state, chrome = chromeArgs, media = mediaArgs)
         }
-    }
-
-    // The three bar buttons. 筛选 and 排序 are one-choice sheets — the check mark is the
-    // current value — and 样式 is the same two choices the ⋯ menu offers, so the button and
-    // the menu row drive one flag and can never disagree.
-    if (filterOpen) {
-        ChoiceSheet(
-            title = filterLbl,
-            options = listOf(
-                filterAllLbl to (typeFilter == null),
-                filterVideoLbl to (typeFilter == FileType.VIDEO),
-                filterPhotoLbl to (typeFilter == FileType.PHOTO),
-            ),
-            onPick = { index ->
-                typeFilter = when (index) {
-                    1 -> FileType.VIDEO
-                    2 -> FileType.PHOTO
-                    else -> null
-                }
-            },
-            onDismiss = { filterOpen = false },
-            // Starred-only is a filter, not a sort, so it belongs on this sheet rather than
-            // on the one the 排序 button opens.
-            extraLabel = favoritesOnlyLbl,
-            extraOn = favoritesOnly,
-            onExtra = { favoritesOnly = !favoritesOnly },
-        )
-    }
-    if (sortOpen) {
-        ChoiceSheet(
-            title = sortLbl,
-            options = listOf(
-                sortByNameLbl to !sortBySize,
-                sortBySizeLbl to sortBySize,
-                sortAscLbl to !sortDescending,
-                sortDescLbl to sortDescending,
-            ),
-            onPick = { index ->
-                when (index) {
-                    0 -> sortBySize = false
-                    1 -> sortBySize = true
-                    2 -> sortDescending = false
-                    else -> sortDescending = true
-                }
-            },
-            onDismiss = { sortOpen = false },
-        )
-    }
-    if (styleOpen) {
-        ChoiceSheet(
-            title = styleLbl,
-            options = listOf(
-                listLbl to (layout == FileLayout.List),
-                galleryLbl to (layout == FileLayout.Gallery),
-            ),
-            onPick = { index ->
-                state.fileLayout = if (index == 1) FileLayout.Gallery else FileLayout.List
-            },
-            onDismiss = { styleOpen = false },
-        )
     }
 
     val target = pendingDelete
@@ -1049,88 +1003,6 @@ private fun MediaTile(
     }
 }
 
-/**
- * A top-bar button's sheet: a title and a list of choices, the active one ticked.
- *
- * The screens this replaced were dropdown menus, which is where the ⋯ menu's rows already
- * live. A bar button earns its own surface because it is *about one thing* — the sheet is
- * titled with that thing, so the rows below it need no prefix to say which control they
- * belong to (the old menu shipped rows literally labelled 「筛选与排序 · 全部」 because a
- * flat list has no room for a heading).
- *
- * [extraLabel] is one optional toggle that belongs to the same question as [options] but is
- * not one of them — 「只看收藏」 under 筛选. It stays independent of the check marks: starring
- * a clip and then filtering to videos has to show the starred videos, not either-or.
- */
-@Composable
-private fun ChoiceSheet(
-    title: String,
-    options: List<Pair<String, Boolean>>,
-    onPick: (Int) -> Unit,
-    onDismiss: () -> Unit,
-    extraLabel: String? = null,
-    extraOn: Boolean = false,
-    onExtra: () -> Unit = {},
-) {
-    val haptics = LocalHapticFeedback.current
-    OverlayBottomSheet(show = true, onDismissRequest = onDismiss) {
-        Column(Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
-            SmallTitle(title)
-            Card(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
-                // The tick rides the `end` slot, not the content slot: BasicRow's content is a
-                // ColumnScope, where `weight` is vertical — putting the label there with a
-                // weight stretches every row to the sheet's full height.
-                options.forEachIndexed { index, (label, selected) ->
-                    BasicRow(
-                        onClick = {
-                            haptics.tick()
-                            onPick(index)
-                            onDismiss()
-                        },
-                        end = {
-                            if (selected) {
-                                Icon(
-                                    MiuixIcons.Ok,
-                                    contentDescription = null,
-                                    tint = MiuixTheme.colorScheme.primary,
-                                    modifier = Modifier.size(20.dp),
-                                )
-                            }
-                        },
-                    ) {
-                        Text(
-                            text = label,
-                            fontSize = 16.sp,
-                            color = MiuixTheme.colorScheme.onBackground,
-                        )
-                    }
-                }
-            }
-            if (extraLabel != null) {
-                Card(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
-                        .padding(top = 8.dp),
-                ) {
-                    BasicRow(
-                        onClick = {
-                            haptics.toggle()
-                            onExtra()
-                        },
-                        end = { Switch(checked = extraOn, onCheckedChange = null) },
-                    ) {
-                        Text(
-                            text = extraLabel,
-                            fontSize = 16.sp,
-                            color = MiuixTheme.colorScheme.onBackground,
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 
 /** One row of the batch bar; the three actions are equal in weight. */
 @Composable
@@ -1300,26 +1172,6 @@ private fun ColumnScope.fileItem(
         // hidden rather than left there to mis-fire.
         if (!selectMode) {
             Spacer(Modifier.width(6.dp))
-            // Starring is local and instant, so it sits first and never waits on the
-            // camera; the two buttons that talk to it stay where they were.
-            val starred = state.isFavorite(f.name)
-            IconButton(
-                onClick = {
-                    haptics.toggle()
-                    state.toggleFavorite(f.name)
-                },
-                backgroundColor = Color.Transparent,
-            ) {
-                Icon(
-                    if (starred) MiuixIcons.FavoritesFill else MiuixIcons.Favorites,
-                    contentDescription = stringResource(
-                        if (starred) Res.string.action_unstar_file else Res.string.action_star_file,
-                        f.name,
-                    ),
-                    tint = if (starred) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.onSurfaceVariantSummary,
-                    modifier = Modifier.size(20.dp),
-                )
-            }
             val transfer = state.downloadState(f.name)
             if (transfer == DownloadItem.State.Running || transfer == DownloadItem.State.Queued) {
                 InfiniteProgressIndicator(size = 20.dp, strokeWidth = 2.5.dp)

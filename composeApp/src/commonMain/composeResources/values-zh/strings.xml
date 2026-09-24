@@ -308,9 +308,6 @@
     <string name="hint_batch_delete_many">选中的文件会从相机上删除，无法恢复。</string>
     <string name="action_delete_all">全部删除</string>
     <string name="action_load_more">加载更多</string>
-    <string name="action_favorites_only">只看收藏</string>
-    <string name="action_star_file">收藏 %1$s</string>
-    <string name="action_unstar_file">取消收藏 %1$s</string>
     <string name="sd_format_age">上次格式化：%1$d 天前。</string>
     <string name="sd_format_overdue">上次格式化：%1$d 天前——出门前值得重新格式化一次。</string>
     <string name="sd_format_never">这台手机上还没有格式化记录。</string>
