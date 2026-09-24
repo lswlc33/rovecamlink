@@ -527,9 +527,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             for ((name, path) in staged) {
                 downloads.removeAll { it.file.name == name }
                 runCatching { okio.FileSystem.SYSTEM.delete(path) }
-                    .onFailure { Diag.d(LogTag.FILE) { "preview cleanup failed $name ${Diag.causeChain(it)}" } }
+                    .onFailure { Diag.at(LogLevel.DEBUG, LogTag.FILE, "preview cleanup failed $name ${Diag.causeChain(it)}") }
             }
-            Diag.d(LogTag.FILE) { "viewer closed, dropped ${staged.size} preview file(s)" }
+            Diag.at(LogLevel.DEBUG, LogTag.FILE, "viewer closed, dropped ${staged.size} preview file(s)")
         }
     }
 
