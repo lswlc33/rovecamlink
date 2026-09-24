@@ -1324,15 +1324,14 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         }
         val bytes = http.getBytes(url, MAX_THUMBNAIL_BYTES)
         if (bytes != null) return bytes
-        // A `.THM` that does not answer is the normal case for a photo on this firmware
-        // (`GET …/SING0001.THM -> 500`), and without a second try every photo tile stays
-        // blank while the videos beside it work. The official app has a downscaled
-        // endpoint for exactly this: `GET http://<ip>/thumb/<path without
-        // extension>.jpg` (`docs/08 …/02-XTUGO-档案.md` §2.4). Try it before giving up.
-        val alt = HiFiles.thumbJpgPath(file.name) ?: return null
-        val altUrl = "${media(session.host, session.port)}/$alt"
-        Diag.d(LogTag.PROTO) { "thumb .THM failed for ${LogFormat.safe(file.name)}, retrying $altUrl" }
-        return http.getBytes(altUrl, MAX_THUMBNAIL_BYTES)
+        // Photos have no camera-side preview on this firmware: the card listing (2026-09-24,
+        // `GET /sd/DCIM/100XTUDV/`) shows `<name>.THM` beside every video but none beside any
+        // `.JPG`. The `.THM` request for a photo answers `500` because the file is simply not
+        // there. The `/thumb/<path>.jpg` endpoint the official app uses on its other chip
+        // branch does not exist here either (`GET …/thumb/… -> 404`), so there is nothing left
+        // to try at the URL level — a photo preview has to come from the JPEG itself, which
+        // only a downscaling decode can afford to hold (see `loadThumbnail`).
+        return null
     }
 
     override suspend fun download(
