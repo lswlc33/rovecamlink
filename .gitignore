@@ -48,3 +48,6 @@ simulator/bin/
 # Written by the desktop run and the tests: rolling diagnostic logs + staged media
 logs/
 downloads/
+
+# 小猫的本地记忆（每台机器一份，不共享）
+.workbuddy/
