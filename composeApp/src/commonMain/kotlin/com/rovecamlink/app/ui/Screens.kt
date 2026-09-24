@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,6 +53,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -106,8 +109,6 @@ import com.rovecamlink.app.hint_batch_delete_many
 import com.rovecamlink.app.hint_locked_adjust
 import com.rovecamlink.app.hint_locked_capture
 import com.rovecamlink.app.hint_locked_mode
-import com.rovecamlink.app.hint_new_password
-import com.rovecamlink.app.hint_new_ssid
 import com.rovecamlink.app.hint_photo_needs_photo_mode
 import com.rovecamlink.app.hint_quick_adjust
 import com.rovecamlink.app.hint_rotate_picture
@@ -183,19 +184,18 @@ import com.rovecamlink.app.workmode_video
 import com.rovecamlink.app.resolve
 import com.rovecamlink.app.action_check_update
 import com.rovecamlink.app.action_download_update
-import com.rovecamlink.app.action_hide_password
 import com.rovecamlink.app.action_install_now
 import com.rovecamlink.app.action_read_camera_wifi
 import com.rovecamlink.app.action_recheck_update
-import com.rovecamlink.app.action_show_password
-import com.rovecamlink.app.action_use_read_values
 import com.rovecamlink.app.confirm_install_firmware
 import com.rovecamlink.app.firmware_update_forced
+import com.rovecamlink.app.hint_ap_unsupported
 import com.rovecamlink.app.hint_wifi_read_unsupported
 import com.rovecamlink.app.label_newest_version
 import com.rovecamlink.app.label_package_size
 import com.rovecamlink.app.label_release_notes
 import com.rovecamlink.app.label_wifi_password
+import com.rovecamlink.app.label_wifi_ssid
 import com.rovecamlink.app.msg_install_firmware
 import com.rovecamlink.app.note_download_needs_internet
 import com.rovecamlink.app.note_release_notes_unavailable
@@ -220,18 +220,13 @@ import com.rovecamlink.app.message_delete_all_files
 import com.rovecamlink.app.download_eta
 import com.rovecamlink.app.permission_title
 import com.rovecamlink.app.action_load_more
-import com.rovecamlink.app.action_read_channel
 import com.rovecamlink.app.label_wifi_channel
-import com.rovecamlink.app.section_camera_capabilities
-import com.rovecamlink.app.action_read_capabilities
-import com.rovecamlink.app.label_standby_support
-import com.rovecamlink.app.status_standby_supported
 import com.rovecamlink.app.status_standby_unsupported
 import com.rovecamlink.app.status_capabilities_unknown
-import com.rovecamlink.app.label_capability_tokens
-import com.rovecamlink.app.status_capabilities_empty
 import com.rovecamlink.app.action_sleep_camera
+import com.rovecamlink.app.title_save_camera_wifi
 import com.rovecamlink.app.title_sleep_camera
+import com.rovecamlink.app.title_wifi_channel
 import com.rovecamlink.app.message_sleep_camera
 import com.rovecamlink.app.confirm_sleep
 import com.rovecamlink.app.sd_format_age
@@ -256,16 +251,19 @@ import top.yukonga.miuix.kmp.basic.Switch
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Close
 import top.yukonga.miuix.kmp.icon.extended.Delete
 import top.yukonga.miuix.kmp.icon.extended.Download
 import top.yukonga.miuix.kmp.icon.extended.Filter
+import top.yukonga.miuix.kmp.icon.extended.Hide
 import top.yukonga.miuix.kmp.icon.extended.Image
 import top.yukonga.miuix.kmp.icon.extended.Ok
 import top.yukonga.miuix.kmp.icon.extended.Play
 import top.yukonga.miuix.kmp.icon.extended.Refresh
 import top.yukonga.miuix.kmp.icon.extended.SelectAll
+import top.yukonga.miuix.kmp.icon.extended.Show
 import top.yukonga.miuix.kmp.icon.extended.Sort
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
 import top.yukonga.miuix.kmp.preference.ArrowPreference
@@ -1061,6 +1059,39 @@ private fun MediaTile(
 }
 
 
+/**
+ * A settings entry: the right-arrow row this app uses for anything that navigates, opens a
+ * dialog, or runs a command the user can see through.
+ *
+ * Settings lists are lists of entries, not of buttons — a filled button inside a card reads
+ * as something that acts *on the camera*, which is why every one of these rows stopped being
+ * a [top.yukonga.miuix.kmp.basic.Button] (2026-09-24 「设备页使用了太多不合规的按钮」). The
+ * spinner that used to sit in the button moves into the trailing slot, so a command that
+ * takes seconds still looks alive.
+ */
+@Composable
+private fun ColumnScope.entryRow(
+    title: String,
+    busy: Boolean = false,
+    enabled: Boolean = true,
+    summary: String? = null,
+    onClick: () -> Unit,
+) {
+    ArrowPreference(
+        title = title,
+        summary = summary,
+        enabled = enabled && !busy,
+        endActions = {
+            if (busy) {
+                InfiniteProgressIndicator(size = 18.dp, strokeWidth = 2.dp, orbitingDotSize = 3.dp)
+                Spacer(Modifier.width(8.dp))
+            }
+        },
+        onClick = onClick,
+    )
+}
+
+
 /** One row of the batch bar; the three actions are equal in weight. */
 @Composable
 private fun SmallButton(
@@ -1328,6 +1359,10 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
     var wifiSsid by remember { mutableStateOf("") }
     var wifiPass by remember { mutableStateOf("") }
     var wifiSubmit by remember { mutableStateOf(false) }
+    /** The save confirmation: the hotspot restarts, and that is worth one dialog. */
+    var wifiConfirm by remember { mutableStateOf(false) }
+    /** Whether the channel picker is open. */
+    var showChannel by remember { mutableStateOf(false) }
 
     /** Whether the read-back passphrase is shown in clear. Off by default. */
     var showPass by remember { mutableStateOf(false) }
@@ -1402,7 +1437,6 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
     val cancelLbl = stringResource(Res.string.cancel)
     val shortCancelLbl = stringResource(Res.string.action_cancel_short)
     val sdCardTitle = stringResource(Res.string.section_sd_card)
-    val readChannelLbl = stringResource(Res.string.action_read_channel)
     val channelLbl = stringResource(Res.string.label_wifi_channel)
     val formatSdLbl = stringResource(Res.string.action_format_sd)
     // The two OTA rows that need formatting are resolved *here*, in the composable part
@@ -1425,25 +1459,19 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
         ""
     }
     val cameraWifiTitle = stringResource(Res.string.section_camera_wifi)
-    val newSsidHint = stringResource(Res.string.hint_new_ssid)
-    val newPassHint = stringResource(Res.string.hint_new_password)
+    val wifiSsidLbl = stringResource(Res.string.label_wifi_ssid)
     val wifiRestartNote = stringResource(Res.string.note_wifi_restarts)
     val wifiPassLbl = stringResource(Res.string.label_wifi_password)
     val readWifiLbl = stringResource(Res.string.action_read_camera_wifi)
     val notReadLbl = stringResource(Res.string.status_wifi_not_read)
     val wifiReadUnsupportedLbl = stringResource(Res.string.hint_wifi_read_unsupported)
-    val showPassLbl = stringResource(Res.string.action_show_password)
-    val hidePassLbl = stringResource(Res.string.action_hide_password)
-    val prefillLbl = stringResource(Res.string.action_use_read_values)
-    // A16: the firmware's own capability tokens, and the standby row they gate (B10).
-    val capabilitiesTitle = stringResource(Res.string.section_camera_capabilities)
-    val readCapabilitiesLbl = stringResource(Res.string.action_read_capabilities)
-    val standbyLbl = stringResource(Res.string.label_standby_support)
-    val standbyYesLbl = stringResource(Res.string.status_standby_supported)
+    val wifiSaveTitle = stringResource(Res.string.title_save_camera_wifi)
+    val wifiChannelLbl = stringResource(Res.string.title_wifi_channel)
+    val apUnsupportedLbl = stringResource(Res.string.hint_ap_unsupported)
+    // A16/B10: the tokens the camera reports are no longer a list on this page — the only
+    // row that acts on one is 休眠, and it says in place why it is greyed.
     val standbyNoLbl = stringResource(Res.string.status_standby_unsupported)
     val capabilitiesUnknownLbl = stringResource(Res.string.status_capabilities_unknown)
-    val capabilityTokensLbl = stringResource(Res.string.label_capability_tokens)
-    val capabilitiesEmptyLbl = stringResource(Res.string.status_capabilities_empty)
     val sleepLbl = stringResource(Res.string.action_sleep_camera)
     val dangerTitle = stringResource(Res.string.section_danger)
     val rebootLbl = stringResource(Res.string.action_reboot_camera)
@@ -1469,6 +1497,26 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
     // open, so a `remember`ed index would come back as 相机 every time (see `settingsTab`).
     val tab = state.settingsTab
     val haptics = LocalHapticFeedback.current
+    // 相机 Wi-Fi 的写入走设备设置那一条通道，所以两个输入框和它们下面的两个按钮共用一个「忙」。
+    val wifiBusy = state.isBusy(Op.Settings)
+
+    // 设备页自己把事实读回来：进页读一次热点信息和固件能力，都走静默模式 —— 一次自动读取
+    // 不是用户的提问，答不上来不该先弹一条红横幅（只剩 读取 按钮那一次会弹，因为那是人按的）。
+    LaunchedEffect(connected, tab) {
+        if (!connected || tab != TAB_DEVICE) return@LaunchedEffect
+        if (state.canReadCameraWifi() && state.cameraWifi == null) {
+            state.readCameraWifi(reportFailure = false)
+        }
+        if (!state.capabilitiesRead) state.readDeviceCapabilities(reportFailure = false)
+    }
+
+    // 读回来的名称与密码直接落进输入框：这就是「读取」要的全部，用户不该再按第三个键把值搬过去。
+    LaunchedEffect(state.cameraWifi) {
+        val wifi = state.cameraWifi ?: return@LaunchedEffect
+        wifiSsid = wifi.ssid
+        wifiPass = wifi.password ?: ""
+        wifiSubmit = false
+    }
 
     MiuixPage(
         title = stringResource(Res.string.tab_settings),
@@ -1535,8 +1583,8 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                             }
                         }
                     }
-                    section(card = false) {
-                        actionRow(reloadLabel, busy = state.isBusy(Op.Settings)) {
+                    section {
+                        entryRow(reloadLabel, busy = state.isBusy(Op.Settings)) {
                             state.loadDeviceSettings()
                         }
                     }
@@ -1564,16 +1612,8 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                     valueItem(wifiLbl, state.displayedSsid()?.ifBlank { null } ?: "—")
                     valueItem(hostLbl, state.session?.let { "${it.host}:${it.port}" } ?: "—")
                     valueItem(sdStateTitle, if (st?.sdState == null) "—" else sdStateLbl)
-                    actionRow(
-                        syncTimeLbl,
-                        busy = state.isBusy(Op.TimeSync),
-                        onClick = { state.syncTime() },
-                    )
-                    actionRow(
-                        refreshInfoLbl,
-                        busy = state.isBusy(Op.DeviceInfo),
-                        onClick = { state.loadDeviceInfo() },
-                    )
+                    entryRow(syncTimeLbl, busy = state.isBusy(Op.TimeSync)) { state.syncTime() }
+                    entryRow(refreshInfoLbl, busy = state.isBusy(Op.DeviceInfo)) { state.loadDeviceInfo() }
                 }
 
                 section(title = firmwareTitle) {
@@ -1584,18 +1624,22 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                     // failure or a "no firmware published" answer is never a silent button.
                     val line = ota.otaLabel()
                     if (line.isNotEmpty() && ota !is OtaState.Available) valueItem(statusLbl, line)
-                    if (!supported && ota is OtaState.Idle) {
-                        valueItem(noteLbl, firmwareUnsupportedLbl)
-                    }
                     when (ota) {
                         OtaState.Idle -> {
-                            actionRow(checkLbl, enabled = supported) { state.checkForFirmwareUpdate() }
+                            // A greyed entry carries its own reason in the summary: the note
+                            // row that used to sit above the button said the same thing one
+                            // line up, and a list of entries has no room for a borrowed
+                            // explanation.
+                            val why = if (supported) null else firmwareUnsupportedLbl
+                            entryRow(checkLbl, enabled = supported, summary = why) {
+                                state.checkForFirmwareUpdate()
+                            }
                             // Desktop keeps the manual route: it is how the whole install
                             // flow is exercised against `simulator/` without a vendor
                             // cloud, and it is the only way to flash a file the index has
                             // nothing for.
                             if (state.supportsLocalFirmwarePackage()) {
-                                actionRow(selectFirmwareLbl, enabled = supported) {
+                                entryRow(selectFirmwareLbl, enabled = supported, summary = why) {
                                     state.installChosenFirmwarePackage()
                                 }
                             }
@@ -1608,8 +1652,8 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                             val notes = ota.offer.releaseNoteFor(noteLang)
                             if (notes != null) textBlockItem(notesLbl, notes) else valueItem(notesLbl, noNotesLbl)
                             valueItem(noteLbl, internetNoteLbl)
-                            actionRow(downloadLbl) { state.downloadFirmwareUpdate(ota.offer) }
-                            actionRow(dismissLbl) { state.resetOtaState() }
+                            entryRow(downloadLbl) { state.downloadFirmwareUpdate(ota.offer) }
+                            entryRow(dismissLbl) { state.resetOtaState() }
                         }
 
                         is OtaState.Downloading -> {
@@ -1618,37 +1662,36 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                             // download runs for minutes and the percentage above already
                             // moves, so this is orientation, not measurement.
                             ProgressLine(ota.fraction)
-                            actionRow(cancelLbl) { state.cancelFirmwareUpdate() }
+                            entryRow(cancelLbl) { state.cancelFirmwareUpdate() }
                         }
 
                         is OtaState.ReadyToInstall -> {
                             valueItem(statusLbl, readyText)
                             // R5 (`docs/04 §6.1`): the precondition is checked before the
-                            // button, and the reason is shown *instead of* a dead button —
-                            // a greyed control that does not say why is what this app's own
-                            // UI rule forbids.
+                            // entry, and the reason is shown *on* the greyed row — a greyed
+                            // control that does not say why is what this app's own UI rule
+                            // forbids, and the summary slot is where an entry says it.
                             val blocker = state.firmwareInstallBlocker()
                             if (blocker != null) {
-                                valueItem(noteLbl, blocker)
-                                actionRow(installLbl, enabled = false) {}
+                                entryRow(installLbl, enabled = false, summary = blocker) {}
                             } else {
                                 // Flashing is the one action in this app that can leave the
                                 // camera unable to boot, and it cannot be undone from here,
                                 // so it goes through the same confirmation the card format
                                 // does — which also carries the factory-reset warning (R12).
-                                actionRow(installLbl) { pending = DangerOp.InstallFirmware }
+                                entryRow(installLbl) { pending = DangerOp.InstallFirmware }
                             }
-                            actionRow(dismissLbl) { state.resetOtaState() }
+                            entryRow(dismissLbl) { state.resetOtaState() }
                         }
 
                         OtaState.Completed -> {
                             valueItem(statusLbl, updateAppliedLbl)
-                            actionRow(dismissLbl) { state.resetOtaState() }
+                            entryRow(dismissLbl) { state.resetOtaState() }
                         }
 
-                        OtaState.Cancelled -> actionRow(cancelledLbl) { state.resetOtaState() }
+                        OtaState.Cancelled -> entryRow(cancelledLbl) { state.resetOtaState() }
 
-                        is OtaState.Failed -> actionRow(recheckLbl) {
+                        is OtaState.Failed -> entryRow(recheckLbl) {
                             state.resetOtaState()
                             state.checkForFirmwareUpdate()
                         }
@@ -1656,8 +1699,8 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                         else -> {
                             // Checking, and the transfer states: the only useful control
                             // while bytes are moving is the one that stops.
-                            if (!ota.isTerminal) actionRow(cancelLbl) { state.cancelFirmwareUpdate() }
-                            else actionRow(dismissLbl) { state.resetOtaState() }
+                            if (!ota.isTerminal) entryRow(cancelLbl) { state.cancelFirmwareUpdate() }
+                            else entryRow(dismissLbl) { state.resetOtaState() }
                         }
                     }
                 }
@@ -1674,128 +1717,118 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                         days >= FORMAT_OVERDUE_DAYS -> hintLine(stringResource(Res.string.sd_format_overdue, days))
                         else -> hintLine(stringResource(Res.string.sd_format_age, days))
                     }
-                    actionRow(formatSdLbl, busy = state.isBusy(Op.FormatSd)) { pending = DangerOp.FormatSd }
+                    entryRow(formatSdLbl, busy = state.isBusy(Op.FormatSd)) { pending = DangerOp.FormatSd }
                 }
 
+                // 相机 Wi-Fi: 两个输入框，值来自相机自己的回读 —— 「读取」把答案填进来，
+                // 「保存」把它写回去。这一组剩下的问题（信道、重新开启热点）各自收进入口行，
+                // 因为它们是「再看/再做一件事」，而不是这一屏要填的表。
                 section(title = cameraWifiTitle) {
-                    // ---- what the camera itself says its hotspot is ----
-                    //
-                    // The read-back rows come first because they are the answer to the
-                    // question this group used to make people guess at: "what is the
-                    // password I set two years ago". Masked by default — this is a screen
-                    // someone may be holding out to another person — and prefilled into
-                    // the rename fields below so a change starts from the truth.
-                    val wifi = state.cameraWifi
-                    if (wifi == null) {
-                        valueItem(
-                            wifiLbl,
-                            if (state.canReadCameraWifi()) notReadLbl else wifiReadUnsupportedLbl,
-                        )
-                    } else {
-                        valueItem(wifiLbl, wifi.ssid)
-                        valueItem(
-                            wifiPassLbl,
-                            if (showPass) wifi.password ?: "—" else "•".repeat(wifi.password?.length ?: 0).ifEmpty { "—" },
-                        )
-                        if (!wifi.password.isNullOrEmpty()) {
-                            actionRow(if (showPass) hidePassLbl else showPassLbl) { showPass = !showPass }
-                        }
-                        actionRow(prefillLbl) {
-                            wifiSsid = wifi.ssid
-                            wifiPass = wifi.password ?: ""
-                            wifiSubmit = false
-                        }
+                    MiuixField(
+                        value = wifiSsid,
+                        onValueChange = { wifiSsid = it; wifiSubmit = false },
+                        placeholder = wifiSsidLbl,
+                        enabled = !wifiBusy,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
+                    )
+                    MiuixField(
+                        value = wifiPass,
+                        onValueChange = { wifiPass = it; wifiSubmit = false },
+                        placeholder = wifiPassLbl,
+                        enabled = !wifiBusy,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
+                        // 默认遮盖：这一页会被递到别人手上，而这是整个界面唯一一条凭据。
+                        visualTransformation = if (showPass) VisualTransformation.None
+                            else PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(onClick = { haptics.tap(); showPass = !showPass }) {
+                                Icon(
+                                    imageVector = if (showPass) MiuixIcons.Hide else MiuixIcons.Show,
+                                    contentDescription = null,
+                                    tint = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                                )
+                            }
+                        },
+                    )
+                    when {
+                        !state.canReadCameraWifi() -> hintLine(wifiReadUnsupportedLbl)
+                        state.cameraWifi == null -> hintLine(notReadLbl)
                     }
-                    if (state.canReadCameraWifi()) {
-                        actionRow(readWifiLbl, busy = state.isBusy(Op.Wifi)) { state.readCameraWifi() }
-                    }
+                    if (wifiSubmit) hintLine(wifiRestartNote)
                     // B8: the hotspot's channel — 2.4G reaches further, 5G is cleaner, and
                     // which one this room wants is a call only the user can make.
-                    actionRow(readChannelLbl, busy = state.isBusy(Op.Wifi)) { state.readWifiChannel() }
-                    state.cameraWifiChannel?.let { valueItem(channelLbl, it.toString()) }
-                    ChannelStrip(
-                        current = state.cameraWifiChannel,
-                        enabled = !state.isBusy(Op.Wifi),
-                        onPick = { state.setWifiChannel(it) },
-                    )
-                    BasicRow {
-                        MiuixField(
-                            value = wifiSsid,
-                            onValueChange = { wifiSsid = it; wifiSubmit = false },
-                            placeholder = wifi?.ssid?.ifBlank { null } ?: newSsidHint,
-                            enabled = true,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                        Spacer(Modifier.size(8.dp))
-                        MiuixField(
-                            value = wifiPass,
-                            onValueChange = { wifiPass = it; wifiSubmit = false },
-                            placeholder = newPassHint,
-                            enabled = true,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                    entryRow(wifiChannelLbl, summary = state.cameraWifiChannel?.toString()) {
+                        showChannel = true
                     }
-                    val wifiBusy = wifiSubmit && state.isBusy(Op.Settings)
-                    actionRow(
-                        saveLabel,
-                        busy = wifiBusy,
-                        enabled = wifiSsid.isNotBlank() && wifiPass.isNotBlank() &&
-                            !state.isBusy(Op.Settings),
-                    ) {
-                        wifiSubmit = true
-                        state.setCameraWifi(wifiSsid.trim(), wifiPass.trim())
-                    }
-                    if (wifiSubmit) valueItem(noteLbl, wifiRestartNote)
                     // The other half of "the app cannot open the camera's hotspot": when
                     // the camera is reachable but not broadcasting, this is the one command
                     // that brings the AP back without going through Bluetooth at all.
-                    actionRow(
-                        raiseApLbl,
+                    entryRow(
+                        title = raiseApLbl,
                         busy = state.isBusy(Op.AccessPoint),
                         enabled = state.canRaiseAccessPoint(),
+                        summary = if (state.canRaiseAccessPoint()) null else apUnsupportedLbl,
                     ) { state.raiseAccessPoint() }
                 }
-
-                section(title = capabilitiesTitle) {
-                    // A16. The tokens are the firmware's own words, so they are shown
-                    // verbatim rather than mapped into this app's idea of a feature list:
-                    // an unknown token is a fact about the camera, not a gap to hide.
-                    valueItem(
-                        standbyLbl,
-                        when {
-                            !state.capabilitiesRead -> capabilitiesUnknownLbl
-                            state.supportsStandby() -> standbyYesLbl
-                            else -> standbyNoLbl
-                        },
-                    )
-                    if (state.capabilitiesRead) {
-                        val tokens = state.deviceCapabilities
-                        if (tokens.isEmpty()) {
-                            valueItem(noteLbl, capabilitiesEmptyLbl)
-                        } else {
-                            valueItem(capabilityTokensLbl, tokens.sorted().joinToString(", "))
+                // 读取 / 保存 在卡片外面，不是卡片里的一行：这两个是整页唯一读写相机凭据的操作，
+                // 也是用户自己画的那一版布局（2026-09-24）。
+                section(card = false) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        Button(
+                            onClick = {
+                                haptics.tap()
+                                state.readCameraWifi()
+                            },
+                            modifier = Modifier.weight(1f),
+                            enabled = state.canReadCameraWifi() && !wifiBusy &&
+                                !state.isBusy(Op.Wifi),
+                        ) {
+                            if (state.isBusy(Op.Wifi)) {
+                                InfiniteProgressIndicator(size = 15.dp, strokeWidth = 2.dp, orbitingDotSize = 2.5.dp)
+                                Spacer(Modifier.width(8.dp))
+                            }
+                            Text(readWifiLbl, fontSize = 16.sp)
+                        }
+                        Button(
+                            onClick = {
+                                haptics.tap()
+                                wifiConfirm = true
+                            },
+                            modifier = Modifier.weight(1f),
+                            enabled = wifiSsid.isNotBlank() && wifiPass.isNotBlank() &&
+                                !wifiBusy,
+                        ) {
+                            Text(saveLabel, fontSize = 16.sp)
                         }
                     }
-                    actionRow(
-                        readCapabilitiesLbl,
-                        busy = state.isBusy(Op.Capabilities),
-                    ) { state.readDeviceCapabilities() }
+                }
+
+                section(title = dangerTitle) {
+                    if (state.canRebootCamera()) {
+                        entryRow(rebootLbl, busy = state.isBusy(Op.Reboot)) { pending = DangerOp.Reboot }
+                    }
                     // B10. Offered only where the firmware claimed standby: the endpoint
                     // exists everywhere and does nothing on hardware without it (the
                     // official client gates its own button on the same token), and the
-                    // cost of guessing wrong is the user's connection.
-                    actionRow(
-                        sleepLbl,
+                    // cost of guessing wrong is the user's connection. The token list it
+                    // used to be read from is gone from this page, so the row says in
+                    // place why it is greyed.
+                    entryRow(
+                        title = sleepLbl,
                         busy = state.isBusy(Op.Power),
                         enabled = state.supportsStandby(),
+                        summary = when {
+                            !state.capabilitiesRead -> capabilitiesUnknownLbl
+                            !state.supportsStandby() -> standbyNoLbl
+                            else -> null
+                        },
                     ) { pending = DangerOp.Sleep }
-                }
-
-                section(title = dangerTitle, card = false) {
-                    if (state.canRebootCamera()) {
-                        actionRow(rebootLbl, busy = state.isBusy(Op.Reboot)) { pending = DangerOp.Reboot }
-                    }
-                    actionRow(factoryResetLbl, busy = state.isBusy(Op.FactoryReset)) {
+                    entryRow(factoryResetLbl, busy = state.isBusy(Op.FactoryReset)) {
                         pending = DangerOp.FactoryReset
                     }
                 }
@@ -1963,6 +1996,48 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                     Text(confirmLabel)
                 }
             }
+        }
+    }
+
+    // 保存相机 Wi-Fi 的确认：写入会让相机重启热点，手机会掉线一次，这不是一个可以静默完成的
+    // 操作，而「保存」本来也不该在按下去之后才让人发现这件事。
+    if (wifiConfirm) {
+        ConfirmDialog(
+            title = wifiSaveTitle,
+            message = wifiRestartNote,
+            confirmLabel = saveLabel,
+            cancelLabel = shortCancelLbl,
+            destructive = false,
+            onConfirm = {
+                wifiConfirm = false
+                wifiSubmit = true
+                state.setCameraWifi(wifiSsid.trim(), wifiPass.trim())
+            },
+            onDismiss = { wifiConfirm = false },
+        )
+    }
+
+    // B8: 信道挑在对话框里 —— 它是十来个数字里选一个，摊在一页设置里既占地方又读不出当前值。
+    if (showChannel) {
+        OverlayDialog(
+            show = true,
+            title = wifiChannelLbl,
+            summary = state.cameraWifiChannel?.let { "$channelLbl $it" } ?: notReadLbl,
+            onDismissRequest = { showChannel = false },
+        ) {
+            // 打开时读一次：这是会改频段的写入，得先知道现在用的是哪一个。
+            LaunchedEffect(Unit) { state.readWifiChannel() }
+            ChannelStrip(
+                current = state.cameraWifiChannel,
+                enabled = !state.isBusy(Op.Wifi),
+                onPick = { state.setWifiChannel(it) },
+            )
+            Spacer(Modifier.height(12.dp))
+            TextButton(
+                text = shortCancelLbl,
+                onClick = { showChannel = false },
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }

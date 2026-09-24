@@ -132,16 +132,13 @@
     <string name="sd_error">Error</string>
     <string name="sd_unknown">Unknown</string>
     <string name="action_format_sd">Format SD card</string>
-    <string name="hint_new_ssid">New SSID</string>
-    <string name="hint_new_password">New password</string>
     <string name="note_wifi_restarts">The camera will restart its Wi-Fi — you\'ll need to reconnect to the new network.</string>
     <string name="label_wifi_password">Wi-Fi password</string>
-    <string name="action_read_camera_wifi">Read the camera\'s current Wi-Fi</string>
+    <string name="action_read_camera_wifi">Read</string>
     <string name="status_wifi_not_read">Not read yet</string>
+    <string name="label_wifi_ssid">Wi-Fi name</string>
     <string name="hint_wifi_read_unsupported">This camera cannot report its Wi-Fi back; name and password can only be changed</string>
-    <string name="action_show_password">Show</string>
-    <string name="action_hide_password">Hide</string>
-    <string name="action_use_read_values">Fill the fields below from what was read</string>
+    <string name="title_save_camera_wifi">Save the camera Wi-Fi?</string>
     <string name="ota_note_lang">en</string>
     <string name="title_install_firmware">Flash this firmware to the camera now?</string>
     <string name="msg_install_firmware">The camera restarts and writes the image itself. Power must stay on, the screen must stay awake, and nothing else may use the link. An interrupted flash can leave the camera unable to boot, and this app cannot put the old firmware back. Check the battery and that a card is inserted.\n\nAlso: flashing restores the camera to factory settings — the hotspot name and password, the clock, and every setting you changed on the camera go back to their defaults and have to be set again.</string>
@@ -168,6 +165,7 @@
     <string name="qr_hint_point">Point at the camera\'s Wi-Fi QR code</string>
     <string name="qr_hint_camera_permission">Camera permission is needed to scan</string>
     <string name="qr_hint_no_wifi">QR code has no Wi-Fi info (%1$s)</string>
+    <string name="qr_camera_failed">Could not open the camera. Check the camera permission, or make sure the device/emulator exposes one.</string>
 
     <!-- QR scan (Desktop) -->
     <string name="qr_unavailable_desktop">QR scanning is not available on desktop — use Manual connect.</string>
@@ -316,7 +314,6 @@
     <string name="sd_format_age">Last formatted %1$d days ago.</string>
     <string name="sd_format_overdue">Last formatted %1$d days ago — worth reformatting before a trip.</string>
     <string name="sd_format_never">No format recorded on this phone yet.</string>
-    <string name="action_read_channel">Read the hotspot channel</string>
     <string name="label_wifi_channel">Channel</string>
     <string name="title_delete_all_files">Delete all %1$d files?</string>
     <string name="message_delete_all_files">All %1$d files on the camera are removed at once. This cannot be undone.</string>
@@ -327,16 +324,12 @@
     <string name="label_clear_selection">Clear</string>
     <string name="label_unknown_date">Unknown date</string>
     <string name="action_raise_access_point">Make the camera broadcast its hotspot again</string>
+    <string name="hint_ap_unsupported">This camera cannot be told to raise its hotspot from the app</string>
+    <string name="title_wifi_channel">Wi-Fi channel</string>
 
-    <!-- A16: what the firmware says it can do, and the one token the app acts on. -->
-    <string name="section_camera_capabilities">Camera features</string>
-    <string name="action_read_capabilities">Read the features this camera reports</string>
-    <string name="label_standby_support">Standby (sleep / wake)</string>
-    <string name="status_standby_supported">Supported</string>
+    <!-- A16: the firmware feature tokens now only gate the sleep row, which says why in place. -->
     <string name="status_standby_unsupported">This camera does not support it</string>
     <string name="status_capabilities_unknown">Unknown — not read yet</string>
-    <string name="label_capability_tokens">Tokens the camera reported</string>
-    <string name="status_capabilities_empty">The camera did not report any feature token.</string>
 
     <!-- B10: standby, and the Wake-on-LAN packet that ends it. -->
     <string name="action_sleep_camera">Put the camera to sleep</string>

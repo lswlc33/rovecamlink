@@ -132,16 +132,13 @@
     <string name="sd_error">异常</string>
     <string name="sd_unknown">未知</string>
     <string name="action_format_sd">格式化存储卡</string>
-    <string name="hint_new_ssid">新网络名称</string>
-    <string name="hint_new_password">新密码</string>
     <string name="note_wifi_restarts">相机会重启它自己的 Wi-Fi，你需要重新连接新的网络。</string>
     <string name="label_wifi_password">Wi-Fi 密码</string>
-    <string name="action_read_camera_wifi">读取相机当前的 Wi-Fi</string>
+    <string name="action_read_camera_wifi">读取</string>
     <string name="status_wifi_not_read">尚未读取</string>
+    <string name="label_wifi_ssid">Wi-Fi 名称</string>
     <string name="hint_wifi_read_unsupported">这台相机不回读 Wi-Fi 信息，只能改名改密码</string>
-    <string name="action_show_password">显示</string>
-    <string name="action_hide_password">隐藏</string>
-    <string name="action_use_read_values">用读取到的值填好下面的输入框</string>
+    <string name="title_save_camera_wifi">保存相机 Wi-Fi？</string>
     <string name="ota_note_lang">zh</string>
     <string name="title_install_firmware">现在给相机刷写固件？</string>
     <string name="msg_install_firmware">相机会重启并自己烧写，这期间不能断电、不能关屏幕、也不能靠近相机以外的网络。刷写中断有可能让相机开不了机，本 App 无法把固件刷回去。请确认电量充足并已插好存储卡。\n\n另外：刷完固件相机会恢复出厂设置 —— 热点名与密码、对时、以及你在相机上改过的各项设置都会回到默认值，需要重新设置一遍。</string>
@@ -168,6 +165,7 @@
     <string name="qr_hint_point">将镜头对准相机的 Wi-Fi 二维码</string>
     <string name="qr_hint_camera_permission">需要相机权限才能扫码</string>
     <string name="qr_hint_no_wifi">二维码中没有 Wi-Fi 信息(%1$s)</string>
+    <string name="qr_camera_failed">无法打开相机。请检查相机权限，或确认设备/模拟器已启用摄像头。</string>
 
     <!-- QR scan (Desktop) -->
     <string name="qr_unavailable_desktop">桌面版暂不支持二维码扫描 — 请使用手动连接。</string>
@@ -315,7 +313,6 @@
     <string name="sd_format_age">上次格式化：%1$d 天前。</string>
     <string name="sd_format_overdue">上次格式化：%1$d 天前——出门前值得重新格式化一次。</string>
     <string name="sd_format_never">这台手机上还没有格式化记录。</string>
-    <string name="action_read_channel">读取热点信道</string>
     <string name="label_wifi_channel">信道</string>
     <string name="title_delete_all_files">删除全部 %1$d 个文件？</string>
     <string name="message_delete_all_files">相机上这 %1$d 个文件会被一次性全部删除，无法恢复。</string>
@@ -326,16 +323,12 @@
     <string name="label_clear_selection">取消全选</string>
     <string name="label_unknown_date">日期未知</string>
     <string name="action_raise_access_point">让相机重新开启热点</string>
+    <string name="hint_ap_unsupported">这台相机不支持由 App 重新开启热点</string>
+    <string name="title_wifi_channel">Wi-Fi 信道</string>
 
-    <!-- A16：固件自报的能力，以及 App 唯一真正据以行动的那个标记。 -->
-    <string name="section_camera_capabilities">相机能力</string>
-    <string name="action_read_capabilities">读取相机自报的能力</string>
-    <string name="label_standby_support">休眠 / 唤醒</string>
-    <string name="status_standby_supported">支持</string>
+    <!-- A16：固件自报的能力标记只剩下「休眠」那一行的门控，行内自己说明原因。 -->
     <string name="status_standby_unsupported">这台相机不支持</string>
     <string name="status_capabilities_unknown">未知（尚未读取）</string>
-    <string name="label_capability_tokens">相机自报的标记</string>
-    <string name="status_capabilities_empty">相机没有报告任何能力标记。</string>
 
     <!-- B10：待机，以及结束待机的网络唤醒包。 -->
     <string name="action_sleep_camera">让相机休眠</string>

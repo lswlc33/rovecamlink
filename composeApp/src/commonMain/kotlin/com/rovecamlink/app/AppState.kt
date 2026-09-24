@@ -1856,12 +1856,21 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      *
      * This is the read half of 相机 Wi-Fi; without it the rename form below it is the
      * only thing on the screen, i.e. you can set a password you can never see again.
+     *
+     * [reportFailure] is false for the read the device page does on its own when it opens:
+     * a camera that does not answer `getwifi.cgi` would otherwise greet every visit with a
+     * red banner about a question nobody asked yet. The button keeps the banner, because
+     * there the user did ask.
      */
-    fun readCameraWifi() = runOp(Op.Wifi) { proto, s ->
+    fun readCameraWifi(reportFailure: Boolean = true) = runOp(Op.Wifi) { proto, s ->
         val wifi = proto.getWifi(s)
         if (wifi == null) {
             cameraWifi = null
-            CmdResult.Failure("这台相机没有回读 Wi-Fi 信息（getwifi.cgi 未给出 wifissid）")
+            if (reportFailure) {
+                CmdResult.Failure("这台相机没有回读 Wi-Fi 信息（getwifi.cgi 未给出 wifissid）")
+            } else {
+                CmdResult.Ok
+            }
         } else {
             cameraWifi = wifi
             // Never the passphrase itself: the log is exported and shared, and unlike
@@ -2026,12 +2035,16 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * from one that silently ignores it — the official client gates its own sleep button
      * on the `standby` token (`DV.supportWakeSleep`, `DV.java:736-743`) rather than
      * discovering the difference by pressing it.
+     *
+     * [reportFailure] is false for the read the device page does on its own. Nothing on
+     * that page shows the tokens any more; the single row they gate explains itself in
+     * place, so an unreadable answer is not worth a banner.
      */
-    fun readDeviceCapabilities() = runOp(Op.Capabilities) { proto, s ->
+    fun readDeviceCapabilities(reportFailure: Boolean = true) = runOp(Op.Capabilities) { proto, s ->
         val tokens = proto.deviceCapabilities(s)
         deviceCapabilities = tokens
         capabilitiesRead = true
-        if (tokens.isEmpty()) {
+        if (tokens.isEmpty() && reportFailure) {
             CmdResult.Failure("相机没有报告自身能力（getdevcapabilities.cgi 未给出 devcapabilities）")
         } else {
             CmdResult.Ok

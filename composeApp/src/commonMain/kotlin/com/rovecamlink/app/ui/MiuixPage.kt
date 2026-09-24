@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
@@ -648,6 +649,10 @@ fun ColumnScope.actionRow(
  * as the placeholder when the box is empty, which is what every one of these fields
  * wants, and it brings the fill, the corner radius and the focus ring that a hand-built
  * box did not — a `surfaceVariant` plate is invisible on a card of the same colour.
+ *
+ * [visualTransformation] and [trailingIcon] exist for the one field in this app that holds
+ * a credential: the camera's hotspot passphrase is masked by default, and the eye that
+ * unmasks it belongs to the field it unmasks.
  */
 @Composable
 fun MiuixField(
@@ -656,6 +661,8 @@ fun MiuixField(
     placeholder: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    trailingIcon: (@Composable () -> Unit)? = null,
 ) {
     TextField(
         value = value,
@@ -665,6 +672,8 @@ fun MiuixField(
         useLabelAsPlaceholder = placeholder.isNotEmpty(),
         enabled = enabled,
         singleLine = true,
+        visualTransformation = visualTransformation,
+        trailingIcon = trailingIcon,
     )
 }
 
