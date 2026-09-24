@@ -228,6 +228,8 @@
     <string name="log_action_share">导出并分享</string>
     <string name="log_action_save">保存到文件</string>
     <string name="log_action_snapshot">刷新环境快照</string>
+    <string name="log_action_clear">全部清空</string>
+    <string name="log_clear_confirm">将清空 App 当前保留的全部日志记录，且无法撤销。</string>
     <string name="log_export_hint">上面两项会包含本机全部历史记录；只导本次会话：</string>
     <string name="log_busy_preparing">正在生成…</string>
     <string name="log_busy_saving">正在保存…</string>

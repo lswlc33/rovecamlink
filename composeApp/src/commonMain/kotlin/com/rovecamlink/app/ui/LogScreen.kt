@@ -33,17 +33,20 @@ import androidx.compose.ui.unit.sp
 import com.rovecamlink.app.AppState
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.action_back
+import com.rovecamlink.app.action_cancel_short
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogLevel
 import com.rovecamlink.app.core.log.LogRecord
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.createLogStore
+import com.rovecamlink.app.log_action_clear
 import com.rovecamlink.app.log_action_save
 import com.rovecamlink.app.log_action_share
 import com.rovecamlink.app.log_action_snapshot
 import com.rovecamlink.app.log_busy_preparing
 import com.rovecamlink.app.log_busy_saving
+import com.rovecamlink.app.log_clear_confirm
 import com.rovecamlink.app.log_close
 import com.rovecamlink.app.log_empty
 import com.rovecamlink.app.log_export_hint
@@ -118,6 +121,7 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
     var detail by remember { mutableStateOf<LogRecord?>(null) }
     var busy by remember { mutableStateOf<String?>(null) }
     var note by remember { mutableStateOf<String?>(null) }
+    var clearRequested by remember { mutableStateOf(false) }
 
     // Polling (rather than a flow) keeps the preview honest about records that were
     // demoted to TRACE by sampling: every tick re-reads the writer's buffer.
@@ -208,8 +212,12 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
                 )
             }
         },
-        // The one per-page action rides in the overflow — 日志设置 opens the separate page.
+        // The overflow carries the page-level actions: save this history to a file (the
+        // same action the button row below offers, reachable without scrolling), clear all
+        // records, and 日志设置, which opens the separate page.
         menuItems = listOf(
+            AppBarMenuItem(label = stringResource(Res.string.log_action_save)) { export(share = false) },
+            AppBarMenuItem(label = stringResource(Res.string.log_action_clear)) { clearRequested = true },
             AppBarMenuItem(label = logSettingsLbl) { state.pushPage(com.rovecamlink.app.Page.LogSettings) },
         ),
         header = {
@@ -333,6 +341,39 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
                     colors = ButtonDefaults.buttonColorsPrimary(),
                 ) {
                     Text(stringResource(Res.string.log_close))
+                }
+            }
+        }
+    }
+
+    if (clearRequested) {
+        OverlayDialog(
+            show = true,
+            title = stringResource(Res.string.log_action_clear),
+            summary = stringResource(Res.string.log_clear_confirm),
+            onDismissRequest = { clearRequested = false },
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Button(onClick = { clearRequested = false }, modifier = Modifier.weight(1f)) {
+                    Text(stringResource(Res.string.action_cancel_short))
+                }
+                // Red, like the settings page's other irreversible actions: this drops the
+                // records a support request would otherwise have been built from.
+                Button(
+                    onClick = {
+                        clearRequested = false
+                        scope.launch { Diag.clear() }
+                    },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        color = MiuixTheme.colorScheme.error,
+                        contentColor = MiuixTheme.colorScheme.onError,
+                    ),
+                ) {
+                    Text(stringResource(Res.string.log_action_clear))
                 }
             }
         }

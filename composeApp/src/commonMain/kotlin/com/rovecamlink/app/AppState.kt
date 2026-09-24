@@ -2500,12 +2500,16 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     ) {
         setBusy(op, true)
         try {
+            val prePhotoCount = deviceStatus?.photoCount
             val r = block(proto, s)
             Diag.opOutcome(op.name, r.isOk, if (r is CmdResult.Failure) LogFormat.safe(r.message) else "")
             if (r is CmdResult.Failure) errorMessage = raw(r.message)
             // refresh status promptly after a control action
             runCatching { deviceStatus = proto.getStatus(s) }
                 .onFailure { Diag.d(LogTag.STATE) { "post-$op status refresh failed ${Diag.causeChain(it)}" } }
+            if (op == Op.Capture && r.isOk && deviceStatus?.photoCount == prePhotoCount) {
+                confirmCaptureCount(proto, s, prePhotoCount)
+            }
         } catch (t: kotlinx.coroutines.CancellationException) {
             // Disconnecting cancels the session scope this coroutine runs in, so every
             // in-flight operation is cancelled with it. Reporting that as a failure put a
@@ -2521,6 +2525,28 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             errorMessage = t.message?.let(::raw) ?: localized(Res.string.err_command_failed)
         } finally {
             setBusy(op, false)
+        }
+    }
+
+    /**
+     * Keep reading the status a few times after a shutter press.
+     *
+     * The shutter's white flash is keyed to the camera's own photo count rather than to
+     * the tap (see `LiveScreen.PreviewHeader`), and the file lands on the card a moment
+     * *after* `capture.cgi` returns — so the prompt refresh above usually still shows the
+     * old count and the flash waits for the next [POLL_INTERVAL_MS] tick. Re-reading here
+     * latches the count as soon as the camera publishes it. It runs off the operation's
+     * busy window (so the shutter never stays "busy" any longer) and stops at the first
+     * read that shows the count moved.
+     */
+    private fun confirmCaptureCount(proto: CameraProtocol, s: CameraSession, before: Int?) {
+        (sessionScope ?: scope).launch {
+            repeat(CAPTURE_CONFIRM_READS) {
+                delay(CAPTURE_CONFIRM_INTERVAL_MS)
+                runCatching { deviceStatus = proto.getStatus(s) }
+                    .onFailure { Diag.d(LogTag.STATE) { "capture confirm refresh failed ${Diag.causeChain(it)}" } }
+                if (deviceStatus?.photoCount != before) return@launch
+            }
         }
     }
 
@@ -2584,6 +2610,14 @@ private const val LISTING_PAGE = 300
 
 /** Status polling interval; it is a load characteristic of the camera, so it belongs in the log. */
 private const val POLL_INTERVAL_MS = 1_500L
+
+/**
+ * Extra status reads after a shutter press, so the white flash (keyed to the camera's own
+ * photo count) fires as soon as the camera publishes the new count instead of at the next
+ * [POLL_INTERVAL_MS] tick. Bounded: the loop stops at the first read that shows the move.
+ */
+private const val CAPTURE_CONFIRM_READS = 4
+private const val CAPTURE_CONFIRM_INTERVAL_MS = 500L
 
 /** Decoded thumbnails held at once in the list layout: 6–8 rows a screen, so ~3 screens. */
 private const val MAX_CACHED_THUMBNAILS_LIST = 24

@@ -229,6 +229,8 @@
     <string name="log_action_share">Share TXT</string>
     <string name="log_action_save">Save TXT</string>
     <string name="log_action_snapshot">Snapshot</string>
+    <string name="log_action_clear">Clear all</string>
+    <string name="log_clear_confirm">Clears every log record the app is holding right now. This cannot be undone.</string>
     <string name="log_export_hint">Share/Save include every run on this device. Just this session:</string>
     <string name="log_busy_preparing">Preparing…</string>
     <string name="log_busy_saving">Saving…</string>
