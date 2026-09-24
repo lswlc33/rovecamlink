@@ -22,7 +22,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * painting a grey box over the page's own background.
  */
 @Composable
-actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
+actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier, onAspect: ((Float) -> Unit)?) {
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(
             text = rtspUrl?.let { stringResource(Res.string.preview_no_decoder_ios, it) }

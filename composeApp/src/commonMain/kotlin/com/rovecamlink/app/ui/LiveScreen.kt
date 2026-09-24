@@ -245,6 +245,9 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
     }
 
     val listState = rememberLazyListState()
+    // The stream's own ratio, reported by the decoder once it knows it; 0 until then, and the
+    // frame falls back to 16:9 (see PreviewHeader).
+    var streamAspect by remember { mutableStateOf(0f) }
     val shrinkDistancePx = with(LocalDensity.current) { PreviewShrinkDistance.toPx() }
     // How far down the page has been scrolled, 0 at the top and 1 once the first
     // [PreviewShrinkDistance] is behind it. The picture gives height back as this grows:
@@ -325,7 +328,7 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
             },
         ) {
             Box(Modifier.fillMaxSize().background(Color.Black)) {
-                CameraPreviewFrame(previewUrl, Modifier.fillMaxSize(), spinDegrees, spinSwap)
+                CameraPreviewFrame(previewUrl, Modifier.fillMaxSize(), spinDegrees, spinSwap, { streamAspect = it })
                 // A long press anywhere on the picture puts it back. No tap handler: the shutter
                 // below is the only thing on this screen that a tap should reach.
                 Box(
@@ -367,6 +370,8 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
                     recTimeSec = st?.videoTimeSec ?: 0,
                     photos = st?.photoCount,
                     flashNonce = state.captureFlash,
+                    streamAspect = streamAspect,
+                    onStreamAspect = { streamAspect = it },
                     shrink = scrolled,
                     onLongPress = { state.setFullscreenPreview(true) },
                     modifier = Modifier.fillMaxWidth(),
@@ -473,6 +478,8 @@ private fun PreviewHeader(
     recTimeSec: Int,
     photos: Int?,
     flashNonce: Int = 0,
+    streamAspect: Float = 0f,
+    onStreamAspect: ((Float) -> Unit)? = null,
     shrink: Float = 0f,
     onLongPress: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -507,7 +514,12 @@ private fun PreviewHeader(
     )
 
     BoxWithConstraints(modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
-        val wanted = if (swap) maxWidth * 16f / 9f else maxWidth * 9f / 16f
+        // The box follows the stream's own ratio instead of a fixed 16:9: a camera serving
+        // 4:3 was being stretched into a 16:9 frame (2026-09-24 「图传模块的尺寸和屏幕比例
+        // 应该随着画面而变化…画面也不该被拉伸」). Falls back to 16:9 until the decoder
+        // reports, and on the platforms that never do.
+        val aspect = streamAspect.takeIf { it > 0f } ?: (16f / 9f)
+        val wanted = if (swap) maxWidth * aspect else maxWidth / aspect
         // The rotated case gets most of the screen on purpose. Turning the phone puts a
         // 9:16 box in a portrait canvas, and capping it at half the height — which is
         // what this did — leaves a picture narrower than the phone is wide, so the
@@ -518,7 +530,7 @@ private fun PreviewHeader(
         // rows need — and the shutter keeps floating over whatever is left.
         val limit = maxHeight * if (swap) (0.76f - 0.26f * shrink.coerceIn(0f, 1f)) else 0.42f
         val boxH = minOf(wanted, limit)
-        val boxW = if (swap) boxH * 9f / 16f else maxWidth
+        val boxW = if (swap) boxH / aspect else minOf(maxWidth, boxH * aspect)
         Box(
             Modifier
                 .align(Alignment.Center)
@@ -530,7 +542,7 @@ private fun PreviewHeader(
                 },
             contentAlignment = Alignment.Center,
         ) {
-            CameraPreviewFrame(url, Modifier.fillMaxSize(), degrees, swap)
+            CameraPreviewFrame(url, Modifier.fillMaxSize(), degrees, swap, onStreamAspect)
             // Drawn over the picture, but with no input handler of its own, so it never
             // stands between the user and the frame underneath.
             Box(Modifier.fillMaxSize().background(Color.White.copy(alpha = flashAlpha)))
@@ -584,12 +596,20 @@ private fun SolidDot(color: Color) {
  * The preview, rotated by the phone's own attitude without touching the app's layout.
  *
  * Rotating the video layer alone is not enough: a 16:9 stream measured into the tall
- * 9:16 box the rotated frame now needs would be squashed first and turned second. So
- * the child is measured with its width and height swapped, then rotated in place —
- * which is also why [PreviewHeader] flips its own box at the same moment.
+ * box the rotated frame now needs would be squashed first and turned second. So the child
+ * is measured with its width and height swapped, then rotated in place — which is also why
+ * [PreviewHeader] flips its own box at the same moment. The box's own ratio now comes from
+ * the stream ([PreviewHeader]'s `streamAspect`), so the swap is a transpose of the real
+ * shape rather than of an assumed 16:9.
  */
 @Composable
-private fun CameraPreviewFrame(url: String?, modifier: Modifier, degrees: Float, swap: Boolean) {
+private fun CameraPreviewFrame(
+    url: String?,
+    modifier: Modifier,
+    degrees: Float,
+    swap: Boolean,
+    onAspect: ((Float) -> Unit)? = null,
+) {
     Box(modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
         CameraPreviewView(
             url,
@@ -605,6 +625,7 @@ private fun CameraPreviewFrame(url: String?, modifier: Modifier, degrees: Float,
                     }
                 }
                 .rotate(degrees),
+            onAspect,
         )
     }
 }

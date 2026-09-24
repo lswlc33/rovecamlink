@@ -22,7 +22,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * the CGI protocol against the simulator; live preview is an Android feature.
  */
 @Composable
-actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
+actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier, onAspect: ((Float) -> Unit)?) {
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(
             text = rtspUrl?.let { stringResource(Res.string.preview_no_decoder_desktop, it) }

@@ -25,8 +25,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
@@ -108,7 +110,7 @@ private const val MAX_PLAYBACK_ATTEMPTS = 6
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
+actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier, onAspect: ((Float) -> Unit)?) {
     val context = LocalContext.current
     val probe = remember(rtspUrl) { LatencyProbe() }
     val scope = rememberCoroutineScope()
@@ -184,8 +186,21 @@ actual fun CameraPreviewView(rtspUrl: String?, modifier: Modifier) {
             ExoPlayer.Builder(context)
                 .setLoadControl(loadControl)
                 .build().apply {
+                    // Letterbox rather than stretch. The frame upstream is sized to the
+                    // reported aspect, so this is normally a no-op — it is the guarantee for
+                    // the case the aspect is still unknown or the stream lies, which is
+                    // exactly when a stretched picture was reported (2026-09-24
+                    // 「画面也不该被拉伸 无论如何情况下」).
+                    setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT)
                     addListener(
                         object : Player.Listener {
+                            override fun onVideoSizeChanged(videoSize: VideoSize) {
+                                if (videoSize.height <= 0) return
+                                val aspect = videoSize.width.toFloat() *
+                                    videoSize.pixelWidthHeightRatio / videoSize.height
+                                if (aspect > 0f) runCatching { onAspect?.invoke(aspect) }
+                            }
+
                             override fun onPlaybackStateChanged(playbackState: Int) {
                                 if (playbackState == Player.STATE_BUFFERING) {
                                     // Timed from here to the next READY. Started on every
