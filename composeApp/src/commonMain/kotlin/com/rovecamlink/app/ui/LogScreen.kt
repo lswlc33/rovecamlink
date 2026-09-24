@@ -142,7 +142,7 @@ fun LogScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Unit)
     fun export(share: Boolean) {
         if (busy != null) return
         scope.launch {
-            withContext(Dispatchers.IO + NonCancellable) {
+            withContext(Dispatchers.Default + NonCancellable) {
                 // NonCancellable: this coroutine belongs to the screen, and closing the
                 // preview mid-export would otherwise discard the bundle it just built.
                 busy = getString(if (share) Res.string.log_busy_preparing else Res.string.log_busy_saving)

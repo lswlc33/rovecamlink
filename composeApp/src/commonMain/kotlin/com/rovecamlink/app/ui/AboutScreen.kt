@@ -80,7 +80,7 @@ fun AboutScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Uni
                 // composition, so a back gesture cancels it — and a bundle cut off
                 // mid-share is worse than no bundle. NonCancellable lets the one-shot
                 // export finish even after the screen is gone.
-                withContext(Dispatchers.IO + NonCancellable) {
+                withContext(Dispatchers.Default + NonCancellable) {
                     // The header has to describe the session as it is now: the snapshot is
                     // otherwise only refreshed while the log page is open.
                     state.refreshDiagnosticsEnv()
