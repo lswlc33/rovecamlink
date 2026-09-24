@@ -235,7 +235,7 @@ interface CameraProtocol {
      * tables, menu listings) drop them here, so a camera replaced on the same IP cannot
      * be served another model's table.
      */
-    fun onSessionClosed(session: CameraSession) {}
+    suspend fun onSessionClosed(session: CameraSession) {}
 
     /**
      * What this camera says it can do, as the firmware's own tokens.

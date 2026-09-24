@@ -122,31 +122,47 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
         // TUWIN exposes a menu XML; we surface a minimal known set via menu params.
         val ids = listOf("resolution", "bitrate", "exposure", "whitebalance", "wdr", "audio")
         return ids.mapNotNull { id ->
-            val v = http.getText("${session.baseUrl}/api/menu/getparameter?id=$id")?.toObj()?.string("value")
-                ?: http.getText("${session.baseUrl}/api/menu/getparameter?id=$id")
-            if (v == null) null else CameraSetting(id, id.replaceFirstChar { c -> c.uppercase() }, v.toString())
+            // One request per id. The old code re-fetched the same URL as its fallback
+            // and then showed the whole reply as the value when `value` was absent.
+            val body = http.getText("${session.baseUrl}/api/menu/getparameter?id=$id")
+                ?: return@mapNotNull null
+            val obj = body.toObj()
+            val value = when {
+                // A non-JSON reply (the `/api/menu/xml`-shaped endpoints have no
+                // `result`) *is* the value; this is the text the old fallback fetched.
+                obj == null -> body.trim().takeIf { it.isNotEmpty() } ?: return@mapNotNull null
+                // A JSON envelope that refused the read (`result != 0`) contributes no row.
+                !body.accepted() -> return@mapNotNull null
+                else -> obj.string("value")
+                    ?: obj.get("info")?.let { (it as? JsonPrimitive)?.contentOrNull }
+                    ?: return@mapNotNull null
+            }
+            CameraSetting(id, id.replaceFirstChar { c -> c.uppercase() }, value)
         }
     }
 
     override suspend fun setSetting(session: CameraSession, id: String, value: String): CmdResult {
-        val r = http.getText("${session.baseUrl}/api/menu/setparameter?id=$id&value=$value")
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("setparameter failed")
+        val r = http.getText("${session.baseUrl}/api/menu/setparameter?id=$id&value=${urlEnc(value)}")
+        return if (r.accepted()) CmdResult.Ok else CmdResult.Failure("setparameter failed")
     }
 
     override suspend fun setMode(session: CameraSession, mode: WorkMode): CmdResult {
         val r = http.getText("${session.baseUrl}/api/setmode?mode=${mode.code}")
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("setmode failed")
+        return if (r.accepted()) CmdResult.Ok else CmdResult.Failure("setmode failed")
     }
 
     override suspend fun capture(session: CameraSession): CmdResult {
         val r = http.getText("${session.baseUrl}/api/capture")
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("capture failed")
+        return if (r.accepted()) CmdResult.Ok else CmdResult.Failure("capture failed")
     }
 
     override suspend fun record(session: CameraSession, start: Boolean): CmdResult {
         val r = http.getText("${session.baseUrl}/api/record/${if (start) "start" else "stop"}")
+        // Announce the change only for a command the camera accepted: emitting it on a
+        // refusal left the UI showing a recording the camera had never started.
+        if (!r.accepted()) return CmdResult.Failure("record failed")
         _events.tryEmit(DeviceEvent.RecordingChanged(start))
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("record failed")
+        return CmdResult.Ok
     }
 
     override suspend fun listFiles(session: CameraSession, start: Int, end: Int): List<RemoteFile> {
@@ -181,13 +197,13 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
                 dateMillis = o.long("time") ?: o.long("date"),
             )
         }
-        Diag.d(LogTag.PARSE) { "filelist ${arr.size} entries, ${files.size} usable (keys=${el.jsonObject.keys ?: "array"})" }
+        Diag.d(LogTag.PARSE) { "filelist ${arr.size} entries, ${files.size} usable (keys=${(el as? JsonObject)?.keys?.joinToString(",") ?: "array"})" }
         return files
     }
 
     override suspend fun deleteFile(session: CameraSession, file: RemoteFile): CmdResult {
         val r = http.getText("${session.baseUrl}/api/playback/delete?file=${file.name}")
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("delete failed")
+        return if (r.accepted()) CmdResult.Ok else CmdResult.Failure("delete failed")
     }
 
     override suspend fun thumbnail(session: CameraSession, file: RemoteFile): ByteArray? =
@@ -222,19 +238,19 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override suspend fun formatSd(session: CameraSession): CmdResult {
         val r = http.getText("${session.baseUrl}/api/system/formatsd")
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("format SD failed")
+        return if (r.accepted()) CmdResult.Ok else CmdResult.Failure("format SD failed")
     }
 
     override suspend fun factoryReset(session: CameraSession): CmdResult {
         // Ride3Pro's official app marks this endpoint TODO; Ride6 routes it through the
         // menu parameter id `factory_reset`. Best-effort on both.
         val r = http.getText("${session.baseUrl}/api/menu/setparameter?id=factory_reset&value=1")
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("factory reset failed")
+        return if (r.accepted()) CmdResult.Ok else CmdResult.Failure("factory reset failed")
     }
 
     override suspend fun reboot(session: CameraSession): CmdResult {
         val r = http.getText("${session.baseUrl}/api/reboot")
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("reboot failed")
+        return if (r.accepted()) CmdResult.Ok else CmdResult.Failure("reboot failed")
     }
 
     override suspend fun syncTime(session: CameraSession): CmdResult {
@@ -243,7 +259,7 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
             "${session.baseUrl}/api/vendor/send-time?year=${now.year}&month=${now.monthNumber}" +
                 "&day=${now.dayOfMonth}&hour=${now.hour}&minute=${now.minute}&second=${now.second}",
         )
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("time sync failed")
+        return if (r.accepted()) CmdResult.Ok else CmdResult.Failure("time sync failed")
     }
 
     override suspend fun setWifi(session: CameraSession, ssid: String, password: String): CmdResult {
@@ -255,12 +271,29 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
         val b = http.getText(
             "${session.baseUrl}/api/menu/setparameter?id=wifi_passwd&value=${urlEnc(password)}",
         )
-        return if (a != null && b != null) CmdResult.Ok
+        return if (a.accepted() && b.accepted()) CmdResult.Ok
         else CmdResult.Failure("setwifi failed")
     }
 
     private fun urlEnc(s: String): String =
         s.replace(" ", "%20").replace("&", "%26").replace("=", "%3D")
+
+    /**
+     * Whether a REST reply means the camera accepted the command.
+     *
+     * Every endpoint speaks the same envelope — `{"result": Int, "info": …}` with
+     * `isSuccess() == (result == 0)`
+     * (`docs/08-官方APK全量逆向档案/01-TUWIN-档案.md` §3, `Ride3ProApiResponse.java:13-19`),
+     * so a bare "we got a body" test — which is what this file used — reported a refused
+     * command as success. A reply that is not a JSON object carries no `result` and is
+     * judged by the transport alone, which is how the XML/streaming endpoints work.
+     */
+    private fun String?.accepted(): Boolean {
+        val text = this ?: return false
+        val obj = runCatching { json.parseToJsonElement(text).jsonObject }.getOrNull() ?: return true
+        val result = (obj["result"] as? JsonPrimitive)?.contentOrNull ?: return true
+        return result.trim() == "0"
+    }
 
     // ---- helpers ----
     private fun absolute(session: CameraSession, url: String) =
@@ -268,9 +301,6 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
 
     private fun String.toObj(): JsonObject? =
         runCatching { json.parseToJsonElement(this).jsonObject }.getOrNull()
-
-    private fun JsonObject.jsonPrimitiveOrNull(): String? =
-        (this as? JsonPrimitive)?.contentOrNull
 
     private fun JsonElement.jsonPrimitiveOrNull(): String? =
         (this as? JsonPrimitive)?.contentOrNull

@@ -28,6 +28,8 @@ import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.transport.CameraHttp
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -74,6 +76,19 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     private val _events = MutableSharedFlow<DeviceEvent>(extraBufferCapacity = 8)
     override val events: Flow<DeviceEvent> = _events
 
+    /**
+     * Guards every per-host cache below ([workModeCache], [namedModeCache], [menuRows],
+     * [menuCache], [deviceMenuCache], [liveMode], [slowStatus], …).
+     *
+     * Those maps are touched by the 1.5 s status poll, the settings walk and the file
+     * listing, which are separate coroutines, and the transport's one-request-at-a-time
+     * lane serialises the *requests*, not the bookkeeping that follows them. A `HashMap`
+     * written from two threads can corrupt silently, so every read and write goes
+     * through this lock. It is held for a single map operation and never across a call
+     * that could take it again, so it cannot deadlock.
+     */
+    private val stateLock = Mutex()
+
     /** The endpoints whose verdict lives somewhere other than the `Success` sentinel. */
     private val maintenance = HiMaintenance(http) { cgi(it.host, it.port) }
 
@@ -95,7 +110,11 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     override suspend fun connect(host: String, port: Int): CameraSession =
         Diag.inOp("hi3510-connect", "target=$host:$port") {
             val attr = HiVarParser.parse(http.getText("${cgi(host, port)}/getdeviceattr.cgi"))
-                ?: error("getdeviceattr.cgi gave no answer at $host:$port")
+            // [HiVarParser.parse] is total — an unanswered request parses to an empty map,
+            // not null — so "the camera did not answer" is an *empty* result here. The old
+            // `?: error(...)` could never fire, which let connect() build a session for a
+            // camera that had said nothing at all.
+            if (attr.isEmpty()) error("getdeviceattr.cgi gave no answer at $host:$port")
             val name = attr["name"]?.trim().orEmpty()
             val model = if (name.isNotEmpty()) name else (attr["model"] ?: "XTU Hi35xx")
             val newApp = attr["hardversion"]?.trim() == "NewAPP"
@@ -153,10 +172,15 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     private suspend fun currentStrMode(session: CameraSession, refresh: Boolean = false): String {
         if (!session.newApp()) return session.strMode()
-        if (!refresh) liveMode[session.host]?.let { return it }
+        if (!refresh) stateLock.withLock { liveMode[session.host] }?.let { return it }
         val fresh = HiVarParser.parse(http.getText("${cgi(session.host, session.port)}/getcurworkmode.cgi"))
         val name = (fresh["workmode"] ?: fresh["value"])?.split(",")?.firstOrNull()?.trim()
-        return if (name.isNullOrEmpty()) session.strMode() else name.also { liveMode[session.host] = it }
+        return if (name.isNullOrEmpty()) {
+            session.strMode()
+        } else {
+            stateLock.withLock { liveMode[session.host] = name }
+            name
+        }
     }
 
     /** Work-state codes the SigmaStar/Hi35xx firmware reports in `getcurallinfo`. */
@@ -242,8 +266,8 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     private val deviceMenuCache = mutableMapOf<String, List<String>>()
 
     private suspend fun workModeNames(session: CameraSession): Map<String, List<String>> {
-        workModeCache[session.host]?.let { return it }
-        if (session.host in workModeUnsupported) return emptyMap()
+        stateLock.withLock { workModeCache[session.host] }?.let { return it }
+        if (stateLock.withLock { session.host in workModeUnsupported }) return emptyMap()
         val loaded = runCatching {
             val body = http.getText("${cgi(session.host, session.port)}/getallworkmode.cgi") ?: return@runCatching emptyMap()
             val parsed = HiVarParser.parse(body)
@@ -251,7 +275,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             // what it did send is then a *prefix* of the truth — [HiVarParser] keeps the
             // longest statement per key, but a key whose only statement was the cut one
             // still holds a short list. Flag the host so [listModes] completes it.
-            if (body.count { it == '"' } % 2 == 1) workModeTruncated.add(session.host)
+            if (body.count { it == '"' } % 2 == 1) stateLock.withLock { workModeTruncated.add(session.host) }
             mapOf(
                 "video" to parsed["video"].csvOrList(),
                 "photo" to parsed["photo"].csvOrList(),
@@ -259,7 +283,9 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         }.getOrDefault(emptyMap())
         // Record the negative answer too: consulted on every status poll, a silent
         // retry would be one wasted camera request every 1.5 seconds forever.
-        if (loaded.isEmpty()) workModeUnsupported.add(session.host) else workModeCache[session.host] = loaded
+        stateLock.withLock {
+            if (loaded.isEmpty()) workModeUnsupported.add(session.host) else workModeCache[session.host] = loaded
+        }
         return loaded
     }
 
@@ -270,26 +296,37 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
      * camera reached at the same 192.168.0.1 would otherwise be served the first one's
      * menu — the risk grew the moment [readMenu] started trusting those rows instead of
      * re-reading them on every mode switch.
+     *
+     * The slow-status half of [getStatus] is dropped here as well: it is a per-host
+     * battery/card snapshot with an 8 s TTL, and a camera swapped onto the same IP would
+     * otherwise show the previous unit's charge and free space until it aged out.
      */
-    override fun onSessionClosed(session: CameraSession) {
-        workModeCache.remove(session.host)
-        workModeUnsupported.remove(session.host)
-        workModeTruncated.remove(session.host)
-        namedModeCache.remove(session.host)
-        menuCache.remove(session.host)
-        deviceMenuCache.remove(session.host)
-        liveMode.remove(session.host)
-        val before = menuRows.size
-        menuRows.keys.retainAll { !it.startsWith("${session.host}|") }
-        if (before != menuRows.size) {
-            Diag.debug(LogTag.PROTO, "menu cache for ${session.host} dropped (${before - menuRows.size} walk(s))")
+    override suspend fun onSessionClosed(session: CameraSession) {
+        val dropped = stateLock.withLock {
+            workModeCache.remove(session.host)
+            workModeUnsupported.remove(session.host)
+            workModeTruncated.remove(session.host)
+            namedModeCache.remove(session.host)
+            menuCache.remove(session.host)
+            deviceMenuCache.remove(session.host)
+            liveMode.remove(session.host)
+            slowStatus.remove(session.host)
+            slowStatusAt.remove(session.host)
+            val before = menuRows.size
+            menuRows.keys.retainAll { !it.startsWith("${session.host}|") }
+            before - menuRows.size
+        }
+        if (dropped != 0) {
+            Diag.debug(LogTag.PROTO, "menu cache for ${session.host} dropped ($dropped walk(s))")
         }
     }
 
     /** Forget the cached mode/menu for a host after the camera's mode changed. */
-    private fun invalidateModeCache(session: CameraSession) {
-        liveMode.remove(session.host)
-        menuCache.remove(session.host)
+    private suspend fun invalidateModeCache(session: CameraSession) {
+        stateLock.withLock {
+            liveMode.remove(session.host)
+            menuCache.remove(session.host)
+        }
     }
 
     private fun String?.csvOrList(): List<String> =
@@ -318,7 +355,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             Diag.d(LogTag.PROTO) { "listModes skipped: legacy firmware has no named work modes" }
             return emptyList()
         }
-        namedModeCache[session.host]?.let { return it }
+        stateLock.withLock { namedModeCache[session.host] }?.let { return it }
         val table = workModeNames(session)
         val modes = if (table.isNotEmpty()) {
             // What the firmware's own answer did not cover: a family it left out
@@ -326,7 +363,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             // truncated list can be short in the middle and no name can be pointed at
             // as the lost one. A complete answer matches nothing here and costs no
             // camera request at all.
-            val wanted = if (session.host in workModeTruncated) {
+            val wanted = if (stateLock.withLock { session.host in workModeTruncated }) {
                 HiModes.candidates
             } else {
                 HiModes.candidates.filter { (family, _) ->
@@ -371,7 +408,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         // said `-2222` to all 22 names, and re-asking on every call is not a fallback,
         // it is a denial of service on a link that also carries the live view.
         // [probeModes] returning null (inconclusive) deliberately skips this line.
-        namedModeCache[session.host] = modes
+        stateLock.withLock { namedModeCache[session.host] = modes }
         return modes
     }
 
@@ -445,7 +482,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     /** The family a mode name belongs to, from this session's resolved list first. */
     private suspend fun familyOf(session: CameraSession, name: String?): ModeFamily? {
         if (name.isNullOrEmpty()) return null
-        namedModeCache[session.host]?.firstOrNull { it.name == name }?.let { return it.family }
+        stateLock.withLock { namedModeCache[session.host] }?.firstOrNull { it.name == name }?.let { return it.family }
         HiModes.familyOf(name)?.let { return it }
         val table = workModeNames(session)
         return when {
@@ -492,8 +529,10 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         val recording = working && isVideoModeName(modeName, session)
         val busy = working && !recording
 
-        val slow = slowStatus[session.host]?.takeIf {
-            monotonicMillis() - (slowStatusAt[session.host] ?: 0L) < SLOW_STATUS_TTL_MS
+        val slow = stateLock.withLock {
+            slowStatus[session.host]?.takeIf {
+                monotonicMillis() - (slowStatusAt[session.host] ?: 0L) < SLOW_STATUS_TTL_MS
+            }
         } ?: run {
             val batt = HiVarParser.parse(http.getText("$base/getbatterycapacity.cgi?"))
             val sd = HiVarParser.parse(http.getText("$base/getsdstate.cgi?"))
@@ -514,9 +553,11 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
                 sdState = SdCardState.fromRaw(sd["sdstate"]),
                 photoCount = count.int("count"),
                 raw = batt + sd + count,
-            ).also {
-                slowStatus[session.host] = it
-                slowStatusAt[session.host] = monotonicMillis()
+            ).also { fresh ->
+                stateLock.withLock {
+                    slowStatus[session.host] = fresh
+                    slowStatusAt[session.host] = monotonicMillis()
+                }
             }
         }
 
@@ -622,7 +663,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
             // code did whenever the mode table was unavailable) leaves the user with
             // a photo they never asked for, or a recording restarted behind their back.
             return CmdResult.Failure(
-                "Camera is in video mode \"${modeName ?: "?"}\" — the record button starts that one, not capture",
+                "Camera is in video mode \"${modeName}\" — the record button starts that one, not capture",
             )
         }
         val url = shape.startUrl(base)
@@ -630,7 +671,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         val r = http.getText(url)
         return when (val verdict = Cgi.verdict(r)) {
             is CgiReply.Accepted -> {
-                Diag.i(LogTag.PROTO) { "${shape.endpoint} accepted (mode=${modeName ?: "?"} state=${state ?: "?"})" }
+                Diag.i(LogTag.PROTO) { "${shape.endpoint} accepted (mode=${modeName} state=${state ?: "?"})" }
                 CmdResult.Ok
             }
             is CgiReply.Rejected -> refuse(shape.endpoint, verdict)
@@ -661,7 +702,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         val r = http.getText(url)
         return when (val verdict = Cgi.verdict(r)) {
             is CgiReply.Accepted -> {
-                Diag.i(LogTag.PROTO) { "${shape.endpoint} stop accepted (mode=${modeName ?: "?"})" }
+                Diag.i(LogTag.PROTO) { "${shape.endpoint} stop accepted (mode=${modeName})" }
                 CmdResult.Ok
             }
             is CgiReply.Rejected -> refuse("${shape.endpoint} stop", verdict)
@@ -699,8 +740,10 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
                 // sequential requests on the one link that also carries the live view —
                 // which is what starved the preview for 7.6 s in the 2026-09-23 log.
                 // [readMenu] refreshes every row's *value* from the new primary listing.
-                liveMode[session.host] = mode.name
-                menuCache.remove(session.host)
+                stateLock.withLock {
+                    liveMode[session.host] = mode.name
+                    menuCache.remove(session.host)
+                }
                 CmdResult.Ok
             }
             is CgiReply.Rejected -> refuse("setNamedMode \"${mode.name}\"", verdict)
@@ -933,7 +976,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         nameCache: MutableMap<String, List<String>>,
     ): List<CameraSetting> {
         val cacheKey = "${session.host}|$workmode"
-        val cached = menuRows[cacheKey]
+        val cached = stateLock.withLock { menuRows[cacheKey] }
         val base = cgi(session.host, session.port)
         val wp = param(workmode)
         val primary = HiMenu.parsePrimaryItems(http.getText("$base/getprimarymenuitem.cgi?-workmode=$wp"))
@@ -995,9 +1038,11 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
                 }
             }
         }
-        nameCache[session.host] = out.map { it.id }
+        stateLock.withLock {
+            nameCache[session.host] = out.map { it.id }
+            if (out.isNotEmpty() && optionFailures < out.size) menuRows[cacheKey] = out
+        }
         if (out.isNotEmpty()) {
-            if (optionFailures < out.size) menuRows[cacheKey] = out
             Diag.i(LogTag.PROTO) {
                 "menu read ${out.size}/${primary.size} items for \"$workmode\"" +
                     " ($reused from cache, ${out.size - reused - optionFailures} re-read)"
@@ -1039,7 +1084,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         if (!session.newApp()) {
             return CmdResult.Failure("This firmware has no System device menu — use the per-mode settings")
         }
-        val known = deviceMenuCache[session.host]
+        val known = stateLock.withLock { deviceMenuCache[session.host] }
         if (known != null && known.isNotEmpty() && id !in known) {
             Diag.w(LogTag.PROTO) { "setDeviceSetting \"$id\" not in the System menu (${known.joinToString(",")}) — refused" }
             return CmdResult.Failure("\"$id\" is not a device setting")
@@ -1052,7 +1097,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
         if (session.newApp()) {
             // A menu name the primary listing never returned is the one failure we can
             // catch before sending it: the firmware answers such names with -2222.
-            val known = menuCache[session.host]
+            val known = stateLock.withLock { menuCache[session.host] }
             if (known != null && known.isNotEmpty() && id !in known) {
                 Diag.w(LogTag.PROTO) { "setSetting \"$id\" not in the current menu (${known.joinToString(",")}) — refused" }
                 return CmdResult.Failure("\"$id\" is not a setting of the current mode")
@@ -1147,7 +1192,7 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     override suspend fun readBack(session: CameraSession, id: String): CameraSetting? {
         if (!session.newApp()) return null
         val base = cgi(session.host, session.port)
-        val workmode = if (deviceMenuCache[session.host]?.contains(id) == true) {
+        val workmode = if (stateLock.withLock { deviceMenuCache[session.host]?.contains(id) } == true) {
             HiModes.SYSTEM_WORKMODE
         } else {
             currentStrMode(session)
@@ -1293,7 +1338,11 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
     // ---------- device info / maintenance ----------
 
     override suspend fun getDeviceInfo(session: CameraSession): DeviceInfo? {
-        val attr = HiVarParser.parse(http.getText("${cgi(session.host, session.port)}/getdeviceattr.cgi")) ?: return null
+        val attr = HiVarParser.parse(http.getText("${cgi(session.host, session.port)}/getdeviceattr.cgi"))
+        // Empty means "the camera did not answer": parse() is total, so the old
+        // `?: return null` never fired and an unreachable camera produced an all-null
+        // DeviceInfo instead of the honest "nothing to show".
+        if (attr.isEmpty()) return null
         return DeviceInfo(
             name = attr["name"]?.trim()?.ifEmpty { null },
             model = attr["model"]?.trim()?.ifEmpty { null },
@@ -1309,7 +1358,14 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override suspend fun factoryReset(session: CameraSession): CmdResult {
         val r = http.getText("${cgi(session.host, session.port)}/reset.cgi")
-        return if (r != null) CmdResult.Ok else CmdResult.Failure("factory reset failed")
+        // An answered CGI is not an accepted command on this family: it reports a
+        // refusal as HTTP 200 with `SvrFuncResult` in the body, so a bare null check
+        // reported "reset" for a camera that had refused it.
+        return when (val verdict = Cgi.verdict(r)) {
+            is CgiReply.Accepted -> CmdResult.Ok
+            is CgiReply.Rejected -> refuse("factory reset", verdict)
+            CgiReply.NoAnswer -> CmdResult.Failure("factory reset failed (reset.cgi did not answer)")
+        }
     }
 
     /**
