@@ -185,6 +185,15 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      */
     val pageDepth: Int get() = pages.size
 
+    /**
+     * The page a pop would reveal.
+     *
+     * Two readers: a back gesture previews this page before the stack is touched, and the shell
+     * keeps this layer composed under the top one so that revealing it is a slide over something
+     * that already exists. Null depth 0 is the tab layer, and null when nothing is pushed at all.
+     */
+    val pageBelowTop: Page? get() = pages.getOrNull(pages.lastIndex - 1)
+
     /** Whether any pushed page (the log, its settings, the about page) is showing. */
     val diagnosticsOpen: Boolean get() = pages.isNotEmpty()
 
@@ -430,11 +439,25 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     var previewFullscreen by mutableStateOf(false)
         private set
 
+    /**
+     * How far up the full-screen preview is: 1 while it owns the window, 0 once it is gone.
+     *
+     * Beside [previewFullscreen] rather than inside the live page because the back gesture is the
+     * shell's: the preview is the live page's own overlay, but the finger pulling it down and the
+     * decision to let it go are not.
+     */
+    var previewReveal by mutableStateOf(1f)
+        internal set
+
     fun setFullscreenPreview(on: Boolean) {
         if (previewFullscreen != on) {
             Diag.info(LogTag.STATE, "preview fullscreen=$on")
         }
         previewFullscreen = on
+        // Any way out other than the gesture — the tab changed, the long press again — is an
+        // instant close. Only a gesture owns a half-open state, and it is the one path that
+        // animates this down before calling here with false.
+        previewReveal = if (on) 1f else 0f
     }
 
     /**

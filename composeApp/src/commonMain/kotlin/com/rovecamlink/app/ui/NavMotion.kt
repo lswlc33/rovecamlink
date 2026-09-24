@@ -1,13 +1,6 @@
 package com.rovecamlink.app.ui
 
 import androidx.compose.animation.core.Easing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.ContentTransform
-import androidx.compose.ui.unit.IntOffset
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.exp
@@ -31,14 +24,14 @@ import kotlin.math.sqrt
  *    distance-dependent, and so it never bounces; see [NavProgrammaticEasing].
  *
  * Deliberately **not** adopted, and why:
- * - the **0.5 dim scrim** drawn under the top layer: this app's background is near-black, so a
- *   half-black scrim over it is invisible, and the covered page already carries the official
- *   alpha falloff;
+ * - the **0.5 dim scrim**: upstream draws it over the *covered* entry, not over the window
+ *   behind, and a half-black layer over a page that already carries the official alpha falloff
+ *   adds nothing on this app's near-black background;
  * - the **leading-corner clip** (`NavCornerClipMode.Leading`): upstream clips to the *platform's*
  *   screen corner radius, which needs a per-platform API for a sub-pixel detail during the
- *   animation;
- * - **pixel-snapping** the entering offset: upstream does it so a corner-clipped page's
- *   anti-aliased edge does not shimmer, and with no clip there is no shimmer to fix.
+ *   animation.
+ *
+ * The **pixel-snapping** is adopted, for the moving layer only — see [layerPlacement].
  */
 object NavMotion {
 
@@ -58,34 +51,50 @@ object NavMotion {
     private const val COVERED_ALPHA = 0.9f
 
     /**
-     * The transition between two depths of the page stack.
+     * Where one layer of the stack sits while [frame] is played at [progress].
      *
-     * [push] is decided by the caller from the two depths, because the same `Page` can be on
-     * either side of a move: 日志 → 日志设置 is a push while the reverse is a pop, and both
-     * have a non-null page on each end.
+     * Two shapes, both upstream `NavTransitions.MiuixDefault`:
+     *
+     * - the layer on top of the stack — the one arriving on a push or leaving on a pop — slides a
+     *   full width from or to the trailing edge;
+     * - the layer it covers parallaxes a quarter width toward the leading edge and dims to 0.9.
+     *   It is still the page being come back to, and taking it to nothing would read as "it
+     *   closed" rather than "it is behind".
+     *
+     * [NavPlacement.snapToPixels] is set for the moving layer only. Upstream rounds just that one
+     * so a corner-clipped page's anti-aliased edge does not shimmer over the scrim while it
+     * moves; the parallax underneath is deliberately left on fractional pixels.
      */
-    fun stackTransition(push: Boolean): ContentTransform {
-        val spec = tween<IntOffset>(DURATION_MS, easing = NavProgrammaticEasing)
-        val fade = tween<Float>(DURATION_MS, easing = NavProgrammaticEasing)
-        return if (push) {
-            // The new page arrives full width; the one it covers gives ground and dims.
-            ContentTransform(
-                targetContentEnter = slideInHorizontally(spec) { width -> width },
-                initialContentExit = slideOutHorizontally(spec) { width ->
-                    -(width * COVERED_PARALLAX).toInt()
-                } + fadeOut(fade, targetAlpha = COVERED_ALPHA),
+    fun layerPlacement(layerDepth: Int, frame: NavFrame, progress: Float): NavPlacement {
+        // Settled: nothing is moving, so nothing is offset — whatever `progress` and the last
+        // direction happen to be.
+        if (!frame.moving) return NavPlacement(fractionX = 0f, alpha = 1f, snapToPixels = true)
+        return if (layerDepth == frame.topDepth) {
+            NavPlacement(
+                fractionX = if (frame.forward) 1f - progress else progress,
+                alpha = 1f,
+                snapToPixels = true,
             )
         } else {
-            // Back: the top page leaves the way it came, and the page below returns to rest.
-            ContentTransform(
-                targetContentEnter = slideInHorizontally(spec) { width ->
-                    -(width * COVERED_PARALLAX).toInt()
-                } + fadeIn(fade, initialAlpha = COVERED_ALPHA),
-                initialContentExit = slideOutHorizontally(spec) { width -> width },
+            val cover = if (frame.forward) progress else 1f - progress
+            NavPlacement(
+                fractionX = -cover * COVERED_PARALLAX,
+                alpha = 1f - (1f - COVERED_ALPHA) * cover,
+                snapToPixels = false,
             )
         }
     }
 }
+
+/**
+ * Where a layer of the stack sits, in fractions of the layer's own size so the caller can read
+ * its width off the graphics layer instead of being handed it.
+ */
+class NavPlacement(
+    val fractionX: Float,
+    val alpha: Float,
+    val snapToPixels: Boolean,
+)
 
 /**
  * The enter/exit curve of miuix navigation, reproduced point for point.

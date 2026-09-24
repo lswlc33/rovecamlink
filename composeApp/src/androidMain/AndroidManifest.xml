@@ -62,6 +62,7 @@
         android:label="RoveCamLink"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
+        android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.RoveCamLink">
 
         <!--

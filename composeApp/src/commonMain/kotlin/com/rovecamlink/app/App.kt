@@ -1,6 +1,6 @@
 package com.rovecamlink.app
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,11 +12,15 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.zIndex
@@ -29,15 +33,21 @@ import com.rovecamlink.app.ui.LiveScreen
 import com.rovecamlink.app.ui.LogScreen
 import com.rovecamlink.app.ui.LogSettingsScreen
 import com.rovecamlink.app.ui.MediaViewer
+import com.rovecamlink.app.ui.NavKey
 import com.rovecamlink.app.ui.NavMotion
+import com.rovecamlink.app.ui.NavStackState
 import com.rovecamlink.app.ui.PermissionsScreen
 import com.rovecamlink.app.ui.PlatformBackHandler
+import com.rovecamlink.app.ui.PlatformPredictiveBackHandler
 import com.rovecamlink.app.ui.SettingsScreen
+import com.rovecamlink.app.ui.blockPointerInput
 import com.rovecamlink.app.ui.glass.IosLiquidGlassNavigationBar
 import com.rovecamlink.app.ui.rememberBarBackdrop
+import com.rovecamlink.app.ui.rememberNavStack
 import com.rovecamlink.app.ui.rememberPagerNavState
 import com.rovecamlink.app.ui.sampleBackdrop
 import com.rovecamlink.app.ui.tick
+import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import top.yukonga.miuix.kmp.basic.NavigationItem
@@ -58,20 +68,21 @@ enum class Tab(val labelRes: StringResource, val icon: ImageVector) {
 }
 
 /**
- * What the transition animates on: the page on top **and** how deep it is.
- *
- * A page alone cannot say which way a move went — pushing 日志设置 from 日志 and popping back
- * are both "from one non-null page to another" — so the depth rides along and the transition
- * reads its direction from the difference.
+ * How small the bottom bar gets on its way out. It shrinks toward its own bottom edge and slides
+ * off, which reads as the bar folding down under the page rather than blinking out of existence.
  */
-private data class NavKey(val page: Page?, val depth: Int)
+private const val BAR_MIN_SCALE = 0.82f
 
 /**
- * The shell: a bottom navigation bar and nothing else.
+ * The shell: a bottom navigation bar and the page stack over four tabs.
  *
- * The bar at the top of the window belongs to the page under it — see `MiuixPage` — so
- * that it can name the page rather than the app and collapse as that page's list moves.
- * The window title still names the app.
+ * The bar at the top of the window belongs to the page under it — see `MiuixPage` — so that it can
+ * name the page rather than the app and collapse as that page's list moves. The window title still
+ * names the app.
+ *
+ * The stack itself is [NavStackState]: one fraction that both the pages and the bar read. That is
+ * what makes a return follow the hand instead of jumping — see the file, and `NavMotion` for where
+ * the geometry comes from.
  */
 @Composable
 fun App(graph: AppGraph = remember { AppGraph() }) {
@@ -98,37 +109,97 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
         }
     }
 
-    // The system back gesture is the other way out of a pushed page, and the arrow in its
-    // bar is the first: both land on the same `popPage`, so a pushed page behaves like the
-    // sub-page it looks like. With nothing pushed this stays out of the way and back keeps
-    // its platform meaning (leave the app).
-    PlatformBackHandler(enabled = state.topPage != null) { state.popPage() }
-    // The full-screen picture is the other thing back has to be able to leave, and it is
-    // the only control it has: the bar that would carry a 退出 button is hidden by design.
-    PlatformBackHandler(enabled = state.topPage == null && state.previewFullscreen) {
-        state.setFullscreenPreview(false)
+    val navInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val nav = rememberNavStack(NavKey(state.topPage, state.pageDepth))
+    val navProgress = nav.progress.value
+    // What a back gesture previews: the page one level down. The stack is untouched until the
+    // gesture commits, so the page being left is still the live one and the revealed layer is the
+    // warm one the shell keeps composed beneath it.
+    val popTarget = NavKey(state.pageBelowTop, state.pageDepth - 1)
+
+    // --- Going back --------------------------------------------------------------------------
+    // Three things can be left by a back gesture, and they are declared in the order they must be
+    // offered: the media viewer covers everything, the full-screen picture covers the live page,
+    // and a pushed page covers a tab. Android's dispatcher asks the last one that is enabled, and
+    // each of the three gets both halves of a back — the fingers-on-screen preview and the plain
+    // press (`PredictiveBackHandler` ends in one commit on versions with no progress to report).
+    val viewerShown = state.viewer != null
+    val viewerReveal = remember { Animatable(1f) }
+    // Opened afresh starts whole; only a gesture leaves it part way.
+    LaunchedEffect(state.viewer) { if (viewerShown) viewerReveal.snapTo(1f) }
+    PlatformPredictiveBackHandler(
+        enabled = viewerShown,
+        onProgress = { events -> events.collect { viewerReveal.snapTo(it) } },
+        onCommit = {
+            viewerReveal.animateTo(0f, NavStackState.GESTURE_SETTLE)
+            state.closeViewer()
+        },
+        onCancel = { viewerReveal.animateTo(1f, NavStackState.GESTURE_SETTLE) },
+    )
+
+    val previewShown = state.topPage == null && state.previewFullscreen
+    // The preview's own fraction is mirrored into `AppState`, because the live page is what draws
+    // it and the live page is not where the gesture arrives.
+    val previewReveal = remember { Animatable(1f) }
+    LaunchedEffect(state.previewFullscreen) {
+        if (state.previewFullscreen) {
+            previewReveal.snapTo(1f)
+            state.previewReveal = 1f
+        }
     }
-    // The media viewer sits above even that: it covers the window, so back has to close it
-    // before anything else can claim the gesture.
-    PlatformBackHandler(enabled = state.viewer != null) { state.closeViewer() }
-    // With nothing pushed, back walks the pager home instead of closing the app — the demo's
-    // own behaviour, and the Android convention for a bottom bar: 设置 → 返回 lands on 设备,
-    // a second 返回 leaves. The two handlers are mutually exclusive by their conditions.
+    PlatformPredictiveBackHandler(
+        enabled = previewShown,
+        onProgress = { events ->
+            events.collect { fraction ->
+                previewReveal.snapTo(fraction)
+                state.previewReveal = fraction
+            }
+        },
+        onCommit = {
+            previewReveal.animateTo(0f, NavStackState.GESTURE_SETTLE) { state.previewReveal = value }
+            state.setFullscreenPreview(false)
+        },
+        onCancel = {
+            previewReveal.animateTo(1f, NavStackState.GESTURE_SETTLE) { state.previewReveal = value }
+        },
+    )
+
+    val pageStackShown = state.topPage != null
+    PlatformPredictiveBackHandler(
+        enabled = pageStackShown,
+        onProgress = { events ->
+            nav.beginGesture(popTarget)
+            events.collect { nav.driveGesture(it) }
+        },
+        onCommit = {
+            state.popPage()
+            nav.commitGesture(popTarget)
+        },
+        onCancel = { nav.cancelGesture() },
+    )
+
+    // With nothing pushed, back walks the pager home instead of closing the app — the demo's own
+    // behaviour, and the Android convention for a bottom bar: 设置 → 返回 lands on 设备, a second
+    // 返回 leaves. There is no overlay to preview here, so this one stays a plain press.
     PlatformBackHandler(
-        enabled = state.topPage == null && !state.previewFullscreen &&
-            state.viewer == null && pager.selectedPage != 0,
+        enabled = !pageStackShown && !previewShown && !viewerShown && pager.selectedPage != 0,
     ) {
         pager.animateToPage(0)
     }
 
-    // A pushed page is a full-screen sub-page: 日志, 日志设置, 关于 and 权限说明 all carry their
-    // own back arrow, and leaving the four tabs lit under them made the app look like it had
-    // more tabs than the arrow implied (2026-09-24 「部分二级页面…应该是全屏的，底栏应该隐藏
-    // 掉」). The full-screen picture hides it too. The gesture-bar inset the bar used to
-    // consume is handed back to the page instead of being dropped with it, so the last row of
-    // a log still clears the system bar.
-    val fullScreen = state.topPage != null || state.previewFullscreen || state.viewer != null
-    val navInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    // How much of the bar is showing: 1 over the tabs, 0 once a pushed page owns the window. A move
+    // in flight hands the bar the same fraction the pages are on, so a return brings it back under
+    // the finger rather than snapping it in half way through.
+    val barShown = when {
+        // The bar is drawn *over* the page (miuix's Scaffold places the bottom bar after the body),
+        // so a collapse animated here would paint it across the very surface it is making room for.
+        // The viewer and the preview take the window outright and the bar steps aside at once.
+        viewerShown || state.previewFullscreen -> 0f
+        !nav.frame.moving -> if (state.topPage == null) 1f else 0f
+        nav.frame.forward -> 1f - navProgress
+        else -> navProgress
+    }
+
     // The bar floats over the page — miuix's `Scaffold` places the body at the window origin and
     // the bar on top of it — so what scrolls under it is what the blur reads. On a device with
     // no runtime shader [backdrop] is null and the bar keeps its solid surface.
@@ -140,7 +211,24 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
     Scaffold(
         containerColor = MiuixTheme.colorScheme.background,
         bottomBar = {
-            if (!fullScreen) {
+            // Composed even at 0, which is the point: the Scaffold measures this slot to size the
+            // content padding every page reads, and a bar that came and went would move every
+            // layer's bottom inset in the middle of a transition — the ~90dp jump a list used to
+            // take on the frame a page was pushed. `graphicsLayer` moves and shrinks without
+            // touching layout, and at 0 the bar sits entirely below the window: unseen, unhittable.
+            Box(
+                Modifier.graphicsLayer {
+                    val shown = barShown
+                    val scale = BAR_MIN_SCALE + (1f - BAR_MIN_SCALE) * shown
+                    scaleX = scale
+                    scaleY = scale
+                    // Shrunk toward its own bottom edge and then dropped clear of the window, which
+                    // is the 向下缩小收起 the field report asked for.
+                    transformOrigin = TransformOrigin(0.5f, 1f)
+                    translationY = (1f - shown) * size.height
+                    alpha = shown
+                },
+            ) {
                 // The iOS-style glass bar from the miuix demo (vendored under `ui/glass`).
                 // It blurs the page behind it itself — that is what `backdrop` is, and why
                 // the content above carries `sampleBackdrop` — so it takes no `barBlur`
@@ -163,56 +251,114 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
             }
         },
     ) { padding ->
-        val outerPadding = if (fullScreen) PaddingValues(bottom = navInset) else padding
+        // A pushed page owns the whole window, so it gets the gesture-bar inset back rather than
+        // the bar's measured height — and it keeps it for the whole transition, because the bar no
+        // longer changes size when a page arrives. The log is the one that used to show this as a
+        // jump: it follows its own tail, so ~90dp of bottom padding appearing at the start of a
+        // return moved the line the user was reading.
+        val pagePadding = PaddingValues(bottom = navInset)
         Box(Modifier.fillMaxSize().sampleBackdrop(backdrop)) {
-            // The pushed layer wins over the tab underneath: the log, its settings and the
-            // about page each get the whole window and their own back arrow, rather than
-            // being painted over one tab's content. The key carries the stack *depth* as well
-            // as the page, because that is what tells a push from a pop — 日志 → 日志设置 and
-            // the way back are both "two non-null pages".
-            AnimatedContent(
-                targetState = NavKey(state.topPage, state.pageDepth),
-                transitionSpec = { NavMotion.stackTransition(push = targetState.depth > initialState.depth) },
-                label = "page",
-            ) { key ->
-                // Deeper pages draw above shallower ones — on a push the arriving page is on
-                // top, and on a pop the page *leaving* is. Without this, `AnimatedContent`
-                // paints its target above its initial content, so going back drew the
-                // revealed page over the one sliding away and the two read as a cross-fade
-                // instead of a stack moving (caught in the 2026-09-24 emulator capture).
-                Box(Modifier.zIndex(key.depth.toFloat())) {
-                    when (key.page) {
-                        Page.Log -> LogScreen(state, outerPadding = outerPadding, onClose = { state.popPage() })
-                        Page.LogSettings -> LogSettingsScreen(state, outerPadding = outerPadding, onClose = { state.popPage() })
-                        Page.About -> AboutScreen(state, outerPadding = outerPadding, onClose = { state.popPage() })
-                        Page.Permissions -> PermissionsScreen(state, outerPadding = outerPadding, onClose = { state.popPage() })
-                        null -> HorizontalPager(
-                            state = pagerState,
-                            // miuix's own snap spring, so a swipe settles with the same feel the
-                            // bar's tap does (`springAnimateToPage` uses it too).
-                            flingBehavior = PagerDefaults.flingBehavior(
-                                state = pagerState,
-                                snapAnimationSpec = PagerNavigationSpringSpec,
+            // Every layer the stack is holding. The page under the top one stays composed: that is
+            // what makes a return a slide over a page that already exists instead of the first
+            // frame of one being built. Upstream keeps every presented entry composed, and its
+            // visible window — `-1 < d <= opaqueDepth` — is exactly this: two layers deep.
+            val layers = if (nav.frame.moving) {
+                listOf(nav.frame.from, nav.frame.to)
+            } else {
+                buildList {
+                    add(nav.frame.to)
+                    if (nav.frame.to.depth >= 1) add(NavKey(state.pageBelowTop, nav.frame.to.depth - 1))
+                }
+            }
+            layers.forEach { layer ->
+                // Keyed by the layer itself, not by position: a push turns [tab, page] into [page]
+                // and a pop the other way round, and without the key the two slots would swap
+                // contents instead of keeping theirs.
+                key(layer) {
+                    val placement = NavMotion.layerPlacement(layer.depth, nav.frame, navProgress)
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            // Deeper pages draw above shallower ones. On a push that puts the
+                            // arriving page on top; on a pop it puts the *leaving* one there, which
+                            // is what makes the two read as a stack moving rather than a cross-fade
+                            // (caught in the 2026-09-24 emulator capture).
+                            .zIndex(layer.depth.toFloat())
+                            .graphicsLayer {
+                                // Read the width off the layer instead of being handed it, so the
+                                // placement only ever has to deal in fractions.
+                                val px = placement.fractionX * size.width
+                                translationX = if (placement.snapToPixels) {
+                                    px.roundToInt().toFloat()
+                                } else {
+                                    px
+                                }
+                                alpha = placement.alpha
+                            }
+                            // A covered layer is composed but must not be reachable: without this a
+                            // control on the page underneath would answer a tap through the page
+                            // covering it.
+                            .then(
+                                if (layer.depth < nav.frame.topDepth) {
+                                    Modifier.blockPointerInput()
+                                } else {
+                                    Modifier
+                                },
                             ),
-                            verticalAlignment = Alignment.Top,
-                            key = { tabs[it] },
-                        ) { page ->
-                            when (tabs[page]) {
-                                Tab.Devices -> ConnectScreen(state, outerPadding = outerPadding)
-                                Tab.Live -> LiveScreen(state, outerPadding = outerPadding)
-                                Tab.Files -> FilesScreen(state, outerPadding = outerPadding)
-                                Tab.Settings -> SettingsScreen(state, outerPadding = outerPadding)
+                    ) {
+                        val outer = if (layer.page == null) padding else pagePadding
+                        when (layer.page) {
+                            Page.Log -> LogScreen(state, outerPadding = outer, onClose = { state.popPage() })
+                            Page.LogSettings -> LogSettingsScreen(state, outerPadding = outer, onClose = { state.popPage() })
+                            Page.About -> AboutScreen(state, outerPadding = outer, onClose = { state.popPage() })
+                            Page.Permissions -> PermissionsScreen(state, outerPadding = outer, onClose = { state.popPage() })
+                            null -> HorizontalPager(
+                                state = pagerState,
+                                // miuix's own snap spring, so a swipe settles with the same feel the
+                                // bar's tap does (`springAnimateToPage` uses it too).
+                                flingBehavior = PagerDefaults.flingBehavior(
+                                    state = pagerState,
+                                    snapAnimationSpec = PagerNavigationSpringSpec,
+                                ),
+                                verticalAlignment = Alignment.Top,
+                                key = { tabs[it] },
+                            ) { page ->
+                                when (tabs[page]) {
+                                    Tab.Devices -> ConnectScreen(state, outerPadding = outer)
+                                    Tab.Live -> LiveScreen(state, outerPadding = outer)
+                                    Tab.Files -> FilesScreen(state, outerPadding = outer)
+                                    Tab.Settings -> SettingsScreen(state, outerPadding = outer)
+                                }
                             }
                         }
                     }
                 }
             }
             state.errorMessage?.let { msg ->
-                ErrorBanner(msg) { state.errorMessage = null }
+                // Raised by the bar's own height, which is what it was missing: this draws inside
+                // the body and the bar is placed after it, so at the window's bottom edge the
+                // message was underneath the bar rather than above it.
+                ErrorBanner(
+                    msg = msg,
+                    bottomInset = padding.calculateBottomPadding(),
+                ) { state.errorMessage = null }
             }
             // Last in the Box, so the viewer covers the error banner too: it is the one
-            // surface that owns the whole window while it is up.
-            if (state.viewer != null) MediaViewer(state)
+            // surface that owns the whole window while it is up. The fraction is the gesture's,
+            // so a back that is half let go leaves it half raised.
+            if (viewerShown) {
+                Box(
+                    Modifier.fillMaxSize().graphicsLayer {
+                        val reveal = viewerReveal.value
+                        alpha = reveal
+                        val scale = 0.92f + 0.08f * reveal
+                        scaleX = scale
+                        scaleY = scale
+                    },
+                ) {
+                    MediaViewer(state)
+                }
+            }
         }
     }
 
