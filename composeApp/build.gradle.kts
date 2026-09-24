@@ -158,6 +158,18 @@ android {
         }
     }
 
+    // 体积问题只在「没裁剪的代码」上：不开 R8 时 30182 个类全被打进包里（Guava 2107、
+    // Compose 约 7700、miuix 1765、Media3 约 2600、CameraX 约 1700、Ktor 约 1900、
+    // zxing 291……其中绝大多数从未被引用），19.93MB 的包里 dex 占 18.16MB，而全部原生库
+    // 只有 0.18MB、资源 0.67MB。所以 R8 只开在 release 上，nightly 与正式版都发它。
+    // 实测（本机全新构建）：release 3.64MB(1 个 dex)。
+    //
+    // debug 保持不裁剪。它只服务本地与模拟器调试，体积无所谓；一旦开裁剪，坏处全落在
+    // 本地迭代链路上而收益为零：①R8 每次 debug 构建都要跑一遍，拖慢「改一行→装上模拟器」；
+    // ②没被引用的类会被删掉，想 step 进去看的时候类已经不存在；③资源收缩可能误删只在
+    // 运行时按名字取用的资源，而这种问题只会在你本机复现。以前给 debug 开裁剪的唯一理由是
+    // 「nightly 发的就是 debug」，现在 nightly 改发 release（见 .github/workflows/nightly.yml），
+    // 那个理由已经不成立了。
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
@@ -165,8 +177,16 @@ android {
                 signingConfig = signingConfigs.getByName("rovrecamlink")
             }
         }
+        // release 是唯一开 R8 的：裁剪 + 资源收缩 + optimize 规则（比默认规则多做内联/合并）。
+        // 混淆被 proguard-rules.pro 里的 -dontobfuscate 关掉，代价只有 0.06MB，换来诊断日志
+        // 里的崩溃堆栈直接可读——core/log/CrashRecorder.kt 就是靠它把现场带回来的。
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
             if (hasSharedSigningKey) {
                 signingConfig = signingConfigs.getByName("rovrecamlink")
             }

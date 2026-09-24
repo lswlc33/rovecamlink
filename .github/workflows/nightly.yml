@@ -1,13 +1,19 @@
 name: Nightly
 
 # 每日构建：定时 / 手动 / 推 main 三种触发，每次产出「一个」APK 并发成 nightly 预发布。
-# Android 出 debug 包（可调试，但用与正式版同一把密钥签名）；macOS 上仅编译 iOS 目标，
-# 守住「壳工程可编译」这条线（iOS 未做功能验证，不产 IPA、不跑模拟器）。
+# Android 出的是 release 包——和正式版同一份构建类型、同一把密钥，只是文件名仍叫 nightly。
+# macOS 上仅编译 iOS 目标，守住「壳工程可编译」这条线（iOS 未做功能验证，不产 IPA、不跑模拟器）。
 #
-# 为什么 debug 也要签名：Android 靠签名证书判定能否覆盖升级。debug 默认用 runner 现场
-# 生成的 Android debug 密钥，等于每个 nightly 换一次签名，装机必报「与已安装应用签名
-# 不符」，只能先卸载。现在 debug 与 release 共用 ROVECAMLINK_RELEASE_* 那把密钥，并由
-# verify-apk-signature 核对证书指纹，nightly 与正式版签名一致，装上就能一路升级。
+# 为什么发 release 而不是 debug：nightly 是给人下载安装的，下载量直接决定体验。AGP 对
+# debuggable 构建只裁剪、不做优化（构建时会警告 DEBUGGABLE_AND_MINIFIED_ENABLED），所以
+# debug 就算开了 R8 也只能压到 7.95MB（不开是 19.93MB），而 release 只有 3.64MB。代价是
+# 包不再可调试（adb set-debug-app 挂不上），但排障靠的是 App 内 Diagnostics 导出的诊断
+# TXT，其中的崩溃堆栈因为关了混淆（见 composeApp/proguard-rules.pro）保持可读，换得值。
+#
+# 为什么必须签名：Android 靠签名证书判定能否覆盖升级。release 的默认产物是未签名的，
+# 装了之后下一次升级必然报「与已安装应用签名不符」，只能先卸载。nightly 与正式版共用
+# ROVECAMLINK_RELEASE_* 那把密钥，并由 verify-apk-signature 核对证书指纹，
+# nightly 与正式版签名一致，装上就能一路升级。
 #
 # 只有工作流产物这一个包：不再额外 upload-artifact，避免同一个 run 出现两份 APK。
 # push 也发布会让 Releases 页变长，所以只保留最近 KEEP_NIGHTLIES 条 nightly，更早的连 tag 一起删。
@@ -47,7 +53,7 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: 构建签名 debug APK + 单测
+      - name: 构建签名 release APK + 单测
         env:
           ROVECAMLINK_RELEASE_KEYSTORE_BASE64: ${{ secrets.ROVECAMLINK_RELEASE_KEYSTORE_BASE64 }}
           ROVECAMLINK_RELEASE_STORE_PASSWORD: ${{ secrets.ROVECAMLINK_RELEASE_STORE_PASSWORD }}
@@ -62,19 +68,22 @@ jobs:
           fi
           printf '%s' "$ROVECAMLINK_RELEASE_KEYSTORE_BASE64" | base64 -d > nightly.keystore
           export ROVECAMLINK_RELEASE_STORE_FILE=nightly.keystore
-          ./gradlew :composeApp:assembleDebug :composeApp:testDebugUnitTest --console=plain
+          ./gradlew :composeApp:assembleRelease :composeApp:testDebugUnitTest --console=plain
           rm -f nightly.keystore
 
       - name: 校验产物唯一并核对签名
         id: check
         run: |
           set -eu
-          out=composeApp/build/outputs/apk/debug
-          n=$(find "$out" -maxdepth 1 -type f -name '*.apk' | wc -l)
+          # release 目录里除了成品还有 baselineProfiles/ 子目录与 output-metadata.json，
+          # 所以用 `*-release.apk` 全词匹配：只挑签名成品，将来若多出 unsigned 中间产物
+          # 也不会被误伤（与 release.yml 同一条规矩，两边保持一致）。
+          out=composeApp/build/outputs/apk/release
+          n=$(find "$out" -maxdepth 1 -type f -name '*-release.apk' | wc -l)
           if [ "$n" != "1" ]; then
-            echo "::error::$out 下期望恰好一个 APK，实际 $n 个"; exit 1
+            echo "::error::$out 下期望恰好一个签名 release APK，实际 $n 个"; exit 1
           fi
-          apk=$(find "$out" -maxdepth 1 -type f -name '*.apk' | head -1)
+          apk=$(find "$out" -maxdepth 1 -type f -name '*-release.apk' | head -1)
           # 包名带上 versionName 和这一轮的 UTC 时间戳。以前每个 nightly 都叫
           # `RoveCamLink-nightly.apk`，下载目录里几个包同名，分不清手上装的是哪一次；
           # 时间戳在这里算，Release 的 tag 与文件名共用同一个值。
