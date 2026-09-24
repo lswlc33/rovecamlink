@@ -105,9 +105,18 @@ object UiTestDevice {
         CameraMode("Burst Photo", ModeFamily.PHOTO),
     )
 
-    /** Two days of captures, so the file page's date grouping has something to group. */
+    /**
+     * Two days of captures, so the file page's date grouping has something to group.
+     *
+     * The URLs point at a canned tree served over HTTP rather than at the fake
+     * `ui.test` host: `loadThumbnail` does not ride [runOp], so nothing upstream of
+     * the transport stops it, and a `.THM` fetch against an unresolvable name just
+     * fails. Pointing at a real server is what lets the gallery's grid cells draw
+     * actual pictures in this mode. `10.0.2.2` is the emulator's view of the host;
+     * `tools/fakecam/README.md` has the server that fills those paths.
+     */
     fun files(): List<RemoteFile> {
-        val root = "http://ui.test/DCIM"
+        val root = "http://10.0.2.2:18080/DCIM"
         fun file(name: String, type: FileType, size: Long, stamp: String) = RemoteFile(
             name = name,
             type = type,

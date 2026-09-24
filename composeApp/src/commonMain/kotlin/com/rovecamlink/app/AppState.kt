@@ -242,6 +242,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         uiTestModeState = on
         if (on) {
             session = UiTestDevice.session()
+            // The scope the session-bound work rides, normally built in connect(). Without
+            // it `loadThumbnail` — which does not go through runOp, so the uiTestMode guard
+            // there never sees it — bails on its second line and every gallery cell stays a
+            // type glyph. The canned tree serves real .THM bytes, so the fetch is worth
+            // making here too.
+            sessionScope?.cancel()
+            sessionScope = CoroutineScope(scope.coroutineContext + Job())
             settings = UiTestDevice.settings()
             deviceSettings = UiTestDevice.deviceSettings()
             modes = UiTestDevice.modes()
@@ -261,6 +268,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         } else {
             uiTestTicker?.cancel()
             uiTestTicker = null
+            sessionScope?.cancel()
+            sessionScope = null
             session = null
             settings = emptyList()
             deviceSettings = emptyList()
