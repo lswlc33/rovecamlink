@@ -114,7 +114,6 @@ import com.rovecamlink.app.files_view_line
 import com.rovecamlink.app.files_view_list
 import com.rovecamlink.app.firmware_unsupported
 import com.rovecamlink.app.menu_filter
-import com.rovecamlink.app.menu_list_style
 import com.rovecamlink.app.menu_sort
 import com.rovecamlink.app.hint_batch_delete_many
 import com.rovecamlink.app.hint_locked_adjust
@@ -285,9 +284,7 @@ import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Delete
 import top.yukonga.miuix.kmp.icon.extended.Download
 import top.yukonga.miuix.kmp.icon.extended.Filter
-import top.yukonga.miuix.kmp.icon.extended.GridView
 import top.yukonga.miuix.kmp.icon.extended.Image
-import top.yukonga.miuix.kmp.icon.extended.ListView
 import top.yukonga.miuix.kmp.icon.extended.Ok
 import top.yukonga.miuix.kmp.icon.extended.Play
 import top.yukonga.miuix.kmp.icon.extended.Refresh
@@ -398,7 +395,6 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     val unknownDateLbl = stringResource(Res.string.label_unknown_date)
     val filterLbl = stringResource(Res.string.menu_filter)
     val sortLbl = stringResource(Res.string.menu_sort)
-    val styleLbl = stringResource(Res.string.menu_list_style)
     val galleryLbl = stringResource(Res.string.files_view_gallery)
     val listLbl = stringResource(Res.string.files_view_list)
     val filterAllLbl = stringResource(Res.string.filter_type_all)
@@ -436,7 +432,6 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
             if (selected.contains(name)) selected.remove(name) else selected.add(name)
         },
         onDelete = { pendingDelete = it },
-        allFiles = state.files,
         onOpen = { state.openViewer(it, state.files) },
         emptyTitle = onCameraTitle,
         emptyFilesLabel = filesLbl,
@@ -662,8 +657,6 @@ private class MediaArgs(
     val selected: List<String>,
     val onToggle: (String) -> Unit,
     val onDelete: (RemoteFile) -> Unit,
-    /** Every file on the page, so the viewer can walk the run the user opened. */
-    val allFiles: List<RemoteFile>,
     val onOpen: (RemoteFile) -> Unit,
     val emptyTitle: String,
     val emptyFilesLabel: String,
@@ -2092,4 +2085,3 @@ private fun com.rovecamlink.app.core.model.DeviceInfo?.softVersionDash(): String
 private fun com.rovecamlink.app.core.model.DeviceInfo?.hardVersionDash(): String = this?.hardVersion.dashOr(null)
 private fun com.rovecamlink.app.core.model.DeviceInfo?.regionDash(): String = this?.region.dashOr(null)
 private fun com.rovecamlink.app.core.model.DeviceInfo?.macDash(): String = this?.mac.dashOr(null)
-private fun com.rovecamlink.app.core.model.DeviceInfo?.ssidDash(): String = this?.ssid.dashOr(null)

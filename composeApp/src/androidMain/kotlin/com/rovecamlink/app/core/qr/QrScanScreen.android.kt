@@ -204,7 +204,7 @@ private fun CameraQrScanner(lifecycleOwner: LifecycleOwner, onText: (String) -> 
  */
 private fun ImageProxy.toLuminanceSource(): PlanarYUVLuminanceSource? {
     val plane = planes.firstOrNull() ?: return null
-    val buffer = plane.buffer ?: return null
+    val buffer = plane.buffer
     val w = width
     val h = height
     if (w <= 0 || h <= 0) return null

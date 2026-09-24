@@ -292,7 +292,7 @@ object LogFormat {
         }
         val ascii = bytes.take(n).joinToString("") { b ->
             val c = b.toInt() and 0xFF
-            if (c in 0x20..0x7E) c.toInt().toChar().toString() else "."
+            if (c in 0x20..0x7E) c.toChar().toString() else "."
         }
         return "$hex| $ascii" + if (bytes.size > n) " ...(+${bytes.size - n} of ${bytes.size}B)" else ""
     }

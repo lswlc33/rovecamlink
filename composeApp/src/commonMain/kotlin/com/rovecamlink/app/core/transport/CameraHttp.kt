@@ -104,7 +104,7 @@ class CameraHttp(
             val resp: HttpResponse = client.get { url(url) }
             val body = resp.bodyAsText()
             val ok = resp.status.isSuccess()
-            call.reply(resp, body?.length ?: 0, body)
+            call.reply(resp, body.length, body)
             if (ok) body else null
         } catch (t: Throwable) {
             call.fail(t)

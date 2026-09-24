@@ -52,7 +52,9 @@ private class AndroidFileSaver : FileSaver {
                 uri.toString()
             } catch (t: Throwable) {
                 // Otherwise the half-written row stays IS_PENDING=1 forever, invisible
-                // to the user but squatting on the file name.
+                // to the user but squatting on the file name. The cause is logged because
+                // this is the one failure the caller only ever sees as `null`.
+                Diag.warn(LogTag.DL, "gallery publish failed: ${Diag.causeChain(t)}")
                 runCatching { resolver.delete(uri, null, null) }
                 null
             }
@@ -73,6 +75,7 @@ private class AndroidFileSaver : FileSaver {
                 }
                 out.absolutePath
             } catch (t: Throwable) {
+                Diag.warn(LogTag.DL, "downloads publish failed: ${Diag.causeChain(t)}")
                 null
             }
         }
