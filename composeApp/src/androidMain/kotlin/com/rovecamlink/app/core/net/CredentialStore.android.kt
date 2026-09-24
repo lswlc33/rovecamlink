@@ -2,12 +2,19 @@ package com.rovecamlink.app.core.net
 
 import android.content.Context
 import com.rovecamlink.app.androidContext
+import com.rovecamlink.app.core.security.SecretCodec
 
 /**
  * Passphrases live in app-private shared preferences, so a re-pair after an app
  * update or a reboot is still one tap. They are never written to external storage:
  * `logs/` is world-readable through the file manager, and the diagnostics TXT a
  * user sends us is built from it.
+ *
+ * They are also **encrypted at rest** ([SecretCodec], an AES/GCM key held by the
+ * platform Keystore) rather than stored in the clear, because the value grants
+ * access to the camera's own network — the same reason the BLE log masks it. A
+ * value the keystore refuses to encrypt falls back to plaintext so the feature
+ * still works; [SecretCodec.decrypt] reads both forms.
  *
  * Keyed by SSID, not BSSID — these cameras hand out a new BSSID per boot while the
  * network name stays put.
@@ -18,10 +25,11 @@ private class SharedPrefsCredentialStore : WifiCredentialStore {
     }
 
     override fun passwordFor(ssid: String): String? =
-        prefs.getString(KEY_PREFIX + ssid, null)?.takeIf { it.isNotEmpty() }
+        prefs.getString(KEY_PREFIX + ssid, null)?.let { SecretCodec.decrypt(it) }?.takeIf { it.isNotEmpty() }
 
     override fun remember(ssid: String, password: String) {
-        prefs.edit().putString(KEY_PREFIX + ssid, password).apply()
+        val stored = SecretCodec.encrypt(password) ?: password
+        prefs.edit().putString(KEY_PREFIX + ssid, stored).apply()
     }
 
     override fun forget(ssid: String) {
