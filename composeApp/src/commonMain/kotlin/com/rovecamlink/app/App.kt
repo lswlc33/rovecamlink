@@ -190,12 +190,18 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
     // How much of the bar is showing: 1 over the tabs, 0 once a pushed page owns the window. A move
     // in flight hands the bar the same fraction the pages are on, so a return brings it back under
     // the finger rather than snapping it in half way through.
+    //
+    // Read off the nav *frame* and never off `state.topPage`. The stack changes first and the
+    // transition starts an effect later, so for one frame the two disagree — and asking the stack
+    // there made the bar jump to 0, then back to 1 when the slide actually began, then collapse:
+    // the blink the 2026-09-24 report saw on the way into a page (「底栏会闪烁一下，再进行收起」).
+    // The frame is what is on screen, so it is what the bar is derived from.
     val barShown = when {
         // The bar is drawn *over* the page (miuix's Scaffold places the bottom bar after the body),
         // so a collapse animated here would paint it across the very surface it is making room for.
         // The viewer and the preview take the window outright and the bar steps aside at once.
         viewerShown || state.previewFullscreen -> 0f
-        !nav.frame.moving -> if (state.topPage == null) 1f else 0f
+        !nav.frame.moving -> if (nav.frame.to.depth == 0) 1f else 0f
         nav.frame.forward -> 1f - navProgress
         else -> navProgress
     }
@@ -295,11 +301,17 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                                 }
                                 alpha = placement.alpha
                             }
-                            // A covered layer is composed but must not be reachable: without this a
-                            // control on the page underneath would answer a tap through the page
-                            // covering it.
+                            // A layer that is not the one being arrived at is composed but must not
+                            // be reachable: the tab under a pushed page, and the page being left
+                            // behind, would otherwise answer taps through whatever covers them.
+                            //
+                            // "Not the arrival" rather than "covered": during a return the page
+                            // being revealed is the one below, and it becomes live the moment it
+                            // is on screen — waiting for the animation to finish before it accepts
+                            // a touch is what made a back feel like it had to be waited out
+                            // (2026-09-24 「动画时要等很久才能操作下个触控动作」).
                             .then(
-                                if (layer.depth < nav.frame.topDepth) {
+                                if (layer != nav.frame.to) {
                                     Modifier.blockPointerInput()
                                 } else {
                                     Modifier

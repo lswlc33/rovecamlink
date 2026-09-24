@@ -35,8 +35,19 @@ import kotlin.math.sqrt
  */
 object NavMotion {
 
-    /** Upstream `NavDriverSpec.PROGRAMMATIC_DURATION_MILLIS`: the established ~500 ms step. */
-    const val DURATION_MS = 500
+    /**
+     * Upstream `NavDriverSpec.PROGRAMMATIC_DURATION_MILLIS` is 500 ms, and this departs from it
+     * on purpose: the 2026-09-24 field report called the step 「有点长…要等很久」. Upstream spends
+     * that long because its own navigation is finger-driven most of the time and the programmatic
+     * duration only has to match the settle of a spring it is already carrying velocity into; here
+     * every arrow tap and stack change goes through this one number, so it is the felt speed of
+     * the whole app rather than the tail of a gesture.
+     *
+     * 300 ms keeps the same curve and the same geometry — the middle is still the brisk part and
+     * the tail still lands rather than stops — and finishes fast enough that the next touch is not
+     * something the user waits for.
+     */
+    const val DURATION_MS = 300
 
     /**
      * Upstream `NavTransitions.MiuixDefault`, covered segment: the page below slides a quarter
