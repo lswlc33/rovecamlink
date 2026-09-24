@@ -2,6 +2,7 @@ package com.rovecamlink.app.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -42,6 +43,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +52,7 @@ import com.rovecamlink.app.LocalizedString
 import com.rovecamlink.app.Phase
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.action_diagnostics
+import com.rovecamlink.app.action_dismiss
 import com.rovecamlink.app.action_more
 import com.rovecamlink.app.not_connected_note
 import com.rovecamlink.app.not_connected_title
@@ -90,6 +93,7 @@ import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.basic.VerticalScrollBar
 import top.yukonga.miuix.kmp.basic.rememberScrollBarAdapter
 import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.icon.extended.Close
 import top.yukonga.miuix.kmp.icon.extended.ListView
 import top.yukonga.miuix.kmp.icon.extended.More
 import top.yukonga.miuix.kmp.icon.extended.Report
@@ -400,10 +404,14 @@ fun MiuixPage(
  * nothing to group, and the 2026-09-24 report called it out (「只有按钮一个的时候，按钮还包了
  * 一个边」). The un-carded branch keeps the card's own insets, so the button lands on
  * exactly the same pixels it did inside it.
+ *
+ * [swipeShield] is for a card that holds controls the user drags sideways — see
+ * [horizontalDragShield].
  */
 fun LazyListScope.section(
     title: String? = null,
     card: Boolean = true,
+    swipeShield: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     item {
@@ -412,12 +420,32 @@ fun LazyListScope.section(
             .fillMaxWidth()
             .padding(horizontal = CardInset)
             .padding(bottom = SectionGap)
+            .then(if (swipeShield) Modifier.horizontalDragShield() else Modifier)
         if (card) {
             Card(modifier) { content() }
         } else {
             Column(modifier) { content() }
         }
     }
+}
+
+/**
+ * Claim horizontal drags that no child wanted, so the tab pager underneath does not take them.
+ *
+ * The four tabs live in a `HorizontalPager` that covers the whole window, and the live page's
+ * cards carry the sliders and chip rows the user is actually aiming at. A drag that started *on* a
+ * control was always the control's — it consumes first — but one that started on the card's own
+ * padding, or on the label beside a slider, fell straight through to the pager and changed tab
+ * instead of moving the thing under the finger (2026-09-24 field report). This only ever sees what
+ * was left: `detectHorizontalDragGestures` drops out as soon as a child has consumed the movement,
+ * and it waits for horizontal slop, so a vertical drag is still the list's.
+ *
+ * Put on the cards rather than on the page on purpose — the gaps between them are the page's bare
+ * background, and swiping there is still how the user moves between tabs.
+ */
+fun Modifier.horizontalDragShield(): Modifier = pointerInput(Unit) {
+    // The body is empty because the detector is what matters: it consumes the drag it claims.
+    detectHorizontalDragGestures { _, _ -> }
 }
 
 /**
@@ -914,13 +942,21 @@ fun ConfirmDialog(
     }
 }
 
-/** Dismissible error toast pinned to the bottom of the content area. */
+/**
+ * Dismissible error toast pinned to the bottom of the content area, above [bottomInset].
+ *
+ * [bottomInset] is the caller's own bottom padding, and it exists because this draws inside the
+ * `Scaffold`'s body while the shell's bottom bar is placed *after* the body: at the window's
+ * bottom edge the message was underneath the bar and effectively invisible. The whole bar is still
+ * tappable to dismiss, and the ✕ is there because "tap the message to get rid of it" is not
+ * something a message can say about itself.
+ */
 @Composable
-fun ErrorBanner(msg: LocalizedString, onDismiss: () -> Unit) {
+fun ErrorBanner(msg: LocalizedString, bottomInset: Dp, onDismiss: () -> Unit) {
     val scheme = MiuixTheme.colorScheme
     val haptics = LocalHapticFeedback.current
     Box(
-        Modifier.fillMaxSize().padding(16.dp),
+        Modifier.fillMaxSize().padding(16.dp).padding(bottom = bottomInset),
         contentAlignment = Alignment.BottomCenter,
     ) {
         Row(
@@ -933,7 +969,7 @@ fun ErrorBanner(msg: LocalizedString, onDismiss: () -> Unit) {
                     haptics.tap()
                     onDismiss()
                 }
-                .padding(horizontal = 14.dp, vertical = 12.dp),
+                .padding(start = 14.dp, end = 6.dp, top = 12.dp, bottom = 12.dp),
         ) {
             Icon(
                 MiuixIcons.Report,
@@ -948,6 +984,20 @@ fun ErrorBanner(msg: LocalizedString, onDismiss: () -> Unit) {
                 fontSize = 13.sp,
                 modifier = Modifier.weight(1f),
             )
+            IconButton(
+                onClick = {
+                    haptics.tap()
+                    onDismiss()
+                },
+                backgroundColor = Color.Transparent,
+            ) {
+                Icon(
+                    MiuixIcons.Close,
+                    contentDescription = stringResource(Res.string.action_dismiss),
+                    tint = scheme.onError,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
         }
     }
 }
