@@ -411,4 +411,12 @@
     <string name="sort_ascending">Ascending</string>
     <string name="sort_descending">Descending</string>
     <string name="files_filter_line">%1$s · %2$s %3$s</string>
+
+    <!-- Media viewer. -->
+    <string name="viewer_close">Close viewer</string>
+    <string name="viewer_counter">%1$d / %2$d</string>
+    <string name="viewer_loading">Loading…</string>
+    <string name="viewer_preparing">Preparing photo…</string>
+    <string name="viewer_cannot_open">Could not open this file</string>
+    <string name="viewer_retry">Try again</string>
 </resources>

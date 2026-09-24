@@ -114,6 +114,11 @@ object UiTestDevice {
      * fails. Pointing at a real server is what lets the gallery's grid cells draw
      * actual pictures in this mode. `10.0.2.2` is the emulator's view of the host;
      * `tools/fakecam/README.md` has the server that fills those paths.
+     *
+     * `sizeBytes` matches what that server actually holds, byte for byte. It is not
+     * decoration: `download()` compares the written length against this field and fails
+     * the transfer on a mismatch, so a made-up number would make every file in this mode
+     * un-openable — which is exactly what the viewer needs to exercise.
      */
     fun files(): List<RemoteFile> {
         val root = "http://10.0.2.2:18080/DCIM"
@@ -126,12 +131,12 @@ object UiTestDevice {
             dateMillis = Instant.parse(isoUtc(stamp)).toEpochMilliseconds(),
         )
         return listOf(
-            file("2026092114302200.MP4", FileType.VIDEO, 148_236_544, "20260921143022"),
-            file("2026092114315500.JPG", FileType.PHOTO, 3_812_448, "20260921143155"),
-            file("2026092118041100.MP4", FileType.VIDEO, 1_207_959_552, "20260921180411"),
-            file("2026092209120300.JPG", FileType.PHOTO, 2_457_600, "20260922091203"),
-            file("2026092209121900.JPG", FileType.PHOTO, 4_194_304, "20260922091219"),
-            file("2026092219384700.MP4", FileType.VIDEO, 524_288_000, "20260922193847"),
+            file("2026092114302200.MP4", FileType.VIDEO, 3_521, "20260921143022"),
+            file("2026092114315500.JPG", FileType.PHOTO, 59_815, "20260921143155"),
+            file("2026092118041100.MP4", FileType.VIDEO, 5_636, "20260921180411"),
+            file("2026092209120300.JPG", FileType.PHOTO, 61_411, "20260922091203"),
+            file("2026092209121900.JPG", FileType.PHOTO, 63_824, "20260922091219"),
+            file("2026092219384700.MP4", FileType.VIDEO, 5_620, "20260922193847"),
         )
     }
 

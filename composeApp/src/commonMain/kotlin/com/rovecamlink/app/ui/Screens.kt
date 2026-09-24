@@ -454,6 +454,8 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
             if (selected.contains(name)) selected.remove(name) else selected.add(name)
         },
         onDelete = { pendingDelete = it },
+        allFiles = state.files,
+        onOpen = { state.openViewer(it, state.files) },
         emptyTitle = onCameraTitle,
         emptyFilesLabel = filesLbl,
         emptyNote = filesNone,
@@ -700,6 +702,9 @@ private class MediaArgs(
     val selected: List<String>,
     val onToggle: (String) -> Unit,
     val onDelete: (RemoteFile) -> Unit,
+    /** Every file on the page, so the viewer can walk the run the user opened. */
+    val allFiles: List<RemoteFile>,
+    val onOpen: (RemoteFile) -> Unit,
     val emptyTitle: String,
     val emptyFilesLabel: String,
     val emptyNote: String,
@@ -916,6 +921,7 @@ private fun LazyListScope.filesList(
                     selectMode = media.selectMode,
                     selected = media.selected.contains(f.name),
                     onToggle = { media.onToggle(f.name) },
+                    onOpen = { media.onOpen(f) },
                     onDelete = { media.onDelete(f) },
                 )
             }
@@ -945,6 +951,7 @@ private fun LazyGridScope.filesGrid(
                 selectMode = media.selectMode,
                 selected = media.selected.contains(f.name),
                 onToggle = { media.onToggle(f.name) },
+                onOpen = { media.onOpen(f) },
             )
         }
     }
@@ -969,6 +976,7 @@ private fun MediaTile(
     selectMode: Boolean,
     selected: Boolean,
     onToggle: () -> Unit,
+    onOpen: () -> Unit,
 ) {
     val isVideo = f.type == FileType.VIDEO
     LaunchedEffect(f.name) { state.loadThumbnail(f) }
@@ -980,7 +988,12 @@ private fun MediaTile(
             .background(
                 if (isVideo) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.secondary,
             )
-            .then(if (selectMode) Modifier.clickable(onClick = onToggle) else Modifier),
+            // Outside select mode a tap opens the media; inside it the tap is the selection,
+            // which is why the two are alternatives rather than nested handlers.
+            .then(
+                if (selectMode) Modifier.clickable(onClick = onToggle)
+                else Modifier.clickable(onClick = onOpen),
+            ),
     ) {
         val bitmap = state.thumbnails[f.name]
         if (bitmap != null) {
@@ -1216,6 +1229,7 @@ private fun ColumnScope.fileItem(
     selectMode: Boolean,
     selected: Boolean,
     onToggle: () -> Unit,
+    onOpen: () -> Unit,
     onDelete: () -> Unit,
 ) {
     val isVideo = f.type == FileType.VIDEO
@@ -1228,7 +1242,9 @@ private fun ColumnScope.fileItem(
     Row(
         Modifier
             .fillMaxWidth()
-            .then(if (selectMode) Modifier.clickable(onClick = onToggle) else Modifier)
+            // A row is tappable either way; *what* the tap does is the difference —
+            // selection in select mode, opening the media otherwise.
+            .clickable(onClick = if (selectMode) onToggle else onOpen)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

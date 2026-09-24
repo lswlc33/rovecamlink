@@ -28,6 +28,7 @@ import com.rovecamlink.app.ui.FilesScreen
 import com.rovecamlink.app.ui.LiveScreen
 import com.rovecamlink.app.ui.LogScreen
 import com.rovecamlink.app.ui.LogSettingsScreen
+import com.rovecamlink.app.ui.MediaViewer
 import com.rovecamlink.app.ui.NavMotion
 import com.rovecamlink.app.ui.PermissionsScreen
 import com.rovecamlink.app.ui.PlatformBackHandler
@@ -107,10 +108,16 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
     PlatformBackHandler(enabled = state.topPage == null && state.previewFullscreen) {
         state.setFullscreenPreview(false)
     }
+    // The media viewer sits above even that: it covers the window, so back has to close it
+    // before anything else can claim the gesture.
+    PlatformBackHandler(enabled = state.viewer != null) { state.closeViewer() }
     // With nothing pushed, back walks the pager home instead of closing the app — the demo's
     // own behaviour, and the Android convention for a bottom bar: 设置 → 返回 lands on 设备,
     // a second 返回 leaves. The two handlers are mutually exclusive by their conditions.
-    PlatformBackHandler(enabled = state.topPage == null && !state.previewFullscreen && pager.selectedPage != 0) {
+    PlatformBackHandler(
+        enabled = state.topPage == null && !state.previewFullscreen &&
+            state.viewer == null && pager.selectedPage != 0,
+    ) {
         pager.animateToPage(0)
     }
 
@@ -120,7 +127,7 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
     // 掉」). The full-screen picture hides it too. The gesture-bar inset the bar used to
     // consume is handed back to the page instead of being dropped with it, so the last row of
     // a log still clears the system bar.
-    val fullScreen = state.topPage != null || state.previewFullscreen
+    val fullScreen = state.topPage != null || state.previewFullscreen || state.viewer != null
     val navInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     // The bar floats over the page — miuix's `Scaffold` places the body at the window origin and
     // the bar on top of it — so what scrolls under it is what the blur reads. On a device with
@@ -203,6 +210,9 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
             state.errorMessage?.let { msg ->
                 ErrorBanner(msg) { state.errorMessage = null }
             }
+            // Last in the Box, so the viewer covers the error banner too: it is the one
+            // surface that owns the whole window while it is up.
+            if (state.viewer != null) MediaViewer(state)
         }
     }
 

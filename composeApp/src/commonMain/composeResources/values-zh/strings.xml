@@ -408,4 +408,12 @@
     <string name="sort_ascending">升序</string>
     <string name="sort_descending">降序</string>
     <string name="files_filter_line">%1$s · %2$s %3$s</string>
+
+    <!-- 媒体查看器。 -->
+    <string name="viewer_close">关闭查看器</string>
+    <string name="viewer_counter">%1$d / %2$d</string>
+    <string name="viewer_loading">加载中…</string>
+    <string name="viewer_preparing">正在准备照片…</string>
+    <string name="viewer_cannot_open">无法打开此文件</string>
+    <string name="viewer_retry">重试</string>
 </resources>

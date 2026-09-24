@@ -1,5 +1,6 @@
 package com.rovecamlink.app
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -98,10 +99,24 @@ data class DownloadItem(
     val file: RemoteFile,
     val progress: Float = 0f,
     val state: State = State.Queued,
+    /**
+     * Where the bytes actually sit — a real path in app storage, always readable with
+     * [okio.FileSystem.SYSTEM]. This is what a reader opens.
+     */
     val localPath: String? = null,
+    /**
+     * What to show the user as "this is where it went". On Android [publishToGallery]
+     * hands back a MediaStore `content://` URI, which is *not* a path okio can open —
+     * conflating the two made the viewer fail on every photo with a
+     * `FileNotFoundException`. Kept apart so neither use has to guess what it holds.
+     */
+    val publishedUri: String? = null,
     val error: LocalizedString? = null,
 ) {
     enum class State { Queued, Running, Done, Failed }
+
+    /** The user-facing location, falling back to the staged path. */
+    val displayPath: String? get() = publishedUri ?: localPath
 }
 
 /**
@@ -121,6 +136,27 @@ enum class Page { Log, LogSettings, About, Permissions }
  * and the fallback — it is the only one that can show size and per-file actions in place.
  */
 enum class FileLayout { List, Gallery }
+
+/**
+ * The media viewer, open over everything else.
+ *
+ * Not a [Page]: a pushed page keeps the shell's top bar and swaps one tab's body, while
+ * this covers the window and carries its own controls. It also has to be swipeable
+ * across the day's captures, which a single pushed page is not.
+ *
+ * [files] is the run of media the viewer walks — the same type as [index] started on, so
+ * a swipe in the gallery never lands on a video when the user opened a photo. The list is
+ * a snapshot taken at open time: the camera's listing does not change under the user
+ * while they are looking at one frame, and re-deriving it per recomposition would make
+ * the index jump when a background refresh lands.
+ */
+@Immutable
+data class ViewerTarget(
+    val files: List<RemoteFile>,
+    val index: Int,
+) {
+    val current: RemoteFile? get() = files.getOrNull(index)
+}
 
 /**
  * Central observable state + orchestration. One instance for the app.
@@ -292,6 +328,20 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         return true
     }
 
+    /**
+     * The read-side counterpart of [uiTestSkipped], and deliberately *not* a skip.
+     *
+     * In this mode the file list is served by our own loopback fake camera, whose URLs
+     * point at a host the user controls — so a fetch cannot reach a real device, and
+     * refusing it would leave every reader (thumbnails, the viewer, downloads) with
+     * nothing to draw. The mode is here to make the UI inspectable; a viewer that can
+     * never show a picture is the opposite of that. Writes still go through
+     * [uiTestSkipped]: those are the ones that would misrepresent a device.
+     */
+    private fun uiTestNote(what: String) {
+        if (uiTestMode) Diag.info(LogTag.APP, "UI TEST $what (loopback fake source)")
+    }
+
     var statusMessage by mutableStateOf<LocalizedString?>(null)
         private set
     var errorMessage by mutableStateOf<LocalizedString?>(null)
@@ -388,6 +438,66 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             Diag.info(LogTag.STATE, "preview fullscreen=$on")
         }
         previewFullscreen = on
+    }
+
+    /**
+     * The media viewer currently on screen, or null.
+     *
+     * Held here for the same reason [previewFullscreen] is: the shell draws it over the
+     * tabs and the navigation bar, and neither of those lives inside the files page. It
+     * also has to survive a recomposition of that page, which a local `remember` would not.
+     */
+    var viewer by mutableStateOf<ViewerTarget?>(null)
+        private set
+
+    /**
+     * The local path a viewer needs, and whether it is on disk yet.
+     *
+     * Previewing uses the download path rather than issuing its own fetch on purpose: a
+     * camera JPEG runs to several megabytes and the small-body GET is capped at 1 MiB, so
+     * a viewer built on that would refuse exactly the files worth looking at. Going through
+     * [download] also means a file that is looked at is one the user already has, with the
+     * resume and failure handling that path has had since the field sessions.
+     */
+    fun localPathOf(name: String): String? =
+        downloads.firstOrNull { it.file.name == name && it.state == DownloadItem.State.Done }
+            ?.localPath
+
+    /**
+     * Open [file] in the viewer, walking the other media of its own kind in [all].
+     *
+     * Photos and clips are separated rather than shown as one run: a swipe that landed on
+     * a video while the user was reading stills would start a transfer and a playback the
+     * user did not ask for.
+     */
+    fun openViewer(file: RemoteFile, all: List<RemoteFile>) {
+        val sameKind = all.filter { it.type == file.type }
+        val at = sameKind.indexOfFirst { it.name == file.name }
+        viewer = ViewerTarget(
+            files = sameKind.ifEmpty { listOf(file) },
+            index = if (at >= 0) at else 0,
+        )
+        Diag.info(
+            LogTag.FILE,
+            "viewer open ${file.name} (${file.type}, ${viewer?.files?.size} in run at $at)",
+        )
+        // Fetch it if this is the first time it is being looked at, so the viewer has
+        // something to draw; a file already on disk resolves immediately.
+        if (localPathOf(file.name) == null) download(file)
+    }
+
+    fun closeViewer() {
+        viewer?.let { Diag.info(LogTag.FILE, "viewer close at index ${it.index}") }
+        viewer = null
+    }
+
+    /** Move within the open run, clamped at both ends. */
+    fun stepViewer(delta: Int) {
+        val v = viewer ?: return
+        val next = (v.index + delta).coerceIn(0, v.files.lastIndex)
+        if (next == v.index) return
+        viewer = v.copy(index = next)
+        v.files.getOrNull(next)?.let { if (localPathOf(it.name) == null) download(it) }
     }
 
     var deviceStatus by mutableStateOf<DeviceStatus?>(null)
@@ -2145,10 +2255,19 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     }
 
     fun download(file: RemoteFile, force: Boolean = false) {
-        if (uiTestSkipped("DOWNLOAD ${file.name}")) return
-        val proto = protocol ?: return
-        val s = session ?: return
-        val owner = sessionScope ?: return
+        uiTestNote("DOWNLOAD ${file.name}")
+        val proto = protocol ?: run {
+            Diag.warn(LogTag.DL, "DOWNLOAD ${file.name} has no protocol (session ${if (session == null) "null" else "ok"})")
+            return
+        }
+        val s = session ?: run {
+            Diag.warn(LogTag.DL, "DOWNLOAD ${file.name} has no session")
+            return
+        }
+        val owner = sessionScope ?: run {
+            Diag.warn(LogTag.DL, "DOWNLOAD ${file.name} has no sessionScope")
+            return
+        }
         val current = downloads.firstOrNull { it.file.name == file.name }
         if (current != null && current.state != DownloadItem.State.Failed) {
             Diag.debug(LogTag.DL, "ignore duplicate download of ${file.name} (state=${current.state})")
@@ -2180,7 +2299,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     // corrupt local copy.
                     if (!force && file.sizeBytes > 0L && have == file.sizeBytes) {
                         Diag.i(LogTag.DL) { "SKIP ${file.name} — already on disk (${LogFormat.size(have)})" }
-                        markDone(file, dest.toString())
+                        markDone(file, dest.toString(), downloads.firstOrNull { it.file.name == file.name }?.publishedUri)
                         return@withContext
                     }
                     // Resume only into a genuinely partial file; a complete or oversized
@@ -2226,7 +2345,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                         .onFailure { Diag.at(LogLevel.WARN, LogTag.DL, "gallery publish threw ${Diag.causeChain(it)}") }
                         .getOrNull()
                     if (ms > 0) lastRateBps = written * 1000 / ms
-                    markDone(file, published ?: dest.toString())
+                    markDone(file, dest.toString(), published)
                     Diag.i(LogTag.DL) {
                         "DONE ${file.name} ${LogFormat.size(written)} in ${ms}ms " +
                             "(${LogFormat.size(lastRateBps)}/s) -> ${published ?: dest}"
@@ -2275,10 +2394,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         errorMessage = reason
     }
 
-    private fun markDone(file: RemoteFile, localPath: String) {
+    private fun markDone(file: RemoteFile, localPath: String, publishedUri: String? = null) {
         val i = downloads.indexOfFirst { it.file.name == file.name }
         if (i >= 0) downloads[i] = downloads[i].copy(
-            state = DownloadItem.State.Done, progress = 1f, localPath = localPath,
+            state = DownloadItem.State.Done,
+            progress = 1f,
+            localPath = localPath,
+            publishedUri = publishedUri,
         )
     }
 
