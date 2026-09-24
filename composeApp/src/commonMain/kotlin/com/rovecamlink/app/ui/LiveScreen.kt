@@ -158,18 +158,24 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
     // and continues from wherever the angle got to, so turning the phone quickly is one continuous
     // turn instead of a queue of queued 90° hops. `swap` is then read off the *animated* angle, not
     // off the target, so the box turns with the picture instead of a beat ahead of it.
-    val spin = remember { Animatable(orientation.degrees) }
-    LaunchedEffect(orientation.degrees) {
+    // The camera's own rotation rides the *same* animated target as the phone's, so turning
+    // the camera animates exactly like turning the phone does. Adding it after the
+    // `Animatable` (the first cut) made a camera turn a one-frame jump next to an animated
+    // phone turn (2026-09-24 「由相机旋转引起的旋转图传没有动画」).
+    //
+    // It is *subtracted*: `rotation` counts the camera's clockwise turn and the stream
+    // arrives already turned that way, so the frame has to undo it. Adding it instead left
+    // every camera-portrait shot upside down (2026-09-24 「相机旋转竖版的是反的，上下颠倒了」).
+    val cameraDegrees = (state.cameraRotation ?: 0).toFloat()
+    val spinTarget = orientation.degrees - cameraDegrees
+    val spin = remember { Animatable(spinTarget) }
+    LaunchedEffect(spinTarget) {
         val from = spin.value
         // Shortest way round: 350° to 10° is 20°, not 340°.
-        val delta = ((orientation.degrees - from + 540f) % 360f) - 180f
+        val delta = ((spinTarget - from + 540f) % 360f) - 180f
         spin.animateTo(from + delta, spring(dampingRatio = 1f, stiffness = 260f))
     }
-    // The camera's own rotation adds to the phone's. The stream is rotated by the camera and
-    // counter-rotated by how the phone is held, so the box has to turn for both at once —
-    // turning the camera to portrait makes it portrait, and turning the phone still works on
-    // top of that (2026-09-24 request). Clockwise degrees: 90 and 270 both mean portrait.
-    val spinDegrees = spin.value + (state.cameraRotation ?: 0).toFloat()
+    val spinDegrees = spin.value
     val spinSwap = ((spinDegrees % 360f + 360f) % 360f / 90f).roundToInt() % 2 == 1
 
     // The official client syncs the clock every time the preview screen is built

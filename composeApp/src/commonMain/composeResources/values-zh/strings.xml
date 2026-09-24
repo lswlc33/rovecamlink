@@ -274,7 +274,7 @@
     <string name="remedy_join_failed">已经看到相机，但 Wi-Fi 没能连上。靠近一些，并关掉 VPN 或代理——它们会把相机挤出路由。</string>
     <string name="remedy_unidentified">有网络应答，但没有已注册的协议认得它。确认这个型号受支持，或用「手动连接」把地址直接填进去。</string>
     <string name="label_known_camera">已记住的相机</string>
-    <string name="action_rename_camera">给这台相机起个名字</string>
+    <string name="action_rename_camera">为相机添加备注</string>
     <string name="action_forget_camera">忘记这台相机</string>
     <string name="hint_camera_alias">用来代替热点名显示。留空恢复为 SSID。</string>
     <string name="hint_last_refresh">%1$d 秒前刷新</string>
