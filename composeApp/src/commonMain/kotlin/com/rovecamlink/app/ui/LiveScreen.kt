@@ -7,6 +7,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -152,6 +153,26 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
     val rotating = remember { mutableStateOf(true) }
     val orientation = rememberDeviceOrientation(OrientationMode.Snapped, enabled = rotating.value)
 
+    // The picture follows the phone, and the quadrant it snaps to is a 90° step. The sensor side
+    // already deadens the edges (±15° dead band, 60°/30° hysteresis), so a shake cannot rattle the
+    // quadrant — but the step itself used to land in one frame, next to a measurement swap and a
+    // preview box that changes shape, which read as a jolt rather than as the frame settling
+    // (2026-09-24 「图传旋转建议有可以打断的旋转动画」).
+    //
+    // `Animatable` is what makes it interruptible: a new quadrant cancels the flight in progress
+    // and continues from wherever the angle got to, so turning the phone quickly is one continuous
+    // turn instead of a queue of queued 90° hops. `swap` is then read off the *animated* angle, not
+    // off the target, so the box turns with the picture instead of a beat ahead of it.
+    val spin = remember { Animatable(orientation.degrees) }
+    LaunchedEffect(orientation.degrees) {
+        val from = spin.value
+        // Shortest way round: 350° to 10° is 20°, not 340°.
+        val delta = ((orientation.degrees - from + 540f) % 360f) - 180f
+        spin.animateTo(from + delta, spring(dampingRatio = 1f, stiffness = 260f))
+    }
+    val spinDegrees = spin.value
+    val spinSwap = ((spinDegrees % 360f + 360f) % 360f / 90f).roundToInt() % 2 == 1
+
     // The official client syncs the clock every time the preview screen is built
     // (`HaisiPreviewModel.requestPreviewParams`), not just once at connect: a camera
     // that has been sitting switched-off for a week otherwise stamps every clip with
@@ -289,18 +310,32 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
     // only how much room it is given (2026-09-24 「图传部分可以通过长按变成全屏预览状态（此时
     // 会保留录制键依旧悬浮）再次长按退出」).
     if (state.previewFullscreen) {
-        Box(Modifier.fillMaxSize().background(Color.Black)) {
-            CameraPreviewFrame(previewUrl, Modifier.fillMaxSize(), orientation.degrees, orientation.isLandscapeFrame)
-            // A long press anywhere on the picture puts it back. No tap handler: the shutter
-            // below is the only thing on this screen that a tap should reach.
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) {
-                        detectTapGestures(onLongPress = { state.setFullscreenPreview(false) })
-                    },
-            )
-            shutter()
+        // The fraction is the shell's, not this page's: a back gesture pulls the picture down and
+        // decides whether to let it go, and the gesture reaches `App`, not here. At rest it is 1 and
+        // this is a plain full-screen box.
+        Box(
+            Modifier.fillMaxSize().graphicsLayer {
+                val reveal = state.previewReveal
+                alpha = reveal
+                translationY = (1f - reveal) * size.height * 0.18f
+                val shrink = 0.94f + 0.06f * reveal
+                scaleX = shrink
+                scaleY = shrink
+            },
+        ) {
+            Box(Modifier.fillMaxSize().background(Color.Black)) {
+                CameraPreviewFrame(previewUrl, Modifier.fillMaxSize(), spinDegrees, spinSwap)
+                // A long press anywhere on the picture puts it back. No tap handler: the shutter
+                // below is the only thing on this screen that a tap should reach.
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) {
+                            detectTapGestures(onLongPress = { state.setFullscreenPreview(false) })
+                        },
+                )
+                shutter()
+            }
         }
         return
     }
@@ -324,8 +359,8 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
             Column {
                 PreviewHeader(
                     url = previewUrl,
-                    degrees = orientation.degrees,
-                    swap = orientation.isLandscapeFrame,
+                    degrees = spinDegrees,
+                    swap = spinSwap,
                     recording = recording,
                     busy = busy,
                     recTimeSec = st?.videoTimeSec ?: 0,
@@ -338,7 +373,10 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
         },
         floating = shutter,
     ) {
-        section(title = statusTitle) {
+        // Every card on this page shields horizontal drags: the tab pager underneath would
+        // otherwise take a drag that began on a card's padding or on the label beside a slider,
+        // and change tab instead of moving the control under the finger.
+        section(title = statusTitle, swipeShield = true) {
             // One line, two facts. 录制 and 模式 used to be two full-width rows — the same
             // shape as a settings row, which is what made this card read as a form; they are
             // both short values, so they sit side by side the way the vitals line above the
@@ -369,7 +407,7 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
             }
         }
 
-        section(title = modeTitle) {
+        section(title = modeTitle, swipeShield = true) {
             ModeStrip(
                 modes = modes,
                 selected = current?.name,
@@ -392,7 +430,7 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
         val chips = quickChoiceIds.mapNotNull { id -> state.settings.firstOrNull { it.id == id } }
             .filter { it.options.size >= 2 }
         if (bars.isNotEmpty() || chips.isNotEmpty()) {
-            section(title = quickAdjustTitle) {
+            section(title = quickAdjustTitle, swipeShield = true) {
                 bars.forEach { s ->
                     QuickAdjustBar(
                         setting = s,
