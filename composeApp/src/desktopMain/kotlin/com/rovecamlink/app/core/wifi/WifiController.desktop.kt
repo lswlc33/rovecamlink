@@ -15,6 +15,7 @@ private class DesktopWifiController : WifiController {
         WifiResult.Failed("Desktop has no per-network socket binding; the OS routing table decides.")
     override fun isVpnActive(): Boolean = false
     override fun openVpnSettings(): Boolean = false
+    override fun openWifiSettings(): Boolean = false
 }
 
 private class DesktopWifiScanner : WifiScanner {

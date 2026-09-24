@@ -48,6 +48,10 @@
     <string name="label_password">密码</string>
     <string name="action_join_connect">加入并连接</string>
     <string name="action_connect_to_ip">连接到 IP</string>
+    <string name="action_open_wifi_settings">连接 WiFi</string>
+    <string name="err_open_wifi_settings">无法打开系统 WiFi 设置，请手动前往系统设置连接相机热点。</string>
+    <string name="title_connected_camera">已连接的相机</string>
+    <string name="message_forget_camera">要忘记这台相机吗？保存的名称和 WiFi 凭据将被删除。</string>
     <string name="placeholder_ip">192.168.0.1</string>
 
     <!-- Live screen -->

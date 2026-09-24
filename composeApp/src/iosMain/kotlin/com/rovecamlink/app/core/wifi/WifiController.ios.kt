@@ -21,6 +21,7 @@ private class IosWifiController : WifiController {
         WifiResult.Failed("iOS cannot rebind sockets to an already-joined network yet (needs NEHotspotConfiguration + per-flow routing).")
     override fun isVpnActive(): Boolean = false
     override fun openVpnSettings(): Boolean = false
+    override fun openWifiSettings(): Boolean = false
 }
 
 private class IosWifiScanner : WifiScanner {

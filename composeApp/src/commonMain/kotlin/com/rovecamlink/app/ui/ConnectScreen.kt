@@ -26,15 +26,16 @@ import com.rovecamlink.app.AppState
 import com.rovecamlink.app.Phase
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.action_connect
-import com.rovecamlink.app.action_connect_to_ip
 import com.rovecamlink.app.action_disconnect
+import com.rovecamlink.app.action_open_wifi_settings
 import com.rovecamlink.app.action_join_connect
 import com.rovecamlink.app.action_refresh
 import com.rovecamlink.app.action_scan_qr
-import com.rovecamlink.app.action_wake_camera
-import com.rovecamlink.app.hint_wake_needs_bssid
+import com.rovecamlink.app.message_forget_camera
+import com.rovecamlink.app.title_connected_camera
 import com.rovecamlink.app.cancel
 import com.rovecamlink.app.err_bluetooth_unsupported
+import com.rovecamlink.app.err_open_wifi_settings
 import com.rovecamlink.app.hint_ble_wake
 import com.rovecamlink.app.hint_connect_choice
 import com.rovecamlink.app.hint_last_refresh
@@ -66,7 +67,6 @@ import com.rovecamlink.app.phase_joining_wifi
 import com.rovecamlink.app.phase_scanning_bluetooth
 import com.rovecamlink.app.phase_scanning_wifi
 import com.rovecamlink.app.phase_waking_camera
-import com.rovecamlink.app.placeholder_ip
 import com.rovecamlink.app.resolve
 import com.rovecamlink.app.section_status
 import com.rovecamlink.app.tab_devices
@@ -81,6 +81,8 @@ import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
+import top.yukonga.miuix.kmp.overlay.OverlayDialog
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.theme.LocalContentColor
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -104,11 +106,12 @@ import kotlin.math.roundToInt
  */
 @Composable
 fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
-    var manualIp by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showQr by remember { mutableStateOf(false) }
-    // Which remembered camera is being renamed, and the text being typed (A6).
+    var showConnectedDetails by remember { mutableStateOf(false) }
+    var wifiSettingsError by remember { mutableStateOf(false) }
     var renameFor by remember { mutableStateOf<String?>(null) }
+    var forgetFor by remember { mutableStateOf<String?>(null) }
     var renameText by remember { mutableStateOf("") }
     val nearby = state.nearby
     var tick by remember { mutableStateOf(0L) }
@@ -120,6 +123,12 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     // without re-launching on the way back the lists would sit frozen at whatever they
     // last showed — tappable, and pointing at a camera that has since gone.
     LaunchedEffect(isConnected) {
+        if (!isConnected) {
+            showConnectedDetails = false
+            renameFor = null
+            forgetFor = null
+            renameText = ""
+        }
         if (isConnected) return@LaunchedEffect
         nearby.start()
         try {
@@ -169,8 +178,10 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     val savedLbl = stringResource(Res.string.label_saved)
     val otherTitle = stringResource(Res.string.label_other_ways)
     val qrLbl = stringResource(Res.string.action_scan_qr)
-    val ipLbl = stringResource(Res.string.action_connect_to_ip)
-    val ipHint = stringResource(Res.string.placeholder_ip)
+    val wifiSettingsLbl = stringResource(Res.string.action_open_wifi_settings)
+    val wifiSettingsErrorMessage = stringResource(Res.string.err_open_wifi_settings)
+    val connectedCameraTitle = stringResource(Res.string.title_connected_camera)
+    val forgetMessage = stringResource(Res.string.message_forget_camera)
     val passwordLbl = stringResource(Res.string.label_password)
     val cancelLbl = stringResource(Res.string.cancel)
     val saveLbl = stringResource(Res.string.save)
@@ -182,8 +193,6 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     val aliasHint = stringResource(Res.string.hint_camera_alias)
     val joinLbl = stringResource(Res.string.action_join_connect)
     val noneLbl = stringResource(Res.string.label_nearby_none)
-    val wakeLbl = stringResource(Res.string.action_wake_camera)
-    val wakeNeedsBssidLbl = stringResource(Res.string.hint_wake_needs_bssid)
     val ageSeconds = if (nearby.lastUpdateAt == 0L) -1 else ((tick - nearby.lastUpdateAt) / 1000f).roundToInt()
 
     val canConnect = joined != null || nearby.hasCandidate
@@ -214,36 +223,36 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
         subtitle = barStatus,
     ) {
         section {
-            ConnectHero(
-                connected = connected,
-                title = if (connected) summary else cameraLbl,
-                subtitle = if (connected) {
-                    state.session?.let { "${it.host}:${it.port}" } ?: ""
-                } else {
-                    nearbyCountLine(
+            if (connected) {
+                ArrowPreference(
+                    title = summary,
+                    summary = state.session?.platform?.displayName.orEmpty(),
+                    onClick = { showConnectedDetails = true },
+                )
+            } else {
+                ConnectHero(
+                    title = cameraLbl,
+                    subtitle = nearbyCountLine(
                         ble = nearby.bluetooth.size,
                         wifi = nearby.networks.size,
                         joined = joined != null,
                         searching = nearby.searching,
                         none = noneLbl,
-                    )
-                },
-                refreshLabel = refreshLbl,
-                connectLabel = connectLbl,
-                disconnectLabel = disconnectLbl,
-                scanning = nearby.searching,
-                busy = busy,
-                canConnect = canConnect,
-                footnote = when {
-                    connected -> ""
-                    ageSeconds < 0 -> choiceHint
-                    canConnect -> stringResource(Res.string.hint_last_refresh, ageSeconds)
-                    else -> choiceHint
-                },
-                onRefresh = { state.refreshNearby() },
-                onConnect = { state.connectNearby() },
-                onDisconnect = { state.disconnect() },
-            )
+                    ),
+                    refreshLabel = refreshLbl,
+                    connectLabel = connectLbl,
+                    scanning = nearby.searching,
+                    busy = busy,
+                    canConnect = canConnect,
+                    footnote = if (ageSeconds < 0 || !canConnect) {
+                        choiceHint
+                    } else {
+                        stringResource(Res.string.hint_last_refresh, ageSeconds)
+                    },
+                    onRefresh = { state.refreshNearby() },
+                    onConnect = { state.connectNearby() },
+                )
+            }
         }
 
         if (noticeNow != null || remedyNow != null) {
@@ -264,39 +273,18 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
         val pinned = joined
         if (connected && pinned != null) {
             section(title = knownLbl) {
-                if (renameFor == pinned) {
-                    MiuixField(
-                        value = renameText,
-                        onValueChange = { renameText = it },
-                        placeholder = aliasHint,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                    Row(
-                        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Button(
-                            onClick = {
-                                state.setCameraAlias(pinned, renameText.ifBlank { null })
-                                renameFor = null
-                                renameText = ""
-                            },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColorsPrimary(),
-                        ) { Text(saveLbl) }
-                        Button(
-                            onClick = { renameFor = null; renameText = "" },
-                            modifier = Modifier.weight(1f),
-                        ) { Text(cancelLbl) }
-                    }
-                } else {
-                    actionRow(renameLbl) {
+                ArrowPreference(
+                    title = renameLbl,
+                    summary = state.cameraAlias(pinned).orEmpty(),
+                    onClick = {
                         renameFor = pinned
                         renameText = state.cameraAlias(pinned).orEmpty()
-                    }
-                    actionRow(forgetLbl) { state.forgetCamera(pinned) }
-                }
+                    },
+                )
+                ArrowPreference(
+                    title = forgetLbl,
+                    onClick = { forgetFor = pinned },
+                )
             }
         }
 
@@ -356,72 +344,160 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
             }
         }
 
-        state.askPasswordFor?.let { network ->
-            section(title = network.ssid) {
-                MiuixField(
-                    value = password,
-                    onValueChange = { password = it },
-                    placeholder = passwordLbl,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                )
-                Row(
-                    Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    val joining = state.phase == Phase.ConnectingWifi
-                    Button(
-                        onClick = {
-                            state.connectToNetwork(network, password.ifBlank { null })
-                            password = ""
-                        },
-                        modifier = Modifier.weight(1f),
-                        // A WPA2 hotspot with an empty passphrase is a join that is
-                        // already known to fail: Android answers `onUnavailable`
-                        // after 1.7 s and the user reads it as "the camera is broken".
-                        enabled = password.isNotBlank() && !joining,
-                        colors = ButtonDefaults.buttonColorsPrimary(),
-                    ) {
-                        if (joining) {
-                            InfiniteProgressIndicator(
-                                color = LocalContentColor.current,
-                                size = 15.dp,
-                                strokeWidth = 2.dp,
-                                orbitingDotSize = 2.5.dp,
-                            )
-                            Spacer(Modifier.width(8.dp))
-                        }
-                        Text(joinLbl)
-                    }
-                    Button(
-                        onClick = { state.askPasswordFor = null },
-                        colors = ButtonDefaults.buttonColors(),
-                    ) {
-                        Text(cancelLbl)
-                    }
-                }
-            }
-        }
-
         section(title = otherTitle) {
-            actionRow(qrLbl) { showQr = true }
-            // B10: the way back from standby. It belongs here rather than with the other
-            // power actions because a sleeping camera has no session — the device page is
-            // showing "not connected" by the time anyone needs this.
-            val canWake = state.canWakeCamera()
-            actionRow(wakeLbl, enabled = canWake) { state.wakeCamera() }
-            if (!canWake) hintLine(wakeNeedsBssidLbl)
-            MiuixField(
-                value = manualIp,
-                onValueChange = { manualIp = it },
-                placeholder = ipHint,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+            ArrowPreference(
+                title = qrLbl,
+                onClick = { showQr = true },
             )
-            actionRow(ipLbl, busy = state.phase == Phase.IdentifyingDevice) {
-                val ip = manualIp.trim()
-                if (ip.isNotEmpty()) state.connect(manualHost = ip)
+            ArrowPreference(
+                title = wifiSettingsLbl,
+                onClick = { wifiSettingsError = !state.openWifiSettings() },
+            )
+        }
+    }
+
+    if (wifiSettingsError) {
+        OverlayDialog(
+            show = true,
+            title = wifiSettingsLbl,
+            summary = wifiSettingsErrorMessage,
+            onDismissRequest = { wifiSettingsError = false },
+        ) {
+            TextButton(
+                text = cancelLbl,
+                onClick = { wifiSettingsError = false },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+
+    state.askPasswordFor?.let { network ->
+        val joining = state.phase == Phase.ConnectingWifi
+        OverlayDialog(
+            show = true,
+            title = network.ssid,
+            onDismissRequest = {
+                state.askPasswordFor = null
+                password = ""
+            },
+        ) {
+            MiuixField(
+                value = password,
+                onValueChange = { password = it },
+                placeholder = passwordLbl,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !joining,
+            )
+            Spacer(Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                TextButton(
+                    text = cancelLbl,
+                    onClick = {
+                        state.askPasswordFor = null
+                        password = ""
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+                Spacer(Modifier.width(20.dp))
+                TextButton(
+                    text = joinLbl,
+                    onClick = {
+                        state.connectToNetwork(network, password.ifBlank { null })
+                        password = ""
+                    },
+                    enabled = password.isNotBlank() && !joining,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.textButtonColorsPrimary(),
+                )
             }
         }
+    }
+
+    if (showConnectedDetails) {
+        OverlayDialog(
+            show = true,
+            title = connectedCameraTitle,
+            summary = listOfNotNull(
+                state.session?.model,
+                state.session?.platform?.displayName,
+            ).joinToString(" · "),
+            onDismissRequest = { showConnectedDetails = false },
+        ) {
+            TextButton(
+                text = disconnectLbl,
+                onClick = {
+                    showConnectedDetails = false
+                    state.disconnect()
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.textButtonColors(
+                    color = MiuixTheme.colorScheme.error,
+                    textColor = MiuixTheme.colorScheme.onError,
+                ),
+            )
+        }
+    }
+
+    val renaming = renameFor
+    if (renaming != null) {
+        OverlayDialog(
+            show = true,
+            title = renameLbl,
+            onDismissRequest = {
+                renameFor = null
+                renameText = ""
+            },
+        ) {
+            MiuixField(
+                value = renameText,
+                onValueChange = { renameText = it },
+                placeholder = aliasHint,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                TextButton(
+                    text = cancelLbl,
+                    onClick = {
+                        renameFor = null
+                        renameText = ""
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+                Spacer(Modifier.width(20.dp))
+                TextButton(
+                    text = saveLbl,
+                    onClick = {
+                        state.setCameraAlias(renaming, renameText.ifBlank { null })
+                        renameFor = null
+                        renameText = ""
+                    },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.textButtonColorsPrimary(),
+                )
+            }
+        }
+    }
+
+    val forgetting = forgetFor
+    if (forgetting != null) {
+        ConfirmDialog(
+            title = forgetLbl,
+            message = forgetMessage,
+            confirmLabel = forgetLbl,
+            cancelLabel = cancelLbl,
+            onConfirm = {
+                state.forgetCamera(forgetting)
+                forgetFor = null
+            },
+            onDismiss = { forgetFor = null },
+        )
     }
 }
 
@@ -446,19 +522,16 @@ private fun nearbyCountLine(ble: Int, wifi: Int, joined: Boolean, searching: Boo
  */
 @Composable
 private fun ColumnScope.ConnectHero(
-    connected: Boolean,
     title: String,
     subtitle: String,
     refreshLabel: String,
     connectLabel: String,
-    disconnectLabel: String,
     scanning: Boolean,
     busy: Boolean,
     canConnect: Boolean,
     footnote: String,
     onRefresh: () -> Unit,
     onConnect: () -> Unit,
-    onDisconnect: () -> Unit,
 ) {
     val scheme = MiuixTheme.colorScheme
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
@@ -476,55 +549,40 @@ private fun ColumnScope.ConnectHero(
         }
         Spacer(Modifier.height(12.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-            if (connected) {
-                Button(
-                    onClick = onDisconnect,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        color = scheme.error,
-                        contentColor = scheme.onError,
-                    ),
-                ) {
-                    Text(disconnectLabel)
-                }
-            } else {
-                Button(
-                    onClick = onRefresh,
-                    colors = ButtonDefaults.buttonColors(),
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (scanning) {
-                            InfiniteProgressIndicator(
-                                color = LocalContentColor.current,
-                                size = 14.dp,
-                                strokeWidth = 2.dp,
-                                orbitingDotSize = 2.5.dp,
-                            )
-                            Spacer(Modifier.width(6.dp))
-                        }
-                        Text(refreshLabel)
+            Button(
+                onClick = onRefresh,
+                colors = ButtonDefaults.buttonColors(),
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (scanning) {
+                        InfiniteProgressIndicator(
+                            color = LocalContentColor.current,
+                            size = 14.dp,
+                            strokeWidth = 2.dp,
+                            orbitingDotSize = 2.5.dp,
+                        )
+                        Spacer(Modifier.width(6.dp))
                     }
+                    Text(refreshLabel)
                 }
-                Button(
-                    onClick = onConnect,
-                    modifier = Modifier.weight(1f),
-                    // Disabled with a reason beside it: a greyed 连接 next to "nothing
-                    // found" reads as a broken button, so the footnote says what to do.
-                    enabled = canConnect && !busy,
-                    colors = ButtonDefaults.buttonColorsPrimary(),
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (busy) {
-                            InfiniteProgressIndicator(
-                                color = LocalContentColor.current,
-                                size = 15.dp,
-                                strokeWidth = 2.dp,
-                                orbitingDotSize = 2.5.dp,
-                            )
-                            Spacer(Modifier.width(8.dp))
-                        }
-                        Text(connectLabel)
+            }
+            Button(
+                onClick = onConnect,
+                modifier = Modifier.weight(1f),
+                enabled = canConnect && !busy,
+                colors = ButtonDefaults.buttonColorsPrimary(),
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (busy) {
+                        InfiniteProgressIndicator(
+                            color = LocalContentColor.current,
+                            size = 15.dp,
+                            strokeWidth = 2.dp,
+                            orbitingDotSize = 2.5.dp,
+                        )
+                        Spacer(Modifier.width(8.dp))
                     }
+                    Text(connectLabel)
                 }
             }
         }

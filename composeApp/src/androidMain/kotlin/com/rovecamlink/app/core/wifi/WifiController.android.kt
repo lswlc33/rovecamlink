@@ -467,20 +467,26 @@ private class AndroidWifiController : WifiController {
         cm.getNetworkCapabilities(n)?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true
     }.getOrDefault(false)
 
-    override fun openVpnSettings(): Boolean {
-        // The VPN panel is the screen the user was sent to, but OEM ROMs own that
-        // decision — the OnePlus this was first field-tested on ships a settings app
-        // that answers some `android.settings.*` actions by throwing. Fall through to
-        // the top-level page rather than reporting failure for a screen that exists.
-        for (action in listOf(Settings.ACTION_VPN_SETTINGS, Settings.ACTION_SETTINGS)) {
+    override fun openVpnSettings(): Boolean = openSettings(
+        actions = listOf(Settings.ACTION_VPN_SETTINGS, Settings.ACTION_SETTINGS),
+        reason = "the proxy can be switched off",
+    )
+
+    override fun openWifiSettings(): Boolean = openSettings(
+        actions = listOf(Settings.ACTION_WIFI_SETTINGS, Settings.ACTION_SETTINGS),
+        reason = "the camera hotspot can be joined",
+    )
+
+    private fun openSettings(actions: List<String>, reason: String): Boolean {
+        for (action in actions) {
             val intent = Intent(action).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             val opened = runCatching { androidContext.startActivity(intent); true }.getOrDefault(false)
             if (opened) {
-                Diag.info(LogTag.NET, "opened $action so the proxy can be switched off")
+                Diag.info(LogTag.NET, "opened $action so $reason")
                 return true
             }
         }
-        Diag.warn(LogTag.NET, "no settings screen would open; the user has to leave the app to stop the proxy")
+        Diag.warn(LogTag.NET, "no settings screen would open; the user has to leave the app")
         return false
     }
 

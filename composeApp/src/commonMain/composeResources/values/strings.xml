@@ -48,6 +48,10 @@
     <string name="label_password">Password</string>
     <string name="action_join_connect">Join &amp; connect</string>
     <string name="action_connect_to_ip">Connect to IP</string>
+    <string name="action_open_wifi_settings">Connect WiFi</string>
+    <string name="err_open_wifi_settings">Could not open system WiFi settings. Open Settings and join the camera hotspot manually.</string>
+    <string name="title_connected_camera">Connected camera</string>
+    <string name="message_forget_camera">Forget this camera? Its saved name and WiFi credentials will be removed.</string>
     <string name="placeholder_ip">192.168.0.1</string>
 
     <!-- Live screen -->

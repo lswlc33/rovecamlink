@@ -98,6 +98,7 @@ interface WifiController {
      * gesture the user would have to complete by memory.
      */
     fun openVpnSettings(): Boolean
+    fun openWifiSettings(): Boolean
 }
 
 /**

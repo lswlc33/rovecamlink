@@ -850,6 +850,8 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         nearby.refreshNow()
     }
 
+    fun openWifiSettings(): Boolean = graph.wifi.openWifiSettings()
+
     /** Join a hotspot the user picked from the Wi-Fi list, with the passphrase they typed. */
     fun connectToNetwork(network: CameraNetwork, passphrase: String?) {
         askPasswordFor = null
