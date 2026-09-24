@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Sampled from the artwork's own backdrop by tools/IconGen.java -->
-    <color name="ic_launcher_background">#181817</color>
+    <color name="ic_launcher_background">#A1D1FE</color>
 </resources>
