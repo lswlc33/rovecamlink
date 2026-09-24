@@ -13,7 +13,7 @@ UI 测试模式（设置 → 软件 → UI 测试模式）用一台内置假相�
 
 | 文件 | 作用 |
 | --- | --- |
-| `generate.py` | 生成 `DCIM/<yyyyMMddHHmmss>/<name>` 与同名 `.THM`。图片带大号编号、日期、文件名和播放角标，**用来一眼判断某格画的是不是正确的那张图** |
+| `generate.py` | 生成 `DCIM/<yyyyMMddHHmmss>/<name>` 与同名 `.THM`。图片带大号编号、日期、文件名和播放角标，**用来一眼判断某格画的是不是正确的那张图**。视频是**真 H.264 MP4**（2 秒，编号烧进画面），不是改名的 JPEG |
 | `serve.py` | 把这棵树用 HTTP 发出去，并把**每个请求**打到标准输出。格子空白时先看这里：没有日志行＝App 根本没发请求；404＝发了个树里没有的路径 |
 | `../…/UiTestDevice.kt` | 假相机的文件 URL 指向 `http://10.0.2.2:18080/DCIM` |
 
@@ -21,7 +21,7 @@ UI 测试模式（设置 → 软件 → UI 测试模式）用一台内置假相�
 
 ```bash
 # 1. 依赖（隔离环境，不污染系统 python）
-python -m venv <env> && <env>/Scripts/pip install pillow
+python -m venv <env> && <env>/Scripts/pip install pillow imageio-ffmpeg
 
 # 2. 生成素材
 <env>/Scripts/python.exe tools/fakecam/generate.py
@@ -31,6 +31,10 @@ python -m venv <env> && <env>/Scripts/pip install pillow
 ```
 
 服务必须绑在 `0.0.0.0`，模拟器才连得上。
+
+`generate.py` 末尾会把每条素材的真实字节数打印成 `UiTestDevice.files()` 要的形状。
+**每次重新生成后都要把新数字贴回那个文件** —— `download()` 会拿实际写入长度跟声明的
+`sizeBytes` 对账，对不上就判传输失败，整个 UI 测试模式下的文件都会打不开。
 
 ## 为什么是 `10.0.2.2`
 
@@ -61,6 +65,11 @@ adb shell "echo -e 'GET /DCIM/20260921143022/2026092114302200.THM HTTP/1.0\r\n\r
 `.THM` 是 320×320 JPEG，13–15 KB —— 刻意落在真实 S7PRO 实测的 6–28 KB 区间里，
 这样 `MAX_THUMBNAIL_BYTES`（1 MiB）和 `getBytes` 的分块读取走的都是真实路径，
 而不是一个碰巧通过的尺寸。
+
+三条 `.MP4` 是 3.5–5.7 KB 的真 H.264（480×480 / 24fps / 2s / yuv420p / baseline），
+用 `imageio-ffmpeg` 自带的二进制渲的。**这一点对查看器是必须的**：画廊只需要一张静帧，
+但查看器会把文件交给 ExoPlayer，改名 JPEG 在打开的一瞬间就会被拒 —— 素材树全是假视频
+的话，播放这条路径根本测不到。编号烧进每一帧，所以播放起来能直接看出播的是第几条。
 
 ## 排错顺序
 
