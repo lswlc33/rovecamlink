@@ -472,13 +472,20 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         private set
 
     /**
+     * Files the viewer staged for a look. A preview is not a download: these bytes stay in
+     * app storage only for as long as the viewer is open and are deleted by [closeViewer].
+     * Only ever filled after a real fetch, so a file the user already owned is never touched.
+     */
+    private val previewStaged = mutableMapOf<String, Path>()
+
+    /**
      * The local path a viewer needs, and whether it is on disk yet.
      *
      * Previewing uses the download path rather than issuing its own fetch on purpose: a
      * camera JPEG runs to several megabytes and the small-body GET is capped at 1 MiB, so
-     * a viewer built on that would refuse exactly the files worth looking at. Going through
-     * [download] also means a file that is looked at is one the user already has, with the
-     * resume and failure handling that path has had since the field sessions.
+     * a viewer built on that would refuse exactly the files worth looking at. It is the
+     * *staging* half of [download] though — `publish = false` — so a look never leaves the
+     * file in the gallery, and [closeViewer] deletes it once the look ends.
      */
     fun localPathOf(name: String): String? =
         downloads.firstOrNull { it.file.name == name && it.state == DownloadItem.State.Done }
@@ -503,13 +510,27 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             "viewer open ${file.name} (${file.type}, ${viewer?.files?.size} in run at $at)",
         )
         // Fetch it if this is the first time it is being looked at, so the viewer has
-        // something to draw; a file already on disk resolves immediately.
-        if (localPathOf(file.name) == null) download(file)
+        // something to draw; a file already on disk resolves immediately. Staged, not
+        // published: looking at a photo must not put it in the phone's gallery.
+        if (localPathOf(file.name) == null) download(file, publish = false)
     }
 
     fun closeViewer() {
         viewer?.let { Diag.info(LogTag.FILE, "viewer close at index ${it.index}") }
         viewer = null
+        // Drop what the look staged. The bytes went to app storage, not the gallery, and
+        // they do not outlive the viewer (2026-09-24 report: previews were landing in the
+        // album, because this used to go through the ordinary download).
+        if (previewStaged.isNotEmpty()) {
+            val staged = previewStaged.toList()
+            previewStaged.clear()
+            for ((name, path) in staged) {
+                downloads.removeAll { it.file.name == name }
+                runCatching { okio.FileSystem.SYSTEM.delete(path) }
+                    .onFailure { Diag.d(LogTag.FILE) { "preview cleanup failed $name ${Diag.causeChain(it)}" } }
+            }
+            Diag.d(LogTag.FILE) { "viewer closed, dropped ${staged.size} preview file(s)" }
+        }
     }
 
     /** Move within the open run, clamped at both ends. */
@@ -518,7 +539,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val next = (v.index + delta).coerceIn(0, v.files.lastIndex)
         if (next == v.index) return
         viewer = v.copy(index = next)
-        v.files.getOrNull(next)?.let { if (localPathOf(it.name) == null) download(it) }
+        v.files.getOrNull(next)?.let { if (localPathOf(it.name) == null) download(it, publish = false) }
     }
 
     var deviceStatus by mutableStateOf<DeviceStatus?>(null)
@@ -2294,7 +2315,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         if (otaState.isTerminal) otaState = OtaState.Idle
     }
 
-    fun download(file: RemoteFile, force: Boolean = false) {
+    fun download(file: RemoteFile, force: Boolean = false, publish: Boolean = true) {
         uiTestNote("DOWNLOAD ${file.name}")
         val proto = protocol ?: run {
             Diag.warn(LogTag.DL, "DOWNLOAD ${file.name} has no protocol (session ${if (session == null) "null" else "ok"})")
@@ -2339,7 +2360,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     // corrupt local copy.
                     if (!force && file.sizeBytes > 0L && have == file.sizeBytes) {
                         Diag.i(LogTag.DL) { "SKIP ${file.name} — already on disk (${LogFormat.size(have)})" }
-                        markDone(file, dest.toString(), downloads.firstOrNull { it.file.name == file.name }?.publishedUri)
+                        markDone(file, dest.toString(), if (publish) downloads.firstOrNull { it.file.name == file.name }?.publishedUri else null)
                         return@withContext
                     }
                     // Resume only into a genuinely partial file; a complete or oversized
@@ -2381,16 +2402,26 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                         file.name.endsWith(".mov", true) -> "video/quicktime"
                         else -> "video/mp4"
                     }
-                    val published = runCatching { graph.fileSaver.publishToGallery(dest, file.name, mime) }
-                        .onFailure { Diag.at(LogLevel.WARN, LogTag.DL, "gallery publish threw ${Diag.causeChain(it)}") }
-                        .getOrNull()
+                    // `publish = false` is the viewer's staging path: the bytes stay in app
+                    // storage for the length of the look and [closeViewer] deletes them.
+                    // Publishing them is what put every previewed photo into the phone's
+                    // gallery (2026-09-24 report).
+                    val published = if (publish) {
+                        runCatching { graph.fileSaver.publishToGallery(dest, file.name, mime) }
+                            .onFailure { Diag.at(LogLevel.WARN, LogTag.DL, "gallery publish threw ${Diag.causeChain(it)}") }
+                            .getOrNull()
+                    } else {
+                        previewStaged[file.name] = dest
+                        null
+                    }
                     if (ms > 0) lastRateBps = written * 1000 / ms
                     markDone(file, dest.toString(), published)
                     Diag.i(LogTag.DL) {
                         "DONE ${file.name} ${LogFormat.size(written)} in ${ms}ms " +
-                            "(${LogFormat.size(lastRateBps)}/s) -> ${published ?: dest}"
+                            "(${LogFormat.size(lastRateBps)}/s) -> ${published ?: dest}" +
+                            if (publish) "" else " (preview, not published)"
                     }
-                    if (published == null) {
+                    if (publish && published == null) {
                         errorMessage = localized(Res.string.err_gallery_rejected)
                     }
                 } catch (t: kotlinx.coroutines.CancellationException) {
