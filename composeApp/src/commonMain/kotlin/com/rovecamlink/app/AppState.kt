@@ -114,9 +114,6 @@ data class DownloadItem(
     val error: LocalizedString? = null,
 ) {
     enum class State { Queued, Running, Done, Failed }
-
-    /** The user-facing location, falling back to the staged path. */
-    val displayPath: String? get() = publishedUri ?: localPath
 }
 
 /**
@@ -1129,9 +1126,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     is DeviceEvent.BatteryChanged ->
                         deviceStatus = deviceStatus?.copy(battery = ev.percent)
                     is DeviceEvent.Disconnected -> {
-                        Diag.at(LogLevel.WARN, LogTag.STATE, "device reported disconnect reason=${ev.reason ?: "-"}")
+                        Diag.at(LogLevel.WARN, LogTag.STATE, "device reported disconnect reason=${ev.reason.ifEmpty { "-" }}")
                         // Camera-supplied text: shown as-is, not a translatable resource.
-                        errorMessage = ev.reason?.let(::raw)
+                        errorMessage = raw(ev.reason)
                         disconnect()
                     }
                 }
@@ -2063,7 +2060,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 val now = Diag.uptimeMillis()
                 if (now - lastPublished >= 250L || (total > 0 && done >= total)) {
                     lastPublished = now
-                    otaState = OtaState.Downloading(fraction, done, total)
+                    // The progress callback arrives on the transport's IO dispatcher.
+                    // Hop back onto the session scope (the Compose UI dispatcher) before
+                    // touching Compose state, so the snapshot write happens on the thread
+                    // that owns it instead of racing the frame thread. `owner.launch` on a
+                    // single-threaded dispatcher also keeps the 1% steps in order.
+                    val next = OtaState.Downloading(fraction, done, total)
+                    owner.launch { otaState = next }
                 }
             }
             when (result) {
@@ -2187,6 +2190,11 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         )
         coord.onState = {
             otaState = it
+            // The package has been delivered to the camera; drop the cached copy so a
+            // 16–54 MB image does not sit in the firmware cache forever (`discard` was
+            // defined but nothing ever called it). A hand-picked package lives outside
+            // the cache and is left alone.
+            if (it is OtaState.Completed) firmwareUpdater.discardCached(pkg.path)
             Diag.at(
                 if (it is OtaState.Failed) LogLevel.ERROR else LogLevel.INFO, LogTag.OTA,
                 "state -> ${it::class.simpleName}",
@@ -2326,6 +2334,10 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     // ended on purpose — and then marking the queue entry failed — turned
                     // every clean disconnect into a red error.
                     Diag.info(LogTag.DL, "download ${file.name} cancelled (${t.message ?: "scope closed"})")
+                    // Rethrown, not swallowed: cancellation is the coroutine's own exit
+                    // signal and must keep propagating. The queue entry is deliberately
+                    // left as-is (not marked failed) — disconnect clears the queue anyway.
+                    throw t
                 } catch (t: Throwable) {
                     Diag.at(LogLevel.ERROR, LogTag.DL, "download ${file.name} threw ${Diag.causeChain(t)}")
                     markFailed(file, t.message?.let(::raw) ?: localized(Res.string.err_download_failed))
@@ -2441,6 +2453,12 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             // refresh status promptly after a control action
             runCatching { deviceStatus = proto.getStatus(s) }
                 .onFailure { Diag.d(LogTag.STATE) { "post-$op status refresh failed ${Diag.causeChain(it)}" } }
+        } catch (t: kotlinx.coroutines.CancellationException) {
+            // Disconnecting cancels the session scope this coroutine runs in, so every
+            // in-flight operation is cancelled with it. Reporting that as a failure put a
+            // red banner over a clean disconnect; CancellationException is control flow,
+            // not an error, so it is rethrown rather than swallowed or logged as ERROR.
+            throw t
         } catch (t: Throwable) {
             Diag.at(
                 level = LogLevel.ERROR, tag = LogTag.APP,

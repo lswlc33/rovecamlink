@@ -93,6 +93,8 @@ class FirmwareUpdater(
         onProgress: (fraction: Float, done: Long, total: Long) -> Unit,
     ): PackageResult = wifi.withInternetRoute("firmware-download ${offer.fileName}") {
         val dest = cacheDir / safePackageName(offer.fileName)
+        // Fetching this package supersedes whatever the previous check left behind.
+        pruneOtherPackages(dest)
         val fs = FileSystem.SYSTEM
         val already = runCatching { fs.metadata(dest).size }.getOrNull() ?: 0L
         // Only resume into something that is genuinely a prefix of this package. A
@@ -130,6 +132,34 @@ class FirmwareUpdater(
             if (FileSystem.SYSTEM.exists(dest)) FileSystem.SYSTEM.delete(dest)
         }.isSuccess
         Diag.info(LogTag.OTA, "cached package ${dest.name} ${if (removed) "deleted" else "delete failed"}")
+    }
+
+    /**
+     * Drop [path] **only if it is a cached package**. A hand-picked rescue image the
+     * user chose lives outside [cacheDir] and is theirs, not ours, to delete.
+     */
+    fun discardCached(path: Path) {
+        if (path.parent != cacheDir) return
+        discard(path.name)
+    }
+
+    /**
+     * Keep the cache directory holding **one** package — the one about to be fetched.
+     *
+     * The directory is dedicated (`FileSystem.firmwareDir()`), and every build has a
+     * name of its own, so without this each superseded check leaves a 16–54 MB image
+     * behind forever: the app exposed [discard] but nothing called it, and a user who
+     * downloaded more than one build accumulated all of them.
+     */
+    private fun pruneOtherPackages(keep: Path) {
+        runCatching {
+            FileSystem.SYSTEM.list(cacheDir)
+                .filter { it.name != keep.name }
+                .forEach { stale ->
+                    Diag.info(LogTag.OTA, "pruning superseded package ${stale.name}")
+                    runCatching { FileSystem.SYSTEM.delete(stale) }
+                }
+        }
     }
 
     private fun fraction(done: Long, total: Long): Float =

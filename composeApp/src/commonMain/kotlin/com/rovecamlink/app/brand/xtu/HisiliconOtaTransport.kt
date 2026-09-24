@@ -88,9 +88,14 @@ class HisiliconOtaTransport(private val http: CameraHttp) : OtaTransport {
     private fun buildMultipart(fileName: String, bytes: ByteArray, boundary: String): ByteArray {
         // encodeToByteArray() rather than toByteArray(): this is commonMain, and
         // Kotlin/Native has no charset-free String overload. Both parts are ASCII.
+        //
+        // The name is only ever one we built (`safePackageName`) or a local file's own,
+        // but a `"` in it would end this header early and let the rest of the name inject
+        // multipart fields — so it is stripped rather than trusted.
+        val safeName = fileName.replace("\"", "")
         val head = (
             "--$boundary\r\n" +
-                "Content-Disposition: form-data; name=\"sd\"; filename=\"$fileName\"\r\n" +
+                "Content-Disposition: form-data; name=\"sd\"; filename=\"$safeName\"\r\n" +
                 "Content-Type: application/octet-stream\r\n\r\n"
             ).encodeToByteArray()
         val tail = "\r\n--$boundary--\r\n".encodeToByteArray()
