@@ -10,12 +10,21 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -28,7 +37,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -39,13 +50,19 @@ import com.google.zxing.common.HybridBinarizer
 import com.google.zxing.qrcode.QRCodeReader
 import com.rovecamlink.app.PermissionBridge
 import com.rovecamlink.app.Res
+import com.rovecamlink.app.action_scan_qr
 import com.rovecamlink.app.cancel
+import com.rovecamlink.app.qr_camera_failed
 import com.rovecamlink.app.qr_hint_camera_permission
 import com.rovecamlink.app.qr_hint_no_wifi
 import com.rovecamlink.app.qr_hint_point
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
+import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.icon.extended.Close
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
@@ -54,7 +71,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.min
 
 @Composable
-actual fun QrScanScreen(onResult: (QrWifiCredentials?) -> Unit, onClose: () -> Unit) {
+actual fun QrScanScreen(
+    outerPadding: PaddingValues,
+    onResult: (QrWifiCredentials?) -> Unit,
+    onClose: () -> Unit,
+) {
     val context = LocalContext.current
     val lifecycleOwner = context as? LifecycleOwner
 
@@ -70,6 +91,9 @@ actual fun QrScanScreen(onResult: (QrWifiCredentials?) -> Unit, onClose: () -> U
     // 协程里调用 stringResource。
     var pending by remember { mutableStateOf<Pair<String, QrWifiCredentials?>?>(null) }
     var parseFailed by remember { mutableStateOf<String?>(null) }
+    // 相机拿不到时置位(没有摄像头、模拟器未映射摄像头、被别的应用占用)。没有它这页就是
+    // 一整块黑,用户分不清「还在启动」和「永远不会好」。
+    var cameraFailed by remember { mutableStateOf(false) }
 
     LaunchedEffect(hasCameraPermission) {
         if (!hasCameraPermission) {
@@ -92,48 +116,107 @@ actual fun QrScanScreen(onResult: (QrWifiCredentials?) -> Unit, onClose: () -> U
     val hintPoint = stringResource(Res.string.qr_hint_point)
     val hintCameraPermission = stringResource(Res.string.qr_hint_camera_permission)
     val cancelLabel = stringResource(Res.string.cancel)
+    val titleLabel = stringResource(Res.string.action_scan_qr)
+    val cameraFailedLabel = stringResource(Res.string.qr_camera_failed)
 
-    // 派生 hint:扫码解析失败时显示带 label 的提示;否则按权限状态展示默认引导。
+    // 派生 hint:相机打不开或二维码解析失败时说明原因,否则按权限状态展示默认引导。
     // 把 parseFailed 取到 local val 才能 smart cast 到非空类型。
     val failedLabel = parseFailed
     val hint = when {
+        cameraFailed -> cameraFailedLabel
         failedLabel != null -> stringResource(Res.string.qr_hint_no_wifi, failedLabel)
         !hasCameraPermission -> hintCameraPermission
         else -> hintPoint
     }
 
-    Box(Modifier.fillMaxSize().background(Color.Black)) {
-        if (hasCameraPermission && lifecycleOwner != null) {
+    BoxWithConstraints(Modifier.fillMaxSize().background(Color.Black)) {
+        // 正方形取景框,按较短边取尺寸,横竖屏都不会超出屏幕。它只负责给用户定位;
+        // 识别仍是整帧交给 zxing,不做裁剪。
+        val frameSide = minOf(maxWidth, maxHeight) * 0.68f
+
+        if (hasCameraPermission && lifecycleOwner != null && !cameraFailed) {
             CameraQrScanner(
                 lifecycleOwner = lifecycleOwner,
                 onText = { text ->
                     pending = text.take(24) to parseWifiQr(text)
                 },
+                onFailed = { cameraFailed = true },
             )
         }
 
-        Column(
-            Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        // 预览铺满整屏,控件单独退到安全区内。退让是必需的:外壳的底栏是画在内容之上的,
+        // 原来贴底边放的「取消」正好被它盖住,读起来就是「这页没有退出的地方」。
+        // outerPadding 由 Scaffold 量出,已含底栏高度与手势条;顶部再避开状态栏。
+        Box(
+            Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.statusBars)
+                .padding(bottom = outerPadding.calculateBottomPadding()),
         ) {
-            Text(
-                text = hint,
-                color = Color.White,
-                modifier = Modifier
-                    .background(Color(0xB3000000), RoundedCornerShape(10.dp))
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-            )
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(
+                    onClick = onClose,
+                    backgroundColor = Color.Black.copy(alpha = 0.35f),
+                ) {
+                    Icon(
+                        MiuixIcons.Close,
+                        contentDescription = cancelLabel,
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+                Text(
+                    text = titleLabel,
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f),
+                )
+                // 与关闭按钮等宽,标题才是光学居中的。
+                Spacer(Modifier.size(40.dp))
+            }
+
+            Column(
+                Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Box(
+                    Modifier
+                        .size(frameSide)
+                        .border(2.dp, Color.White.copy(alpha = 0.85f), RoundedCornerShape(18.dp)),
+                )
+                Spacer(Modifier.height(20.dp))
+                Text(
+                    text = hint,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .background(Color(0xB3000000), RoundedCornerShape(10.dp))
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                )
+            }
+
             Button(
                 onClick = onClose,
                 colors = ButtonDefaults.buttonColors(),
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 24.dp),
             ) { Text(cancelLabel) }
         }
     }
 }
 
 @Composable
-private fun CameraQrScanner(lifecycleOwner: LifecycleOwner, onText: (String) -> Unit) {
+private fun CameraQrScanner(
+    lifecycleOwner: LifecycleOwner,
+    onText: (String) -> Unit,
+    onFailed: () -> Unit,
+) {
     val context = LocalContext.current
     val previewView = remember {
         PreviewView(context).apply { scaleType = PreviewView.ScaleType.FILL_CENTER }
@@ -159,8 +242,13 @@ private fun CameraQrScanner(lifecycleOwner: LifecycleOwner, onText: (String) -> 
     AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize())
 
     LaunchedEffect(previewView) {
-        val provider = withContext(Dispatchers.IO) {
-            ProcessCameraProvider.getInstance(context).get()
+        val provider = runCatching {
+            withContext(Dispatchers.IO) { ProcessCameraProvider.getInstance(context).get() }
+        }.getOrNull()
+        // 相机服务起不来:报出去让页面说明原因,而不是停在一整块黑上。
+        if (provider == null) {
+            onFailed()
+            return@LaunchedEffect
         }
         val reader = QRCodeReader()
         val hints = mapOf(DecodeHintType.TRY_HARDER to true)
@@ -194,7 +282,7 @@ private fun CameraQrScanner(lifecycleOwner: LifecycleOwner, onText: (String) -> 
                     }
                 }
             }
-        runCatching {
+        val bound = runCatching {
             provider.unbindAll()
             provider.bindToLifecycle(
                 lifecycleOwner,
@@ -203,6 +291,8 @@ private fun CameraQrScanner(lifecycleOwner: LifecycleOwner, onText: (String) -> 
                 analysis,
             )
         }
+        // 没有后置摄像头,或摄像头已被别处占用:说清楚,别让页面一直黑着。
+        if (bound.isFailure) onFailed()
     }
 }
 

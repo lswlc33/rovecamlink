@@ -147,6 +147,7 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
 
     if (showQr) {
         QrScanScreen(
+            outerPadding = outerPadding,
             onResult = { creds ->
                 showQr = false
                 if (creds != null) state.connect(creds.ssid, creds.password)
