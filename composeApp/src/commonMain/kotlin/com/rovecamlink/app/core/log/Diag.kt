@@ -17,6 +17,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import okio.Buffer
 import okio.BufferedSink
 import okio.FileSystem
 import okio.Path
@@ -138,11 +139,16 @@ object Diag {
         fun write(text: String) {
             if (!config.fileSink) return
             val f = file ?: return
+            // A failed write (disk full, IO error) must leave a trace: the exported
+            // log is the only evidence a field session produces, and silently losing
+            // lines is worse than an error line explaining why they are missing.
             runCatching { f.writeUtf8(text).writeUtf8("\n") }
+                .onFailure { if (fileError == null) fileError = "log write failed: ${it.message}" }
         }
 
         fun flush() {
             runCatching { file?.flush() }
+                .onFailure { if (fileError == null) fileError = "log flush failed: ${it.message}" }
             sinceFlush = 0
         }
     }
@@ -739,7 +745,10 @@ object Diag {
                 // Even the newest run alone blows the budget: slice it to its most
                 // recent tail so a huge session still yields a usable, size-bounded file
                 // instead of either dropping everything or emitting an enormous export.
-                f.content = trimToTail(readText(f.path), budget)
+                // The tail is read straight off the end of the file — reading it whole
+                // first (as this used to) is an OOM on a long session, because the run
+                // that reaches here is by definition the one bigger than the budget.
+                f.content = trimToTail(readTailText(f.path, budget), budget)
                 f.contentTruncated = true
                 analyze(f)
                 kept.add(0, f)
@@ -861,10 +870,45 @@ object Diag {
     }.getOrDefault("")
 
     /**
+     * Read only the newest [maxBytes] of [path] (plus a little slack so the caller's
+     * boundary trim has a whole line to land on), never the whole file.
+     *
+     * This exists for the one run that alone exceeds the export budget, and that file
+     * is the only unbounded thing in the log directory — a long session writes far past
+     * the budget. Slurping it into a `String` (UTF-16 on the JVM, i.e. double the
+     * bytes) before slicing is exactly the allocation that takes the app down mid-export
+     * on the low-heap phone this runs on.
+     */
+    private fun readTailText(path: Path, maxBytes: Long): String = runCatching {
+        val budget = maxBytes.coerceAtLeast(0L)
+        if (budget == 0L) return@runCatching ""
+        val size = FileSystem.SYSTEM.metadata(path).size ?: return@runCatching ""
+        if (size <= budget) return@runCatching readText(path)
+        // Discard the leading bytes, then take the rest. Driven by `Source.read` rather
+        // than `BufferedSource.skip`, whose presence differs across okio majors; the read
+        // side is the part of the API that is stable.
+        var skip = (size - budget - CHUNK_BYTES).coerceAtLeast(0L)
+        val tail = Buffer()
+        FileSystem.SYSTEM.source(path).use { src ->
+            val scratch = Buffer()
+            while (skip > 0L) {
+                val n = src.read(scratch, if (skip < CHUNK_BYTES) skip else CHUNK_BYTES)
+                if (n <= 0L) break
+                skip -= n
+                scratch.clear()
+            }
+            while (src.read(tail, CHUNK_BYTES) > 0L) {
+                // Drain to EOF; the tail buffer is what the caller trims.
+            }
+        }
+        tail.readUtf8()
+    }.getOrDefault("")
+
+    /**
      * Keep at most [maxBytes] of the newest content from [text], starting on a record
      * boundary (never mid-line, never on an orphan `|  ` continuation), so a tail slice
-     * is still valid `rovdiag/1`. The whole file is already in memory here — we only
-     * reached this path because that one run alone exceeds the export budget.
+     * is still valid `rovdiag/1`. [text] is already the bounded tail ([readTailText]),
+     * so this only has to drop the partial first line it began on.
      */
     private fun trimToTail(text: String, maxBytes: Long): String {
         val max = maxBytes.toInt().coerceIn(0, text.length)
@@ -936,6 +980,9 @@ object Diag {
     private const val FLUSH_EVERY = 25
     private const val FLUSH_HEARTBEAT_MS = 2_000L
     private const val MAX_RUNS = 256
+
+    /** Read/scratch block size for [readTailText]'s tail read. */
+    private const val CHUNK_BYTES = 64L * 1024
 
     /**
      * Size budget for the *historical* part of a full export (KEEP_FILES can together

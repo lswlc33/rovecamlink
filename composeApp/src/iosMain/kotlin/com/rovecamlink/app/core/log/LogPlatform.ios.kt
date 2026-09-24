@@ -59,7 +59,10 @@ private class IosLogStore : LogStore {
     override fun logsDir(): Path = dir()
 
     override fun save(fileName: String, content: String): String? {
-        val target = dir() / fileName
+        // Keep only the leaf: the name reaches here from the share flow, and a path
+        // separator in it would write outside the logs directory (the Android store
+        // reduces it the same way).
+        val target = dir() / fileName.substringAfterLast('/')
         return runCatching {
             FileSystem.SYSTEM.write(target) { writeUtf8(content) }
             target.toString()
