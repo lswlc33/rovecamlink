@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,7 +32,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.items as gridItems
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -62,6 +67,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rovecamlink.app.AppState
 import com.rovecamlink.app.DownloadItem
+import com.rovecamlink.app.FileLayout
 import com.rovecamlink.app.Op
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.action_app_settings
@@ -103,7 +109,13 @@ import com.rovecamlink.app.download_failed
 import com.rovecamlink.app.file_type_photo
 import com.rovecamlink.app.file_type_video
 import com.rovecamlink.app.files_none_refresh
+import com.rovecamlink.app.files_view_gallery
+import com.rovecamlink.app.files_view_line
+import com.rovecamlink.app.files_view_list
 import com.rovecamlink.app.firmware_unsupported
+import com.rovecamlink.app.menu_filter
+import com.rovecamlink.app.menu_list_style
+import com.rovecamlink.app.menu_sort
 import com.rovecamlink.app.hint_batch_delete_many
 import com.rovecamlink.app.hint_locked_adjust
 import com.rovecamlink.app.hint_locked_capture
@@ -211,7 +223,6 @@ import com.rovecamlink.app.status_wifi_not_read
 import com.rovecamlink.app.tab_files
 import com.rovecamlink.app.tab_settings
 import com.rovecamlink.app.title_install_firmware
-import com.rovecamlink.app.menu_filter_sort
 import com.rovecamlink.app.filter_type_all
 import com.rovecamlink.app.filter_type_video
 import com.rovecamlink.app.filter_type_photo
@@ -250,6 +261,7 @@ import com.rovecamlink.app.core.media.CameraPreviewView
 import com.rovecamlink.app.core.media.OrientationMode
 import com.rovecamlink.app.core.media.rememberDeviceOrientation
 import com.rovecamlink.app.core.model.CameraSetting
+import com.rovecamlink.app.core.model.DayGroup
 import com.rovecamlink.app.core.model.FileType
 import com.rovecamlink.app.core.model.ModeFamily
 import com.rovecamlink.app.core.model.ModeTrigger
@@ -264,6 +276,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
+import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
@@ -276,10 +289,15 @@ import top.yukonga.miuix.kmp.icon.extended.Delete
 import top.yukonga.miuix.kmp.icon.extended.Download
 import top.yukonga.miuix.kmp.icon.extended.Favorites
 import top.yukonga.miuix.kmp.icon.extended.FavoritesFill
+import top.yukonga.miuix.kmp.icon.extended.Filter
+import top.yukonga.miuix.kmp.icon.extended.GridView
 import top.yukonga.miuix.kmp.icon.extended.Image
+import top.yukonga.miuix.kmp.icon.extended.ListView
 import top.yukonga.miuix.kmp.icon.extended.Ok
 import top.yukonga.miuix.kmp.icon.extended.Play
 import top.yukonga.miuix.kmp.icon.extended.Refresh
+import top.yukonga.miuix.kmp.icon.extended.Sort
+import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.preference.OverlayDropdownPreference
@@ -334,9 +352,19 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     var pendingDeleteAll by remember { mutableStateOf(false) }
     var selectMode by remember { mutableStateOf(false) }
     val selected = remember { mutableStateListOf<String>() }
+    // Every top-bar button opens its own sheet, so each holds its own flag; two open at
+    // once is not a state that exists.
+    var filterOpen by remember { mutableStateOf(false) }
+    var sortOpen by remember { mutableStateOf(false) }
+    var styleOpen by remember { mutableStateOf(false) }
 
-    // Filter + sort live behind the top-bar 「更多」 menu (2026-09-23 「筛选/排序移入顶栏
-    // 更多」). `typeFilter` == null means 全部; sorting is a key + direction pair.
+    // The list style lives in AppState: a pushed page replaces this screen while it is
+    // open, so a `remember`ed style came back as 列表 after every visit to the log. It
+    // also picks the thumbnail cache depth, which is read outside the composition.
+    val layout = state.fileLayout
+
+    // Filter + sort are the two bar buttons (2026-09-24 「筛选和排序、诊断这三个按钮拆成三个
+    // 按钮」). `typeFilter` == null means 全部; sorting is a key + direction pair.
     var typeFilter by remember { mutableStateOf<FileType?>(null) }
     var sortBySize by remember { mutableStateOf(false) }
     var sortDescending by remember { mutableStateOf(true) }
@@ -386,7 +414,11 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     val clearFinishedLbl = stringResource(Res.string.action_clear_finished)
     val retryFailedLbl = stringResource(Res.string.action_retry_failed)
     val unknownDateLbl = stringResource(Res.string.label_unknown_date)
-    val filterSortLbl = stringResource(Res.string.menu_filter_sort)
+    val filterLbl = stringResource(Res.string.menu_filter)
+    val sortLbl = stringResource(Res.string.menu_sort)
+    val styleLbl = stringResource(Res.string.menu_list_style)
+    val galleryLbl = stringResource(Res.string.files_view_gallery)
+    val listLbl = stringResource(Res.string.files_view_list)
     val filterAllLbl = stringResource(Res.string.filter_type_all)
     val filterVideoLbl = stringResource(Res.string.filter_type_video)
     val filterPhotoLbl = stringResource(Res.string.filter_type_photo)
@@ -394,179 +426,211 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     val sortBySizeLbl = stringResource(Res.string.sort_by_size)
     val sortAscLbl = stringResource(Res.string.sort_ascending)
     val sortDescLbl = stringResource(Res.string.sort_descending)
-    // The one-line current-condition summary, shown only when a filter or sort is active:
-    // "视频 · 大小 降序". The default (全部/名称/升序) shows nothing (正文不塞控件).
-    val filterLine = stringResource(
-        Res.string.files_filter_line,
-        when (typeFilter) {
-            FileType.VIDEO -> filterVideoLbl
-            FileType.PHOTO -> filterPhotoLbl
-            else -> filterAllLbl
+    // The one-line current-condition summary, shown only when something is non-default:
+    // 「画廊 · 视频 · 大小 降序」. The default (列表/全部/名称/升序) shows nothing, so the
+    // 正文 stays free of controls and the bar's own checked states carry the rest.
+    val viewLine = stringResource(
+        Res.string.files_view_line,
+        if (layout == FileLayout.Gallery) galleryLbl else listLbl,
+        stringResource(
+            Res.string.files_filter_line,
+            when (typeFilter) {
+                FileType.VIDEO -> filterVideoLbl
+                FileType.PHOTO -> filterPhotoLbl
+                else -> filterAllLbl
+            },
+            if (sortBySize) sortBySizeLbl else sortByNameLbl,
+            if (sortDescending) sortDescLbl else sortAscLbl,
+        ),
+    )
+    val viewLineVisible = filterActive || layout != FileLayout.List
+
+    val mediaArgs = MediaArgs(
+        videoLabel = videoLbl,
+        photoLabel = photoLbl,
+        selectMode = selectMode,
+        selected = selected,
+        onToggle = { name ->
+            if (selected.contains(name)) selected.remove(name) else selected.add(name)
         },
-        if (sortBySize) sortBySizeLbl else sortByNameLbl,
-        if (sortDescending) sortDescLbl else sortAscLbl,
+        onDelete = { pendingDelete = it },
+        emptyTitle = onCameraTitle,
+        emptyFilesLabel = filesLbl,
+        emptyNote = filesNone,
+    )
+    val chromeArgs = ChromeArgs(
+        refreshLabel = refreshLabel,
+        selectLabel = selectLbl,
+        onToggleSelect = {
+            selectMode = !selectMode
+            if (!selectMode) selected.clear()
+        },
+        selectMode = selectMode,
+        viewLineVisible = viewLineVisible,
+        viewLine = viewLine,
+        batchTitle = batchTitle,
+        selectAllLabel = selectAllLbl,
+        selectedCount = selectedCount,
+        allSelected = allSelected,
+        deleteBusy = state.isBusy(Op.Delete),
+        onSelectAll = {
+            if (allSelected) {
+                selected.clear()
+            } else {
+                state.files.forEach { f -> if (!selected.contains(f.name)) selected.add(f.name) }
+            }
+        },
+        onDownloadSelected = {
+            state.files.filter { selected.contains(it.name) }.forEach { state.download(it) }
+        },
+        onRequestBatchDelete = { pendingBatchDelete = true },
+        downloadsTitle = downloadsTitle,
+        clearFinishedLabel = clearFinishedLbl,
+        retryFailedLabel = retryFailedLbl,
+        doneLabel = doneLabel,
+        failedLabel = failedLabel,
+        loadMoreLabel = loadMoreLbl,
     )
 
     MiuixPage(
         title = stringResource(Res.string.tab_files),
         outerPadding = outerPadding,
         state = state,
-        // Filter/sort each toggle one facet; the check mark shows the active choice, so the
-        // menu doubles as the state readout. Tapping never closes over the file list — the
-        // recomputation above keys off these flags.
+        // Three bar buttons, each opening its own sheet: 筛选 picks a facet, 排序 picks a
+        // key and a direction, 样式 toggles the layout. Every row shows a check mark on the
+        // active choice, so each sheet doubles as that control's state readout — which is
+        // why the summary line below the bar only has to name what is *not* the default.
+        //
+        // 诊断 left the bar to make room (the bar holds three icons before the title runs
+        // out on a 360dp phone) and rejoined 更多, where it sits under 切换列表样式.
+        appBarIcons = if (state.session == null) emptyList() else listOf(
+            AppBarIcon(
+                icon = MiuixIcons.Filter,
+                contentDescription = filterLbl,
+                checked = typeFilter != null || favoritesOnly,
+            ) { filterOpen = true },
+            AppBarIcon(
+                icon = MiuixIcons.Sort,
+                contentDescription = sortLbl,
+                checked = sortBySize || !sortDescending,
+            ) { sortOpen = true },
+            AppBarIcon(
+                icon = if (layout == FileLayout.Gallery) MiuixIcons.GridView else MiuixIcons.ListView,
+                contentDescription = styleLbl,
+                checked = layout == FileLayout.Gallery,
+            ) { styleOpen = true },
+        ),
+        // The ⋯ sheet used to hold all six actions, 删除全部 among them — so the two
+        // controls the list is *read through* shared a menu with the one that wipes the
+        // card. What is left is what is genuinely occasional: the other list style, the
+        // log, and 删除全部.
         menuItems = if (state.session == null) emptyList() else listOf(
-            AppBarMenuItem(label = "$filterSortLbl · $filterAllLbl", checked = typeFilter == null) { typeFilter = null },
-            AppBarMenuItem(label = filterVideoLbl, checked = typeFilter == FileType.VIDEO) { typeFilter = FileType.VIDEO },
-            AppBarMenuItem(label = filterPhotoLbl, checked = typeFilter == FileType.PHOTO) { typeFilter = FileType.PHOTO },
-            AppBarMenuItem(label = sortByNameLbl, checked = !sortBySize) { sortBySize = false },
-            AppBarMenuItem(label = sortBySizeLbl, checked = sortBySize) { sortBySize = true },
-            AppBarMenuItem(label = sortDescLbl, checked = sortDescending) { sortDescending = true },
-            AppBarMenuItem(label = sortAscLbl, checked = !sortDescending) { sortDescending = false },
-            AppBarMenuItem(label = favoritesOnlyLbl, checked = favoritesOnly) { favoritesOnly = !favoritesOnly },
+            AppBarMenuItem(label = galleryLbl, checked = layout == FileLayout.Gallery) {
+                state.fileLayout = FileLayout.Gallery
+            },
+            AppBarMenuItem(label = listLbl, checked = layout == FileLayout.List) {
+                state.fileLayout = FileLayout.List
+            },
             // The one irreversible action here, so it sits last and apart: in the menu
             // rather than beside 刷新/选择, where a stray tap would cost the whole card.
             AppBarMenuItem(label = deleteAllLbl, enabled = state.files.isNotEmpty()) {
                 pendingDeleteAll = true
             },
         ),
+        // The gallery needs a grid container, which a LazyListScope cannot express — a list
+        // scope has no cross-axis span. So when the gallery is on the whole content area is
+        // handed over here, and 文件页 lays its chrome (刷新/选择, the transfers, 加载更多)
+        // out in grid items instead of sections. Both paths go through the same two
+        // composables below, so a style switch moves nothing but the media itself.
+        gridCells = if (state.session != null && layout == FileLayout.Gallery) {
+            {
+                filesChrome(state = state, chrome = chromeArgs)
+                filesGrid(
+                    state = state,
+                    groups = groups,
+                    media = mediaArgs,
+                    unknownDateLbl = unknownDateLbl,
+                )
+                filesTail(state = state, chrome = chromeArgs, media = mediaArgs)
+            }
+        } else {
+            null
+        },
     ) {
         if (state.session == null) {
             notConnectedItem()
         } else {
-            // Two actions, side by side, outside a card: the demo lays a button pair out
-            // in a Row inset by the card's own 12dp rather than stacking two full-width
-            // buttons inside one.
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    actionButton(
-                        refreshLabel,
-                        busy = state.isBusy(Op.Refresh),
-                        primary = true,
-                        onClick = { state.refreshFiles() },
-                    )
-                    actionButton(selectLbl, onClick = {
-                        selectMode = !selectMode
-                        if (!selectMode) selected.clear()
-                    })
-                }
+            filesChrome(state = state, chrome = chromeArgs)
+            if (layout == FileLayout.List) {
+                filesList(
+                    state = state,
+                    groups = groups,
+                    media = mediaArgs,
+                    unknownDateLbl = unknownDateLbl,
+                )
             }
-
-            // Only when a filter or sort is in effect: one muted line naming the current
-            // condition, so the body carries no controls of its own.
-            if (filterActive) {
-                item {
-                    Text(
-                        text = filterLine,
-                        fontSize = 13.sp,
-                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 28.dp, vertical = 4.dp),
-                    )
-                }
-            }
-
-            if (selectMode) {
-                item {
-                    SmallTitle(text = batchTitle)
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp)
-                            .padding(bottom = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        SmallButton(selectAllLbl, modifier = Modifier.weight(1f)) {
-                            if (allSelected) {
-                                selected.clear()
-                            } else {
-                                state.files.forEach { f ->
-                                    if (!selected.contains(f.name)) selected.add(f.name)
-                                }
-                            }
-                        }
-                        SmallButton(
-                            stringResource(Res.string.action_download_count, selectedCount),
-                            modifier = Modifier.weight(1f),
-                            enabled = selectedCount > 0,
-                        ) {
-                            state.files.filter { selected.contains(it.name) }.forEach { state.download(it) }
-                        }
-                        SmallButton(
-                            stringResource(Res.string.action_delete_count, selectedCount),
-                            modifier = Modifier.weight(1f),
-                            enabled = selectedCount > 0 && !state.isBusy(Op.Delete),
-                            destructive = true,
-                        ) { pendingBatchDelete = true }
-                    }
-                }
-            }
-
-            if (state.downloads.isNotEmpty()) {
-                section(title = downloadsTitle) {
-                    // One quiet line instead of a bar per row: what a queue in flight owes
-                    // the user is the number no single row can give — the whole wait.
-                    state.downloadEtaSeconds()?.let { eta ->
-                        Text(
-                            text = stringResource(Res.string.download_eta, eta),
-                            fontSize = 13.sp,
-                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 4.dp),
-                        )
-                    }
-                    if (state.downloads.any { it.state == DownloadItem.State.Done }) {
-                        actionRow(clearFinishedLbl) { state.clearFinishedDownloads() }
-                    }
-                    if (state.downloads.any { it.state == DownloadItem.State.Failed }) {
-                        actionRow(retryFailedLbl) { state.retryFailedDownloads() }
-                    }
-                    state.downloads.forEach { d -> downloadItem(d, doneLabel, failedLabel) }
-                }
-            }
-
-            groups.forEach { g ->
-                val heading = (g.key?.toString() ?: unknownDateLbl) + " · " + g.files.size
-                section(title = heading) {
-                    g.files.forEach { f ->
-                        fileItem(
-                            state = state,
-                            f = f,
-                            videoLabel = videoLbl,
-                            photoLabel = photoLbl,
-                            selectMode = selectMode,
-                            selected = selected.contains(f.name),
-                            onToggle = {
-                                if (selected.contains(f.name)) selected.remove(f.name)
-                                else selected.add(f.name)
-                            },
-                            onDelete = { pendingDelete = f },
-                        )
-                    }
-                }
-            }
-
-            // A card holding more than one page stops at the cut; this is the only way to
-            // ask for the rest. Hidden once the listing is exhausted, so an ordinary card
-            // never shows a button that would do nothing.
-            if (!state.filesExhausted && state.files.isNotEmpty()) {
-                section(card = false) {
-                    actionRow(loadMoreLbl, busy = state.isBusy(Op.Refresh)) { state.loadMoreFiles() }
-                }
-            }
-
-            if (state.files.isEmpty()) {
-                section(title = onCameraTitle) {
-                    valueItem(filesLbl, filesNone)
-                }
-            }
+            filesTail(state = state, chrome = chromeArgs, media = mediaArgs)
         }
+    }
+
+    // The three bar buttons. 筛选 and 排序 are one-choice sheets — the check mark is the
+    // current value — and 样式 is the same two choices the ⋯ menu offers, so the button and
+    // the menu row drive one flag and can never disagree.
+    if (filterOpen) {
+        ChoiceSheet(
+            title = filterLbl,
+            options = listOf(
+                filterAllLbl to (typeFilter == null),
+                filterVideoLbl to (typeFilter == FileType.VIDEO),
+                filterPhotoLbl to (typeFilter == FileType.PHOTO),
+            ),
+            onPick = { index ->
+                typeFilter = when (index) {
+                    1 -> FileType.VIDEO
+                    2 -> FileType.PHOTO
+                    else -> null
+                }
+            },
+            onDismiss = { filterOpen = false },
+            // Starred-only is a filter, not a sort, so it belongs on this sheet rather than
+            // on the one the 排序 button opens.
+            extraLabel = favoritesOnlyLbl,
+            extraOn = favoritesOnly,
+            onExtra = { favoritesOnly = !favoritesOnly },
+        )
+    }
+    if (sortOpen) {
+        ChoiceSheet(
+            title = sortLbl,
+            options = listOf(
+                sortByNameLbl to !sortBySize,
+                sortBySizeLbl to sortBySize,
+                sortAscLbl to !sortDescending,
+                sortDescLbl to sortDescending,
+            ),
+            onPick = { index ->
+                when (index) {
+                    0 -> sortBySize = false
+                    1 -> sortBySize = true
+                    2 -> sortDescending = false
+                    else -> sortDescending = true
+                }
+            },
+            onDismiss = { sortOpen = false },
+        )
+    }
+    if (styleOpen) {
+        ChoiceSheet(
+            title = styleLbl,
+            options = listOf(
+                listLbl to (layout == FileLayout.List),
+                galleryLbl to (layout == FileLayout.Gallery),
+            ),
+            onPick = { index ->
+                state.fileLayout = if (index == 1) FileLayout.Gallery else FileLayout.List
+            },
+            onDismiss = { styleOpen = false },
+        )
     }
 
     val target = pendingDelete
@@ -618,6 +682,440 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
             },
             onDismiss = { pendingDeleteAll = false },
         )
+    }
+}
+
+/**
+ * The strings and callbacks the files page's media area needs, in both layouts.
+ *
+ * A parameter object rather than eleven positional arguments: the list and the grid draw
+ * the same files with the same behaviour, and threading that through two functions whose
+ * signatures have to stay in step is how the two drift apart. The labels are resolved
+ * once in [FilesScreen] and shared.
+ */
+private class MediaArgs(
+    val videoLabel: String,
+    val photoLabel: String,
+    val selectMode: Boolean,
+    val selected: List<String>,
+    val onToggle: (String) -> Unit,
+    val onDelete: (RemoteFile) -> Unit,
+    val emptyTitle: String,
+    val emptyFilesLabel: String,
+    val emptyNote: String,
+)
+
+/** The strings and callbacks for the chrome that sits above the media, in both layouts. */
+private class ChromeArgs(
+    val refreshLabel: String,
+    val selectLabel: String,
+    val onToggleSelect: () -> Unit,
+    val selectMode: Boolean,
+    val viewLineVisible: Boolean,
+    val viewLine: String,
+    val batchTitle: String,
+    val selectAllLabel: String,
+    val selectedCount: Int,
+    val allSelected: Boolean,
+    val deleteBusy: Boolean,
+    val onSelectAll: () -> Unit,
+    val onDownloadSelected: () -> Unit,
+    val onRequestBatchDelete: () -> Unit,
+    val downloadsTitle: String,
+    val clearFinishedLabel: String,
+    val retryFailedLabel: String,
+    val doneLabel: String,
+    val failedLabel: String,
+    val loadMoreLabel: String,
+)
+
+/** `"2026-09-23 · 12"`, or the unknown-date heading. One spelling for both layouts. */
+private fun dayHeading(g: DayGroup, unknownDateLabel: String) =
+    (g.key?.toString() ?: unknownDateLabel) + " · " + g.files.size
+
+/**
+ * 刷新 / 选择, the current-condition line, the batch bar and the transfer queue.
+ *
+ * Shared by both layouts so that switching style changes only the media below: a user who
+ * has just selected twelve clips and then taps 列表样式 must not lose the batch bar or see
+ * it move. `LazyListScope` and `LazyGridScope` have no common supertype, so this exists as
+ * two thin adapters over one body rather than one function taking either.
+ */
+private fun LazyListScope.filesChrome(state: AppState, chrome: ChromeArgs) {
+    item { ChromeHeader(state, chrome) }
+    if (chrome.viewLineVisible) item { ViewLine(chrome.viewLine) }
+    if (chrome.selectMode) item { BatchBar(chrome) }
+    if (state.downloads.isNotEmpty()) item { TransferCard(state, chrome) }
+}
+
+private fun LazyGridScope.filesChrome(state: AppState, chrome: ChromeArgs) {
+    item(span = { GridItemSpan(maxLineSpan) }) { ChromeHeader(state, chrome) }
+    if (chrome.viewLineVisible) item(span = { GridItemSpan(maxLineSpan) }) { ViewLine(chrome.viewLine) }
+    if (chrome.selectMode) item(span = { GridItemSpan(maxLineSpan) }) { BatchBar(chrome) }
+    if (state.downloads.isNotEmpty()) item(span = { GridItemSpan(maxLineSpan) }) { TransferCard(state, chrome) }
+}
+
+/** Two actions, side by side, outside a card — the demo's button-pair layout. */
+@Composable
+private fun ChromeHeader(state: AppState, chrome: ChromeArgs) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        actionButton(
+            chrome.refreshLabel,
+            busy = state.isBusy(Op.Refresh),
+            primary = true,
+            onClick = { state.refreshFiles() },
+        )
+        actionButton(chrome.selectLabel, onClick = chrome.onToggleSelect)
+    }
+}
+
+/** One muted line naming what is off its default — the body carries no controls itself. */
+@Composable
+private fun ViewLine(text: String) {
+    Text(
+        text = text,
+        fontSize = 13.sp,
+        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 28.dp, vertical = 4.dp),
+    )
+}
+
+/** 全选 / 下载 ( n ) / 删除 ( n ); the three are equal in weight. */
+@Composable
+private fun BatchBar(chrome: ChromeArgs) {
+    SmallTitle(text = chrome.batchTitle)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .padding(bottom = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        SmallButton(chrome.selectAllLabel, modifier = Modifier.weight(1f), onClick = chrome.onSelectAll)
+        SmallButton(
+            stringResource(Res.string.action_download_count, chrome.selectedCount),
+            modifier = Modifier.weight(1f),
+            enabled = chrome.selectedCount > 0,
+            onClick = chrome.onDownloadSelected,
+        )
+        SmallButton(
+            stringResource(Res.string.action_delete_count, chrome.selectedCount),
+            modifier = Modifier.weight(1f),
+            enabled = chrome.selectedCount > 0 && !chrome.deleteBusy,
+            destructive = true,
+            onClick = chrome.onRequestBatchDelete,
+        )
+    }
+}
+
+/** The download queue: one quiet ETA line, then the rows, then the two queue-wide actions. */
+@Composable
+private fun TransferCard(state: AppState, chrome: ChromeArgs) {
+    Card(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .padding(bottom = 12.dp),
+    ) {
+        SmallTitle(chrome.downloadsTitle)
+        // One quiet line instead of a bar per row: what a queue in flight owes the user is
+        // the number no single row can give — the whole wait.
+        state.downloadEtaSeconds()?.let { eta ->
+            Text(
+                text = stringResource(Res.string.download_eta, eta),
+                fontSize = 13.sp,
+                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+            )
+        }
+        if (state.downloads.any { it.state == DownloadItem.State.Done }) {
+            actionRow(chrome.clearFinishedLabel) { state.clearFinishedDownloads() }
+        }
+        if (state.downloads.any { it.state == DownloadItem.State.Failed }) {
+            actionRow(chrome.retryFailedLabel) { state.retryFailedDownloads() }
+        }
+        state.downloads.forEach { d -> downloadItem(d, chrome.doneLabel, chrome.failedLabel) }
+    }
+}
+
+/** 加载更多, and the empty state — the two rows below the media in both layouts. */
+private fun LazyListScope.filesTail(state: AppState, chrome: ChromeArgs, media: MediaArgs) {
+    // A card holding more than one page stops at the cut; this is the only way to ask for
+    // the rest. Hidden once the listing is exhausted, so an ordinary card never shows a
+    // button that would do nothing.
+    if (!state.filesExhausted && state.files.isNotEmpty()) {
+        section(card = false) {
+            actionRow(chrome.loadMoreLabel, busy = state.isBusy(Op.Refresh)) { state.loadMoreFiles() }
+        }
+    }
+    if (state.files.isEmpty()) {
+        section(title = media.emptyTitle) {
+            valueItem(media.emptyFilesLabel, media.emptyNote)
+        }
+    }
+}
+
+private fun LazyGridScope.filesTail(state: AppState, chrome: ChromeArgs, media: MediaArgs) {
+    if (!state.filesExhausted && state.files.isNotEmpty()) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            // `actionRow` is a ColumnScope extension; the grid item is not a Column, so one
+            // is wrapped explicitly. Same for the empty-state card below.
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+                    .padding(bottom = 12.dp),
+            ) {
+                actionRow(chrome.loadMoreLabel, busy = state.isBusy(Op.Refresh)) {
+                    state.loadMoreFiles()
+                }
+            }
+        }
+    }
+    if (state.files.isEmpty()) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Card(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+                    .padding(bottom = 12.dp),
+            ) {
+                Column {
+                    SmallTitle(media.emptyTitle)
+                    valueItem(media.emptyFilesLabel, media.emptyNote)
+                }
+            }
+        }
+    }
+}
+
+/** The list layout's media: one card per day, one row per file. */
+private fun LazyListScope.filesList(
+    state: AppState,
+    groups: List<DayGroup>,
+    media: MediaArgs,
+    unknownDateLbl: String,
+) {
+    groups.forEach { g ->
+        section(title = dayHeading(g, unknownDateLbl)) {
+            g.files.forEach { f ->
+                fileItem(
+                    state = state,
+                    f = f,
+                    videoLabel = media.videoLabel,
+                    photoLabel = media.photoLabel,
+                    selectMode = media.selectMode,
+                    selected = media.selected.contains(f.name),
+                    onToggle = { media.onToggle(f.name) },
+                    onDelete = { media.onDelete(f) },
+                )
+            }
+        }
+    }
+}
+
+/**
+ * The gallery: the same day headings as full-width rows, each followed by that day's
+ * cells. The heading spans the whole line ([GridItemSpan]) so a date never gets split
+ * across a row break — which is what makes this read as an album rather than a wall.
+ */
+private fun LazyGridScope.filesGrid(
+    state: AppState,
+    groups: List<DayGroup>,
+    media: MediaArgs,
+    unknownDateLbl: String,
+) {
+    groups.forEach { g ->
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            SmallTitle(dayHeading(g, unknownDateLbl))
+        }
+        gridItems(g.files, key = { it.name }) { f ->
+            MediaTile(
+                state = state,
+                f = f,
+                selectMode = media.selectMode,
+                selected = media.selected.contains(f.name),
+                onToggle = { media.onToggle(f.name) },
+            )
+        }
+    }
+}
+
+/**
+ * One gallery cell: the decoded preview filling a square, cropped to cover.
+ *
+ * The fill is deliberately only asked for from inside the cell — the same reason
+ * [fileItem] does it there. In the gallery it matters more: a grid materialises every
+ * cell in its visible window at once, and asking for the whole card's previews while the
+ * list is being built is what crashed the tab before `loadThumbnail` was capped.
+ *
+ * A still-unfetched preview is not a blank grey box: it shows the type glyph on the same
+ * tinted plate [FileThumbnail] uses, so a camera that serves no `.THM` at all still reads
+ * as "photo here, video here" rather than as a rendering failure.
+ */
+@Composable
+private fun MediaTile(
+    state: AppState,
+    f: RemoteFile,
+    selectMode: Boolean,
+    selected: Boolean,
+    onToggle: () -> Unit,
+) {
+    val isVideo = f.type == FileType.VIDEO
+    LaunchedEffect(f.name) { state.loadThumbnail(f) }
+    Box(
+        Modifier
+            .padding(2.dp)
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(10.dp))
+            .background(
+                if (isVideo) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.secondary,
+            )
+            .then(if (selectMode) Modifier.clickable(onClick = onToggle) else Modifier),
+    ) {
+        val bitmap = state.thumbnails[f.name]
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+        } else {
+            Icon(
+                imageVector = if (isVideo) MiuixIcons.Play else MiuixIcons.Image,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.align(Alignment.Center).size(28.dp),
+            )
+        }
+        // A video has no other clue that it is one: the cover crop of a clip looks exactly
+        // like a photo until something says otherwise, so the glyph stays on top of the
+        // frame rather than only standing in for a missing one.
+        if (bitmap != null && isVideo) {
+            Icon(
+                imageVector = MiuixIcons.Play,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(6.dp)
+                    .size(18.dp)
+                    .shadow(2.dp, CircleShape),
+            )
+        }
+        if (selectMode && selected) {
+            Icon(
+                MiuixIcons.Ok,
+                contentDescription = null,
+                tint = MiuixTheme.colorScheme.primary,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(6.dp)
+                    .size(22.dp)
+                    .background(Color.White, CircleShape),
+            )
+            // A tick alone is easy to miss against a bright frame; the scrim makes the
+            // selected cells legible at a glance. Same tint as the type plate, so the
+            // selected and unselected states are two weights of one thing.
+            Box(
+                Modifier
+                    .matchParentSize()
+                    .background(MiuixTheme.colorScheme.primary.copy(alpha = 0.18f)),
+            )
+        }
+    }
+}
+
+/**
+ * A top-bar button's sheet: a title and a list of choices, the active one ticked.
+ *
+ * The screens this replaced were dropdown menus, which is where the ⋯ menu's rows already
+ * live. A bar button earns its own surface because it is *about one thing* — the sheet is
+ * titled with that thing, so the rows below it need no prefix to say which control they
+ * belong to (the old menu shipped rows literally labelled 「筛选与排序 · 全部」 because a
+ * flat list has no room for a heading).
+ *
+ * [extraLabel] is one optional toggle that belongs to the same question as [options] but is
+ * not one of them — 「只看收藏」 under 筛选. It stays independent of the check marks: starring
+ * a clip and then filtering to videos has to show the starred videos, not either-or.
+ */
+@Composable
+private fun ChoiceSheet(
+    title: String,
+    options: List<Pair<String, Boolean>>,
+    onPick: (Int) -> Unit,
+    onDismiss: () -> Unit,
+    extraLabel: String? = null,
+    extraOn: Boolean = false,
+    onExtra: () -> Unit = {},
+) {
+    val haptics = LocalHapticFeedback.current
+    OverlayBottomSheet(show = true, onDismissRequest = onDismiss) {
+        Column(Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
+            SmallTitle(title)
+            Card(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
+                // The tick rides the `end` slot, not the content slot: BasicRow's content is a
+                // ColumnScope, where `weight` is vertical — putting the label there with a
+                // weight stretches every row to the sheet's full height.
+                options.forEachIndexed { index, (label, selected) ->
+                    BasicRow(
+                        onClick = {
+                            haptics.tick()
+                            onPick(index)
+                            onDismiss()
+                        },
+                        end = {
+                            if (selected) {
+                                Icon(
+                                    MiuixIcons.Ok,
+                                    contentDescription = null,
+                                    tint = MiuixTheme.colorScheme.primary,
+                                    modifier = Modifier.size(20.dp),
+                                )
+                            }
+                        },
+                    ) {
+                        Text(
+                            text = label,
+                            fontSize = 16.sp,
+                            color = MiuixTheme.colorScheme.onBackground,
+                        )
+                    }
+                }
+            }
+            if (extraLabel != null) {
+                Card(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
+                        .padding(top = 8.dp),
+                ) {
+                    BasicRow(
+                        onClick = {
+                            haptics.toggle()
+                            onExtra()
+                        },
+                        end = { Switch(checked = extraOn, onCheckedChange = null) },
+                    ) {
+                        Text(
+                            text = extraLabel,
+                            fontSize = 16.sp,
+                            color = MiuixTheme.colorScheme.onBackground,
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 

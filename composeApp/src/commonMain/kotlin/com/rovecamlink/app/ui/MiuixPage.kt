@@ -22,6 +22,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -109,8 +114,39 @@ data class AppBarMenuItem(
     val onClick: () -> Unit,
 )
 
+/**
+ * One icon in a page's top bar, next to the ⋯ button.
+ *
+ * The bar used to give every per-page action exactly one home — the overflow — on the
+ * reading that it "has room for exactly one trailing icon". The 2026-09-24 files-page
+ * request showed that reading was too strict: 筛选 and 排序 are not occasional commands
+ * but the two controls a card of hundreds of clips is *read through*, and burying each
+ * behind a tap into a menu that also holds 删除全部 made the common path the long one.
+ *
+ * [checked] tints the icon so a bar icon doubles as its own state readout, the way the
+ * menu rows already do. Icons still have to be few — past three the title runs out of
+ * room on a 360dp phone — and any action that is a *verb on data* rather than a way of
+ * looking at it still belongs in the overflow.
+ */
+data class AppBarIcon(
+    val icon: ImageVector,
+    val contentDescription: String,
+    val checked: Boolean = false,
+    val onClick: () -> Unit,
+)
+
 /** Horizontal inset of a section's card from the page edge. */
 private val CardInset = 12.dp
+
+/**
+ * Columns in a gallery grid.
+ *
+ * Three is the album convention and the count that keeps a thumbnail big enough to
+ * recognise: on a 360dp phone each cell is ~112dp, so a 4:3 photo cover-cropped to a
+ * square still reads as the shot it is. Four would fit a third more clips per screen and
+ * make every one of them a stamp.
+ */
+internal const val GalleryColumns = 3
 
 /** The gap one section leaves before the next; the demo puts it under the card, never above. */
 private val SectionGap = 12.dp
@@ -192,12 +228,14 @@ fun MiuixPage(
     subtitleColor: Color? = null,
     navigationIcon: @Composable () -> Unit = {},
     menuItems: List<AppBarMenuItem> = emptyList(),
-    actions: @Composable RowScope.() -> Unit = { AppBarActions(state, menuItems) },
+    appBarIcons: List<AppBarIcon> = emptyList(),
+    actions: @Composable RowScope.() -> Unit = { AppBarActions(state, menuItems, appBarIcons) },
     bottomContent: (@Composable () -> Unit)? = null,
     header: (@Composable () -> Unit)? = null,
     floating: @Composable BoxScope.() -> Unit = {},
     listBottomInset: Dp = 0.dp,
     listState: LazyListState = rememberLazyListState(),
+    gridCells: (LazyGridScope.() -> Unit)? = null,
     content: LazyListScope.() -> Unit,
 ) {
     // The bar always collapses. It used to stop doing so whenever a [header] was pinned,
@@ -215,6 +253,11 @@ fun MiuixPage(
     // the blur reads. On a device without the shader [backdrop] is null and the bar goes back
     // to being the solid plate it always was.
     val backdrop = rememberBarBackdrop()
+    // Both containers are remembered unconditionally. Creating the one that is not in
+    // use costs an empty state object, and it is what lets the files page flip between
+    // the list and the gallery without either losing its scroll position — a grid state
+    // made inside the `else` branch would be recreated on every style switch.
+    val gridState = rememberLazyGridState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -255,15 +298,37 @@ fun MiuixPage(
             .fillMaxWidth()
         val list: @Composable () -> Unit = {
             Box(Modifier.fillMaxSize()) {
-                LazyColumn(
-                    state = listState,
-                    contentPadding = contentPadding,
-                    modifier = listModifier,
-                ) {
-                    content()
+                // Two containers, one at a time. A grid is not a LazyColumn with wider
+                // items — a LazyListScope cannot express a cross-axis span — so the
+                // files page hands over a whole LazyGridScope when it wants the album
+                // arrangement. Both branches share the padding and the width fix below,
+                // so a page's first row sits at the same pixel either way; the scroll
+                // bar goes with whichever one is on, since only it knows its extent.
+                val cells = gridCells
+                if (cells == null) {
+                    LazyColumn(
+                        state = listState,
+                        contentPadding = contentPadding,
+                        modifier = listModifier,
+                    ) {
+                        content()
+                    }
+                } else {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(GalleryColumns),
+                        state = gridState,
+                        contentPadding = contentPadding,
+                        modifier = listModifier,
+                    ) {
+                        cells()
+                    }
                 }
                 VerticalScrollBar(
-                    adapter = rememberScrollBarAdapter(listState),
+                    adapter = if (cells == null) {
+                        rememberScrollBarAdapter(listState)
+                    } else {
+                        rememberScrollBarAdapter(gridState)
+                    },
                     modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
                     trackPadding = contentPadding,
                 )
@@ -545,34 +610,69 @@ fun LazyListScope.notConnectedItem() {
 }
 
 /**
- * The bar's trailing controls: the diagnostics switch, and — when a page supplies any —
- * a 「更多」 overflow behind a single ⋯ button.
+ * The bar's trailing controls: the app-wide diagnostics switch, any per-page icons the
+ * page asked for, and — when it supplies menu rows — a 「更多」 overflow behind a ⋯ button.
  *
  * Diagnostics has to be one tap away from wherever you are: that is where the failure
- * you want to report just happened. One tap also puts it away again — the same button is
- * the close control, so the page never has to be re-found after a screen change.
+ * you want to report just happened. On a page with no icons of its own it is the bar's
+ * single trailing control, and the same button puts it away again — so the page never has
+ * to be re-found after a screen change. A page that *does* carry icons ([appBarIcons],
+ * the files page's 筛选/排序/样式) keeps that toggle in its overflow instead, because a
+ * row of four icons would push the title off a 360dp bar.
  *
  * The overflow is miuix's own [OverlayListPopup] + [ListPopupColumn] + [DropdownImpl],
  * anchored to the ⋯ button — the same three pieces the library's own
  * `OverlayDropdownPopup` is built from. 0.9.4 ships no one-call `IconDropdownMenu`, so the
- * three are assembled here rather than reached for. A page with no per-page action shows
- * only the diagnostics icon; the app-wide 「查看日志」 is always the last row so it sits in
- * the same place on every page.
+ * three are assembled here rather than reached for.
  *
  * `actions` is the library's icon slot and nothing else, so the connection state is not
  * a chip here — it is the bar's second line. See [connectionStatus].
  */
 @Composable
-fun RowScope.AppBarActions(state: AppState, menuItems: List<AppBarMenuItem> = emptyList()) {
+fun RowScope.AppBarActions(
+    state: AppState,
+    menuItems: List<AppBarMenuItem> = emptyList(),
+    appBarIcons: List<AppBarIcon> = emptyList(),
+) {
     val haptics = LocalHapticFeedback.current
-    if (menuItems.isNotEmpty()) {
-        var expanded by remember { mutableStateOf(false) }
-        val viewLog = AppBarMenuItem(
+    val diagnosticsIcon = AppBarIcon(
+        icon = MiuixIcons.ListView,
+        contentDescription = stringResource(Res.string.action_diagnostics),
+        checked = state.diagnosticsOpen,
+    ) {
+        if (state.diagnosticsOpen) state.closeDiagnostics() else state.openDiagnostics()
+    }
+    // With icons on the bar, diagnostics moves into the overflow so there is room for them;
+    // the label is the same row the menu-driven pages already show.
+    val icons = if (appBarIcons.isEmpty()) emptyList() else appBarIcons
+    val rows = if (appBarIcons.isEmpty()) {
+        menuItems
+    } else {
+        menuItems + AppBarMenuItem(
             label = stringResource(Res.string.action_diagnostics),
             checked = state.diagnosticsOpen,
         ) { state.openDiagnostics() }
-        // 查看日志 always last, so its position never shifts between pages.
-        val rows = menuItems + viewLog
+    }
+    icons.forEach { entry ->
+        IconButton(
+            onClick = {
+                haptics.tap()
+                entry.onClick()
+            },
+        ) {
+            Icon(
+                entry.icon,
+                contentDescription = entry.contentDescription,
+                tint = if (entry.checked) {
+                    MiuixTheme.colorScheme.primary
+                } else {
+                    MiuixTheme.colorScheme.onBackground
+                },
+            )
+        }
+    }
+    if (rows.isNotEmpty()) {
+        var expanded by remember { mutableStateOf(false) }
         Box {
             IconButton(
                 onClick = {
@@ -609,17 +709,19 @@ fun RowScope.AppBarActions(state: AppState, menuItems: List<AppBarMenuItem> = em
                 }
             }
         }
-    } else {
+    } else if (appBarIcons.isEmpty()) {
+        // No rows and no icons: diagnostics *is* the bar, and one tap both opens and closes
+        // it. Checked above rather than below so the icon's tint reflects [state.diagnosticsOpen].
         IconButton(
             onClick = {
                 haptics.tap()
-                if (state.diagnosticsOpen) state.closeDiagnostics() else state.openDiagnostics()
+                diagnosticsIcon.onClick()
             },
         ) {
             Icon(
-                MiuixIcons.ListView,
-                contentDescription = stringResource(Res.string.action_diagnostics),
-                tint = if (state.diagnosticsOpen) {
+                diagnosticsIcon.icon,
+                contentDescription = diagnosticsIcon.contentDescription,
+                tint = if (diagnosticsIcon.checked) {
                     MiuixTheme.colorScheme.primary
                 } else {
                     MiuixTheme.colorScheme.onBackground

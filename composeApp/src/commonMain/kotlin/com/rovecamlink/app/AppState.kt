@@ -113,6 +113,16 @@ data class DownloadItem(
 enum class Page { Log, LogSettings, About, Permissions }
 
 /**
+ * How the files page draws its media.
+ *
+ * [Gallery] is the album arrangement the 2026-09-24 request asked for: big thumbnails in
+ * a grid under the same day headings, which is the shape a person reads a camera card in
+ * when they are looking for a clip rather than for a filename. [List] stays the default
+ * and the fallback — it is the only one that can show size and per-file actions in place.
+ */
+enum class FileLayout { List, Gallery }
+
+/**
  * Central observable state + orchestration. One instance for the app.
  * All long-running work is launched on [scope].
  */
@@ -382,6 +392,20 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         private set
     var files by mutableStateOf<List<RemoteFile>>(emptyList())
         private set
+
+    /**
+     * How the files page draws the camera's media — the card list, or the gallery (A12).
+     *
+     * Held here rather than in `FilesScreen` for the same reason [settingsTab] is: a pushed
+     * page replaces the screen while it is open, so a `remember`ed style would be back to
+     * 列表 every time the user came back from a clip they opened out of the gallery.
+     *
+     * It also decides how many thumbnails are worth keeping — see [trimThumbnails]
+     * and [MAX_CACHED_THUMBNAILS_LIST] — so the read has to happen outside the
+     * composition, in [loadThumbnail] and [trimThumbnails].
+     */
+    var fileLayout by mutableStateOf(FileLayout.List)
+        internal set
 
     /**
      * False while the camera may hold files past the ones listed.
@@ -1505,7 +1529,17 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * disappearing.
      */
     private fun trimThumbnails() {
-        while (thumbnails.size >= MAX_CACHED_THUMBNAILS) {
+        // The cap follows the layout: the gallery draws ~15 cells a screen against the
+        // list's 6–8 rows, so a 24-deep cache that is comfortable for rows would have
+        // evicted everything the user just scrolled past before the next screenful
+        // arrived — and at [MAX_THUMBS_IN_FLIGHT] that reads as a gallery that never
+        // fills in. See [MAX_CACHED_THUMBNAILS_LIST] and [MAX_CACHED_THUMBNAILS_GALLERY].
+        val cap = if (fileLayout == FileLayout.Gallery) {
+            MAX_CACHED_THUMBNAILS_GALLERY
+        } else {
+            MAX_CACHED_THUMBNAILS_LIST
+        }
+        while (thumbnails.size >= cap) {
             val oldest = thumbSeen.removeFirstOrNull() ?: thumbnails.keys.firstOrNull() ?: return
             thumbnails.remove(oldest)
         }
@@ -2382,8 +2416,18 @@ private const val LISTING_PAGE = 300
 /** Status polling interval; it is a load characteristic of the camera, so it belongs in the log. */
 private const val POLL_INTERVAL_MS = 1_500L
 
-/** Decoded thumbnails held at once; beyond this the oldest are evicted. */
-private const val MAX_CACHED_THUMBNAILS = 24
+/** Decoded thumbnails held at once in the list layout: 6–8 rows a screen, so ~3 screens. */
+private const val MAX_CACHED_THUMBNAILS_LIST = 24
+
+/**
+ * The same cap for the gallery. Three columns put 15 cells on one screen, and the user
+ * scrolls a gallery faster than a list because there is nothing to read — so the list's
+ * 24 would have been under two screens' worth and every thumb would be re-fetched from
+ * the camera (at [MAX_THUMBS_IN_FLIGHT], 400 ms each) as soon as it came back into view.
+ * 60 is four screens: enough that a scroll up-and-back is served from memory, while one
+ * decoded frame of 60 grid cells stays well inside what 24 list rows already cost.
+ */
+private const val MAX_CACHED_THUMBNAILS_GALLERY = 60
 
 /**
  * The one capability token this app acts on: `DV.supportWakeSleep()` returns true when

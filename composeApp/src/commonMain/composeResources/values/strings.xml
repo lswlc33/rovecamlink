@@ -349,8 +349,24 @@
 
     <!-- Top-bar overflow menu + the pages it reaches. -->
     <string name="action_more">More</string>
-    <string name="menu_filter_sort">Filter &amp; sort</string>
     <string name="menu_log_settings">Logging settings</string>
+
+    <!--
+      Files page: the top bar's three own buttons, and the overflow that now holds
+      only the list-style switch and the log. Splitting the single ⋯ that used to
+      carry all six per-page actions is the 2026-09-24 request — 筛选/排序/诊断 each
+      get their own tap target so a filter no longer costs two taps inside a menu
+      that also holds 删除全部.
+    -->
+    <string name="menu_filter">Filter</string>
+    <string name="menu_sort">Sort</string>
+    <string name="menu_list_style">List style</string>
+    <string name="menu_diagnostics">View diagnostics log</string>
+    <!-- The two list styles; also the two rows of the 列表样式 submenu. -->
+    <string name="files_view_list">List</string>
+    <string name="files_view_gallery">Gallery</string>
+    <!-- "Gallery · Video · Size descending" — the one-line readout under the bar. -->
+    <string name="files_view_line">%1$s · %2$s</string>
 
     <!-- Appearance picker (Software tab). -->
     <string name="section_appearance">Appearance</string>
