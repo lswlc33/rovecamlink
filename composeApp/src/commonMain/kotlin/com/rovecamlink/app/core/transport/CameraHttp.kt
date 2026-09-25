@@ -123,6 +123,39 @@ class CameraHttp(
     }
 
     /**
+     * POST an empty body and return the response text, or null on failure — the twin
+     * of [getText] for the camera families whose verbs are POST (iCatch `/app/…`
+     * declares getparamvalue/getparamitems/enterrecorder as POSTs; the official client
+     * sends an empty string body with `application/json; charset=utf-8`,
+     * ApiCaller.java:96-118). Through the same lane + logging as every other call.
+     */
+    suspend fun postText(url: String): String? = exchange("POST", url) { call ->
+        try {
+            val resp = client.post {
+                url(url)
+                contentType(ContentType.Application.Json)
+                setBody("")
+            }
+            val ok = resp.status.isSuccess()
+            val declared = resp.contentLength()
+            if (declared != null && declared > MAX_SMALL_BODY) {
+                call.reply(resp, 0, null, note = "refused: body ${declared}B over cap ${MAX_SMALL_BODY}B")
+                return@exchange null
+            }
+            val body = readCapped(resp.bodyAsChannel(), MAX_SMALL_BODY)?.decodeToString()
+            call.reply(
+                resp, body?.length ?: 0, body,
+                note = if (body == null) "over cap ${MAX_SMALL_BODY}B" else "",
+            )
+            if (ok) body else null
+        } catch (t: Throwable) {
+            call.fail(t)
+            if (t is CancellationException) throw t
+            null
+        }
+    }
+
+    /**
      * GET returning raw bytes (thumbnails, small binaries), refusing a body larger
      * than [maxBytes]. The cap is not tidiness: a "preview" URL that turns out to be
      * the original 48 MB photo would otherwise be buffered whole, decoded whole, and

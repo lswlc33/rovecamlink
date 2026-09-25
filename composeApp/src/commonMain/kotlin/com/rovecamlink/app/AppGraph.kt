@@ -1,5 +1,6 @@
 package com.rovecamlink.app
 
+import com.rovecamlink.app.brand.icatch.IcatchHttpProtocol
 import com.rovecamlink.app.brand.tuwin.TuwinRestProtocol
 import com.rovecamlink.app.brand.xtu.HisiliconProtocol
 import com.rovecamlink.app.core.ble.BleCameraProfile
@@ -35,8 +36,9 @@ class AppGraph {
     val tcp: CameraTcp = createCameraTcp()
 
     private val protocolList = listOf(
-        HisiliconProtocol(http),   // XTU X7 Pro + most Hi35xx cams (primary target)
-        TuwinRestProtocol(http),   // TUWIN Ride3Pro / Ride6
+        HisiliconProtocol(http, tcp),  // XTU X7 Pro + most Hi35xx cams (primary target)
+        TuwinRestProtocol(http),       // TUWIN Ride3Pro / Ride6
+        IcatchHttpProtocol(http),      // idGoLive family: Novatek `.254` + Qz `.169.1` (dash cams)
     )
 
     val registry = CameraProtocolRegistry(protocolList)

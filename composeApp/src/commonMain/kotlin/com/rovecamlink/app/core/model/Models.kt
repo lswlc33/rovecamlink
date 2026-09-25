@@ -41,6 +41,7 @@ enum class DevicePlatform(val displayName: String) {
 enum class Brand(val displayName: String) {
     XTU("XTU"),
     TUWIN("TUWIN"),
+    ICATCH("iCatch"),
     GENERIC("Generic"),
 }
 
