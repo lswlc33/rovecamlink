@@ -1,5 +1,6 @@
 package com.rovecamlink.app.brand.icatch
 
+import com.rovecamlink.app.brand.xtu.HiFiles
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogTag
@@ -445,7 +446,14 @@ class IcatchHttpProtocol(private val http: CameraHttp) : CameraProtocol {
                 ssid = attr?.stringKey("ssid"),
                 raw = buildMap {
                     put("profile", PROFILE_QZ)
-                    product?.let { p -> p.forEach { (k, v) -> putIfAbsent("product.$k", v.toString()) } }
+                    // No putIfAbsent here: it is a JVM-only MutableMap extension, and
+                    // this file is commonMain (the iOS target compile caught it).
+                    product?.let { p ->
+                        p.forEach { (k, v) ->
+                            val key = "product.$k"
+                            if (!containsKey(key)) put(key, v.toString())
+                        }
+                    }
                 },
             )
         }
@@ -552,25 +560,11 @@ class IcatchHttpProtocol(private val http: CameraHttp) : CameraProtocol {
 
     // ---------- small helpers ----------
 
-    private fun parseLyTime(raw: String): Long? {
-        // `TIME` is a bare yyyMMddHHmmss-ish stamp in the 3015 reply (official UI shows
-        // it verbatim); parse what parses, leave the rest undated.
-        val digits = raw.filter { it.isDigit() }
-        if (digits.length < 14) return null
-        return runCatching {
-            val y = digits.substring(0, 4).toInt()
-            val mo = digits.substring(4, 6).toInt()
-            val d = digits.substring(6, 8).toInt()
-            val h = digits.substring(8, 10).toInt()
-            val mi = digits.substring(10, 12).toInt()
-            val s = digits.substring(12, 14).toInt()
-            java.util.Calendar.getInstance().run {
-                clear()
-                set(y, mo - 1, d, h, mi, s)
-                timeInMillis
-            }
-        }.getOrNull()
-    }
+    private fun parseLyTime(raw: String): Long? =
+        // `TIME` is a bare yyyyMMddHHmmss-ish stamp in the 3015 reply; the same digits
+        // shape the hi3510 file list answers with, so reuse its parser instead of a
+        // second one (and stay off java.util.Calendar, which is JVM-only).
+        HiFiles.parseCreate(raw)
 
     private val HEX = "0123456789ABCDEF".toCharArray()
 
