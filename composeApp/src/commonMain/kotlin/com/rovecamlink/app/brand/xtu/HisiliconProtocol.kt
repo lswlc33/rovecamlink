@@ -15,6 +15,7 @@ import com.rovecamlink.app.core.model.DeviceInfo
 import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.model.DeviceStatus
 import com.rovecamlink.app.core.model.FileType
+import com.rovecamlink.app.core.model.LiveConfig
 import com.rovecamlink.app.core.model.ModeFamily
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.SdCardState
@@ -26,6 +27,7 @@ import com.rovecamlink.app.core.log.monotonicMillis
 import com.rovecamlink.app.core.net.WakeOnLan
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.transport.CameraHttp
+import com.rovecamlink.app.core.transport.CameraTcp
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.sync.Mutex
@@ -53,7 +55,15 @@ import okio.Path
  *    It also plays that RTSP URL over RTP/TCP, not UDP — see core.media.CameraPreview.
  *  - Media download: http://<ip>/<path>; thumbnail: same path with extension swapped to .THM
  */
-class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
+class HisiliconProtocol(
+    private val http: CameraHttp,
+    /**
+     * The port-8080 firmware socket, shared with [XtuSocketOtaTransport]. It is here because
+     * it carries one thing that is *not* a firmware image: the RTMP hand-off
+     * (`RECV_RTMP`), the only way this family can be told to start a live stream.
+     */
+    private val tcp: CameraTcp,
+) : CameraProtocol {
 
     override val platform = DevicePlatform.HISILICON
 
@@ -1358,6 +1368,18 @@ class HisiliconProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override fun previewUrl(session: CameraSession): String =
         "rtsp://${session.host}:554/livestream/12"
+
+    /**
+     * RTMP hand-off. This family is the one the vendor app sends over its own firmware
+     * socket rather than Bluetooth (`BroadcastDouyinFragment3.sendRtmp2Hisi`), and it is
+     * the only live-streaming channel this build speaks — see [XtuRtmpPush] for the
+     * exchange and for why success means "the camera took the parameters", not "the
+     * stream is up".
+     */
+    override val supportsLive: Boolean get() = true
+
+    override suspend fun startLive(session: CameraSession, config: LiveConfig): CmdResult =
+        XtuRtmpPush(tcp).start(session, config)
 
     // ---------- device info / maintenance ----------
 

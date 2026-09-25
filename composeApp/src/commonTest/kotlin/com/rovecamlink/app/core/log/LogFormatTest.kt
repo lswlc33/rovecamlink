@@ -119,6 +119,31 @@ class LogFormatTest {
     }
 
     @Test
+    fun rtmpStreamKeysAreMaskedButTheServerStaysReadable() {
+        // The classic shape: app + key. The key is what lets anyone push into the
+        // channel, so it never travels in an export; host and app do.
+        val masked = LogFormat.redactStreamUrl("rtmp://push.example.com/live/key-19abC")
+        assertFalse(masked.contains("key-19abC"), masked)
+        assertTrue(masked.contains("rtmp://push.example.com/live/"), masked)
+        assertTrue(masked.contains("/***#9"), masked)
+
+        // The other shape hosts use: key as the first path segment.
+        val appless = LogFormat.redactStreamUrl("rtmp://a.b-cdn.net/9f8e7d6c5b4a")
+        assertFalse(appless.contains("9f8e7d6c5b4a"), appless)
+        assertTrue(appless.startsWith("rtmp://a.b-cdn.net/"), appless)
+    }
+
+    @Test
+    fun rtmpWithoutAKeySegmentAndNonRtmpUrlsPassThrough() {
+        // Nothing after the authority: no key exists, and masking the host would erase
+        // the one fact the line is there to record.
+        assertEquals("rtmp://192.168.1.10:1935", LogFormat.redactStreamUrl("rtmp://192.168.1.10:1935"))
+        // Ordinary URLs keep the redactUrl behaviour unchanged — the key mask is for pushes.
+        val http = "http://192.168.0.1/cgi-bin/hi3510/getdeviceattr.cgi"
+        assertEquals(LogFormat.redactUrl(http), LogFormat.redactStreamUrl(http))
+    }
+
+    @Test
     fun aBodyIsMaskedExactlyOnce() {
         // Regression: a second redaction pass used to re-mask its own `***#10` output.
         val out = LogFormat.redactText("var wifikey=\"letmein123\";")

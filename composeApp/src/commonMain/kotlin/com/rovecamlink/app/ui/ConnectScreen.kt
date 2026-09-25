@@ -32,10 +32,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rovecamlink.app.AppState
+import com.rovecamlink.app.Page
 import com.rovecamlink.app.Phase
 import com.rovecamlink.app.Res
 import com.rovecamlink.app.action_connect
 import com.rovecamlink.app.action_disconnect
+import com.rovecamlink.app.action_live_preview
+import com.rovecamlink.app.action_live_settings
 import com.rovecamlink.app.action_open_wifi_settings
 import com.rovecamlink.app.action_join_connect
 import com.rovecamlink.app.action_refresh
@@ -43,7 +46,9 @@ import com.rovecamlink.app.action_scan_qr
 import com.rovecamlink.app.device_catalog_entry
 import com.rovecamlink.app.device_catalog_entry_hint
 import com.rovecamlink.app.device_catalog_title
+import com.rovecamlink.app.err_live_unsupported
 import com.rovecamlink.app.message_forget_camera
+import com.rovecamlink.app.section_live
 import com.rovecamlink.app.title_connected_camera
 import com.rovecamlink.app.cancel
 import com.rovecamlink.app.err_bluetooth_unsupported
@@ -214,6 +219,10 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     val catalogTitle = stringResource(Res.string.device_catalog_title)
     val catalogEntryLbl = stringResource(Res.string.device_catalog_entry)
     val catalogEntryHint = stringResource(Res.string.device_catalog_entry_hint)
+    val liveTitle = stringResource(Res.string.section_live)
+    val liveSettingsLbl = stringResource(Res.string.action_live_settings)
+    val livePreviewLbl = stringResource(Res.string.action_live_preview)
+    val liveUnsupported = stringResource(Res.string.err_live_unsupported)
     val ageSeconds = if (nearby.lastUpdateAt == 0L) -1 else ((tick - nearby.lastUpdateAt) / 1000f).roundToInt()
 
     val canConnect = joined != null || nearby.hasCandidate
@@ -276,6 +285,29 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
                     onRefresh = { state.refreshNearby() },
                     onConnect = { state.connectNearby() },
                 )
+            }
+        }
+
+        // 直播 (RTMP). The camera is the RTMP client, not this app: these two pages hand it a
+        // network and a URL, and then watch what it pushes. Kept shut on a family that cannot
+        // be told to go live — two rows that can only ever fail are worse than one line that
+        // says why.
+        if (connected) {
+            section(title = liveTitle) {
+                if (state.supportsLive()) {
+                    ArrowPreference(
+                        title = liveSettingsLbl,
+                        summary = state.liveConfig.blocker?.reasonRes?.let { stringResource(it) }
+                            ?: state.liveConfig.rtmpUrl,
+                        onClick = { state.pushPage(Page.LiveSettings) },
+                    )
+                    ArrowPreference(
+                        title = livePreviewLbl,
+                        onClick = { state.pushPage(Page.LivePreview) },
+                    )
+                } else {
+                    hintLine(liveUnsupported)
+                }
             }
         }
 

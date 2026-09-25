@@ -19,6 +19,7 @@ import com.rovecamlink.app.core.model.DeviceEvent
 import com.rovecamlink.app.core.model.DeviceInfo
 import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.model.DeviceStatus
+import com.rovecamlink.app.core.model.LiveConfig
 import com.rovecamlink.app.core.model.ModeFamily
 import com.rovecamlink.app.core.model.ModeTrigger
 import com.rovecamlink.app.core.model.SdCardState
@@ -84,7 +85,7 @@ enum class Phase {
 }
 
 /** A discrete user/system operation so the UI can grey out only the relevant control. */
-enum class Op { Capture, Record, Mode, Refresh, Delete, Settings, FormatSd, FactoryReset, Reboot, DeviceInfo, AccessPoint, Wifi, TimeSync, Capabilities, Power }
+enum class Op { Capture, Record, Mode, Refresh, Delete, Settings, FormatSd, FactoryReset, Reboot, DeviceInfo, AccessPoint, Wifi, TimeSync, Capabilities, Power, Live }
 
 /** What the user decided about the running proxy: the two buttons, and what a dismissal means. */
 enum class VpnChoice {
@@ -123,7 +124,7 @@ data class DownloadItem(
  * These are not tabs: nobody looks for the log or the about page on the way to a
  * shooting setting, but both have to be reachable from wherever a failure happened.
  */
-enum class Page { Log, LogSettings, About, Permissions, SupportedDevices }
+enum class Page { Log, LogSettings, About, Permissions, SupportedDevices, LiveSettings, LivePreview }
 
 /**
  * How the files page draws its media.
@@ -2116,6 +2117,73 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 onFailure = { errorMessage = raw(it.message ?: "wake-on-LAN failed") },
             )
         }
+    }
+
+    // ---------- live streaming (RTMP) ----------
+
+    /**
+     * What the camera should be told before it pushes: the Wi-Fi to join, the URL to push
+     * to, and the three encoder parameters — see [com.rovecamlink.app.core.model.LiveConfig]
+     * for the payload these become.
+     *
+     * **In memory only, on purpose.** The payload carries a Wi-Fi passphrase, and the two
+     * stores that outlive a launch are for things that are not credentials: `AppPrefs` says
+     * so itself ("anything that needs structure gets its own store"), and the credential
+     * store is keyed by the *camera's own* hotspot. The vendor app does not remember this
+     * screen either — it is set up per stream.
+     */
+    var liveConfig by mutableStateOf(LiveConfig())
+        private set
+
+    fun updateLiveConfig(transform: (LiveConfig) -> LiveConfig) {
+        liveConfig = transform(liveConfig)
+    }
+
+    /** Whether the connected camera can be handed stream settings at all. */
+    fun supportsLive(): Boolean = protocol?.supportsLive == true
+
+    /**
+     * Hand the camera the stream settings and ask it to go live.
+     *
+     * Success is "the camera took the parameters": it joins the network and pushes by
+     * itself, and it reports nothing back afterwards — which is why the notice says to
+     * check the preview rather than claiming a stream is up. There is no stop command on
+     * this channel at all (`XtuRtmpPush`), so this is one-way by the firmware's design and
+     * not by omission here.
+     *
+     * The blocker is checked before [runOp] rather than inside it because the reason for an
+     * incomplete form is the *form's* to show, as a localized line, not a `CmdResult`
+     * carrying English prose.
+     */
+    fun startLive() {
+        val blocker = liveConfig.blocker
+        if (blocker != null) {
+            Diag.warn(LogTag.APP, "live refused locally: ${blocker.name}")
+            errorMessage = localized(blocker.reasonRes)
+            return
+        }
+        runOp(Op.Live) { proto, s ->
+            Diag.info(LogTag.APP, "LIVE hand-off requested (${liveConfig.resolution.wire}/${liveConfig.fps.wire})")
+            val r = proto.startLive(s, liveConfig)
+            if (r.isOk) errorMessage = localized(Res.string.notice_live_started)
+            r
+        }
+    }
+
+    /**
+     * The preview URL for a camera reached at [host] rather than at the session's own
+     * address.
+     *
+     * The path is the plugin's business — `/livestream/12` on this family is a firmware
+     * fact, not a UI one — so the URL is the plugin's own with the authority swapped. That
+     * is what lets the preview follow a camera which has left its hotspot for the stream
+     * Wi-Fi and now answers at whatever address the router gave it.
+     */
+    fun livePreviewUrl(host: String): String {
+        val s = session ?: return ""
+        val base = protocol?.previewUrl(s) ?: return ""
+        val wanted = host.trim().ifEmpty { s.host }
+        return if (wanted == s.host) base else base.replaceFirst("//${s.host}", "//$wanted")
     }
 
     // ---------- firmware OTA ----------

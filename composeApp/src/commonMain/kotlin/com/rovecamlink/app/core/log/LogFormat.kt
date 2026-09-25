@@ -261,6 +261,30 @@ object LogFormat {
             authority.substring(at)
     }
 
+    /**
+     * An RTMP push URL with its stream key masked, for log lines.
+     *
+     * The last `/`-separated segment of an RTMP URL is almost always the stream key —
+     * the secret a platform issues that lets anyone holding it push into the channel
+     * (`rtmp://host/live/<key>`; some hosts shape it as `rtmp://host/<app>/<key>`, which
+     * this masks too, since the app name is recoverable from context and the key is the
+     * one thing that must not travel). Diagnostic exports are designed to be attached to
+     * a public issue, so a push URL may only appear in one with its tail masked. Everything
+     * before the tail stays readable: host and app are what a "which server was it" follow-up
+     * needs, and [maskUserInfo] has already handled credentials ahead of the host.
+     */
+    fun redactStreamUrl(url: String, keepSecrets: Boolean = false): String {
+        val safe = redactUrl(url, keepSecrets)
+        if (keepSecrets || safe.startsWith("rtmp", ignoreCase = true).not()) return safe
+        val tailStart = safe.lastIndexOf('/')
+        // No path segment to split (rtmp://host or a bare host:port): there is no key,
+        // and masking the authority would erase the address the whole line exists for.
+        if (tailStart < safe.indexOf("://") + 3) return safe
+        val key = safe.substring(tailStart + 1)
+        if (key.isEmpty()) return safe
+        return safe.substring(0, tailStart + 1) + MASK + key.length
+    }
+
     private fun String.containsAny(needles: List<String>): Boolean =
         needles.any { contains(it, ignoreCase = true) }
 

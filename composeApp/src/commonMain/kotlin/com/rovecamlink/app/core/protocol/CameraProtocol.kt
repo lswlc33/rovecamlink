@@ -7,6 +7,7 @@ import com.rovecamlink.app.core.model.CmdResult
 import com.rovecamlink.app.core.model.DeviceInfo
 import com.rovecamlink.app.core.model.DevicePlatform
 import com.rovecamlink.app.core.model.DeviceStatus
+import com.rovecamlink.app.core.model.LiveConfig
 import com.rovecamlink.app.core.model.ModeFamily
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.WorkMode
@@ -150,6 +151,34 @@ interface CameraProtocol {
         alreadyHaveBytes: Long,
         onProgress: (Float) -> Unit,
     ): Long
+
+    /**
+     * Hand the camera everything it needs to push an RTMP stream **by itself**: the Wi-Fi
+     * to join, the URL to push to, and the three encoder parameters.
+     *
+     * The camera is the RTMP client here, not this app — the official client has no
+     * streaming code either, it only passes the parameters on and then polls its own
+     * cloud for the room state (`docs/08-官方APK全量逆向档案/02-XTUGO-档案.md` §10.4-10.5).
+     * Which channel carries them is the family's business: the Hi35xx socket takes the
+     * whole payload on port 8080, and the Ambarella / newer models take it over
+     * Bluetooth as `R006` (network) + `R007` (parameters).
+     *
+     * Success means **the camera accepted the parameters**, not that a stream is up. On
+     * the socket transport the link is closed before the camera has had time to join
+     * anything, and there is no acknowledgement later — the official client's own
+     * "streaming" screen is a local timer, not a report from the camera.
+     */
+    suspend fun startLive(session: CameraSession, config: LiveConfig): CmdResult =
+        CmdResult.Failure("This camera has no live-streaming command")
+
+    /**
+     * Whether [startLive] is wired up for this family, so the UI can say why before the
+     * button is pressed rather than after.
+     *
+     * Same shape as [supportsReboot], and for the same reason: the alternative is a UI
+     * that branches on the platform, which has to be edited every time a family is added.
+     */
+    val supportsLive: Boolean get() = false
 
     /** Absolute RTSP (or fallback) URL for live preview. */
     fun previewUrl(session: CameraSession): String

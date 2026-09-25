@@ -421,4 +421,51 @@
     <string name="viewer_preparing">正在准备照片…</string>
     <string name="viewer_cannot_open">无法打开此文件</string>
     <string name="viewer_retry">重试</string>
+
+    <!--
+      直播推流（RTMP）。推流的是相机自己，不是本 App：设置页把 Wi-Fi 和推流地址交给它，
+      预览页再从相机的 RTSP 上把画面读回来看。
+    -->
+    <string name="section_live">直播</string>
+    <string name="action_live_settings">直播设置</string>
+    <string name="action_live_preview">直播预览</string>
+    <string name="err_live_unsupported">这台相机没有直播推流命令</string>
+
+    <!-- 直播设置页。 -->
+    <string name="live_title_settings">直播设置</string>
+    <string name="section_live_wifi">直播 Wi-Fi</string>
+    <string name="hint_live_wifi">相机加入这个网络去推流，不是手机自己的热点。</string>
+    <string name="label_live_ssid">Wi-Fi 名称</string>
+    <string name="label_live_password">Wi-Fi 密码</string>
+    <string name="section_live_url">推流地址</string>
+    <string name="label_live_url">RTMP 地址</string>
+    <string name="hint_live_url">rtmp://live.example.com/live</string>
+    <string name="section_live_encoder">画质</string>
+    <string name="title_live_resolution">分辨率</string>
+    <string name="title_live_fps">帧率</string>
+    <string name="title_live_bitrate">码率</string>
+    <string name="action_start_live">开始直播</string>
+    <string name="title_start_live">开始直播？</string>
+    <string name="message_start_live">相机会加入上面的 Wi-Fi，并把画面推到那个地址。期间它可能会从自己的热点上掉线。</string>
+    <string name="confirm_start_live">开播</string>
+    <string name="notice_live_started">相机已接受推流参数。它不会回报推流是否真的开始，可以打开「直播预览」看一眼。</string>
+    <string name="hint_live_no_stop">这条通道没有「关播」命令，停止推流需要在相机上操作。</string>
+    <string name="live_res_720">720P（高清）</string>
+    <string name="live_res_1080">1080P（超清）</string>
+    <string name="live_fps_25">25 帧（标准）</string>
+    <string name="live_fps_30">30 帧（运动）</string>
+    <string name="live_bitrate_smooth">流畅优先</string>
+    <string name="live_bitrate_high">画质优先</string>
+    <string name="live_blocker_no_network">还没设置直播 Wi-Fi</string>
+    <string name="live_blocker_no_url">还没填写 RTMP 地址</string>
+    <string name="live_blocker_not_rtmp">推流地址要以 rtmp 开头</string>
+
+    <!-- 直播预览页。 -->
+    <string name="live_title_preview">直播预览</string>
+    <string name="label_live_host">相机地址</string>
+    <string name="hint_live_host">相机加入直播 Wi-Fi 之后在哪里——还在当热点就是 192.168.0.1，否则是路由器分给它的地址。</string>
+    <string name="value_live_stream_url">播放地址</string>
+    <string name="action_live_play">播放</string>
+    <string name="action_live_stop">停止</string>
+    <string name="hint_live_preview_stopped">当前没有播放。点「播放」读取相机自己的预览流。</string>
 </resources>

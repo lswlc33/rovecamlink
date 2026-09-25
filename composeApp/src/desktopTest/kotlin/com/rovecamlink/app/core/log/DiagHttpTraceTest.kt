@@ -2,6 +2,7 @@ package com.rovecamlink.app.core.log
 
 import com.rovecamlink.app.brand.xtu.HisiliconProtocol
 import com.rovecamlink.app.core.transport.CameraHttp
+import com.rovecamlink.app.core.transport.createCameraTcp
 import java.io.File
 import java.net.InetSocketAddress
 import kotlin.test.Test
@@ -74,7 +75,7 @@ class DiagHttpTraceTest {
         try {
             val port = server.address.port
             val http = CameraHttp()
-            val proto = HisiliconProtocol(http)
+            val proto = HisiliconProtocol(http, createCameraTcp())
             val op = "c${Diag.nextId()}:test-session"
 
             Diag.config.minLevel = LogLevel.DEBUG

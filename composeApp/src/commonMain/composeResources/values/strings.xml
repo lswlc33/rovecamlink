@@ -424,4 +424,52 @@
     <string name="viewer_preparing">Preparing photo…</string>
     <string name="viewer_cannot_open">Could not open this file</string>
     <string name="viewer_retry">Try again</string>
+
+    <!--
+      Live streaming (RTMP). The camera is the RTMP client, not this app: the settings
+      page hands it a Wi-Fi network and a push URL, and the preview page then reads the
+      camera's own stream back over RTSP.
+    -->
+    <string name="section_live">Live</string>
+    <string name="action_live_settings">Live settings</string>
+    <string name="action_live_preview">Live preview</string>
+    <string name="err_live_unsupported">This camera family has no live-streaming command</string>
+
+    <!-- Live settings page. -->
+    <string name="live_title_settings">Live settings</string>
+    <string name="section_live_wifi">Wi-Fi for the stream</string>
+    <string name="hint_live_wifi">The network the camera joins to push. Not the phone\'s own hotspot.</string>
+    <string name="label_live_ssid">Wi-Fi name</string>
+    <string name="label_live_password">Wi-Fi password</string>
+    <string name="section_live_url">Stream URL</string>
+    <string name="label_live_url">RTMP URL</string>
+    <string name="hint_live_url">rtmp://live.example.com/live</string>
+    <string name="section_live_encoder">Picture</string>
+    <string name="title_live_resolution">Resolution</string>
+    <string name="title_live_fps">Frame rate</string>
+    <string name="title_live_bitrate">Quality</string>
+    <string name="action_start_live">Start streaming</string>
+    <string name="title_start_live">Start streaming?</string>
+    <string name="message_start_live">The camera joins the Wi-Fi above and pushes to that URL. It may drop off its own hotspot while it does.</string>
+    <string name="confirm_start_live">Start</string>
+    <string name="notice_live_started">The camera took the stream settings. Nothing here reports whether the stream itself came up — open Live preview to check.</string>
+    <string name="hint_live_no_stop">This channel has no stop command, so the stream is stopped from the camera.</string>
+    <string name="live_res_720">720P (HD)</string>
+    <string name="live_res_1080">1080P (Full HD)</string>
+    <string name="live_fps_25">25 fps (standard)</string>
+    <string name="live_fps_30">30 fps (motion)</string>
+    <string name="live_bitrate_smooth">Smooth first</string>
+    <string name="live_bitrate_high">Quality first</string>
+    <string name="live_blocker_no_network">No Wi-Fi set for the camera</string>
+    <string name="live_blocker_no_url">No RTMP URL yet</string>
+    <string name="live_blocker_not_rtmp">The URL has to start with rtmp</string>
+
+    <!-- Live preview page. -->
+    <string name="live_title_preview">Live preview</string>
+    <string name="label_live_host">Camera address</string>
+    <string name="hint_live_host">Where the camera is once it joined the stream Wi-Fi — its own 192.168.0.1 while it still runs the hotspot, otherwise the address your router handed it.</string>
+    <string name="value_live_stream_url">Stream</string>
+    <string name="action_live_play">Play</string>
+    <string name="action_live_stop">Stop</string>
+    <string name="hint_live_preview_stopped">Nothing is playing. Play reads the camera\'s own preview stream.</string>
 </resources>

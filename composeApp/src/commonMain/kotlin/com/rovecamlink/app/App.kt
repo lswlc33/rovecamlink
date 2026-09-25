@@ -29,7 +29,9 @@ import com.rovecamlink.app.ui.ConfirmDialog
 import com.rovecamlink.app.ui.ConnectScreen
 import com.rovecamlink.app.ui.ErrorBanner
 import com.rovecamlink.app.ui.FilesScreen
+import com.rovecamlink.app.ui.LivePreviewScreen
 import com.rovecamlink.app.ui.LiveScreen
+import com.rovecamlink.app.ui.LiveSettingsScreen
 import com.rovecamlink.app.ui.LogScreen
 import com.rovecamlink.app.ui.LogSettingsScreen
 import com.rovecamlink.app.ui.MediaViewer
@@ -326,6 +328,8 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                             Page.About -> AboutScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             Page.Permissions -> PermissionsScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             Page.SupportedDevices -> SupportedDevicesScreen(state, outerPadding = outer, onClose = { state.popPage() })
+                            Page.LiveSettings -> LiveSettingsScreen(state, outerPadding = outer, onClose = { state.popPage() })
+                            Page.LivePreview -> LivePreviewScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             null -> HorizontalPager(
                                 state = pagerState,
                                 // miuix's own snap spring, so a swipe settles with the same feel the
