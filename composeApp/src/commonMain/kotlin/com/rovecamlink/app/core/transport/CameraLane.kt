@@ -59,6 +59,12 @@ suspend fun currentCameraRequest(): CameraRequestClass =
  * The request runs in the *caller's* coroutine — the lane only hands over a slot — so
  * cancellation stays honest: a disconnect that cancels an enumeration releases the
  * slot rather than leaving a worker to finish a request nobody wants any more.
+ *
+ * The one invariant everything here rests on: **the slot is handed over in a single
+ * critical section**, so a null `holder` always means an empty queue and never merely a
+ * holder mid-hand-off. Two callers must never hold it at once — the camera answers the
+ * overlap by truncating responses and then refusing everything ([CameraLane]'s class
+ * comment is the field evidence).
  */
 internal class CameraLane(private val key: String) {
 
@@ -134,9 +140,23 @@ internal class CameraLane(private val key: String) {
             throw CameraRefusing("Enumerate skipped during camera cooldown")
         }
         val queued = lock.withLock {
-            val free = holder == null && waiting.none { outranks(it, waiter) }
-            if (free) holder = waiter else waiting.addLast(waiter)
-            !free
+            // `holder == null` is the whole test for a free slot: [giveUp] hands the slot
+            // over inside one critical section, so a null holder also means nothing is
+            // waiting, and an arrival either takes a genuinely free slot or queues behind
+            // whoever holds it.
+            //
+            // This used to read `holder == null && waiting.none { outranks(it, waiter) }`,
+            // which allowed an arriving Command/Status to take a slot that a queued
+            // Enumerate was about to be given — but only while the holder was momentarily
+            // published as null during the split hand-off, which is the race [giveUp]
+            // describes. Priority is decided when the slot is handed over, not on arrival.
+            if (holder == null) {
+                holder = waiter
+                false
+            } else {
+                waiting.addLast(waiter)
+                true
+            }
         }
         if (!queued) return
         try {
@@ -149,33 +169,37 @@ internal class CameraLane(private val key: String) {
         }
     }
 
-    /** Drop this waiter's claim: leave the queue, and free the slot if it was ours. */
+    /**
+     * Drop this waiter's claim: leave the queue, and hand the slot to whoever is next in
+     * the **same** critical section.
+     *
+     * The hand-off must not be split in two. Releasing the slot and promoting the next
+     * waiter separately leaves `holder == null` observable in between — and an arriving
+     * Command or Status takes any free slot its queued rivals do not outrank, so it claims
+     * the very slot the promotion is about to hand out. Both then run their block and the
+     * camera gets two overlapping requests, which is the one thing this class exists to
+     * prevent (`CameraLaneTest` caught it as `peak == 2`).
+     *
+     * Keeping `holder` and the queue consistent inside one lock also gives the invariant
+     * [acquire] relies on: **a null holder means nothing is queued**, because no path
+     * publishes a free slot while waiters are waiting.
+     */
     private suspend fun giveUp(waiter: Waiter) {
-        val wasHolding = lock.withLock {
-            waiting.remove(waiter)
-            val held = holder === waiter
-            if (held) holder = null
-            held
-        }
-        if (wasHolding) grantNext()
-    }
-
-    private suspend fun grantNext() {
         val next = lock.withLock {
+            waiting.remove(waiter)
+            if (holder !== waiter) return@withLock null
             // minWithOrNull keeps the first minimum in deque order, so equal classes
-            // stay FIFO without a sequence number.
+            // stay FIFO without a sequence number — this is where a queued Command or
+            // Status overtakes the Enumerate walk that arrived before it.
             val head = waiting.minWithOrNull(compareBy { it.clazz.ordinal })
-            if (head != null) {
-                waiting.remove(head)
-                holder = head
-            }
+            if (head != null) waiting.remove(head)
+            holder = head
             head
         }
+        // Completed outside the lock: the promoted caller must not need a lock this
+        // coroutine still holds, and `holder` already names it.
         next?.granted?.complete(Unit)
     }
-
-    private fun outranks(candidate: Waiter, waiter: Waiter): Boolean =
-        candidate.clazz.ordinal < waiter.clazz.ordinal
 
     /** Feed the refusal streak from outside the lane (bulk transfers do this). */
     suspend fun noteResult(ok: Boolean, cause: String?) = lock.withLock {

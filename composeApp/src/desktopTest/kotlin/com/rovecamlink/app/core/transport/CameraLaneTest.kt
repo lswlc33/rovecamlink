@@ -10,7 +10,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -19,6 +18,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.yield
 
 /**
  * The transport rules that keep a camera alive.
@@ -43,35 +43,54 @@ class CameraLaneTest {
         val peak = AtomicInteger()
         val seen = AtomicInteger()
 
+        // The holder is held open until every other request is registered, and each
+        // registration waits for the lane to actually take it before the next one starts.
+        // The old version sequenced this with `delay(6)`/`delay(40)`, which was a race in
+        // both directions under load: a slow dispatch let a later request reach the lane
+        // first, and a fast one let the holder finish before the queue was built — either
+        // way the assertions below were about the scheduler rather than about the lane.
+        val holderStarted = CompletableDeferred<Unit>()
+        val releaseHolder = CompletableDeferred<Unit>()
+
+        // Occupancy as the camera sees it: this is what must never exceed one. The
+        // decrement sits in a `finally` so a failed or cancelled block cannot leave the
+        // count high and quietly weaken the assertion below.
+        suspend fun track(name: String, body: suspend () -> Unit) {
+            peak.set(maxOf(peak.get(), inFlight.incrementAndGet()))
+            order.add(name)
+            try {
+                body()
+            } finally {
+                inFlight.decrementAndGet()
+            }
+        }
+
         withContext(Dispatchers.Default) {
-            val jobs: List<Deferred<*>> = (0 until 6).map { i ->
+            val specs = buildList {
+                add("enum0" to CameraRequestClass.Enumerate)
+                (1..5).forEach { add("enum$it" to CameraRequestClass.Enumerate) }
+                add("command" to CameraRequestClass.Command)
+                add("status" to CameraRequestClass.Status)
+            }
+            val jobs = specs.mapIndexed { index, (name, clazz) ->
                 val job = async {
-                    lane.submit(CameraRequestClass.Enumerate) {
-                        peak.set(maxOf(peak.get(), inFlight.incrementAndGet()))
-                        order.add("enum$i"); delay(40); inFlight.decrementAndGet()
+                    lane.submit(clazz) {
+                        track(name) {
+                            if (index == 0) {
+                                holderStarted.complete(Unit)
+                                releaseHolder.await()
+                            } else {
+                                delay(20)
+                            }
+                        }
                     }
                 }
-                // Register one at a time: on a multi-threaded dispatcher six coroutines
-                // reach the lane in whatever order the threads hand them over, and the
-                // assertion below is about the queue's order, not the scheduler's.
-                delay(6)
+                if (index == 0) withTimeout(5_000) { holderStarted.await() }
+                else awaitWaiting(lane, index) // enum0 holds, so the k-th arrival is the k-th queued
                 job
             }
-            delay(10) // enum0 is in the slot, enum1..5 queued
-            val command: Deferred<*> = async {
-                lane.submit(CameraRequestClass.Command) {
-                    peak.set(maxOf(peak.get(), inFlight.incrementAndGet()))
-                    order.add("command"); delay(20); inFlight.decrementAndGet()
-                }
-            }
-            delay(10)
-            val status: Deferred<*> = async {
-                lane.submit(CameraRequestClass.Status) {
-                    peak.set(maxOf(peak.get(), inFlight.incrementAndGet()))
-                    order.add("status"); delay(20); inFlight.decrementAndGet()
-                }
-            }
-            withTimeout(20_000) { (jobs + command + status).awaitAll() }
+            releaseHolder.complete(Unit)
+            withTimeout(20_000) { jobs.awaitAll() }
             seen.set(order.size)
         }
 
@@ -81,6 +100,93 @@ class CameraLaneTest {
         assertTrue(order.indexOf("command") < order.indexOf("enum5"), "order was $order")
         assertTrue(order.indexOf("command") < order.indexOf("status"), "order was $order")
         assertTrue(order.indexOf("status") < order.indexOf("enum5"), "order was $order")
+    }
+
+    /**
+     * A Command arriving exactly as the holder finishes must not share the slot with the
+     * waiter that was queued behind it.
+     *
+     * This is the race the hand-off has to close: releasing the slot and promoting the next
+     * waiter in two separate critical sections leaves a window where a newly arriving
+     * Command sees a free slot — its queued Enumerate rival does not outrank it — and takes
+     * it, while the promotion then hands the same slot to the waiter. Both callers run and
+     * the camera gets two overlapping requests.
+     *
+     * Repeated because it is a race: one round lands in the window only by luck. Both
+     * parties in the overlap hold the slot briefly, so a collision is *observed* rather
+     * than merely won by a nose — and the wait for the second request to be queued is a
+     * `yield` spin, not `delay` polling: on Windows a `delay` costs a full ~15 ms timer
+     * tick, which is 25 seconds over these rounds.
+     */
+    @Test
+    fun aCommandArrivingAsTheHolderFinishesNeverSharesTheSlot() = runBlocking {
+        val inFlight = AtomicInteger()
+        val peak = AtomicInteger()
+        val overlaps = Collections.synchronizedList(mutableListOf<String>())
+
+        suspend fun track(name: String, body: suspend () -> Unit) {
+            val live = inFlight.incrementAndGet()
+            if (live > 1) overlaps.add("$name saw $live in flight")
+            peak.set(maxOf(peak.get(), live))
+            try {
+                body()
+            } finally {
+                inFlight.decrementAndGet()
+            }
+        }
+
+        withContext(Dispatchers.Default) {
+            repeat(ROUNDS) { round ->
+                val lane = CameraLane("127.0.0.1:$round")
+                val holderStarted = CompletableDeferred<Unit>()
+                val releaseHolder = CompletableDeferred<Unit>()
+
+                val holder = async {
+                    lane.submit(CameraRequestClass.Enumerate) {
+                        track("holder") { holderStarted.complete(Unit); releaseHolder.await() }
+                    }
+                }
+                withTimeout(5_000) { holderStarted.await() }
+
+                // One Enumerate queued behind the holder. Its presence is what makes the
+                // collision a bug rather than a legitimate claim: the promotion that follows
+                // the hand-off has somewhere to go, so the arriving Command and the promoted
+                // waiter can both end up holding the slot.
+                val queued = async {
+                    lane.submit(CameraRequestClass.Enumerate) { track("queued") { delay(HOLD_MS) } }
+                }
+                awaitQueued(lane, 1)
+
+                // The collision: a Command reaches the lane in the same breath as the
+                // holder's completion, and the two do not overtake each other.
+                val arriving = async {
+                    lane.submit(CameraRequestClass.Command) { track("arriving") { delay(HOLD_MS) } }
+                }
+                releaseHolder.complete(Unit)
+
+                withTimeout(5_000) { holder.await() }
+                withTimeout(5_000) { queued.await() }
+                withTimeout(5_000) { arriving.await() }
+            }
+        }
+
+        assertEquals(
+            1,
+            peak.get(),
+            "two requests ran against the same camera at once — ${overlaps.take(3)}",
+        )
+    }
+
+    /**
+     * Spin (without a timer) until the lane holds [expected] queued requests.
+     *
+     * `delay(1)` polling — what [awaitWaiting] does — costs a full timer tick per iteration,
+     * and the collision test's cost is dominated by those ticks rather than by its logic.
+     */
+    private suspend fun awaitQueued(lane: CameraLane, expected: Int) {
+        withTimeout(2_000) {
+            while (lane.waitingCount() != expected) yield()
+        }
     }
 
     @Test
@@ -220,5 +326,22 @@ class CameraLaneTest {
 
     private companion object {
         const val SMALL_BODY = 20_480
+
+        /**
+         * Rounds for [aCommandArrivingAsTheHolderFinishesNeverSharesTheSlot]. Each round is
+         * one hand-off racing an arrival, and the race window is a few instructions wide, so
+         * this is far more than one: it has to fail loudly on a split hand-off rather than
+         * once in a hundred runs.
+         */
+        const val ROUNDS = 150
+
+        /**
+         * How long each party in a potential overlap stays inside its block.
+         *
+         * Long enough that a second caller entering the same slot is caught red-handed
+         * instead of slipping in after the first has left; short enough that a round costs
+         * one timer tick rather than a dozen.
+         */
+        const val HOLD_MS = 3L
     }
 }
