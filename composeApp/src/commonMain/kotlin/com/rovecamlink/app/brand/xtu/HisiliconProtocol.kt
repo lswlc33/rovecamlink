@@ -275,6 +275,18 @@ class HisiliconProtocol(
          */
         const val MAX_THUMBNAIL_BYTES: Int = 1024 * 1024
 
+        /**
+         * Ceiling for the *photo* fallback below: the original JPEG, because this firmware
+         * writes no `.THM` beside a `.JPG`.
+         *
+         * Sized off what the camera actually produces rather than picked round: the S7PRO's
+         * 12–48 MP frames land between roughly 3 MB and 16 MB, and this is not the JPEG the
+         * user sees — it is the JPEG that gets decoded and then thrown away, once, per
+         * photo, to fill one grid cell. Eight mebibytes covers the frames a card of this
+         * class holds while still refusing a mis-declared multi-gigabyte body.
+         */
+        const val MAX_PHOTO_PREVIEW_BYTES: Int = 8 * 1024 * 1024
+
         /** A `-`-prefixed CGI query value, percent-encoded. */
         fun param(value: String): String = Cgi.param(value)
     }
@@ -1358,28 +1370,43 @@ class HisiliconProtocol(
     }
 
     /**
-     * The card's `.THM` preview, capped at [MAX_THUMBNAIL_BYTES].
+     * The card's `.THM` preview, capped at [MAX_THUMBNAIL_BYTES]; for a **photo**, the
+     * original JPEG, capped at [MAX_PHOTO_PREVIEW_BYTES].
      *
-     * There is deliberately no fallback to `file.downloadUrl`: an old one made every
-     * file whose `.THM` was missing request its original — a 1.2 GB clip or a 48 MP
-     * JPEG — into a grid cell. Null means "no preview", and the UI shows a placeholder.
+     * A blanket fallback to `file.downloadUrl` is what this used to avoid and still does:
+     * an old version requested the original for every file whose `.THM` was missing, which
+     * for a video means pulling a 1.2 GB clip into a grid cell. But a photo is the case
+     * that fallback was wrong about, not right about for a different reason: this firmware
+     * writes no `.THM` beside a `.JPG` at all (the card listing of 2026-09-24,
+     * `GET /sd/DCIM/100XTUDV/`, shows one beside every video and none beside any photo), so
+     * the `.THM` request answers `500` because the file is simply not there. Refusing to
+     * fall back then made every photo in the app a permanent placeholder.
+     *
+     * The `/thumb/<path>.jpg` endpoint the official app uses on its other chip branch does
+     * not exist here either (`GET …/thumb/… -> 404`), so there is nothing left to try at the
+     * URL level: a photo preview has to come from the JPEG itself. That is affordable only
+     * because the caller decodes it *scaled* ([decodeScaledImage]) — the bytes are large,
+     * the bitmap that survives them is a grid cell. Videos keep the old rule exactly: no
+     * `.THM`, no preview, since a `.MP4` has no first frame to pull this way.
+     *
+     * Null means "no preview", and the UI shows a placeholder.
      */
     override suspend fun thumbnail(session: CameraSession, file: RemoteFile): ByteArray? {
         val url = file.thumbnailUrl
-        if (url == null) {
-            Diag.d(LogTag.PROTO) { "no thumbnail for ${LogFormat.safe(file.name)}: the card has no .THM sibling" }
+        if (url != null) {
+            http.getBytes(url, MAX_THUMBNAIL_BYTES)?.let { return it }
+            Diag.d(LogTag.PROTO) { "no .THM for ${LogFormat.safe(file.name)}" }
+        }
+        if (file.type != FileType.PHOTO) {
+            Diag.d(LogTag.PROTO) { "no preview for ${LogFormat.safe(file.name)}: the card has no .THM sibling" }
             return null
         }
-        val bytes = http.getBytes(url, MAX_THUMBNAIL_BYTES)
-        if (bytes != null) return bytes
-        // Photos have no camera-side preview on this firmware: the card listing (2026-09-24,
-        // `GET /sd/DCIM/100XTUDV/`) shows `<name>.THM` beside every video but none beside any
-        // `.JPG`. The `.THM` request for a photo answers `500` because the file is simply not
-        // there. The `/thumb/<path>.jpg` endpoint the official app uses on its other chip
-        // branch does not exist here either (`GET …/thumb/… -> 404`), so there is nothing left
-        // to try at the URL level — a photo preview has to come from the JPEG itself, which
-        // only a downscaling decode can afford to hold (see `loadThumbnail`).
-        return null
+        val bytes = http.getBytes(file.downloadUrl, MAX_PHOTO_PREVIEW_BYTES)
+        Diag.d(LogTag.PROTO) {
+            "photo preview for ${LogFormat.safe(file.name)}: " +
+                (bytes?.let { "${it.size}B of the original" } ?: "original refused or unavailable")
+        }
+        return bytes
     }
 
     override suspend fun download(

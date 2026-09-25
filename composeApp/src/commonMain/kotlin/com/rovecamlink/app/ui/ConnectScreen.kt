@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -127,7 +128,6 @@ import kotlin.math.roundToInt
 @Composable
 fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     var password by remember { mutableStateOf("") }
-    var showQr by remember { mutableStateOf(false) }
     var showConnectedDetails by remember { mutableStateOf(false) }
     var wifiSettingsError by remember { mutableStateOf(false) }
     var renameFor by remember { mutableStateOf<String?>(null) }
@@ -136,6 +136,11 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     val nearby = state.nearby
     var tick by remember { mutableStateOf(0L) }
     val isConnected = state.phase == Phase.Connected
+
+    // The scanner is this page's mode, and the page is dropped by the pager when it scrolls
+    // out of view — so opening it and then swiping to another tab must not leave the flag set,
+    // or the shell would keep the bottom bar folded away on a page that has no scanner on it.
+    DisposableEffect(Unit) { onDispose { state.qrScanOpen = false } }
 
     // Search while this screen is on screen; stop when it is not, so a backgrounded
     // tab does not keep the LE scanner busy. Keyed on the connection state as well:
@@ -165,14 +170,14 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
         }
     }
 
-    if (showQr) {
+    if (state.qrScanOpen) {
         QrScanScreen(
             outerPadding = outerPadding,
             onResult = { creds ->
-                showQr = false
+                state.qrScanOpen = false
                 if (creds != null) state.connect(creds.ssid, creds.password)
             },
-            onClose = { showQr = false },
+            onClose = { state.qrScanOpen = false },
         )
         return
     }
@@ -326,12 +331,18 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
         // The camera we are on: give it a name, or drop everything this phone remembers
         // about it (A6). Shown while connected, because that is when the SSID in hand is
         // unambiguously the one the actions should target.
+        //
+        // The name goes through `takeIf { isNotBlank() }` rather than `.orEmpty()`: an
+        // empty summary is not "no summary" to the library, it is a summary of length zero,
+        // and it still claims its line — which is what put a row's worth of blank space
+        // between 为相机添加备注 and 忘记这个设备 on every camera that has never been renamed
+        // (2026-09-25 report). Null is what makes the row collapse to one line.
         val pinned = joined
         if (connected && pinned != null) {
             section(title = knownLbl) {
                 ArrowPreference(
                     title = renameLbl,
-                    summary = state.cameraAlias(pinned).orEmpty(),
+                    summary = state.cameraAlias(pinned)?.takeIf { it.isNotBlank() },
                     onClick = {
                         renameFor = pinned
                         renameText = state.cameraAlias(pinned).orEmpty()
@@ -403,7 +414,7 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
         section(title = otherTitle) {
             ArrowPreference(
                 title = qrLbl,
-                onClick = { showQr = true },
+                onClick = { state.qrScanOpen = true },
             )
             ArrowPreference(
                 title = wifiSettingsLbl,

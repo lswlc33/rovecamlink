@@ -38,8 +38,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,8 +49,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
@@ -249,17 +252,47 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
     // frame falls back to 16:9 (see PreviewHeader).
     var streamAspect by remember { mutableStateOf(0f) }
     val shrinkDistancePx = with(LocalDensity.current) { PreviewShrinkDistance.toPx() }
-    // How far down the page has been scrolled, 0 at the top and 1 once the first
+    // How much of the picture has been given back, 0 at the top and 1 once the first
     // [PreviewShrinkDistance] is behind it. The picture gives height back as this grows:
     // a rotated frame pinned at three quarters of the screen leaves the quick-adjust rows
     // in a strip too short to drag a slider in (2026-09-24 「图传图像横屏时 图传因为占用过大，
     // 会影响下方快速设置使用，所以图像横屏时可以随着滚动最多缩小至半屏」).
-    val scrolled by remember(shrinkDistancePx) {
-        derivedStateOf {
-            if (listState.firstVisibleItemIndex > 0) {
-                1f
-            } else {
-                (listState.firstVisibleItemScrollOffset / shrinkDistancePx).coerceIn(0f, 1f)
+    //
+    // It is a state of its own rather than a readout of `listState`, which is what it used to
+    // be: the picture is laid out *above* the list, so deriving the fraction from the list's
+    // offset made both happen at once, and every pixel the list moved was also a pixel the
+    // picture had already lost — the two motions superimposed on each other, with the list's
+    // first row sliding up under a picture that was still on its way down (2026-09-25
+    // 「缩小没有结束之前出现上滑，会导致内容遮挡」). [previewShrink] is what gives the
+    // picture the first claim on a drag and hands the list what is left.
+    var shrink by remember { mutableFloatStateOf(0f) }
+    val previewShrink = remember(shrinkDistancePx) {
+        object : NestedScrollConnection {
+            // The finger's own drag, claimed for the picture before the list sees it: scrolling
+            // down (content moving up, positive y) pays for the shrink, and the list gets only
+            // what is left once the picture has nothing further to give.
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (source != NestedScrollSource.UserInput) return Offset.Zero
+                val room = (1f - shrink) * shrinkDistancePx
+                if (available.y <= 0f || room <= 0f) return Offset.Zero
+                val used = minOf(available.y, room)
+                shrink += used / shrinkDistancePx
+                return Offset(0f, used)
+            }
+
+            // Coming back up, the list is already at its top and has consumed nothing: the
+            // picture grows back first, in the same order it shrank.
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource,
+            ): Offset {
+                if (source != NestedScrollSource.UserInput) return Offset.Zero
+                val room = shrink * shrinkDistancePx
+                if (available.y >= 0f || room <= 0f) return Offset.Zero
+                val used = minOf(-available.y, room)
+                shrink -= used / shrinkDistancePx
+                return Offset(0f, -used)
             }
         }
     }
@@ -351,6 +384,9 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
         subtitle = barStatus,
         listBottomInset = shutterBand,
         listState = listState,
+        // The picture is above the list, not inside it, so the order the two give way in has to
+        // be declared: this connection is the list's innermost, i.e. the first to see a drag.
+        listNestedScroll = previewShrink,
         // 自动跟随 rides in the overflow now (2026-09-23 「自动跟随移入更多菜单」): the toggle
         // does not belong in a card under a live video surface, and the ⋯ menu is where
         // per-page switches live across the app. The check mark reflects the current state.
@@ -372,7 +408,7 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
                     flashNonce = state.captureFlash,
                     streamAspect = streamAspect,
                     onStreamAspect = { streamAspect = it },
-                    shrink = scrolled,
+                    shrink = shrink,
                     onLongPress = { state.setFullscreenPreview(true) },
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -394,7 +430,13 @@ fun LiveScreen(state: AppState, outerPadding: PaddingValues) {
             ModeStrip(
                 modes = modes,
                 selected = current?.name,
-                locked = working,
+                // A mode change is a request in flight, not an instantaneous write: the strip
+                // has to stay shut until the camera has answered with the new mode, or a second
+                // tap lands on a control whose answer is still on its way and the two writes
+                // race. [Op.Mode] covers the switch itself, so the strip reopens the moment
+                // `currentMode` moves (2026-09-25 「切换相机模式时 相机模式应该灰显，防止中途再次操作，
+                // 直到获取新的相机模式再恢复」).
+                locked = working || state.isBusy(Op.Mode),
                 videoLabel = stringResource(Res.string.workmode_video),
                 photoLabel = stringResource(Res.string.workmode_photo),
                 onSelect = { state.selectMode(it) },
@@ -981,7 +1023,11 @@ private fun ModeStrip(
     }
     val haptics = LocalHapticFeedback.current
     fun chipsOf(family: ModeFamily) = modes.filter { it.family == family }
-    Column(modifier) {
+    // The whole strip dims while [locked], not just the chips. `enabled = false` only withholds
+    // the tap — the tab row above has no `enabled` of its own, and a control that looks live but
+    // does nothing reads as a broken tap rather than as a refused one (2026-09-25 「相机模式应该
+    // 灰显，防止中途再次操作」). The tab row is the other writer of `workmode`, so it dims too.
+    Column(modifier.graphicsLayer { alpha = if (locked) 0.45f else 1f }) {
         // The contour variant, because this one lives *inside* a card: the standard
         // `TabRow` is a sibling of the card in the demo and sizes its segments from
         // different min/max widths than the in-card shape does.

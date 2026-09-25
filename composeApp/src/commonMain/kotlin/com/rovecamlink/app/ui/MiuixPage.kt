@@ -45,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -319,6 +320,7 @@ fun MiuixPage(
     floating: @Composable BoxScope.() -> Unit = {},
     listBottomInset: Dp = 0.dp,
     listState: LazyListState = rememberLazyListState(),
+    listNestedScroll: NestedScrollConnection? = null,
     gridCells: (LazyGridScope.() -> Unit)? = null,
     content: LazyListScope.() -> Unit,
 ) {
@@ -412,6 +414,11 @@ fun MiuixPage(
         val listModifier = Modifier
             .overScrollVertical()
             .nestedScroll(scrollBehavior.nestedScrollConnection)
+            // A page's own connection goes last, which is what makes it the *first* to see a drag:
+            // nested scroll is dispatched from the node nearest the scrolling container outwards,
+            // so a page that lays something out above the list (the live page's picture) can claim
+            // the finger's movement before the bar collapses or the list moves. See `LiveScreen`.
+            .then(if (listNestedScroll == null) Modifier else Modifier.nestedScroll(listNestedScroll))
             .fillMaxHeight()
             // Width as well as height. A LazyColumn with no width constraint sizes itself to
             // its *widest item*, so a page whose rows all fill the width was fine while a

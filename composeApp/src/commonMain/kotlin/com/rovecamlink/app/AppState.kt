@@ -42,6 +42,7 @@ import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogLevel
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.OpContext
+import com.rovecamlink.app.core.media.decodeScaledImage
 import com.rovecamlink.app.core.net.WakeOnLan
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.provision.ProvisioningController
@@ -60,7 +61,6 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.datetime.Clock
 import okio.Path
 import kotlin.concurrent.Volatile
-import org.jetbrains.compose.resources.decodeToImageBitmap
 
 /** High-level connection lifecycle phase, surfaced in the UI. */
 enum class Phase {
@@ -469,6 +469,17 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         private set
 
     /**
+     * True while the QR scanner owns the window.
+     *
+     * The scanner used to be a `remember` inside `ConnectScreen`, which was invisible to the
+     * shell — so the bottom bar stayed up over a page that is a camera viewfinder, and the
+     * 取消 button underneath it read as 「这页没有退出的地方」. Held here instead, and reset by
+     * the screen that owns it ([ConnectScreen] disposes it on the way out, so leaving the tab
+     * with the scanner up cannot leave the bar hidden on another page).
+     */
+    var qrScanOpen by mutableStateOf(false)
+
+    /**
      * Files the viewer staged for a look. A preview is not a download: these bytes stay in
      * app storage only for as long as the viewer is open and are deleted by [closeViewer].
      * Only ever filled after a real fetch, so a file the user already owned is never touched.
@@ -589,6 +600,19 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * exactly one page and nothing ever asked for page two.
      */
     var filesExhausted by mutableStateOf(false)
+        private set
+
+    /**
+     * True when the shutter has written a file since the listing was last read.
+     *
+     * The files page is disposed whenever the pager leaves it, so a photo taken on the live
+     * tab and a listing read before it are both true at the same time — and the page then
+     * rebuilt itself from the stale list, showing a gallery that was one file short until
+     * the user pressed 刷新 (2026-09-25 「用户再次进入文件页时，应该自动刷新文件列表，以方便看到最新的
+     * 文件」). Only the shutter sets it: the listing is otherwise rebuilt by its own controls,
+     * and every extra fetch is a request the camera has to answer.
+     */
+    var filesStale by mutableStateOf(false)
         private set
 
     /** Per-operation in-progress flags (so a disabled control can explain itself). */
@@ -1416,11 +1440,12 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         // camera only publishes the new count after `photo.cgi` returns (2026-09-24 report).
         captureFlash++
         if (uiTestSkipped("capture")) {
+            filesStale = true
             deviceStatus = (deviceStatus ?: UiTestDevice.status())
                 .copy(photoCount = (deviceStatus?.photoCount ?: 0) + 1)
             return
         }
-        runOp(Op.Capture) { proto, s -> proto.capture(s) }
+        runOp(Op.Capture) { proto, s -> proto.capture(s).also { if (it.isOk) filesStale = true } }
     }
 
     /**
@@ -1429,12 +1454,16 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * offers it while [captureRunning] is true for a [ModeTrigger.TOGGLE] mode.
      */
     fun stopCapture() {
-        if (uiTestSkipped("stopCapture")) return
-        runOp(Op.Capture) { proto, s -> proto.stopCapture(s) }
+        if (uiTestSkipped("stopCapture")) {
+            filesStale = true
+            return
+        }
+        runOp(Op.Capture) { proto, s -> proto.stopCapture(s).also { if (it.isOk) filesStale = true } }
     }
 
     fun record(start: Boolean) {
         if (uiTestSkipped("record start=$start")) {
+            if (!start) filesStale = true
             deviceStatus = (deviceStatus ?: UiTestDevice.status()).copy(
                 recording = start,
                 busy = start,
@@ -1443,7 +1472,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             )
             return
         }
-        runOp(Op.Record) { proto, s -> proto.record(s, start) }
+        // Only the *end* of a clip leaves a new file behind; a recording that is still
+        // running has nothing to list yet.
+        runOp(Op.Record) { proto, s -> proto.record(s, start).also { if (it.isOk && !start) filesStale = true } }
     }
 
     /**
@@ -1621,6 +1652,9 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         thumbSeen.retainAll(present)
         files = listed
         filesExhausted = listed.size < LISTING_PAGE
+        // This listing is what the page shows, so whatever the shutter did while the user
+        // was away has now been accounted for.
+        filesStale = false
         Diag.i(LogTag.FILE) {
             "list ${listed.size} files (was $previous)" +
                 (if (gone.isEmpty()) "" else " removed=${gone.size} [${gone.joinToString(",") { it.substringAfterLast('/') }.take(160)}]") +
@@ -1695,19 +1729,26 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     if (err is kotlinx.coroutines.CancellationException) throw err
                     Diag.d(LogTag.FILE) { "thumb fetch failed ${file.name} ${Diag.causeChain(err)}" }
                 }.getOrNull()
-                val bitmap = bytes?.let {
+                val bitmap = bytes?.let { payload ->
                     withContext(Dispatchers.Default) {
-                        runCatching { it.decodeToImageBitmap() }
+                        val decoded = runCatching { decodeScaledImage(payload, THUMBNAIL_DECODE_PX) }
                             .onFailure { err ->
-                                // "Camera answered but the image is unusable" is a protocol
-                                // finding, not a UI bug: log the payload it choked on.
                                 Diag.at(
                                     LogLevel.WARN, LogTag.PARSE,
-                                    "thumb decode failed ${file.name} ${it.size}B ${Diag.causeChain(err)}" +
-                                        "\n${LogFormat.CONT}first=${LogFormat.hexPreview(it, minOf(32, it.size))}",
+                                    "thumb decode threw ${file.name} ${Diag.causeChain(err)}",
                                 )
                             }
                             .getOrNull()
+                        if (decoded == null) {
+                            // "Camera answered but the image is unusable" is a protocol
+                            // finding, not a UI bug: log the payload it choked on.
+                            Diag.at(
+                                LogLevel.WARN, LogTag.PARSE,
+                                "thumb undecodable ${file.name} ${payload.size}B" +
+                                    "\n${LogFormat.CONT}first=${LogFormat.hexPreview(payload, minOf(32, payload.size))}",
+                            )
+                        }
+                        decoded
                     }
                 }
                 if (bitmap != null) {
@@ -2859,6 +2900,20 @@ private const val MAX_CACHED_THUMBNAILS_LIST = 24
  * decoded frame of 60 grid cells stays well inside what 24 list rows already cost.
  */
 private const val MAX_CACHED_THUMBNAILS_GALLERY = 60
+
+/**
+ * Long edge, in pixels, a thumbnail is decoded to.
+ *
+ * The `.THM` path never needed this — those files land at 6–28 KB and decode to whatever
+ * the camera chose. The photo fallback does ([HisiliconProtocol.thumbnail]): a photo has no
+ * `.THM` on this firmware, so its preview is its own 12–48 MP JPEG, and the difference
+ * between decoding that at full size and decoding it here is the difference between a
+ * blank grid and an OOM. 384 px is comfortably above what a cell draws — the gallery's
+ * widest cell is a third of a ~1080 px screen, i.e. 360 px, at 3x density — so the
+ * thumbnails stay sharp at the size they are shown and the cache holds a tenth of what the
+ * originals would cost it.
+ */
+private const val THUMBNAIL_DECODE_PX = 384
 
 /**
  * The one capability token this app acts on: `DV.supportWakeSleep()` returns true when

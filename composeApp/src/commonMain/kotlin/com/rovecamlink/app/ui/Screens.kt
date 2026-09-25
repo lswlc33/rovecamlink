@@ -317,6 +317,12 @@ fun FilesScreen(state: AppState, outerPadding: PaddingValues) {
     // app holds (a session's worth of 3 MP bitmaps), and they are only useful while this
     // grid is the one on screen (2026-09-24 request).
     DisposableEffect(Unit) { onDispose { state.clearThumbnailCache() } }
+    // Coming back to this page re-runs this: the pager drops a page's composition when it
+    // scrolls out of view (`beyondViewportPageCount = 0`), so a plain `LaunchedEffect(Unit)`
+    // is exactly "the user just arrived here". If the shutter fired while they were on the
+    // live view — a photo, or the end of a clip — the list on screen is missing it, and
+    // nothing else would go looking: the listing is only re-read on connect or on tap.
+    LaunchedEffect(Unit) { if (state.filesStale) state.refreshFiles() }
     // Deleting is irreversible on the camera, so it goes through a confirm dialog.
     var pendingDelete by remember { mutableStateOf<RemoteFile?>(null) }
     var pendingBatchDelete by remember { mutableStateOf(false) }

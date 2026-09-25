@@ -1,6 +1,9 @@
 package com.rovecamlink.app
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -75,6 +78,50 @@ enum class Tab(val labelRes: StringResource, val icon: ImageVector) {
  * off, which reads as the bar folding down under the page rather than blinking out of existence.
  */
 private const val BAR_MIN_SCALE = 0.82f
+
+/**
+ * How far into a page transition the bar sits still before it starts folding.
+ *
+ * The bar used to be handed the transition's own curve, `1f - NavProgrammaticEasing(progress)`,
+ * and that curve is an underdamped spring's step response: it is 48% collapsed at 60 ms and
+ * effectively finished by 150 ms of a 300 ms move (2026-09-25 report 「底栏收起动画太快了 导致没法
+ * 欣赏到」). Two things were wrong with borrowing it. The page is not a spring — it is a sheet
+ * sliding at a fixed speed, and the bar was leaving three times faster than the thing causing it
+ * to leave. And a spring curve front-loads *on purpose*: it is meant to be the tail of a motion
+ * the finger already started, which is exactly what an arrow tap does not provide.
+ *
+ * So the bar gets its own timing. [BAR_FOLD_HEAD] is the beat before it responds at all: the page
+ * has visibly begun to arrive, and only then does the bar fold — cause first, effect after. The
+ * rest is [barFold]'s smoothstep, which is half-collapsed at the halfway point instead of
+ * nine-tenths, so the collapse is something the eye can follow all the way down.
+ */
+private const val BAR_FOLD_HEAD = 0.15f
+
+/**
+ * The bar's own collapse fraction for a transition that has played [progress] of its way.
+ *
+ * Monotone, and pinned at both ends: `barFold(0) == 0` and `barFold(1) == 1`, so the settled
+ * states — the ones the bar spends all its time in — are untouched, and only the ride between
+ * them changed. Smoothstep (`3t² - 2t³`) rather than a linear ramp because both ends of a bar
+ * sliding off should have no velocity: it leaves and arrives rather than snapping into motion.
+ * This is also what makes a pop read as the same motion backwards, since the same function is
+ * read from 1 down to 0 there.
+ */
+private fun barFold(progress: Float): Float {
+    val local = ((progress - BAR_FOLD_HEAD) / (1f - BAR_FOLD_HEAD)).coerceIn(0f, 1f)
+    return local * local * (3f - 2f * local)
+}
+
+/**
+ * How long the bar takes to fold away for the QR scanner, which is not a page transition and so
+ * has no progress of its own to follow.
+ *
+ * Longer than [NavMotion.DURATION_MS] on purpose: nothing else is moving at that moment. The
+ * scanner is a black viewfinder that is simply *there* the instant the entry is tapped, and this
+ * fold is the only thing on screen telling the user the bar is getting out of the way — the
+ * 2026-09-25 report asked for exactly that animation, so it is worth the extra beat.
+ */
+private const val BAR_QR_FOLD_MS = 360
 
 /**
  * The shell: a bottom navigation bar and the page stack over four tabs.
@@ -199,14 +246,29 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
     // there made the bar jump to 0, then back to 1 when the slide actually began, then collapse:
     // the blink the 2026-09-24 report saw on the way into a page (「底栏会闪烁一下，再进行收起」).
     // The frame is what is on screen, so it is what the bar is derived from.
+    // The QR scanner is not a page and has no transition of its own, so its fold is a plain
+    // animation between two settled values. It has to be a real animation rather than a branch on
+    // `state.qrScanOpen` for the *closing* half as much as the opening one: the scanner is gone the
+    // frame the flag clears, and a bar that reappeared at full size in that frame would be the
+    // same blink this page's other reports are about. See [BAR_QR_FOLD_MS].
+    val barQrShown by animateFloatAsState(
+        targetValue = if (state.qrScanOpen) 0f else 1f,
+        animationSpec = tween(BAR_QR_FOLD_MS, easing = LinearOutSlowInEasing),
+        label = "barQrFold",
+    )
     val barShown = when {
         // The bar is drawn *over* the page (miuix's Scaffold places the bottom bar after the body),
         // so a collapse animated here would paint it across the very surface it is making room for.
         // The viewer and the preview take the window outright and the bar steps aside at once.
         viewerShown || state.previewFullscreen -> 0f
+        // The scanner is checked before the frame branches: it is a mode of the tab underneath it,
+        // so a transition can only be starting *below* it, and that transition's progress would
+        // otherwise bring the bar back up over a live viewfinder.
+        state.qrScanOpen || barQrShown < 1f -> barQrShown
         !nav.frame.moving -> if (nav.frame.to.depth == 0) 1f else 0f
-        nav.frame.forward -> 1f - navProgress
-        else -> navProgress
+        // The bar keeps the page's direction but not its curve: it is the effect, not the cause.
+        nav.frame.forward -> 1f - barFold(navProgress)
+        else -> barFold(navProgress)
     }
 
     // The bar floats over the page — miuix's `Scaffold` places the body at the window origin and
@@ -342,7 +404,15 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                                 key = { tabs[it] },
                             ) { page ->
                                 when (tabs[page]) {
-                                    Tab.Devices -> ConnectScreen(state, outerPadding = outer)
+                                    // The scanner takes the window while it is up, so the tab hands it
+                                    // the same [pagePadding] a pushed page gets: the bar's own height is
+                                    // no longer on screen to be avoided (it is folding away as this
+                                    // becomes true), and leaving ~90dp of it reserved put the frame and
+                                    // the 取消 button in a band above the bottom of the screen.
+                                    Tab.Devices -> ConnectScreen(
+                                        state,
+                                        outerPadding = if (state.qrScanOpen) pagePadding else outer,
+                                    )
                                     Tab.Live -> LiveScreen(state, outerPadding = outer)
                                     Tab.Files -> FilesScreen(state, outerPadding = outer)
                                     Tab.Settings -> SettingsScreen(state, outerPadding = outer)
