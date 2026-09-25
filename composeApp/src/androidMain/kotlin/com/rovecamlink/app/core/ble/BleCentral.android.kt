@@ -70,6 +70,19 @@ private class AndroidBleCentral : BleCentral {
             camera = camera,
             handshake = profile.newSession(camera, pairingKey),
             expectedGateway = profile.expectedGateway,
+            // Whose command channel to look for. A malformed UUID is the profile's bug, not
+            // the user's: log it and fall back to the generic pick rather than failing the
+            // whole handshake over a constant.
+            characteristicUuid = profile.characteristicUuid?.let { value ->
+                runCatching { UUID.fromString(value) }.getOrElse {
+                    Diag.error(
+                        LogTag.NET,
+                        "BLE profile ${profile.id} declares an unparseable characteristic " +
+                            "\"$value\" (${Diag.causeChain(it)}), using the generic channel",
+                    )
+                    null
+                }
+            },
         )
         active = session
         return try {
@@ -244,6 +257,8 @@ private class GattSession(
     private val camera: BleCamera,
     private val handshake: BleHandshake,
     private val expectedGateway: String?,
+    /** The brand's command channel, or null to let the GATT table decide. */
+    private val characteristicUuid: UUID?,
 ) {
     /**
      * Pending writes and the flag that says one is in flight.
@@ -416,18 +431,20 @@ private class GattSession(
      * services — the official client's own reconnect loop is the reason that shape is
      * survivable.
      *
-     * The command channel is `00008888` — `BluetoothConnector.java:242` asks for
-     * exactly `getService(0000180a).getCharacteristic(00008888)`, and `8888` is the
-     * only hard-coded characteristic UUID in the whole APK. It is also what the live
-     * data path uses, so it is the one place a real device reliably writes to.
+     * The command channel is the profile's ([BleCameraProfile.characteristicUuid]): for the
+     * XTU family that is `00008888` — `BluetoothConnector.java:242` asks for exactly
+     * `getService(0000180a).getCharacteristic(00008888)`, and `8888` is the only hard-coded
+     * characteristic UUID in the whole APK. It is also what the live data path uses, so it
+     * is the one place a real device reliably writes to.
      *
      * The order below is deliberately the *strict* version of the official
      * `BLEConnectUtils.java:541` test, which accepts "has a CCCD **or** is 8888" and
      * therefore lets the last characteristic of an unrelated service (battery,
      * device-info) win the race on a full GATT table — `DeviceAddWaveFragment.java:285`
-     * is the same app's own corrected **and** test. We try 8888 first, and only fall
-     * back to a CCCD-bearing writable characteristic when the camera does not expose
-     * it, which is what an earlier version of this file assumed was normal.
+     * is the same app's own corrected **and** test. We try the declared channel first, and
+     * only fall back to a CCCD-bearing writable characteristic when the camera does not
+     * expose it, which is what an earlier version of this file assumed was normal. A brand
+     * that declares no channel goes straight to those fallbacks.
      */
     private fun discovered(g: BluetoothGatt, status: Int) {
         if (characteristic != null || closed) return
@@ -440,8 +457,11 @@ private class GattSession(
         val writable = BluetoothGattCharacteristic.PROPERTY_WRITE or
             BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
         fun hasCccd(c: BluetoothGattCharacteristic) = c.descriptors.any { it.uuid == CCCD }
-        val chosen = all.lastOrNull { it.uuid == XTU_CHAR && hasCccd(it) }
-            ?: all.firstOrNull { it.uuid == XTU_CHAR }
+        val declared = characteristicUuid
+        val chosen = declared?.let { channel ->
+            all.lastOrNull { it.uuid == channel && hasCccd(it) }
+                ?: all.firstOrNull { it.uuid == channel }
+        }
             ?: all.lastOrNull { hasCccd(it) && it.properties and writable > 0 }
             ?: all.lastOrNull { hasCccd(it) }
             ?: all.firstOrNull { it.properties and writable > 0 }
@@ -613,7 +633,14 @@ private class GattSession(
         /** A stack that completes the CCCD write without calling us back. */
         private const val NOTIFY_CONFIRM_TIMEOUT_MS = 2_000L
 
+        /**
+         * The client-characteristic-configuration descriptor — the standard one every
+         * notifiable characteristic has, identical across devices and brands.
+         *
+         * A brand's own command channel is *not* here: it is
+         * [BleCameraProfile.characteristicUuid], declared by the profile that knows the
+         * firmware.
+         */
         private val CCCD: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
-        private val XTU_CHAR: UUID = UUID.fromString("00008888-0000-1000-8000-00805f9b34fb")
     }
 }

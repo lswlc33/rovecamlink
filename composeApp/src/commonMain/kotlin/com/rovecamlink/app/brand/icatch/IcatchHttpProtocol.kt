@@ -1,6 +1,6 @@
 package com.rovecamlink.app.brand.icatch
 
-import com.rovecamlink.app.brand.xtu.HiFiles
+import com.rovecamlink.app.core.model.CameraFiles
 import com.rovecamlink.app.core.log.Diag
 import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogTag
@@ -564,7 +564,7 @@ class IcatchHttpProtocol(private val http: CameraHttp) : CameraProtocol {
         // `TIME` is a bare yyyyMMddHHmmss-ish stamp in the 3015 reply; the same digits
         // shape the hi3510 file list answers with, so reuse its parser instead of a
         // second one (and stay off java.util.Calendar, which is JVM-only).
-        HiFiles.parseCreate(raw)
+        CameraFiles.parseCreate(raw)
 
     private val HEX = "0123456789ABCDEF".toCharArray()
 

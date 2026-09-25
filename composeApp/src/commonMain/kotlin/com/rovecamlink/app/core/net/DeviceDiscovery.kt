@@ -39,20 +39,33 @@ class DeviceDiscovery(
         Diag.inOp("identify", "target=$host:$port plugins=${registry.platforms().joinToString(",")}") {
             for (protocol in registry.all()) {
                 val t0 = Diag.uptimeMillis()
-                // Swallowing a cancellation here would defeat the `withTimeoutOrNull`
-                // budget around [discover]: a probe that timed out must end the host,
-                // not be reported as "no".
-                val verdict = runCatching { protocol.probe(host, port) }
-                    .onFailure { if (it is CancellationException) throw it }
+                // Each probe gets a budget of its own. Without one, a single slow endpoint
+                // eats the host's whole slice — 12s for the first candidate — and the plugin
+                // that would have answered never runs at all, so a camera that is right there
+                // is reported absent.
+                //
+                // A probe that runs out means "not this family", not "this host is gone": the
+                // caller's budget in [discover] still owns that verdict, and because
+                // `withTimeoutOrNull` only swallows its own timeout, an outer cancellation
+                // passes straight through here.
+                val outcome: Result<Boolean?> = runCatching {
+                    withTimeoutOrNull(PROBE_TIMEOUT_MS) { protocol.probe(host, port) }
+                }.onFailure { if (it is CancellationException) throw it }
                 val ms = Diag.uptimeMillis() - t0
                 Diag.d(LogTag.NET) {
                     "probe ${protocol.platform.displayName} $host:$port -> " +
-                        verdict.fold(
-                            { if (it) "MATCH" else "no" },
+                        outcome.fold(
+                            { verdict ->
+                                when (verdict) {
+                                    true -> "MATCH"
+                                    false -> "no"
+                                    null -> "TIMEOUT (over ${PROBE_TIMEOUT_MS}ms)"
+                                }
+                            },
                             { "ERROR ${Diag.causeChain(it)}" },
                         ) + " ${ms}ms"
                 }
-                if (verdict.getOrDefault(false)) {
+                if (outcome.getOrNull() == true) {
                     Diag.i(LogTag.NET) { "identified $host:$port as ${protocol.platform.displayName}" }
                     return@inOp protocol.platform
                 }
@@ -122,5 +135,20 @@ class DeviceDiscovery(
 
         private const val FIRST_HOST_BUDGET_MS = 12_000L
         private const val LATER_HOST_BUDGET_MS = 2_500L
+
+        /**
+         * How long one plugin's `probe` may take before it is called "not this family".
+         *
+         * Sized against [FIRST_HOST_BUDGET_MS] and the plugin count, not against a camera:
+         * the point is that three plugins each get a fair share of the first, generous slice
+         * instead of the first one consuming it. A CGI answer takes ~200ms (2026-09-22 field
+         * log), an unanswered connect costs the HTTP client's 8s — so 4s separates "slow but
+         * real" from "this host is not that family" with room to spare.
+         *
+         * Hosts after the first run on [LATER_HOST_BUDGET_MS], which is shorter than this, so
+         * there the caller's budget remains the effective limit — which is the intent: only
+         * the first guess is worth waiting on.
+         */
+        private const val PROBE_TIMEOUT_MS = 4_000L
     }
 }

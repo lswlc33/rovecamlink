@@ -17,7 +17,7 @@ private class IosWifiController : WifiController {
         WifiResult.Failed("iOS WiFi-direct not implemented (needs NEHotspotConfiguration entitlement). Join the camera network in Settings, then use Manual connect.")
     override suspend fun disconnect() {}
     override fun watchWifiChanges(listener: ((ssid: String?) -> Unit)?) {}
-    override suspend fun adoptCurrentNetwork(force: Boolean): WifiResult =
+    override suspend fun adoptCurrentNetwork(force: Boolean, prefixes: List<String>): WifiResult =
         WifiResult.Failed("iOS cannot rebind sockets to an already-joined network yet (needs NEHotspotConfiguration + per-flow routing).")
     override fun isVpnActive(): Boolean = false
     override fun openVpnSettings(): Boolean = false

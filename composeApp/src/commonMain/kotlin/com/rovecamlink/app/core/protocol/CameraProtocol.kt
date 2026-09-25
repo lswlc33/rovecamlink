@@ -11,6 +11,7 @@ import com.rovecamlink.app.core.model.LiveConfig
 import com.rovecamlink.app.core.model.ModeFamily
 import com.rovecamlink.app.core.model.RemoteFile
 import com.rovecamlink.app.core.model.WorkMode
+import com.rovecamlink.app.core.ota.OtaTransport
 import com.rovecamlink.app.core.transport.CameraHttp
 import kotlinx.coroutines.flow.Flow
 import okio.Path
@@ -69,6 +70,27 @@ interface CameraProtocol {
     suspend fun connect(host: String, port: Int): CameraSession
 
     suspend fun getStatus(session: CameraSession): DeviceStatus
+
+    /**
+     * Whether [getStatus] can actually tell whether the camera is recording.
+     *
+     * `DeviceStatus.recording` is a plain Boolean, so a family whose status reply has no
+     * recording field has to answer *something* — and answering `false` on every poll is not
+     * a neutral choice. It is a claim, and it contradicts the command the user just gave: the
+     * record button flips back to 录像 a moment after recording started. The app's existing
+     * guard against that (`AppState.localRecordFlipAt`) only covers the poll that was already
+     * in flight, not the ones after it.
+     *
+     * TUWIN is that family, and the archive says so outright: `/api/device/status` carries
+     * battery, mode and card facts but **no** recording field, and the official app tracks
+     * recording as a *local* event instead (`docs/08 01-TUWIN-档案.md` §5.3, "不用
+     * `recording_time` 字段"). So it declares `false` here, and the app keeps the state the
+     * last record command established rather than overwriting it with a guess.
+     *
+     * The echo of `recording = false` from such a plugin is therefore never trusted; a false
+     * here is not "not recording", it is "no opinion".
+     */
+    val reportsRecordingState: Boolean get() = true
     suspend fun getSettings(session: CameraSession): List<CameraSetting>
     suspend fun setSetting(session: CameraSession, id: String, value: String): CmdResult
 
@@ -238,6 +260,18 @@ interface CameraProtocol {
     suspend fun getWifi(session: CameraSession): com.rovecamlink.app.core.model.CameraWifi? = null
 
     /**
+     * Whether [getWifi] is wired up for this family, so the settings page can offer 读取
+     * before it is pressed rather than after.
+     *
+     * Same shape as [supportsReboot] and for the same reason: the answer has to come from
+     * the plugin, not from the UI naming a brand. The alternative is the branch this
+     * replaces — `session?.platform == DevicePlatform.HISILICON` — which means a family
+     * that implements [getWifi] still gets no button, and adding that family has to reopen
+     * the UI to say so.
+     */
+    val supportsCameraWifiRead: Boolean get() = false
+
+    /**
      * The channel the camera's own hotspot broadcasts on, or null when it cannot say.
      *
      * 2.4 GHz reaches further but is crowded by every neighbour's router; 5 GHz is clean
@@ -269,6 +303,16 @@ interface CameraProtocol {
      */
     suspend fun ensureAccessPoint(session: CameraSession): CmdResult =
         CmdResult.Failure("This camera has no way to raise its hotspot from the app")
+
+    /**
+     * Whether [ensureAccessPoint] is wired up for this family, so 恢复热点 can be offered
+     * from the plugin's answer instead of a brand comparison in the UI.
+     *
+     * A flag rather than "does it override the method": Kotlin cannot ask that without
+     * reflection, and a default implementation that reports failure is still an
+     * implementation.
+     */
+    val supportsAccessPoint: Boolean get() = false
 
     /**
      * Called when a session ends. Protocols that cache per-host firmware facts (work-mode
@@ -342,6 +386,26 @@ interface CameraProtocol {
 
     /** Optional event stream. */
     val events: Flow<com.rovecamlink.app.core.model.DeviceEvent>
+
+    /**
+     * How a firmware image gets onto this camera, or null when this family has no update
+     * path yet — in which case the UI hides the section instead of offering a button that
+     * cannot work.
+     *
+     * The delivery channel is the family's business and nothing else is: which socket or
+     * which CGI pair carries the bytes, in which order they are tried, and which failures
+     * are cheap enough to fall through to the next one. That knowledge lived in
+     * `AppState.startInstall` as two hardcoded XTU classes plus five of their error codes,
+     * which meant a second family wanting updates had to edit the app's state machine.
+     *
+     * **What this does not cover:** the two ends of the flow that are still one vendor's —
+     * the cloud index that decides *whether* an update exists (`GkuFirmwareIndex`) and the
+     * image-header guard that decides whether a file may be sent (`FirmwareImage`), both in
+     * `core.ota` and both XTU-shaped. A family returning a transport therefore also has to
+     * fit those, until a second family's real firmware format is available to design
+     * against; claiming otherwise here would be a promise the rest of the flow breaks.
+     */
+    val otaTransport: OtaTransport? get() = null
 }
 
 /** Registry of available protocol plugins, keyed by platform. */
@@ -357,6 +421,16 @@ class CameraProtocolRegistry(protocols: List<CameraProtocol>) {
     fun protocolFor(platform: DevicePlatform): CameraProtocol? = byPlatform[platform]
     fun all(): Collection<CameraProtocol> = byPlatform.values
     fun platforms(): Set<DevicePlatform> = byPlatform.keys
+
+    /**
+     * Every hotspot prefix any registered plugin claims.
+     *
+     * Read by the Wi-Fi layer as one half of "does this SSID look like a camera" — see
+     * `core.wifi.cameraLikePrefixes`, which merges this with the generic hints. Kept here
+     * so a new brand reaches the scanner by declaring [CameraProtocol.wifiSsidPrefixes]
+     * on its plugin, without editing a list of names shared by every other brand.
+     */
+    val claimedSsidPrefixes: List<String> get() = bySsidPrefix.map { it.first }
 
     /** The plugin whose family broadcasts this hotspot name, when one recognises it. */
     fun forSsid(ssid: String?): CameraProtocol? {

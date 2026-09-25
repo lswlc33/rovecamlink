@@ -89,6 +89,23 @@ interface BleCameraProfile {
         namePrefixes.any { name.startsWith(it, ignoreCase = true) }
 
     /**
+     * The GATT characteristic this brand's command channel lives on, as a 128-bit UUID
+     * string, or null when the brand has no channel it can name.
+     *
+     * Per-brand because it is a firmware constant, not a platform one: the hi3510 family
+     * writes its `R001_`… commands to `00008888-…` (the only hard-coded characteristic UUID
+     * in the official APK, and the one characteristic a real device reliably accepts). That
+     * number used to live in the Android central, where a second brand could not declare a
+     * different channel and the platform layer could not say whose channel it had picked.
+     *
+     * Null is not "no Bluetooth": it means "no named channel", and the Android central then
+     * falls back to whatever writable characteristic the GATT table offers. The standard
+     * CCCD descriptor is not this — it is identical for every device and stays a platform
+     * constant.
+     */
+    val characteristicUuid: String? get() = null
+
+    /**
      * Fresh handshake for one connection attempt.
      *
      * [pairingKey] is the short code the camera shows on its own screen (XTU: 4

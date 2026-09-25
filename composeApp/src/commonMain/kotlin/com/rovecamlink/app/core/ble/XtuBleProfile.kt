@@ -50,6 +50,16 @@ class XtuBleProfile(
     /** XTU's AP always hands out itself as the gateway (SSConstant.SS_IP). */
     override val expectedGateway: String? get() = "192.168.0.1"
 
+    /**
+     * `00008888-…` — the family's command channel.
+     *
+     * The official client reaches it as `getService(0000180a).getCharacteristic(00008888)`
+     * and it is the only hard-coded characteristic UUID in the whole APK
+     * (`BLEConnectUtils.java:541`; `DeviceAddWaveFragment.java:285` is the same app's own
+     * corrected test), which is also why the Android central tries it before anything else.
+     */
+    override val characteristicUuid: String? get() = "00008888-0000-1000-8000-00805f9b34fb"
+
     override fun newSession(camera: BleCamera, pairingKey: String?): BleHandshake {
         // A code we already hold for this camera is the official client's signal to skip
         // the pairing offer and open the hotspot with it directly.

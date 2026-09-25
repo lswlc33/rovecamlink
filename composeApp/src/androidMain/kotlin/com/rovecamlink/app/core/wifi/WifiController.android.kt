@@ -388,7 +388,7 @@ private class AndroidWifiController : WifiController {
         return runCatching { cm.allNetworks?.firstOrNull { isPlainWifi(it) } }.getOrNull()
     }
 
-    override suspend fun adoptCurrentNetwork(force: Boolean): WifiResult {
+    override suspend fun adoptCurrentNetwork(force: Boolean, prefixes: List<String>): WifiResult {
         // We are about to take over the route: drop a handle that is no longer live
         // first, so it cannot be reported back as "still bound" afterwards.
         clearStaleCameraBinding()
@@ -397,7 +397,7 @@ private class AndroidWifiController : WifiController {
                 Diag.warn(LogTag.WIFI, "adopt refused: no plain Wi-Fi network (cellular only, or Wi-Fi off)")
             }
         val ssid = currentCameraSsid()
-        val cameraLike = ssid != null && DEFAULT_PREFIXES.any { ssid.startsWith(it, ignoreCase = true) }
+        val cameraLike = anyPrefixMatches(prefixes, ssid)
         val isolatedAp = runCatching {
             val caps = cm.getNetworkCapabilities(target)
             caps != null && !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
@@ -597,7 +597,7 @@ private class AndroidWifiScanner : WifiScanner {
             }
             val results: List<ScanResult> = wm.scanResults ?: emptyList()
             results
-                .filter { r -> prefixes.any { p -> (r.SSID ?: "").startsWith(p, ignoreCase = true) } }
+                .filter { r -> anyPrefixMatches(prefixes, r.SSID) }
                 .distinctBy { it.SSID }
                 .map { r ->
                     val secured = !(r.capabilities ?: "").contains("OPEN", true)

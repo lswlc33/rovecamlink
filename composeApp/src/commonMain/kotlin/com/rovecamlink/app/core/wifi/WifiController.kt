@@ -59,8 +59,16 @@ interface WifiController {
      * [force] adopts even when the SSID does not look like a camera network and
      * the network claims internet — used by the manual-IP flow, where the user
      * told us the host so we do not need the hotspot to identify itself.
+     *
+     * [prefixes] is what "looks like a camera network" means to the caller, so the
+     * brand vocabulary stays where the plugins are: pass
+     * [com.rovecamlink.app.AppGraph.cameraSsidPrefixes]. The default is the generic
+     * hint list, which is what an unscoped call (a platform's own retry) should use.
      */
-    suspend fun adoptCurrentNetwork(force: Boolean = false): WifiResult
+    suspend fun adoptCurrentNetwork(
+        force: Boolean = false,
+        prefixes: List<String> = DEFAULT_PREFIXES,
+    ): WifiResult
 
     /**
      * True when the phone's default network is a VPN tunnel. Camera traffic then
@@ -102,8 +110,9 @@ interface WifiController {
 }
 
 /**
- * Scans for nearby camera hotspots. XTU/TUWIN cameras broadcast SSIDs that
- * usually start with a brand prefix (e.g. "XTU", "X7", "RIDE", "M3").
+ * Scans for nearby camera hotspots, matching whatever prefixes the caller passes —
+ * the merged camera-like list, in practice
+ * ([com.rovecamlink.app.AppGraph.cameraSsidPrefixes]).
  */
 interface WifiScanner {
     /**
@@ -124,7 +133,58 @@ interface WifiScanner {
 
 data class CameraNetwork(val ssid: String, val secured: Boolean, val rssi: Int)
 
+/**
+ * Hotspot prefixes that mean "camera-like" but that **no plugin claims**.
+ *
+ * Two different questions live here, and conflating them is how a new brand breaks an
+ * old one:
+ *
+ *  - *Which plugin drives this hotspot* — [CameraProtocol.wifiSsidPrefixes], owned by
+ *    the plugin, answering with a fixed host and a factory passphrase.
+ *  - *Is this SSID worth showing and auto-connecting* — this list, which is deliberately
+ *    wider. XTU is the case that proves they differ: the camera family's own hotspots
+ *    begin `XTU…`, while the Hisilicon plugin claims only `XTUCam_` because XTU's
+ *    Ambarella models share the naming and do not answer CGI on port 80.
+ *
+ * These entries predate the plugin registry and none of them is a documented hotspot
+ * prefix — `X7`, `RIDE`, `M3`, `R3`, `R6` are *model* names, and `GO` is the official
+ * XTU app's name (`docs/03 §1.1`, `§2.1`). They are kept verbatim because removing a
+ * matcher can only lose cameras, and they cost one `startsWith` each.
+ *
+ * **A new brand must not add anything here.** Declare `wifiSsidPrefixes` on its plugin;
+ * [cameraLikePrefixes] merges that in automatically.
+ */
 val DEFAULT_PREFIXES = listOf("XTU", "X7", "X5", "GO", "RIDE", "R3", "R6", "R5", "M3", "SJ", "AKASO")
+
+/**
+ * What the Wi-Fi layer treats as a camera hotspot: the prefixes the registered plugins
+ * claim, plus the generic hints above.
+ *
+ * A union, so this is purely additive — a new plugin can only make more SSIDs match, and
+ * can never take a match away from a camera that already worked. That property is the
+ * point: it is what lets a brand be added by registering a plugin instead of editing a
+ * name list every other brand shares.
+ *
+ * Order is irrelevant to matching (the caller tests every prefix), but claimed prefixes
+ * come first so a log line reads brand-first.
+ */
+fun cameraLikePrefixes(claimed: List<String>): List<String> =
+    (claimed + DEFAULT_PREFIXES).distinct()
+
+/**
+ * True when [ssid] is one of [prefixes] — the single matching rule behind "this hotspot
+ * looks like a camera".
+ *
+ * One function rather than the same `startsWith(…, ignoreCase = true)` spelled out at
+ * each site (the scan filter, the auto-connect trigger, the adopt gate), because the
+ * answer to "is this our kind of network" has to agree everywhere: a hotspot the scan
+ * lists but the adopt gate refuses leaves the phone talking to the camera over the
+ * default route, which is the VPN failure this whole path exists to avoid.
+ *
+ * Null and blank are never a camera — there are no empty prefixes to match against.
+ */
+fun anyPrefixMatches(prefixes: List<String>, ssid: String?): Boolean =
+    !ssid.isNullOrBlank() && prefixes.any { ssid.startsWith(it, ignoreCase = true) }
 
 /** expect factory; each platform supplies its own implementation. */
 expect fun createWifiController(): WifiController

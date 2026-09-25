@@ -5,6 +5,7 @@ import com.rovecamlink.app.brand.xtu.HiVarParser.int
 import com.rovecamlink.app.brand.xtu.HiVarParser.long
 import com.rovecamlink.app.brand.xtu.HiVarParser.mb
 import com.rovecamlink.app.core.model.Brand
+import com.rovecamlink.app.core.model.CameraFiles
 import com.rovecamlink.app.core.model.CameraMode
 import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CameraWifi
@@ -25,6 +26,8 @@ import com.rovecamlink.app.core.log.LogFormat
 import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.monotonicMillis
 import com.rovecamlink.app.core.net.WakeOnLan
+import com.rovecamlink.app.core.ota.ChainedOtaTransport
+import com.rovecamlink.app.core.ota.OtaTransport
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.transport.CameraHttp
 import com.rovecamlink.app.core.transport.CameraTcp
@@ -81,6 +84,41 @@ class HisiliconProtocol(
 
     /** docs/03: the XTU factory passphrase, what the official app fills in silently. */
     override val defaultWifiPassword: String? get() = "12345678"
+
+    /** `getwifi.cgi` exists on the hi3510 CGI family — see [getWifi]'s note. */
+    override val supportsCameraWifiRead: Boolean get() = true
+
+    /** `raiseap.cgi` — the second half of the Bluetooth provisioning complaint. */
+    override val supportsAccessPoint: Boolean get() = true
+
+    /**
+     * The two channels the official app ships for this camera class, in the order it tries
+     * them: the port-8080 socket first, the `upgrade.cgi` pair behind it.
+     *
+     * Both halves are built here rather than in `AppState` because everything about the
+     * choice is this family's: which socket, which CGI pair, and — the part that is easy to
+     * get wrong — which failures mean "nothing was sent yet, try the next channel" versus
+     * "bytes may already be in the camera, stop". Only the five pre-handshake codes belong
+     * to the first group; `ERR_BODY_WRITE` is deliberately *not* in the set, because a
+     * failure writing the body means the camera already received the header.
+     *
+     * Lazy so a graph that never touches firmware never opens the socket transport.
+     */
+    override val otaTransport: OtaTransport by lazy {
+        ChainedOtaTransport(
+            channels = listOf(
+                XtuSocketOtaTransport(tcp, http),
+                HisiliconOtaTransport(http),
+            ),
+            preHandshakeFailures = setOf(
+                XtuSocketOtaTransport.ERR_CONNECT,
+                XtuSocketOtaTransport.ERR_HEADER_WRITE,
+                XtuSocketOtaTransport.ERR_CMD_MISMATCH,
+                XtuSocketOtaTransport.ERR_HANDSHAKE_READ,
+                XtuSocketOtaTransport.ERR_MD5_WRITE,
+            ),
+        )
+    }
 
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
     private val _events = MutableSharedFlow<DeviceEvent>(extraBufferCapacity = 8)
@@ -1265,18 +1303,18 @@ class HisiliconProtocol(
         }
 
     private fun buildFile(host: String, path: String, size: Long, create: String?): RemoteFile {
-        val type = HiFiles.typeOf(path)
+        val type = CameraFiles.typeOf(path)
         // The card's own `.THM` sibling is the first choice; the original is never a
         // preview URL (a 48 MP JPEG decoded into a grid cell is an OOM). It is not
         // always there — see [thumbnail], which falls back to `/thumb`.
-        val thumbPath = HiFiles.thumbnailPath(path)
+        val thumbPath = CameraFiles.thumbnailPath(path)
         return RemoteFile(
             name = path,
             type = type,
             sizeBytes = size,
             downloadUrl = "$host/$path",
             thumbnailUrl = thumbPath?.let { "$host/$it" },
-            dateMillis = HiFiles.parseCreate(create),
+            dateMillis = CameraFiles.parseCreate(create),
         )
     }
 

@@ -1,27 +1,31 @@
-package com.rovecamlink.app.brand.xtu
+package com.rovecamlink.app.core.model
 
-import com.rovecamlink.app.core.model.FileType
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 
 /**
- * Facts about one file on the camera's SD card, kept out of
- * [HisiliconProtocol] so they can be pinned against the bytes a real card
- * produced.
+ * How a camera's card names its files: what kind a name is, where its preview sibling
+ * lives, and how its timestamp reads. The facts are shared by every family this app
+ * speaks to, so they live beside [FileType] rather than inside one brand's plugin.
  *
- * The listing this reads comes from `getfilelistinfoios.cgi`, which answers a JSON
- * array — verbatim from the 2026-09-21 XTU S7PRO session:
+ * This used to be `brand.xtu.HiFiles`, which made one family's parser the only one
+ * available and — because a `brand` package importing another `brand` package is the one
+ * dependency the plugin layout cannot justify — left iCatch importing Hisilicon's class to
+ * read its own timestamps. The naming was the tell: `.THM` siblings and `yyyyMMddHHmmss`
+ * stamps are what these cameras do, not what one vendor does.
+ *
+ * The listing this reads comes from the hi3510 family's `getfilelistinfoios.cgi`, which
+ * answers a JSON array — verbatim from the 2026-09-21 XTU S7PRO session:
  *
  *     {"path":"sd/DCIM/100XTUDV/NORM0011.MP4","create":"2026-09-21 18:37:52",
  *      "time":"27","size":"69935925","rotation":"0"}
  *
- * [time] (the clip's duration in seconds) and [rotation] are read by nobody here
- * and must not break the parse: `RemoteFile` has no field for either, and a
- * listing row that fails to decode costs the user a file they can see on the
- * camera but not in the app.
+ * `time` (the clip's duration in seconds) and `rotation` are read by nobody here and must
+ * not break the parse: [RemoteFile] has no field for either, and a listing row that fails
+ * to decode costs the user a file they can see on the camera but not in the app.
  */
-object HiFiles {
+object CameraFiles {
 
     /** Video/photo from the extension alone — the firmware's `type` field does not exist. */
     fun typeOf(path: String): FileType {

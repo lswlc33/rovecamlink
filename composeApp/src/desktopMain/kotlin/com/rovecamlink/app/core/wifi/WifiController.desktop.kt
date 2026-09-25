@@ -11,7 +11,7 @@ private class DesktopWifiController : WifiController {
         WifiResult.Failed("WiFi-direct is not available on desktop. Use Manual connect (e.g. 127.0.0.1).")
     override suspend fun disconnect() {}
     override fun watchWifiChanges(listener: ((ssid: String?) -> Unit)?) {}
-    override suspend fun adoptCurrentNetwork(force: Boolean): WifiResult =
+    override suspend fun adoptCurrentNetwork(force: Boolean, prefixes: List<String>): WifiResult =
         WifiResult.Failed("Desktop has no per-network socket binding; the OS routing table decides.")
     override fun isVpnActive(): Boolean = false
     override fun openVpnSettings(): Boolean = false

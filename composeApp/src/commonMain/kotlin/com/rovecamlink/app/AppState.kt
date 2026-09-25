@@ -7,8 +7,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.graphics.ImageBitmap
-import com.rovecamlink.app.brand.xtu.HisiliconOtaTransport
-import com.rovecamlink.app.brand.xtu.XtuSocketOtaTransport
 import com.rovecamlink.app.core.model.CameraMode
 import com.rovecamlink.app.core.model.CameraSession
 import com.rovecamlink.app.core.model.CameraWifi
@@ -30,7 +28,6 @@ import com.rovecamlink.app.core.transport.CameraRequest
 import com.rovecamlink.app.core.transport.CameraRequestClass
 import com.rovecamlink.app.core.transport.withCameraRequest
 import com.rovecamlink.app.core.nearby.NearbyController
-import com.rovecamlink.app.core.ota.ChainedOtaTransport
 import com.rovecamlink.app.core.ota.FirmwareOffer
 import com.rovecamlink.app.core.ota.FirmwarePackage
 import com.rovecamlink.app.core.ota.FirmwareUpdater
@@ -50,7 +47,6 @@ import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.provision.ProvisioningController
 import com.rovecamlink.app.core.storage.sanitizeFileName
 import com.rovecamlink.app.core.wifi.CameraNetwork
-import com.rovecamlink.app.core.wifi.DEFAULT_PREFIXES
 import com.rovecamlink.app.core.wifi.WifiResult
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -646,7 +642,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             refreshVpnState()
             if (ssid == null || session != null) return@watchWifiChanges
             if (phase != Phase.Idle && phase != Phase.Error) return@watchWifiChanges
-            if (DEFAULT_PREFIXES.none { ssid.startsWith(it, ignoreCase = true) }) return@watchWifiChanges
+            if (!graph.isCameraLikeSsid(ssid)) return@watchWifiChanges
             Diag.at(LogLevel.INFO, LogTag.APP, "AUTO-CONNECT on camera-like SSID $ssid")
             connect()
         }
@@ -794,7 +790,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     /** The camera-like hotspot the phone is already joined to, when there is one. */
     val joinedCameraNetwork: String?
         get() = currentWifiSsid?.takeIf { ssid ->
-            ssid.isNotBlank() && DEFAULT_PREFIXES.any { ssid.startsWith(it, ignoreCase = true) }
+            ssid.isNotBlank() && graph.isCameraLikeSsid(ssid)
         }
 
     /**
@@ -970,7 +966,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             errorMessage = localized(Res.string.err_scan_needs_location)
             return@launch
         }
-        runCatching { graph.scanner.scan(force = true) }
+        runCatching { graph.scanner.scan(prefixes = graph.cameraSsidPrefixes, force = true) }
             .onSuccess {
                 Diag.i(LogTag.WIFI) {
                     "scan found ${it.size} camera-like networks: " +
@@ -1035,7 +1031,14 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 return
             }
             if (!graph.wifi.isConnectedToCamera) {
-                when (val adopt = graph.wifi.adoptCurrentNetwork(force = manualHost != null)) {
+                // The prefix list comes from the plugins, so a brand added later is
+                // recognised here without touching this call — an unrecognised hotspot
+                // is refused adoption, which leaves the sockets on the default route.
+                val adopt = graph.wifi.adoptCurrentNetwork(
+                    force = manualHost != null,
+                    prefixes = graph.cameraSsidPrefixes,
+                )
+                when (adopt) {
                     is WifiResult.Connected ->
                         Diag.i(LogTag.WIFI) { "adopted the already-joined Wi-Fi (${adopt.ssid.ifEmpty { "unknown" }})" }
                     is WifiResult.Failed ->
@@ -1331,15 +1334,21 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                             Diag.i(LogTag.STATE) { "poll recovered after $consecutivePollFailures failure(s)" }
                         }
                         consecutivePollFailures = 0
-                        // A poll that left the phone before the record button was pressed
-                        // describes the old state. Trusting it is what made the button
-                        // snap back to "录像" a moment after recording had started.
+                        // Two reasons a poll's recording verdict is not trusted:
+                        //
+                        //  - It left the phone before the record button was pressed, so it
+                        //    describes the old state. Trusting it is what made the button
+                        //    snap back to "录像" a moment after recording had started.
+                        //  - The family cannot report recording at all, in which case every
+                        //    poll answers `false` and would undo the command a second later,
+                        //    forever. See CameraProtocol.reportsRecordingState.
                         val stale = t0 < localRecordFlipAt
+                        val keepRecording = stale || !proto.reportsRecordingState
                         if (stale) {
                             Diag.d(LogTag.STATE) { "ignoring recording=${it.recording} from a poll issued before the record command" }
                         }
                         logStatusChange(deviceStatus, it, Diag.uptimeMillis() - t0)
-                        deviceStatus = if (stale) {
+                        deviceStatus = if (keepRecording) {
                             it.copy(recording = deviceStatus?.recording == true)
                         } else {
                             it
@@ -1858,9 +1867,15 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     var cameraWifi by mutableStateOf<CameraWifi?>(null)
         private set
 
-    /** Whether this camera family can answer [readCameraWifi] at all. */
-    fun canReadCameraWifi(): Boolean =
-        session?.platform == DevicePlatform.HISILICON
+    /**
+     * Whether this camera family can answer [readCameraWifi] at all.
+     *
+     * Asked of the plugin, never of the brand: a family that implements `getWifi` is
+     * exactly the family whose flag is true, and the two can no longer drift apart — which
+     * is what the `platform == HISILICON` this replaces guaranteed the moment a second
+     * family implemented the read.
+     */
+    fun canReadCameraWifi(): Boolean = protocol?.supportsCameraWifiRead == true
 
     /**
      * Ask the camera what its own hotspot is called and what key it wants.
@@ -2022,8 +2037,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     fun raiseAccessPoint() = runOp(Op.AccessPoint) { proto, s -> proto.ensureAccessPoint(s) }
 
     /** Whether this camera family can be told to broadcast again at all. */
-    fun canRaiseAccessPoint(): Boolean =
-        session?.platform == DevicePlatform.HISILICON
+    fun canRaiseAccessPoint(): Boolean = protocol?.supportsAccessPoint == true
 
     // ---------- A16: what the camera says it can do ----------
 
@@ -2189,11 +2203,16 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     // ---------- firmware OTA ----------
 
     /**
-     * Whether the connected camera family supports firmware updates yet. Only the
-     * Hisilicon CGI transport is implemented so far (doc 04's "start with Hisilicon").
+     * Whether the connected camera family supports firmware updates yet — that is, whether
+     * its plugin hands over a delivery channel.
+     *
+     * "Has a transport" rather than a brand name, so a second family that implements one
+     * gets the section without this file changing. Note what the flag does *not* claim: the
+     * update **check** still goes to one vendor's cloud index and the image guard still reads
+     * one vendor's header format (see `CameraProtocol.otaTransport`), so a family with a
+     * transport but no index entry will stop at 检查更新 with "no published firmware".
      */
-    fun firmwareUpdateSupported(): Boolean =
-        session?.platform == DevicePlatform.HISILICON
+    fun firmwareUpdateSupported(): Boolean = protocol?.otaTransport != null
 
     /**
      * Whether the danger section should offer 重启相机.
@@ -2385,28 +2404,21 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         val base = session ?: return
         val proto = protocol ?: return
         val owner = sessionScope ?: return
+        // The plugin's own channel: which socket or CGI pair carries the bytes, in which
+        // order they are tried, and which failures are cheap enough to fall through is a
+        // property of the family, not of this state machine.
+        val channel = proto.otaTransport ?: run {
+            Diag.at(LogLevel.ERROR, LogTag.OTA, "no firmware channel for ${base.platform.displayName}")
+            if (!otaState.isTerminal) otaState = OtaState.Failed("这个相机没有固件升级通道")
+            return
+        }
         Diag.info(
             LogTag.OTA,
             "install ${pkg.fileName} ${LogFormat.size(pkg.sizeBytes)} version=${pkg.version ?: "?"} via ${base.platform.displayName}",
         )
         cancelOtaWork("superseded by an install")
         val coord = OtaCoordinator(
-            transport = ChainedOtaTransport(
-                channels = listOf(
-                    // The channel the official app ships for this camera class first, and
-                    // the CGI pair behind it; see ChainedOtaTransport for why that order is
-                    // safe to fall through.
-                    XtuSocketOtaTransport(graph.tcp, graph.http),
-                    HisiliconOtaTransport(graph.http),
-                ),
-                preHandshakeFailures = setOf(
-                    XtuSocketOtaTransport.ERR_CONNECT,
-                    XtuSocketOtaTransport.ERR_HEADER_WRITE,
-                    XtuSocketOtaTransport.ERR_CMD_MISMATCH,
-                    XtuSocketOtaTransport.ERR_HANDSHAKE_READ,
-                    XtuSocketOtaTransport.ERR_MD5_WRITE,
-                ),
-            ),
+            transport = channel,
             connect = { proto.connect(base.host, base.port) },
             // A file the user picked themselves may be a rescue image the vendor never
             // published, so an unrecognised header is a warning there and a refusal on the

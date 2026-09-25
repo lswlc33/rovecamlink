@@ -24,13 +24,10 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.longOrNull
 import okio.Path
 import kotlin.random.Random
@@ -57,6 +54,13 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
      */
     override val wifiSsidPrefixes = listOf("TUWIN_R3P_", "TUWIN_R6_")
 
+    /**
+     * `/api/device/status` has no recording field on this family, so a poll cannot answer
+     * "is it recording" — see the interface's note. Reporting `false` anyway is what made
+     * the record button undo itself a second after the user pressed it.
+     */
+    override val reportsRecordingState: Boolean get() = false
+
     /** Ride3Pro / Ride6 ship 192.168.25.1 as the AP gateway. */
     override val fixedHost: String? get() = "192.168.25.1"
 
@@ -69,7 +73,10 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
 
     override suspend fun probe(host: String, port: Int): Boolean {
         val body = http.getText("http://$host:$port/api/device/status")
-        val verdict = body != null && (body.contains("status", true) || body.trim().startsWith("{"))
+        // The verdict is [TuwinStatus]'s, not a shape test: "starts with a brace" also
+        // matches iCatch's Qz replies, and a camera claimed by the wrong plugin is driven
+        // with requests it will never answer.
+        val verdict = TuwinStatus.looksLike(body)
         Diag.d(LogTag.PROTO) { "tuwin probe $host:$port -> $verdict (body=${body?.length ?: "null"} chars, starts=${LogFormat.safe(body?.take(40))})" }
         return verdict
     }
@@ -87,8 +94,10 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
             val authBody = http.getText("http://$host:$port/api/authdevice?seed=$seed")
             http.getText("http://$host:$port/api/rtspstatus?seed=$seed")
             val info = http.getText("http://$host:$port/api/device/info")
-            val model = info?.let { runCatching { json.parseToJsonElement(it) }.getOrNull() }
-                ?.jsonObject?.get("model")?.jsonPrimitiveOrNull() ?: "TUWIN"
+            // `model` lives in `info` too (§2.1 row 3). Read off the top level it was always
+            // absent, so every TUWIN session called itself "TUWIN" on the About page and in
+            // the diagnostics header while the camera was reporting a real model name.
+            val model = TuwinStatus.deviceInfo(info)?.model ?: "TUWIN"
             Diag.d(LogTag.PROTO) {
                 "auth answered=${authBody != null} info=${info != null} model=$model seed_len=${seed.length}"
             }
@@ -98,24 +107,23 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
             )
         }
 
+    /**
+     * Battery, card and mode, read from the two endpoints that carry them.
+     *
+     * The parsing is [TuwinStatus]'s, and it is not a formality: this method used to read
+     * `battery` / `record` / `mode` / `recordtime` off the **top level** of
+     * `/api/device/status`, while the firmware puts its fields in `info` and calls them
+     * `battery_percent` / `current_mode` / `recording_time` — so every one of them came back
+     * null and the status row drew blanks on a camera that was answering fine. The same
+     * mistake hid `total` / `free` on `/api/sd/info`, and its `status` was handed to the
+     * hi3510 family's `SDOK` / `NOSD` vocabulary, which reads this family's `0` ("card is
+     * fine") as an error.
+     */
     override suspend fun getStatus(session: CameraSession): DeviceStatus {
         val base = session.baseUrl
         val statusBody = http.getText("$base/api/device/status")
         val sdBody = http.getText("$base/api/sd/info")
-        val obj = statusBody?.toObj()
-        val sd = sdBody?.toObj()
-        return DeviceStatus(
-            battery = obj?.int("battery") ?: obj?.int("batterylevel"),
-            recording = (obj?.int("record") ?: obj?.int("recording") ?: 0) == 1,
-            mode = obj?.int("mode")?.let { WorkMode.fromCode(it) },
-            videoTimeSec = obj?.int("recordtime") ?: obj?.int("videotime"),
-            sdTotalMb = sd?.long("total") ?: sd?.long("totalspace"),
-            sdFreeMb = sd?.long("free") ?: sd?.long("freespace") ?: sd?.long("available"),
-            sdState = sd?.string("status")?.let { SdCardState.fromRaw(it) },
-            photoCount = sd?.int("photocount"),
-            videoCount = sd?.int("videocount"),
-            raw = obj?.rawMap() ?: emptyMap(),
-        )
+        return TuwinStatus.parse(statusBody, sdBody)
     }
 
     override suspend fun getSettings(session: CameraSession): List<CameraSetting> {
@@ -224,19 +232,15 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
 
     // ---------- device info / maintenance ----------
 
-    override suspend fun getDeviceInfo(session: CameraSession): DeviceInfo? {
-        val obj = http.getText("${session.baseUrl}/api/device/info")?.toObj() ?: return null
-        return DeviceInfo(
-            model = obj.string("model")?.ifEmpty { null },
-            softVersion = obj.string("swver")?.ifEmpty { null },
-            hardVersion = obj.string("hwver")?.ifEmpty { null },
-            serialNumber = obj.string("uuid")?.ifEmpty { null },
-            mac = obj.string("mac")?.ifEmpty { null },
-            ssid = obj.string("ssid")?.ifEmpty { null },
-            soc = obj.string("soc")?.ifEmpty { null },
-            raw = obj.rawMap(),
-        )
-    }
+    /**
+     * Model, firmware, serial, MAC and SSID, read through to the object that carries them.
+     *
+     * [TuwinStatus.deviceInfo] does the reading — and the one thing that must not be
+     * overlooked here: the same reply answers the camera's hotspot passphrase, which
+     * `DeviceInfo.raw` would otherwise carry into an exported log.
+     */
+    override suspend fun getDeviceInfo(session: CameraSession): DeviceInfo? =
+        TuwinStatus.deviceInfo(http.getText("${session.baseUrl}/api/device/info"))
 
     override suspend fun formatSd(session: CameraSession): CmdResult {
         val r = http.getText("${session.baseUrl}/api/system/formatsd")
@@ -312,18 +316,9 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
     private fun String.toObj(): JsonObject? =
         runCatching { json.parseToJsonElement(this).jsonObject }.getOrNull()
 
-    private fun JsonElement.jsonPrimitiveOrNull(): String? =
-        (this as? JsonPrimitive)?.contentOrNull
-
     private fun JsonObject.string(key: String): String? =
         (get(key) as? JsonPrimitive)?.contentOrNull
 
-    private fun JsonObject.int(key: String): Int? =
-        (get(key) as? JsonPrimitive)?.intOrNull ?: (get(key) as? JsonPrimitive)?.contentOrNull?.toIntOrNull()
-
     private fun JsonObject.long(key: String): Long? =
         (get(key) as? JsonPrimitive)?.longOrNull ?: (get(key) as? JsonPrimitive)?.contentOrNull?.toLongOrNull()
-
-    private fun JsonObject.rawMap(): Map<String, String> =
-        entries.associate { (k, v) -> k to ((v as? JsonPrimitive)?.contentOrNull ?: v.toString()) }
 }

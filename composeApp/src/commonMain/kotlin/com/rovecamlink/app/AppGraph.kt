@@ -16,13 +16,20 @@ import com.rovecamlink.app.core.storage.createPermissionController
 import com.rovecamlink.app.core.transport.CameraHttp
 import com.rovecamlink.app.core.transport.CameraTcp
 import com.rovecamlink.app.core.transport.createCameraTcp
+import com.rovecamlink.app.core.wifi.anyPrefixMatches
+import com.rovecamlink.app.core.wifi.cameraLikePrefixes
 import com.rovecamlink.app.core.wifi.createWifiController
 import com.rovecamlink.app.core.wifi.createWifiScanner
 
 /**
  * Hand-rolled composition root (no DI framework — keeps the dependency graph
- * tiny and the build robust). To support a new camera family, add its protocol
- * plugin to [protocolList] and nothing else changes.
+ * tiny and the build robust).
+ *
+ * To support a new camera family: implement [com.rovecamlink.app.core.protocol.CameraProtocol]
+ * in a `brand/<name>` package, add it to [protocolList], and give it a
+ * [DevicePlatform] / [Brand] value. Nothing else changes — [cameraSsidPrefixes], the
+ * capability gates, the OTA channel and the device-menu rendering all read from the
+ * plugin, so none of them names a brand.
  */
 class AppGraph {
     val http: CameraHttp = CameraHttp()
@@ -43,6 +50,20 @@ class AppGraph {
 
     val registry = CameraProtocolRegistry(protocolList)
     val discovery = DeviceDiscovery(registry, http)
+
+    /**
+     * What the Wi-Fi layer treats as a camera hotspot: every prefix the registered
+     * plugins claim, plus the generic hints that predate the registry.
+     *
+     * Read by the scan filter, the auto-connect trigger and `adoptCurrentNetwork`, so a
+     * brand reaches all three by declaring `wifiSsidPrefixes` on its plugin — no edit to
+     * a list of names shared by every other brand. It is a union with [DEFAULT_PREFIXES],
+     * so adding a plugin can only ever recognise *more* hotspots.
+     */
+    val cameraSsidPrefixes: List<String> = cameraLikePrefixes(registry.claimedSsidPrefixes)
+
+    /** True when [ssid] looks like a camera hotspot — the predicate behind the above. */
+    fun isCameraLikeSsid(ssid: String?): Boolean = anyPrefixMatches(cameraSsidPrefixes, ssid)
 
     val wifi = createWifiController()
     val scanner = createWifiScanner()

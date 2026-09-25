@@ -52,9 +52,13 @@ data class DeviceCatalogBrand(
  *    "CGI 家族" means "this family answers the Hi35xx CGI, SoC unconfirmed",
  *    because the official app dispatches on the camera's self-reported `type`,
  *    not on a model table.
- *  - idGoLive's iCatch platform is documented but has no plugin in this build yet
- *    (`docs/08 附录 A §0.1`), so its block renders as 未适配 — the page is where a
- *    user with such a camera learns why connect gives up.
+ *  - idGoLive's iCatch platform is documented in `docs/08 附录 A §0.1` and **is** driven
+ *    in this build (`IcatchHttpProtocol`), so XTU's Mini1 and the idGoLive rows read 已适配.
+ *
+ * What a brand can drive is not decided here: the page asks the registry, so a plugin
+ * arriving later flips a row from 未适配 to 已适配 with no edit to this file. Adding a model
+ * to the lists below is a **documentation** change, and the row it adds stays 未适配 until
+ * something in `brand/` can speak to it.
  *
  * Pure data: the page owns presentation, this owns nothing but the facts.
  */

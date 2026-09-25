@@ -171,7 +171,11 @@ class NearbyController(
     }
 
     private suspend fun readWifi(force: Boolean) {
-        val found = runCatching { graph.scanner.scan(force = force) }
+        // The prefix list is the registry's, not a constant here: a brand decides what its
+        // own hotspots are called, and the connection screen then lists them.
+        val found = runCatching {
+            graph.scanner.scan(prefixes = graph.cameraSsidPrefixes, force = force)
+        }
             .onFailure { Diag.w(LogTag.WIFI) { "nearby wifi scan threw ${Diag.causeChain(it)}" } }
             .getOrDefault(emptyList())
         networks = found
