@@ -40,6 +40,9 @@ import com.rovecamlink.app.action_open_wifi_settings
 import com.rovecamlink.app.action_join_connect
 import com.rovecamlink.app.action_refresh
 import com.rovecamlink.app.action_scan_qr
+import com.rovecamlink.app.device_catalog_entry
+import com.rovecamlink.app.device_catalog_entry_hint
+import com.rovecamlink.app.device_catalog_title
 import com.rovecamlink.app.message_forget_camera
 import com.rovecamlink.app.title_connected_camera
 import com.rovecamlink.app.cancel
@@ -206,6 +209,11 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     val aliasHint = stringResource(Res.string.hint_camera_alias)
     val joinLbl = stringResource(Res.string.action_join_connect)
     val noneLbl = stringResource(Res.string.label_nearby_none)
+    // 支持设备列表入口的三条文案：section 的内容 lambda 不在组合上下文里，stringResource
+    // 只能在页面的组合部分解析（与设置页把全部文案提前解析是同一条规矩）。
+    val catalogTitle = stringResource(Res.string.device_catalog_title)
+    val catalogEntryLbl = stringResource(Res.string.device_catalog_entry)
+    val catalogEntryHint = stringResource(Res.string.device_catalog_entry_hint)
     val ageSeconds = if (nearby.lastUpdateAt == 0L) -1 else ((tick - nearby.lastUpdateAt) / 1000f).roundToInt()
 
     val canConnect = joined != null || nearby.hasCandidate
@@ -368,6 +376,16 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
             ArrowPreference(
                 title = wifiSettingsLbl,
                 onClick = { wifiSettingsError = !state.openWifiSettings() },
+            )
+        }
+
+        // 支持设备列表：页面最下方的常驻入口。不依赖连接状态 —— 问「这个型号到底能不能连」
+        // 的人，多半正处于没连上的那一步。
+        section(title = catalogTitle) {
+            ArrowPreference(
+                title = catalogEntryLbl,
+                summary = catalogEntryHint,
+                onClick = { state.pushPage(com.rovecamlink.app.Page.SupportedDevices) },
             )
         }
     }

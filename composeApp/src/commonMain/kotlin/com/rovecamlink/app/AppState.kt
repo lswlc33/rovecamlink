@@ -123,7 +123,7 @@ data class DownloadItem(
  * These are not tabs: nobody looks for the log or the about page on the way to a
  * shooting setting, but both have to be reachable from wherever a failure happened.
  */
-enum class Page { Log, LogSettings, About, Permissions }
+enum class Page { Log, LogSettings, About, Permissions, SupportedDevices }
 
 /**
  * How the files page draws its media.
@@ -736,6 +736,16 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * the registry.
      */
     fun supportedPlatforms(): Set<DevicePlatform> = graph.registry.platforms()
+
+    /**
+     * The protocol plugin registered for [platform], or null when this build cannot
+     * speak it. The supported-devices page uses this to separate the families this
+     * app can actually drive (已适配) from the ones the catalog merely documents
+     * (未适配) — a row's wiring claim has to come from the registry, not from the
+     * catalog saying so about itself.
+     */
+    fun protocolFor(platform: DevicePlatform): CameraProtocol? =
+        graph.registry.protocolFor(platform)
 
     fun isBusy(op: Op): Boolean = busy.contains(op)
     private fun setBusy(op: Op, on: Boolean) {

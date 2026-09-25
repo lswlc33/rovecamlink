@@ -380,6 +380,16 @@
     <string name="about_title">About</string>
     <string name="about_version">Version</string>
     <string name="about_protocols">Supported cameras</string>
+
+    <!-- Supported devices (the device tab bottom entry). -->
+    <string name="device_catalog_title">Supported devices</string>
+    <string name="device_catalog_entry">Supported device list</string>
+    <string name="device_catalog_entry_hint">Browse the models, protocols and chips this app adapts, by brand</string>
+    <string name="device_catalog_adapted">Adapted</string>
+    <string name="device_catalog_not_adapted">Not adapted</string>
+    <string name="device_catalog_protocol">Protocol</string>
+    <string name="device_catalog_chip">Chip</string>
+    <string name="device_catalog_chip_unknown">Chip unconfirmed</string>
     <string name="about_feedback">Report a problem</string>
     <string name="about_feedback_body">The file that opens carries everything a report needs and nothing you have to type: this phone\'s model, Android version and ABI, the app version, the camera\'s model, firmware, hardware, serial and the clock this app last set, the live session, and every log run stored on the device. Attach it to an issue at github.com/lswlc33/rovecamlink/issues.</string>
     <string name="about_feedback_action">Attach diagnostics and share</string>

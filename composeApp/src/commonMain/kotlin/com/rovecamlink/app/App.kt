@@ -40,6 +40,7 @@ import com.rovecamlink.app.ui.PermissionsScreen
 import com.rovecamlink.app.ui.PlatformBackHandler
 import com.rovecamlink.app.ui.PlatformPredictiveBackHandler
 import com.rovecamlink.app.ui.SettingsScreen
+import com.rovecamlink.app.ui.SupportedDevicesScreen
 import com.rovecamlink.app.ui.blockPointerInput
 import com.rovecamlink.app.ui.glass.IosLiquidGlassNavigationBar
 import com.rovecamlink.app.ui.rememberBarBackdrop
@@ -324,6 +325,7 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                             Page.LogSettings -> LogSettingsScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             Page.About -> AboutScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             Page.Permissions -> PermissionsScreen(state, outerPadding = outer, onClose = { state.popPage() })
+                            Page.SupportedDevices -> SupportedDevicesScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             null -> HorizontalPager(
                                 state = pagerState,
                                 // miuix's own snap spring, so a swipe settles with the same feel the
