@@ -24,6 +24,10 @@
 	<string>4</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<!-- Compose Multiplatform 严格检查要求显式开启，否则启动即抛
+	     IllegalStateException（缺它意味着放弃 ProMotion 高刷）。 -->
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -33,7 +37,8 @@
 	<dict/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<!-- 项目只编 arm64（KMP 目标 iosArm64/iosSimulatorArm64），armv7 是 32 位时代的键。 -->
+		<string>arm64</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

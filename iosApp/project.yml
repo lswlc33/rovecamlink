@@ -19,6 +19,7 @@ targets:
         CFBundleDisplayName: RoveCamLink
         CFBundleIconName: AppIcon
         UILaunchScreen: {}
+        CADisableMinimumFrameDurationOnPhone: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.rovecamlink.app
