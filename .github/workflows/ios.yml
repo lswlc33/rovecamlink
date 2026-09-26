@@ -59,6 +59,9 @@ jobs:
           # 工程名取自 project.yml 的 name 字段 → RoveCamLink.xcodeproj（不是 target 名）。
           test -d RoveCamLink.xcodeproj
           # generic destination：不点名任何机型，SDK 仍是 iphonesimulator。
+          # ARCHS=arm64 必须显式给：generic 模拟器默认 ARCHS="arm64 x86_64"，而
+          # embedAndSignAppleFrameworkForXcode 不认识 x86_64——项目已刻意移除
+          # iosX64（Compose 1.12 没发该目标的产物，见 composeApp/build.gradle.kts）。
           # -derivedDataPath 必须配 -scheme（-target 不行），scheme 在 project.yml 里显式声明。
           # JAVA_HOME 由 setup-java 导出，preBuild 里的 ./gradlew 能直接找到 JDK。
           xcodebuild \
@@ -69,6 +72,7 @@ jobs:
             -derivedDataPath build/DerivedData \
             build \
             CODE_SIGNING_ALLOWED=NO \
+            ARCHS=arm64 \
             -quiet
 
       - name: 模拟器装机并拉起 App
