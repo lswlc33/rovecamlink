@@ -23,7 +23,7 @@ class TuwinStatusTest {
 
     @Test
     fun `the documented status fields are recognised under the envelope`() {
-        // docs/08 01-TUWIN-档案.md §2.1 row 4 — Ride3ProDeviceStatusInfo's own fields.
+        // docs/evidence docs/evidence/tuwin §2.1 row 4 — Ride3ProDeviceStatusInfo's own fields.
         val body = """
             {"result":0,"info":{"adapter_status":1,"battery_percent":87,"current_mode":0,
             "mode_active":1,"recording_time":42,"exception_flags":0,"hdr_chk_cnt":3}}
@@ -114,7 +114,7 @@ class TuwinStatusTest {
 
     @Test
     fun `the documented fields are read out of the envelope`() {
-        // The shape docs/08 01-TUWIN-档案.md §2.1 row 4 describes: everything inside `info`.
+        // The shape docs/evidence docs/evidence/tuwin §2.1 row 4 describes: everything inside `info`.
         // Every one of these used to come back null, because the plugin read the top level.
         val status = TuwinStatus.parse(
             statusBody = """{"result":0,"info":{"adapter_status":1,"battery_percent":87,""" +
@@ -182,7 +182,7 @@ class TuwinStatusTest {
 
     @Test
     fun `recording is never claimed from this family's status`() {
-        // Not a guess: there is no recording field in the reply (docs/08 §5.3), so the
+        // Not a guess: there is no recording field in the reply (docs/evidence/tuwin §5.3), so the
         // plugin declares reportsRecordingState = false and this false is never trusted.
         // A `recording_time` that happens to be non-zero must not turn into "recording".
         // The plugin-side flag itself is pinned in PluginCapabilitiesTest.

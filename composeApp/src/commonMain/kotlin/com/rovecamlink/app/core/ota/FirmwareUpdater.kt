@@ -11,7 +11,7 @@ import okio.FileSystem
 import okio.Path
 
 /**
- * The first two of the four halves of "firmware update" (`docs/04 §0`): ask the
+ * The first two of the four halves of "firmware update" (`docs/analysis/ota-and-gaps §0`): ask the
  * vendor which build is current, then get its bytes onto the phone. Sending them to
  * the camera and reading the version back are the other two, and live in
  * [OtaCoordinator] and the per-brand [OtaTransport].
@@ -38,7 +38,7 @@ class FirmwareUpdater(
     /**
      * Ask the index for [cameraName]'s model and compare it against [softVersion].
      *
-     * One user action, one request — the shape `docs/05 §7` asks for. Enumerating
+     * One user action, one request — the shape `docs/analysis/network-api §7` asks for. Enumerating
      * models against this endpoint is trivially easy (it is unauthenticated and the
      * model is whitespace-stripped device name), and doing it here would turn a
      * feature into a scanner.
@@ -81,7 +81,7 @@ class FirmwareUpdater(
      * Two things the vendor's own client never does, and both are free here: the URL is
      * forced onto HTTPS (`GkuFirmwareIndex.secureDownloadUrl`), and the byte count is
      * compared with the `size` the index already sent (`GetDeviceNewestVersionResponse`
-     * has no such field, so the official app cannot — `docs/04 §5.2`). A truncated
+     * has no such field, so the official app cannot — `docs/analysis/ota-and-gaps §5.2`). A truncated
      * package pushed to a camera is the bricking scenario, so a short body is reported
      * as a failure even though the transport calls it a completed transfer.
      *
@@ -189,7 +189,7 @@ class FirmwareUpdater(
          * Keep a server-supplied file name inside the cache directory.
          *
          * The name is the last path segment of a URL the vendor controls, so it is treated as
-         * untrusted input (`docs/05` C-3 is the vendor making exactly this mistake on their
+         * untrusted input (`docs/analysis/network-api` C-3 is the vendor making exactly this mistake on their
          * side). It is reduced by the shared [sanitizeFileName] — the single place where a
          * device- or server-supplied name becomes a safe basename — so the media path and the
          * firmware path can never disagree about what "safe" means, and the Windows-illegal set

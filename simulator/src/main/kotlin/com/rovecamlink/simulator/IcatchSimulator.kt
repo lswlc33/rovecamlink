@@ -19,7 +19,7 @@ import javax.imageio.ImageIO
 
 /**
  * Desktop simulators for the two iCatch HTTP profiles spoken by the idGoLive app
- * (wire facts from docs/08-官方APK全量逆向档案/03-idGoLive-档案.md appendix B):
+ * (wire facts from docs/evidence/idgolive.md appendix B):
  *
  * - `SIM_PROFILE=ly` — the Novatek-style `?custom=1&cmd=` XML family on 192.168.1.254.
  * - `SIM_PROFILE=qz` — the `/app/…` JSON family on 192.168.169.1.

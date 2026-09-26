@@ -5,7 +5,7 @@ package com.rovecamlink.app.core.ota
  *
  * The second, manual entry into the same install flow the vendor cloud drives: the
  * card-update path every supported camera has and none of the official apps expose
- * (`docs/04 §6.1` R9) means a downloaded file should always be installable, and it is
+ * (`docs/analysis/ota-and-gaps §6.1` R9) means a downloaded file should always be installable, and it is
  * the only route left when the index has nothing for the model.
  *
  * Desktop opens a file dialog; Android and iOS return null, because the cloud check

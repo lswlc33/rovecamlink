@@ -1,0 +1,442 @@
+# XTU GO — 类与成员明细：com.gku.actioncam.hisilicon.dv.imagelookover
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 3 个文件 / 3 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.gku.actioncam.hisilicon.dv.imagelookover.StorageValue`
+L7 · [class] public StorageValue · `com/gku/actioncam/hisilicon/dv/imagelookover/StorageValue.java`
+
+字段/常量（2）：
+- `ArrayList<String> choiceDeleteOrDownloadPathList`  L8
+- `ArrayList<HiDefine.PathConnection> pathConnectionArrayList`  L9
+### `com.gku.actioncam.hisilicon.dv.imagelookover.SwitchImageActivity`
+L62 · [class] public SwitchImageActivity · extends `Activity` · `com/gku/actioncam/hisilicon/dv/imagelookover/SwitchImageActivity.java`
+
+字段/常量（115）：
+- `int DOWNLOAD_FINISH = 3`  L63
+- `int DOWNLOAD_PROGRESS = 2`  L64
+- `int DOWNLOAD_START = 1`  L65
+- `int MIN_WIDTH = 320`  L66
+- `int NEED_SELECT_DMR = 2`  L67
+- `String TAG = "SwitchImageActivity"`  L68
+- `ImageView ivModeMenu`  L69
+- `LinearLayout lineDelete`  L70
+- `LinearLayout lineDownload`  L71
+- `LinearLayout lineFileInfo`  L72
+- `LinearLayout lineShare`  L73
+- `String mCurrentURI`  L74
+- `DisplayMetrics mDispalyMetrix`  L75
+- `ProgressDialog mLoadingDialog`  L76
+- `Handler mPlayControlHandler`  L77
+- `String mStrSSID`  L78
+- `WifiDisconnectReceiver mWifiDisReceiver`  L79
+- `String nextMediaPath`  L80
+- `String preMediaPath`  L81
+- `PopupWindow preViewMenuWin`  L82
+- `ProgressBar progressBar`  L83
+- `RelativeLayout relTopTitle`  L84
+- `SwitchImageView switchImageView`  L85
+- `PopupWindow toolbarWindow`  L86
+- `TextView tvProgress`  L87
+- `View vTopView`  L88
+- `Bitmap CurBitmap = null`  L90
+- `Bitmap lastDownloadBitmap = null`  L91
+- `Bitmap NextBitmap = null`  L92
+- `boolean[] bVideoOrJPG = new boolean[3]`  L93
+- `Bitmap BackBitmap = null`  L94
+- `ImageView imgPlay = null`  L95
+- `View vBack = null`  L96
+- `ArrayList<String> mAllURIs = null`  L97
+- `int CurFileIndex = -1`  L98
+- `int nPathListlen = -1`  L99
+- `boolean bEditFile = false`  L100
+- `ArrayList<String> strFileList = null`  L101
+- `boolean bDownload = false`  L102
+- `boolean[] bDecodeSuccess = new boolean[3]`  L103
+- `int mToolbarHeight = 0`  L106
+- `int mToolbarWidth = 0`  L107
+- `PlayControlThread mHandlerThread = null`  L108
+- `int shareType = 0`  L109
+- `int i = msg.what`  L113
+- `ArrayList<HiDefine.PathConnection> listPathCon = null`  L124
+- `SwitchImageActivity switchImageActivity = SwitchImageActivity.this`  L181
+- `SwitchImageActivity switchImageActivity2 = SwitchImageActivity.this`  L183
+- `SwitchImageActivity switchImageActivity3 = SwitchImageActivity.this`  L187
+- `SwitchImageActivity switchImageActivity4 = SwitchImageActivity.this`  L189
+- `int i = msg.what`  L204
+- `SwitchImageActivity switchImageActivity = SwitchImageActivity.this`  L217
+- `SwitchImageActivity switchImageActivity2 = SwitchImageActivity.this`  L219
+- `SwitchImageActivity switchImageActivity3 = SwitchImageActivity.this`  L223
+- `SwitchImageActivity switchImageActivity4 = SwitchImageActivity.this`  L225
+- `int i = msg.what`  L257
+- `int i = msg.what`  L293
+- `SwitchImageActivity switchImageActivity = SwitchImageActivity.this`  L316
+- `SwitchImageActivity switchImageActivity2 = SwitchImageActivity.this`  L319
+- `SwitchImageView switchImageView = SwitchImageActivity.this.switchImageView`  L321
+- `SwitchImageActivity switchImageActivity3 = SwitchImageActivity.this`  L322
+- `int i = this.CurFileIndex`  L384
+- `WifiDisconnectReceiver wifiDisconnectReceiver = this.mWifiDisReceiver`  L388
+- `SwitchImageActivity switchImageActivity = SwitchImageActivity.this`  L402
+- `SwitchImageActivity switchImageActivity = SwitchImageActivity.this`  L434
+- `SwitchImageActivity switchImageActivity2 = SwitchImageActivity.this`  L440
+- `int i = this.CurFileIndex`  L471
+- `WifiDisconnectReceiver wifiDisconnectReceiver = this.mWifiDisReceiver`  L492
+- `int i = this.nPathListlen`  L503
+- `int i2 = this.CurFileIndex`  L507
+- `String str`  L516
+- `int i = this.nPathListlen`  L517
+- `int i2 = this.CurFileIndex`  L521
+- `int i = this.nPathListlen`  L547
+- `int i2 = this.CurFileIndex`  L551
+- `String str`  L560
+- `int i = this.nPathListlen`  L561
+- `int i2 = this.CurFileIndex`  L565
+- `Bitmap bitmap = this.NextBitmap`  L585
+- `Bitmap bitmap2 = this.CurBitmap`  L589
+- `boolean[] zArr = this.bVideoOrJPG`  L592
+- `boolean[] zArr2 = this.bDecodeSuccess`  L594
+- `Bitmap bitmap3 = this.BackBitmap`  L596
+- `Bitmap bitmap = this.BackBitmap`  L617
+- `Bitmap bitmap2 = this.CurBitmap`  L621
+- `boolean[] zArr = this.bVideoOrJPG`  L624
+- `boolean[] zArr2 = this.bDecodeSuccess`  L626
+- `Bitmap bitmap3 = this.NextBitmap`  L628
+- `String str2 = str + this.mStrSSID + "/" + strSubstring`  L661
+- `Bitmap bitmapDecodeStream`  L669
+- `float f = i * 1.0f`  L790
+- `Throwable th`  L849
+- `HttpURLConnection httpURLConnection`  L850
+- `?? r12`  L851
+- `File file`  L852
+- `?? r13`  L853
+- `StringBuilder sb`  L854
+- `Message messageObtainMessage`  L855
+- `BufferedOutputStream bufferedOutputStream`  L856
+- `BufferedOutputStream bufferedOutputStream2`  L857
+- `int i2 = 2`  L859
+- `String str2 = imagePath + ".tmp"`  L865
+- `BufferedInputStream bufferedInputStream = null`  L869
+- `byte[] bArr = new byte[1024]`  L882
+- `int i3 = 0`  L884
+- `int i = this.CurFileIndex`  L1085
+- `ProgressDialog progressDialog = this.mLoadingDialog`  L1114
+- `ArrayList<String> arrayList = this.strFileList`  L1174
+- `Bitmap bitmap = this.CurBitmap`  L1191
+- `Bitmap bitmap2 = this.NextBitmap`  L1195
+- `Bitmap bitmap3 = this.BackBitmap`  L1199
+- `Bitmap bitmap4 = this.lastDownloadBitmap`  L1203
+- `ProgressDialog progressDialog = this.mLoadingDialog`  L1208
+- `Bundle extras`  L1233
+- `Handler handler = this.StartHandleProcess`  L1252
+
+方法（50）：
+- `void handleMessage(Message msg)`  L112 @Override
+- `void handleMessage(Message msg)`  L127 @Override
+    - 体内字面量：" delete failed" · " delete failed"
+- `void handleMessage(Message msg)`  L158 @Override
+    - 体内字面量："CurFileIndex=" · "CurFileIndex="
+- `void handleMessage(Message msg)`  L203 @Override
+- `void run()`  L239 @Override
+    - 体内字面量："dng" · "5432113212222" · "run:  --------------------------   å¼å§ä¸è½½" · "45613222222333" · "handleMessage: ----------------------2222222"
+- `void handleMessage(Message msg)`  L256 @Override
+- `void run()`  L280 @Override
+- `void run()`  L286 @Override
+- `void handleMessage(Message msg)`  L292 @Override
+- `void OnLongClick()`  L331
+- `void startMessageHandler()`  L334
+    - 体内字面量："dmcImageControlThread"
+- `void stopMessageHandler()`  L343
+- `void onCreate(Bundle savedInstanceState)`  L349 @Override
+    - 体内字面量："mAllURIs == null" · "89089879" · "onCreate: ----------------------  è¿å¥æ­¤é¡µé¢" · "CurIndex" · "ShareType" · "CurFileIndex=" · "PathNum" · "wifiSSID"
+- `void onClick(View v)`  L400 @Override
+- `void onClick(View v)`  L408 @Override
+- `void onClick(View v)`  L415 @Override
+    - 体内字面量："yunqi_debug" · "onClick: curPath: "
+- `void onClick(View v)`  L431 @Override
+- `void onClick(View v)`  L447 @Override
+- `void onClick(View v)`  L457 @Override
+- `void onClick(View v)`  L463 @Override
+- `void onStart()`  L470 @Override
+- `void onResume()`  L486 @Override
+- `void onStop()`  L491 @Override
+- `String getNextPathName()`  L502
+- `String getNextPathTHM()`  L515
+- `void OnSingleClick()`  L533
+- `String getBackPathName()`  L546
+- `String getBackPathTHM()`  L559
+- `void BackPage()`  L575
+    - 体内字面量："CurFileIndex=" · "CurFileIndex="
+- `void NextpPage()`  L607
+    - 体内字面量："CurFileIndex=" · "CurFileIndex="
+- `String getImagePath(String imageUrl, int souce)`  L638
+    - 体内字面量："543211321" · "getImagePath:  ---------------   " · "543211321" · "getImagePath:  --------------  å·²å­å¨" · "/" · "543211321" · "getImagePath:  -----0000---------  localAppDataPath =null" · "/cache/" · "5432113212222" · "getImagePath:  -------------------   ä¸å­å¨ç" · "5432113212222" · " mkdirs() failed" · "5432113212222" · "getImagePath:  ----------------------  åå»ºæå  " · "5432113212222" · "getImagePath: ----------  å­å¨ç"
+- `Bitmap decodeSampledBitmapFromResource(String strPathFile, int nIdex, String thmImage)`  L668
+- `Bitmap getVideoThumbnail(String videoPath, int width, int height)`  L804
+- `boolean onKeyDown(int keyCode, KeyEvent event)`  L814 @Override
+- `boolean downLoadVideo(String str, int i)`  L848
+- `void onRestoreInstanceState(Bundle savedInstanceState)`  L1062 @Override
+    - 体内字面量："SSID" · "bEditFile" · "CurFileIndex" · "strFileList" · "strpathList" · "nPathListlen" · "menuIsShowing" · "toorbarIsShowing"
+- `void onSaveInstanceState(Bundle outState)`  L1105 @Override
+    - 体内字面量："bEditFile" · "CurFileIndex" · "strFileList" · "strpathList" · "nPathListlen" · "menuIsShowing" · "toorbarIsShowing" · "SSID"
+- `void showMenu()`  L1122
+- `void showToolBar()`  L1127
+- `void findView()`  L1141
+- `void setReturnForResult()`  L1169
+    - 体内字面量："dlgType" · "isDeletefile"
+- `void onDestroy()`  L1189 @Override
+- `boolean undoDownloadTask()`  L1218
+- `void onActivityResult(int requestCode, int resultCode, Intent data)`  L1232 @Override
+- `void processDownloadOption(Bundle MarsBuddle)`  L1257
+    - 体内字面量："Option"
+- `void processDeleteConfirm(Bundle MarsBuddle)`  L1261
+    - 体内字面量："oprateType"
+- `void onConfigurationChanged(Configuration newConfig)`  L1268 @Override
+    - 体内字面量："onConfigurationChanged()"
+- `void showLoadingDialog(boolean show)`  L1281
+- `void onCancel(DialogInterface dialog)`  L1291 @Override
+- `void toPlayVideoActivity()`  L1309
+    - 体内字面量："All URI num:" · "Current URI:" · "current URI index:" · "start"
+### `com.gku.actioncam.hisilicon.dv.imagelookover.SwitchImageView`
+L18 · [class] public SwitchImageView · extends `View` · `com/gku/actioncam/hisilicon/dv/imagelookover/SwitchImageView.java`
+
+字段/常量（200）：
+- `int CUR_IMAGE_STEP_NUM = 10`  L19
+- `int ERROR_VALUE = 12`  L20
+- `int HIDE_TOOLBAR_COUNT = 40`  L21
+- `int HIDE_TOOLBAR_TIME = 100`  L22
+- `float REF_TIMES = 2.0f`  L23
+- `int SHOW_CURIMAGE = 1`  L24
+- `int STATUS_BACK = 8`  L25
+- `int STATUS_CHECK = 5`  L26
+- `int STATUS_INIT = 1`  L27
+- `int STATUS_MOVE = 4`  L28
+- `int STATUS_MOVEUP = 6`  L29
+- `int STATUS_NO_NULL = 0`  L30
+- `int STATUS_SHOW_DOUBLE_ZOOM = 2`  L31
+- `int STATUS_SHOW_NORMAL = 9`  L32
+- `int STATUS_UPDATE = 7`  L33
+- `int STATUS_ZOOM = 3`  L34
+- `int STEP_TIME = 30`  L35
+- `int SWITCH_IMAGE = 2`  L36
+- `int SWITCH_STEP_NUM = 8`  L37
+- `String TAG = "SwitchImageView"`  L38
+- `int WIDTH_WEIGHT = 8`  L39
+- `int ZOOM_IMAGE = 3`  L40
+- `int ZOOM_MAX_TIMES = 4`  L41
+- `int ZOOM_STEP_NUM = 10`  L42
+- `boolean bEnableTouch`  L43
+- `boolean bVideo`  L44
+- `Bitmap backBitmap`  L45
+- `float backBitmapWidth`  L46
+- `float backInitRatio`  L47
+- `float backTotalTranslateX`  L48
+- `float backTotalTranslateY`  L49
+- `float centerPointX`  L50
+- `float centerPointY`  L51
+- `float currentBitmapHeight`  L52
+- `float currentBitmapWidth`  L53
+- `int currentStatus`  L54
+- `float fBackProgress`  L55
+- `float fSwitchProgress`  L56
+- `float fZoomProgressRatio`  L57
+- `Handler handler`  L58
+- `int height`  L59
+- `ImageView imgPlay`  L60
+- `float initRatio`  L61
+- `double lastFingerDis`  L62
+- `float lastImgRatio`  L63
+- `float lastImgbmpWidth`  L64
+- `float lastXImgMove`  L65
+- `float lastXMove`  L66
+- `float lastYImgMove`  L67
+- `float lastYMove`  L68
+- `int mChangeStatus`  L69
+- `int mHidetoolbarTime`  L70
+- `boolean mTouchUp`  L71
+- `boolean mWaitDouble`  L72
+- `Matrix matrix`  L73
+- `float movedDistanceX`  L74
+- `float movedDistanceY`  L75
+- `int nZoomProgressX`  L76
+- `int nZoomProgressY`  L77
+- `Bitmap nextBitmap`  L78
+- `float nextInitRatio`  L79
+- `float nextTotalTranslateX`  L80
+- `float nextTotalTranslateY`  L81
+- `Handler onClickHandle`  L82
+- `float oriTranslateX`  L83
+- `float oriTranslateY`  L84
+- `Handler pagehandle`  L85
+- `Runnable runHideToolBar`  L86
+- `Runnable runOnclick`  L87
+- `Runnable runSwitchImage`  L88
+- `float scaledRatio`  L89
+- `Bitmap sourceBitmap`  L90
+- `float targetTotalRatio`  L91
+- `float targetTotalTranslateX`  L92
+- `float targetTotalTranslateY`  L93
+- `float totalRatio`  L94
+- `float totalTranslateX`  L95
+- `float totalTranslateY`  L96
+- `int width`  L97
+- `float xDownLocal`  L98
+- `float xUpLocal`  L99
+- `float yDownLocal`  L100
+- `float yUpLocal`  L101
+- `int i = SwitchImageView.this.mChangeStatus`  L136
+- `float f = this.xDownLocal`  L272
+- `float f2 = this.xUpLocal`  L273
+- `float f3 = this.yDownLocal`  L277
+- `float f4 = this.yUpLocal`  L278
+- `int i = this.width`  L308
+- `float f = i`  L309
+- `float f2 = this.currentBitmapWidth`  L310
+- `float f4 = this.totalTranslateX`  L312
+- `float f5 = x - this.lastXMove`  L362
+- `float f6 = y - this.lastYMove`  L364
+- `float f7 = this.totalTranslateX`  L366
+- `float f8 = this.totalTranslateY`  L374
+- `float f9 = this.totalRatio`  L390
+- `float f10 = this.initRatio`  L391
+- `float f11 = this.totalRatio * this.scaledRatio`  L398
+- `float f12 = this.initRatio`  L400
+- `Bitmap bitmap = this.sourceBitmap`  L421
+- `float f = this.lastXImgMove`  L434
+- `float f = this.fZoomProgressRatio`  L489
+- `Matrix matrix = this.matrix`  L499
+- `float f2 = this.totalRatio`  L500
+- `Bitmap bitmap = this.sourceBitmap`  L503
+- `float f`  L515
+- `Matrix matrix = this.matrix`  L520
+- `float f2 = this.totalRatio`  L521
+- `float f3 = this.currentBitmapWidth`  L525
+- `int i = this.width`  L526
+- `float f4 = 0.0f`  L527
+- `float f5 = this.totalTranslateX`  L531
+- `float f6 = this.scaledRatio`  L532
+- `float f7 = this.currentBitmapHeight`  L540
+- `int i2 = this.height`  L541
+- `float f8 = this.totalTranslateY`  L545
+- `float f9 = this.scaledRatio`  L546
+- `Matrix matrix = this.matrix`  L568
+- `float f = this.totalRatio`  L569
+- `float f2 = this.oriTranslateX`  L571
+- `float f3 = this.fBackProgress`  L572
+- `float f4 = f2 + f3`  L573
+- `float f5 = this.totalTranslateX`  L576
+- `float f6 = this.totalTranslateX`  L583
+- `Matrix matrix2 = this.matrix`  L597
+- `float f7 = this.backInitRatio`  L598
+- `int i = this.width`  L604
+- `float f8 = i`  L605
+- `float f9 = this.currentBitmapWidth`  L606
+- `Matrix matrix3 = this.matrix`  L612
+- `float f11 = this.nextInitRatio`  L613
+- `float f = this.totalTranslateX + this.movedDistanceX`  L621
+- `float f2 = this.totalTranslateY + this.movedDistanceY`  L622
+- `Matrix matrix = this.matrix`  L623
+- `float f3 = this.totalRatio`  L624
+- `Bitmap bitmap = this.sourceBitmap`  L629
+- `float f4 = this.totalTranslateX`  L633
+- `int i = this.width`  L634
+- `Matrix matrix2 = this.matrix`  L637
+- `float f5 = this.backInitRatio`  L638
+- `int i2 = this.width`  L641
+- `float f8 = i2`  L644
+- `float f9 = this.currentBitmapWidth`  L645
+- `Bitmap bitmap2 = this.backBitmap`  L653
+- `Matrix matrix3 = this.matrix`  L662
+- `float f10 = this.nextInitRatio`  L663
+- `float f11 = this.currentBitmapWidth`  L667
+- `float f12 = this.totalTranslateX + f11`  L669
+- `int i3 = this.width`  L670
+- `Bitmap bitmap3 = this.nextBitmap`  L677
+- `float f = this.oriTranslateX + this.movedDistanceX`  L691
+- `float f2 = this.oriTranslateY + this.movedDistanceY`  L692
+- `Matrix matrix = this.matrix`  L693
+- `float f3 = this.totalRatio`  L694
+- `float f4 = this.totalTranslateX`  L697
+- `float f5 = this.totalTranslateX`  L712
+- `Matrix matrix2 = this.matrix`  L734
+- `float f6 = this.lastImgRatio`  L735
+- `int i = this.width`  L741
+- `Matrix matrix3 = this.matrix`  L746
+- `float f7 = this.lastImgRatio`  L747
+- `Bitmap bitmap`  L754
+- `float f = this.initRatio`  L758
+- `float f2 = f * 4.0f`  L767
+- `int i = this.width`  L772
+- `int i2 = this.height`  L783
+- `Bitmap bitmap = this.sourceBitmap`  L802
+- `int i = this.width`  L808
+- `float f = width`  L810
+- `float f2 = f * 1.0f`  L811
+- `float f3 = f2 / i`  L812
+- `float f4 = height`  L813
+- `float f5 = 1.0f * f4`  L814
+- `int i2 = this.height`  L815
+- `float f6 = i / f2`  L817
+- `float f7 = i2 / f5`  L822
+- `float f8 = this.initRatio`  L827
+- `Matrix matrix = this.matrix`  L840
+- `float f9 = this.initRatio`  L841
+- `Bitmap bitmap = this.backBitmap`  L851
+- `int i = this.width`  L857
+- `float f = width`  L859
+- `float f2 = f * 1.0f`  L860
+- `float f3 = f2 / i`  L861
+- `float f4 = height`  L862
+- `float f5 = 1.0f * f4`  L863
+- `int i2 = this.height`  L864
+- `float f6 = i / f2`  L866
+- `float f7 = i2 / f5`  L870
+- `Bitmap bitmap = this.nextBitmap`  L887
+- `int i = this.width`  L893
+- `float f = width`  L895
+- `float f2 = f * 1.0f`  L896
+- `float f3 = f2 / i`  L897
+- `float f4 = height`  L898
+- `float f5 = 1.0f * f4`  L899
+- `int i2 = this.height`  L900
+- `float f6 = i / f2`  L902
+- `float f7 = i2 / f5`  L907
+
+方法（27）：
+- `public SwitchImageView(Context context, AttributeSet attrs)`  L103
+- `void run()`  L135 @Override
+- `void run()`  L161 @Override
+- `void run()`  L174 @Override
+- `void updateImageBitmap(Bitmap Curbitmap)`  L197
+- `void updateImageNext(Bitmap nextBitmap)`  L207
+    - 体内字面量："nextBitmap.width = " · "nextBitmap.getHeight = "
+- `void updateImageBack(Bitmap backBitmap)`  L215
+    - 体内字面量："backBitmap.width = " · "backBitmap.getHeight = "
+- `void setImageBitmap(Bitmap Curbitmap, Bitmap Nextbmp, Bitmap bitmap, boolean bVideoOrJPG, boolean bFresh)`  L223
+    - 体内字面量："STATUS_INIT"
+- `void setPlayBtn(ImageView imgPlay)`  L240
+- `void shutHidetoolbarTime()`  L244
+- `void openHidetoolbarTime()`  L248
+- `void onLayout(boolean changed, int left, int top, int right, int bottom)`  L254 @Override
+    - 体内字面量："lastXImgMove = "
+- `void processPressEvent()`  L264
+- `boolean onTouchEvent(MotionEvent event)`  L286 @Override
+    - 体内字面量："event.getActionMasked() = " · "bEnableTouch = "
+- `void onDraw(Canvas canvas)`  L415 @Override
+- `void ShowNormalImage(Canvas canvas)`  L488
+- `void setPageChange(Handler pagehandle, Handler onClickHandle)`  L509
+- `void zoom(Canvas canvas)`  L514
+- `void moveSlowUp(Canvas canvas)`  L561
+- `void move(Canvas canvas)`  L619
+- `void switchImageMove(Canvas canvas)`  L684
+- `void OnDoubleClick()`  L753
+- `void initBitmap(Canvas canvas)`  L801
+- `void backInitBitmap()`  L850
+- `void nextInitBitmap()`  L886
+- `double distanceBetweenFingers(MotionEvent event)`  L921
+- `void centerPointBetweenFingers(MotionEvent event)`  L927

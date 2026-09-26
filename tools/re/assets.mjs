@@ -102,7 +102,7 @@ export function run(app) {
   }
   writeOut(app, 'assets-content.md', [
     header(`${app.label} — assets/ 文本文件全文`, [
-      `内联 ${content.length} 个文本 asset；协议相关的菜单/配置定义是 \`docs/03\` 参数表的一手来源`,
+      `内联 ${content.length} 个文本 asset；协议相关的菜单/配置定义是 \`docs/analysis/protocol-matrix\` 参数表的一手来源`,
     ]),
     ...content,
   ].join('\n'), { docs: content.length <= 60 });

@@ -4,7 +4,7 @@ package com.rovecamlink.app.core.ble
  * iOS Bluetooth LE scaffold. The real implementation needs CoreBluetooth
  * (`CBCentralManager` + a GATT write per command) and, to actually join the
  * hotspot the camera reports, the `NEHotspotConfiguration` entitlement — see
- * docs/07 §3.5. Until then this keeps shared code compiling and the UI honest:
+ * docs/analysis/ble-and-vpn §3.5. Until then this keeps shared code compiling and the UI honest:
  * [BleOutcome.Unsupported] makes the app fall back to "join in Settings, then
  * we adopt that network".
  */

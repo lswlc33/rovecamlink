@@ -1,0 +1,985 @@
+# idGoLive — 类与成员明细：com.icatchtek.pancam.core
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 44 个文件 / 44 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.icatchtek.pancam.core.feature.gles.ICatchPancamGL`
+L18 · [class] public ICatchPancamGL · implements `ICatchIPancamGL` · `com/icatchtek/pancam/core/feature/gles/ICatchPancamGL.java`
+
+字段/常量（4）：
+- `boolean deprecated = false`  L19
+- `int pancamGLID`  L20
+- `ICatchPancamGLTransform pancamGLTransform`  L21
+- `ICatchPancamGLTransform iCatchPancamGLTransform = this.pancamGLTransform`  L54
+
+方法（12）：
+- `public ICatchPancamGL(int i)`  L23
+- `boolean changePanoramaType(int i)`  L28 @Override
+- `boolean clearFormat()`  L33 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+- `void finalize()`  L40
+- `ICatchIPancamGLTransform getPancamGLTransform()`  L50 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+- `boolean init()`  L66 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+- `boolean init(int i)`  L74 @Override
+- `boolean release()`  L79 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+- `void releaseResource()`  L86
+- `boolean removeSurface(int i, ICatchISurfaceContext iCatchISurfaceContext)`  L92 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+- `boolean setFormat(int i, int i2, int i3)`  L100 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+- `boolean setSurface(int i, ICatchISurfaceContext iCatchISurfaceContext)`  L111 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+### `com.icatchtek.pancam.core.feature.gles.ICatchPancamGLTransform`
+L10 · [class] public ICatchPancamGLTransform · implements `ICatchIPancamGLTransform` · `com/icatchtek/pancam/core/feature/gles/ICatchPancamGLTransform.java`
+
+字段/常量（2）：
+- `boolean deprecated = false`  L11
+- `int glTransformID`  L12
+
+方法（10）：
+- `protected ICatchPancamGLTransform(int i)`  L14
+- `void finalize()`  L18
+- `boolean locate(float f)`  L28 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+- `boolean reset()`  L36 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+- `boolean rotate(int i, float f, float f2, float f3, long j)`  L44 @Override
+    - 体内字面量："The deprecated instance, please get new one." · "The rotation not supported now, the degree should matches landscape or portrait."
+- `boolean rotate(ICatchGLPoint iCatchGLPoint, ICatchGLPoint iCatchGLPoint2)`  L64 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+- `boolean scale(float f)`  L72 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+- `boolean scale(float f, float f2)`  L80 @Override
+- `boolean updateAccel(float f, float f2, float f3, long j)`  L85 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+- `boolean updateGyro(float f, float f2, float f3, long j)`  L93 @Override
+    - 体内字面量："The deprecated instance, please get new one."
+### `com.icatchtek.pancam.core.feature.ICatchGLDefaultStreamParam`
+L6 · [class] public ICatchGLDefaultStreamParam · implements `ICatchStreamParam` · `com/icatchtek/pancam/core/feature/ICatchGLDefaultStreamParam.java`
+
+字段/常量（3）：
+- `String streamingParam`  L7
+- `int streamingPort`  L8
+- `int transportType`  L9
+
+方法（9）：
+- `public ICatchGLDefaultStreamParam(int i, String str, int i2)`  L11
+- `int getBitRate()`  L18 @Override
+- `String getCmdLineParam()`  L23 @Override
+- `int getCodec()`  L28 @Override
+- `int getFrameRate()`  L33 @Override
+- `int getHeight()`  L38 @Override
+- `int getTransportType()`  L43 @Override
+- `int getWidth()`  L48 @Override
+- `String toString()`  L52
+    - 体内字面量："NET::" · "USB::"
+### `com.icatchtek.pancam.core.feature.ICatchPancamControl`
+L12 · [class] public ICatchPancamControl · implements `ICatchIPancamControl` · `com/icatchtek/pancam/core/feature/ICatchPancamControl.java`
+
+字段/常量（1）：
+- `int sessionID`  L13
+
+方法（3）：
+- `public ICatchPancamControl(int i)`  L15
+- `void addEventListener(int i, ICatchIPancamListener iCatchIPancamListener)`  L20 @Override
+- `void removeEventListener(int i, ICatchIPancamListener iCatchIPancamListener)`  L25 @Override
+### `com.icatchtek.pancam.core.feature.ICatchPancamImage`
+L18 · [class] public final ICatchPancamImage · implements `ICatchIPancamImage` · `com/icatchtek/pancam/core/feature/ICatchPancamImage.java`
+
+字段/常量（5）：
+- `ICatchPancamGL pancamGL`  L19
+- `int sessionID`  L20
+- `ICatchPancamGL iCatchPancamGL = this.pancamGL`  L43
+- `ICatchPancamGL iCatchPancamGL = this.pancamGL`  L69
+- `ICatchPancamGL iCatchPancamGL = this.pancamGL`  L89
+
+方法（11）：
+- `public ICatchPancamImage(int i)`  L22
+- `boolean clear()`  L27 @Override
+- `ICatchIStreamProvider disableRender()`  L32 @Override
+    - 体内字面量："this operation not supported."
+- `ICatchIPancamGL enableGLRender()`  L37 @Override
+- `ICatchIPancamGL enableGLRender(int i)`  L42 @Override
+- `boolean enableRender(ICatchISurfaceContext iCatchISurfaceContext)`  L67 @Override
+- `void releaseResource()`  L88
+- `boolean update(ICatchGLImage iCatchGLImage)`  L96 @Override
+- `boolean update(ICatchGLImage iCatchGLImage, float f)`  L101 @Override
+    - 体内字面量："The image should not null."
+- `boolean update(ICatchGLImageRaw iCatchGLImageRaw)`  L112 @Override
+- `boolean update(ICatchGLImageRaw iCatchGLImageRaw, float f)`  L117 @Override
+    - 体内字面量："The image should not null."
+### `com.icatchtek.pancam.core.feature.ICatchPancamPreview`
+L39 · [class] public final ICatchPancamPreview · extends `AppFeatureUtils implements ICatchIPancamPreview` · implements `ICatchIPancamPreview` · `com/icatchtek/pancam/core/feature/ICatchPancamPreview.java`
+
+字段/常量（12）：
+- `int sessionID`  L40
+- `ICatchStreamControl streamControl`  L41
+- `ICatchStreamPublish streamPublish`  L42
+- `ICatchStreamStablization streamStablization`  L43
+- `ICatchITransport transport`  L44
+- `ICatchStreamControl iCatchStreamControl = this.streamControl`  L111
+- `ICatchStreamPublish iCatchStreamPublish = this.streamPublish`  L120
+- `ICatchStreamStablization iCatchStreamStablization = this.streamStablization`  L129
+- `ICatchStreamControl iCatchStreamControl = this.streamControl`  L161
+- `ICatchStreamPublish iCatchStreamPublish = this.streamPublish`  L165
+- `ICatchStreamStablization iCatchStreamStablization = this.streamStablization`  L172
+- `ICatchITransport iCatchITransport = this.transport`  L199
+
+方法（18）：
+- `public ICatchPancamPreview(int i, ICatchITransport iCatchITransport)`  L46
+- `ICatchIStreamProvider disableRender()`  L76 @Override
+- `ICatchIPancamGL enableGLRender()`  L87 @Override
+- `ICatchIPancamGL enableGLRender(int i)`  L92 @Override
+- `boolean enableRender(ICatchISurfaceContext iCatchISurfaceContext)`  L103 @Override
+- `ICatchIStreamControl getStreamControl()`  L110 @Override
+- `ICatchIStreamPublish getStreamPublish()`  L119 @Override
+- `ICatchIStreamStablization getStreamStablization()`  L128 @Override
+- `boolean getThumbnail(int i, ICatchFrameBuffer iCatchFrameBuffer, int i2)`  L137 @Override
+- `boolean getThumbnail(ICatchFrameBuffer iCatchFrameBuffer, int i)`  L148 @Override
+- `boolean isStreamingOn()`  L153 @Override
+- `void releaseResource()`  L157
+- `boolean start(ICatchStreamParam iCatchStreamParam)`  L179 @Override
+- `boolean start(ICatchStreamParam iCatchStreamParam, boolean z)`  L184 @Override
+- `boolean start(ICatchStreamParam iCatchStreamParam, boolean z, int i)`  L189 @Override
+- `boolean start(ICatchStreamParam iCatchStreamParam, boolean z, int i, boolean z2, boolean z3)`  L194 @Override
+    - 体内字面量："streamParam should not be null"
+- `boolean stop()`  L210 @Override
+- `boolean stop(int i)`  L215 @Override
+    - 体内字面量："Operation not supported, the next Ops only available in usb scsi mode"
+### `com.icatchtek.pancam.core.feature.ICatchPancamVideoPlayback`
+L40 · [class] public final ICatchPancamVideoPlayback · extends `AppFeatureUtils implements ICatchIPancamVideoPlayback` · implements `ICatchIPancamVideoPlayback` · `com/icatchtek/pancam/core/feature/ICatchPancamVideoPlayback.java`
+
+字段/常量（10）：
+- `int sessionID`  L41
+- `ICatchStreamControl streamControl`  L42
+- `ICatchStreamPublish streamPublish`  L43
+- `ICatchStreamStablization streamStablization`  L44
+- `ICatchITransport transport`  L45
+- `ICatchStreamControl iCatchStreamControl = this.streamControl`  L117
+- `ICatchStreamStablization iCatchStreamStablization = this.streamStablization`  L126
+- `ICatchStreamControl iCatchStreamControl = this.streamControl`  L179
+- `ICatchStreamPublish iCatchStreamPublish = this.streamPublish`  L183
+- `ICatchStreamStablization iCatchStreamStablization = this.streamStablization`  L190
+
+方法（18）：
+- `public ICatchPancamVideoPlayback(int i, ICatchITransport iCatchITransport)`  L47
+- `ICatchIStreamProvider disableRender()`  L77 @Override
+- `ICatchIPancamGL enableGLRender()`  L88 @Override
+- `ICatchIPancamGL enableGLRender(int i)`  L93 @Override
+- `boolean enableRender(ICatchISurfaceContext iCatchISurfaceContext)`  L104 @Override
+- `double getLength()`  L111 @Override
+- `ICatchIStreamControl getStreamControl()`  L116 @Override
+- `ICatchIStreamStablization getStreamStablization()`  L125 @Override
+- `boolean getThumbnail(int i, ICatchFrameBuffer iCatchFrameBuffer, int i2)`  L134 @Override
+- `boolean getThumbnail(ICatchFrameBuffer iCatchFrameBuffer, int i)`  L145 @Override
+- `boolean isStreamingOn()`  L150 @Override
+- `boolean pause()`  L155 @Override
+- `boolean play(ICatchFile iCatchFile, boolean z, boolean z2)`  L160 @Override
+    - 体内字面量："Play file on camera does not support this transport: "
+- `boolean play(ICatchFile iCatchFile, boolean z, boolean z2, double d)`  L168 @Override
+    - 体内字面量："Play file on camera does not support this transport: "
+- `void releaseResource()`  L175
+- `boolean resume()`  L197 @Override
+- `boolean seek(double d)`  L202 @Override
+- `boolean stop()`  L207 @Override
+### `com.icatchtek.pancam.core.feature.stream.ICatchStreamControl`
+L21 · [class] public ICatchStreamControl · implements `ICatchIStreamControl` · `com/icatchtek/pancam/core/feature/stream/ICatchStreamControl.java`
+
+字段/常量（1）：
+- `int streamControlID`  L22
+
+方法（13）：
+- `public ICatchStreamControl(int i)`  L24
+- `boolean addMovieRecordInfo(String str)`  L29 @Override
+- `boolean disableAudio()`  L34 @Override
+- `boolean enableAudio()`  L39 @Override
+- `void finalize()`  L43
+- `List<ICatchImageSize> getSupportedImageSize()`  L53 @Override
+- `void releaseResource()`  L57
+- `boolean setImageSize(ICatchImageSize iCatchImageSize)`  L62 @Override
+- `boolean snapImage(ICatchFrameBuffer iCatchFrameBuffer, int i)`  L67 @Override
+- `boolean snapImage(ICatchFrameBuffer iCatchFrameBuffer, boolean z, int i)`  L72 @Override
+- `boolean startMovieRecord(String str, boolean z)`  L77 @Override
+- `boolean startMovieRecord(String str, boolean z, boolean z2)`  L82 @Override
+- `boolean stopMovieRecord()`  L87 @Override
+### `com.icatchtek.pancam.core.feature.stream.ICatchStreamProvider`
+L21 · [class] public ICatchStreamProvider · implements `ICatchIStreamProvider` · `com/icatchtek/pancam/core/feature/stream/ICatchStreamProvider.java`
+
+字段/常量（1）：
+- `int streamProviderID`  L22
+
+方法（13）：
+- `public ICatchStreamProvider(int i)`  L24
+- `boolean containsAudioStream()`  L29 @Override
+- `boolean containsVideoStream()`  L34 @Override
+- `void finalize()`  L38
+- `ICatchAudioFormat getAudioFormat()`  L48 @Override
+- `List<ICatchAudioFormat> getAudioFormats()`  L53 @Override
+- `boolean getNextAudioFrame(int i, ICatchFrameBuffer iCatchFrameBuffer)`  L58 @Override
+- `boolean getNextAudioFrame(ICatchFrameBuffer iCatchFrameBuffer)`  L69 @Override
+- `boolean getNextVideoFrame(int i, ICatchFrameBuffer iCatchFrameBuffer)`  L74 @Override
+- `boolean getNextVideoFrame(ICatchFrameBuffer iCatchFrameBuffer)`  L85 @Override
+- `ICatchVideoFormat getVideoFormat()`  L90 @Override
+- `List<ICatchVideoFormat> getVideoFormats()`  L95 @Override
+- `void releaseResource()`  L99
+### `com.icatchtek.pancam.core.feature.stream.ICatchStreamPublish`
+L12 · [class] public ICatchStreamPublish · implements `ICatchIStreamPublish` · `com/icatchtek/pancam/core/feature/stream/ICatchStreamPublish.java`
+
+字段/常量（1）：
+- `int streamPublishID`  L13
+
+方法（10）：
+- `public ICatchStreamPublish(int i)`  L15
+- `String createChannel(ICatchGLCredential iCatchGLCredential, String str, String str2, boolean z)`  L20 @Override
+- `void deleteChannel()`  L25 @Override
+- `void finalize()`  L29
+- `boolean isStreamSupportPublish()`  L39 @Override
+- `void releaseResource()`  L43
+- `String startLive()`  L48 @Override
+- `boolean startPublishStreaming(String str)`  L53 @Override
+- `void stopLive()`  L58 @Override
+- `boolean stopPublishStreaming()`  L63 @Override
+### `com.icatchtek.pancam.core.feature.stream.ICatchStreamStablization`
+L10 · [class] public ICatchStreamStablization · implements `ICatchIStreamStablization` · `com/icatchtek/pancam/core/feature/stream/ICatchStreamStablization.java`
+
+字段/常量（2）：
+- `int stablizationID`  L11
+- `String stablizationInfo_Jni`  L38
+
+方法（6）：
+- `public ICatchStreamStablization(int i)`  L13
+- `boolean disableStablization()`  L18 @Override
+- `boolean enableStablization()`  L23 @Override
+- `void finalize()`  L27
+- `ICatchGLStablizationInfo getStablizationInfo()`  L37 @Override
+- `void releaseResource()`  L48
+### `com.icatchtek.pancam.core.feature.type.VrGLStreamSettings`
+L9 · [class] public VrGLStreamSettings · `com/icatchtek/pancam/core/feature/type/VrGLStreamSettings.java`
+
+字段/常量（8）：
+- `String PAN_MINE_CODE_H264 = "video/avc"`  L10
+- `String PAN_MINE_CODE_HEVC = "video/hevc"`  L11
+- `String PAN_MINE_CODE_I420 = "video/raw"`  L12
+- `String PAN_MINE_CODE_JPEG = "video/jpeg"`  L13
+- `String PAN_MINE_CODE_PCM = "audio/raw"`  L14
+- `String PAN_MINE_CODE_RGBA = "video/raw"`  L15
+- `ICatchAudioFormat audioFormat`  L16
+- `ICatchVideoFormat videoFormat`  L17
+
+方法（9）：
+- `public VrGLStreamSettings()`  L19
+- `public VrGLStreamSettings(ICatchAudioFormat iCatchAudioFormat, ICatchVideoFormat iCatchVideoFormat)`  L24
+- `VrGLStreamSettings fromString(String str)`  L29
+    - 体内字面量："audio" · "video"
+- `String getMineType(int i)`  L39
+    - 体内字面量："video/avc" · "video/hevc" · "audio/raw" · "video/raw"
+- `ICatchAudioFormat getAudioFormat()`  L58
+- `ICatchVideoFormat getVideoFormat()`  L62
+- `void setAudioFormat(ICatchAudioFormat iCatchAudioFormat)`  L66
+- `void setVideoFormat(ICatchVideoFormat iCatchVideoFormat)`  L70
+- `String toString()`  L74
+    - 体内字面量："audio" · "video"
+### `com.icatchtek.pancam.core.feature.type.VrGLUsbSettings`
+L8 · [class] public VrGLUsbSettings · `com/icatchtek/pancam/core/feature/type/VrGLUsbSettings.java`
+
+字段/常量（4）：
+- `int bulk`  L9
+- `int fileDescriptor`  L10
+- `int productID`  L11
+- `int vendorID`  L13
+
+方法（10）：
+- `public VrGLUsbSettings(int i, int i2, int i3, int i4)`  L15
+- `VrGLUsbSettings fromString(String str)`  L22
+    - 体内字面量："bulk" · "vendorID" · "fileDescriptor" · "streamingSettings"
+- `int getBulk()`  L39
+- `int getFileDescriptor()`  L43
+- `int getProductID()`  L47
+- `VrGLStreamSettings getStreamSettings()`  L51
+- `int getVendorID()`  L55
+- `void setFileDescriptor(int i)`  L59
+- `void setStreamSettings(VrGLStreamSettings vrGLStreamSettings)`  L63
+- `String toString()`  L67
+    - 体内字面量："bulk" · "vendorID" · "fileDescriptor" · "streamingSettings"
+### `com.icatchtek.pancam.core.feature.utils.AppFeatureUtils`
+L7 · [class] public AppFeatureUtils · `com/icatchtek/pancam/core/feature/utils/AppFeatureUtils.java`
+
+字段/常量（4）：
+- `ICatchPancamGL pancamGL`  L8
+- `ICatchStreamProvider streamProvider`  L9
+- `ICatchPancamGL iCatchPancamGL = this.pancamGL`  L12
+- `ICatchStreamProvider iCatchStreamProvider = this.streamProvider`  L25
+
+方法（3）：
+- `void __reset_gl_feature()`  L11
+- `void __reset_provider_feature()`  L24
+- `void finalize()`  L32
+### `com.icatchtek.pancam.core.jni.extractor.DataTypeUtil`
+L13 · [class] public DataTypeUtil · `com/icatchtek/pancam/core/jni/extractor/DataTypeUtil.java`
+
+字段/常量（21）：
+- `int i = 0`  L54
+- `int i2 = 0`  L55
+- `int i = 255`  L92
+- `int i2 = 44100`  L93
+- `int i3 = 16`  L94
+- `int i4 = 2`  L95
+- `double d = 0.0d`  L128
+- `int i = 0`  L129
+- `int i2 = 0`  L130
+- `String str3 = "<binary/metadata>"`  L160
+- `int i = 255`  L161
+- `int i2 = 0`  L162
+- `int i3 = 0`  L163
+- `int i4 = 0`  L164
+- `int i5 = 0`  L165
+- `int i6 = 0`  L166
+- `int i7 = 0`  L167
+- `float f = 0.0f`  L216
+- `float f2 = 0.0f`  L217
+- `float f3 = 0.0f`  L218
+- `float f4 = 0.0f`  L219
+
+方法（12）：
+- `List<Integer> splitStringToIntList(String str)`  L14
+    - 体内字面量：";"
+- `List<String> splitStringToStringList(String str)`  L26
+    - 体内字面量：";"
+- `List<ICatchVideoFormat> splitStringToVideoFormatList(String str)`  L38
+    - 体内字面量：";"
+- `ICatchImageSize toImageSize(String str)`  L52
+    - 体内字面量："DtaTypeUtil" · "toImageSize: "
+- `List<ICatchImageSize> toImageSizes(String str)`  L76
+    - 体内字面量：";"
+- `ICatchAudioFormat toPartialAudioFormat(String str)`  L87
+    - 体内字面量："DtaTypeUtil" · "value: "
+- `PartialFrameInfo toPartialFrameInfo(String str)`  L124
+- `ICatchVideoFormat toPartialVideoFormat(String str)`  L151
+    - 体内字面量：";"
+- `ICatchVideoFormat toPartialVideoFormat(String str, String str2)`  L155
+    - 体内字面量："DtaTypeUtil" · "value: "
+- `ICatchGLStablizationInfo toStablizationInfo(String str)`  L212
+- `ICatchVideoFormat toVideoFormat(String str)`  L243
+    - 体内字面量：","
+- `String toVideoFormat(ICatchVideoFormat iCatchVideoFormat)`  L247
+    - 体内字面量："mineType=" · ",codec=" · ",videoW=" · ",videoH=" · ",bitrate=" · ",durationUs=" · ",maxInputSize=" · ","
+### `com.icatchtek.pancam.core.jni.extractor.ExceptionErr`
+L4 · [class] public ExceptionErr · `com/icatchtek/pancam/core/jni/extractor/ExceptionErr.java`
+
+字段/常量（73）：
+- `int ICH_ALREADY_INIT = -221`  L5
+- `int ICH_AUDIO_STREAM_CLOSED = -91`  L6
+- `int ICH_BUF_TOO_SMALL = -7`  L7
+- `int ICH_CALLBACK_EXISTS = -40`  L8
+- `int ICH_DEVICE_BUSY = -1`  L9
+- `int ICH_DEVICE_ERROR = -2`  L10
+- `int ICH_ERROR_ACCESS = -22`  L11
+- `int ICH_ERROR_BUSY = -25`  L12
+- `int ICH_ERROR_INTERRUPTED = -29`  L13
+- `int ICH_ERROR_INVALID_DEVICE = -30`  L14
+- `int ICH_ERROR_INVALID_MODE = -31`  L15
+- `int ICH_ERROR_IO = -21`  L16
+- `int ICH_ERROR_NOT_FOUND = -24`  L17
+- `int ICH_ERROR_NO_DEVICE = -23`  L18
+- `int ICH_ERROR_OVERFLOW = -27`  L19
+- `int ICH_ERROR_PIPE = -28`  L20
+- `int ICH_ERROR_TIMEOUT = -26`  L21
+- `int ICH_FILE_NOT_FOUND = -9`  L22
+- `int ICH_FORMAT_NOT_SPECIFIED = -217`  L23
+- `int ICH_FORMAT_NOT_SUPPORTED = -216`  L24
+- `int ICH_INVALID_ARGUMENT = -12`  L25
+- `int ICH_INVALID_SESSION = -11`  L26
+- `int ICH_JNI_EXP = -41`  L27
+- `int ICH_LISTENER_EXISTS = -60`  L28
+- `int ICH_LISTENER_NOT_EXISTS = -61`  L29
+- `int ICH_MUXER_ALREADY_STARTED = -110`  L30
+- `int ICH_MUXER_NOT_STARTED = -112`  L31
+- `int ICH_MUXER_START_FAILED = -111`  L32
+- `int ICH_MUXER_WAITING_KEY_FRAME = -113`  L33
+- `int ICH_NOT_IMPLEMENTED = -4`  L34
+- `int ICH_NOT_INIT = -220`  L35
+- `int ICH_NOT_SUPPORTED = -3`  L36
+- `int ICH_NO_USB_ENDPOINT = -43`  L37
+- `int ICH_NO_USB_FRAME_INFO = -44`  L38
+- `int ICH_NO_USB_INTERFACE = -42`  L39
+- `int ICH_NO_USB_STREAM = -45`  L40
+- `int ICH_OPEN_FAIL = -120`  L41
+- `int ICH_OUT_OF_MEMORY = -8`  L42
+- `int ICH_PATH_NOT_FOUND = -10`  L43
+- `int ICH_PAUSE_FAILED = -72`  L44
+- `int ICH_PB_CACHING = -82`  L45
+- `int ICH_PB_MEM_FULL = -81`  L46
+- `int ICH_PB_PLAY_END = -83`  L47
+- `int ICH_PB_STREAM_PAUSED = -84`  L48
+- `int ICH_PERMISSION_DENIED = -5`  L49
+- `int ICH_PICTURE_NOT_SPECIFIED = -218`  L50
+- `int ICH_PTP_INIT_FAILED = -101`  L51
+- `int ICH_PUBLISH_ALREADY_START = -103`  L52
+- `int ICH_PUBLISH_ALREADY_STOP = -104`  L53
+- `int ICH_RENDER_ALREADY_INIT = -211`  L54
+- `int ICH_RENDER_ALREADY_STARTED = -213`  L55
+- `int ICH_RENDER_NOT_INIT = -210`  L56
+- `int ICH_RENDER_NOT_STARTED = -212`  L57
+- `int ICH_RESOURCE_NOT_READY = -202`  L58
+- `int ICH_RESUME_FAILED = -73`  L59
+- `int ICH_SEEK_FAILED = -71`  L60
+- `int ICH_SESSION_EXISTS = -203`  L61
+- `int ICH_SESSION_NOT_EXISTS = -204`  L62
+- `int ICH_SESSION_PASSWORD_ERR = -100`  L63
+- `int ICH_SOCKET_ERROR = -13`  L64
+- `int ICH_SPHERE_TYPE_NOT_SUPPORTED = -219`  L65
+- `int ICH_STREAM_ALREADY_STARTED = -206`  L66
+- `int ICH_STREAM_NOT_RUNNING = -92`  L67
+- `int ICH_STREAM_NOT_SUPPORT = -93`  L68
+- `int ICH_STREAM_PLAYING_ENDED = -205`  L69
+- `int ICH_SURFACE_ALREADY_SET = -215`  L70
+- `int ICH_SURFACE_NOT_SET = -214`  L71
+- `int ICH_TRANSPORT_ERROR = -207`  L72
+- `int ICH_TRY_AGAIN = -6`  L73
+- `int ICH_UNKNOWN_ERROR = -255`  L74
+- `int ICH_VIDEO_STREAM_CLOSED = -90`  L75
+- `int ICH_WAIT_TIME_OUT = -102`  L76
+- `int ICH_WIFI_DISCONNECTED = -14`  L77
+### `com.icatchtek.pancam.core.jni.extractor.ExceptionMsg`
+L4 · [class] public ExceptionMsg · `com/icatchtek/pancam/core/jni/extractor/ExceptionMsg.java`
+
+字段/常量（73）：
+- `String ICH_ALREADY_INIT_MSG = "already init"`  L5
+- `String ICH_AUDIO_STREAM_CLOSED_MSG = "audio stream closed"`  L6
+- `String ICH_BUF_TOO_SMALL_MSG = "buffer too small"`  L7
+- `String ICH_CALLBACK_EXISTS_MSG = "call back exception"`  L8
+- `String ICH_DEVICE_BUSY_MSG = "device busy"`  L9
+- `String ICH_DEVICE_ERROR_MSG = "device error"`  L10
+- `String ICH_ERROR_ACCESS_MSG = "access denied"`  L11
+- `String ICH_ERROR_BUSY_MSG = "device or resource busy"`  L12
+- `String ICH_ERROR_INTERRUPTED_MSG = "operation interrupted"`  L13
+- `String ICH_ERROR_INVALID_DEVICE_MSG = "invalid device"`  L14
+- `String ICH_ERROR_INVALID_MODE_MSG = "invalid mode"`  L15
+- `String ICH_ERROR_IO_MSG = "io failed"`  L16
+- `String ICH_ERROR_NOT_FOUND_MSG = "device not found"`  L17
+- `String ICH_ERROR_NO_DEVICE_MSG = "no such device"`  L18
+- `String ICH_ERROR_OVERFLOW_MSG = "memory or resource overflow"`  L19
+- `String ICH_ERROR_PIPE_MSG = "pipe error"`  L20
+- `String ICH_ERROR_TIMEOUT_MSG = "operation timeout"`  L21
+- `String ICH_FILE_NOT_FOUND_MSG = "file not found"`  L22
+- `String ICH_FORMAT_NOT_SPECIFIED_MSG = "format not specified"`  L23
+- `String ICH_FORMAT_NOT_SUPPORTED_MSG = "format not supported"`  L24
+- `String ICH_INVALID_ARGUMENT_MSG = "invalid argument"`  L25
+- `String ICH_INVALID_SESSION_MSG = "invalid session"`  L26
+- `String ICH_JNI_EXP_MSG = "native (java) operation failed"`  L27
+- `String ICH_LISTENER_EXISTS_MSG = "listener exists"`  L28
+- `String ICH_LISTENER_NOT_EXISTS_MSG = "listener not exists"`  L29
+- `String ICH_MUXER_ALREADY_STARTED_MSG = "muxer already started"`  L30
+- `String ICH_MUXER_NOT_STARTED_MSG = "muxer not started"`  L31
+- `String ICH_MUXER_START_FAILED_MSG = "muxer start failed"`  L32
+- `String ICH_MUXER_WAITING_KEY_FRAME_MSG = "muxer waiting key frame"`  L33
+- `String ICH_NOT_IMPLEMENTED_MSG = "not implemented"`  L34
+- `String ICH_NOT_INIT_MSG = "not init"`  L35
+- `String ICH_NOT_SUPPORTED_MSG = "not supported"`  L36
+- `String ICH_NO_USB_ENDPOINT_MSG = "no such usb endpoint"`  L37
+- `String ICH_NO_USB_FRAME_INFO_MSG = "usb frame info error"`  L38
+- `String ICH_NO_USB_INTERFACE_MSG = "no such usb interface"`  L39
+- `String ICH_NO_USB_STREAM_MSG = "usb stream error"`  L40
+- `String ICH_OPEN_FAIL_MSG = "open failed"`  L41
+- `String ICH_OUT_OF_MEMORY_MSG = "out of memory"`  L42
+- `String ICH_PATH_NOT_FOUND_MSG = "path not found"`  L43
+- `String ICH_PAUSE_FAILED_MSG = "pause failed"`  L44
+- `String ICH_PB_CACHING_MSG = "playback caching"`  L45
+- `String ICH_PB_MEM_FULL_MSG = "playback memory full"`  L46
+- `String ICH_PB_PLAY_END_MSG = "playback ended"`  L47
+- `String ICH_PB_STREAM_PAUSED_MSG = "playback stream paused"`  L48
+- `String ICH_PERMISSION_DENIED_MSG = "permission denied"`  L49
+- `String ICH_PICTURE_NOT_SPECIFIED_MSG = "picture not specified"`  L50
+- `String ICH_PTP_INIT_FAILED_MSG = "setup ptp connection failed"`  L51
+- `String ICH_PUBLISH_ALREADY_START_MSG = "publish already started"`  L52
+- `String ICH_PUBLISH_ALREADY_STOP_MSG = "publish already stopped"`  L53
+- `String ICH_RENDER_ALREADY_INIT_MSG = "render already init"`  L54
+- `String ICH_RENDER_ALREADY_STARTED_MSG = "render already started"`  L55
+- `String ICH_RENDER_NOT_INIT_MSG = "render not init"`  L56
+- `String ICH_RENDER_NOT_STARTED_MSG = "render not started"`  L57
+- `String ICH_RESOURCE_NOT_READY_MSG = "resource not ready"`  L58
+- `String ICH_RESUME_FAILED_MSG = "resume failed"`  L59
+- `String ICH_SEEK_FAILED_MSG = "seek failed"`  L60
+- `String ICH_SESSION_EXISTS_MSG_MSG = "session exists"`  L61
+- `String ICH_SESSION_NOT_EXISTS_MSG = "session not exists"`  L62
+- `String ICH_SESSION_PASSWORD_ERR_MSG = "session's password not correct"`  L63
+- `String ICH_SOCKET_ERROR_MSG = "socket error"`  L64
+- `String ICH_SPHERE_TYPE_NOT_SUPPORTED_MSG = "sphere type not supported"`  L65
+- `String ICH_STREAM_ALREADY_STARTED_MSG = "stream already started"`  L66
+- `String ICH_STREAM_NOT_RUNNING_MSG = "stream not running"`  L67
+- `String ICH_STREAM_NOT_SUPPORT_MSG = "stream not supported"`  L68
+- `String ICH_STREAM_PLAYING_ENDED_MSG = "stream playing ended"`  L69
+- `String ICH_SURFACE_ALREADY_SET_MSG = "surface already set"`  L70
+- `String ICH_SURFACE_NOT_SET_MSG = "surface not set"`  L71
+- `String ICH_TRANSPORT_ERROR_MSG = "transport error"`  L72
+- `String ICH_TRY_AGAIN_MSG = "try again"`  L73
+- `String ICH_UNKNOWN_ERROR_MSG = "unknown error"`  L74
+- `String ICH_VIDEO_STREAM_CLOSED_MSG = "video stream closed"`  L75
+- `String ICH_WAIT_TIME_OUT_MSG = "wait timeout"`  L76
+- `String ICH_WIFI_DISCONNECTED_MSG = "connection disconnected(wifi)"`  L77
+### `com.icatchtek.pancam.core.jni.extractor.ExceptionUtil`
+L7 · [class] public ExceptionUtil · `com/icatchtek/pancam/core/jni/extractor/ExceptionUtil.java`
+
+字段/常量（2）：
+- `Map<Integer, String> innerMsgMapping`  L8
+- `Map<Integer, String> map = innerMsgMapping`  L14
+
+方法（2）：
+- `String getErrorMessage(int i)`  L10
+- `void initMsgMapping()`  L22
+    - 体内字面量："device busy" · "device error" · "not supported" · "not implemented" · "permission denied" · "try again" · "buffer too small" · "out of memory" · "file not found" · "path not found" · "invalid session" · "invalid argument" · "socket error" · "connection disconnected(wifi)" · "io failed" · "access denied" · "no such device" · "device not found" · "device or resource busy" · "operation timeout" · "memory or resource overflow" · "pipe error" · "operation interrupted" · "invalid device" · "invalid mode" · "call back exception" · "native (java) operation failed" · "no such usb interface" · "no such usb endpoint" · "usb frame info error" · "usb stream error" · "listener exists" · "listener not exists" · "seek failed" · "pause failed" · "resume failed" · "playback memory full" · "playback caching" · "playback ended" · "playback stream paused" · "video stream closed" · "audio stream closed" · "stream not running" · "stream not supported" · "session's password not correct" · "setup ptp connection failed" · "wait timeout" · "publish already started" · "publish already stopped" · "muxer already started" · "muxer start failed" · "muxer not started" · "muxer waiting key frame" · "open failed" · "resource not ready" · "session exists" · "session not exists" · "stream playing ended" · "stream already started" · "transport error" · "render not init" · "render already init" · "render not started" · "render already started" · "surface not set" · "surface already set" · "format not supported" · "format not specified" · "picture not specified" · "sphere type not supported" · "not init" · "already init" · "unknown error"
+### `com.icatchtek.pancam.core.jni.extractor.NativeValueExtractor`
+L48 · [class] public NativeValueExtractor · `com/icatchtek/pancam/core/jni/extractor/NativeValueExtractor.java`
+
+方法（6）：
+- `void errorToException(int i)`  L49
+    - 体内字面量："error Exception mapping" · "unknown errorID: "
+- `boolean extractNativeBoolValue(String str)`  L161
+    - 体内字面量："RET_ERR" · "RET_BOOL" · "NativeValueExtractor" · "Fatal error, invalid data from jni layer."
+- `double extractNativeDoubleValue(String str)`  L172
+    - 体内字面量："RET_ERR" · "RET_DOUBLE" · "NativeValueExtractor" · "Fatal error, invalid data from jni layer. "
+- `int extractNativeIntValue(String str)`  L183
+    - 体内字面量："RET_ERR" · "RET_INT" · "NativeValueExtractor" · "Fatal error, invalid data from jni layer."
+- `long extractNativeLongValue(String str)`  L194
+    - 体内字面量："RET_ERR" · "RET_LONG" · "NativeValueExtractor" · "Fatal error, invalid data from jni layer."
+- `String extractNativeStringValue(String str)`  L205
+    - 体内字面量："RET_ERR" · "RET_STRING" · "NativeValueExtractor" · "Fatal error, invalid data from jni layer."
+### `com.icatchtek.pancam.core.jni.extractor.NativeValueTag`
+L4 · [class] public NativeValueTag · `com/icatchtek/pancam/core/jni/extractor/NativeValueTag.java`
+
+字段/常量（7）：
+- `String RETURN_BOOL_TAG = "RET_BOOL"`  L5
+- `String RETURN_DOUBLE_TAG = "RET_DOUBLE"`  L6
+- `String RETURN_ERR_TAG = "RET_ERR"`  L7
+- `String RETURN_INT_TAG = "RET_INT"`  L8
+- `String RETURN_LONG_TAG = "RET_LONG"`  L9
+- `String RETURN_STRING_TAG = "RET_STRING"`  L10
+- `String SEPARATOR_TAG = "::"`  L11
+### `com.icatchtek.pancam.core.jni.extractor.NativeValueUtil`
+L6 · [class] public NativeValueUtil · `com/icatchtek/pancam/core/jni/extractor/NativeValueUtil.java`
+
+方法（6）：
+- `boolean getBoolValue(String str)`  L7
+    - 体内字面量："::" · "RET_BOOL"
+- `double getDoubleValue(String str)`  L12
+    - 体内字面量："::" · "RET_DOUBLE"
+- `int getErrValue(String str)`  L20
+    - 体内字面量："::" · "RET_ERR"
+- `int getIntValue(String str)`  L28
+    - 体内字面量："::" · "RET_INT"
+- `long getLongValue(String str)`  L36
+    - 体内字面量："::" · "RET_LONG"
+- `String getStringValue(String str)`  L44
+    - 体内字面量："::" · "RET_STRING"
+### `com.icatchtek.pancam.core.jni.extractor.PartialFrameInfo`
+L4 · [class] public PartialFrameInfo · `com/icatchtek/pancam/core/jni/extractor/PartialFrameInfo.java`
+
+字段/常量（3）：
+- `int codec`  L5
+- `int frameSize`  L6
+- `double presentationTime`  L7
+
+方法（7）：
+- `int getCodec()`  L9
+- `int getFrameSize()`  L13
+- `double getPresentationTime()`  L17
+- `void setCodec(int i)`  L21
+- `void setFrameSize(int i)`  L25
+- `void setPresentationTime(double d)`  L29
+- `String toString()`  L33
+    - 体内字面量："codec: " · ";frameSize: " · ";presentationTime: " · ";"
+### `com.icatchtek.pancam.core.jni.JPancamConfig`
+L8 · [class] public JPancamConfig · `com/icatchtek/pancam/core/jni/JPancamConfig.java`
+
+方法（20）：
+- `String disableDumpTransportStream(boolean z)`  L13
+- `boolean disableDumpTransportStream_Jni(boolean z)`  L15
+- `String disableRTPOverTCP()`  L24
+- `boolean disableRTPOverTCP_Jni()`  L26
+- `String enableDumpTransportStream(boolean z, String str)`  L35
+- `boolean enableDumpTransportStream_Jni(boolean z, String str)`  L37
+- `String enableRTPOverTCP()`  L46
+- `boolean enableRTPOverTCP_Jni()`  L48
+- `String getExtHeadCheck()`  L57
+- `boolean getExtHeadCheck_jni()`  L59
+- `String getPreviewCacheTime()`  L68
+- `int getPreviewCacheTime_Jni()`  L70
+- `void setExtHeadCheck(boolean z)`  L79
+- `void setExtHeadCheck_Jni(boolean z)`  L81
+- `String setOutputCodec(int i, int i2)`  L85
+- `boolean setOutputCodec_Jni(int i, int i2)`  L87
+- `String setPreviewCacheParam(int i, int i2)`  L96
+- `boolean setPreviewCacheParam_Jni(int i, int i2)`  L98
+- `String setSoftwareDecoder(boolean z)`  L107
+- `boolean setSoftwareDecoder_Jni(boolean z)`  L109
+### `com.icatchtek.pancam.core.jni.JPancamControl`
+L10 · [class] public JPancamControl · `com/icatchtek/pancam/core/jni/JPancamControl.java`
+
+方法（4）：
+- `String addEventListener(int i, int i2, CoreEventListener coreEventListener, int i3)`  L15
+- `boolean addEventListener_Jni(int i, int i2, CoreEventListener coreEventListener, int i3)`  L17
+- `String removeEventListener(int i, int i2, int i3)`  L30
+- `boolean removeEventListener_Jni(int i, int i2, int i3)`  L32
+### `com.icatchtek.pancam.core.jni.JPancamGL`
+L13 · [class] public JPancamGL · `com/icatchtek/pancam/core/jni/JPancamGL.java`
+
+方法（20）：
+- `String changePanoramaType(int i, int i2)`  L18
+- `boolean changePanoramaType_Jni(int i, int i2)`  L20
+- `String clearFormat(int i)`  L35
+- `boolean clearFormat_Jni(int i)`  L37
+- `String getPancamGLStablization(int i)`  L48
+- `int getPancamGLStablization_Jni(int i)`  L50
+- `String getPancamGLTransport(int i)`  L59
+- `int getPancamGLTransport_Jni(int i)`  L61
+- `String init(int i)`  L70
+- `boolean init_Jni(int i)`  L72
+- `String release(int i)`  L85
+- `boolean release_Jni(int i)`  L87
+- `String removeGL(int i)`  L98
+- `boolean removeGL_Jni(int i)`  L100
+- `String removeSurface(int i, int i2, int i3)`  L109
+- `boolean removeSurface_Jni(int i, int i2, int i3)`  L111
+- `String setFormat(int i, int i2, int i3, int i4)`  L124
+- `boolean setFormat_Jni(int i, int i2, int i3, int i4)`  L126
+- `String setSurface(int i, int i2, int i3)`  L139
+- `boolean setSurface_Jni(int i, int i2, int i3)`  L141
+### `com.icatchtek.pancam.core.jni.JPancamGLTransform`
+L7 · [class] public JPancamGLTransform · `com/icatchtek/pancam/core/jni/JPancamGLTransform.java`
+
+方法（16）：
+- `String locate(int i, float f)`  L12
+- `boolean locate_Jni(int i, float f)`  L14
+- `String removeGLTransform(int i)`  L25
+- `boolean removeGLTransform_Jni(int i)`  L27
+- `String reset(int i)`  L36
+- `boolean reset_Jni(int i)`  L38
+- `String rotateA(int i, float f, float f2, float f3, float f4)`  L47
+- `String rotateB(int i, int i2, float f, float f2, float f3, long j)`  L49
+- `boolean rotate_Jni(int i, float f, float f2, float f3, float f4)`  L51
+- `boolean rotate_Jni(int i, int i2, float f, float f2, float f3, long j)`  L62
+- `String scale(int i, float f)`  L73
+- `boolean scale_Jni(int i, float f)`  L75
+- `String updateAccel(int i, float f, float f2, float f3, long j)`  L86
+- `boolean updateAccel_Jni(int i, float f, float f2, float f3, long j)`  L88
+- `String updateGyro(int i, float f, float f2, float f3, long j)`  L99
+- `boolean updateGyro_Jni(int i, float f, float f2, float f3, long j)`  L101
+### `com.icatchtek.pancam.core.jni.JPancamImage`
+L8 · [class] public JPancamImage · `com/icatchtek/pancam/core/jni/JPancamImage.java`
+
+方法（8）：
+- `String clear(int i)`  L13
+- `boolean clear_Jni(int i)`  L15
+- `String enableGLRender(int i, int i2)`  L24
+- `int enableGLRender_Jni(int i, int i2)`  L26
+- `String enableRender(int i, int i2)`  L39
+- `boolean enableRender_Jni(int i, int i2)`  L41
+- `String update(int i, int i2, int i3, int i4, byte[] bArr, int i5, float f)`  L54
+- `boolean update_Jni(int i, int i2, int i3, int i4, byte[] bArr, int i5, float f)`  L56
+### `com.icatchtek.pancam.core.jni.JPancamInfo`
+L6 · [class] public JPancamInfo · `com/icatchtek/pancam/core/jni/JPancamInfo.java`
+
+方法（2）：
+- `String getSDKVersion()`  L11
+- `String getSDKVersion_Jni()`  L13
+### `com.icatchtek.pancam.core.jni.JPancamLog`
+L4 · [class] public JPancamLog · `com/icatchtek/pancam/core/jni/JPancamLog.java`
+
+方法（7）：
+- `void setDebugMode(boolean z)`  L9
+- `void setFileLogOutput(boolean z)`  L11
+- `void setFileLogPath(String str)`  L13
+- `void setLog(int i, boolean z)`  L15
+- `void setLogLevel(int i, int i2)`  L17
+- `void setSystemLogOutput(boolean z)`  L19
+- `void writeLog(int i, String str, String str2)`  L21
+### `com.icatchtek.pancam.core.jni.JPancamPreview`
+L15 · [class] public JPancamPreview · `com/icatchtek/pancam/core/jni/JPancamPreview.java`
+
+方法（24）：
+- `String disableRender(int i)`  L20
+- `int disableRender_Jni(int i)`  L22
+- `String enableGLRender(int i, int i2)`  L35
+- `int enableGLRender_Jni(int i, int i2)`  L37
+- `String enableRender(int i, int i2)`  L50
+- `boolean enableRender_Jni(int i, int i2)`  L52
+- `String getStreamControl(int i)`  L67
+- `int getStreamControl_Jni(int i)`  L69
+- `String getStreamPublish(int i)`  L84
+- `int getStreamPublish_Jni(int i)`  L86
+- `String getStreamStablization(int i)`  L101
+- `int getStreamStablization_Jni(int i)`  L103
+- `String getThumbnail(int i, int i2, byte[] bArr, int i3)`  L118
+- `String getThumbnail_Jni(int i, int i2, byte[] bArr, int i3)`  L120
+- `String isStreamingOn(int i)`  L139
+- `boolean isStreamingOn_Jni(int i)`  L141
+- `String setPreviewParam(int i, int i2, boolean z)`  L154
+- `boolean setPreviewParam_Jni(int i, int i2, boolean z)`  L156
+- `String start(int i, String str, boolean z, int i2, boolean z2, boolean z3)`  L165
+- `boolean start_Jni(int i, String str, boolean z, int i2, boolean z2, boolean z3)`  L167
+- `String stop(int i)`  L184
+- `String stopScsiStream(int i, int i2)`  L186
+- `boolean stop_Jni(int i)`  L188
+- `boolean stop_Jni(int i, int i2)`  L201
+### `com.icatchtek.pancam.core.jni.JPancamSession`
+L12 · [class] public JPancamSession · `com/icatchtek/pancam/core/jni/JPancamSession.java`
+
+方法（14）：
+- `String addEventListener(int i, CoreEventListener coreEventListener, int i2, boolean z)`  L17
+- `boolean addEventListener_Jni(int i, CoreEventListener coreEventListener, int i2, boolean z)`  L19
+- `String createSession()`  L30
+- `int createSession_Jni()`  L32
+- `String deleteSession(int i)`  L41
+- `boolean deleteSession_Jni(int i)`  L43
+- `String destroySession(int i)`  L52
+- `boolean destroySession_Jni(int i)`  L54
+- `String prepareSessionNET(int i, String str, String str2, int i2, int i3, int i4, int i5, float f, float f2)`  L65
+- `String prepareSessionUVC(int i, boolean z, int i2, int i3, int i4, int i5, int i6, int i7, int i8, float f, float f2)`  L67
+- `boolean prepareSession_Jni(int i, String str, String str2, ICatchGLColor iCatchGLColor, ICatchGLDisplayPPI iCatchGLDisplayPPI)`  L69
+- `boolean prepareSession_Jni(int i, boolean z, int i2, int i3, int i4, ICatchGLColor iCatchGLColor, ICatchGLDisplayPPI iCatchGLDisplayPPI)`  L78
+- `String removeEventListener(int i, int i2, boolean z)`  L87
+- `boolean removeEventListener_Jni(int i, int i2, boolean z)`  L89
+### `com.icatchtek.pancam.core.jni.JPancamVideoPlayback`
+L19 · [class] public JPancamVideoPlayback · `com/icatchtek/pancam/core/jni/JPancamVideoPlayback.java`
+
+方法（28）：
+- `String disableRender(int i)`  L24
+- `int disableRender_Jni(int i)`  L26
+- `String enableGLRender(int i, int i2)`  L39
+- `int enableGLRender_Jni(int i, int i2)`  L41
+- `String enableRender(int i, int i2)`  L54
+- `boolean enableRender_Jni(int i, int i2)`  L56
+- `String getLength(int i)`  L71
+- `double getLength_Jni(int i)`  L73
+- `String getStreamControl(int i)`  L86
+- `int getStreamControl_Jni(int i)`  L88
+- `String getStreamPublish(int i)`  L103
+- `int getStreamPublish_Jni(int i)`  L105
+- `String getStreamStablization(int i)`  L120
+- `int getStreamStablization_Jni(int i)`  L122
+- `String getThumbnail(int i, int i2, byte[] bArr, int i3)`  L137
+- `String getThumbnail_Jni(int i, int i2, byte[] bArr, int i3)`  L139
+- `String isStreamingOn(int i)`  L158
+- `boolean isStreamingOn_Jni(int i)`  L160
+- `String pause(int i)`  L173
+- `boolean pause_Jni(int i)`  L175
+- `String play(int i, String str, double d, boolean z, boolean z2)`  L192
+- `boolean play_Jni(int i, String str, double d, boolean z, boolean z2)`  L194
+- `String resume(int i)`  L209
+- `boolean resume_Jni(int i)`  L211
+- `String seek(int i, double d)`  L228
+- `boolean seek_Jni(int i, double d)`  L230
+- `String stop(int i)`  L247
+- `boolean stop_Jni(int i)`  L249
+    - 体内字面量："video_pb" · "after jni stop, return str: "
+### `com.icatchtek.pancam.core.jni.JStreamControl`
+L19 · [class] public JStreamControl · `com/icatchtek/pancam/core/jni/JStreamControl.java`
+
+方法（18）：
+- `String addMovieRecordInfo(int i, String str)`  L24
+- `boolean addMovieRecordInfo_Jni(int i, String str)`  L26
+- `String disableAudio(int i)`  L41
+- `boolean disableAudio_Jni(int i)`  L43
+- `String enableAudio(int i)`  L56
+- `boolean enableAudio_Jni(int i)`  L58
+- `String getSupportedImageSizes(int i)`  L71
+- `List<ICatchImageSize> getSupportedImageSizes_Jni(int i)`  L73
+- `String removeStreamControl(int i)`  L89
+- `boolean removeStreamControl_Jni(int i)`  L91
+- `String setImageSize(int i, int i2, int i3)`  L100
+- `boolean setImageSize_Jni(int i, ICatchImageSize iCatchImageSize)`  L102
+- `String snapImage(int i, byte[] bArr, boolean z, int i2)`  L120
+- `boolean snapImage_Jni(int i, ICatchFrameBuffer iCatchFrameBuffer, boolean z, int i2)`  L122
+- `String startMovieRecord(int i, String str, boolean z, boolean z2)`  L145
+- `boolean startMovieRecord_Jni(int i, String str, boolean z, boolean z2)`  L147
+- `String stopMovieRecord(int i)`  L166
+- `boolean stopMovieRecord_Jni(int i)`  L168
+### `com.icatchtek.pancam.core.jni.JStreamProvider`
+L19 · [class] public JStreamProvider · `com/icatchtek/pancam/core/jni/JStreamProvider.java`
+
+字段/常量（2）：
+- `byte[] bArr = new byte[255]`  L25
+- `byte[] bArr2 = new byte[255]`  L26
+
+方法（20）：
+- `boolean __fill_video_csd_info(int i, int i2, ICatchVideoFormat iCatchVideoFormat)`  L24
+- `String containsAudioStream(int i)`  L52
+- `boolean containsAudioStream_Jni(int i)`  L54
+- `String containsVideoStream(int i)`  L69
+- `boolean containsVideoStream_Jni(int i)`  L71
+- `String getAudioFormat(int i, int i2)`  L86
+- `ICatchAudioFormat getAudioFormat_Jni(int i, int i2)`  L88
+- `List<ICatchAudioFormat> getAudioFormats_Jni(int i)`  L107
+- `String getNextAudioFrame(int i, int i2, byte[] bArr)`  L128
+- `String getNextAudioFrame_Jni(int i, int i2, byte[] bArr)`  L130
+- `String getNextVideoFrame(int i, int i2, byte[] bArr)`  L151
+- `String getNextVideoFrame_Jni(int i, int i2, byte[] bArr)`  L153
+- `String getVideoFormat(int i, int i2)`  L174
+- `String getVideoFormatCsdA(int i, int i2, byte[] bArr)`  L176
+- `String getVideoFormatCsdB(int i, int i2, byte[] bArr)`  L178
+- `ICatchVideoFormat getVideoFormat_Jni(int i, int i2)`  L180
+    - 体内字面量："__flow_debug__" · "getVideoFormat 1." · "__flow_debug__" · "getVideoFormat 1." · "__flow_debug__" · "getVideoFormat extract." · "__flow_debug__" · "getVideoFormat extract."
+- `String getVideoFormats(int i)`  L205
+- `List<ICatchVideoFormat> getVideoFormats_Jni(int i)`  L207
+    - 体内字面量："##"
+- `String removeStreamProvider(int i)`  L231
+- `boolean removeStreamProvider_Jni(int i)`  L233
+### `com.icatchtek.pancam.core.jni.JStreamPublish`
+L11 · [class] public JStreamPublish · `com/icatchtek/pancam/core/jni/JStreamPublish.java`
+
+方法（16）：
+- `String createChannel(int i, String str, String str2, String str3, boolean z)`  L12
+- `String createChannel_Jni(int i, ICatchGLCredential iCatchGLCredential, String str, String str2, boolean z)`  L14
+- `String deleteChannel(int i)`  L23
+- `void deleteChannel_Jni(int i)`  L25
+- `String isStreamSupportPublish(int i)`  L33
+- `boolean isStreamSupportPublish_Jni(int i)`  L35
+- `String removeStreamPublish(int i)`  L48
+- `boolean removeStreamPublish_Jni(int i)`  L50
+- `String startLive(int i)`  L59
+- `String startLive_Jni(int i)`  L61
+- `String startPublishStreaming(int i, String str)`  L70
+- `boolean startPublishStreaming_Jni(int i, String str)`  L72
+- `String stopLive(int i)`  L87
+- `void stopLive_Jni(int i)`  L89
+- `String stopPublishStreaming(int i)`  L97
+- `boolean stopPublishStreaming_Jni(int i)`  L99
+### `com.icatchtek.pancam.core.jni.JStreamStablization`
+L7 · [class] public JStreamStablization · `com/icatchtek/pancam/core/jni/JStreamStablization.java`
+
+方法（8）：
+- `String disableStablization(int i)`  L12
+- `boolean disableStablization_Jni(int i)`  L14
+- `String enableStablization(int i)`  L25
+- `boolean enableStablization_Jni(int i)`  L27
+- `String getStablizationInfo(int i)`  L38
+- `String getStablizationInfo_Jni(int i)`  L40
+- `String removeStreamStablization(int i)`  L51
+- `boolean removeStreamStablization_Jni(int i)`  L53
+### `com.icatchtek.pancam.core.jni.JSurfaceContext`
+L8 · [class] public JSurfaceContext · `com/icatchtek/pancam/core/jni/JSurfaceContext.java`
+
+方法（6）：
+- `String createSurfaceContext(Surface surface)`  L13
+- `int createSurfaceContext_Jni(Surface surface)`  L15
+- `String deleteSurfaceContext(int i)`  L24
+- `boolean deleteSurface_Jni(int i)`  L26
+- `String setViewPort(int i, int i2, int i3, int i4, int i5)`  L35
+- `boolean setViewPort_Jni(int i, int i2, int i3, int i4, int i5)`  L37
+### `com.icatchtek.pancam.core.jni.NativeLibraryLoader`
+L4 · [class] public NativeLibraryLoader · `com/icatchtek/pancam/core/jni/NativeLibraryLoader.java`
+
+字段/常量（3）：
+- `boolean bLoaded = false`  L5
+- `String intelArch = "x86"`  L6
+- `String[] neonArmArchArray = {"armv7a", "armeabi-v7a"}`  L7
+
+方法（3）：
+- `boolean doSupportNeonArmArch(String str)`  L9
+- `void loadLibrary()`  L18
+- `void loadLibrary_1()`  L26
+    - 体内字面量："c++_shared" · "usb_transport" · "depth_net_transport" · "reliant" · "panorama_vr"
+### `com.icatchtek.pancam.core.util.event.CoreEventListener`
+L7 · [class] public CoreEventListener · `com/icatchtek/pancam/core/util/event/CoreEventListener.java`
+
+字段/常量（1）：
+- `ICatchIPancamListener originalListener`  L8
+
+方法（3）：
+- `public CoreEventListener(ICatchIPancamListener iCatchIPancamListener)`  L10
+- `int getOriginalHashCode()`  L14
+- `void notify(int i, int i2, long j, long j2, long j3, double d, double d2, double d3, String str, String str2, String str3)`  L18
+### `com.icatchtek.pancam.core.util.type.NativeFile`
+L13 · [class] public NativeFile · `com/icatchtek/pancam/core/util/type/NativeFile.java`
+
+字段/常量（21）：
+- `int TYPE_ALL = 15`  L14
+- `int TYPE_AUDIO = 4`  L15
+- `int TYPE_IMAGE = 1`  L16
+- `int TYPE_TEXT = 8`  L17
+- `int TYPE_UNKNOWN = 16`  L18
+- `int TYPE_VIDEO = 2`  L19
+- `Map<Integer, Integer> types`  L20
+- `int length = strArrSplit.length`  L35
+- `String str2 = "<binary/metadata>"`  L36
+- `long j = -1`  L37
+- `double d = 0.0d`  L38
+- `int i = -1`  L39
+- `String str3 = "<binary/metadata>"`  L40
+- `String str4 = str3`  L41
+- `int i2 = 16`  L42
+- `int i3 = 0`  L43
+- `int i4 = 0`  L44
+- `int i5 = 0`  L45
+- `int i6 = 0`  L46
+- `String[] strArr = strArrSplit`  L48
+- `int i7 = length`  L50
+
+方法（4）：
+- `void fillFileTypes()`  L22
+- `ICatchFile toICatchFile(String str)`  L33
+    - 体内字面量：","
+- `String toICatchFile(ICatchFile iCatchFile)`  L94
+    - 体内字面量："handle=" · ",path=" · ",name=" · ",date=" · ",type=" · ",size=" · ",framerate=" · ",width=" · ",height=" · ",fileDuration=" · ","
+- `List<ICatchFile> toIcatchFiles(String str)`  L122
+    - 体内字面量：";"
+### `com.icatchtek.pancam.core.util.VrLogger`
+L7 · [class] public VrLogger · `com/icatchtek/pancam/core/util/VrLogger.java`
+
+方法（3）：
+- `void logE(String str, String str2)`  L8
+    - 体内字面量："tag = " · "null" · "peng.tan" · "tag = " · "null" · "peng.tan"
+- `void logI(String str, String str2)`  L25
+    - 体内字面量："tag = " · "null" · "peng.tan" · "tag = " · "null" · "peng.tan"
+- `void logW(String str, String str2)`  L42
+    - 体内字面量："tag = " · "null" · "peng.tan" · "tag = " · "null" · "peng.tan"
+### `com.icatchtek.pancam.core.util.VrMutex`
+L4 · [class] public VrMutex · `com/icatchtek/pancam/core/util/VrMutex.java`
+
+字段/常量（1）：
+- `boolean syncLock = false`  L5
+
+方法（2）：
+- `void lock()`  L7
+- `void unlock()`  L18
+### `com.icatchtek.pancam.core.util.VrRoutines`
+L6 · [class] public VrRoutines · `com/icatchtek/pancam/core/util/VrRoutines.java`
+
+方法（1）：
+- `boolean dump_file(String str, byte[] bArr, int i)`  L7
+### `com.icatchtek.pancam.core.VrImageRAW`
+L12 · [class] public VrImageRAW · `com/icatchtek/pancam/core/VrImageRAW.java`
+
+字段/常量（13）：
+- `int VR_RAW_IMAGE_KEY_A_RGB = 1`  L13
+- `int VR_RAW_IMAGE_KEY_RGB_A = 2`  L14
+- `int VR_RAW_IMAGE_KEY_YUV_U = 18`  L15
+- `int VR_RAW_IMAGE_KEY_YUV_V = 19`  L16
+- `int VR_RAW_IMAGE_KEY_YUV_Y = 17`  L17
+- `int format`  L18
+- `int imageH`  L20
+- `int imageW`  L21
+- `double d = i == 150 ? 0.25d : 0.5d`  L30
+- `int i4 = this.format`  L57
+- `int i5 = this.format == 148 ? 1 : 2`  L60
+- `int i3 = i2 + 1`  L79
+- `int i = this.format`  L96
+
+方法（6）：
+- `int calculateDataSize(int i, int i2, int i3, int i4)`  L23
+- `byte[] getData(int i)`  L37
+    - 体内字面量："Invalid key, not buffer bounded with image key: "
+- `int getDataSize(int i)`  L45
+- `boolean init(int i, int i2, int i3)`  L49
+    - 体内字面量："The imageW and imageH must be less or equal than zero." · "vrImage_init" · "imageW: " · ", imageH: "
+- `boolean putData(int i, ByteBuffer byteBuffer, int i2)`  L77
+- `boolean putData(ByteBuffer byteBuffer)`  L94

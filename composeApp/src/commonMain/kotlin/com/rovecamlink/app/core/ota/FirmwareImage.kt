@@ -11,13 +11,13 @@ import okio.openZip
 /**
  * What the package's **own header** says about it, read before a single byte is sent.
  *
- * This is guard R1/R2 of `docs/04 §6.1`, and the reason it exists is in `§6.2`: none of
+ * This is guard R1/R2 of `docs/analysis/ota-and-gaps §6.1`, and the reason it exists is in `§6.2`: none of
  * the three official apps ever reads a byte of the image, and the protocol gives the
  * camera nothing but a *file name* to judge the package by. So the camera cannot refuse a
  * wrong image — "this package is for another model" is a decision only the app can make,
  * and until this file existed this app was not making it either.
  *
- * The layout is measured, not guessed (`docs/04 §5.4`, from real S7PRO images):
+ * The layout is measured, not guessed (`docs/analysis/ota-and-gaps §5.4`, from real S7PRO images):
  *
  * | offset | bytes | content |
  * |---|---|---|
@@ -69,7 +69,7 @@ object FirmwareImage {
 
         /**
          * The header parsed and names a different model. **This is the bricking case**:
-         * same SoC, different sensor/DDR/partition layout (`docs/04 §5.4`), so it is
+         * same SoC, different sensor/DDR/partition layout (`docs/analysis/ota-and-gaps §5.4`), so it is
          * refused rather than warned about.
          */
         data class WrongModel(val expected: String?, val found: String) : Check
@@ -81,7 +81,7 @@ object FirmwareImage {
          * Not an image this app can vouch for: no XTU header at all. Refused too, because
          * "we cannot tell what this is" is not a reason to hand it to a bootloader. The
          * one route that overrides this is a hand-picked local file, where the user has
-         * explicitly chosen an arbitrary package (`docs/04 §6.1` R9).
+         * explicitly chosen an arbitrary package (`docs/analysis/ota-and-gaps §6.1` R9).
          */
         data class Unrecognised(val reason: String) : Check
     }
@@ -141,7 +141,7 @@ object FirmwareImage {
      * Read the first [HEADER_BYTES] bytes of the image at [path], plus the byte count they
      * should be checked against.
      *
-     * Two shapes are real here (`docs/04 §5.4`): the S7PRO ships a `.bin` and the vendor's
+     * Two shapes are real here (`docs/analysis/ota-and-gaps §5.4`): the S7PRO ships a `.bin` and the vendor's
      * index serves it inside a `.zip`, so a zip is opened and its single entry is read —
      * the entry's *uncompressed* length is what the header's total-length field describes,
      * not the zip's size on disk. Anything else is read as a plain file.
@@ -160,7 +160,7 @@ object FirmwareImage {
 
     private fun readFromZip(fs: FileSystem, path: Path): Pair<ByteArray, Long>? {
         val zip = fs.openZip(path)
-        // The images measured in `docs/04 §5.4` hold exactly one `.bin`; if a future one
+        // The images measured in `docs/analysis/ota-and-gaps §5.4` hold exactly one `.bin`; if a future one
         // holds several, the largest is the image and the rest are notes. The entry's
         // *uncompressed* length is what the header's total-length field describes, which is
         // why this is the metadata size and not the zip's size on disk.

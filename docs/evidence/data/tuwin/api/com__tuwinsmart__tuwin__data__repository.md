@@ -1,0 +1,4966 @@
+# TUWIN — 类与成员明细：com.tuwinsmart.tuwin.data.repository
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 141 个文件 / 217 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.tuwinsmart.tuwin.data.repository.C2214x731f631f`
+L20 · [class] final C2214x731f631f · extends `SuspendLambda implements Function1<Continuation<? super Ride3ProApiResponse<Object>>, Object>` · implements `Function1<Continuation<? super Ride3ProApiResponse<Object>>, Object>` · `com/tuwinsmart/tuwin/data/repository/C2214x731f631f.java`
+注解：
+
+字段/常量（4）：
+- `Ride3ProApiService $ride3ProApiService`  L21
+- `long $seed`  L22
+- `int label`  L23
+- `int i = this.label`  L45
+
+方法（3）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L33 @Override
+- `Object invoke(Continuation<? super Ride3ProApiResponse<Object>> continuation)`  L38 @Override
+- `Object invokeSuspend(Object obj)`  L43 @Override
+### `com.tuwinsmart.tuwin.data.repository.C2215x27b7af2c`
+L21 · [class] final C2215x27b7af2c · extends `SuspendLambda implements Function1<Continuation<? super Ride3ProApiResponse<Object>>, Object>` · implements `Function1<Continuation<? super Ride3ProApiResponse<Object>>, Object>` · `com/tuwinsmart/tuwin/data/repository/C2215x27b7af2c.java`
+注解：
+
+字段/常量（4）：
+- `Calendar $calendar`  L22
+- `Ride3ProApiService $ride3ProApiService`  L23
+- `int label`  L24
+- `int i = this.label`  L46
+
+方法（3）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L34 @Override
+- `Object invoke(Continuation<? super Ride3ProApiResponse<Object>> continuation)`  L39 @Override
+- `Object invokeSuspend(Object obj)`  L44 @Override
+### `com.tuwinsmart.tuwin.data.repository.C2216x9d51f82a`
+L20 · [class] final C2216x9d51f82a · extends `SuspendLambda implements Function1<Continuation<? super Ride3ProApiResponse<Object>>, Object>` · implements `Function1<Continuation<? super Ride3ProApiResponse<Object>>, Object>` · `com/tuwinsmart/tuwin/data/repository/C2216x9d51f82a.java`
+注解：
+
+字段/常量（3）：
+- `Ride3ProApiService $ride3ProApiService`  L21
+- `int label`  L22
+- `int i = this.label`  L43
+
+方法（3）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L31 @Override
+- `Object invoke(Continuation<? super Ride3ProApiResponse<Object>> continuation)`  L36 @Override
+- `Object invokeSuspend(Object obj)`  L41 @Override
+### `com.tuwinsmart.tuwin.data.repository.DeviceRepositoryImpl`
+L46 · [class] public final DeviceRepositoryImpl · implements `DeviceRepository` · `com/tuwinsmart/tuwin/data/repository/DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（24）：
+- `C21541 c21541`  L96
+- `Mutex mutex`  L97
+- `DeviceRepositoryImpl deviceRepositoryImpl`  L98
+- `Throwable th`  L99
+- `Mutex mutex2`  L100
+- `Object obj = c21541.result`  L111
+- `int i = c21541.label`  L113
+- `Mutex mutex4 = mutex`  L160
+- `Mutex mutex5 = mutex`  L167
+- `Object next`  L179
+- `ConnectedDevice connectedDevice`  L180
+- `Object next2`  L181
+- `Object next3`  L182
+- `Object next4`  L183
+- `String boardversion`  L184
+- `String version`  L185
+- `String str = currentSSID`  L188
+- `List<ConnectedDevice> list = copyData`  L207
+- `ConnectUtil connectUtil = ConnectUtil.INSTANCE`  L229
+- `List<ConnectedDevice> list2 = copyData`  L235
+- `Result.Companion companion = Result.INSTANCE`  L370
+- `Result.Companion companion = Result.INSTANCE`  L377
+- `Result.Companion companion = Result.INSTANCE`  L384
+- `Result.Companion companion = Result.INSTANCE`  L391
+
+方法（11）：
+- `PreferenceHelper invoke()`  L52 @Override
+    - 体内字面量："com.tuwinsmart.tuwin.data.repository.DeviceRepositoryImpl" · "DeviceRepositoryImpl.kt" · "saveDevice" · "this" · "device" · "$this$withLock_u24default$iv" · "$this$withLock_u24default$iv" · "L$0" · "L$1" · "L$2" · "L$0"
+- `PreferenceHelper getPreferenceHelper()`  L81
+    - 体内字面量："è¯·ä½¿ç¨ getRide5DeviceAttr() ç»ä¸ Ride5 å±æ§è·å" · "getRide5DeviceAttr()"
+- `Observable<HashMap<String, String>> getDeviceAttributes()`  L87
+    - 体内字面量："Legacy RIDE5 Rx API was removed; use the session-scoped Ride5 port" · "error(...)"
+- `Object saveDevice(ConnectedDevice connectedDevice, Continuation<? super List<ConnectedDevice>> continuation)`  L95 @Override
+- `List<ConnectedDevice> saveDeviceInBackground(ConnectedDevice device)`  L178
+- `List<ConnectedDevice> getSavedDevices()`  L356 @Override
+- `List<ConnectedDevice> deleteDevice(ConnectedDevice device)`  L361 @Override
+    - 体内字面量："device"
+- `Object mo2776detectM3ConnectiongIAlus(Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, Continuation<? super Result<M3ConnectionResult>> continuation)`  L369 @Override
+- `Object mo2777getM3DeviceAttrIoAF18A(Continuation<? super Result<M3DeviceAttr>> continuation)`  L376 @Override
+- `Object mo2778getRide5DeviceAttrIoAF18A(Continuation<? super Result<? extends HashMap<String, String>>> continuation)`  L383 @Override
+- `Object mo2779syncM3TimeIoAF18A(Continuation<? super Result<Unit>> continuation)`  L390 @Override
+### `com.tuwinsmart.tuwin.data.repository.DeviceRepositoryImpl$C21541`
+L62 · [class] static final C21541 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L63
+- `Object L$1`  L64
+- `Object L$2`  L65
+- `int label`  L66
+- `Object result`  L67
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L74 @Override
+### `com.tuwinsmart.tuwin.data.repository.DeviceRepositoryImpl$saveDevice$2$1`
+L20 · [class] final DeviceRepositoryImpl$saveDevice$2$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super List<? extends ConnectedDevice>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super List<? extends ConnectedDevice>>, Object>` · `com/tuwinsmart/tuwin/data/repository/DeviceRepositoryImpl$saveDevice$2$1.java`
+注解：
+
+字段/常量（3）：
+- `ConnectedDevice $device`  L21
+- `int label`  L22
+- `DeviceRepositoryImpl this$0`  L23
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L33 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super List<? extends ConnectedDevice>> continuation)`  L38 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super List<ConnectedDevice>> continuation)`  L43
+- `Object invokeSuspend(Object obj)`  L48 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.data.repository.DeviceVersionRepositoryImpl`
+L21 · [class] public final DeviceVersionRepositoryImpl · implements `DeviceVersionRepository` · `com/tuwinsmart/tuwin/data/repository/DeviceVersionRepositoryImpl.java`
+注解：
+
+字段/常量（3）：
+- `String KEY_ALL_DEVICE_IDS = "device_version_all_ids"`  L22
+- `String KEY_PREFIX = "device_version_"`  L23
+- `PreferenceHelper preferenceHelper`  L24
+
+方法（6）：
+- `public DeviceVersionRepositoryImpl(PreferenceHelper preferenceHelper)`  L26
+    - 体内字面量："preferenceHelper"
+- `void saveVersion(String deviceId, String version)`  L32 @Override
+    - 体内字面量："deviceId" · "version" · ","
+- `String getVersion(String deviceId)`  L42 @Override
+    - 体内字面量："deviceId"
+- `Map<String, String> getAllVersions()`  L48 @Override
+- `void clearVersion(String deviceId)`  L60 @Override
+    - 体内字面量："deviceId" · ","
+- `Set<String> getAllDeviceIds()`  L68
+    - 体内字面量：","
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceAttrCompatibilityCache`
+L13 · [class] public final M3DeviceAttrCompatibilityCache · `com/tuwinsmart/tuwin/data/repository/M3DeviceAttrCompatibilityCache.java`
+注解：
+
+字段/常量（4）：
+- `String M3_OTA_QUERY_VERSION_KEY = "m3_ota_query_version"`  L15
+- `String M3_OTA_VERSION_KEY = "m3_otaver"`  L16
+- `String M3_SOFTWARE_VERSION_KEY = "m3_softver"`  L17
+- `M3OtaVersionPolicy m3OtaVersionPolicy = M3OtaVersionPolicy.INSTANCE`  L31
+
+方法（2）：
+- `private M3DeviceAttrCompatibilityCache()`  L19
+- `void persist(PreferenceHelper preferenceHelper, M3DeviceAttr attr)`  L22
+    - 体内字面量："preferenceHelper" · "attr"
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl`
+L77 · [class] public final M3DeviceRepositoryImpl · implements `M3DeviceRepository, M3SessionResourceOwner` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（273）：
+- `Function1<Continuation<? super M3ApiService>, Object> apiProvider`  L78
+- `Function0<Unit> beforeThumbnailCacheWrite`  L79
+- `Function0<Unit> closeResources`  L80
+- `Context context`  L81
+- `Function1<M3DeviceAttr, Unit> onDeviceAttrVerified`  L82
+- `Function1<List<String>, Unit> onFileListVerified`  L83
+- `AtomicBoolean resourcesClosed`  L84
+- `Flow<M3SocketMessage> socketMessages`  L85
+- `M3ThumbnailCache thumbnailCache`  L86
+- `M3DeviceRepositoryImpl$getSDInfo$1 m3DeviceRepositoryImpl$getSDInfo$1`  L176
+- `M3SDInfoResponse m3SDInfoResponse`  L177
+- `Object objApi = m3DeviceRepositoryImpl$getSDInfo$1.result`  L188
+- `int i = m3DeviceRepositoryImpl$getSDInfo$1.label`  L190
+- `Result.Companion companion = Result.INSTANCE`  L203
+- `Result.Companion companion2 = Result.INSTANCE`  L206
+- `Result.Companion companion3 = Result.INSTANCE`  L223
+- `Result.Companion companion4 = Result.INSTANCE`  L228
+- `M3DeviceRepositoryImpl$getBatteryInfo$1 m3DeviceRepositoryImpl$getBatteryInfo$1`  L237
+- `M3BatteryInfoResponse m3BatteryInfoResponse`  L238
+- `Object objApi = m3DeviceRepositoryImpl$getBatteryInfo$1.result`  L249
+- `int i = m3DeviceRepositoryImpl$getBatteryInfo$1.label`  L251
+- `Result.Companion companion = Result.INSTANCE`  L264
+- `Result.Companion companion2 = Result.INSTANCE`  L267
+- `Result.Companion companion3 = Result.INSTANCE`  L284
+- `Result.Companion companion4 = Result.INSTANCE`  L289
+- `M3DeviceRepositoryImpl$getMediaInfo$1 m3DeviceRepositoryImpl$getMediaInfo$1`  L302
+- `M3MediaInfoResponse m3MediaInfoResponse`  L303
+- `M3MediaInfo mediaInfo`  L304
+- `Object objApi = m3DeviceRepositoryImpl$getMediaInfo$1.result`  L315
+- `int i = m3DeviceRepositoryImpl$getMediaInfo$1.label`  L317
+- `Result.Companion companion = Result.INSTANCE`  L332
+- `Result.Companion companion2 = Result.INSTANCE`  L335
+- `Result.Companion companion3 = Result.INSTANCE`  L338
+- `Result.Companion companion4 = Result.INSTANCE`  L356
+- `Result.Companion companion5 = Result.INSTANCE`  L359
+- `Result.Companion companion6 = Result.INSTANCE`  L362
+- `Result.Companion companion7 = Result.INSTANCE`  L367
+- `M3DeviceRepositoryImpl$getDeviceAttr$1 m3DeviceRepositoryImpl$getDeviceAttr$1`  L378
+- `M3DeviceRepositoryImpl m3DeviceRepositoryImpl`  L379
+- `M3DeviceRepositoryImpl m3DeviceRepositoryImpl2`  L380
+- `M3DeviceAttrResponse m3DeviceAttrResponse`  L381
+- `Object objApi = m3DeviceRepositoryImpl$getDeviceAttr$1.result`  L392
+- `int i = m3DeviceRepositoryImpl$getDeviceAttr$1.label`  L394
+- `Result.Companion companion = Result.INSTANCE`  L411
+- `Result.Companion companion2 = Result.INSTANCE`  L414
+- `Result.Companion companion3 = Result.INSTANCE`  L436
+- `Result.Companion companion4 = Result.INSTANCE`  L439
+- `Result.Companion companion5 = Result.INSTANCE`  L444
+- `M3DeviceRepositoryImpl$syncDeviceTime$1 m3DeviceRepositoryImpl$syncDeviceTime$1`  L459
+- `Object obj`  L460
+- `int i2`  L461
+- `M3DeviceRepositoryImpl m3DeviceRepositoryImpl`  L462
+- `int i3`  L463
+- `M3SetSysTimeResponse m3SetSysTimeResponse`  L464
+- `M3SetTimeZoneResponse m3SetTimeZoneResponse`  L465
+- `Object objApi = m3DeviceRepositoryImpl$syncDeviceTime$1.result`  L476
+- `int i4 = m3DeviceRepositoryImpl$syncDeviceTime$1.label`  L478
+- `int i5 = m3DeviceRepositoryImpl$syncDeviceTime$1.I$0`  L482
+- `Result.Companion companion = Result.INSTANCE`  L495
+- `Result.Companion companion2 = Result.INSTANCE`  L526
+- `Result.Companion companion3 = Result.INSTANCE`  L529
+- `int i6 = i2`  L552
+- `Result.Companion companion4 = Result.INSTANCE`  L557
+- `Result.Companion companion5 = Result.INSTANCE`  L574
+- `Result.Companion companion6 = Result.INSTANCE`  L577
+- `Result.Companion companion7 = Result.INSTANCE`  L582
+- `M3DeviceRepositoryImpl$getGravityDirection$1 m3DeviceRepositoryImpl$getGravityDirection$1`  L593
+- `GravityDirectionResponse gravityDirectionResponse`  L594
+- `List<GravityInfo> info`  L595
+- `int iCoerceIn`  L596
+- `GravityInfo gravityInfo`  L597
+- `Integer value`  L598
+- `Object objApi = m3DeviceRepositoryImpl$getGravityDirection$1.result`  L609
+- `int i = m3DeviceRepositoryImpl$getGravityDirection$1.label`  L611
+- `Result.Companion companion = Result.INSTANCE`  L624
+- `Result.Companion companion2 = Result.INSTANCE`  L632
+- `Result.Companion companion3 = Result.INSTANCE`  L648
+- `Result.Companion companion4 = Result.INSTANCE`  L656
+- `Result.Companion companion5 = Result.INSTANCE`  L661
+- `Flow<M3SocketMessage> flow = this.socketMessages`  L668
+- `Flow<M3SocketMessage> flow = this.socketMessages`  L823
+- `M3DeviceRepositoryImpl$setRecording$1 m3DeviceRepositoryImpl$setRecording$1`  L982
+- `M3RecordResponse m3RecordResponse`  L983
+- `M3DeviceRepositoryImpl$setRecording$1 m3DeviceRepositoryImpl$setRecording$2 = m3DeviceRepositoryImpl$setRecording$1`  L994
+- `Object objApi = m3DeviceRepositoryImpl$setRecording$2.result`  L995
+- `int i2 = m3DeviceRepositoryImpl$setRecording$2.label`  L997
+- `Result.Companion companion = Result.INSTANCE`  L1011
+- `Result.Companion companion2 = Result.INSTANCE`  L1014
+- `int i3 = i`  L1024
+- `Result.Companion companion3 = Result.INSTANCE`  L1032
+- `Result.Companion companion4 = Result.INSTANCE`  L1035
+- `Result.Companion companion5 = Result.INSTANCE`  L1040
+- `M3DeviceRepositoryImpl$takePhoto$1 m3DeviceRepositoryImpl$takePhoto$1`  L1051
+- `M3SetParamResponse m3SetParamResponse`  L1052
+- `M3DeviceRepositoryImpl$takePhoto$1 m3DeviceRepositoryImpl$takePhoto$2 = m3DeviceRepositoryImpl$takePhoto$1`  L1063
+- `Object objApi = m3DeviceRepositoryImpl$takePhoto$2.result`  L1064
+- `int i2 = m3DeviceRepositoryImpl$takePhoto$2.label`  L1066
+- `Result.Companion companion = Result.INSTANCE`  L1080
+- `Result.Companion companion2 = Result.INSTANCE`  L1083
+- `int i3 = i`  L1093
+- `Result.Companion companion3 = Result.INSTANCE`  L1101
+- `Result.Companion companion4 = Result.INSTANCE`  L1104
+- `Result.Companion companion5 = Result.INSTANCE`  L1109
+- `M3DeviceRepositoryImpl$setMode$1 m3DeviceRepositoryImpl$setMode$1`  L1120
+- `M3SetModeResponse m3SetModeResponse`  L1121
+- `Object objApi = m3DeviceRepositoryImpl$setMode$1.result`  L1132
+- `int i2 = m3DeviceRepositoryImpl$setMode$1.label`  L1134
+- `Result.Companion companion = Result.INSTANCE`  L1148
+- `Result.Companion companion2 = Result.INSTANCE`  L1151
+- `Result.Companion companion3 = Result.INSTANCE`  L1168
+- `Result.Companion companion4 = Result.INSTANCE`  L1171
+- `Result.Companion companion5 = Result.INSTANCE`  L1176
+- `M3DeviceRepositoryImpl$getCurrentMode$1 m3DeviceRepositoryImpl$getCurrentMode$1`  L1190
+- `M3CurModeResponse m3CurModeResponse`  L1191
+- `List<M3CurModeInfo> info`  L1192
+- `Iterator<T> it`  L1193
+- `Object next`  L1194
+- `Integer value`  L1195
+- `Object objApi = m3DeviceRepositoryImpl$getCurrentMode$1.result`  L1206
+- `int i = m3DeviceRepositoryImpl$getCurrentMode$1.label`  L1208
+- `Result.Companion companion = Result.INSTANCE`  L1232
+- `Result.Companion companion2 = Result.INSTANCE`  L1235
+- `Result.Companion companion3 = Result.INSTANCE`  L1238
+- `Result.Companion companion4 = Result.INSTANCE`  L1266
+- `Result.Companion companion5 = Result.INSTANCE`  L1269
+- `Result.Companion companion6 = Result.INSTANCE`  L1272
+- `Result.Companion companion7 = Result.INSTANCE`  L1277
+- `Flow<M3SocketMessage> flow = this.socketMessages`  L1284
+- `Flow<M3SocketMessage> flow = this.socketMessages`  L1439
+- `Flow<M3SocketMessage> flow = this.socketMessages`  L1670
+- `Flow<M3SocketMessage> flow = this.socketMessages`  L1826
+- `M3DeviceRepositoryImpl$getFileList$1 m3DeviceRepositoryImpl$getFileList$1`  L1988
+- `M3DeviceRepositoryImpl m3DeviceRepositoryImpl`  L1989
+- `M3DeviceRepositoryImpl m3DeviceRepositoryImpl2`  L1990
+- `M3FileListResponse m3FileListResponse`  L1991
+- `List<M3FolderInfo> info`  L1992
+- `ArrayList arrayList`  L1993
+- `Iterator<T> it`  L1994
+- `ArrayList arrayList2`  L1995
+- `Iterator<T> it2`  L1996
+- `Object objApi = m3DeviceRepositoryImpl$getFileList$1.result`  L2007
+- `int i = m3DeviceRepositoryImpl$getFileList$1.label`  L2009
+- `Function1<List<String>, Unit> function1 = m3DeviceRepositoryImpl2.onFileListVerified`  L2024
+- `Result.Companion companion = Result.INSTANCE`  L2041
+- `Result.Companion companion2 = Result.INSTANCE`  L2044
+- `Function1<List<String>, Unit> function2 = m3DeviceRepositoryImpl2.onFileListVerified`  L2064
+- `Result.Companion companion3 = Result.INSTANCE`  L2081
+- `Result.Companion companion4 = Result.INSTANCE`  L2084
+- `Result.Companion companion5 = Result.INSTANCE`  L2089
+- `M3DeviceRepositoryImpl$getThumbnail$1 m3DeviceRepositoryImpl$getThumbnail$1`  L2098
+- `M3DeviceRepositoryImpl m3DeviceRepositoryImpl`  L2099
+- `String str2`  L2100
+- `Object obj = m3DeviceRepositoryImpl$getThumbnail$1.result`  L2111
+- `int i = m3DeviceRepositoryImpl$getThumbnail$1.label`  L2113
+- `Result.Companion companion = Result.INSTANCE`  L2120
+- `Result.Companion companion2 = Result.INSTANCE`  L2146
+- `Result.Companion companion3 = Result.INSTANCE`  L2151
+- `M3DeviceRepositoryImpl$setPlaybackMode$1 m3DeviceRepositoryImpl$setPlaybackMode$1`  L2162
+- `M3PlaybackResponse m3PlaybackResponse`  L2163
+- `Object objApi = m3DeviceRepositoryImpl$setPlaybackMode$1.result`  L2174
+- `int i = m3DeviceRepositoryImpl$setPlaybackMode$1.label`  L2176
+- `Result.Companion companion = Result.INSTANCE`  L2190
+- `Result.Companion companion2 = Result.INSTANCE`  L2193
+- `Result.Companion companion3 = Result.INSTANCE`  L2211
+- `Result.Companion companion4 = Result.INSTANCE`  L2214
+- `Result.Companion companion5 = Result.INSTANCE`  L2219
+- `M3DeviceRepositoryImpl$deleteFile$1 m3DeviceRepositoryImpl$deleteFile$1`  L2230
+- `M3DeleteFileResponse m3DeleteFileResponse`  L2231
+- `Object objApi = m3DeviceRepositoryImpl$deleteFile$1.result`  L2242
+- `int i = m3DeviceRepositoryImpl$deleteFile$1.label`  L2244
+- `Result.Companion companion = Result.INSTANCE`  L2258
+- `Result.Companion companion2 = Result.INSTANCE`  L2261
+- `Result.Companion companion3 = Result.INSTANCE`  L2279
+- `Result.Companion companion4 = Result.INSTANCE`  L2282
+- `Result.Companion companion5 = Result.INSTANCE`  L2287
+- `M3DeviceRepositoryImpl$setMenuMode$1 m3DeviceRepositoryImpl$setMenuMode$1`  L2298
+- `M3SettingResponse m3SettingResponse`  L2299
+- `Object objApi = m3DeviceRepositoryImpl$setMenuMode$1.result`  L2310
+- `int i = m3DeviceRepositoryImpl$setMenuMode$1.label`  L2312
+- `Result.Companion companion = Result.INSTANCE`  L2326
+- `Result.Companion companion2 = Result.INSTANCE`  L2329
+- `Result.Companion companion3 = Result.INSTANCE`  L2347
+- `Result.Companion companion4 = Result.INSTANCE`  L2350
+- `Result.Companion companion5 = Result.INSTANCE`  L2355
+- `M3DeviceRepositoryImpl$getParamItemsByMode$1 m3DeviceRepositoryImpl$getParamItemsByMode$1`  L2364
+- `M3ParamItemsResponse m3ParamItemsResponse`  L2365
+- `Object objApi = m3DeviceRepositoryImpl$getParamItemsByMode$1.result`  L2376
+- `int i2 = m3DeviceRepositoryImpl$getParamItemsByMode$1.label`  L2378
+- `Result.Companion companion = Result.INSTANCE`  L2392
+- `Result.Companion companion2 = Result.INSTANCE`  L2395
+- `Result.Companion companion3 = Result.INSTANCE`  L2413
+- `Result.Companion companion4 = Result.INSTANCE`  L2418
+- `M3DeviceRepositoryImpl$getParamItemValue$1 m3DeviceRepositoryImpl$getParamItemValue$1`  L2444
+- `M3ParamItemsResponse m3ParamItemsResponse`  L2445
+- `List<M3ParamItem> info`  L2446
+- `M3ParamItem m3ParamItem`  L2447
+- `M3ParamItem m3ParamItem2`  L2448
+- `List<String> items`  L2449
+- `Integer curIndex`  L2450
+- `int iIntValue`  L2451
+- `List<Integer> list`  L2452
+- `String str2`  L2453
+- `String str3`  L2454
+- `Iterator<T> it`  L2455
+- `Object next`  L2456
+- `Object objApi = m3DeviceRepositoryImpl$getParamItemValue$1.result`  L2467
+- `int i = m3DeviceRepositoryImpl$getParamItemValue$1.label`  L2469
+- `Result.Companion companion = Result.INSTANCE`  L2484
+- `Result.Companion companion2 = Result.INSTANCE`  L2493
+- `Result.Companion companion3 = Result.INSTANCE`  L2511
+- `Result.Companion companion4 = Result.INSTANCE`  L2522
+- `Result.Companion companion5 = Result.INSTANCE`  L2527
+- `Result.Companion companion6 = Result.INSTANCE`  L2540
+- `Result.Companion companion7 = Result.INSTANCE`  L2543
+- `Result.Companion companion8 = Result.INSTANCE`  L2561
+- `Result.Companion companion9 = Result.INSTANCE`  L2570
+- `Result.Companion companion10 = Result.INSTANCE`  L2589
+- `Result.Companion companion11 = Result.INSTANCE`  L2600
+- `Result.Companion companion12 = Result.INSTANCE`  L2605
+- `Result.Companion companion13 = Result.INSTANCE`  L2618
+- `Result.Companion companion14 = Result.INSTANCE`  L2621
+- `Result.Companion companion15 = Result.INSTANCE`  L2626
+- `M3DeviceRepositoryImpl$setParamValue$1 m3DeviceRepositoryImpl$setParamValue$1`  L2637
+- `M3SetParamResponse m3SetParamResponse`  L2638
+- `Object objApi = m3DeviceRepositoryImpl$setParamValue$1.result`  L2649
+- `int i2 = m3DeviceRepositoryImpl$setParamValue$1.label`  L2651
+- `Result.Companion companion = Result.INSTANCE`  L2666
+- `Result.Companion companion2 = Result.INSTANCE`  L2669
+- `Result.Companion companion3 = Result.INSTANCE`  L2689
+- `Result.Companion companion4 = Result.INSTANCE`  L2692
+- `Result.Companion companion5 = Result.INSTANCE`  L2697
+- `M3DeviceRepositoryImpl$setWifiSsid$1 m3DeviceRepositoryImpl$setWifiSsid$1`  L2708
+- `M3SetWifiResponse m3SetWifiResponse`  L2709
+- `M3DeviceRepositoryImpl$setWifiSsid$1 m3DeviceRepositoryImpl$setWifiSsid$2 = m3DeviceRepositoryImpl$setWifiSsid$1`  L2720
+- `Object objApi = m3DeviceRepositoryImpl$setWifiSsid$2.result`  L2721
+- `int i = m3DeviceRepositoryImpl$setWifiSsid$2.label`  L2723
+- `Result.Companion companion = Result.INSTANCE`  L2737
+- `Result.Companion companion2 = Result.INSTANCE`  L2740
+- `Result.Companion companion3 = Result.INSTANCE`  L2758
+- `Result.Companion companion4 = Result.INSTANCE`  L2761
+- `Result.Companion companion5 = Result.INSTANCE`  L2766
+- `M3DeviceRepositoryImpl$setWifiPassword$1 m3DeviceRepositoryImpl$setWifiPassword$1`  L2777
+- `M3SetWifiResponse m3SetWifiResponse`  L2778
+- `M3DeviceRepositoryImpl$setWifiPassword$1 m3DeviceRepositoryImpl$setWifiPassword$2 = m3DeviceRepositoryImpl$setWifiPassword$1`  L2789
+- `Object objApi = m3DeviceRepositoryImpl$setWifiPassword$2.result`  L2790
+- `int i = m3DeviceRepositoryImpl$setWifiPassword$2.label`  L2792
+- `Result.Companion companion = Result.INSTANCE`  L2806
+- `Result.Companion companion2 = Result.INSTANCE`  L2809
+- `String str2 = str`  L2819
+- `Result.Companion companion3 = Result.INSTANCE`  L2828
+- `Result.Companion companion4 = Result.INSTANCE`  L2831
+- `Result.Companion companion5 = Result.INSTANCE`  L2836
+- `M3DeviceRepositoryImpl$formatSdCard$1 m3DeviceRepositoryImpl$formatSdCard$1`  L2847
+- `M3SdFormatResponse m3SdFormatResponse`  L2848
+- `Object objApi = m3DeviceRepositoryImpl$formatSdCard$1.result`  L2859
+- `int i = m3DeviceRepositoryImpl$formatSdCard$1.label`  L2861
+- `Result.Companion companion = Result.INSTANCE`  L2874
+- `Result.Companion companion2 = Result.INSTANCE`  L2877
+- `Result.Companion companion3 = Result.INSTANCE`  L2893
+- `Result.Companion companion4 = Result.INSTANCE`  L2896
+- `Result.Companion companion5 = Result.INSTANCE`  L2901
+- `M3DeviceRepositoryImpl$factoryReset$1 m3DeviceRepositoryImpl$factoryReset$1`  L2912
+- `M3ResetResponse m3ResetResponse`  L2913
+- `Object objApi = m3DeviceRepositoryImpl$factoryReset$1.result`  L2924
+- `int i = m3DeviceRepositoryImpl$factoryReset$1.label`  L2926
+- `Result.Companion companion = Result.INSTANCE`  L2939
+- `Result.Companion companion2 = Result.INSTANCE`  L2942
+- `Result.Companion companion3 = Result.INSTANCE`  L2958
+- `Result.Companion companion4 = Result.INSTANCE`  L2961
+- `Result.Companion companion5 = Result.INSTANCE`  L2966
+- `M3DeviceRepositoryImpl$uploadFirmware$1 m3DeviceRepositoryImpl$uploadFirmware$1`  L2975
+- `Object objWithContext = m3DeviceRepositoryImpl$uploadFirmware$1.result`  L2986
+- `int i = m3DeviceRepositoryImpl$uploadFirmware$1.label`  L2988
+
+方法（54）：
+- `public M3DeviceRepositoryImpl(Function1<? super Continuation<? super M3ApiService>, ? extends Object> apiProvider, Flow<? extends M3SocketMessage> socketMessages, M3ThumbnailCache thumbnailCache, Context context, Function1<? super M3DeviceAttr, Unit> onDeviceAttrVerified, Function1<? super List<String>, Unit> onFileListVerified, Function0<Unit> beforeThumbnailCacheWrite, Function0<Unit> closeResources)`  L89
+    - 体内字面量："apiProvider" · "socketMessages" · "thumbnailCache" · "context" · "onDeviceAttrVerified" · "onFileListVerified" · "beforeThumbnailCacheWrite" · "closeResources"
+- ` M3DeviceRepositoryImpl(Function1 function1, Flow flow, M3ThumbnailCache m3ThumbnailCache, Context context, Function1 function2, Function1 function3, Function0 function0, Function0 function4, int i, DefaultConstructorMarker defaultConstructorMarker)`  L109
+- `void invoke2(M3DeviceAttr it)`  L112
+    - 体内字面量："it"
+- `Unit invoke(M3DeviceAttr m3DeviceAttr)`  L117 @Override
+- `void invoke2(List<String> it)`  L123
+    - 体内字面量："it"
+- `Unit invoke(List<? extends String> list)`  L128 @Override
+- `void invoke2()`  L134
+- `Unit invoke()`  L138 @Override
+- `void invoke2()`  L144
+- `Unit invoke()`  L148 @Override
+- `Object api(Continuation<? super M3ApiService> continuation)`  L156
+- `void closeSessionResources()`  L161 @Override
+- `Object mo2791getSDInfoIoAF18A(Continuation<? super Result<M3SDInfo>> continuation)`  L175 @Override
+- `Object mo2783getBatteryInfoIoAF18A(Continuation<? super Result<M3BatteryInfo>> continuation)`  L236 @Override
+- `Object mo2788getMediaInfoIoAF18A(Continuation<? super Result<M3MediaInfo>> continuation)`  L301 @Override
+- `Object mo2785getDeviceAttrIoAF18A(Continuation<? super Result<M3DeviceAttr>> continuation)`  L377 @Override
+- `Object mo2800syncDeviceTime0E7RQCE(String str, int i, Continuation<? super Result<Unit>> continuation)`  L458 @Override
+- `Object mo2787getGravityDirectionIoAF18A(Continuation<? super Result<Integer>> continuation)`  L592 @Override
+- `Flow<M3BatteryInfo> observeBatteryUpdates()`  L667 @Override
+- `Object collect(FlowCollector<? super Object> flowCollector, Continuation continuation)`  L740 @Override
+    - 体内字面量："<anonymous>" · "R" · "value" · "emit" · "(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "kotlinx/coroutines/flow/FlowKt__EmittersKt$unsafeTransform$1$1" · "kotlinx/coroutines/flow/FlowKt__TransformKt$map$$inlined$unsafeTransform$1$2"
+- `Object collect(FlowCollector<? super M3BatteryInfo> flowCollector, Continuation continuation)`  L814 @Override
+- `Flow<Integer> observeSDCardUpdates()`  L822 @Override
+- `Object collect(FlowCollector<? super Object> flowCollector, Continuation continuation)`  L895 @Override
+    - 体内字面量："<anonymous>" · "R" · "value" · "emit" · "(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "kotlinx/coroutines/flow/FlowKt__EmittersKt$unsafeTransform$1$1" · "kotlinx/coroutines/flow/FlowKt__TransformKt$map$$inlined$unsafeTransform$1$2"
+- `Object collect(FlowCollector<? super Integer> flowCollector, Continuation continuation)`  L969 @Override
+- `Object mo2797setRecordinggIAlus(int i, Continuation<? super Result<Unit>> continuation)`  L981 @Override
+- `Object mo2801takePhotogIAlus(int i, Continuation<? super Result<Unit>> continuation)`  L1050 @Override
+- `Object mo2794setModegIAlus(int i, Continuation<? super Result<Unit>> continuation)`  L1119 @Override
+- `Object mo2784getCurrentModeIoAF18A(Continuation<? super Result<Integer>> continuation)`  L1189 @Override
+- `Flow<Boolean> observeRecordingUpdates()`  L1283 @Override
+- `Object collect(FlowCollector<? super Object> flowCollector, Continuation continuation)`  L1356 @Override
+    - 体内字面量："<anonymous>" · "R" · "value" · "emit" · "(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "kotlinx/coroutines/flow/FlowKt__EmittersKt$unsafeTransform$1$1" · "kotlinx/coroutines/flow/FlowKt__TransformKt$map$$inlined$unsafeTransform$1$2"
+- `Object collect(FlowCollector<? super Boolean> flowCollector, Continuation continuation)`  L1430 @Override
+- `Flow<Unit> observeCaptureUpdates()`  L1438 @Override
+- `Object collect(FlowCollector<? super Object> flowCollector, Continuation continuation)`  L1511 @Override
+    - 体内字面量："<anonymous>" · "R" · "value" · "emit" · "(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "kotlinx/coroutines/flow/FlowKt__EmittersKt$unsafeTransform$1$1" · "kotlinx/coroutines/flow/FlowKt__TransformKt$filter$$inlined$unsafeTransform$1$2"
+- `Object collect(FlowCollector<? super M3SocketMessage.CaptureUpdate> flowCollector, Continuation continuation)`  L1587 @Override
+    - 体内字面量："<anonymous>" · "R" · "value" · "emit" · "(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "kotlinx/coroutines/flow/FlowKt__EmittersKt$unsafeTransform$1$1" · "kotlinx/coroutines/flow/FlowKt__TransformKt$map$$inlined$unsafeTransform$1$2"
+- `Object collect(FlowCollector<? super Unit> flowCollector, Continuation continuation)`  L1661 @Override
+- `Flow<M3RecordingTimeUpdate> observeRecordingTimeUpdates()`  L1669 @Override
+- `Object collect(FlowCollector<? super Object> flowCollector, Continuation continuation)`  L1742 @Override
+    - 体内字面量："<anonymous>" · "R" · "value" · "emit" · "(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "kotlinx/coroutines/flow/FlowKt__EmittersKt$unsafeTransform$1$1" · "kotlinx/coroutines/flow/FlowKt__TransformKt$map$$inlined$unsafeTransform$1$2"
+- `Object collect(FlowCollector<? super M3RecordingTimeUpdate> flowCollector, Continuation continuation)`  L1817 @Override
+- `Flow<Integer> observeCountdownTimeUpdates()`  L1825 @Override
+- `Object collect(FlowCollector<? super Object> flowCollector, Continuation continuation)`  L1898 @Override
+    - 体内字面量："<anonymous>" · "R" · "value" · "emit" · "(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "kotlinx/coroutines/flow/FlowKt__EmittersKt$unsafeTransform$1$1" · "kotlinx/coroutines/flow/FlowKt__TransformKt$map$$inlined$unsafeTransform$1$2"
+- `Object collect(FlowCollector<? super Integer> flowCollector, Continuation continuation)`  L1972 @Override
+- `Object mo2786getFileListIoAF18A(Continuation<? super Result<M3FileListResponse>> continuation)`  L1987 @Override
+- `Object mo2792getThumbnailgIAlus(String str, Continuation<? super Result<Bitmap>> continuation)`  L2097 @Override
+- `Object mo2796setPlaybackModegIAlus(String str, Continuation<? super Result<Unit>> continuation)`  L2161 @Override
+- `Object mo2780deleteFilegIAlus(String str, Continuation<? super Result<Unit>> continuation)`  L2229 @Override
+- `Object mo2793setMenuModegIAlus(String str, Continuation<? super Result<Unit>> continuation)`  L2297 @Override
+- `Object mo2790getParamItemsByModegIAlus(int i, Continuation<? super Result<? extends List<M3ParamItem>>> continuation)`  L2363 @Override
+- `Object mo2789getParamItemValuegIAlus(String str, Continuation<? super Result<String>> continuation)`  L2443 @Override
+- `Object mo2795setParamValue0E7RQCE(String str, int i, Continuation<? super Result<Unit>> continuation)`  L2636 @Override
+- `Object mo2799setWifiSsidgIAlus(String str, Continuation<? super Result<Unit>> continuation)`  L2707 @Override
+- `Object mo2798setWifiPasswordgIAlus(String str, Continuation<? super Result<Unit>> continuation)`  L2776 @Override
+- `Object mo2782formatSdCardIoAF18A(Continuation<? super Result<Unit>> continuation)`  L2846 @Override
+- `Object mo2781factoryResetIoAF18A(Continuation<? super Result<Unit>> continuation)`  L2911 @Override
+- `Object mo2802uploadFirmwareBWLJW6A(Uri uri, long j, Function2<? super Long, ? super Long, Unit> function2, Continuation<? super Result<Unit>> continuation)`  L2974 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2`
+L674 · [class] public static final AnonymousClass2 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（40）：
+- `FlowCollector $this_unsafeFlow`  L675
+- `AnonymousClass1 anonymousClass1`  L706
+- `Object obj2 = anonymousClass1.result`  L717
+- `int i = anonymousClass1.label`  L719
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L722
+- `FlowCollector $this_unsafeFlow`  L830
+- `AnonymousClass1 anonymousClass1`  L861
+- `Object obj2 = anonymousClass1.result`  L872
+- `int i = anonymousClass1.label`  L874
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L877
+- `FlowCollector $this_unsafeFlow`  L1291
+- `AnonymousClass1 anonymousClass1`  L1322
+- `Object obj2 = anonymousClass1.result`  L1333
+- `int i = anonymousClass1.label`  L1335
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1338
+- `FlowCollector $this_unsafeFlow`  L1446
+- `AnonymousClass1 anonymousClass1`  L1477
+- `Object obj2 = anonymousClass1.result`  L1488
+- `int i = anonymousClass1.label`  L1490
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1493
+- `FlowCollector $this_unsafeFlow`  L1677
+- `AnonymousClass1 anonymousClass1`  L1708
+- `Object obj2 = anonymousClass1.result`  L1719
+- `int i = anonymousClass1.label`  L1721
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1724
+- `FlowCollector $this_unsafeFlow`  L1753
+- `AnonymousClass1 anonymousClass1`  L1783
+- `Object obj2 = anonymousClass1.result`  L1794
+- `int i = anonymousClass1.label`  L1796
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1799
+- `FlowCollector $this_unsafeFlow`  L1833
+- `AnonymousClass1 anonymousClass1`  L1864
+- `Object obj2 = anonymousClass1.result`  L1875
+- `int i = anonymousClass1.label`  L1877
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1880
+- `FlowCollector $this_unsafeFlow`  L1909
+- `AnonymousClass1 anonymousClass1`  L1939
+- `Object obj2 = anonymousClass1.result`  L1950
+- `int i = anonymousClass1.label`  L1952
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1955
+
+方法（16）：
+- `public AnonymousClass2(FlowCollector flowCollector)`  L699
+- `Object emit(Object obj, Continuation continuation)`  L705 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L854
+- `Object emit(Object obj, Continuation continuation)`  L860 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1315
+- `Object emit(Object obj, Continuation continuation)`  L1321 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1470
+- `Object emit(Object obj, Continuation continuation)`  L1476 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1701
+- `Object emit(Object obj, Continuation continuation)`  L1707 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1776
+- `Object emit(Object obj, Continuation continuation)`  L1782 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1857
+- `Object emit(Object obj, Continuation continuation)`  L1863 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1932
+- `Object emit(Object obj, Continuation continuation)`  L1938 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2`
+L829 · [class] public static final AnonymousClass2 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（40）：
+- `FlowCollector $this_unsafeFlow`  L675
+- `AnonymousClass1 anonymousClass1`  L706
+- `Object obj2 = anonymousClass1.result`  L717
+- `int i = anonymousClass1.label`  L719
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L722
+- `FlowCollector $this_unsafeFlow`  L830
+- `AnonymousClass1 anonymousClass1`  L861
+- `Object obj2 = anonymousClass1.result`  L872
+- `int i = anonymousClass1.label`  L874
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L877
+- `FlowCollector $this_unsafeFlow`  L1291
+- `AnonymousClass1 anonymousClass1`  L1322
+- `Object obj2 = anonymousClass1.result`  L1333
+- `int i = anonymousClass1.label`  L1335
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1338
+- `FlowCollector $this_unsafeFlow`  L1446
+- `AnonymousClass1 anonymousClass1`  L1477
+- `Object obj2 = anonymousClass1.result`  L1488
+- `int i = anonymousClass1.label`  L1490
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1493
+- `FlowCollector $this_unsafeFlow`  L1677
+- `AnonymousClass1 anonymousClass1`  L1708
+- `Object obj2 = anonymousClass1.result`  L1719
+- `int i = anonymousClass1.label`  L1721
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1724
+- `FlowCollector $this_unsafeFlow`  L1753
+- `AnonymousClass1 anonymousClass1`  L1783
+- `Object obj2 = anonymousClass1.result`  L1794
+- `int i = anonymousClass1.label`  L1796
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1799
+- `FlowCollector $this_unsafeFlow`  L1833
+- `AnonymousClass1 anonymousClass1`  L1864
+- `Object obj2 = anonymousClass1.result`  L1875
+- `int i = anonymousClass1.label`  L1877
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1880
+- `FlowCollector $this_unsafeFlow`  L1909
+- `AnonymousClass1 anonymousClass1`  L1939
+- `Object obj2 = anonymousClass1.result`  L1950
+- `int i = anonymousClass1.label`  L1952
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1955
+
+方法（16）：
+- `public AnonymousClass2(FlowCollector flowCollector)`  L699
+- `Object emit(Object obj, Continuation continuation)`  L705 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L854
+- `Object emit(Object obj, Continuation continuation)`  L860 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1315
+- `Object emit(Object obj, Continuation continuation)`  L1321 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1470
+- `Object emit(Object obj, Continuation continuation)`  L1476 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1701
+- `Object emit(Object obj, Continuation continuation)`  L1707 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1776
+- `Object emit(Object obj, Continuation continuation)`  L1782 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1857
+- `Object emit(Object obj, Continuation continuation)`  L1863 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1932
+- `Object emit(Object obj, Continuation continuation)`  L1938 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2`
+L1290 · [class] public static final AnonymousClass2 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（40）：
+- `FlowCollector $this_unsafeFlow`  L675
+- `AnonymousClass1 anonymousClass1`  L706
+- `Object obj2 = anonymousClass1.result`  L717
+- `int i = anonymousClass1.label`  L719
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L722
+- `FlowCollector $this_unsafeFlow`  L830
+- `AnonymousClass1 anonymousClass1`  L861
+- `Object obj2 = anonymousClass1.result`  L872
+- `int i = anonymousClass1.label`  L874
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L877
+- `FlowCollector $this_unsafeFlow`  L1291
+- `AnonymousClass1 anonymousClass1`  L1322
+- `Object obj2 = anonymousClass1.result`  L1333
+- `int i = anonymousClass1.label`  L1335
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1338
+- `FlowCollector $this_unsafeFlow`  L1446
+- `AnonymousClass1 anonymousClass1`  L1477
+- `Object obj2 = anonymousClass1.result`  L1488
+- `int i = anonymousClass1.label`  L1490
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1493
+- `FlowCollector $this_unsafeFlow`  L1677
+- `AnonymousClass1 anonymousClass1`  L1708
+- `Object obj2 = anonymousClass1.result`  L1719
+- `int i = anonymousClass1.label`  L1721
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1724
+- `FlowCollector $this_unsafeFlow`  L1753
+- `AnonymousClass1 anonymousClass1`  L1783
+- `Object obj2 = anonymousClass1.result`  L1794
+- `int i = anonymousClass1.label`  L1796
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1799
+- `FlowCollector $this_unsafeFlow`  L1833
+- `AnonymousClass1 anonymousClass1`  L1864
+- `Object obj2 = anonymousClass1.result`  L1875
+- `int i = anonymousClass1.label`  L1877
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1880
+- `FlowCollector $this_unsafeFlow`  L1909
+- `AnonymousClass1 anonymousClass1`  L1939
+- `Object obj2 = anonymousClass1.result`  L1950
+- `int i = anonymousClass1.label`  L1952
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1955
+
+方法（16）：
+- `public AnonymousClass2(FlowCollector flowCollector)`  L699
+- `Object emit(Object obj, Continuation continuation)`  L705 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L854
+- `Object emit(Object obj, Continuation continuation)`  L860 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1315
+- `Object emit(Object obj, Continuation continuation)`  L1321 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1470
+- `Object emit(Object obj, Continuation continuation)`  L1476 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1701
+- `Object emit(Object obj, Continuation continuation)`  L1707 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1776
+- `Object emit(Object obj, Continuation continuation)`  L1782 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1857
+- `Object emit(Object obj, Continuation continuation)`  L1863 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1932
+- `Object emit(Object obj, Continuation continuation)`  L1938 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2`
+L1445 · [class] public static final AnonymousClass2 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（40）：
+- `FlowCollector $this_unsafeFlow`  L675
+- `AnonymousClass1 anonymousClass1`  L706
+- `Object obj2 = anonymousClass1.result`  L717
+- `int i = anonymousClass1.label`  L719
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L722
+- `FlowCollector $this_unsafeFlow`  L830
+- `AnonymousClass1 anonymousClass1`  L861
+- `Object obj2 = anonymousClass1.result`  L872
+- `int i = anonymousClass1.label`  L874
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L877
+- `FlowCollector $this_unsafeFlow`  L1291
+- `AnonymousClass1 anonymousClass1`  L1322
+- `Object obj2 = anonymousClass1.result`  L1333
+- `int i = anonymousClass1.label`  L1335
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1338
+- `FlowCollector $this_unsafeFlow`  L1446
+- `AnonymousClass1 anonymousClass1`  L1477
+- `Object obj2 = anonymousClass1.result`  L1488
+- `int i = anonymousClass1.label`  L1490
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1493
+- `FlowCollector $this_unsafeFlow`  L1677
+- `AnonymousClass1 anonymousClass1`  L1708
+- `Object obj2 = anonymousClass1.result`  L1719
+- `int i = anonymousClass1.label`  L1721
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1724
+- `FlowCollector $this_unsafeFlow`  L1753
+- `AnonymousClass1 anonymousClass1`  L1783
+- `Object obj2 = anonymousClass1.result`  L1794
+- `int i = anonymousClass1.label`  L1796
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1799
+- `FlowCollector $this_unsafeFlow`  L1833
+- `AnonymousClass1 anonymousClass1`  L1864
+- `Object obj2 = anonymousClass1.result`  L1875
+- `int i = anonymousClass1.label`  L1877
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1880
+- `FlowCollector $this_unsafeFlow`  L1909
+- `AnonymousClass1 anonymousClass1`  L1939
+- `Object obj2 = anonymousClass1.result`  L1950
+- `int i = anonymousClass1.label`  L1952
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1955
+
+方法（16）：
+- `public AnonymousClass2(FlowCollector flowCollector)`  L699
+- `Object emit(Object obj, Continuation continuation)`  L705 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L854
+- `Object emit(Object obj, Continuation continuation)`  L860 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1315
+- `Object emit(Object obj, Continuation continuation)`  L1321 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1470
+- `Object emit(Object obj, Continuation continuation)`  L1476 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1701
+- `Object emit(Object obj, Continuation continuation)`  L1707 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1776
+- `Object emit(Object obj, Continuation continuation)`  L1782 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1857
+- `Object emit(Object obj, Continuation continuation)`  L1863 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1932
+- `Object emit(Object obj, Continuation continuation)`  L1938 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2`
+L1676 · [class] public static final AnonymousClass2 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（40）：
+- `FlowCollector $this_unsafeFlow`  L675
+- `AnonymousClass1 anonymousClass1`  L706
+- `Object obj2 = anonymousClass1.result`  L717
+- `int i = anonymousClass1.label`  L719
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L722
+- `FlowCollector $this_unsafeFlow`  L830
+- `AnonymousClass1 anonymousClass1`  L861
+- `Object obj2 = anonymousClass1.result`  L872
+- `int i = anonymousClass1.label`  L874
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L877
+- `FlowCollector $this_unsafeFlow`  L1291
+- `AnonymousClass1 anonymousClass1`  L1322
+- `Object obj2 = anonymousClass1.result`  L1333
+- `int i = anonymousClass1.label`  L1335
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1338
+- `FlowCollector $this_unsafeFlow`  L1446
+- `AnonymousClass1 anonymousClass1`  L1477
+- `Object obj2 = anonymousClass1.result`  L1488
+- `int i = anonymousClass1.label`  L1490
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1493
+- `FlowCollector $this_unsafeFlow`  L1677
+- `AnonymousClass1 anonymousClass1`  L1708
+- `Object obj2 = anonymousClass1.result`  L1719
+- `int i = anonymousClass1.label`  L1721
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1724
+- `FlowCollector $this_unsafeFlow`  L1753
+- `AnonymousClass1 anonymousClass1`  L1783
+- `Object obj2 = anonymousClass1.result`  L1794
+- `int i = anonymousClass1.label`  L1796
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1799
+- `FlowCollector $this_unsafeFlow`  L1833
+- `AnonymousClass1 anonymousClass1`  L1864
+- `Object obj2 = anonymousClass1.result`  L1875
+- `int i = anonymousClass1.label`  L1877
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1880
+- `FlowCollector $this_unsafeFlow`  L1909
+- `AnonymousClass1 anonymousClass1`  L1939
+- `Object obj2 = anonymousClass1.result`  L1950
+- `int i = anonymousClass1.label`  L1952
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1955
+
+方法（16）：
+- `public AnonymousClass2(FlowCollector flowCollector)`  L699
+- `Object emit(Object obj, Continuation continuation)`  L705 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L854
+- `Object emit(Object obj, Continuation continuation)`  L860 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1315
+- `Object emit(Object obj, Continuation continuation)`  L1321 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1470
+- `Object emit(Object obj, Continuation continuation)`  L1476 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1701
+- `Object emit(Object obj, Continuation continuation)`  L1707 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1776
+- `Object emit(Object obj, Continuation continuation)`  L1782 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1857
+- `Object emit(Object obj, Continuation continuation)`  L1863 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1932
+- `Object emit(Object obj, Continuation continuation)`  L1938 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2`
+L1752 · [class] public static final AnonymousClass2 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（40）：
+- `FlowCollector $this_unsafeFlow`  L675
+- `AnonymousClass1 anonymousClass1`  L706
+- `Object obj2 = anonymousClass1.result`  L717
+- `int i = anonymousClass1.label`  L719
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L722
+- `FlowCollector $this_unsafeFlow`  L830
+- `AnonymousClass1 anonymousClass1`  L861
+- `Object obj2 = anonymousClass1.result`  L872
+- `int i = anonymousClass1.label`  L874
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L877
+- `FlowCollector $this_unsafeFlow`  L1291
+- `AnonymousClass1 anonymousClass1`  L1322
+- `Object obj2 = anonymousClass1.result`  L1333
+- `int i = anonymousClass1.label`  L1335
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1338
+- `FlowCollector $this_unsafeFlow`  L1446
+- `AnonymousClass1 anonymousClass1`  L1477
+- `Object obj2 = anonymousClass1.result`  L1488
+- `int i = anonymousClass1.label`  L1490
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1493
+- `FlowCollector $this_unsafeFlow`  L1677
+- `AnonymousClass1 anonymousClass1`  L1708
+- `Object obj2 = anonymousClass1.result`  L1719
+- `int i = anonymousClass1.label`  L1721
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1724
+- `FlowCollector $this_unsafeFlow`  L1753
+- `AnonymousClass1 anonymousClass1`  L1783
+- `Object obj2 = anonymousClass1.result`  L1794
+- `int i = anonymousClass1.label`  L1796
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1799
+- `FlowCollector $this_unsafeFlow`  L1833
+- `AnonymousClass1 anonymousClass1`  L1864
+- `Object obj2 = anonymousClass1.result`  L1875
+- `int i = anonymousClass1.label`  L1877
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1880
+- `FlowCollector $this_unsafeFlow`  L1909
+- `AnonymousClass1 anonymousClass1`  L1939
+- `Object obj2 = anonymousClass1.result`  L1950
+- `int i = anonymousClass1.label`  L1952
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1955
+
+方法（16）：
+- `public AnonymousClass2(FlowCollector flowCollector)`  L699
+- `Object emit(Object obj, Continuation continuation)`  L705 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L854
+- `Object emit(Object obj, Continuation continuation)`  L860 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1315
+- `Object emit(Object obj, Continuation continuation)`  L1321 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1470
+- `Object emit(Object obj, Continuation continuation)`  L1476 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1701
+- `Object emit(Object obj, Continuation continuation)`  L1707 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1776
+- `Object emit(Object obj, Continuation continuation)`  L1782 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1857
+- `Object emit(Object obj, Continuation continuation)`  L1863 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1932
+- `Object emit(Object obj, Continuation continuation)`  L1938 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2`
+L1832 · [class] public static final AnonymousClass2 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（40）：
+- `FlowCollector $this_unsafeFlow`  L675
+- `AnonymousClass1 anonymousClass1`  L706
+- `Object obj2 = anonymousClass1.result`  L717
+- `int i = anonymousClass1.label`  L719
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L722
+- `FlowCollector $this_unsafeFlow`  L830
+- `AnonymousClass1 anonymousClass1`  L861
+- `Object obj2 = anonymousClass1.result`  L872
+- `int i = anonymousClass1.label`  L874
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L877
+- `FlowCollector $this_unsafeFlow`  L1291
+- `AnonymousClass1 anonymousClass1`  L1322
+- `Object obj2 = anonymousClass1.result`  L1333
+- `int i = anonymousClass1.label`  L1335
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1338
+- `FlowCollector $this_unsafeFlow`  L1446
+- `AnonymousClass1 anonymousClass1`  L1477
+- `Object obj2 = anonymousClass1.result`  L1488
+- `int i = anonymousClass1.label`  L1490
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1493
+- `FlowCollector $this_unsafeFlow`  L1677
+- `AnonymousClass1 anonymousClass1`  L1708
+- `Object obj2 = anonymousClass1.result`  L1719
+- `int i = anonymousClass1.label`  L1721
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1724
+- `FlowCollector $this_unsafeFlow`  L1753
+- `AnonymousClass1 anonymousClass1`  L1783
+- `Object obj2 = anonymousClass1.result`  L1794
+- `int i = anonymousClass1.label`  L1796
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1799
+- `FlowCollector $this_unsafeFlow`  L1833
+- `AnonymousClass1 anonymousClass1`  L1864
+- `Object obj2 = anonymousClass1.result`  L1875
+- `int i = anonymousClass1.label`  L1877
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1880
+- `FlowCollector $this_unsafeFlow`  L1909
+- `AnonymousClass1 anonymousClass1`  L1939
+- `Object obj2 = anonymousClass1.result`  L1950
+- `int i = anonymousClass1.label`  L1952
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1955
+
+方法（16）：
+- `public AnonymousClass2(FlowCollector flowCollector)`  L699
+- `Object emit(Object obj, Continuation continuation)`  L705 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L854
+- `Object emit(Object obj, Continuation continuation)`  L860 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1315
+- `Object emit(Object obj, Continuation continuation)`  L1321 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1470
+- `Object emit(Object obj, Continuation continuation)`  L1476 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1701
+- `Object emit(Object obj, Continuation continuation)`  L1707 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1776
+- `Object emit(Object obj, Continuation continuation)`  L1782 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1857
+- `Object emit(Object obj, Continuation continuation)`  L1863 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1932
+- `Object emit(Object obj, Continuation continuation)`  L1938 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2`
+L1908 · [class] public static final AnonymousClass2 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（40）：
+- `FlowCollector $this_unsafeFlow`  L675
+- `AnonymousClass1 anonymousClass1`  L706
+- `Object obj2 = anonymousClass1.result`  L717
+- `int i = anonymousClass1.label`  L719
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L722
+- `FlowCollector $this_unsafeFlow`  L830
+- `AnonymousClass1 anonymousClass1`  L861
+- `Object obj2 = anonymousClass1.result`  L872
+- `int i = anonymousClass1.label`  L874
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L877
+- `FlowCollector $this_unsafeFlow`  L1291
+- `AnonymousClass1 anonymousClass1`  L1322
+- `Object obj2 = anonymousClass1.result`  L1333
+- `int i = anonymousClass1.label`  L1335
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1338
+- `FlowCollector $this_unsafeFlow`  L1446
+- `AnonymousClass1 anonymousClass1`  L1477
+- `Object obj2 = anonymousClass1.result`  L1488
+- `int i = anonymousClass1.label`  L1490
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1493
+- `FlowCollector $this_unsafeFlow`  L1677
+- `AnonymousClass1 anonymousClass1`  L1708
+- `Object obj2 = anonymousClass1.result`  L1719
+- `int i = anonymousClass1.label`  L1721
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1724
+- `FlowCollector $this_unsafeFlow`  L1753
+- `AnonymousClass1 anonymousClass1`  L1783
+- `Object obj2 = anonymousClass1.result`  L1794
+- `int i = anonymousClass1.label`  L1796
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1799
+- `FlowCollector $this_unsafeFlow`  L1833
+- `AnonymousClass1 anonymousClass1`  L1864
+- `Object obj2 = anonymousClass1.result`  L1875
+- `int i = anonymousClass1.label`  L1877
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1880
+- `FlowCollector $this_unsafeFlow`  L1909
+- `AnonymousClass1 anonymousClass1`  L1939
+- `Object obj2 = anonymousClass1.result`  L1950
+- `int i = anonymousClass1.label`  L1952
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1955
+
+方法（16）：
+- `public AnonymousClass2(FlowCollector flowCollector)`  L699
+- `Object emit(Object obj, Continuation continuation)`  L705 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L854
+- `Object emit(Object obj, Continuation continuation)`  L860 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1315
+- `Object emit(Object obj, Continuation continuation)`  L1321 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1470
+- `Object emit(Object obj, Continuation continuation)`  L1476 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1701
+- `Object emit(Object obj, Continuation continuation)`  L1707 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1776
+- `Object emit(Object obj, Continuation continuation)`  L1782 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1857
+- `Object emit(Object obj, Continuation continuation)`  L1863 @Override
+- `public AnonymousClass2(FlowCollector flowCollector)`  L1932
+- `Object emit(Object obj, Continuation continuation)`  L1938 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2$AnonymousClass1`
+L681 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（30）：
+- `Object L$0`  L682
+- `Object L$1`  L683
+- `int label`  L684
+- `Object result`  L685
+- `Object L$0`  L837
+- `Object L$1`  L838
+- `int label`  L839
+- `Object result`  L840
+- `Object L$0`  L1298
+- `Object L$1`  L1299
+- `int label`  L1300
+- `Object result`  L1301
+- `Object L$0`  L1453
+- `Object L$1`  L1454
+- `int label`  L1455
+- `Object result`  L1456
+- `Object L$0`  L1684
+- `Object L$1`  L1685
+- `int label`  L1686
+- `Object result`  L1687
+- `Object L$0`  L1760
+- `int label`  L1761
+- `Object result`  L1762
+- `Object L$0`  L1840
+- `Object L$1`  L1841
+- `int label`  L1842
+- `Object result`  L1843
+- `Object L$0`  L1916
+- `int label`  L1917
+- `Object result`  L1918
+
+方法（16）：
+- `public AnonymousClass1(Continuation continuation)`  L687
+- `Object invokeSuspend(Object obj)`  L692 @Override
+- `public AnonymousClass1(Continuation continuation)`  L842
+- `Object invokeSuspend(Object obj)`  L847 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1303
+- `Object invokeSuspend(Object obj)`  L1308 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1458
+- `Object invokeSuspend(Object obj)`  L1463 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1689
+- `Object invokeSuspend(Object obj)`  L1694 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1764
+- `Object invokeSuspend(Object obj)`  L1769 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1845
+- `Object invokeSuspend(Object obj)`  L1850 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1920
+- `Object invokeSuspend(Object obj)`  L1925 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2$AnonymousClass1`
+L836 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（30）：
+- `Object L$0`  L682
+- `Object L$1`  L683
+- `int label`  L684
+- `Object result`  L685
+- `Object L$0`  L837
+- `Object L$1`  L838
+- `int label`  L839
+- `Object result`  L840
+- `Object L$0`  L1298
+- `Object L$1`  L1299
+- `int label`  L1300
+- `Object result`  L1301
+- `Object L$0`  L1453
+- `Object L$1`  L1454
+- `int label`  L1455
+- `Object result`  L1456
+- `Object L$0`  L1684
+- `Object L$1`  L1685
+- `int label`  L1686
+- `Object result`  L1687
+- `Object L$0`  L1760
+- `int label`  L1761
+- `Object result`  L1762
+- `Object L$0`  L1840
+- `Object L$1`  L1841
+- `int label`  L1842
+- `Object result`  L1843
+- `Object L$0`  L1916
+- `int label`  L1917
+- `Object result`  L1918
+
+方法（16）：
+- `public AnonymousClass1(Continuation continuation)`  L687
+- `Object invokeSuspend(Object obj)`  L692 @Override
+- `public AnonymousClass1(Continuation continuation)`  L842
+- `Object invokeSuspend(Object obj)`  L847 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1303
+- `Object invokeSuspend(Object obj)`  L1308 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1458
+- `Object invokeSuspend(Object obj)`  L1463 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1689
+- `Object invokeSuspend(Object obj)`  L1694 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1764
+- `Object invokeSuspend(Object obj)`  L1769 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1845
+- `Object invokeSuspend(Object obj)`  L1850 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1920
+- `Object invokeSuspend(Object obj)`  L1925 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2$AnonymousClass1`
+L1297 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（30）：
+- `Object L$0`  L682
+- `Object L$1`  L683
+- `int label`  L684
+- `Object result`  L685
+- `Object L$0`  L837
+- `Object L$1`  L838
+- `int label`  L839
+- `Object result`  L840
+- `Object L$0`  L1298
+- `Object L$1`  L1299
+- `int label`  L1300
+- `Object result`  L1301
+- `Object L$0`  L1453
+- `Object L$1`  L1454
+- `int label`  L1455
+- `Object result`  L1456
+- `Object L$0`  L1684
+- `Object L$1`  L1685
+- `int label`  L1686
+- `Object result`  L1687
+- `Object L$0`  L1760
+- `int label`  L1761
+- `Object result`  L1762
+- `Object L$0`  L1840
+- `Object L$1`  L1841
+- `int label`  L1842
+- `Object result`  L1843
+- `Object L$0`  L1916
+- `int label`  L1917
+- `Object result`  L1918
+
+方法（16）：
+- `public AnonymousClass1(Continuation continuation)`  L687
+- `Object invokeSuspend(Object obj)`  L692 @Override
+- `public AnonymousClass1(Continuation continuation)`  L842
+- `Object invokeSuspend(Object obj)`  L847 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1303
+- `Object invokeSuspend(Object obj)`  L1308 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1458
+- `Object invokeSuspend(Object obj)`  L1463 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1689
+- `Object invokeSuspend(Object obj)`  L1694 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1764
+- `Object invokeSuspend(Object obj)`  L1769 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1845
+- `Object invokeSuspend(Object obj)`  L1850 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1920
+- `Object invokeSuspend(Object obj)`  L1925 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2$AnonymousClass1`
+L1452 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（30）：
+- `Object L$0`  L682
+- `Object L$1`  L683
+- `int label`  L684
+- `Object result`  L685
+- `Object L$0`  L837
+- `Object L$1`  L838
+- `int label`  L839
+- `Object result`  L840
+- `Object L$0`  L1298
+- `Object L$1`  L1299
+- `int label`  L1300
+- `Object result`  L1301
+- `Object L$0`  L1453
+- `Object L$1`  L1454
+- `int label`  L1455
+- `Object result`  L1456
+- `Object L$0`  L1684
+- `Object L$1`  L1685
+- `int label`  L1686
+- `Object result`  L1687
+- `Object L$0`  L1760
+- `int label`  L1761
+- `Object result`  L1762
+- `Object L$0`  L1840
+- `Object L$1`  L1841
+- `int label`  L1842
+- `Object result`  L1843
+- `Object L$0`  L1916
+- `int label`  L1917
+- `Object result`  L1918
+
+方法（16）：
+- `public AnonymousClass1(Continuation continuation)`  L687
+- `Object invokeSuspend(Object obj)`  L692 @Override
+- `public AnonymousClass1(Continuation continuation)`  L842
+- `Object invokeSuspend(Object obj)`  L847 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1303
+- `Object invokeSuspend(Object obj)`  L1308 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1458
+- `Object invokeSuspend(Object obj)`  L1463 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1689
+- `Object invokeSuspend(Object obj)`  L1694 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1764
+- `Object invokeSuspend(Object obj)`  L1769 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1845
+- `Object invokeSuspend(Object obj)`  L1850 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1920
+- `Object invokeSuspend(Object obj)`  L1925 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2$AnonymousClass1`
+L1683 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（30）：
+- `Object L$0`  L682
+- `Object L$1`  L683
+- `int label`  L684
+- `Object result`  L685
+- `Object L$0`  L837
+- `Object L$1`  L838
+- `int label`  L839
+- `Object result`  L840
+- `Object L$0`  L1298
+- `Object L$1`  L1299
+- `int label`  L1300
+- `Object result`  L1301
+- `Object L$0`  L1453
+- `Object L$1`  L1454
+- `int label`  L1455
+- `Object result`  L1456
+- `Object L$0`  L1684
+- `Object L$1`  L1685
+- `int label`  L1686
+- `Object result`  L1687
+- `Object L$0`  L1760
+- `int label`  L1761
+- `Object result`  L1762
+- `Object L$0`  L1840
+- `Object L$1`  L1841
+- `int label`  L1842
+- `Object result`  L1843
+- `Object L$0`  L1916
+- `int label`  L1917
+- `Object result`  L1918
+
+方法（16）：
+- `public AnonymousClass1(Continuation continuation)`  L687
+- `Object invokeSuspend(Object obj)`  L692 @Override
+- `public AnonymousClass1(Continuation continuation)`  L842
+- `Object invokeSuspend(Object obj)`  L847 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1303
+- `Object invokeSuspend(Object obj)`  L1308 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1458
+- `Object invokeSuspend(Object obj)`  L1463 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1689
+- `Object invokeSuspend(Object obj)`  L1694 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1764
+- `Object invokeSuspend(Object obj)`  L1769 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1845
+- `Object invokeSuspend(Object obj)`  L1850 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1920
+- `Object invokeSuspend(Object obj)`  L1925 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2$AnonymousClass1`
+L1759 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（30）：
+- `Object L$0`  L682
+- `Object L$1`  L683
+- `int label`  L684
+- `Object result`  L685
+- `Object L$0`  L837
+- `Object L$1`  L838
+- `int label`  L839
+- `Object result`  L840
+- `Object L$0`  L1298
+- `Object L$1`  L1299
+- `int label`  L1300
+- `Object result`  L1301
+- `Object L$0`  L1453
+- `Object L$1`  L1454
+- `int label`  L1455
+- `Object result`  L1456
+- `Object L$0`  L1684
+- `Object L$1`  L1685
+- `int label`  L1686
+- `Object result`  L1687
+- `Object L$0`  L1760
+- `int label`  L1761
+- `Object result`  L1762
+- `Object L$0`  L1840
+- `Object L$1`  L1841
+- `int label`  L1842
+- `Object result`  L1843
+- `Object L$0`  L1916
+- `int label`  L1917
+- `Object result`  L1918
+
+方法（16）：
+- `public AnonymousClass1(Continuation continuation)`  L687
+- `Object invokeSuspend(Object obj)`  L692 @Override
+- `public AnonymousClass1(Continuation continuation)`  L842
+- `Object invokeSuspend(Object obj)`  L847 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1303
+- `Object invokeSuspend(Object obj)`  L1308 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1458
+- `Object invokeSuspend(Object obj)`  L1463 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1689
+- `Object invokeSuspend(Object obj)`  L1694 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1764
+- `Object invokeSuspend(Object obj)`  L1769 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1845
+- `Object invokeSuspend(Object obj)`  L1850 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1920
+- `Object invokeSuspend(Object obj)`  L1925 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2$AnonymousClass1`
+L1839 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（30）：
+- `Object L$0`  L682
+- `Object L$1`  L683
+- `int label`  L684
+- `Object result`  L685
+- `Object L$0`  L837
+- `Object L$1`  L838
+- `int label`  L839
+- `Object result`  L840
+- `Object L$0`  L1298
+- `Object L$1`  L1299
+- `int label`  L1300
+- `Object result`  L1301
+- `Object L$0`  L1453
+- `Object L$1`  L1454
+- `int label`  L1455
+- `Object result`  L1456
+- `Object L$0`  L1684
+- `Object L$1`  L1685
+- `int label`  L1686
+- `Object result`  L1687
+- `Object L$0`  L1760
+- `int label`  L1761
+- `Object result`  L1762
+- `Object L$0`  L1840
+- `Object L$1`  L1841
+- `int label`  L1842
+- `Object result`  L1843
+- `Object L$0`  L1916
+- `int label`  L1917
+- `Object result`  L1918
+
+方法（16）：
+- `public AnonymousClass1(Continuation continuation)`  L687
+- `Object invokeSuspend(Object obj)`  L692 @Override
+- `public AnonymousClass1(Continuation continuation)`  L842
+- `Object invokeSuspend(Object obj)`  L847 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1303
+- `Object invokeSuspend(Object obj)`  L1308 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1458
+- `Object invokeSuspend(Object obj)`  L1463 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1689
+- `Object invokeSuspend(Object obj)`  L1694 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1764
+- `Object invokeSuspend(Object obj)`  L1769 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1845
+- `Object invokeSuspend(Object obj)`  L1850 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1920
+- `Object invokeSuspend(Object obj)`  L1925 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$AnonymousClass2$AnonymousClass1`
+L1915 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（30）：
+- `Object L$0`  L682
+- `Object L$1`  L683
+- `int label`  L684
+- `Object result`  L685
+- `Object L$0`  L837
+- `Object L$1`  L838
+- `int label`  L839
+- `Object result`  L840
+- `Object L$0`  L1298
+- `Object L$1`  L1299
+- `int label`  L1300
+- `Object result`  L1301
+- `Object L$0`  L1453
+- `Object L$1`  L1454
+- `int label`  L1455
+- `Object result`  L1456
+- `Object L$0`  L1684
+- `Object L$1`  L1685
+- `int label`  L1686
+- `Object result`  L1687
+- `Object L$0`  L1760
+- `int label`  L1761
+- `Object result`  L1762
+- `Object L$0`  L1840
+- `Object L$1`  L1841
+- `int label`  L1842
+- `Object result`  L1843
+- `Object L$0`  L1916
+- `int label`  L1917
+- `Object result`  L1918
+
+方法（16）：
+- `public AnonymousClass1(Continuation continuation)`  L687
+- `Object invokeSuspend(Object obj)`  L692 @Override
+- `public AnonymousClass1(Continuation continuation)`  L842
+- `Object invokeSuspend(Object obj)`  L847 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1303
+- `Object invokeSuspend(Object obj)`  L1308 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1458
+- `Object invokeSuspend(Object obj)`  L1463 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1689
+- `Object invokeSuspend(Object obj)`  L1694 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1764
+- `Object invokeSuspend(Object obj)`  L1769 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1845
+- `Object invokeSuspend(Object obj)`  L1850 @Override
+- `public AnonymousClass1(Continuation continuation)`  L1920
+- `Object invokeSuspend(Object obj)`  L1925 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$C21602`
+L750 · [class] public static final C21602 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（5）：
+- `FlowCollector $this_unsafeFlow`  L751
+- `AnonymousClass1 anonymousClass1`  L781
+- `Object obj2 = anonymousClass1.result`  L792
+- `int i = anonymousClass1.label`  L794
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L797
+
+方法（2）：
+- `public C21602(FlowCollector flowCollector)`  L774
+- `Object emit(Object obj, Continuation continuation)`  L780 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$C21602$AnonymousClass1`
+L757 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L758
+- `int label`  L759
+- `Object result`  L760
+
+方法（2）：
+- `public AnonymousClass1(Continuation continuation)`  L762
+- `Object invokeSuspend(Object obj)`  L767 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$C21612`
+L1521 · [class] public static final C21612 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（5）：
+- `FlowCollector $this_unsafeFlow`  L1522
+- `AnonymousClass1 anonymousClass1`  L1553
+- `Object obj2 = anonymousClass1.result`  L1564
+- `int i = anonymousClass1.label`  L1566
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1569
+
+方法（2）：
+- `public C21612(FlowCollector flowCollector)`  L1546
+- `Object emit(Object obj, Continuation continuation)`  L1552 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$C21612$AnonymousClass1`
+L1528 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L1529
+- `Object L$1`  L1530
+- `int label`  L1531
+- `Object result`  L1532
+
+方法（2）：
+- `public AnonymousClass1(Continuation continuation)`  L1534
+- `Object invokeSuspend(Object obj)`  L1539 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$C21632`
+L1597 · [class] public static final C21632 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（6）：
+- `FlowCollector $this_unsafeFlow`  L1598
+- `AnonymousClass1 anonymousClass1`  L1628
+- `Object obj2 = anonymousClass1.result`  L1639
+- `int i = anonymousClass1.label`  L1641
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1644
+- `Unit unit = Unit.INSTANCE`  L1645
+
+方法（2）：
+- `public C21632(FlowCollector flowCollector)`  L1621
+- `Object emit(Object obj, Continuation continuation)`  L1627 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$C21632$AnonymousClass1`
+L1604 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L1605
+- `int label`  L1606
+- `Object result`  L1607
+
+方法（2）：
+- `public AnonymousClass1(Continuation continuation)`  L1609
+- `Object invokeSuspend(Object obj)`  L1614 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$C21692`
+L1366 · [class] public static final C21692 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（5）：
+- `FlowCollector $this_unsafeFlow`  L1367
+- `AnonymousClass1 anonymousClass1`  L1397
+- `Object obj2 = anonymousClass1.result`  L1408
+- `int i = anonymousClass1.label`  L1410
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L1413
+
+方法（2）：
+- `public C21692(FlowCollector flowCollector)`  L1390
+- `Object emit(Object obj, Continuation continuation)`  L1396 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$C21692$AnonymousClass1`
+L1373 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L1374
+- `int label`  L1375
+- `Object result`  L1376
+
+方法（2）：
+- `public AnonymousClass1(Continuation continuation)`  L1378
+- `Object invokeSuspend(Object obj)`  L1383 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$C21712`
+L905 · [class] public static final C21712 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（5）：
+- `FlowCollector $this_unsafeFlow`  L906
+- `AnonymousClass1 anonymousClass1`  L936
+- `Object obj2 = anonymousClass1.result`  L947
+- `int i = anonymousClass1.label`  L949
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L952
+
+方法（2）：
+- `public C21712(FlowCollector flowCollector)`  L929
+- `Object emit(Object obj, Continuation continuation)`  L935 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$C21712$AnonymousClass1`
+L912 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L913
+- `int label`  L914
+- `Object result`  L915
+
+方法（2）：
+- `public AnonymousClass1(Continuation continuation)`  L917
+- `Object invokeSuspend(Object obj)`  L922 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$deleteFile$1`
+L16 · [class] final M3DeviceRepositoryImpl$deleteFile$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$deleteFile$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L17
+- `int label`  L18
+- `Object result`  L19
+- `M3DeviceRepositoryImpl this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$factoryReset$1`
+L15 · [class] final M3DeviceRepositoryImpl$factoryReset$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$factoryReset$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `M3DeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$formatSdCard$1`
+L15 · [class] final M3DeviceRepositoryImpl$formatSdCard$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$formatSdCard$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `M3DeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$getBatteryInfo$1`
+L15 · [class] final M3DeviceRepositoryImpl$getBatteryInfo$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$getBatteryInfo$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `M3DeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$getCurrentMode$1`
+L15 · [class] final M3DeviceRepositoryImpl$getCurrentMode$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$getCurrentMode$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `M3DeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$getDeviceAttr$1`
+L15 · [class] final M3DeviceRepositoryImpl$getDeviceAttr$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$getDeviceAttr$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `M3DeviceRepositoryImpl this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$getFileList$1`
+L15 · [class] final M3DeviceRepositoryImpl$getFileList$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$getFileList$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `M3DeviceRepositoryImpl this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$getGravityDirection$1`
+L15 · [class] final M3DeviceRepositoryImpl$getGravityDirection$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$getGravityDirection$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `M3DeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$getMediaInfo$1`
+L15 · [class] final M3DeviceRepositoryImpl$getMediaInfo$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$getMediaInfo$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `M3DeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$getParamItemsByMode$1`
+L15 · [class] final M3DeviceRepositoryImpl$getParamItemsByMode$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$getParamItemsByMode$1.java`
+注解：
+
+字段/常量（4）：
+- `int I$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `M3DeviceRepositoryImpl this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$getParamItemValue$1`
+L16 · [class] final M3DeviceRepositoryImpl$getParamItemValue$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$getParamItemValue$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L17
+- `int label`  L18
+- `Object result`  L19
+- `M3DeviceRepositoryImpl this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$getSDInfo$1`
+L15 · [class] final M3DeviceRepositoryImpl$getSDInfo$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$getSDInfo$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `M3DeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$getThumbnail$1`
+L15 · [class] final M3DeviceRepositoryImpl$getThumbnail$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$getThumbnail$1.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L16
+- `Object L$1`  L17
+- `int label`  L18
+- `Object result`  L19
+- `M3DeviceRepositoryImpl this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$getThumbnail$bitmap$1`
+L22 · [class] final M3DeviceRepositoryImpl$getThumbnail$bitmap$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Bitmap>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Bitmap>, Object>` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$getThumbnail$bitmap$1.java`
+注解：
+
+字段/常量（5）：
+- `String $fileName`  L23
+- `int label`  L24
+- `M3DeviceRepositoryImpl this$0`  L25
+- `Bitmap bitmapDecodeByteArray`  L48
+- `int i = this.label`  L50
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L35 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Bitmap> continuation)`  L40 @Override
+- `Object invokeSuspend(Object obj)`  L47 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$setMenuMode$1`
+L15 · [class] final M3DeviceRepositoryImpl$setMenuMode$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$setMenuMode$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `M3DeviceRepositoryImpl this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$setMode$1`
+L15 · [class] final M3DeviceRepositoryImpl$setMode$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$setMode$1.java`
+注解：
+
+字段/常量（4）：
+- `int I$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `M3DeviceRepositoryImpl this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$setParamValue$1`
+L15 · [class] final M3DeviceRepositoryImpl$setParamValue$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$setParamValue$1.java`
+注解：
+
+字段/常量（5）：
+- `int I$0`  L16
+- `Object L$0`  L17
+- `int label`  L18
+- `Object result`  L19
+- `M3DeviceRepositoryImpl this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$setPlaybackMode$1`
+L16 · [class] final M3DeviceRepositoryImpl$setPlaybackMode$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$setPlaybackMode$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L17
+- `int label`  L18
+- `Object result`  L19
+- `M3DeviceRepositoryImpl this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$setRecording$1`
+L15 · [class] final M3DeviceRepositoryImpl$setRecording$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$setRecording$1.java`
+注解：
+
+字段/常量（4）：
+- `int I$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `M3DeviceRepositoryImpl this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$setWifiPassword$1`
+L15 · [class] final M3DeviceRepositoryImpl$setWifiPassword$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$setWifiPassword$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `M3DeviceRepositoryImpl this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$setWifiSsid$1`
+L16 · [class] final M3DeviceRepositoryImpl$setWifiSsid$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$setWifiSsid$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L17
+- `int label`  L18
+- `Object result`  L19
+- `M3DeviceRepositoryImpl this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$syncDeviceTime$1`
+L16 · [class] final M3DeviceRepositoryImpl$syncDeviceTime$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$syncDeviceTime$1.java`
+注解：
+
+字段/常量（6）：
+- `int I$0`  L17
+- `Object L$0`  L18
+- `Object L$1`  L19
+- `int label`  L20
+- `Object result`  L21
+- `M3DeviceRepositoryImpl this$0`  L22
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L31 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$takePhoto$1`
+L15 · [class] final M3DeviceRepositoryImpl$takePhoto$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$takePhoto$1.java`
+注解：
+
+字段/常量（4）：
+- `int I$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `M3DeviceRepositoryImpl this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$uploadFirmware$1`
+L15 · [class] final M3DeviceRepositoryImpl$uploadFirmware$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$uploadFirmware$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `M3DeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.M3DeviceRepositoryImpl$uploadFirmware$2`
+L33 · [class] final M3DeviceRepositoryImpl$uploadFirmware$2 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/data/repository/M3DeviceRepositoryImpl$uploadFirmware$2.java`
+注解：
+
+字段/常量（30）：
+- `long $fileSize`  L34
+- `Uri $fileUri`  L35
+- `Function2<Long, Long, Unit> $onProgress`  L36
+- `Object L$0`  L37
+- `int label`  L38
+- `M3DeviceRepositoryImpl this$0`  L39
+- `Object objM3074constructorimpl`  L74
+- `RequestBody requestBody`  L75
+- `M3UploadResponse m3UploadResponse`  L76
+- `int result`  L77
+- `int i = this.label`  L79
+- `Result.Companion companion = Result.INSTANCE`  L85
+- `long j = this.$fileSize`  L88
+- `Function2<Long, Long, Unit> function2 = this.$onProgress`  L89
+- `InputStream inputStream = inputStreamOpenInputStream`  L106
+- `Function2<Long, Long, Unit> function3 = function2`  L107
+- `long j2 = j`  L108
+- `InputStream inputStream2 = inputStream`  L110
+- `byte[] bArr = new byte[8192]`  L111
+- `long j3 = 0`  L112
+- `Unit unit = Unit.INSTANCE`  L121
+- `Result.Companion companion2 = Result.INSTANCE`  L155
+- `Result.Companion companion3 = Result.INSTANCE`  L158
+- `Result.Companion companion4 = Result.INSTANCE`  L161
+- `Result.Companion companion5 = Result.INSTANCE`  L164
+- `Result.Companion companion6 = Result.INSTANCE`  L178
+- `Result.Companion companion7 = Result.INSTANCE`  L181
+- `Result.Companion companion8 = Result.INSTANCE`  L184
+- `Result.Companion companion9 = Result.INSTANCE`  L187
+- `Result.Companion companion10 = Result.INSTANCE`  L193
+
+方法（7）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L52 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L57 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L62
+- `Object invokeSuspend(Object obj)`  L73 @Override
+- `MediaType getContentType()`  L93 @Override
+- `long get$fileSize()`  L99 @Override
+- `void writeTo(BufferedSink sink)`  L104 @Override
+    - 体内字面量："sink"
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlDeviceResolver`
+L35 · [class] public final RecordingControlDeviceResolver · `com/tuwinsmart/tuwin/data/repository/RecordingControlDeviceResolver.java`
+注解：
+
+字段/常量（17）：
+- `Function1<Continuation<? super List<ConnectedDevice>>, Object> cachedDevices`  L36
+- `Function1<String, DeviceSessionSnapshot> snapshot`  L37
+- `Object objM3074constructorimpl`  L138
+- `DeviceSessionManager deviceSessionManager = sessions`  L140
+- `Result.Companion companion = Result.INSTANCE`  L142
+- `Result.Companion companion2 = Result.INSTANCE`  L145
+- `C21741 c21741`  L163
+- `DeviceSessionSnapshot deviceSessionSnapshotInvoke`  L164
+- `Object objInvoke`  L165
+- `String devid`  L166
+- `DeviceIdentity identity`  L167
+- `Object obj = c21741.result`  L178
+- `int i = c21741.label`  L180
+- `Function1<Continuation<? super List<ConnectedDevice>>, Object> function1 = this.cachedDevices`  L190
+- `boolean z = false`  L212
+- `Object obj2 = null`  L213
+- `RecordingControlDevice.Companion companion = RecordingControlDevice.INSTANCE`  L233
+
+方法（4）：
+- `public RecordingControlDeviceResolver(Function1<? super String, DeviceSessionSnapshot> snapshot, Function1<? super Continuation<? super List<ConnectedDevice>>, ? extends Object> cachedDevices)`  L63
+    - 体内字面量："snapshot" · "cachedDevices" · "<anonymous>" · "Lcom/tuwinsmart/tuwin/domain/model/ConnectedDevice;" · "com.tuwinsmart.tuwin.data.repository.RecordingControlDeviceResolver$2" · "RecordingControlDeviceResolver.kt" · "invokeSuspend"
+- `public RecordingControlDeviceResolver(UserPreferencesRepository preferences, final DeviceSessionManager sessions)`  L130
+- `DeviceSessionSnapshot invoke(String id)`  L137 @Override
+- `Object resolve(DeviceType deviceType, String str, Continuation<? super RecordingControlDevice> continuation)`  L162
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlDeviceResolver$C21732`
+L74 · [class] static final C21732 · extends `SuspendLambda implements Function1<Continuation<? super List<? extends ConnectedDevice>>, Object>` · implements `Function1<Continuation<? super List<? extends ConnectedDevice>>, Object>` · `com/tuwinsmart/tuwin/data/repository/RecordingControlDeviceResolver.java`
+注解：
+
+字段/常量（5）：
+- `UserPreferencesRepository $preferences`  L75
+- `Object L$0`  L76
+- `int label`  L77
+- `Gson gson`  L102
+- `int i = this.label`  L104
+
+方法（4）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L86 @Override
+- `Object invoke(Continuation<? super List<? extends ConnectedDevice>> continuation)`  L91 @Override
+- `Object invoke2(Continuation<? super List<ConnectedDevice>> continuation)`  L96
+- `Object invokeSuspend(Object obj)`  L101 @Override
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlDeviceResolver$C21741`
+L43 · [class] static final C21741 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/RecordingControlDeviceResolver.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L44
+- `Object L$1`  L45
+- `Object L$2`  L46
+- `int label`  L47
+- `Object result`  L48
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L55 @Override
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlEventRepositoryImpl`
+L46 · [class] public final RecordingControlEventRepositoryImpl · implements `RecordingControlEventRepository` · `com/tuwinsmart/tuwin/data/repository/RecordingControlEventRepositoryImpl.java`
+注解：
+
+字段/常量（16）：
+- `RecordingControlEventStorage storage`  L47
+- `RecordingControlEventRepositoryImpl$append$1 recordingControlEventRepositoryImpl$append$1`  L64
+- `Object obj = recordingControlEventRepositoryImpl$append$1.result`  L75
+- `int i = recordingControlEventRepositoryImpl$append$1.label`  L77
+- `RecordingControlEventStorage recordingControlEventStorage = this.storage`  L81
+- `Result.Companion companion = Result.INSTANCE`  L110
+- `Result.Companion companion2 = Result.INSTANCE`  L115
+- `RecordingControlEventRepositoryImpl$eventsFor$1 recordingControlEventRepositoryImpl$eventsFor$1`  L124
+- `RecordingControlDevice recordingControlDevice2`  L125
+- `RecordingControlEventRepositoryImpl recordingControlEventRepositoryImpl`  L126
+- `Object obj = recordingControlEventRepositoryImpl$eventsFor$1.result`  L137
+- `int i = recordingControlEventRepositoryImpl$eventsFor$1.label`  L139
+- `Result.Companion companion = Result.INSTANCE`  L149
+- `RecordingControlEventStorage recordingControlEventStorage = this.storage`  L150
+- `Result.Companion companion2 = Result.INSTANCE`  L184
+- `JsonArray jsonArray = asJsonArray`  L361
+
+方法（11）：
+- `public RecordingControlEventRepositoryImpl(RecordingControlEventStorage storage)`  L49
+    - 体内字面量："storage"
+- `public RecordingControlEventRepositoryImpl(UserPreferencesRepository preferences)`  L55
+    - 体内字面量："preferences"
+- `Object mo2803appendgIAlus(final RecordingControlEvent recordingControlEvent, Continuation<? super Result<Unit>> continuation)`  L63 @Override
+- `String invoke(String currentJson)`  L89 @Override
+    - 体内字面量："currentJson"
+- `int compare(T t, T t2)`  L94 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+- `Object mo2804eventsForBWLJW6A(RecordingControlDevice recordingControlDevice, long j, long j2, Continuation<? super Result<? extends List<RecordingControlEvent>>> continuation)`  L123 @Override
+- `Flow<Result<List<RecordingControlEvent>>> observeEventsFor(final RecordingControlDevice device, final long fromEpochMillisInclusive, final long untilEpochMillisExclusive)`  L190 @Override
+    - 体内字面量："device" · "<anonymous>" · "R" · "value" · "emit" · "(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;" · "kotlinx/coroutines/flow/FlowKt__EmittersKt$unsafeTransform$1$1" · "kotlinx/coroutines/flow/FlowKt__TransformKt$map$$inlined$unsafeTransform$1$2"
+- `Object collect(FlowCollector<? super Result<? extends List<? extends RecordingControlEvent>>> flowCollector, Continuation continuation)`  L292 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/flow/FlowCollector;" · "Lkotlin/Result;" · "Lcom/tuwinsmart/tuwin/domain/model/RecordingControlEvent;" · "error" · "com.tuwinsmart.tuwin.data.repository.RecordingControlEventRepositoryImpl$observeEventsFor$2" · "RecordingControlEventRepositoryImpl.kt" · "invokeSuspend"
+- `List<RecordingControlEvent> decode(String json)`  L353
+    - 体内字面量："recording events must be an array" · "getAsJsonArray(...)"
+- `int compare(T t, T t2)`  L402 @Override
+    - 体内字面量："å½åäºä»¶æ°æ®æåï¼å·²ä¿çåå§æ°æ®"
+- `String encode(List<RecordingControlEvent> events)`  L412
+    - 体内字面量："deviceId" · "sessionId" · "action" · "occurredAtEpochMillis" · "toString(...)"
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlEventRepositoryImpl$AnonymousClass2`
+L198 · [class] public static final AnonymousClass2 · implements `FlowCollector` · `com/tuwinsmart/tuwin/data/repository/RecordingControlEventRepositoryImpl.java`
+注解：
+
+字段/常量（14）：
+- `RecordingControlDevice $device$inlined`  L199
+- `long $fromEpochMillisInclusive$inlined`  L200
+- `FlowCollector $this_unsafeFlow`  L201
+- `long $untilEpochMillisExclusive$inlined`  L202
+- `RecordingControlEventRepositoryImpl this$0`  L203
+- `AnonymousClass1 anonymousClass1`  L237
+- `Object objM3074constructorimpl`  L238
+- `Object obj2 = anonymousClass1.result`  L249
+- `int i = anonymousClass1.label`  L251
+- `FlowCollector flowCollector = this.$this_unsafeFlow`  L254
+- `RecordingControlEventRepositoryImpl recordingControlEventRepositoryImpl = this.this$0`  L256
+- `Result.Companion companion = Result.INSTANCE`  L258
+- `long j = this.$fromEpochMillisInclusive$inlined`  L259
+- `Result.Companion companion2 = Result.INSTANCE`  L278
+
+方法（2）：
+- `public AnonymousClass2(FlowCollector flowCollector, RecordingControlEventRepositoryImpl recordingControlEventRepositoryImpl, long j, long j2, RecordingControlDevice recordingControlDevice)`  L226
+- `Object emit(Object obj, Continuation continuation)`  L236 @Override
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlEventRepositoryImpl$AnonymousClass2$AnonymousClass1`
+L209 · [class] public static final AnonymousClass1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/RecordingControlEventRepositoryImpl.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L210
+- `int label`  L211
+- `Object result`  L212
+
+方法（2）：
+- `public AnonymousClass1(Continuation continuation)`  L214
+- `Object invokeSuspend(Object obj)`  L219 @Override
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlEventRepositoryImpl$append$1`
+L15 · [class] final RecordingControlEventRepositoryImpl$append$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/RecordingControlEventRepositoryImpl$append$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `RecordingControlEventRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlEventRepositoryImpl$C21772`
+L303 · [class] static final C21772 · extends `SuspendLambda implements Function3<FlowCollector<? super Result<? extends List<? extends RecordingControlEvent>>>, Throwable, Continuation<? super Unit>, Object>` · implements `Function3<FlowCollector<? super Result<? extends List<? extends RecordingControlEvent>>>, Throwable, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/data/repository/RecordingControlEventRepositoryImpl.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L304
+- `Object L$1`  L305
+- `int label`  L306
+- `int i = this.label`  L328
+- `Result.Companion companion = Result.INSTANCE`  L336
+
+方法（3）：
+- `Object invoke(FlowCollector<? super Result<? extends List<? extends RecordingControlEvent>>> flowCollector, Throwable th, Continuation<? super Unit> continuation)`  L313 @Override
+- `Object invoke2(FlowCollector<? super Result<? extends List<RecordingControlEvent>>> flowCollector, Throwable th, Continuation<? super Unit> continuation)`  L318
+- `Object invokeSuspend(Object obj)`  L326 @Override
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlEventRepositoryImpl$eventsFor$1`
+L15 · [class] final RecordingControlEventRepositoryImpl$eventsFor$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/RecordingControlEventRepositoryImpl$eventsFor$1.java`
+注解：
+
+字段/常量（7）：
+- `long J$0`  L16
+- `long J$1`  L17
+- `Object L$0`  L18
+- `Object L$1`  L19
+- `int label`  L20
+- `Object result`  L21
+- `RecordingControlEventRepositoryImpl this$0`  L22
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L31 @Override
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlEventStorage`
+L20 · [interface] public RecordingControlEventStorage · `com/tuwinsmart/tuwin/data/repository/RecordingControlEventStorage.java`
+注解：
+
+方法（3）：
+- `Flow<String> observe()`  L21
+- `Object read(Continuation<? super String> continuation)`  L23
+- `Object update(Function1<? super String, String> function1, Continuation<? super Unit> continuation)`  L25
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/flow/FlowCollector;" · "com.tuwinsmart.tuwin.data.repository.RecordingControlEventStorage$observe$1" · "RecordingControlEventRepositoryImpl.kt" · "invokeSuspend"
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlEventStorage$C21781`
+L39 · [class] static final C21781 · extends `SuspendLambda implements Function2<FlowCollector<? super String>, Continuation<? super Unit>, Object>` · implements `Function2<FlowCollector<? super String>, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/data/repository/RecordingControlEventStorage.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L40
+- `int label`  L41
+- `FlowCollector flowCollector`  L61
+- `int i = this.label`  L63
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L48 @Override
+- `Object invoke(FlowCollector<? super String> flowCollector, Continuation<? super Unit> continuation)`  L55 @Override
+- `Object invokeSuspend(Object obj)`  L60 @Override
+### `com.tuwinsmart.tuwin.data.repository.RecordingControlEventStorage$DefaultImpls`
+L29 · [class] public static final DefaultImpls · `com/tuwinsmart/tuwin/data/repository/RecordingControlEventStorage.java`
+注解：
+
+方法（1）：
+- `Flow<String> observe(RecordingControlEventStorage recordingControlEventStorage)`  L30
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl`
+L33 · [class] public final Ride3ProDeviceRepositoryImpl · implements `Ride3ProDeviceRepository` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl.java`
+注解：
+
+字段/常量（40）：
+- `Function0<Ride3ProApiService> serviceProvider`  L34
+- `Ride3ProDeviceRepositoryImpl$detectConnection$1 ride3ProDeviceRepositoryImpl$detectConnection$1`  L87
+- `Object obj = ride3ProDeviceRepositoryImpl$detectConnection$1.result`  L98
+- `int i = ride3ProDeviceRepositoryImpl$detectConnection$1.label`  L100
+- `Ride3ProDeviceRepositoryImpl$detectConnectionLightweight$1 ride3ProDeviceRepositoryImpl$detectConnectionLightweight$1`  L119
+- `Object obj = ride3ProDeviceRepositoryImpl$detectConnectionLightweight$1.result`  L130
+- `int i = ride3ProDeviceRepositoryImpl$detectConnectionLightweight$1.label`  L132
+- `Ride3ProDeviceRepositoryImpl$getSDInfo$1 ride3ProDeviceRepositoryImpl$getSDInfo$1`  L151
+- `Object obj = ride3ProDeviceRepositoryImpl$getSDInfo$1.result`  L162
+- `int i = ride3ProDeviceRepositoryImpl$getSDInfo$1.label`  L164
+- `Ride3ProDeviceRepositoryImpl$getBatteryInfo$1 ride3ProDeviceRepositoryImpl$getBatteryInfo$1`  L183
+- `Object obj = ride3ProDeviceRepositoryImpl$getBatteryInfo$1.result`  L194
+- `int i = ride3ProDeviceRepositoryImpl$getBatteryInfo$1.label`  L196
+- `Ride3ProDeviceRepositoryImpl$getDeviceStatus$1 ride3ProDeviceRepositoryImpl$getDeviceStatus$1`  L214
+- `Object obj = ride3ProDeviceRepositoryImpl$getDeviceStatus$1.result`  L225
+- `int i = ride3ProDeviceRepositoryImpl$getDeviceStatus$1.label`  L227
+- `Ride3ProDeviceRepositoryImpl$getRide3ProDeviceAttr$1 ride3ProDeviceRepositoryImpl$getRide3ProDeviceAttr$1`  L246
+- `Object obj = ride3ProDeviceRepositoryImpl$getRide3ProDeviceAttr$1.result`  L257
+- `int i = ride3ProDeviceRepositoryImpl$getRide3ProDeviceAttr$1.label`  L259
+- `Result.Companion companion = Result.INSTANCE`  L277
+- `Ride3ProDeviceRepositoryImpl$setWifiPassword$1 ride3ProDeviceRepositoryImpl$setWifiPassword$1`  L285
+- `Object obj = ride3ProDeviceRepositoryImpl$setWifiPassword$1.result`  L296
+- `int i = ride3ProDeviceRepositoryImpl$setWifiPassword$1.label`  L298
+- `Ride3ProDeviceRepositoryImpl$formatSdCard$1 ride3ProDeviceRepositoryImpl$formatSdCard$1`  L317
+- `Object sd = ride3ProDeviceRepositoryImpl$formatSdCard$1.result`  L328
+- `int i = ride3ProDeviceRepositoryImpl$formatSdCard$1.label`  L330
+- `Result.Companion companion = Result.INSTANCE`  L349
+- `Result.Companion companion2 = Result.INSTANCE`  L352
+- `Result.Companion companion3 = Result.INSTANCE`  L357
+- `Ride3ProDeviceRepositoryImpl$factoryReset$1 ride3ProDeviceRepositoryImpl$factoryReset$1`  L366
+- `Object obj = ride3ProDeviceRepositoryImpl$factoryReset$1.result`  L377
+- `int i = ride3ProDeviceRepositoryImpl$factoryReset$1.label`  L379
+- `Ride3ProDeviceRepositoryImpl$reboot$1 ride3ProDeviceRepositoryImpl$reboot$1`  L398
+- `Object obj = ride3ProDeviceRepositoryImpl$reboot$1.result`  L409
+- `int i = ride3ProDeviceRepositoryImpl$reboot$1.label`  L411
+- `Ride3ProDeviceRepositoryImpl$executeAttempt$1 ride3ProDeviceRepositoryImpl$executeAttempt$1`  L430
+- `Object objInvoke = ride3ProDeviceRepositoryImpl$executeAttempt$1.result`  L441
+- `int i = ride3ProDeviceRepositoryImpl$executeAttempt$1.label`  L443
+- `Result.Companion companion = Result.INSTANCE`  L448
+- `Result.Companion companion2 = Result.INSTANCE`  L469
+
+方法（17）：
+- `public Ride3ProDeviceRepositoryImpl()`  L37
+- `public Ride3ProDeviceRepositoryImpl(Function0<? extends Ride3ProApiService> serviceProvider)`  L58
+    - 体内字面量："serviceProvider"
+- ` Ride3ProDeviceRepositoryImpl(C21791 c21791, int i, DefaultConstructorMarker defaultConstructorMarker)`  L63
+- `public Ride3ProDeviceRepositoryImpl(final Ride3ProApiService ride3ProApiService)`  L68
+- `Ride3ProApiService invoke()`  L76 @Override
+    - 体内字面量："ride3ProApiService"
+- `Object mo2807detectConnection0E7RQCE(Network network, Function2<? super ConnectionProgressUpdate, ? super Continuation<? super Unit>, ? extends Object> function2, Continuation<? super Result<Ride3ProConnectionSnapshot>> continuation)`  L86 @Override
+- `Object mo2808detectConnectionLightweightgIAlus(Network network, Continuation<? super Result<Ride3ProConnectionSnapshot>> continuation)`  L118 @Override
+- `Object mo2815getSDInfoIoAF18A(Continuation<? super Result<Ride3ProSdInfo>> continuation)`  L150 @Override
+- `Object mo2811getBatteryInfoIoAF18A(Continuation<? super Result<Ride3ProDeviceStatusInfo>> continuation)`  L182 @Override
+- `Object mo2812getDeviceStatusIoAF18A(Continuation<? super Result<Ride3ProDeviceStatusInfo>> continuation)`  L213 @Override
+- `Object mo2814getRide3ProDeviceAttrIoAF18A(Continuation<? super Result<Ride3ProDeviceAttr>> continuation)`  L245 @Override
+- `Object mo2813getMediaInfoIoAF18A(Continuation<? super Result<Unit>> continuation)`  L276 @Override
+- `Object mo2817setWifiPasswordgIAlus(String str, Continuation<? super Result<Unit>> continuation)`  L284 @Override
+- `Object mo2810formatSdCardIoAF18A(Continuation<? super Result<Unit>> continuation)`  L316 @Override
+- `Object mo2809factoryResetIoAF18A(Continuation<? super Result<Unit>> continuation)`  L365 @Override
+- `Object mo2816rebootIoAF18A(Continuation<? super Result<Unit>> continuation)`  L397 @Override
+- `Object m2806executeAttemptBWLJW6A(Network network, String str, Function2<? super Ride3ProApiService, ? super Continuation<? super Result<? extends T>>, ? extends Object> function2, Continuation<? super Result<? extends T>> continuation)`  L429
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$C21791`
+L45 · [class] public C21791 · extends `FunctionReferenceImpl implements Function0<Ride3ProApiService>` · implements `Function0<Ride3ProApiService>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl.java`
+注解：
+
+方法（1）：
+- `Ride3ProApiService invoke()`  L52 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$detectConnection$1`
+L15 · [class] final Ride3ProDeviceRepositoryImpl$detectConnection$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$detectConnection$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProDeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$detectConnection$2`
+L28 · [class] final Ride3ProDeviceRepositoryImpl$detectConnection$2 · extends `SuspendLambda implements Function2<Ride3ProApiService, Continuation<? super Result<? extends Ride3ProConnectionSnapshot>>, Object>` · implements `Function2<Ride3ProApiService, Continuation<? super Result<? extends Ride3ProConnectionSnapshot>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$detectConnection$2.java`
+注解：
+
+字段/常量（40）：
+- `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object> $onProgress`  L29
+- `Object L$0`  L30
+- `Object L$1`  L31
+- `int label`  L32
+- `Ride3ProDeviceRepositoryImpl this$0`  L33
+- `?? r0`  L84
+- `?? r1`  L85
+- `Ride3ProApiService ride3ProApiService`  L86
+- `Ride3ProApiService ride3ProApiService2`  L87
+- `Ride3ProApiResponse ride3ProApiResponse`  L88
+- `Ride3ProDeviceStatusInfo ride3ProDeviceStatusInfo`  L89
+- `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object> function2`  L90
+- `ConnectionProgressUpdate.Started started`  L91
+- `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object> function3`  L92
+- `ConnectionProgressUpdate.Failed failed`  L93
+- `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object> function4`  L94
+- `ConnectionProgressUpdate.Failed failed2`  L95
+- `Ride3ProApiResponse ride3ProApiResponse2`  L96
+- `Ride3ProDeviceStatusInfo ride3ProDeviceStatusInfo2`  L97
+- `Ride3ProDeviceStatusInfo ride3ProDeviceStatusInfo3`  L98
+- `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object> function5`  L99
+- `ConnectionProgressUpdate.Failed failed3`  L100
+- `?? r2 = this.label`  L102
+- `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object> function6 = this.$onProgress`  L108
+- `Result.Companion companion = Result.INSTANCE`  L132
+- `Result.Companion companion2 = Result.INSTANCE`  L144
+- `Result.Companion companion3 = Result.INSTANCE`  L178
+- `Result.Companion companion4 = Result.INSTANCE`  L200
+- `Result.Companion companion5 = Result.INSTANCE`  L212
+- `Result.Companion companion6 = Result.INSTANCE`  L246
+- `Result.Companion companion7 = Result.INSTANCE`  L262
+- `Result.Companion companion8 = Result.INSTANCE`  L274
+- `Result.Companion companion9 = Result.INSTANCE`  L308
+- `Result.Companion companion10 = Result.INSTANCE`  L313
+- `Result.Companion companion11 = Result.INSTANCE`  L317
+- `Result.Companion companion12 = Result.INSTANCE`  L346
+- `Result.Companion companion13 = Result.INSTANCE`  L364
+- `Result.Companion companion14 = Result.INSTANCE`  L371
+- `Result.Companion companion15 = Result.INSTANCE`  L379
+- `Function2<ConnectionProgressUpdate, Continuation<? super Unit>, Object> function7 = this.$onProgress`  L387
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L44 @Override
+- `Object invoke2(Ride3ProApiService ride3ProApiService, Continuation<? super Result<Ride3ProConnectionSnapshot>> continuation)`  L51
+- `Object invoke(Ride3ProApiService ride3ProApiService, Continuation<? super Result<? extends Ride3ProConnectionSnapshot>> continuation)`  L56 @Override
+- `Object invokeSuspend(Object obj)`  L83 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$detectConnectionLightweight$1`
+L15 · [class] final Ride3ProDeviceRepositoryImpl$detectConnectionLightweight$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$detectConnectionLightweight$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProDeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$detectConnectionLightweight$2`
+L24 · [class] final Ride3ProDeviceRepositoryImpl$detectConnectionLightweight$2 · extends `SuspendLambda implements Function2<Ride3ProApiService, Continuation<? super Result<? extends Ride3ProConnectionSnapshot>>, Object>` · implements `Function2<Ride3ProApiService, Continuation<? super Result<? extends Ride3ProConnectionSnapshot>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$detectConnectionLightweight$2.java`
+注解：
+
+字段/常量（6）：
+- `Object L$0`  L25
+- `int label`  L26
+- `int i = this.label`  L52
+- `Result.Companion companion = Result.INSTANCE`  L68
+- `Result.Companion companion2 = Result.INSTANCE`  L73
+- `Result.Companion companion3 = Result.INSTANCE`  L76
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L33 @Override
+- `Object invoke2(Ride3ProApiService ride3ProApiService, Continuation<? super Result<Ride3ProConnectionSnapshot>> continuation)`  L40
+- `Object invoke(Ride3ProApiService ride3ProApiService, Continuation<? super Result<? extends Ride3ProConnectionSnapshot>> continuation)`  L45 @Override
+- `Object invokeSuspend(Object obj)`  L50 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$executeAttempt$1`
+L15 · [class] final Ride3ProDeviceRepositoryImpl$executeAttempt$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$executeAttempt$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `Ride3ProDeviceRepositoryImpl this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$factoryReset$1`
+L15 · [class] final Ride3ProDeviceRepositoryImpl$factoryReset$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$factoryReset$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProDeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$factoryReset$2`
+L22 · [class] final Ride3ProDeviceRepositoryImpl$factoryReset$2 · extends `SuspendLambda implements Function2<Ride3ProApiService, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<Ride3ProApiService, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$factoryReset$2.java`
+注解：
+
+字段/常量（6）：
+- `Object L$0`  L23
+- `int label`  L24
+- `Object objM3074constructorimpl`  L49
+- `int i = this.label`  L51
+- `Result.Companion companion = Result.INSTANCE`  L67
+- `Result.Companion companion2 = Result.INSTANCE`  L70
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L31 @Override
+- `Object invoke2(Ride3ProApiService ride3ProApiService, Continuation<? super Result<Unit>> continuation)`  L38
+- `Object invoke(Ride3ProApiService ride3ProApiService, Continuation<? super Result<? extends Unit>> continuation)`  L43 @Override
+- `Object invokeSuspend(Object obj)`  L48 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$formatSdCard$1`
+L15 · [class] final Ride3ProDeviceRepositoryImpl$formatSdCard$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$formatSdCard$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProDeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$getBatteryInfo$1`
+L15 · [class] final Ride3ProDeviceRepositoryImpl$getBatteryInfo$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$getBatteryInfo$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProDeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$getDeviceStatus$1`
+L15 · [class] final Ride3ProDeviceRepositoryImpl$getDeviceStatus$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$getDeviceStatus$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProDeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$getDeviceStatus$2`
+L23 · [class] final Ride3ProDeviceRepositoryImpl$getDeviceStatus$2 · extends `SuspendLambda implements Function2<Ride3ProApiService, Continuation<? super Result<? extends Ride3ProDeviceStatusInfo>>, Object>` · implements `Function2<Ride3ProApiService, Continuation<? super Result<? extends Ride3ProDeviceStatusInfo>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$getDeviceStatus$2.java`
+注解：
+
+字段/常量（6）：
+- `Object L$0`  L24
+- `int label`  L25
+- `Object objM3074constructorimpl`  L50
+- `int i = this.label`  L52
+- `Result.Companion companion = Result.INSTANCE`  L68
+- `Result.Companion companion2 = Result.INSTANCE`  L71
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L32 @Override
+- `Object invoke2(Ride3ProApiService ride3ProApiService, Continuation<? super Result<Ride3ProDeviceStatusInfo>> continuation)`  L39
+- `Object invoke(Ride3ProApiService ride3ProApiService, Continuation<? super Result<? extends Ride3ProDeviceStatusInfo>> continuation)`  L44 @Override
+- `Object invokeSuspend(Object obj)`  L49 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$getRide3ProDeviceAttr$1`
+L15 · [class] final Ride3ProDeviceRepositoryImpl$getRide3ProDeviceAttr$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$getRide3ProDeviceAttr$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProDeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$getRide3ProDeviceAttr$2`
+L24 · [class] final Ride3ProDeviceRepositoryImpl$getRide3ProDeviceAttr$2 · extends `SuspendLambda implements Function2<Ride3ProApiService, Continuation<? super Result<? extends Ride3ProDeviceAttr>>, Object>` · implements `Function2<Ride3ProApiService, Continuation<? super Result<? extends Ride3ProDeviceAttr>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$getRide3ProDeviceAttr$2.java`
+注解：
+
+字段/常量（13）：
+- `Object L$0`  L25
+- `int label`  L26
+- `String string`  L51
+- `int i = this.label`  L53
+- `Result.Companion companion = Result.INSTANCE`  L69
+- `Result.Companion companion2 = Result.INSTANCE`  L74
+- `Result.Companion companion3 = Result.INSTANCE`  L101
+- `Result.Companion companion4 = Result.INSTANCE`  L106
+- `Result.Companion companion5 = Result.INSTANCE`  L110
+- `Result.Companion companion6 = Result.INSTANCE`  L114
+- `Result.Companion companion7 = Result.INSTANCE`  L118
+- `Result.Companion companion8 = Result.INSTANCE`  L122
+- `Result.Companion companion9 = Result.INSTANCE`  L126
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L33 @Override
+- `Object invoke2(Ride3ProApiService ride3ProApiService, Continuation<? super Result<Ride3ProDeviceAttr>> continuation)`  L40
+- `Object invoke(Ride3ProApiService ride3ProApiService, Continuation<? super Result<? extends Ride3ProDeviceAttr>> continuation)`  L45 @Override
+- `Object invokeSuspend(Object obj)`  L50 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$getSDInfo$1`
+L15 · [class] final Ride3ProDeviceRepositoryImpl$getSDInfo$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$getSDInfo$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProDeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$getSDInfo$2`
+L24 · [class] final Ride3ProDeviceRepositoryImpl$getSDInfo$2 · extends `SuspendLambda implements Function2<Ride3ProApiService, Continuation<? super Result<? extends Ride3ProSdInfo>>, Object>` · implements `Function2<Ride3ProApiService, Continuation<? super Result<? extends Ride3ProSdInfo>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$getSDInfo$2.java`
+注解：
+
+字段/常量（6）：
+- `Object L$0`  L25
+- `int label`  L26
+- `Object objM3074constructorimpl`  L51
+- `int i = this.label`  L53
+- `Result.Companion companion = Result.INSTANCE`  L69
+- `Result.Companion companion2 = Result.INSTANCE`  L72
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L33 @Override
+- `Object invoke2(Ride3ProApiService ride3ProApiService, Continuation<? super Result<Ride3ProSdInfo>> continuation)`  L40
+- `Object invoke(Ride3ProApiService ride3ProApiService, Continuation<? super Result<? extends Ride3ProSdInfo>> continuation)`  L45 @Override
+- `Object invokeSuspend(Object obj)`  L50 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$reboot$1`
+L15 · [class] final Ride3ProDeviceRepositoryImpl$reboot$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$reboot$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProDeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$reboot$2`
+L21 · [class] final Ride3ProDeviceRepositoryImpl$reboot$2 · extends `SuspendLambda implements Function2<Ride3ProApiService, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<Ride3ProApiService, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$reboot$2.java`
+注解：
+
+字段/常量（6）：
+- `Object L$0`  L22
+- `int label`  L23
+- `Object objM3074constructorimpl`  L48
+- `int i = this.label`  L50
+- `Result.Companion companion = Result.INSTANCE`  L66
+- `Result.Companion companion2 = Result.INSTANCE`  L69
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L30 @Override
+- `Object invoke2(Ride3ProApiService ride3ProApiService, Continuation<? super Result<Unit>> continuation)`  L37
+- `Object invoke(Ride3ProApiService ride3ProApiService, Continuation<? super Result<? extends Unit>> continuation)`  L42 @Override
+- `Object invokeSuspend(Object obj)`  L47 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$setWifiPassword$1`
+L15 · [class] final Ride3ProDeviceRepositoryImpl$setWifiPassword$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$setWifiPassword$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProDeviceRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProDeviceRepositoryImpl$setWifiPassword$2`
+L23 · [class] final Ride3ProDeviceRepositoryImpl$setWifiPassword$2 · extends `SuspendLambda implements Function2<Ride3ProApiService, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<Ride3ProApiService, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProDeviceRepositoryImpl$setWifiPassword$2.java`
+注解：
+
+字段/常量（7）：
+- `String $password`  L24
+- `Object L$0`  L25
+- `int label`  L26
+- `Object objM3074constructorimpl`  L53
+- `int i = this.label`  L55
+- `Result.Companion companion = Result.INSTANCE`  L71
+- `Result.Companion companion2 = Result.INSTANCE`  L74
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L35 @Override
+- `Object invoke2(Ride3ProApiService ride3ProApiService, Continuation<? super Result<Unit>> continuation)`  L42
+- `Object invoke(Ride3ProApiService ride3ProApiService, Continuation<? super Result<? extends Unit>> continuation)`  L47 @Override
+- `Object invokeSuspend(Object obj)`  L52 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProFirmwareUploadRepository`
+L26 · [class] public final Ride3ProFirmwareUploadRepository · `com/tuwinsmart/tuwin/data/repository/Ride3ProFirmwareUploadRepository.java`
+注解：
+
+字段/常量（4）：
+- `Function0<Ride3ProApiService> serviceProvider`  L27
+- `Ride3ProFirmwareUploadRepository$uploadFirmware$1 ride3ProFirmwareUploadRepository$uploadFirmware$1`  L53
+- `Object objWithContext = ride3ProFirmwareUploadRepository$uploadFirmware$1.result`  L64
+- `int i = ride3ProFirmwareUploadRepository$uploadFirmware$1.label`  L66
+
+方法（8）：
+- `public Ride3ProFirmwareUploadRepository()`  L30
+- `public Ride3ProFirmwareUploadRepository(Function0<? extends Ride3ProApiService> serviceProvider)`  L35
+    - 体内字面量："serviceProvider"
+- ` Ride3ProFirmwareUploadRepository(C21811 c21811, int i, DefaultConstructorMarker defaultConstructorMarker)`  L40
+- `Ride3ProApiService invoke()`  L44 @Override
+- `Object m2819uploadFirmwareBWLJW6A(File file, Ride3ProFirmwareMeta ride3ProFirmwareMeta, Function2<? super Long, ? super Long, Unit> function2, Continuation<? super Result<Unit>> continuation)`  L52
+- `Object m2818uploadFirmwareBWLJW6A$default(Ride3ProFirmwareUploadRepository ride3ProFirmwareUploadRepository, File file, Ride3ProFirmwareMeta ride3ProFirmwareMeta, Function2 function2, Continuation continuation, int i, Object obj)`  L87
+- `void invoke(long j, long j2)`  L93
+- `Unit invoke(Long l, Long l2)`  L97 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProFirmwareUploadRepository$uploadFirmware$1`
+L15 · [class] final Ride3ProFirmwareUploadRepository$uploadFirmware$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProFirmwareUploadRepository$uploadFirmware$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProFirmwareUploadRepository this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProFirmwareUploadRepository$uploadFirmware$3`
+L38 · [class] final Ride3ProFirmwareUploadRepository$uploadFirmware$3 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProFirmwareUploadRepository$uploadFirmware$3.java`
+注解：
+
+字段/常量（23）：
+- `File $file`  L39
+- `Ride3ProFirmwareMeta $firmwareMeta`  L40
+- `Function2<Long, Long, Unit> $onProgress`  L41
+- `int label`  L42
+- `Ride3ProFirmwareUploadRepository this$0`  L43
+- `Object objM3074constructorimpl`  L72
+- `Object objUploadFirmware`  L73
+- `int i = this.label`  L75
+- `Result.Companion companion = Result.INSTANCE`  L80
+- `File file = this.$file`  L84
+- `Function2<Long, Long, Unit> function2 = this.$onProgress`  L85
+- `Function2<Long, Long, Unit> function3 = function2`  L103
+- `long j = length`  L104
+- `FileInputStream fileInputStream2 = fileInputStream`  L106
+- `byte[] bArr = new byte[8192]`  L107
+- `long j2 = 0`  L108
+- `Unit unit = Unit.INSTANCE`  L117
+- `FileInputStream fileInputStream2 = fileInputStream`  L134
+- `byte[] bArr = new byte[8192]`  L136
+- `Ride3ProFirmwareMeta ride3ProFirmwareMeta = this.$firmwareMeta`  L159
+- `Result.Companion companion2 = Result.INSTANCE`  L185
+- `Result.Companion companion3 = Result.INSTANCE`  L188
+- `Result.Companion companion4 = Result.INSTANCE`  L194
+
+方法（9）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L56 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L61 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L66
+- `Object invokeSuspend(Object obj)`  L71 @Override
+- `MediaType getContentType()`  L89 @Override
+- `long get$totalBytes()`  L95 @Override
+- `void writeTo(BufferedSink sink)`  L100 @Override
+    - 体内字面量："sink"
+- `CharSequence invoke(byte b)`  L147
+    - 体内字面量："%02x" · "format(...)"
+- `CharSequence invoke(Byte b)`  L154 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoader`
+L40 · [class] public final Ride3ProHourFilesLoader · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoader.java`
+注解：
+
+字段/常量（38）：
+- `String CANCELLATION_REASON = "CANCELLED"`  L41
+- `int DEVICE_DEFAULT_YEAR = 2017`  L43
+- `int FILE_LIST_MODE = 0`  L44
+- `int MAX_FILE_INDEX = 9999`  L45
+- `int MIN_FILE_INDEX = 0`  L46
+- `int YEAR_DIVISOR = 10000`  L47
+- `Ride3ProIndexedDiagnostics diagnostics`  L48
+- `Function0<Unit> refreshNetworkBinding`  L49
+- `Function0<Ride3ProApiService> serviceProvider`  L50
+- `Function1<String, Unit> warningLogger`  L51
+- `Ride3ProHourFilesLoader$load$1 ride3ProHourFilesLoader$load$1`  L94
+- `Ride3ProHourFilesLoader ride3ProHourFilesLoader`  L95
+- `Exception e`  L96
+- `HourScanDiagnosticState hourScanDiagnosticState`  L97
+- `CancellationException e2`  L98
+- `Object obj = ride3ProHourFilesLoader$load$1.result`  L109
+- `int i2 = ride3ProHourFilesLoader$load$1.label`  L111
+- `Result.Companion companion = Result.INSTANCE`  L115
+- `Result.Companion companion2 = Result.INSTANCE`  L141
+- `Result.Companion companion3 = Result.INSTANCE`  L159
+- `Result.Companion companion4 = Result.INSTANCE`  L165
+- `Ride3ProIndexedPageDecision ride3ProIndexedPageDecision`  L210
+- `int collectedFileCount`  L211
+- `String str`  L212
+- `String strName`  L213
+- `Ride3ProHourScanStep.Failure failure`  L214
+- `Ride3ProHourScanFailureReason reason`  L215
+- `boolean z = step instanceof Ride3ProHourScanStep.Continue`  L228
+- `Ride3ProIndexedPageDecision ride3ProIndexedPageDecision2 = ride3ProIndexedPageDecision`  L241
+- `Ride3ProIndexedDiagnostics ride3ProIndexedDiagnostics = this.diagnostics`  L258
+- `String strName2 = null`  L271
+- `Object obj`  L340
+- `List<Ride3ProPlaybackFileEntry> list = entries`  L341
+- `int i = 0`  L343
+- `int i2 = i + 1`  L345
+- `List<Ride3ProPlaybackFileEntry> list = entries`  L369
+- `int i = 0`  L371
+- `int i2 = i + 1`  L373
+
+方法（14）：
+- `public Ride3ProHourFilesLoader(Function0<? extends Ride3ProApiService> serviceProvider, Function0<Unit> refreshNetworkBinding, Function1<? super String, Unit> warningLogger, Ride3ProIndexedDiagnostics diagnostics)`  L80
+    - 体内字面量："serviceProvider" · "refreshNetworkBinding" · "warningLogger" · "diagnostics"
+- `Object m2820load0E7RQCE(Ride3ProHourKey ride3ProHourKey, int i, Continuation<? super Result<? extends Ride3ProHourFilesLoadResult>> continuation)`  L93
+- `java.lang.Object loadFromService(com.tuwinsmart.tuwin.domain.model.Ride3ProHourKey r21, int r22, com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoader.HourScanDiagnosticState r23, kotlin.coroutines.Continuation<? super com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoader.HourScanCompletion> r24)`  L193
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoader.loadFromService(com.tuwinsmart.tuwin.domain.model.Ride3ProHourKey, int, com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoader$HourScanDiagnosticState, kotlin.coroutines.Continuation):java.lang.Object"
+- `HourScanDiagnosticState startDiagnostics(Ride3ProHourKey hourKey, int lastFileIndex)`  L201
+- `void emitPageDiagnostics(HourScanDiagnosticState state, final Ride3ProHourKey hourKey, int requestFileIndex, Ride3ProHourScanPage page, Ride3ProHourScanStep step, long pageStartedAtElapsedMs)`  L209
+- `Iterator<Ride3ProPlaybackFile> sourceIterator()`  L219 @Override
+- `Ride3ProHourTimeRelation keyOf(Ride3ProPlaybackFile element)`  L224 @Override
+- `void finishDiagnostics(HourScanDiagnosticState state, Ride3ProIndexedScanOutcome outcome, String reason)`  L303
+- `String diagnosticFailureReason(Exception error)`  L307
+    - 体内字面量："diagnostic failure class name is missing"
+- `void logNewerFiles(Ride3ProHourKey hourKey, List<Ride3ProPlaybackFile> files)`  L327
+    - 体内字面量："FileList item is newer than target hour: file_index=" · ", recordedDate=" · ", recordedHour=" · ", targetDate=" · ", targetHour="
+- `List<Ride3ProHourScanItem> mapScanItems(Ride3ProHourKey hourKey, List<Ride3ProPlaybackFileEntry> entries, int requestFileIndex)`  L339
+- `Ride3ProHourScanPage mapScanPage(Ride3ProHourKey hourKey, List<Ride3ProPlaybackFileEntry> entries, int requestFileIndex)`  L368
+- `boolean isDeviceDefaultTime(Ride3ProPlaybackFile file, Ride3ProHourKey targetHour)`  L391
+- `boolean isNewerThanTarget(Ride3ProPlaybackFile file, Ride3ProHourKey hourKey)`  L395
+    - 体内字面量："Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoader$HourScanDiagnosticState;" · "traceId" · "startedAtElapsedMs" · "pageCount" · "collectedFileCount" · "wrapped" · "(JJIIZ)V" · "getCollectedFileCount" · "()I" · "setCollectedFileCount" · "(I)V" · "getPageCount" · "setPageCount" · "getStartedAtElapsedMs" · "()J" · "getTraceId" · "getWrapped" · "()Z" · "setWrapped" · "(Z)V" · "component1" · "component2" · "component3" · "component4" · "component5" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoader$HourScanCompletion;" · "result" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoadResult;" · "outcome" · "Lcom/tuwinsmart/tuwin/core/util/logging/Ride3ProIndexedScanOutcome;" · "reason" · "(Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoadResult;Lcom/tuwinsmart/tuwin/core/util/logging/Ride3ProIndexedScanOutcome;Ljava/lang/String;)V" · "getOutcome" · "()Lcom/tuwinsmart/tuwin/core/util/logging/Ride3ProIndexedScanOutcome;" · "getReason" · "()Ljava/lang/String;" · "getResult" · "()Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoadResult;" · "component1" · "component2" · "component3" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoader$HourScanExecutionException;" · "Ljava/lang/IllegalStateException;" · "Lkotlin/IllegalStateException;" · "diagnosticReason" · "message" · "(Ljava/lang/String;Ljava/lang/String;)V" · "getDiagnosticReason" · "()Ljava/lang/String;" · "app_release_64" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoader$Companion;" · "()V" · "CANCELLATION_REASON" · "DEVICE_DEFAULT_YEAR" · "FILE_LIST_MODE" · "MAX_FILE_INDEX" · "MIN_FILE_INDEX" · "YEAR_DIVISOR" · "app_release_64"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoader$C21831`
+L57 · [class] static final C21831 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoader.java`
+注解：
+
+字段/常量（8）：
+- `int I$0`  L58
+- `long J$0`  L59
+- `Object L$0`  L60
+- `Object L$1`  L61
+- `Object L$2`  L62
+- `Object L$3`  L63
+- `int label`  L64
+- `Object result`  L65
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L72 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoader$Companion`
+L604 · [class] private static final Companion · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoader.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L605
+- `private Companion()`  L609
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoader$HourScanCompletion`
+L503 · [class] private static final HourScanCompletion · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoader.java`
+注解：
+
+字段/常量（3）：
+- `Ride3ProIndexedScanOutcome outcome`  L504
+- `String reason`  L505
+- `Ride3ProHourFilesLoadResult result`  L506
+
+方法（12）：
+- `HourScanCompletion copy$default(HourScanCompletion hourScanCompletion, Ride3ProHourFilesLoadResult ride3ProHourFilesLoadResult, Ride3ProIndexedScanOutcome ride3ProIndexedScanOutcome, String str, int i, Object obj)`  L508
+- `Ride3ProHourFilesLoadResult getResult()`  L522
+- `Ride3ProIndexedScanOutcome getOutcome()`  L527
+- `String getReason()`  L532
+- `HourScanCompletion copy(Ride3ProHourFilesLoadResult result, Ride3ProIndexedScanOutcome outcome, String reason)`  L536
+    - 体内字面量："result" · "outcome" · "reason"
+- `boolean equals(Object other)`  L543
+- `int hashCode()`  L554
+- `String toString()`  L558
+    - 体内字面量："HourScanCompletion(result=" · ", outcome=" · ", reason=" · ")"
+- `public HourScanCompletion(Ride3ProHourFilesLoadResult result, Ride3ProIndexedScanOutcome outcome, String reason)`  L562
+    - 体内字面量："result" · "outcome" · "reason"
+- `Ride3ProHourFilesLoadResult getResult()`  L571
+- `Ride3ProIndexedScanOutcome getOutcome()`  L575
+- `String getReason()`  L579
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoader$HourScanDiagnosticState`
+L401 · [class] private static final HourScanDiagnosticState · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoader.java`
+注解：
+
+字段/常量（5）：
+- `int collectedFileCount`  L402
+- `int pageCount`  L403
+- `long startedAtElapsedMs`  L404
+- `long traceId`  L405
+- `boolean wrapped`  L406
+
+方法（19）：
+- `long getTraceId()`  L409
+- `long getStartedAtElapsedMs()`  L414
+- `int getPageCount()`  L419
+- `int getCollectedFileCount()`  L424
+- `boolean getWrapped()`  L429
+- `HourScanDiagnosticState copy(long traceId, long startedAtElapsedMs, int pageCount, int collectedFileCount, boolean wrapped)`  L433
+- `boolean equals(Object other)`  L437
+- `int hashCode()`  L448
+- `String toString()`  L452
+    - 体内字面量："HourScanDiagnosticState(traceId=" · ", startedAtElapsedMs=" · ", pageCount=" · ", collectedFileCount=" · ", wrapped=" · ")"
+- `public HourScanDiagnosticState(long j, long j2, int i, int i2, boolean z)`  L456
+- ` HourScanDiagnosticState(long j, long j2, int i, int i2, boolean z, int i3, DefaultConstructorMarker defaultConstructorMarker)`  L464
+- `long getTraceId()`  L468
+- `long getStartedAtElapsedMs()`  L472
+- `int getPageCount()`  L476
+- `void setPageCount(int i)`  L480
+- `int getCollectedFileCount()`  L484
+- `void setCollectedFileCount(int i)`  L488
+- `boolean getWrapped()`  L492
+- `void setWrapped(boolean z)`  L496
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoader$HourScanExecutionException`
+L586 · [class] private static final HourScanExecutionException · extends `IllegalStateException` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoader.java`
+注解：
+
+字段/常量（1）：
+- `String diagnosticReason`  L587
+
+方法（2）：
+- `String getDiagnosticReason()`  L589
+- `public HourScanExecutionException(String diagnosticReason, String message)`  L594
+    - 体内字面量："diagnosticReason" · "message"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoader$load$1`
+L15 · [class] final Ride3ProHourFilesLoader$load$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoader$load$1.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L16
+- `Object L$1`  L17
+- `int label`  L18
+- `Object result`  L19
+- `Ride3ProHourFilesLoader this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoadResult`
+L12 · [interface] public Ride3ProHourFilesLoadResult · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoadResult.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoadResult$Loaded;" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoadResult;" · "files" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProPlaybackFile;" · "(Ljava/util/List;)V" · "getFiles" · "()Ljava/util/List;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoadResult$NoValidRecordings;" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoadResult;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoadResult$Loaded`
+L16 · [class] public static final Loaded · implements `Ride3ProHourFilesLoadResult` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoadResult.java`
+注解：
+
+字段/常量（1）：
+- `List<Ride3ProPlaybackFile> files`  L17
+
+方法（8）：
+- `Loaded copy$default(Loaded loaded, List list, int i, Object obj)`  L20
+- `List<Ride3ProPlaybackFile> component1()`  L27
+- `Loaded copy(List<Ride3ProPlaybackFile> files)`  L31
+    - 体内字面量："files"
+- `boolean equals(Object other)`  L36
+- `int hashCode()`  L43
+- `String toString()`  L47
+    - 体内字面量："Loaded(files=" · ")"
+- `public Loaded(List<Ride3ProPlaybackFile> files)`  L51
+    - 体内字面量："files"
+- `List<Ride3ProPlaybackFile> getFiles()`  L56
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourFilesLoadResult$NoValidRecordings`
+L63 · [class] public static final NoValidRecordings · implements `Ride3ProHourFilesLoadResult` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourFilesLoadResult.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L66
+- `int hashCode()`  L76
+- `String toString()`  L80
+    - 体内字面量："NoValidRecordings"
+- `private NoValidRecordings()`  L84
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourFileTimeRelation`
+L13 · [class] public final Ride3ProHourFileTimeRelation · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourFileTimeRelation.java`
+注解：
+
+方法（2）：
+- `private Ride3ProHourFileTimeRelation()`  L16
+- `Ride3ProHourTimeRelation classify(Ride3ProPlaybackFile file, Ride3ProHourKey target)`  L19
+    - 体内字面量："file" · "target"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanCompletionReason`
+L11 · [enum] public Ride3ProHourScanCompletionReason · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanCompletionReason.java`
+注解：
+
+枚举常量（5）：
+- `EMPTY_PAGE()`  L12
+- `SHORT_PAGE()`  L13
+- `NON_TARGET_BOUNDARY()`  L14
+- `AVAILABLE_FILES_CYCLE()`  L15
+- `DEFAULT_TIME_LIMIT()`  L16
+
+方法（1）：
+- `EnumEntries<Ride3ProHourScanCompletionReason> getEntries()`  L20
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanCursor`
+L23 · [class] public final Ride3ProHourScanCursor · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanCursor.java`
+注解：
+
+字段/常量（17）：
+- `int DEFAULT_TIME_LIMIT = 60`  L25
+- `Comparator<Ride3ProPlaybackFile> FILE_TIME_DESCENDING`  L26
+- `int MAX_FILE_INDEX = 9999`  L27
+- `int MIN_FILE_INDEX = 0`  L28
+- `int PAGE_SIZE = 16`  L29
+- `int consecutiveDefaultTimeCount`  L30
+- `Set<List<Integer>> pageFingerprints`  L31
+- `Set<Integer> requestedIndexes`  L32
+- `Set<Integer> seenFileIndexes`  L33
+- `Ride3ProHourKey target`  L34
+- `LinkedHashMap<Integer, Ride3ProPlaybackFile> targetFilesByIndex`  L35
+- `boolean terminal`  L36
+- `List<Ride3ProPlaybackFile> list = page`  L49
+- `ArrayList arrayList2 = arrayList`  L55
+- `int i = this.consecutiveDefaultTimeCount + 1`  L83
+- `Set<Integer> set = this.seenFileIndexes`  L104
+- `int i2 = iIntValue == 0 ? MAX_FILE_INDEX : iIntValue - 1`  L116
+
+方法（8）：
+- `public Ride3ProHourScanCursor(Ride3ProHourKey target)`  L38
+    - 体内字面量："target"
+- `Ride3ProHourScanStep acceptPage(int requestFileIndex, List<Ride3ProPlaybackFile> page)`  L47
+    - 体内字面量："page"
+- `Ride3ProHourScanStep acceptPage$app_release_64(int requestFileIndex, Ride3ProHourScanPage page)`  L64
+    - 体内字面量："page" · "hour scan is already terminal"
+- `Ride3ProHourScanStep complete(Ride3ProHourScanCompletionReason completionReason)`  L125
+    - 体内字面量："<get-values>(...)"
+- `Ride3ProHourScanStep.Failure failure(Ride3ProHourScanFailureReason reason, String message)`  L135
+    - 体内字面量："Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanCursor$Companion;" · "()V" · "DEFAULT_TIME_LIMIT" · "FILE_TIME_DESCENDING" · "Ljava/util/Comparator;" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProPlaybackFile;" · "Lkotlin/Comparator;" · "MAX_FILE_INDEX" · "MIN_FILE_INDEX" · "PAGE_SIZE" · "app_release_64"
+- `int compare(T t, T t2)`  L155 @Override
+- `int compare(T t, T t2)`  L162 @Override
+- `int compare(T t, T t2)`  L170 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanCursor$Companion`
+L142 · [class] private static final Companion · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanCursor.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L143
+- `private Companion()`  L147
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanFailureReason`
+L11 · [enum] public Ride3ProHourScanFailureReason · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanFailureReason.java`
+注解：
+
+枚举常量（1）：
+- `ALREADY_TERMINAL()`  L12
+
+方法（1）：
+- `EnumEntries<Ride3ProHourScanFailureReason> getEntries()`  L16
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanItem`
+L11 · [interface] public Ride3ProHourScanItem · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanItem.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanItem$Valid;" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanItem;" · "file" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProPlaybackFile;" · "(Lcom/tuwinsmart/tuwin/domain/model/Ride3ProPlaybackFile;)V" · "getFile" · "()Lcom/tuwinsmart/tuwin/domain/model/Ride3ProPlaybackFile;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanItem$DeviceDefaultTime;" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanItem;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanItem$Invalid;" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanItem;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanItem$DeviceDefaultTime`
+L62 · [class] public static final DeviceDefaultTime · implements `Ride3ProHourScanItem` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanItem.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L65
+- `int hashCode()`  L75
+- `String toString()`  L79
+    - 体内字面量："DeviceDefaultTime"
+- `private DeviceDefaultTime()`  L83
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanItem$Invalid`
+L89 · [class] public static final Invalid · implements `Ride3ProHourScanItem` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanItem.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L92
+- `int hashCode()`  L102
+- `String toString()`  L106
+    - 体内字面量："Invalid"
+- `private Invalid()`  L110
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanItem$Valid`
+L15 · [class] public static final Valid · implements `Ride3ProHourScanItem` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanItem.java`
+注解：
+
+字段/常量（1）：
+- `Ride3ProPlaybackFile file`  L16
+
+方法（8）：
+- `Valid copy$default(Valid valid, Ride3ProPlaybackFile ride3ProPlaybackFile, int i, Object obj)`  L18
+- `Ride3ProPlaybackFile getFile()`  L26
+- `Valid copy(Ride3ProPlaybackFile file)`  L30
+    - 体内字面量："file"
+- `boolean equals(Object other)`  L35
+- `int hashCode()`  L42
+- `String toString()`  L46
+    - 体内字面量："Valid(file=" · ")"
+- `public Valid(Ride3ProPlaybackFile file)`  L50
+    - 体内字面量："file"
+- `Ride3ProPlaybackFile getFile()`  L55
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanPage`
+L13 · [class] public final Ride3ProHourScanPage · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanPage.java`
+注解：
+
+字段/常量（3）：
+- `List<Ride3ProHourScanItem> items`  L14
+- `List<Integer> rawFileIndexes`  L15
+- `List<Ride3ProHourScanItem> list = this.items`  L78
+
+方法（11）：
+- `Ride3ProHourScanPage copy$default(Ride3ProHourScanPage ride3ProHourScanPage, List list, List list2, int i, Object obj)`  L18
+- `List<Integer> component1()`  L28
+- `List<Ride3ProHourScanItem> component2()`  L32
+- `Ride3ProHourScanPage copy(List<Integer> rawFileIndexes, List<? extends Ride3ProHourScanItem> items)`  L36
+    - 体内字面量："rawFileIndexes" · "items"
+- `boolean equals(Object other)`  L42
+- `int hashCode()`  L53
+- `String toString()`  L57
+    - 体内字面量："Ride3ProHourScanPage(rawFileIndexes=" · ", items=" · ")"
+- `public Ride3ProHourScanPage(List<Integer> rawFileIndexes, List<? extends Ride3ProHourScanItem> items)`  L62
+    - 体内字面量："rawFileIndexes" · "items"
+- `List<Integer> getRawFileIndexes()`  L69
+- `List<Ride3ProHourScanItem> getItems()`  L73
+- `List<Ride3ProPlaybackFile> getValidFiles()`  L77
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanStep`
+L12 · [interface] public Ride3ProHourScanStep · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep$Continue;" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep;" · "nextFileIndex" · "collectedFileCount" · "wrapped" · "(IIZ)V" · "getCollectedFileCount" · "()I" · "getNextFileIndex" · "getWrapped" · "()Z" · "component1" · "component2" · "component3" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep$Complete;" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep;" · "files" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProPlaybackFile;" · "completionReason" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanCompletionReason;" · "(Ljava/util/List;Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanCompletionReason;)V" · "getCompletionReason" · "()Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanCompletionReason;" · "getFiles" · "()Ljava/util/List;" · "component1" · "component2" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep$NoValidRecordings;" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep;" · "completionReason" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanCompletionReason;" · "(Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanCompletionReason;)V" · "getCompletionReason" · "()Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanCompletionReason;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep$Failure;" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep;" · "reason" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanFailureReason;" · "message" · "collectedFileCount" · "(Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanFailureReason;Ljava/lang/String;I)V" · "getCollectedFileCount" · "()I" · "getMessage" · "()Ljava/lang/String;" · "getReason" · "()Lcom/tuwinsmart/tuwin/data/repository/Ride3ProHourScanFailureReason;" · "component1" · "component2" · "component3" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanStep$Complete`
+L93 · [class] public static final Complete · implements `Ride3ProHourScanStep` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep.java`
+注解：
+
+字段/常量（2）：
+- `Ride3ProHourScanCompletionReason completionReason`  L94
+- `List<Ride3ProPlaybackFile> files`  L95
+
+方法（10）：
+- `Complete copy$default(Complete complete, List list, Ride3ProHourScanCompletionReason ride3ProHourScanCompletionReason, int i, Object obj)`  L98
+- `List<Ride3ProPlaybackFile> component1()`  L108
+- `Ride3ProHourScanCompletionReason getCompletionReason()`  L113
+- `Complete copy(List<Ride3ProPlaybackFile> files, Ride3ProHourScanCompletionReason completionReason)`  L117
+    - 体内字面量："files" · "completionReason"
+- `boolean equals(Object other)`  L123
+- `int hashCode()`  L134
+- `String toString()`  L138
+    - 体内字面量："Complete(files=" · ", completionReason=" · ")"
+- `public Complete(List<Ride3ProPlaybackFile> files, Ride3ProHourScanCompletionReason completionReason)`  L142
+    - 体内字面量："files" · "completionReason"
+- `List<Ride3ProPlaybackFile> getFiles()`  L149
+- `Ride3ProHourScanCompletionReason getCompletionReason()`  L153
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanStep$Continue`
+L16 · [class] public static final Continue · implements `Ride3ProHourScanStep` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep.java`
+注解：
+
+字段/常量（3）：
+- `int collectedFileCount`  L17
+- `int nextFileIndex`  L18
+- `boolean wrapped`  L19
+
+方法（12）：
+- `Continue copy$default(Continue r0, int i, int i2, boolean z, int i3, Object obj)`  L21
+- `int getNextFileIndex()`  L35
+- `int getCollectedFileCount()`  L40
+- `boolean getWrapped()`  L45
+- `Continue copy(int nextFileIndex, int collectedFileCount, boolean wrapped)`  L49
+- `boolean equals(Object other)`  L53
+- `int hashCode()`  L64
+- `String toString()`  L68
+    - 体内字面量："Continue(nextFileIndex=" · ", collectedFileCount=" · ", wrapped=" · ")"
+- `public Continue(int i, int i2, boolean z)`  L72
+- `int getNextFileIndex()`  L78
+- `int getCollectedFileCount()`  L82
+- `boolean getWrapped()`  L86
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanStep$Failure`
+L207 · [class] public static final Failure · implements `Ride3ProHourScanStep` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep.java`
+注解：
+
+字段/常量（3）：
+- `int collectedFileCount`  L208
+- `String message`  L209
+- `Ride3ProHourScanFailureReason reason`  L210
+
+方法（12）：
+- `Failure copy$default(Failure failure, Ride3ProHourScanFailureReason ride3ProHourScanFailureReason, String str, int i, int i2, Object obj)`  L212
+- `Ride3ProHourScanFailureReason getReason()`  L226
+- `String getMessage()`  L231
+- `int getCollectedFileCount()`  L236
+- `Failure copy(Ride3ProHourScanFailureReason reason, String message, int collectedFileCount)`  L240
+    - 体内字面量："reason" · "message"
+- `boolean equals(Object other)`  L246
+- `int hashCode()`  L257
+- `String toString()`  L261
+    - 体内字面量："Failure(reason=" · ", message=" · ", collectedFileCount=" · ")"
+- `public Failure(Ride3ProHourScanFailureReason reason, String message, int i)`  L265
+    - 体内字面量："reason" · "message"
+- `Ride3ProHourScanFailureReason getReason()`  L273
+- `String getMessage()`  L277
+- `int getCollectedFileCount()`  L281
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourScanStep$NoValidRecordings`
+L160 · [class] public static final NoValidRecordings · implements `Ride3ProHourScanStep` · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourScanStep.java`
+注解：
+
+字段/常量（1）：
+- `Ride3ProHourScanCompletionReason completionReason`  L161
+
+方法（8）：
+- `NoValidRecordings copy$default(NoValidRecordings noValidRecordings, Ride3ProHourScanCompletionReason ride3ProHourScanCompletionReason, int i, Object obj)`  L163
+- `Ride3ProHourScanCompletionReason getCompletionReason()`  L171
+- `NoValidRecordings copy(Ride3ProHourScanCompletionReason completionReason)`  L175
+    - 体内字面量："completionReason"
+- `boolean equals(Object other)`  L180
+- `int hashCode()`  L187
+- `String toString()`  L191
+    - 体内字面量："NoValidRecordings(completionReason=" · ")"
+- `public NoValidRecordings(Ride3ProHourScanCompletionReason completionReason)`  L195
+    - 体内字面量："completionReason"
+- `Ride3ProHourScanCompletionReason getCompletionReason()`  L200
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProHourTimeRelation`
+L11 · [enum] public Ride3ProHourTimeRelation · `com/tuwinsmart/tuwin/data/repository/Ride3ProHourTimeRelation.java`
+注解：
+
+枚举常量（3）：
+- `OLDER()`  L12
+- `TARGET()`  L13
+- `NEWER()`  L14
+
+方法（1）：
+- `EnumEntries<Ride3ProHourTimeRelation> getEntries()`  L18
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedDeviceKeyResolver`
+L14 · [class] public final Ride3ProIndexedDeviceKeyResolver · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedDeviceKeyResolver.java`
+注解：
+
+字段/常量（3）：
+- `int MIN_QUOTED_LENGTH = 2`  L16
+- `char QUOTE = "\\\""`  L17
+- `String str = string`  L50
+
+方法（3）：
+- `private Ride3ProIndexedDeviceKeyResolver()`  L19
+- `String resolve(String deviceId, String globalSsid, String currentSsid)`  L36
+    - 体内字面量："indexed playback device key is required"
+- `String normalize(String value)`  L45
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedDeviceKeyResolver$C21841`
+L25 · [class] C21841 · extends `FunctionReferenceImpl implements Function1<String, String>` · implements `Function1<String, String>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedDeviceKeyResolver.java`
+注解：
+
+方法（1）：
+- `String invoke(String str)`  L31 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedDeviceScopeValidator`
+L12 · [class] public final Ride3ProIndexedDeviceScopeValidator · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedDeviceScopeValidator.java`
+注解：
+
+字段/常量（2）：
+- `Function0<String> currentDeviceKey`  L13
+- `String expectedDeviceKey`  L14
+
+方法（2）：
+- `public Ride3ProIndexedDeviceScopeValidator(String expectedDeviceKey, Function0<String> currentDeviceKey)`  L16
+    - 体内字面量："expectedDeviceKey" · "currentDeviceKey" · "expected indexed device key is required"
+- `void validate()`  L26
+    - 体内字面量："indexed playback device scope changed: expected=" · ", current="
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepository`
+L17 · [interface] public Ride3ProIndexedPlaybackRepository · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepository.java`
+注解：
+
+方法（5）：
+- `Object mo2821clearCached1pmJ48()`  L19
+- `Object mo2822deleteHourFile0E7RQCE(Ride3ProHourKey ride3ProHourKey, int i, Continuation<? super Result<? extends List<Ride3ProPlaybackFile>>> continuation)`  L22
+- `Object mo2823loadDayHours0E7RQCE(int i, boolean z, Continuation<? super Result<Ride3ProDayGroup>> continuation)`  L25
+- `Object mo2824loadHourFiles0E7RQCE(Ride3ProHourKey ride3ProHourKey, boolean z, Continuation<? super Result<? extends List<Ride3ProPlaybackFile>>> continuation)`  L28
+- `Object mo2825loadPlaybackCataloggIAlus(boolean z, Continuation<? super Result<Ride3ProPlaybackCatalog>> continuation)`  L31
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl`
+L32 · [class] public final Ride3ProIndexedPlaybackRepositoryImpl · implements `Ride3ProIndexedPlaybackRepository` · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl.java`
+注解：
+
+字段/常量（43）：
+- `String DAY_INFO_ENDPOINT = "/api/playback/dayinfo"`  L34
+- `String DELETE_ENDPOINT = "/api/playback/delete"`  L35
+- `String FILE_COUNT_ENDPOINT = "/api/playback/filecount"`  L36
+- `Ride3ProPlaybackCatalogCacheStore cacheStore`  L37
+- `Function0<Unit> deviceScopeValidator`  L38
+- `Ride3ProPlaybackCatalogFileCountCommitter fileCountCommitter`  L39
+- `Function3<Ride3ProHourKey, Integer, Continuation<? super Result<? extends Ride3ProHourFilesLoadResult>>, Object> hourFilesLoader`  L40
+- `Function0<Unit> refreshNetworkBinding`  L41
+- `Function0<Ride3ProApiService> serviceProvider`  L42
+- `Function1<String, Unit> warningLogger`  L43
+- `Ride3ProIndexedPlaybackRepositoryImpl$loadPlaybackCatalog$1 ride3ProIndexedPlaybackRepositoryImpl$loadPlaybackCatalog$1`  L66
+- `Object obj = ride3ProIndexedPlaybackRepositoryImpl$loadPlaybackCatalog$1.result`  L77
+- `int i = ride3ProIndexedPlaybackRepositoryImpl$loadPlaybackCatalog$1.label`  L79
+- `Result.Companion companion = Result.INSTANCE`  L91
+- `Result.Companion companion2 = Result.INSTANCE`  L99
+- `Ride3ProIndexedPlaybackRepositoryImpl$loadDayHours$1 ride3ProIndexedPlaybackRepositoryImpl$loadDayHours$1`  L112
+- `Object next`  L113
+- `Object obj = ride3ProIndexedPlaybackRepositoryImpl$loadDayHours$1.result`  L124
+- `int i2 = ride3ProIndexedPlaybackRepositoryImpl$loadDayHours$1.label`  L126
+- `Result.Companion companion = Result.INSTANCE`  L138
+- `Result.Companion companion2 = Result.INSTANCE`  L146
+- `Result.Companion companion3 = Result.INSTANCE`  L159
+- `Result.Companion companion4 = Result.INSTANCE`  L163
+- `Ride3ProIndexedPlaybackRepositoryImpl$loadHourFiles$1 ride3ProIndexedPlaybackRepositoryImpl$loadHourFiles$1`  L176
+- `Object obj = ride3ProIndexedPlaybackRepositoryImpl$loadHourFiles$1.result`  L187
+- `int i = ride3ProIndexedPlaybackRepositoryImpl$loadHourFiles$1.label`  L189
+- `Ride3ProIndexedPlaybackRepositoryImpl$deleteHourFile$1 ride3ProIndexedPlaybackRepositoryImpl$deleteHourFile$1`  L208
+- `Object obj = ride3ProIndexedPlaybackRepositoryImpl$deleteHourFile$1.result`  L219
+- `int i2 = ride3ProIndexedPlaybackRepositoryImpl$deleteHourFile$1.label`  L221
+- `Ride3ProIndexedPlaybackRepositoryImpl$captureFailure$1 ride3ProIndexedPlaybackRepositoryImpl$captureFailure$1`  L258
+- `Object objInvoke = ride3ProIndexedPlaybackRepositoryImpl$captureFailure$1.result`  L269
+- `int i = ride3ProIndexedPlaybackRepositoryImpl$captureFailure$1.label`  L271
+- `Result.Companion companion = Result.INSTANCE`  L275
+- `Result.Companion companion2 = Result.INSTANCE`  L291
+- `Result.Companion companion = Result.INSTANCE`  L301
+- `Result.Companion companion2 = Result.INSTANCE`  L306
+- `Result.Companion companion = Result.INSTANCE`  L316
+- `Result.Companion companion2 = Result.INSTANCE`  L322
+- `Result.Companion companion3 = Result.INSTANCE`  L329
+- `Result.Companion companion = Result.INSTANCE`  L351
+- `Result.Companion companion2 = Result.INSTANCE`  L358
+- `Object next`  L371
+- `Object next`  L389
+
+方法（19）：
+- `public Ride3ProIndexedPlaybackRepositoryImpl(Function0<? extends Ride3ProApiService> serviceProvider, Function0<Unit> refreshNetworkBinding, Ride3ProPlaybackCatalogCacheStore cacheStore, Function3<? super Ride3ProHourKey, ? super Integer, ? super Continuation<? super Result<? extends Ride3ProHourFilesLoadResult>>, ? extends Object> hourFilesLoader, Function1<? super String, Unit> warningLogger, Function0<Unit> deviceScopeValidator)`  L46
+    - 体内字面量："serviceProvider" · "refreshNetworkBinding" · "cacheStore" · "hourFilesLoader" · "warningLogger" · "deviceScopeValidator"
+- `Object mo2825loadPlaybackCataloggIAlus(boolean z, Continuation<? super Result<Ride3ProPlaybackCatalog>> continuation)`  L65 @Override
+- `Object mo2823loadDayHours0E7RQCE(int i, boolean z, Continuation<? super Result<Ride3ProDayGroup>> continuation)`  L111 @Override
+- `Object mo2824loadHourFiles0E7RQCE(Ride3ProHourKey ride3ProHourKey, boolean z, Continuation<? super Result<? extends List<Ride3ProPlaybackFile>>> continuation)`  L175 @Override
+- `Object mo2822deleteHourFile0E7RQCE(Ride3ProHourKey ride3ProHourKey, int i, Continuation<? super Result<? extends List<Ride3ProPlaybackFile>>> continuation)`  L207 @Override
+- `Object mo2821clearCached1pmJ48()`  L238 @Override
+- `T requireResponseInfo(Ride3ProApiResponse<T> response, String endpoint)`  L243
+    - 体内字面量：" request failed: " · " response info is missing"
+- `Object m2830captureFailuregIAlus(Function1<? super Continuation<? super T>, ? extends Object> function1, Continuation<? super Result<? extends T>> continuation)`  L257
+- `Object m2833validateCurrentDeviceScoped1pmJ48()`  L298
+- `Object m2831loadCatalogWithinCurrentDeviceScoped1pmJ48()`  L313
+- `Object m2832updateCatalogWithinCurrentDeviceScopeIoAF18A(final Function1<? super Ride3ProPlaybackCatalog, Ride3ProPlaybackCatalog> transform)`  L335
+- `Ride3ProPlaybackCatalog invoke(Ride3ProPlaybackCatalog ride3ProPlaybackCatalog)`  L344 @Override
+- `Ride3ProPlaybackCatalog requireCatalog(Ride3ProPlaybackCatalog catalog)`  L363
+    - 体内字面量："indexed playback catalog cache is empty"
+- `Ride3ProDayGroup requireDay(Ride3ProPlaybackCatalog catalog, int date)`  L370
+- `Ride3ProHourGroup requireHour(Ride3ProPlaybackCatalog catalog, Ride3ProHourKey hourKey)`  L388
+- `Ride3ProDayGroup requireUnchangedDaySummary(Ride3ProPlaybackCatalog catalog, int date, PlaybackGroupSummary requestedSummary)`  L406
+    - 体内字面量："playback day changed while hours were loading: date=" · ", requestedSummary=" · ", latestSummary="
+- `Ride3ProHourGroup requireUnchangedHourSummary(Ride3ProPlaybackCatalog catalog, Ride3ProHourKey hourKey, PlaybackGroupSummary requestedSummary)`  L416
+    - 体内字面量："playback hour changed while files were loading: hourKey=" · ", requestedSummary=" · ", latestSummary="
+- `PlaybackGroupSummary summaryOf(Ride3ProDayGroup day)`  L425
+- `PlaybackGroupSummary summaryOf(Ride3ProHourGroup hour)`  L430
+    - 体内字面量："Lcom/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$PlaybackGroupSummary;" · "reportedFileCount" · "lastFileIndex" · "(Ljava/lang/Integer;I)V" · "getLastFileIndex" · "()I" · "getReportedFileCount" · "()Ljava/lang/Integer;" · "Ljava/lang/Integer;" · "component1" · "component2" · "copy" · "(Ljava/lang/Integer;I)Lcom/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$PlaybackGroupSummary;" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$Companion;" · "()V" · "DAY_INFO_ENDPOINT" · "DELETE_ENDPOINT" · "FILE_COUNT_ENDPOINT" · "app_release_64"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl$captureFailure$1`
+L16 · [class] final Ride3ProIndexedPlaybackRepositoryImpl$captureFailure$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$captureFailure$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L17
+- `Object result`  L18
+- `Ride3ProIndexedPlaybackRepositoryImpl this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl$Companion`
+L501 · [class] private static final Companion · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L502
+- `private Companion()`  L506
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl$deleteHourFile$1`
+L15 · [class] final Ride3ProIndexedPlaybackRepositoryImpl$deleteHourFile$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$deleteHourFile$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProIndexedPlaybackRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl$deleteHourFile$2`
+L31 · [class] final Ride3ProIndexedPlaybackRepositoryImpl$deleteHourFile$2 · extends `SuspendLambda implements Function1<Continuation<? super List<? extends Ride3ProPlaybackFile>>, Object>` · implements `Function1<Continuation<? super List<? extends Ride3ProPlaybackFile>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$deleteHourFile$2.java`
+注解：
+
+字段/常量（23）：
+- `int $fileIndex`  L32
+- `Ride3ProHourKey $hourKey`  L33
+- `int label`  L34
+- `Ride3ProIndexedPlaybackRepositoryImpl this$0`  L35
+- `int i = this.label`  L64
+- `Ride3ProHourKey ride3ProHourKey = this.$hourKey`  L74
+- `List<Ride3ProPlaybackFile> list = files`  L78
+- `int i2 = this.$fileIndex`  L79
+- `boolean z = false`  L80
+- `Ride3ProHourKey ride3ProHourKey2 = this.$hourKey`  L90
+- `int i3 = this.$fileIndex`  L91
+- `Ride3ProIndexedPlaybackRepositoryImpl ride3ProIndexedPlaybackRepositoryImpl = this.this$0`  L113
+- `Ride3ProIndexedPlaybackRepositoryImpl ride3ProIndexedPlaybackRepositoryImpl2 = this.this$0`  L114
+- `Ride3ProHourKey ride3ProHourKey3 = this.$hourKey`  L115
+- `int i4 = this.$fileIndex`  L116
+- `?? EmptyList`  L133
+- `Object next`  L134
+- `List<Ride3ProHourGroup> hours`  L135
+- `Object next2`  L136
+- `List<Ride3ProPlaybackFile> files2`  L137
+- `Ref.ObjectRef<List<Ride3ProPlaybackFile>> objectRef2 = objectRef`  L139
+- `Ride3ProHourKey ride3ProHourKey4 = ride3ProHourKey3`  L141
+- `Ride3ProHourKey ride3ProHourKey5 = ride3ProHourKey3`  L155
+
+方法（5）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L46 @Override
+- `Object invoke(Continuation<? super List<? extends Ride3ProPlaybackFile>> continuation)`  L51 @Override
+- `Object invoke2(Continuation<? super List<Ride3ProPlaybackFile>> continuation)`  L56
+- `Object invokeSuspend(Object obj)`  L62 @Override
+- `Ride3ProPlaybackCatalog invoke(Ride3ProPlaybackCatalog ride3ProPlaybackCatalog2)`  L132 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl$loadDayHours$1`
+L15 · [class] final Ride3ProIndexedPlaybackRepositoryImpl$loadDayHours$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$loadDayHours$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProIndexedPlaybackRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl$loadDayHours$2`
+L26 · [class] final Ride3ProIndexedPlaybackRepositoryImpl$loadDayHours$2 · extends `SuspendLambda implements Function1<Continuation<? super Ride3ProDayGroup>, Object>` · implements `Function1<Continuation<? super Ride3ProDayGroup>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$loadDayHours$2.java`
+注解：
+
+字段/常量（12）：
+- `int $date`  L27
+- `Ride3ProIndexedPlaybackRepositoryImpl.PlaybackGroupSummary $requestedSummary`  L28
+- `int label`  L29
+- `Ride3ProIndexedPlaybackRepositoryImpl this$0`  L30
+- `int i = this.label`  L54
+- `Ride3ProIndexedPlaybackRepositoryImpl ride3ProIndexedPlaybackRepositoryImpl = this.this$0`  L74
+- `Ride3ProIndexedPlaybackRepositoryImpl ride3ProIndexedPlaybackRepositoryImpl2 = this.this$0`  L75
+- `int i2 = this.$date`  L76
+- `Ride3ProIndexedPlaybackRepositoryImpl.PlaybackGroupSummary playbackGroupSummary = this.$requestedSummary`  L77
+- `Function1 function1 = this.this$0.warningLogger`  L109
+- `T t = objectRef2.element`  L114
+- `int i3 = this.$date`  L115
+
+方法（4）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L41 @Override
+- `Object invoke(Continuation<? super Ride3ProDayGroup> continuation)`  L46 @Override
+- `Object invokeSuspend(Object obj)`  L52 @Override
+- `Ride3ProPlaybackCatalog invoke(Ride3ProPlaybackCatalog ride3ProPlaybackCatalog)`  L98 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl$loadHourFiles$1`
+L15 · [class] final Ride3ProIndexedPlaybackRepositoryImpl$loadHourFiles$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$loadHourFiles$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProIndexedPlaybackRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl$loadHourFiles$2`
+L31 · [class] final Ride3ProIndexedPlaybackRepositoryImpl$loadHourFiles$2 · extends `SuspendLambda implements Function1<Continuation<? super List<? extends Ride3ProPlaybackFile>>, Object>` · implements `Function1<Continuation<? super List<? extends Ride3ProPlaybackFile>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$loadHourFiles$2.java`
+注解：
+
+字段/常量（22）：
+- `boolean $forceRefresh`  L32
+- `Ride3ProHourKey $hourKey`  L33
+- `Object L$0`  L34
+- `Object L$1`  L35
+- `int label`  L36
+- `Ride3ProIndexedPlaybackRepositoryImpl this$0`  L37
+- `Object obj2`  L65
+- `Object next`  L66
+- `List<Ride3ProHourGroup> hours`  L67
+- `Ride3ProIndexedPlaybackRepositoryImpl.PlaybackGroupSummary playbackGroupSummary`  L68
+- `T t`  L69
+- `int i = this.label`  L71
+- `Ride3ProHourKey ride3ProHourKey = this.$hourKey`  L81
+- `Ride3ProHourKey ride3ProHourKey2 = this.$hourKey`  L93
+- `Function3 function3 = this.this$0.hourFilesLoader`  L108
+- `Ride3ProHourKey ride3ProHourKey3 = this.$hourKey`  L109
+- `Ride3ProIndexedPlaybackRepositoryImpl ride3ProIndexedPlaybackRepositoryImpl = this.this$0`  L136
+- `Ride3ProIndexedPlaybackRepositoryImpl ride3ProIndexedPlaybackRepositoryImpl2 = this.this$0`  L137
+- `Ride3ProHourKey ride3ProHourKey4 = this.$hourKey`  L138
+- `Ride3ProIndexedPlaybackRepositoryImpl ride3ProIndexedPlaybackRepositoryImpl3 = this.this$0`  L159
+- `Ride3ProIndexedPlaybackRepositoryImpl ride3ProIndexedPlaybackRepositoryImpl4 = this.this$0`  L160
+- `Ride3ProHourKey ride3ProHourKey5 = this.$hourKey`  L161
+
+方法（6）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L48 @Override
+- `Object invoke(Continuation<? super List<? extends Ride3ProPlaybackFile>> continuation)`  L53 @Override
+- `Object invoke2(Continuation<? super List<Ride3ProPlaybackFile>> continuation)`  L58
+- `Object invokeSuspend(Object obj)`  L64 @Override
+- `Ride3ProPlaybackCatalog invoke(Ride3ProPlaybackCatalog ride3ProPlaybackCatalog2)`  L146 @Override
+- `Ride3ProPlaybackCatalog invoke(Ride3ProPlaybackCatalog ride3ProPlaybackCatalog2)`  L170 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl$loadPlaybackCatalog$1`
+L15 · [class] final Ride3ProIndexedPlaybackRepositoryImpl$loadPlaybackCatalog$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$loadPlaybackCatalog$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProIndexedPlaybackRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl$loadPlaybackCatalog$2`
+L22 · [class] final Ride3ProIndexedPlaybackRepositoryImpl$loadPlaybackCatalog$2 · extends `SuspendLambda implements Function1<Continuation<? super Ride3ProPlaybackCatalog>, Object>` · implements `Function1<Continuation<? super Ride3ProPlaybackCatalog>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl$loadPlaybackCatalog$2.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L23
+- `Ride3ProIndexedPlaybackRepositoryImpl this$0`  L24
+- `int i = this.label`  L45
+
+方法（3）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L33 @Override
+- `Object invoke(Continuation<? super Ride3ProPlaybackCatalog> continuation)`  L38 @Override
+- `Object invokeSuspend(Object obj)`  L43 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProIndexedPlaybackRepositoryImpl$PlaybackGroupSummary`
+L437 · [class] static final PlaybackGroupSummary · `com/tuwinsmart/tuwin/data/repository/Ride3ProIndexedPlaybackRepositoryImpl.java`
+注解：
+
+字段/常量（3）：
+- `int lastFileIndex`  L438
+- `Integer reportedFileCount`  L439
+- `Integer num = this.reportedFileCount`  L477
+
+方法（10）：
+- `PlaybackGroupSummary copy$default(PlaybackGroupSummary playbackGroupSummary, Integer num, int i, int i2, Object obj)`  L441
+- `Integer getReportedFileCount()`  L452
+- `int getLastFileIndex()`  L457
+- `PlaybackGroupSummary copy(Integer reportedFileCount, int lastFileIndex)`  L461
+- `boolean equals(Object other)`  L465
+- `int hashCode()`  L476
+- `String toString()`  L481
+    - 体内字面量："PlaybackGroupSummary(reportedFileCount=" · ", lastFileIndex=" · ")"
+- `public PlaybackGroupSummary(Integer num, int i)`  L485
+- `Integer getReportedFileCount()`  L490
+- `int getLastFileIndex()`  L494
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProNoValidRecordingsException`
+L11 · [class] public final Ride3ProNoValidRecordingsException · extends `IllegalStateException` · `com/tuwinsmart/tuwin/data/repository/Ride3ProNoValidRecordingsException.java`
+注解：
+
+字段/常量（3）：
+- `Ride3ProHourKey hourKey`  L12
+- `int lastFileIndex`  L13
+- `Integer reportedFileCount`  L14
+
+方法（4）：
+- `Ride3ProHourKey getHourKey()`  L16
+- `int getLastFileIndex()`  L20
+- `Integer getReportedFileCount()`  L24
+- `public Ride3ProNoValidRecordingsException(Ride3ProHourKey hourKey, int i, Integer num)`  L29
+    - 体内字面量："hour summary has no valid recordings: hourKey=" · ", lastFileIndex=" · ", reportedFileCount=" · "hourKey"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackCacheClearCoordinator`
+L22 · [class] public final Ride3ProPlaybackCacheClearCoordinator · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackCacheClearCoordinator.java`
+注解：
+
+字段/常量（5）：
+- `Function0<String> deviceKeyProvider`  L23
+- `Function1<String, Result<Unit>> indexedCacheClearer`  L24
+- `Function0<Unit> legacyCacheClearer`  L25
+- `Result.Companion companion = Result.INSTANCE`  L82
+- `Result.Companion companion2 = Result.INSTANCE`  L90
+
+方法（7）：
+- `public Ride3ProPlaybackCacheClearCoordinator(Function0<String> deviceKeyProvider, Function0<Unit> legacyCacheClearer, Function1<? super String, Result<Unit>> indexedCacheClearer)`  L28
+    - 体内字面量："deviceKeyProvider" · "legacyCacheClearer" · "indexedCacheClearer"
+- `String captureCurrentDeviceKey()`  L37
+- `Object m2835clearDeviceIoAF18A(final String deviceKey)`  L42
+    - 体内字面量："deviceKey" · "indexed playback device key is required for cache clear"
+- `Unit invoke()`  L56 @Override
+- `void invoke2()`  L62
+- `void collectFailure(List<Throwable> failures, Function0<Unit> action)`  L69
+- `Object m2834toResultIoAF18A(List<? extends Throwable> list)`  L80
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackCacheStore`
+L11 · [interface] public Ride3ProPlaybackCacheStore · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackCacheStore.java`
+注解：
+
+方法（3）：
+- `void clear()`  L12
+- `List<StorageRide3ProRemoteFile> load()`  L14
+- `void save(List<StorageRide3ProRemoteFile> files)`  L16
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackCatalogCacheLockRegistry`
+L16 · [class] final Ride3ProPlaybackCatalogCacheLockRegistry · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackCatalogCacheLockRegistry.java`
+注解：
+
+字段/常量（1）：
+- `ConcurrentHashMap<String, ReentrantLock> concurrentHashMap = locks`  L26
+
+方法（5）：
+- `private Ride3ProPlaybackCatalogCacheLockRegistry()`  L20
+- `ReentrantLock lockFor(File cacheFile)`  L23
+    - 体内字面量："cacheFile"
+- `ReentrantLock invoke(String it)`  L29 @Override
+    - 体内字面量："it"
+- `Object apply(Object obj)`  L36 @Override
+    - 体内字面量："computeIfAbsent(...)"
+- `ReentrantLock lockFor$lambda$0(Function1 tmp0, Object obj)`  L45
+    - 体内字面量："$tmp0"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackCatalogCacheMergePolicy`
+L22 · [class] public final Ride3ProPlaybackCatalogCacheMergePolicy · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackCatalogCacheMergePolicy.java`
+注解：
+
+方法（7）：
+- `private Ride3ProPlaybackCatalogCacheMergePolicy()`  L25
+- `Ride3ProPlaybackCatalog mergeFileCount(Ride3ProPlaybackCatalog cached, Ride3ProPlaybackCatalog fresh)`  L28
+    - 体内字面量："cached" · "fresh"
+- `int compare(T t, T t2)`  L44 @Override
+- `Ride3ProDayGroup mergeDayInfo(Ride3ProDayGroup cached, Ride3ProDayGroup fresh)`  L50
+    - 体内字面量："cached" · "fresh" · "cannot merge DayInfo for different dates: cached=" · ", fresh="
+- `int compare(T t, T t2)`  L70 @Override
+- `Ride3ProDayGroup mergeFileCountDay(Ride3ProDayGroup cached, Ride3ProDayGroup fresh)`  L76
+- `Ride3ProHourGroup mergeDayInfoHour(Ride3ProHourGroup cached, Ride3ProHourGroup fresh, boolean daySummaryMatches)`  L86
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackCatalogCacheStore`
+L11 · [interface] public Ride3ProPlaybackCatalogCacheStore · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackCatalogCacheStore.java`
+注解：
+
+方法（4）：
+- `Object mo2836cleard1pmJ48()`  L13
+- `Object mo2837loadd1pmJ48()`  L16
+- `Object mo2838saveIoAF18A(Ride3ProPlaybackCatalog catalog)`  L19
+- `Object mo2839updateIoAF18A(Function1<? super Ride3ProPlaybackCatalog, Ride3ProPlaybackCatalog> transform)`  L22
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackCatalogFileCountCommitter`
+L19 · [class] public final Ride3ProPlaybackCatalogFileCountCommitter · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackCatalogFileCountCommitter.java`
+注解：
+
+字段/常量（7）：
+- `Ride3ProPlaybackCatalogCacheStore cacheStore`  L20
+- `Function0<Unit> commitGuard`  L21
+- `Function1<String, Unit> warningLogger`  L22
+- `Result.Companion companion = Result.INSTANCE`  L38
+- `Ride3ProPlaybackCatalogFileCountCommitter ride3ProPlaybackCatalogFileCountCommitter = this`  L39
+- `Function1<String, Unit> function1 = this.warningLogger`  L42
+- `Result.Companion companion2 = Result.INSTANCE`  L69
+
+方法（3）：
+- `public Ride3ProPlaybackCatalogFileCountCommitter(Ride3ProPlaybackCatalogCacheStore cacheStore, Function1<? super String, Unit> warningLogger, Function0<Unit> commitGuard)`  L25
+    - 体内字面量："cacheStore" · "warningLogger" · "commitGuard"
+- `Object m2840commitIoAF18A(Ride3ProPlaybackFileCountInfo info)`  L35
+    - 体内字面量："info"
+- `Ride3ProPlaybackCatalog invoke(Ride3ProPlaybackCatalog ride3ProPlaybackCatalog)`  L54 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackCatalogMapper`
+L25 · [class] public final Ride3ProPlaybackCatalogMapper · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackCatalogMapper.java`
+注解：
+
+字段/常量（2）：
+- `Integer num = date`  L49
+- `Integer num = hour`  L93
+
+方法（5）：
+- `private Ride3ProPlaybackCatalogMapper()`  L28
+- `Ride3ProPlaybackMappingResult<Ride3ProPlaybackCatalog> mapFileCount(Ride3ProPlaybackFileCountInfo info)`  L31
+    - 体内字面量："info" · "day_count is required for indexed playback catalog"
+- `int compare(T t, T t2)`  L44 @Override
+    - 体内字面量："Required value was null."
+- `Ride3ProPlaybackMappingResult<Ride3ProDayGroup> mapDayInfo(Ride3ProDayGroup dayGroup, Ride3ProPlaybackDayDetail detail)`  L77
+    - 体内字面量："dayGroup" · "detail"
+- `int compare(T t, T t2)`  L88 @Override
+    - 体内字面量："Required value was null."
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackCatalogPersistentCacheStore`
+L44 · [class] public final Ride3ProPlaybackCatalogPersistentCacheStore · implements `Ride3ProPlaybackCatalogCacheStore` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackCatalogPersistentCacheStore.java`
+注解：
+
+字段/常量（25）：
+- `String CACHE_DIRECTORY_NAME = "ride3pro_indexed_playback_cache"`  L45
+- `String deviceKey`  L47
+- `Gson gson`  L48
+- `Function2<File, File, Boolean> replaceFile`  L49
+- `File rootDirectory`  L50
+- `ReentrantLock transactionLock`  L51
+- `Object objM3074constructorimpl`  L85
+- `ReentrantLock reentrantLock = this.transactionLock`  L86
+- `Result.Companion companion = Result.INSTANCE`  L89
+- `Result.Companion companion2 = Result.INSTANCE`  L93
+- `Object objM3074constructorimpl`  L105
+- `ReentrantLock reentrantLock = this.transactionLock`  L107
+- `Result.Companion companion = Result.INSTANCE`  L110
+- `Ride3ProPlaybackCatalogPersistentCacheStore ride3ProPlaybackCatalogPersistentCacheStore = this`  L111
+- `Result.Companion companion2 = Result.INSTANCE`  L116
+- `Object objM3074constructorimpl`  L128
+- `ReentrantLock reentrantLock = this.transactionLock`  L130
+- `Result.Companion companion = Result.INSTANCE`  L133
+- `Ride3ProPlaybackCatalogPersistentCacheStore ride3ProPlaybackCatalogPersistentCacheStore = this`  L134
+- `Result.Companion companion2 = Result.INSTANCE`  L140
+- `Object objM3074constructorimpl`  L152
+- `ReentrantLock reentrantLock = this.transactionLock`  L153
+- `Result.Companion companion = Result.INSTANCE`  L156
+- `Result.Companion companion2 = Result.INSTANCE`  L161
+- `Unit unit = Unit.INSTANCE`  L210
+
+方法（23）：
+- `public Ride3ProPlaybackCatalogPersistentCacheStore(String deviceKey, File rootDirectory, Function2<? super File, ? super File, Boolean> replaceFile)`  L54
+    - 体内字面量："deviceKey" · "rootDirectory" · "replaceFile" · "deviceKey must not be blank"
+- `public Ride3ProPlaybackCatalogPersistentCacheStore(String deviceKey, File rootDirectory)`  L69
+- `Boolean invoke(File source, File target)`  L72 @Override
+    - 体内字面量："source" · "target" · "deviceKey" · "rootDirectory"
+- `Object mo2837loadd1pmJ48()`  L84 @Override
+- `Object mo2838saveIoAF18A(Ride3ProPlaybackCatalog catalog)`  L104 @Override
+- `Object mo2839updateIoAF18A(Function1<? super Ride3ProPlaybackCatalog, Ride3ProPlaybackCatalog> transform)`  L127 @Override
+- `Object mo2836cleard1pmJ48()`  L151 @Override
+- `Ride3ProPlaybackCatalog loadUnlocked()`  L170
+    - 体内字面量："indexed playback cache directory" · "indexed playback cache path is not a file: " · "indexed playback cache JSON is empty"
+- `void saveUnlocked(Ride3ProPlaybackCatalog catalog)`  L202
+    - 体内字面量：".tmp"
+- `void deleteTemporaryFile(File temporaryFile, Throwable primaryFailure)`  L234
+    - 体内字面量："failed to delete indexed playback temporary cache: "
+- `void clearUnlocked()`  L246
+    - 体内字面量："indexed playback cache directory" · "failed to clear indexed playback cache: "
+- `File ensureCacheDirectory()`  L259
+    - 体内字面量："failed to create cache root: " · "failed to create indexed playback cache directory: " · "indexed playback cache directory"
+- `void validateRootDirectory()`  L272
+    - 体内字面量："cache root"
+- `void requireDirectory(File directory, String label)`  L278
+    - 体内字面量：" is unavailable: "
+- `File cacheDirectory()`  L285
+- `File cacheFile(File cacheDirectory)`  L289
+    - 体内字面量：".json"
+- `Ride3ProPlaybackCatalog immutableSnapshot(Ride3ProPlaybackCatalog catalog)`  L293
+- `Ride3ProDayGroup immutableSnapshot(Ride3ProDayGroup day)`  L303
+- `Ride3ProHourGroup immutableSnapshot(Ride3ProHourGroup hour)`  L313
+- `List<T> immutableList(List<? extends T> values)`  L318
+    - 体内字面量："unmodifiableList(...)"
+- `String sha256(String str)`  L324
+    - 体内字面量："SHA-256" · "getBytes(...)" · "digest(...)"
+- `CharSequence invoke(byte b)`  L331
+    - 体内字面量："%02x" · "format(...)"
+- `CharSequence invoke(Byte b)`  L338 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackCatalogPersistentCacheStore$Companion;" · "()V" · "CACHE_DIRECTORY_NAME" · "app_release_64"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackCatalogPersistentCacheStore$Companion`
+L346 · [class] private static final Companion · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackCatalogPersistentCacheStore.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L347
+- `private Companion()`  L351
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackFileMapper`
+L23 · [class] public final Ride3ProPlaybackFileMapper · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackFileMapper.java`
+注解：
+
+字段/常量（14）：
+- `String AVI_FILE_TYPE = "A"`  L24
+- `String JPEG_FILE_TYPE = "J"`  L26
+- `int MAX_DURATION_SECONDS = 60`  L27
+- `int MAX_FILE_INDEX = 9999`  L28
+- `int MIN_DURATION_SECONDS = 0`  L29
+- `int MIN_FILE_INDEX = 0`  L30
+- `DeviceType deviceType`  L36
+- `Locale ROOT = Locale.ROOT`  L53
+- `String string`  L70
+- `String string2`  L71
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L89
+- `StringCompanionObject stringCompanionObject2 = StringCompanionObject.INSTANCE`  L95
+- `StringCompanionObject stringCompanionObject3 = StringCompanionObject.INSTANCE`  L100
+- `String str = string`  L108
+
+方法（6）：
+- `private Ride3ProPlaybackFileMapper()`  L32
+- `Ride3ProPlaybackFile map(Ride3ProPlaybackFileEntry entry)`  L35
+- `Ride3ProPlaybackFile map(Ride3ProPlaybackFileEntry entry, DeviceType deviceType)`  L45
+    - 体内字面量："entry" · "deviceType" · "file_index" · "file_index must be in 0..9999: " · "file_type"
+- `String resolveFileName(Ride3ProPlaybackFileEntry entry, String fileType, int fileIndex, DeviceType deviceType)`  L69
+- `String requireNonBlank(String value, String fieldName)`  L106
+- `T requireField(T value, String fieldName)`  L115
+    - 体内字面量：" is required"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackMappingResult`
+L12 · [class] public final Ride3ProPlaybackMappingResult · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackMappingResult.java`
+注解：
+
+字段/常量（3）：
+- `T value`  L13
+- `List<String> warnings`  L14
+- `T t = this.value`  L52
+
+方法（10）：
+- `Ride3ProPlaybackMappingResult copy$default(Ride3ProPlaybackMappingResult ride3ProPlaybackMappingResult, Object obj, List list, int i, Object obj2)`  L17
+- `T component1()`  L27
+- `List<String> component2()`  L31
+- `Ride3ProPlaybackMappingResult<T> copy(T value, List<String> warnings)`  L35
+    - 体内字面量："warnings"
+- `boolean equals(Object other)`  L40
+- `int hashCode()`  L51
+- `String toString()`  L56
+    - 体内字面量："Ride3ProPlaybackMappingResult(value=" · ", warnings=" · ")"
+- `public Ride3ProPlaybackMappingResult(T t, List<String> warnings)`  L60
+    - 体内字面量："warnings"
+- `T getValue()`  L66
+- `List<String> getWarnings()`  L70
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackPageLoadResult`
+L14 · [class] public final Ride3ProPlaybackPageLoadResult · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackPageLoadResult.java`
+注解：
+
+字段/常量（4）：
+- `List<StorageRide3ProRemoteFile> allFiles`  L15
+- `boolean hasMore`  L16
+- `Ride3ProPlaybackPageState nextPageState`  L17
+- `Ride3ProPlaybackPageState ride3ProPlaybackPageState = this.nextPageState`  L69
+
+方法（14）：
+- `public Ride3ProPlaybackPageLoadResult()`  L19
+- `Ride3ProPlaybackPageLoadResult copy$default(Ride3ProPlaybackPageLoadResult ride3ProPlaybackPageLoadResult, List list, boolean z, Ride3ProPlaybackPageState ride3ProPlaybackPageState, int i, Object obj)`  L24
+- `List<StorageRide3ProRemoteFile> component1()`  L37
+- `boolean getHasMore()`  L42
+- `Ride3ProPlaybackPageState getNextPageState()`  L47
+- `Ride3ProPlaybackPageLoadResult copy(List<StorageRide3ProRemoteFile> allFiles, boolean hasMore, Ride3ProPlaybackPageState nextPageState)`  L51
+    - 体内字面量："allFiles"
+- `boolean equals(Object other)`  L56
+- `int hashCode()`  L67
+- `String toString()`  L73
+    - 体内字面量："Ride3ProPlaybackPageLoadResult(allFiles=" · ", hasMore=" · ", nextPageState=" · ")"
+- `public Ride3ProPlaybackPageLoadResult(List<StorageRide3ProRemoteFile> allFiles, boolean z, Ride3ProPlaybackPageState ride3ProPlaybackPageState)`  L77
+    - 体内字面量："allFiles"
+- ` Ride3ProPlaybackPageLoadResult(List list, boolean z, Ride3ProPlaybackPageState ride3ProPlaybackPageState, int i, DefaultConstructorMarker defaultConstructorMarker)`  L84
+- `List<StorageRide3ProRemoteFile> getAllFiles()`  L88
+- `boolean getHasMore()`  L92
+- `Ride3ProPlaybackPageState getNextPageState()`  L96
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackPageState`
+L9 · [class] public final Ride3ProPlaybackPageState · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackPageState.java`
+注解：
+
+字段/常量（10）：
+- `int mode`  L10
+- `int nextFileIndex`  L11
+- `int remainingCount`  L12
+- `int requestIndex`  L13
+- `int segment`  L14
+- `int totalFileCount`  L15
+- `int i8 = i2`  L24
+- `int i9 = i3`  L28
+- `int i10 = i4`  L32
+- `int i11 = i5`  L36
+
+方法（18）：
+- `Ride3ProPlaybackPageState copy$default(Ride3ProPlaybackPageState ride3ProPlaybackPageState, int i, int i2, int i3, int i4, int i5, int i6, int i7, Object obj)`  L17
+- `int getTotalFileCount()`  L44
+- `int getNextFileIndex()`  L49
+- `int getRemainingCount()`  L54
+- `int getSegment()`  L59
+- `int getMode()`  L64
+- `int getRequestIndex()`  L69
+- `Ride3ProPlaybackPageState copy(int totalFileCount, int nextFileIndex, int remainingCount, int segment, int mode, int requestIndex)`  L73
+- `boolean equals(Object other)`  L77
+- `int hashCode()`  L88
+- `String toString()`  L92
+    - 体内字面量："Ride3ProPlaybackPageState(totalFileCount=" · ", nextFileIndex=" · ", remainingCount=" · ", segment=" · ", mode=" · ", requestIndex=" · ")"
+- `public Ride3ProPlaybackPageState(int i, int i2, int i3, int i4, int i5, int i6)`  L96
+- `int getTotalFileCount()`  L105
+- `int getNextFileIndex()`  L109
+- `int getRemainingCount()`  L113
+- `int getSegment()`  L117
+- `int getMode()`  L121
+- `int getRequestIndex()`  L125
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackPersistentCacheStore`
+L38 · [class] public final Ride3ProPlaybackPersistentCacheStore · implements `Ride3ProPlaybackCacheStore` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackPersistentCacheStore.java`
+注解：
+
+字段/常量（32）：
+- `String CACHE_DIRECTORY_NAME = "ride3pro_playback_cache"`  L39
+- `String DEFAULT_DEVICE_KEY = "default"`  L41
+- `Function0<Context> contextProvider`  L42
+- `Type fileListType`  L43
+- `Gson gson`  L44
+- `Object objM3074constructorimpl`  L65
+- `Companion unused = Ride3ProPlaybackPersistentCacheStore.Companion`  L66
+- `Result.Companion companion = Result.INSTANCE`  L68
+- `Result.Companion companion2 = Result.INSTANCE`  L71
+- `Object objM3074constructorimpl`  L84
+- `ArrayList arrayList`  L85
+- `Result.Companion companion = Result.INSTANCE`  L91
+- `Ride3ProPlaybackPersistentCacheStore ride3ProPlaybackPersistentCacheStore = this`  L92
+- `List list2 = list`  L98
+- `Result.Companion companion2 = Result.INSTANCE`  L118
+- `Object objM3074constructorimpl`  L131
+- `Result.Companion companion = Result.INSTANCE`  L138
+- `Ride3ProPlaybackPersistentCacheStore ride3ProPlaybackPersistentCacheStore = this`  L139
+- `Unit unit = Unit.INSTANCE`  L147
+- `Result.Companion companion2 = Result.INSTANCE`  L159
+- `Object objM3074constructorimpl`  L170
+- `Result.Companion companion = Result.INSTANCE`  L177
+- `Ride3ProPlaybackPersistentCacheStore ride3ProPlaybackPersistentCacheStore = this`  L178
+- `Result.Companion companion2 = Result.INSTANCE`  L181
+- `Object objM3074constructorimpl`  L212
+- `String[] strArr = new String[3]`  L213
+- `Result.Companion companion = Result.INSTANCE`  L217
+- `Ride3ProPlaybackPersistentCacheStore ride3ProPlaybackPersistentCacheStore = this`  L218
+- `Result.Companion companion2 = Result.INSTANCE`  L221
+- `String string`  L231
+- `String strRemoveSurrounding`  L232
+- `String str2 = str`  L242
+
+方法（12）：
+- `public Ride3ProPlaybackPersistentCacheStore()`  L47
+- `public Ride3ProPlaybackPersistentCacheStore(Function0<? extends Context> contextProvider)`  L52
+    - 体内字面量："contextProvider"
+- ` Ride3ProPlaybackPersistentCacheStore(C21991 c21991, int i, DefaultConstructorMarker defaultConstructorMarker)`  L60
+- `Context invoke()`  L64 @Override
+- `List<StorageRide3ProRemoteFile> load()`  L83 @Override
+- `void save(List<StorageRide3ProRemoteFile> files)`  L130 @Override
+- `void clear()`  L169 @Override
+- `File resolveCacheFile()`  L190
+- `File resolveCacheDirectory()`  L198
+- `String buildCacheFileName()`  L206
+    - 体内字面量：".json"
+- `String resolveDeviceKey()`  L211
+- `String invoke(String str2)`  L230 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackPersistentCacheStore$Companion`
+L256 · [class] private static final Companion · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackPersistentCacheStore.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L257
+- `private Companion()`  L261
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl`
+L48 · [class] public final Ride3ProPlaybackRepositoryImpl · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl.java`
+注解：
+
+字段/常量（208）：
+- `int ERROR_INVALID_COMMAND = -2`  L49
+- `int FILE_TYPE_AVI = 0`  L50
+- `int MAX_FILE_INDEX = 9999`  L51
+- `int MODE_FIRST_PAGE = 0`  L52
+- `int MODE_NEXT_PAGE = 0`  L53
+- `int MODE_PLAYBACK = 2`  L54
+- `int PAGE_SIZE = 16`  L55
+- `long PLAYBACK_STOP_DELAY_MS = 0`  L56
+- `List<StorageRide3ProRemoteFile> cachedPlaybackFiles`  L57
+- `List<StorageRide3ProRemoteFile> incrementalPagingBoundaryFiles`  L58
+- `Ride3ProPlaybackCacheStore cacheStore`  L59
+- `Function0<Ride3ProPreviewHandshakeCache.Key> handshakeKeyProvider`  L60
+- `Function0<Ride3ProApiService> serviceProvider`  L61
+- `String deviceIdentity`  L143
+- `Ride3ProPlaybackRepositoryImpl$setPlaybackMode$1 ride3ProPlaybackRepositoryImpl$setPlaybackMode$1`  L173
+- `Object mode = ride3ProPlaybackRepositoryImpl$setPlaybackMode$1.result`  L184
+- `int i = ride3ProPlaybackRepositoryImpl$setPlaybackMode$1.label`  L186
+- `Result.Companion companion = Result.INSTANCE`  L205
+- `Result.Companion companion2 = Result.INSTANCE`  L208
+- `Result.Companion companion3 = Result.INSTANCE`  L213
+- `Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesPage$1 ride3ProPlaybackRepositoryImpl$loadPlaybackFilesPage$1`  L236
+- `Ride3ProApiService ride3ProApiServiceInvoke`  L237
+- `List<StorageRide3ProRemoteFile> listResolveCachedPlaybackFiles`  L238
+- `List<StorageRide3ProRemoteFile> listEmptyList`  L239
+- `int i2`  L240
+- `Function1<? super Continuation<? super Unit>, ? extends Object> function3`  L241
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl`  L242
+- `List<StorageRide3ProRemoteFile> list`  L243
+- `ReverseTimelineCursor cursor`  L244
+- `List<StorageRide3ProRemoteFile> listResolveCachedPlaybackFiles2`  L245
+- `Object objM2845fetchNextReverseTimelinePagesCOTV0A`  L246
+- `Function1<? super StorageRide3ProRemoteFile, Boolean> function4`  L247
+- `ReverseTimelineCursor reverseTimelineCursor`  L248
+- `List<StorageRide3ProRemoteFile> list2`  L249
+- `List<StorageRide3ProRemoteFile> list3`  L250
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl2`  L251
+- `Integer nextFileIndex`  L252
+- `Integer totalFileCount`  L253
+- `Result result`  L254
+- `Throwable thM3077exceptionOrNullimpl`  L255
+- `PagedLoadMergeResult pagedLoadMergeResultResolveMergedFilesForPagedLoad`  L256
+- `ArrayList arrayList`  L257
+- `ArrayList arrayList2`  L258
+- `Function1<? super StorageRide3ProRemoteFile, Boolean> function5 = function1`  L259
+- `Object obj = ride3ProPlaybackRepositoryImpl$loadPlaybackFilesPage$1.result`  L270
+- `int i3 = ride3ProPlaybackRepositoryImpl$loadPlaybackFilesPage$1.label`  L272
+- `int i4 = ride3ProPlaybackRepositoryImpl$loadPlaybackFilesPage$1.I$0`  L276
+- `Result.Companion companion = Result.INSTANCE`  L299
+- `Result.Companion companion2 = Result.INSTANCE`  L310
+- `Result.Companion companion3 = Result.INSTANCE`  L321
+- `Result.Companion companion4 = Result.INSTANCE`  L333
+- `Result.Companion companion5 = Result.INSTANCE`  L408
+- `Result.Companion companion6 = Result.INSTANCE`  L419
+- `Result.Companion companion7 = Result.INSTANCE`  L430
+- `Result.Companion companion8 = Result.INSTANCE`  L440
+- `Result.Companion companion9 = Result.INSTANCE`  L449
+- `Result.Companion companion10 = Result.INSTANCE`  L472
+- `Result.Companion companion11 = Result.INSTANCE`  L483
+- `Result.Companion companion12 = Result.INSTANCE`  L494
+- `Result.Companion companion13 = Result.INSTANCE`  L505
+- `boolean z2 = z`  L516
+- `Function1 function3 = function1`  L528
+- `Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesInBatches$1 ride3ProPlaybackRepositoryImpl$loadPlaybackFilesInBatches$1`  L560
+- `Object playbackFileCount`  L561
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl`  L562
+- `Ride3ProApiService ride3ProApiService`  L563
+- `int i3`  L564
+- `Function2<? super List<StorageRide3ProRemoteFile>, ? super Continuation<? super Unit>, ? extends Object> function4`  L565
+- `Function1<? super Continuation<? super Unit>, ? extends Object> function5`  L566
+- `int i4`  L567
+- `List<StorageRide3ProRemoteFile> listResolveCachedPlaybackFiles`  L568
+- `ArrayList arrayList`  L569
+- `Function2<? super List<StorageRide3ProRemoteFile>, ? super Continuation<? super Unit>, ? extends Object> function6`  L570
+- `List list`  L571
+- `Ride3ProApiResponse ride3ProApiResponse`  L572
+- `Ride3ProPlaybackFileCountInfo ride3ProPlaybackFileCountInfo`  L573
+- `int iCoerceAtLeast`  L574
+- `Ride3ProPlaybackFileCountInfo ride3ProPlaybackFileCountInfo2`  L575
+- `int iCoerceIn`  L576
+- `List<StorageRide3ProRemoteFile> listResolveCachedPlaybackFiles2`  L577
+- `Ride3ProApiService ride3ProApiService2`  L578
+- `Object obj`  L579
+- `Function2<? super List<StorageRide3ProRemoteFile>, ? super Continuation<? super Unit>, ? extends Object> function7`  L580
+- `int i5`  L581
+- `int i6`  L582
+- `Function1<? super Continuation<? super Unit>, ? extends Object> function8`  L583
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl2`  L584
+- `int i7`  L585
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl3`  L586
+- `Ride3ProApiService ride3ProApiService3`  L587
+- `int i8`  L588
+- `Object objM2850tryIncrementalRefreshE_kVLWM`  L589
+- `Function1<? super StorageRide3ProRemoteFile, Boolean> function9`  L590
+- `Function1<? super Continuation<? super Unit>, ? extends Object> function10`  L591
+- `Function2<? super List<StorageRide3ProRemoteFile>, ? super Continuation<? super Unit>, ? extends Object> function11`  L592
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl4`  L593
+- `Ride3ProApiService ride3ProApiService4`  L594
+- `int i9`  L595
+- `int i10`  L596
+- `int i11`  L597
+- `Integer nextFileIndex`  L598
+- `Integer totalFileCount`  L599
+- `ArrayList arrayList2`  L600
+- `Object obj2`  L601
+- `List list2`  L602
+- `List<StorageRide3ProRemoteFile> list3`  L603
+- `Result result`  L604
+- `Function1<? super StorageRide3ProRemoteFile, Boolean> function12 = function1`  L605
+- `Object objM2844collectReverseTimeline2OhFv8Q = ride3ProPlaybackRepositoryImpl$loadPlaybackFilesInBatches$1.result`  L616
+- `int i12 = ride3ProPlaybackRepositoryImpl$loadPlaybackFilesInBatches$1.label`  L618
+- `int i13 = ride3ProPlaybackRepositoryImpl$loadPlaybackFilesInBatches$1.I$1`  L635
+- `Result.Companion companion = Result.INSTANCE`  L651
+- `Result.Companion companion2 = Result.INSTANCE`  L668
+- `Result.Companion companion3 = Result.INSTANCE`  L806
+- `Result.Companion companion4 = Result.INSTANCE`  L835
+- `Result.Companion companion5 = Result.INSTANCE`  L860
+- `Result.Companion companion6 = Result.INSTANCE`  L877
+- `Result.Companion companion7 = Result.INSTANCE`  L971
+- `Result.Companion companion8 = Result.INSTANCE`  L976
+- `Ride3ProPlaybackRepositoryImpl$preparePlaybackRtspStream$1 ride3ProPlaybackRepositoryImpl$preparePlaybackRtspStream$1`  L1021
+- `Ride3ProApiService ride3ProApiServiceInvoke`  L1022
+- `Ride3ProPreviewHandshakeCache.Key key`  L1023
+- `Ride3ProPreviewHandshakeCache.Key key2`  L1024
+- `Ride3ProPreviewHandshakeCache.Key key3`  L1025
+- `Ride3ProApiResponse ride3ProApiResponse`  L1026
+- `Ride3ProPlaybackRepositoryImpl$preparePlaybackRtspStream$1 ride3ProPlaybackRepositoryImpl$preparePlaybackRtspStream$2 = ride3ProPlaybackRepositoryImpl$preparePlaybackRtspStream$1`  L1037
+- `Object objSendTime = ride3ProPlaybackRepositoryImpl$preparePlaybackRtspStream$2.result`  L1038
+- `int i = ride3ProPlaybackRepositoryImpl$preparePlaybackRtspStream$2.label`  L1040
+- `Result.Companion companion = Result.INSTANCE`  L1062
+- `Result.Companion companion2 = Result.INSTANCE`  L1084
+- `Result.Companion companion3 = Result.INSTANCE`  L1093
+- `Result.Companion companion4 = Result.INSTANCE`  L1120
+- `Result.Companion companion5 = Result.INSTANCE`  L1133
+- `Ride3ProPlaybackRepositoryImpl$sendPlaybackStart$1 ride3ProPlaybackRepositoryImpl$sendPlaybackStart$1`  L1158
+- `Object objM3074constructorimpl`  L1159
+- `?? r10`  L1160
+- `Throwable thM3077exceptionOrNullimpl`  L1161
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl`  L1162
+- `Ride3ProApiService ride3ProApiServiceInvoke`  L1163
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl2`  L1164
+- `Ride3ProApiService ride3ProApiService`  L1165
+- `Ride3ProApiResponse ride3ProApiResponse`  L1166
+- `Ride3ProApiResponse ride3ProApiResponse2`  L1167
+- `Ride3ProApiService ride3ProApiServiceInvoke2`  L1168
+- `Object objPlaybackStart = ride3ProPlaybackRepositoryImpl$sendPlaybackStart$1.result`  L1179
+- `int i2 = ride3ProPlaybackRepositoryImpl$sendPlaybackStart$1.label`  L1181
+- `Result.Companion companion = Result.INSTANCE`  L1201
+- `Result.Companion companion2 = Result.INSTANCE`  L1204
+- `NonCancellable nonCancellable = NonCancellable.INSTANCE`  L1210
+- `Result.Companion companion3 = Result.INSTANCE`  L1226
+- `Result.Companion companion4 = Result.INSTANCE`  L1242
+- `Result.Companion companion5 = Result.INSTANCE`  L1265
+- `Result.Companion companion6 = Result.INSTANCE`  L1273
+- `NonCancellable nonCancellable2 = NonCancellable.INSTANCE`  L1278
+- `Result.Companion companion7 = Result.INSTANCE`  L1293
+- `Result.Companion companion8 = Result.INSTANCE`  L1309
+- `Result.Companion companion9 = Result.INSTANCE`  L1340
+- `Result.Companion companion10 = Result.INSTANCE`  L1343
+- `NonCancellable nonCancellable3 = NonCancellable.INSTANCE`  L1349
+- `Result.Companion companion11 = Result.INSTANCE`  L1371
+- `Result.Companion companion12 = Result.INSTANCE`  L1387
+- `Result.Companion companion13 = Result.INSTANCE`  L1391
+- `C22031 c22031`  L1400
+- `Object objRequestPlaybackStop = c22031.result`  L1411
+- `int i = c22031.label`  L1413
+- `C22021 c22021`  L1443
+- `Object objPlaybackStop = c22021.result`  L1454
+- `int i = c22021.label`  L1456
+- `Ride3ProPlaybackRepositoryImpl$sendPlaybackPause$1 ride3ProPlaybackRepositoryImpl$sendPlaybackPause$1`  L1492
+- `Object objPlaybackPause = ride3ProPlaybackRepositoryImpl$sendPlaybackPause$1.result`  L1503
+- `int i2 = ride3ProPlaybackRepositoryImpl$sendPlaybackPause$1.label`  L1505
+- `Result.Companion companion = Result.INSTANCE`  L1524
+- `Result.Companion companion2 = Result.INSTANCE`  L1527
+- `Result.Companion companion3 = Result.INSTANCE`  L1532
+- `Ride3ProPlaybackRepositoryImpl$sendPlaybackStop$1 ride3ProPlaybackRepositoryImpl$sendPlaybackStop$1`  L1540
+- `Object objRequestPlaybackStop = ride3ProPlaybackRepositoryImpl$sendPlaybackStop$1.result`  L1551
+- `int i = ride3ProPlaybackRepositoryImpl$sendPlaybackStop$1.label`  L1553
+- `Result.Companion companion = Result.INSTANCE`  L1572
+- `Result.Companion companion2 = Result.INSTANCE`  L1575
+- `Result.Companion companion3 = Result.INSTANCE`  L1580
+- `Ride3ProPlaybackRepositoryImpl$deletePlaybackFile$1 ride3ProPlaybackRepositoryImpl$deletePlaybackFile$1`  L1588
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl`  L1589
+- `Object objPlaybackDelete = ride3ProPlaybackRepositoryImpl$deletePlaybackFile$1.result`  L1600
+- `int i2 = ride3ProPlaybackRepositoryImpl$deletePlaybackFile$1.label`  L1602
+- `Result.Companion companion = Result.INSTANCE`  L1626
+- `Result.Companion companion2 = Result.INSTANCE`  L1630
+- `Result.Companion companion3 = Result.INSTANCE`  L1635
+- `ArrayList arrayList2 = arrayList`  L1651
+- `List<StorageRide3ProRemoteFile> list = incrementalPagingBoundaryFiles`  L1656
+- `ArrayList arrayList3 = null`  L1657
+- `ArrayList arrayList5 = arrayList4`  L1665
+- `Ride3ProPlaybackRepositoryImpl$setPlaybackTime$1 ride3ProPlaybackRepositoryImpl$setPlaybackTime$1`  L1676
+- `Object objPlaybackSetTime = ride3ProPlaybackRepositoryImpl$setPlaybackTime$1.result`  L1687
+- `int i2 = ride3ProPlaybackRepositoryImpl$setPlaybackTime$1.label`  L1689
+- `Result.Companion companion = Result.INSTANCE`  L1708
+- `Result.Companion companion2 = Result.INSTANCE`  L1711
+- `Result.Companion companion3 = Result.INSTANCE`  L1716
+- `Ride3ProPlaybackRepositoryImpl$setPlaybackSpeed$1 ride3ProPlaybackRepositoryImpl$setPlaybackSpeed$1`  L1724
+- `Object objPlaybackSetSpeed = ride3ProPlaybackRepositoryImpl$setPlaybackSpeed$1.result`  L1735
+- `int i2 = ride3ProPlaybackRepositoryImpl$setPlaybackSpeed$1.label`  L1737
+- `Result.Companion companion = Result.INSTANCE`  L1756
+- `Result.Companion companion2 = Result.INSTANCE`  L1759
+- `Result.Companion companion3 = Result.INSTANCE`  L1764
+- `List<StorageRide3ProRemoteFile> list = cachedPlaybackFiles`  L1797
+- `List<StorageRide3ProRemoteFile> list = incrementalBoundaryFiles`  L1836
+- `HashSet hashSet2 = hashSet`  L1845
+- `int i = 0`  L1847
+- `int i2 = fileIndex - 1`  L1880
+
+方法（33）：
+- `public Ride3ProPlaybackRepositoryImpl()`  L108
+- `public Ride3ProPlaybackRepositoryImpl(Function0<? extends Ride3ProApiService> serviceProvider, Ride3ProPlaybackCacheStore cacheStore, Function0<Ride3ProPreviewHandshakeCache.Key> handshakeKeyProvider)`  L129
+    - 体内字面量："serviceProvider" · "cacheStore" · "handshakeKeyProvider"
+- ` Ride3ProPlaybackRepositoryImpl(C22001 c22001, Ride3ProPlaybackCacheStore ride3ProPlaybackCacheStore, C22012 c22012, int i, DefaultConstructorMarker defaultConstructorMarker)`  L138
+- `Ride3ProPreviewHandshakeCache.Key invoke()`  L142 @Override
+- `Object m2859setPlaybackModeIoAF18A(Continuation<? super Result<Unit>> continuation)`  L172
+- `Object m2854loadPlaybackFilesPagehUnOzRk(boolean z, int i, Ride3ProPlaybackPageState ride3ProPlaybackPageState, Function1<? super StorageRide3ProRemoteFile, Boolean> function1, Function1<? super Continuation<? super Unit>, ? extends Object> function2, Continuation<? super Result<Ride3ProPlaybackPageLoadResult>> continuation)`  L235
+- `Object m2848loadPlaybackFilesPagehUnOzRk$default(Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl, boolean z, int i, Ride3ProPlaybackPageState ride3ProPlaybackPageState, Function1 function1, Function1 function2, Continuation continuation, int i2, Object obj)`  L512
+- `Boolean invoke(StorageRide3ProRemoteFile it)`  L522 @Override
+    - 体内字面量："it"
+- `boolean hasPlaybackFilesCache()`  L535
+- `Object m2853loadPlaybackFilesInBatchesbMdYcbs(boolean z, int i, int i2, Function1<? super StorageRide3ProRemoteFile, Boolean> function1, Function1<? super Continuation<? super Unit>, ? extends Object> function2, Function2<? super List<StorageRide3ProRemoteFile>, ? super Continuation<? super Unit>, ? extends Object> function3, Continuation<? super Result<? extends List<StorageRide3ProRemoteFile>>> continuation)`  L559
+- `Object m2846getPlaybackFilesgIAlus$default(Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl, boolean z, Continuation continuation, int i, Object obj)`  L982
+- `java.lang.Object m2852getPlaybackFilesgIAlus(boolean r11, kotlin.coroutines.Continuation<? super kotlin.Result<? extends java.util.List<com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile>>> r12)`  L1008
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl.m2852getPlaybackFilesgIAlus(boolean, kotlin.coroutines.Continuation):java.lang.Object"
+- `Object m2855preparePlaybackRtspStreamIoAF18A(Continuation<? super Result<Unit>> continuation)`  L1020
+- `Object m2857sendPlaybackStartgIAlus(int i, Continuation<? super Result<Unit>> continuation)`  L1157
+- `Object stopPlaybackAfterStartFailure(Ride3ProApiService ride3ProApiService, Continuation<? super Unit> continuation)`  L1399
+- `Object requestPlaybackStop(Ride3ProApiService ride3ProApiService, Continuation<? super Ride3ProApiResponse<Object>> continuation)`  L1442
+- `Object m2849sendPlaybackPausegIAlus$default(Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl, int i, Continuation continuation, int i2, Object obj)`  L1482
+- `Object m2856sendPlaybackPausegIAlus(int i, Continuation<? super Result<Unit>> continuation)`  L1491
+- `Object m2858sendPlaybackStopIoAF18A(Continuation<? super Result<Unit>> continuation)`  L1539
+- `Object m2851deletePlaybackFilegIAlus(int i, Continuation<? super Result<Unit>> continuation)`  L1587
+- `void removePlaybackFileFromCache(int fileIndex)`  L1640
+- `Object m2861setPlaybackTimegIAlus(int i, Continuation<? super Result<Unit>> continuation)`  L1675
+- `Object m2860setPlaybackSpeedgIAlus(int i, Continuation<? super Result<Unit>> continuation)`  L1723
+- `void primePlaybackFilesCache$app_release_64(List<StorageRide3ProRemoteFile> files)`  L1769
+    - 体内字面量："files"
+- `java.lang.Object m2850tryIncrementalRefreshE_kVLWM(com.tuwinsmart.tuwin.data.source.remote.api.ride3pro.Ride3ProApiService r23, java.util.List<com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile> r24, int r25, int r26, int r27, int r28, kotlin.jvm.functions.Function1<? super com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile, java.lang.Boolean> r29, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super kotlin.Unit>, ? extends java.lang.Object> r30, kotlin.jvm.functions.Function2<? super java.util.List<com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile>, ? super kotlin.coroutines.Continuation<? super kotlin.Unit>, ? extends java.lang.Object> r31, kotlin.coroutines.Continuation<? super kotlin.Result<? extends java.util.List<com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile>>> r32)`  L1788
+- `List<StorageRide3ProRemoteFile> resolveCachedPlaybackFiles()`  L1796
+- `void updatePlaybackFilesCache(List<StorageRide3ProRemoteFile> files)`  L1809
+- `List<StorageRide3ProRemoteFile> mergeIncrementalFilesWithCache(List<StorageRide3ProRemoteFile> latestWindowFiles, List<StorageRide3ProRemoteFile> cachedFiles, int totalFileCount)`  L1815
+- `List<StorageRide3ProRemoteFile> appendUniqueFiles(List<StorageRide3ProRemoteFile> existingFiles, List<StorageRide3ProRemoteFile> pageFiles)`  L1822
+    - 体内字面量："<get-values>(...)"
+- `PagedLoadMergeResult resolveMergedFilesForPagedLoad(List<StorageRide3ProRemoteFile> existingFiles, List<StorageRide3ProRemoteFile> pageFiles, List<StorageRide3ProRemoteFile> incrementalBoundaryFiles, ReverseTimelineCursor timelineCursor)`  L1835
+- `Ride3ProPlaybackPageState buildPageStateAfterBoundaryMerge(List<StorageRide3ProRemoteFile> mergedFiles, ReverseTimelineCursor timelineCursor)`  L1866
+- `java.lang.Object m2844collectReverseTimeline2OhFv8Q(com.tuwinsmart.tuwin.data.source.remote.api.ride3pro.Ride3ProApiService r23, int r24, com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl.ReverseTimelineCursor r25, java.util.List<com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile> r26, java.util.List<com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile> r27, kotlin.jvm.functions.Function1<? super com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile, java.lang.Boolean> r28, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super kotlin.Unit>, ? extends java.lang.Object> r29, kotlin.jvm.functions.Function2<? super java.util.List<com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile>, ? super kotlin.coroutines.Continuation<? super kotlin.Unit>, ? extends java.lang.Object> r30, kotlin.coroutines.Continuation<? super kotlin.Result<? extends java.util.List<com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile>>> r31)`  L1914
+- `java.lang.Object m2845fetchNextReverseTimelinePagesCOTV0A(com.tuwinsmart.tuwin.data.source.remote.api.ride3pro.Ride3ProApiService r11, int r12, com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl.ReverseTimelineCursor r13, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super kotlin.Unit>, ? extends java.lang.Object> r14, kotlin.coroutines.Continuation<? super kotlin.Result<? extends java.util.List<com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile>>> r15)`  L1940
+    - 体内字面量："Lcom/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$ReverseTimelineCursor;" · "totalFileCount" · "nextFileIndex" · "remainingCount" · "segment" · "mode" · "requestIndex" · "(IIIIII)V" · "getMode" · "()I" · "setMode" · "(I)V" · "getNextFileIndex" · "getRemainingCount" · "setRemainingCount" · "getRequestIndex" · "setRequestIndex" · "getSegment" · "setSegment" · "getTotalFileCount" · "component1" · "component2" · "component3" · "component4" · "component5" · "component6" · "consume" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/fragment/StorageRide3ProRemoteFile;" · "files" · "copy" · "equals" · "other" · "hasRemaining" · "hashCode" · "moveToNextSegment" · "stopExclusive" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$PagedLoadMergeResult;" · "allFiles" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/fragment/StorageRide3ProRemoteFile;" · "hasMore" · "nextPageState" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackPageState;" · "mergedIncrementalBoundary" · "(Ljava/util/List;ZLcom/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackPageState;Z)V" · "getAllFiles" · "()Ljava/util/List;" · "getHasMore" · "()Z" · "getMergedIncrementalBoundary" · "getNextPageState" · "()Lcom/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackPageState;" · "component1" · "component2" · "component3" · "component4" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$C22001`
+L116 · [class] public C22001 · extends `FunctionReferenceImpl implements Function0<Ride3ProApiService>` · implements `Function0<Ride3ProApiService>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl.java`
+注解：
+
+方法（1）：
+- `Ride3ProApiService invoke()`  L123 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$C22021`
+L71 · [class] static final C22021 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L72
+- `int label`  L73
+- `Object result`  L74
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L81 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$C22031`
+L92 · [class] static final C22031 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L93
+- `Object result`  L94
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L101 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$collectReverseTimeline$1`
+L13 · [class] final Ride3ProPlaybackRepositoryImpl$collectReverseTimeline$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$collectReverseTimeline$1.java`
+注解：
+
+字段/常量（12）：
+- `int I$0`  L14
+- `Object L$0`  L15
+- `Object L$1`  L16
+- `Object L$2`  L17
+- `Object L$3`  L18
+- `Object L$4`  L19
+- `Object L$5`  L20
+- `Object L$6`  L21
+- `Object L$7`  L22
+- `int label`  L23
+- `Object result`  L24
+- `Ride3ProPlaybackRepositoryImpl this$0`  L25
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L34 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$Companion`
+L155 · [class] public static final Companion · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L156
+- `private Companion()`  L160
+- `void clearPlaybackFilesCache()`  L163
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$deletePlaybackFile$1`
+L15 · [class] final Ride3ProPlaybackRepositoryImpl$deletePlaybackFile$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$deletePlaybackFile$1.java`
+注解：
+
+字段/常量（5）：
+- `int I$0`  L16
+- `Object L$0`  L17
+- `int label`  L18
+- `Object result`  L19
+- `Ride3ProPlaybackRepositoryImpl this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$fetchNextReverseTimelinePage$1`
+L14 · [class] final Ride3ProPlaybackRepositoryImpl$fetchNextReverseTimelinePage$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$fetchNextReverseTimelinePage$1.java`
+注解：
+
+字段/常量（8）：
+- `int I$0`  L15
+- `int I$1`  L16
+- `Object L$0`  L17
+- `Object L$1`  L18
+- `Object L$2`  L19
+- `int label`  L20
+- `Object result`  L21
+- `Ride3ProPlaybackRepositoryImpl this$0`  L22
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L31 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$getPlaybackFiles$1`
+L15 · [class] final Ride3ProPlaybackRepositoryImpl$getPlaybackFiles$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$getPlaybackFiles$1.java`
+注解：
+
+字段/常量（8）：
+- `int I$0`  L16
+- `int I$1`  L17
+- `Object L$0`  L18
+- `Object L$1`  L19
+- `Object L$2`  L20
+- `int label`  L21
+- `Object result`  L22
+- `Ride3ProPlaybackRepositoryImpl this$0`  L23
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L32 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesInBatches$1`
+L15 · [class] final Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesInBatches$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesInBatches$1.java`
+注解：
+
+字段/常量（11）：
+- `int I$0`  L16
+- `int I$1`  L17
+- `int I$2`  L18
+- `Object L$0`  L19
+- `Object L$1`  L20
+- `Object L$2`  L21
+- `Object L$3`  L22
+- `Object L$4`  L23
+- `int label`  L24
+- `Object result`  L25
+- `Ride3ProPlaybackRepositoryImpl this$0`  L26
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L35 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesInBatches$3`
+L17 · [class] final Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesInBatches$3 · extends `SuspendLambda implements Function1<Continuation<? super Unit>, Object>` · implements `Function1<Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesInBatches$3.java`
+注解：
+
+字段/常量（1）：
+- `int label`  L18
+
+方法（3）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L25 @Override
+- `Object invoke(Continuation<? super Unit> continuation)`  L30 @Override
+- `Object invokeSuspend(Object obj)`  L35 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesPage$1`
+L15 · [class] final Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesPage$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesPage$1.java`
+注解：
+
+字段/常量（10）：
+- `int I$0`  L16
+- `Object L$0`  L17
+- `Object L$1`  L18
+- `Object L$2`  L19
+- `Object L$3`  L20
+- `Object L$4`  L21
+- `Object L$5`  L22
+- `int label`  L23
+- `Object result`  L24
+- `Ride3ProPlaybackRepositoryImpl this$0`  L25
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L34 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesPage$3`
+L18 · [class] public final Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesPage$3 · extends `SuspendLambda implements Function1<Continuation<? super Unit>, Object>` · implements `Function1<Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$loadPlaybackFilesPage$3.java`
+注解：
+
+字段/常量（1）：
+- `int label`  L19
+
+方法（3）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L26 @Override
+- `Object invoke(Continuation<? super Unit> continuation)`  L31 @Override
+- `Object invokeSuspend(Object obj)`  L36 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$PagedLoadMergeResult`
+L2125 · [class] private static final PagedLoadMergeResult · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl.java`
+注解：
+
+字段/常量（5）：
+- `List<StorageRide3ProRemoteFile> allFiles`  L2126
+- `boolean hasMore`  L2127
+- `boolean mergedIncrementalBoundary`  L2128
+- `Ride3ProPlaybackPageState nextPageState`  L2129
+- `Ride3ProPlaybackPageState ride3ProPlaybackPageState = this.nextPageState`  L2185
+
+方法（15）：
+- `PagedLoadMergeResult copy$default(PagedLoadMergeResult pagedLoadMergeResult, List list, boolean z, Ride3ProPlaybackPageState ride3ProPlaybackPageState, boolean z2, int i, Object obj)`  L2132
+- `List<StorageRide3ProRemoteFile> component1()`  L2148
+- `boolean getHasMore()`  L2153
+- `Ride3ProPlaybackPageState getNextPageState()`  L2158
+- `boolean getMergedIncrementalBoundary()`  L2163
+- `PagedLoadMergeResult copy(List<StorageRide3ProRemoteFile> allFiles, boolean hasMore, Ride3ProPlaybackPageState nextPageState, boolean mergedIncrementalBoundary)`  L2167
+    - 体内字面量："allFiles"
+- `boolean equals(Object other)`  L2172
+- `int hashCode()`  L2183
+- `String toString()`  L2189
+    - 体内字面量："PagedLoadMergeResult(allFiles=" · ", hasMore=" · ", nextPageState=" · ", mergedIncrementalBoundary=" · ")"
+- `public PagedLoadMergeResult(List<StorageRide3ProRemoteFile> allFiles, boolean z, Ride3ProPlaybackPageState ride3ProPlaybackPageState, boolean z2)`  L2193
+    - 体内字面量："allFiles"
+- ` PagedLoadMergeResult(List list, boolean z, Ride3ProPlaybackPageState ride3ProPlaybackPageState, boolean z2, int i, DefaultConstructorMarker defaultConstructorMarker)`  L2201
+- `List<StorageRide3ProRemoteFile> getAllFiles()`  L2205
+- `boolean getHasMore()`  L2209
+- `Ride3ProPlaybackPageState getNextPageState()`  L2213
+- `boolean getMergedIncrementalBoundary()`  L2217
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$preparePlaybackRtspStream$1`
+L16 · [class] final Ride3ProPlaybackRepositoryImpl$preparePlaybackRtspStream$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$preparePlaybackRtspStream$1.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L17
+- `Object L$1`  L18
+- `int label`  L19
+- `Object result`  L20
+- `Ride3ProPlaybackRepositoryImpl this$0`  L21
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L30 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$ReverseTimelineCursor`
+L1950 · [class] public static final ReverseTimelineCursor · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl.java`
+注解：
+
+字段/常量（10）：
+- `int mode`  L1951
+- `int nextFileIndex`  L1952
+- `int remainingCount`  L1953
+- `int requestIndex`  L1954
+- `int segment`  L1955
+- `int totalFileCount`  L1956
+- `int i8 = i2`  L1965
+- `int i9 = i3`  L1969
+- `int i10 = i4`  L1973
+- `int i11 = i5`  L1977
+
+方法（27）：
+- `ReverseTimelineCursor copy$default(ReverseTimelineCursor reverseTimelineCursor, int i, int i2, int i3, int i4, int i5, int i6, int i7, Object obj)`  L1958
+- `int getTotalFileCount()`  L1985
+- `int getNextFileIndex()`  L1990
+- `int getRemainingCount()`  L1995
+- `int getSegment()`  L2000
+- `int getMode()`  L2005
+- `int getRequestIndex()`  L2010
+- `ReverseTimelineCursor copy(int totalFileCount, int nextFileIndex, int remainingCount, int segment, int mode, int requestIndex)`  L2014
+- `boolean equals(Object other)`  L2018
+- `int hashCode()`  L2029
+- `String toString()`  L2033
+    - 体内字面量："ReverseTimelineCursor(totalFileCount=" · ", nextFileIndex=" · ", remainingCount=" · ", segment=" · ", mode=" · ", requestIndex=" · ")"
+- `public ReverseTimelineCursor(int i, int i2, int i3, int i4, int i5, int i6)`  L2037
+- ` ReverseTimelineCursor(int i, int i2, int i3, int i4, int i5, int i6, int i7, DefaultConstructorMarker defaultConstructorMarker)`  L2046
+- `int getTotalFileCount()`  L2050
+- `int getNextFileIndex()`  L2054
+- `int getRemainingCount()`  L2058
+- `void setRemainingCount(int i)`  L2062
+- `int getSegment()`  L2066
+- `void setSegment(int i)`  L2070
+- `int getMode()`  L2074
+- `void setMode(int i)`  L2078
+- `int getRequestIndex()`  L2082
+- `void setRequestIndex(int i)`  L2086
+- `int stopExclusive()`  L2090
+- `boolean hasRemaining()`  L2097
+- `List<StorageRide3ProRemoteFile> consume(List<StorageRide3ProRemoteFile> files)`  L2101
+    - 体内字面量："files"
+- `boolean moveToNextSegment()`  L2111
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$sendPlaybackPause$1`
+L15 · [class] final Ride3ProPlaybackRepositoryImpl$sendPlaybackPause$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$sendPlaybackPause$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProPlaybackRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$sendPlaybackStart$1`
+L15 · [class] final Ride3ProPlaybackRepositoryImpl$sendPlaybackStart$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$sendPlaybackStart$1.java`
+注解：
+
+字段/常量（6）：
+- `Object L$0`  L16
+- `Object L$1`  L17
+- `Object L$2`  L18
+- `int label`  L19
+- `Object result`  L20
+- `Ride3ProPlaybackRepositoryImpl this$0`  L21
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L30 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$sendPlaybackStart$2$1`
+L21 · [class] final Ride3ProPlaybackRepositoryImpl$sendPlaybackStart$2$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$sendPlaybackStart$2$1.java`
+注解：
+
+字段/常量（10）：
+- `Ride3ProApiService $service`  L22
+- `Object L$0`  L23
+- `int label`  L24
+- `Ride3ProPlaybackRepositoryImpl this$0`  L25
+- `Object objM3074constructorimpl`  L53
+- `int i = this.label`  L55
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl = this.this$0`  L59
+- `Ride3ProApiService ride3ProApiService = this.$service`  L60
+- `Result.Companion companion = Result.INSTANCE`  L61
+- `Result.Companion companion2 = Result.INSTANCE`  L74
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L35 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L42 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L47
+- `Object invokeSuspend(Object obj)`  L52 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$sendPlaybackStop$1`
+L15 · [class] final Ride3ProPlaybackRepositoryImpl$sendPlaybackStop$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$sendPlaybackStop$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProPlaybackRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$setPlaybackMode$1`
+L15 · [class] final Ride3ProPlaybackRepositoryImpl$setPlaybackMode$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$setPlaybackMode$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProPlaybackRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$setPlaybackSpeed$1`
+L16 · [class] final Ride3ProPlaybackRepositoryImpl$setPlaybackSpeed$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$setPlaybackSpeed$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L17
+- `Object result`  L18
+- `Ride3ProPlaybackRepositoryImpl this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$setPlaybackTime$1`
+L15 · [class] final Ride3ProPlaybackRepositoryImpl$setPlaybackTime$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$setPlaybackTime$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProPlaybackRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImpl$tryIncrementalRefresh$1`
+L15 · [class] final Ride3ProPlaybackRepositoryImpl$tryIncrementalRefresh$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImpl$tryIncrementalRefresh$1.java`
+注解：
+
+字段/常量（17）：
+- `int I$0`  L16
+- `int I$1`  L17
+- `int I$2`  L18
+- `int I$3`  L19
+- `Object L$0`  L20
+- `Object L$1`  L21
+- `Object L$2`  L22
+- `Object L$3`  L23
+- `Object L$4`  L24
+- `Object L$5`  L25
+- `Object L$6`  L26
+- `Object L$7`  L27
+- `Object L$8`  L28
+- `Object L$9`  L29
+- `int label`  L30
+- `Object result`  L31
+- `Ride3ProPlaybackRepositoryImpl this$0`  L32
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L41 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackRepositoryImplKt`
+L9 · [class] public final Ride3ProPlaybackRepositoryImplKt · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackRepositoryImplKt.java`
+注解：
+
+方法（2）：
+- `Ride3ProPlaybackRepositoryImpl.ReverseTimelineCursor toCursor(Ride3ProPlaybackPageState ride3ProPlaybackPageState)`  L11
+- `Ride3ProPlaybackPageState toPageState(Ride3ProPlaybackRepositoryImpl.ReverseTimelineCursor reverseTimelineCursor)`  L16
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPlaybackTimestampParser`
+L13 · [class] public final Ride3ProPlaybackTimestampParser · `com/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackTimestampParser.java`
+注解：
+
+字段/常量（7）：
+- `int DAY_GROUP = 3`  L14
+- `int HOUR_GROUP = 4`  L15
+- `int MINUTE_GROUP = 5`  L16
+- `int MONTH_GROUP = 2`  L17
+- `int MONTH_MULTIPLIER = 100`  L18
+- `int YEAR_GROUP = 1`  L19
+- `int YEAR_MULTIPLIER = 10000`  L20
+
+方法（2）：
+- `private Ride3ProPlaybackTimestampParser()`  L24
+- `Ride3ProPlaybackTimestamp parse(String raw)`  L27
+    - 体内字面量："time is required" · "time must match yyyy-MM-dd HH:mm exactly: " · "time is not a valid protocol timestamp: " · "time is not a valid calendar value: "
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPreviewHandshakeCache`
+L16 · [class] public final Ride3ProPreviewHandshakeCache · `com/tuwinsmart/tuwin/data/repository/Ride3ProPreviewHandshakeCache.java`
+注解：
+
+字段/常量（4）：
+- `long NANOSECONDS_PER_MILLISECOND = 1000000`  L17
+- `long VALIDITY_DURATION_MS = 600000`  L18
+- `LinkedHashMap<Key, Entry> linkedHashMap = entries`  L201
+- `LinkedHashMap<Key, Entry> linkedHashMap = entries`  L231
+
+方法（9）：
+- `private Ride3ProPreviewHandshakeCache()`  L112
+    - 体内字面量："Lcom/tuwinsmart/tuwin/data/repository/Ride3ProPreviewHandshakeCache$Entry;" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProPreviewHandshakeCache$Key;" · "readyAtElapsedRealtimeMs" · "(Lcom/tuwinsmart/tuwin/data/repository/Ride3ProPreviewHandshakeCache$Key;J)V" · "getKey" · "()Lcom/tuwinsmart/tuwin/data/repository/Ride3ProPreviewHandshakeCache$Key;" · "getReadyAtElapsedRealtimeMs" · "()J" · "component1" · "component2" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+- `void markReady$default(Ride3ProPreviewHandshakeCache ride3ProPreviewHandshakeCache, Key key, long j, int i, Object obj)`  L180
+- `void markReady(Key key, long nowElapsedRealtimeMs)`  L187
+    - 体内字面量："key"
+- `boolean consume$default(Ride3ProPreviewHandshakeCache ride3ProPreviewHandshakeCache, Key key, long j, int i, Object obj)`  L192
+- `boolean consume(Key key, long nowElapsedRealtimeMs)`  L199
+    - 体内字面量："key"
+- `void clearSession$default(Ride3ProPreviewHandshakeCache ride3ProPreviewHandshakeCache, String str, Long l, int i, Object obj)`  L213
+- `void clearSession(String sessionId, Long routeRevision)`  L220
+    - 体内字面量："sessionId" · "<get-keys>(...)"
+- `void clear()`  L238
+- `long monotonicTimeMs()`  L242
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPreviewHandshakeCache$Entry`
+L117 · [class] private static final Entry · `com/tuwinsmart/tuwin/data/repository/Ride3ProPreviewHandshakeCache.java`
+注解：
+
+字段/常量（2）：
+- `Key key`  L118
+- `long readyAtElapsedRealtimeMs`  L119
+
+方法（10）：
+- `Entry copy$default(Entry entry, Key key, long j, int i, Object obj)`  L121
+- `Key getKey()`  L132
+- `long getReadyAtElapsedRealtimeMs()`  L137
+- `Entry copy(Key key, long readyAtElapsedRealtimeMs)`  L141
+    - 体内字面量："key"
+- `boolean equals(Object other)`  L146
+- `int hashCode()`  L157
+- `String toString()`  L161
+    - 体内字面量："Entry(key=" · ", readyAtElapsedRealtimeMs=" · ")"
+- `public Entry(Key key, long j)`  L165
+    - 体内字面量："key"
+- `Key getKey()`  L171
+- `long getReadyAtElapsedRealtimeMs()`  L175
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPreviewHandshakeCache$Key`
+L24 · [class] public static final Key · `com/tuwinsmart/tuwin/data/repository/Ride3ProPreviewHandshakeCache.java`
+注解：
+
+字段/常量（3）：
+- `String deviceIdentity`  L25
+- `long routeRevision`  L26
+- `String sessionId`  L27
+
+方法（12）：
+- `Key copy$default(Key key, String str, String str2, long j, int i, Object obj)`  L29
+- `String getDeviceIdentity()`  L43
+- `String getSessionId()`  L48
+- `long getRouteRevision()`  L53
+- `Key copy(String deviceIdentity, String sessionId, long routeRevision)`  L57
+    - 体内字面量："deviceIdentity" · "sessionId"
+- `boolean equals(Object other)`  L63
+- `int hashCode()`  L74
+- `String toString()`  L78
+    - 体内字面量："Key(deviceIdentity=" · ", sessionId=" · ", routeRevision=" · ")"
+- `public Key(String deviceIdentity, String sessionId, long j)`  L82
+    - 体内字面量："deviceIdentity" · "sessionId" · "deviceIdentity is required" · "sessionId is required" · "routeRevision is required"
+- `String getDeviceIdentity()`  L99
+- `String getSessionId()`  L103
+- `long getRouteRevision()`  L107
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProPreviewPrepareWarning`
+L11 · [enum] public Ride3ProPreviewPrepareWarning · `com/tuwinsmart/tuwin/data/repository/Ride3ProPreviewPrepareWarning.java`
+注解：
+
+枚举常量（2）：
+- `SEND_TIME_FAILED()`  L12
+- `RECORDING_START_FAILED()`  L13
+
+方法（1）：
+- `EnumEntries<Ride3ProPreviewPrepareWarning> getEntries()`  L17
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProProtocolTbdException`
+L10 · [class] public final Ride3ProProtocolTbdException · extends `IllegalStateException` · `com/tuwinsmart/tuwin/data/repository/Ride3ProProtocolTbdException.java`
+注解：
+
+方法（1）：
+- `public Ride3ProProtocolTbdException(String message)`  L12
+    - 体内字面量："message"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl`
+L43 · [class] public final Ride3ProRecordRepositoryImpl · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl.java`
+注解：
+
+字段/常量（70）：
+- `Function0<Long> now`  L44
+- `Function2<Ride3ProRequestExecutor, Continuation<? super RecordingControlDevice>, Object> recordingDeviceProvider`  L45
+- `Function0<RecordingControlEventRepository> recordingEventsProvider`  L46
+- `Function0<Ride3ProRequestExecutor> recordingSessionProvider`  L47
+- `Function0<Ride3ProApiService> serviceProvider`  L48
+- `boolean usesLegacySessionResolver`  L49
+- `Ride3ProRecordRepositoryImpl$startRecording$1 ride3ProRecordRepositoryImpl$startRecording$1`  L211
+- `Ride3ProRecordRepositoryImpl$startRecording$1 ride3ProRecordRepositoryImpl$startRecording$2 = ride3ProRecordRepositoryImpl$startRecording$1`  L222
+- `Object obj = ride3ProRecordRepositoryImpl$startRecording$2.result`  L223
+- `int i = ride3ProRecordRepositoryImpl$startRecording$2.label`  L225
+- `RecordingControlAction recordingControlAction = RecordingControlAction.STARTED`  L234
+- `Ride3ProRecordRepositoryImpl$startRecordingInPreviewMode$1 ride3ProRecordRepositoryImpl$startRecordingInPreviewMode$1`  L251
+- `Ride3ProRecordRepositoryImpl ride3ProRecordRepositoryImpl`  L252
+- `RecordingControlDevice recordingControlDevice`  L253
+- `Ride3ProApiService ride3ProApiService`  L254
+- `Ride3ProApiResponse ride3ProApiResponse`  L255
+- `RecordingControlDevice recordingControlDevice2`  L256
+- `Ride3ProRecordRepositoryImpl ride3ProRecordRepositoryImpl2`  L257
+- `Ride3ProApiResponse ride3ProApiResponse2`  L258
+- `long jLongValue`  L259
+- `RecordingControlAction recordingControlAction`  L260
+- `Ride3ProRecordRepositoryImpl$startRecordingInPreviewMode$1 ride3ProRecordRepositoryImpl$startRecordingInPreviewMode$2 = ride3ProRecordRepositoryImpl$startRecordingInPreviewMode$1`  L271
+- `Object objRequestContext = ride3ProRecordRepositoryImpl$startRecordingInPreviewMode$2.result`  L272
+- `int i = ride3ProRecordRepositoryImpl$startRecordingInPreviewMode$2.label`  L274
+- `Result.Companion companion = Result.INSTANCE`  L298
+- `Result.Companion companion2 = Result.INSTANCE`  L314
+- `Result.Companion companion3 = Result.INSTANCE`  L333
+- `Result.Companion companion4 = Result.INSTANCE`  L349
+- `Result.Companion companion5 = Result.INSTANCE`  L368
+- `Result.Companion companion6 = Result.INSTANCE`  L384
+- `Result.Companion companion7 = Result.INSTANCE`  L394
+- `Result.Companion companion8 = Result.INSTANCE`  L399
+- `Ride3ProRecordRepositoryImpl$stopRecording$1 ride3ProRecordRepositoryImpl$stopRecording$1`  L407
+- `Ride3ProRecordRepositoryImpl$stopRecording$1 ride3ProRecordRepositoryImpl$stopRecording$2 = ride3ProRecordRepositoryImpl$stopRecording$1`  L418
+- `Object obj = ride3ProRecordRepositoryImpl$stopRecording$2.result`  L419
+- `int i = ride3ProRecordRepositoryImpl$stopRecording$2.label`  L421
+- `RecordingControlAction recordingControlAction = RecordingControlAction.STOPPED`  L430
+- `Ride3ProRecordRepositoryImpl$execute$1 ride3ProRecordRepositoryImpl$execute$1`  L444
+- `Ride3ProRecordRepositoryImpl ride3ProRecordRepositoryImpl`  L445
+- `RecordingControlAction recordingControlAction2`  L446
+- `String str3`  L447
+- `RecordingControlDevice recordingControlDevice`  L448
+- `Ride3ProApiResponse ride3ProApiResponse`  L449
+- `long jLongValue`  L450
+- `Ride3ProRecordRepositoryImpl$execute$1 ride3ProRecordRepositoryImpl$execute$2 = ride3ProRecordRepositoryImpl$execute$1`  L461
+- `Object objRequestContext = ride3ProRecordRepositoryImpl$execute$2.result`  L462
+- `int i = ride3ProRecordRepositoryImpl$execute$2.label`  L464
+- `Result.Companion companion = Result.INSTANCE`  L499
+- `Result.Companion companion2 = Result.INSTANCE`  L517
+- `Result.Companion companion3 = Result.INSTANCE`  L540
+- `Result.Companion companion4 = Result.INSTANCE`  L552
+- `Result.Companion companion5 = Result.INSTANCE`  L557
+- `C22101 c22101`  L571
+- `Ride3ProApiService ride3ProApiServiceInvoke`  L572
+- `Ride3ProApiService ride3ProApiService`  L573
+- `Ride3ProRequestExecutor ride3ProRequestExecutor`  L574
+- `RecordingControlDevice recordingControlDevice`  L575
+- `Object obj = c22101.result`  L586
+- `int i = c22101.label`  L588
+- `RecordingControlDevice recordingControlDevice2 = null`  L589
+- `Function2<Ride3ProRequestExecutor, Continuation<? super RecordingControlDevice>, Object> function2 = this.recordingDeviceProvider`  L605
+- `C22081 c22081`  L658
+- `Object objM3074constructorimpl`  L659
+- `RecordingControlEvent recordingControlEvent`  L660
+- `Object obj = c22081.result`  L671
+- `int i = c22081.label`  L673
+- `Function0<RecordingControlEventRepository> function0 = this.recordingEventsProvider`  L679
+- `Result.Companion companion = Result.INSTANCE`  L681
+- `Result.Companion companion2 = Result.INSTANCE`  L684
+- `NonCancellable nonCancellable = NonCancellable.INSTANCE`  L696
+
+方法（11）：
+- `public Ride3ProRecordRepositoryImpl()`  L94
+- `public Ride3ProRecordRepositoryImpl(Function0<? extends Ride3ProApiService> function0, Function0<? extends Ride3ProRequestExecutor> recordingSessionProvider, Function0<? extends RecordingControlEventRepository> recordingEventsProvider, Function0<Long> now, Function2<? super Ride3ProRequestExecutor, ? super Continuation<? super RecordingControlDevice>, ? extends Object> recordingDeviceProvider)`  L102
+    - 体内字面量："recordingSessionProvider" · "recordingEventsProvider" · "now" · "recordingDeviceProvider"
+- ` Ride3ProRecordRepositoryImpl(Function0 function0, C22041 c22041, C22052 c22052, C22063 c22063, C22074 c22074, int i, DefaultConstructorMarker defaultConstructorMarker)`  L115
+- `Ride3ProRequestExecutor invoke()`  L119 @Override
+    - 体内字面量："<anonymous>" · "Lcom/tuwinsmart/tuwin/domain/model/RecordingControlDevice;" · "it" · "Lcom/tuwinsmart/tuwin/core/device/ride3pro/Ride3ProRequestExecutor;" · "com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$4" · "Ride3ProRecordRepositoryImpl.kt" · "invokeSuspend"
+- `Object m2864startRecordingIoAF18A(Continuation<? super Result<Unit>> continuation)`  L210
+- `Object m2865startRecordingInPreviewModeIoAF18A(Continuation<? super Result<Unit>> continuation)`  L250
+- `Object m2866stopRecordingIoAF18A(Continuation<? super Result<Unit>> continuation)`  L406
+- `Object m2863executeyxL6bBk(String str, RecordingControlAction recordingControlAction, String str2, Function2<? super Ride3ProApiService, ? super Continuation<? super Ride3ProApiResponse<Object>>, ? extends Object> function2, Continuation<? super Result<Unit>> continuation)`  L443
+- `void refreshLegacyBindingIfNeeded()`  L562
+- `Object requestContext(Continuation<? super Pair<? extends Ride3ProApiService, RecordingControlDevice>> continuation)`  L570
+- `Object record(RecordingControlDevice recordingControlDevice, RecordingControlAction recordingControlAction, long j, Continuation<? super Unit> continuation)`  L657
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$C22052`
+L129 · [class] public C22052 · extends `FunctionReferenceImpl implements Function0<RecordingControlEventRepository>` · implements `Function0<RecordingControlEventRepository>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl.java`
+注解：
+
+方法（1）：
+- `RecordingControlEventRepository invoke()`  L138 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$C22063`
+L147 · [class] public C22063 · extends `FunctionReferenceImpl implements Function0<Long>` · implements `Function0<Long>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl.java`
+注解：
+
+方法（1）：
+- `Long invoke()`  L156 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$C22074`
+L166 · [class] public static final C22074 · extends `SuspendLambda implements Function2<Ride3ProRequestExecutor, Continuation<? super RecordingControlDevice>, Object>` · implements `Function2<Ride3ProRequestExecutor, Continuation<? super RecordingControlDevice>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L167
+- `int label`  L168
+- `int i = this.label`  L189
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L175 @Override
+- `Object invoke(Ride3ProRequestExecutor ride3ProRequestExecutor, Continuation<? super RecordingControlDevice> continuation)`  L182 @Override
+- `Object invokeSuspend(Object obj)`  L187 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$C22081`
+L55 · [class] static final C22081 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L56
+- `int label`  L57
+- `Object result`  L58
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L65 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$C22092`
+L727 · [class] static final C22092 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl.java`
+注解：
+
+字段/常量（5）：
+- `RecordingControlEvent $event`  L728
+- `RecordingControlEventRepository $repository`  L729
+- `int label`  L730
+- `Object objMo2803appendgIAlus`  L751
+- `int i = this.label`  L753
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L740 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L745 @Override
+- `Object invokeSuspend(Object obj)`  L750 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$C22101`
+L76 · [class] static final C22101 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L77
+- `Object L$1`  L78
+- `int label`  L79
+- `Object result`  L80
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L87 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$execute$1`
+L17 · [class] final Ride3ProRecordRepositoryImpl$execute$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl$execute$1.java`
+注解：
+
+字段/常量（8）：
+- `Object L$0`  L18
+- `Object L$1`  L19
+- `Object L$2`  L20
+- `Object L$3`  L21
+- `Object L$4`  L22
+- `int label`  L23
+- `Object result`  L24
+- `Ride3ProRecordRepositoryImpl this$0`  L25
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L34 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$serviceProvider$1`
+L13 · [class] Ride3ProRecordRepositoryImpl$serviceProvider$1 · extends `FunctionReferenceImpl implements Function0<Ride3ProApiService>` · implements `Function0<Ride3ProApiService>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl$serviceProvider$1.java`
+注解：
+
+方法（1）：
+- `Ride3ProApiService invoke()`  L20 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$startRecording$1`
+L15 · [class] final Ride3ProRecordRepositoryImpl$startRecording$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl$startRecording$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProRecordRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$startRecording$2`
+L20 · [class] final Ride3ProRecordRepositoryImpl$startRecording$2 · extends `SuspendLambda implements Function2<Ride3ProApiService, Continuation<? super Ride3ProApiResponse<Object>>, Object>` · implements `Function2<Ride3ProApiService, Continuation<? super Ride3ProApiResponse<Object>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl$startRecording$2.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L21
+- `int label`  L22
+- `int i = this.label`  L43
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L29 @Override
+- `Object invoke(Ride3ProApiService ride3ProApiService, Continuation<? super Ride3ProApiResponse<Object>> continuation)`  L36 @Override
+- `Object invokeSuspend(Object obj)`  L41 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$startRecordingInPreviewMode$1`
+L17 · [class] final Ride3ProRecordRepositoryImpl$startRecordingInPreviewMode$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl$startRecordingInPreviewMode$1.java`
+注解：
+
+字段/常量（6）：
+- `Object L$0`  L18
+- `Object L$1`  L19
+- `Object L$2`  L20
+- `int label`  L21
+- `Object result`  L22
+- `Ride3ProRecordRepositoryImpl this$0`  L23
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L32 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$stopRecording$1`
+L15 · [class] final Ride3ProRecordRepositoryImpl$stopRecording$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl$stopRecording$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProRecordRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImpl$stopRecording$2`
+L21 · [class] final Ride3ProRecordRepositoryImpl$stopRecording$2 · extends `SuspendLambda implements Function2<Ride3ProApiService, Continuation<? super Ride3ProApiResponse<Object>>, Object>` · implements `Function2<Ride3ProApiService, Continuation<? super Ride3ProApiResponse<Object>>, Object>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImpl$stopRecording$2.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L22
+- `int label`  L23
+- `int i = this.label`  L44
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L30 @Override
+- `Object invoke(Ride3ProApiService ride3ProApiService, Continuation<? super Ride3ProApiResponse<Object>> continuation)`  L37 @Override
+- `Object invokeSuspend(Object obj)`  L42 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRecordRepositoryImplKt`
+L13 · [class] public final Ride3ProRecordRepositoryImplKt · `com/tuwinsmart/tuwin/data/repository/Ride3ProRecordRepositoryImplKt.java`
+注解：
+
+字段/常量（3）：
+- `Object objM3074constructorimpl`  L16
+- `Result.Companion companion = Result.INSTANCE`  L18
+- `Result.Companion companion2 = Result.INSTANCE`  L21
+
+方法（1）：
+- `RecordingControlEventRepository resolveRecordingControlEventRepository()`  L15
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProRtspPlaybackNetworkBinder`
+L16 · [class] public final Ride3ProRtspPlaybackNetworkBinder · `com/tuwinsmart/tuwin/data/repository/Ride3ProRtspPlaybackNetworkBinder.java`
+注解：
+
+字段/常量（1）：
+- `Result.Companion companion = Result.INSTANCE`  L76
+
+方法（9）：
+- `private Ride3ProRtspPlaybackNetworkBinder()`  L19
+- `Object m2867bindProcessToDeviceWifiBWLJW6A$default(Ride3ProRtspPlaybackNetworkBinder ride3ProRtspPlaybackNetworkBinder, Function0 function0, Function0 function1, Function1 function2, Function0 function3, int i, Object obj)`  L24
+- `Void invoke()`  L28 @Override
+- `Void invoke()`  L36 @Override
+- `void invoke2(Network network)`  L44
+- `Unit invoke(Network network)`  L48 @Override
+- `void invoke2()`  L57
+- `Unit invoke()`  L61 @Override
+- `Object m2868bindProcessToDeviceWifiBWLJW6A(Function0<? extends Network> currentWifiNetworkProvider, Function0<? extends Network> apiBoundNetworkProvider, Function1<? super Network, Unit> bindDeviceWifi, Function0<Unit> refreshNetworkBinding)`  L71
+    - 体内字面量："currentWifiNetworkProvider" · "apiBoundNetworkProvider" · "bindDeviceWifi" · "refreshNetworkBinding"
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProStreamRepositoryImpl`
+L36 · [class] public final Ride3ProStreamRepositoryImpl · `com/tuwinsmart/tuwin/data/repository/Ride3ProStreamRepositoryImpl.java`
+注解：
+
+字段/常量（42）：
+- `int ERROR_INVALID_COMMAND = -2`  L37
+- `int MODE_PREVIEW = 0`  L38
+- `Function0<Ride3ProPreviewHandshakeCache.Key> handshakeKeyProvider`  L39
+- `Ride3ProRecordRepositoryImpl recordRepository`  L40
+- `Function0<Ride3ProApiService> serviceProvider`  L41
+- `String deviceIdentity`  L128
+- `Ride3ProStreamRepositoryImpl$prepareRtspStream$1 ride3ProStreamRepositoryImpl$prepareRtspStream$1`  L150
+- `Object obj = ride3ProStreamRepositoryImpl$prepareRtspStream$1.result`  L161
+- `int i = ride3ProStreamRepositoryImpl$prepareRtspStream$1.label`  L163
+- `Result.Companion companion = Result.INSTANCE`  L177
+- `Result.Companion companion2 = Result.INSTANCE`  L180
+- `Result.Companion companion3 = Result.INSTANCE`  L185
+- `C22131 c22131`  L203
+- `Ride3ProApiService ride3ProApiServiceInvoke`  L204
+- `Ride3ProPreviewHandshakeCache.Key keyInvoke`  L205
+- `Ride3ProApiService ride3ProApiService`  L206
+- `Ride3ProStreamRepositoryImpl ride3ProStreamRepositoryImpl`  L207
+- `Function1<? super Ride3ProPreviewPrepareWarning, Unit> function2`  L208
+- `Function1<? super Ride3ProPreviewPrepareWarning, Unit> function3`  L209
+- `Ride3ProStreamRepositoryImpl ride3ProStreamRepositoryImpl2`  L210
+- `Ride3ProApiService ride3ProApiService2`  L211
+- `Ride3ProStreamRepositoryImpl ride3ProStreamRepositoryImpl3`  L212
+- `Function1<? super Ride3ProPreviewPrepareWarning, Unit> function4`  L213
+- `Ride3ProPreviewHandshakeCache.Key key`  L214
+- `Ride3ProApiResponse ride3ProApiResponse`  L215
+- `Ride3ProApiResponse ride3ProApiResponse2`  L216
+- `Object objM2864startRecordingIoAF18A`  L217
+- `Throwable thM3077exceptionOrNullimpl`  L218
+- `Object objRunPreviewStep = c22131.result`  L229
+- `int i = c22131.label`  L231
+- `Ride3ProRecordRepositoryImpl ride3ProRecordRepositoryImpl = ride3ProStreamRepositoryImpl2.recordRepository`  L276
+- `Ride3ProRecordRepositoryImpl ride3ProRecordRepositoryImpl2 = ride3ProStreamRepositoryImpl2.recordRepository`  L339
+- `Ride3ProRecordRepositoryImpl ride3ProRecordRepositoryImpl3 = ride3ProStreamRepositoryImpl2.recordRepository`  L355
+- `Ride3ProRecordRepositoryImpl ride3ProRecordRepositoryImpl4 = ride3ProStreamRepositoryImpl2.recordRepository`  L425
+- `C22171 c22171`  L467
+- `Object objInvoke = c22171.result`  L478
+- `int i = c22171.label`  L480
+- `Object objM3074constructorimpl`  L510
+- `Result.Companion companion = Result.INSTANCE`  L512
+- `Ride3ProStreamRepositoryImpl ride3ProStreamRepositoryImpl = this`  L513
+- `Result.Companion companion2 = Result.INSTANCE`  L516
+- `Object obj = fallback`  L519
+
+方法（10）：
+- `public Ride3ProStreamRepositoryImpl()`  L89
+- `public Ride3ProStreamRepositoryImpl(Function0<? extends Ride3ProApiService> serviceProvider, Ride3ProRecordRepositoryImpl recordRepository, Function0<Ride3ProPreviewHandshakeCache.Key> handshakeKeyProvider)`  L110
+    - 体内字面量："serviceProvider" · "recordRepository" · "handshakeKeyProvider"
+- ` Ride3ProStreamRepositoryImpl(Function0 function0, Ride3ProRecordRepositoryImpl ride3ProRecordRepositoryImpl, C22122 c22122, int i, DefaultConstructorMarker defaultConstructorMarker)`  L119
+- `Ride3ProPreviewHandshakeCache.Key invoke()`  L127 @Override
+- `Object m2869prepareRtspStreamgIAlus$default(Ride3ProStreamRepositoryImpl ride3ProStreamRepositoryImpl, Function1 function1, Continuation continuation, int i, Object obj)`  L140
+- `Object m2870prepareRtspStreamgIAlus(Function1<? super Ride3ProPreviewPrepareWarning, Unit> function1, Continuation<? super Result<Unit>> continuation)`  L149
+- `Object prepareRtspStreamInternal(Function1<? super Ride3ProPreviewPrepareWarning, Unit> function1, Continuation<? super Unit> continuation)`  L202
+- `Object prepareRtspStreamInternal$default(Ride3ProStreamRepositoryImpl ride3ProStreamRepositoryImpl, Function1 function1, Continuation continuation, int i, Object obj)`  L457
+- `Object runPreviewStep(String str, String str2, Function1<? super Continuation<? super T>, ? extends Object> function1, Continuation<? super T> continuation)`  L466
+- `String previewStepName(int resourceId, String fallback)`  L509
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProStreamRepositoryImpl$C22111`
+L97 · [class] public C22111 · extends `FunctionReferenceImpl implements Function0<Ride3ProApiService>` · implements `Function0<Ride3ProApiService>` · `com/tuwinsmart/tuwin/data/repository/Ride3ProStreamRepositoryImpl.java`
+注解：
+
+方法（1）：
+- `Ride3ProApiService invoke()`  L104 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProStreamRepositoryImpl$C22131`
+L47 · [class] static final C22131 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProStreamRepositoryImpl.java`
+注解：
+
+字段/常量（6）：
+- `Object L$0`  L48
+- `Object L$1`  L49
+- `Object L$2`  L50
+- `Object L$3`  L51
+- `int label`  L52
+- `Object result`  L53
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L60 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProStreamRepositoryImpl$C22171`
+L71 · [class] static final C22171 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProStreamRepositoryImpl.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L72
+- `Object L$1`  L73
+- `int label`  L74
+- `Object result`  L75
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L82 @Override
+### `com.tuwinsmart.tuwin.data.repository.Ride3ProStreamRepositoryImpl$prepareRtspStream$1`
+L15 · [class] final Ride3ProStreamRepositoryImpl$prepareRtspStream$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/Ride3ProStreamRepositoryImpl$prepareRtspStream$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProStreamRepositoryImpl this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.data.repository.ride5.Ride5FileInfoCache`
+L16 · [class] public final Ride5FileInfoCache · `com/tuwinsmart/tuwin/data/repository/ride5/Ride5FileInfoCache.java`
+注解：
+
+字段/常量（1）：
+- `String str = deviceKey + "|"`  L36
+
+方法（5）：
+- `Ride5FileInfo get(String deviceKey, String path)`  L19
+    - 体内字面量："deviceKey" · "path"
+- `void put(String deviceKey, Ride5FileInfo info)`  L25
+    - 体内字面量："deviceKey" · "info"
+- `void invalidate(String deviceKey)`  L34
+    - 体内字面量："deviceKey"
+- `void clear()`  L53
+- `String cacheKey(String deviceKey, String path)`  L57
+    - 体内字面量："|"
+### `com.tuwinsmart.tuwin.data.repository.ride5.Ride5FileInfoRepository`
+L25 · [class] public final Ride5FileInfoRepository · `com/tuwinsmart/tuwin/data/repository/ride5/Ride5FileInfoRepository.java`
+注解：
+
+字段/常量（9）：
+- `Ride5FileInfoCache cache`  L26
+- `Ride5SessionPortProvider portProvider`  L27
+- `C22181 c22181`  L66
+- `String str3`  L67
+- `Exception e`  L68
+- `Ride5FileInfoRepository ride5FileInfoRepository`  L69
+- `String str4`  L70
+- `Object objFileInfo = c22181.result`  L81
+- `int i = c22181.label`  L83
+
+方法（5）：
+- `public Ride5FileInfoRepository(Ride5SessionPortProvider portProvider, Ride5FileInfoCache cache)`  L53
+    - 体内字面量："portProvider" · "cache"
+- ` Ride5FileInfoRepository(Ride5SessionPortProvider ride5SessionPortProvider, Ride5FileInfoCache ride5FileInfoCache, int i, DefaultConstructorMarker defaultConstructorMarker)`  L60
+- `Object loadFileInfo(String str, String str2, Continuation<? super Ride5FileInfo> continuation)`  L65
+- `void invalidateDeviceCache(String deviceKey)`  L137
+    - 体内字面量："deviceKey"
+- `void clearCache()`  L142
+### `com.tuwinsmart.tuwin.data.repository.ride5.Ride5FileInfoRepository$C22181`
+L33 · [class] static final C22181 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/ride5/Ride5FileInfoRepository.java`
+注解：
+
+字段/常量（6）：
+- `Object L$0`  L34
+- `Object L$1`  L35
+- `Object L$2`  L36
+- `Object L$3`  L37
+- `int label`  L38
+- `Object result`  L39
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L46 @Override
+### `com.tuwinsmart.tuwin.data.repository.ride5.Ride5FileInfoResponseParser`
+L13 · [class] public final Ride5FileInfoResponseParser · `com/tuwinsmart/tuwin/data/repository/ride5/Ride5FileInfoResponseParser.java`
+注解：
+
+字段/常量（7）：
+- `long INVALID_LONG = -1`  L15
+- `String KEY_PATH = "path"`  L16
+- `String KEY_SIZE = "size"`  L17
+- `String KEY_TIME = "time"`  L18
+- `String str`  L25
+- `Long longOrNull`  L47
+- `String str = raw`  L48
+
+方法（3）：
+- `private Ride5FileInfoResponseParser()`  L20
+- `Ride5FileInfo parse(String requestedPath, Map<String, String> response)`  L24
+- `long parseLong(String raw)`  L46
+### `com.tuwinsmart.tuwin.data.repository.ride5.Ride5HourFilesLoader`
+L35 · [class] public final Ride5HourFilesLoader · `com/tuwinsmart/tuwin/data/repository/ride5/Ride5HourFilesLoader.java`
+注解：
+
+字段/常量（6）：
+- `int DEFAULT_CONCURRENCY = 4`  L36
+- `Ride5FileInfoRepository repository`  L37
+- `C22211 c22211`  L162
+- `Object objLoadFileInfo = c22211.result`  L173
+- `int i = c22211.label`  L175
+- `Ride5FileInfoRepository ride5FileInfoRepository = this.repository`  L178
+
+方法（4）：
+- `public Ride5HourFilesLoader(Ride5FileInfoRepository repository)`  L60
+    - 体内字面量："repository"
+- `Object loadHourRecordings$default(Ride5HourFilesLoader ride5HourFilesLoader, String str, List list, int i, Continuation continuation, int i2, Object obj)`  L65
+    - 体内字面量："<anonymous>" · "Lcom/tuwinsmart/tuwin/domain/model/ride5/Ride5HourRecording;" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.data.repository.ride5.Ride5HourFilesLoader$loadHourRecordings$2" · "Ride5HourFilesLoader.kt" · "invokeSuspend"
+- `Object loadHourRecordings(String str, List<VideoItem> list, int i, Continuation<? super List<Ride5HourRecording>> continuation)`  L155
+- `Object loadRecording(String str, VideoItem videoItem, Continuation<? super Ride5HourRecording> continuation)`  L161
+### `com.tuwinsmart.tuwin.data.repository.ride5.Ride5HourFilesLoader$C22192`
+L76 · [class] static final C22192 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super List<? extends Ride5HourRecording>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super List<? extends Ride5HourRecording>>, Object>` · `com/tuwinsmart/tuwin/data/repository/ride5/Ride5HourFilesLoader.java`
+注解：
+
+字段/常量（12）：
+- `int $concurrency`  L77
+- `String $deviceKey`  L78
+- `List<VideoItem> $hourItems`  L79
+- `Object L$0`  L80
+- `int label`  L81
+- `Ride5HourFilesLoader this$0`  L82
+- `Object objAwaitAll`  L112
+- `int i = this.label`  L114
+- `List<VideoItem> list = this.$hourItems`  L122
+- `Ride5HourFilesLoader ride5HourFilesLoader = this.this$0`  L123
+- `String str = this.$deviceKey`  L124
+- `ArrayList arrayList2 = arrayList`  L128
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L94 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super List<? extends Ride5HourRecording>> continuation)`  L101 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super List<Ride5HourRecording>> continuation)`  L106
+- `Object invokeSuspend(Object obj)`  L111 @Override
+- `int compare(T t, T t2)`  L148 @Override
+### `com.tuwinsmart.tuwin.data.repository.ride5.Ride5HourFilesLoader$C22211`
+L43 · [class] static final C22211 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/data/repository/ride5/Ride5HourFilesLoader.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L44
+- `int label`  L45
+- `Object result`  L46
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L53 @Override
+### `com.tuwinsmart.tuwin.data.repository.ride5.Ride5HourFilesLoader$loadHourRecordings$2$deferredResults$1$1`
+L21 · [class] final Ride5HourFilesLoader$loadHourRecordings$2$deferredResults$1$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Ride5HourRecording>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Ride5HourRecording>, Object>` · `com/tuwinsmart/tuwin/data/repository/ride5/Ride5HourFilesLoader$loadHourRecordings$2$deferredResults$1$1.java`
+注解：
+
+字段/常量（18）：
+- `String $deviceKey`  L22
+- `VideoItem $item`  L23
+- `Semaphore $semaphore`  L24
+- `Object L$0`  L25
+- `Object L$1`  L26
+- `Object L$2`  L27
+- `Object L$3`  L28
+- `int label`  L29
+- `Ride5HourFilesLoader this$0`  L30
+- `Semaphore semaphore`  L53
+- `Ride5HourFilesLoader ride5HourFilesLoader`  L54
+- `String str`  L55
+- `VideoItem videoItem`  L56
+- `Semaphore semaphore2`  L57
+- `Throwable th`  L58
+- `int i = this.label`  L60
+- `String str2 = this.$deviceKey`  L66
+- `VideoItem videoItem2 = this.$item`  L67
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L42 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Ride5HourRecording> continuation)`  L47 @Override
+- `Object invokeSuspend(Object obj)`  L52 @Override
+### `com.tuwinsmart.tuwin.data.repository.SdCardFormatReminderRepositoryImpl`
+L14 · [class] public final SdCardFormatReminderRepositoryImpl · implements `SdCardFormatReminderRepository` · `com/tuwinsmart/tuwin/data/repository/SdCardFormatReminderRepositoryImpl.java`
+注解：
+
+字段/常量（2）：
+- `String KEY_PREFIX = "sd_card_format_reminder_start_"`  L18 @Deprecated
+- `PreferenceHelper preferenceHelper`  L19
+
+方法（4）：
+- `public SdCardFormatReminderRepositoryImpl(PreferenceHelper preferenceHelper)`  L21
+    - 体内字面量："preferenceHelper"
+- `Long getReminderStartMillis(String deviceKey)`  L27 @Override
+    - 体内字面量："deviceKey"
+- `void saveReminderStartMillis(String deviceKey, long timestampMillis)`  L37 @Override
+    - 体内字面量："deviceKey"
+- `String keyOf(String deviceKey)`  L42
+    - 体内字面量："Lcom/tuwinsmart/tuwin/data/repository/SdCardFormatReminderRepositoryImpl$Companion;" · "()V" · "KEY_PREFIX" · "app_release_64"
+### `com.tuwinsmart.tuwin.data.repository.SdCardFormatReminderRepositoryImpl$Companion`
+L48 · [class] private static final Companion · `com/tuwinsmart/tuwin/data/repository/SdCardFormatReminderRepositoryImpl.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L49
+- `private Companion()`  L53
+### `com.tuwinsmart.tuwin.data.repository.UserPreferencesRecordingControlEventStorage`
+L16 · [class] final UserPreferencesRecordingControlEventStorage · implements `RecordingControlEventStorage` · `com/tuwinsmart/tuwin/data/repository/UserPreferencesRecordingControlEventStorage.java`
+注解：
+
+字段/常量（1）：
+- `UserPreferencesRepository preferences`  L17
+
+方法（4）：
+- `public UserPreferencesRecordingControlEventStorage(UserPreferencesRepository preferences)`  L19
+    - 体内字面量："preferences"
+- `Object read(Continuation<? super String> continuation)`  L25 @Override
+- `Flow<String> observe()`  L30 @Override
+- `Object update(Function1<? super String, String> function1, Continuation<? super Unit> continuation)`  L35 @Override

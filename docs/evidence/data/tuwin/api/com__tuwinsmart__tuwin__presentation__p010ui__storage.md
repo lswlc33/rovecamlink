@@ -1,0 +1,6174 @@
+# TUWIN — 类与成员明细：com.tuwinsmart.tuwin.presentation.p010ui.storage
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 130 个文件 / 290 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.adapter.DateTitleViewHolder`
+L12 · [class] public final DateTitleViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/adapter/DateTitleViewHolder.java`
+注解：
+
+字段/常量（1）：
+- `ItemStorageListVideoDateTitleBinding binding`  L13
+
+方法（2）：
+- `ItemStorageListVideoDateTitleBinding getBinding()`  L15
+- `public DateTitleViewHolder(ItemStorageListVideoDateTitleBinding binding)`  L20
+    - 体内字面量："binding"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.adapter.ItemEmptyViewHolder`
+L12 · [class] public final ItemEmptyViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/adapter/ItemEmptyViewHolder.java`
+注解：
+
+字段/常量（1）：
+- `ItemStorageListEmptyBinding binding`  L13
+
+方法（2）：
+- `ItemStorageListEmptyBinding getBinding()`  L15
+- `public ItemEmptyViewHolder(ItemStorageListEmptyBinding binding)`  L20
+    - 体内字面量："binding"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.adapter.ItemLoadingViewHolder`
+L12 · [class] public final ItemLoadingViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/adapter/ItemLoadingViewHolder.java`
+注解：
+
+字段/常量（1）：
+- `ItemStorageListLoadingBinding binding`  L13
+
+方法（2）：
+- `ItemStorageListLoadingBinding getBinding()`  L15
+- `public ItemLoadingViewHolder(ItemStorageListLoadingBinding binding)`  L20
+    - 体内字面量："binding"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.adapter.OnStorageListActionListener`
+L10 · [interface] public OnStorageListActionListener · `com/tuwinsmart/tuwin/presentation/p010ui/storage/adapter/OnStorageListActionListener.java`
+注解：
+
+方法（1）：
+- `void onItemClick(int actionId, int position, VideoData videoData)`  L11
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.adapter.OnStorageListActionListener$DefaultImpls`
+L15 · [class] public static final DefaultImpls · `com/tuwinsmart/tuwin/presentation/p010ui/storage/adapter/OnStorageListActionListener.java`
+注解：
+
+方法（1）：
+- `void onItemClick$default(OnStorageListActionListener onStorageListActionListener, int i, int i2, VideoData videoData, int i3, Object obj)`  L16
+    - 体内字面量："Super calls with default arguments not supported in this target, function: onItemClick"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.adapter.SectionTitleViewHolder`
+L12 · [class] public final SectionTitleViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/adapter/SectionTitleViewHolder.java`
+注解：
+
+字段/常量（1）：
+- `ItemStorageListSectionBinding binding`  L13
+
+方法（2）：
+- `ItemStorageListSectionBinding getBinding()`  L15
+- `public SectionTitleViewHolder(ItemStorageListSectionBinding binding)`  L20
+    - 体内字面量："binding"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.adapter.StorageListAdapter`
+L41 · [class] public final StorageListAdapter · extends `RecyclerView.Adapter<RecyclerView.ViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/adapter/StorageListAdapter.java`
+注解：
+
+字段/常量（41）：
+- `int ACTION_ENTER_SELECT_MODE = 1`  L42
+- `int ACTION_EXIT_SELECT_MODE = 2`  L43
+- `int ACTION_RETRY_LOAD = 6`  L44
+- `int ACTION_VIDEO_ITEM_CLICK = 3`  L45
+- `int VIEW_TYPE_DATE_TITLE = 5`  L46
+- `int VIEW_TYPE_VIDEO_ITEM = 6`  L47
+- `boolean isLoading`  L48
+- `boolean isSdcard`  L49
+- `boolean isSuccess`  L50
+- `OnStorageListActionListener listener`  L51
+- `List<VideoItem> mSelectItems`  L52
+- `List<VideoData> mediaList`  L53
+- `Function1<Integer, AuthorizedDeviceResource> ride3ProThumbnailModel`  L54
+- `Function1<String, Object> ride5PreviewModel`  L55
+- `boolean selectMode`  L56
+- `List<Integer> titleIndex`  L57
+- `List<VideoData> list = this.mediaList`  L105
+- `OnStorageListActionListener onStorageListActionListener = this.listener`  L112
+- `ArrayList arrayListEmptyList`  L128
+- `List<VideoItem> list = items`  L131
+- `View itemView = holder.itemView`  L190
+- `int i = 8`  L200
+- `View itemView2 = holder.itemView`  L268
+- `OnStorageListActionListener onStorageListActionListener`  L290
+- `OnStorageListActionListener onStorageListActionListener = this$0.listener`  L303
+- `int iIntValue`  L311
+- `int i2 = i + 1`  L315
+- `List<Integer> list = this$0.titleIndex`  L319
+- `List<VideoItem> list2 = this$0.mSelectItems`  L324
+- `boolean z`  L335
+- `int iIntValue`  L336
+- `boolean z2 = false`  L341
+- `List<Integer> list = this$0.titleIndex`  L354
+- `OnStorageListActionListener onStorageListActionListener = this$0.listener`  L374
+- `int iFlattenCount = 0`  L426
+- `List<VideoItem> list = this.mSelectItems`  L442
+- `List<VideoData> list = this.mediaList`  L453
+- `int i = 0`  L455
+- `int i2 = 0`  L456
+- `int i3 = i + 1`  L458
+- `int i = 0`  L479
+
+方法（33）：
+- ` StorageListAdapter(boolean z, List list, OnStorageListActionListener onStorageListActionListener, C28151 c28151, C28162 c28162, int i, DefaultConstructorMarker defaultConstructorMarker)`  L59
+- `Void invoke(int i2)`  L61
+- `Object invoke(Object obj)`  L66 @Override
+- `Void invoke(String it)`  L71 @Override
+    - 体内字面量："it"
+- `public StorageListAdapter(boolean z, List<VideoData> mediaList, OnStorageListActionListener onStorageListActionListener, Function1<? super Integer, AuthorizedDeviceResource> ride3ProThumbnailModel, Function1<? super String, ? extends Object> ride5PreviewModel)`  L79
+    - 体内字面量："mediaList" · "ride3ProThumbnailModel" · "ride5PreviewModel"
+- `boolean getSelectMode()`  L94
+- `void setSelectMode(boolean z)`  L98
+- `int flattenCount(VideoItem videoItem)`  L118
+- `List<String> flattenPaths(VideoItem videoItem)`  L127
+- `RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L154 @Override
+    - 体内字面量："parent" · "inflate(...)" · "inflate(...)" · "inflate(...)" · "inflate(...)"
+- `int getItemViewType(int position)`  L177 @Override
+- `void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position)`  L182 @Override
+    - 体内字面量："holder"
+- `void onClick(View view)`  L194 @Override
+- `void onClick(View view)`  L213 @Override
+    - 体内字面量："null cannot be cast to non-null type com.tuwinsmart.tuwin.presentation.ui.storage.adapter.VideTitle" · "btnSelectAll"
+- `void onClick(View view)`  L236 @Override
+    - 体内字面量："null cannot be cast to non-null type com.tuwinsmart.tuwin.presentation.ui.storage.adapter.VideoItem" · "Thumbnail_"
+- `void onClick(View view)`  L272 @Override
+    - 体内字面量："ckSelect"
+- `void onClick(View view)`  L280 @Override
+- `void onBindViewHolder$lambda$3(StorageListAdapter this$0, View view)`  L289
+- `void onBindViewHolder$lambda$4(StorageListAdapter this$0, View view)`  L299
+    - 体内字面量："this$0"
+- `void onBindViewHolder$lambda$5(VideTitle item, int i, StorageListAdapter this$0, View view)`  L310
+- `void onBindViewHolder$lambda$6(StorageListAdapter this$0, VideoItem item, RecyclerView.ViewHolder holder, int i, View view)`  L334
+- `void onBindViewHolder$lambda$7(RecyclerView.ViewHolder holder, View view)`  L381
+    - 体内字面量："$holder"
+- `void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads)`  L387 @Override
+    - 体内字面量："holder" · "payloads" · "checkStatus" · "null cannot be cast to non-null type com.tuwinsmart.tuwin.presentation.ui.storage.adapter.VideTitle" · "null cannot be cast to non-null type com.tuwinsmart.tuwin.presentation.ui.storage.adapter.VideoItem"
+- `int getItemCount()`  L416 @Override
+- `boolean hasSelectedItems()`  L420
+- `int hasSelectedCount()`  L424
+- `void deleteSelectedItems()`  L433
+- `List<String> getDownloadPaths()`  L441
+- `void generateTitleIndex()`  L451
+- `List<VideoData> processMediaList()`  L474
+- `void loadFinish(boolean success)`  L494
+- `void loadFinish()`  L500
+- `void startLoading()`  L506
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.adapter.VideoData`
+L11 · [class] public abstract VideoData · implements `Serializable` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/adapter/VideoData.java`
+注解：
+
+方法（2）：
+- ` VideoData(DefaultConstructorMarker defaultConstructorMarker)`  L12
+- `private VideoData()`  L16
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.adapter.VideoItem`
+L15 · [class] public final VideoItem · extends `VideoData implements Serializable` · implements `Serializable` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/adapter/VideoItem.java`
+注解：
+
+字段/常量（13）：
+- `String dayTime`  L16
+- `long duration`  L17
+- `String hourTime`  L18
+- `boolean isLocal`  L19
+- `List<VideoItem> items`  L20
+- `String path`  L21
+- `Integer ride3ProFileIndex`  L22
+- `String ride3ProThumbnailCacheKey`  L23
+- `Date time`  L24
+- `int titleIndex`  L25
+- `Integer num = this.ride3ProFileIndex`  L97
+- `String str = this.ride3ProThumbnailCacheKey`  L99
+- `List<VideoItem> list = this.items`  L101
+
+方法（29）：
+- `int getTitleIndex()`  L28
+- `long getDuration()`  L33
+- `String getPath()`  L38
+- `Integer getRide3ProFileIndex()`  L43
+- `String getRide3ProThumbnailCacheKey()`  L48
+- `Date getTime()`  L53
+- `String getDayTime()`  L58
+- `String getHourTime()`  L63
+- `boolean getIsLocal()`  L68
+- `List<VideoItem> component9()`  L72
+- `VideoItem copy(int titleIndex, String path, Integer ride3ProFileIndex, String ride3ProThumbnailCacheKey, Date time, String dayTime, String hourTime, boolean isLocal, List<VideoItem> items, long duration)`  L76
+    - 体内字面量："path" · "time" · "dayTime" · "hourTime"
+- `boolean equals(Object other)`  L84
+- `int hashCode()`  L95
+- `String toString()`  L105
+    - 体内字面量："VideoItem(titleIndex=" · ", path=" · ", ride3ProFileIndex=" · ", ride3ProThumbnailCacheKey=" · ", time=" · ", dayTime=" · ", hourTime=" · ", isLocal=" · ", items=" · ", duration=" · ")"
+- ` VideoItem(int i, String str, Integer num, String str2, Date date, String str3, String str4, boolean z, List list, long j, int i2, DefaultConstructorMarker defaultConstructorMarker)`  L109
+- `int getTitleIndex()`  L113
+- `void setTitleIndex(int i)`  L117
+- `String getPath()`  L121
+- `Integer getRide3ProFileIndex()`  L125
+- `String getRide3ProThumbnailCacheKey()`  L129
+- `Date getTime()`  L133
+- `String getDayTime()`  L137
+- `String getHourTime()`  L141
+- `boolean isLocal()`  L145
+- `void setLocal(boolean z)`  L149
+- `List<VideoItem> getItems()`  L153
+- `long getDuration()`  L157
+- `void setDuration(long j)`  L161
+- `public VideoItem(int i, String path, Integer num, String str, Date time, String dayTime, String hourTime, boolean z, List<VideoItem> list, long j)`  L166
+    - 体内字面量："path" · "time" · "dayTime" · "hourTime"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.adapter.VideoItemViewHolder`
+L12 · [class] public final VideoItemViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/adapter/VideoItemViewHolder.java`
+注解：
+
+字段/常量（1）：
+- `ItemStorageListVideoItemBinding binding`  L13
+
+方法（2）：
+- `ItemStorageListVideoItemBinding getBinding()`  L15
+- `public VideoItemViewHolder(ItemStorageListVideoItemBinding binding)`  L20
+    - 体内字面量："binding"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.adapter.VideTitle`
+L12 · [class] public final VideTitle · extends `VideoData implements Serializable` · implements `Serializable` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/adapter/VideTitle.java`
+注解：
+
+字段/常量（2）：
+- `boolean isAllSelect`  L13
+- `String videoDate`  L14
+
+方法（12）：
+- `VideTitle copy$default(VideTitle videTitle, String str, boolean z, int i, Object obj)`  L16
+- `String getVideoDate()`  L27
+- `boolean getIsAllSelect()`  L32
+- `VideTitle copy(String videoDate, boolean isAllSelect)`  L36
+    - 体内字面量："videoDate"
+- `boolean equals(Object other)`  L41
+- `int hashCode()`  L52
+- `String toString()`  L56
+    - 体内字面量："VideTitle(videoDate=" · ", isAllSelect=" · ")"
+- ` VideTitle(String str, boolean z, int i, DefaultConstructorMarker defaultConstructorMarker)`  L60
+- `String getVideoDate()`  L64
+- `boolean isAllSelect()`  L68
+- `void setAllSelect(boolean z)`  L72
+- `public VideTitle(String videoDate, boolean z)`  L77
+    - 体内字面量："videoDate"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.FileSelectionBottomBarInsets`
+L15 · [class] public final FileSelectionBottomBarInsets · `com/tuwinsmart/tuwin/presentation/p010ui/storage/FileSelectionBottomBarInsets.java`
+注解：
+
+方法（4）：
+- `private FileSelectionBottomBarInsets()`  L18
+- `void apply(View root, final View bottomActions)`  L21
+    - 体内字面量："root" · "bottomActions" · "bottom action bar must have a fixed non-negative height"
+- `WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat)`  L31 @Override
+- `WindowInsetsCompat apply$lambda$2(View bottomActions, int i, int i2, View view, WindowInsetsCompat insets)`  L39
+    - 体内字面量："$bottomActions" · "<anonymous parameter 0>" · "insets" · "null cannot be cast to non-null type android.view.ViewGroup.LayoutParams"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageLocalFragment`
+L42 · [class] public final StorageLocalFragment · extends `BaseMainFragment` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageLocalFragment.java`
+注解：
+
+字段/常量（22）：
+- `FragmentStorageLocalBinding binding`  L43
+- `StorageLocalItemFragment[] mFragments`  L44
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding = this.binding`  L66
+- `DownloadListActivity.Companion companion = DownloadListActivity.INSTANCE`  L84
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding = this.binding`  L111
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding2 = null`  L112
+- `StorageLocalItemFragment[] storageLocalItemFragmentArr = StorageLocalFragment.this.mFragments`  L120
+- `StorageLocalItemFragment storageLocalItemFragment = storageLocalItemFragmentArr != null ? storageLocalItemFragmentArr[position] : null`  L121
+- `StorageLocalItemFragment.Companion companion = StorageLocalItemFragment.INSTANCE`  L123
+- `StorageLocalItemFragment[] storageLocalItemFragmentArr2 = StorageLocalFragment.this.mFragments`  L127
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding3 = this.binding`  L141
+- `SlidingTabLayout slidingTabLayout = fragmentStorageLocalBinding3.tabLayout`  L146
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding4 = this.binding`  L147
+- `SwipeViewPager swipeViewPager = fragmentStorageLocalBinding4.viewPager`  L152
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding5 = this.binding`  L156
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding = this.binding`  L174
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding2 = null`  L175
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding3 = this.binding`  L181
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding4 = this.binding`  L187
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding5 = this.binding`  L194
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding6 = this.binding`  L201
+- `FragmentStorageLocalBinding fragmentStorageLocalBinding7 = this.binding`  L208
+
+方法（13）：
+- `View getLayoutRoot(LayoutInflater inflater, ViewGroup container)`  L47 @Override
+    - 体内字面量："inflater" · "inflate(...)" · "binding" · "getRoot(...)"
+- `void initFragment()`  L62 @Override
+- `void onClick(View view)`  L75 @Override
+- `void initFragment$lambda$0(StorageLocalFragment this$0, View view)`  L82
+    - 体内字面量："this$0"
+- `void lazyInitData()`  L91 @Override
+    - 体内字面量："video" · "photo"
+- `void fragmentShow()`  L96 @Override
+    - 体内字面量："fragmentShow "
+- `void fragmentHide()`  L102 @Override
+    - 体内字面量："fragmentHide "
+- `void initTab(final LinkedHashMap<String, String> tabKey)`  L106
+    - 体内字面量："<get-keys>(...)"
+- `Fragment getItem(int position)`  L119 @Override
+- `int getCount()`  L137 @Override
+- `void onTaskDownloadFinish(TaskDownloadFinishEvent event)`  L166 @Subscribe(threadMode = ThreadMode.MAIN)
+    - 体内字面量："event"
+- `void refreshDownloading()`  L171
+- `void onDestroyView()`  L218 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageLocalItemFragment`
+L53 · [class] public final StorageLocalItemFragment · extends `BaseMainFragment` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageLocalItemFragment.java`
+注解：
+
+字段/常量（27）：
+- `FragmentStorageListBinding binding`  L57
+- `Gloading.Holder holder`  L58
+- `StorageListAdapter mAdapter`  L59
+- `String type`  L60
+- `FragmentStorageListBinding fragmentStorageListBinding = this.binding`  L105
+- `StorageListAdapter storageListAdapter = this.mAdapter`  L119
+- `String str = this.type`  L133
+- `Gloading.Holder holder = null`  L155
+- `Gloading.Holder holder2 = this.holder`  L166
+- `DailyDetailActivity.Companion companion = DailyDetailActivity.INSTANCE`  L201
+- `BaseActivity activity = StorageLocalItemFragment.this.activity`  L202
+- `ArrayList<File> arrayList`  L244
+- `String string`  L245
+- `MatchGroupCollection groups`  L246
+- `MatchGroup matchGroup`  L247
+- `int i = 2`  L250
+- `StorageLocalItemFragment storageLocalItemFragment = StorageLocalItemFragment.this`  L252
+- `StorageLocalItemFragment storageLocalItemFragment2 = StorageLocalItemFragment.this`  L292
+- `String str = null`  L293
+- `String str2 = null`  L294
+- `DateUtil dateUtil = DateUtil.INSTANCE`  L304
+- `List list = storageLocalItemFragment2.mItems`  L319
+- `String str5 = str == null ? "<binary/metadata>" : str`  L321
+- `String str7 = str == null ? "<binary/metadata>" : str`  L329
+- `Gloading.Holder holder = null`  L361
+- `Gloading.Holder holder2 = StorageLocalItemFragment.this.holder`  L363
+- `Gloading.Holder holder3 = StorageLocalItemFragment.this.holder`  L372
+
+方法（31）：
+- `SimpleDateFormat invoke()`  L70 @Override
+    - 体内字面量："yyyyMMddHH" · "HH" · "HH:mm:ss" · "(\\d{4}_\\d{2}_\\d{2}_\\d{6})"
+- `SimpleDateFormat getFormat()`  L80
+- `SimpleDateFormat getFormat2()`  L84
+- `SimpleDateFormat getFormat3()`  L88
+- `SimpleDateFormat getFormat4()`  L92
+- `SimpleDateFormat getFormat5()`  L96
+- `Regex getRegex()`  L100
+- `FragmentStorageListBinding getBinding()`  L104
+- `void setBinding(FragmentStorageListBinding fragmentStorageListBinding)`  L113
+    - 体内字面量："<set-?>"
+- `StorageListAdapter getMAdapter()`  L118
+- `void setMAdapter(StorageListAdapter storageListAdapter)`  L127
+    - 体内字面量："<set-?>"
+- `String getType()`  L132
+- `void setType(String str)`  L141
+    - 体内字面量："<set-?>"
+- `View getLayoutRoot(LayoutInflater inflater, ViewGroup container)`  L147 @Override
+    - 体内字面量："inflater" · "inflate(...)" · "wrap(...)"
+- `void run()`  L162 @Override
+- `void getLayoutRoot$lambda$0(StorageLocalItemFragment this$0)`  L178
+    - 体内字面量："this$0"
+- `void initFragment()`  L184 @Override
+    - 体内字面量："type"
+- `void onItemClick(int actionId, int position, VideoData videoData)`  L194 @Override
+- `int getSpanSize(int position)`  L213 @Override
+- `void lazyInitData()`  L225 @Override
+- `void formatData()`  L229
+- `Unit invoke(String str)`  L237 @Override
+- `void invoke2(String origin)`  L243
+- `Object apply(Object obj)`  L343 @Override
+- `Unit invoke(Unit unit)`  L353 @Override
+- `void invoke2(Unit unit)`  L359
+- `void accept(Object obj)`  L383 @Override
+- `Unit formatData$lambda$2(Function1 tmp0, Object p0)`  L390
+    - 体内字面量："$tmp0" · "p0"
+- `void formatData$lambda$3(Function1 tmp0, Object obj)`  L397
+    - 体内字面量："$tmp0"
+- `void fragmentShow()`  L403 @Override
+    - 体内字面量："fragmentShow " · "--"
+- `void fragmentHide()`  L408 @Override
+    - 体内字面量："fragmentHide " · "--" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/fragment/StorageLocalItemFragment$Companion;" · "()V" · "getInstance" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/fragment/StorageLocalItemFragment;" · "type" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageLocalItemFragment$Companion`
+L414 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageLocalItemFragment.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L415
+- `private Companion()`  L419
+- `StorageLocalItemFragment getInstance(String type)`  L422
+    - 体内字面量："type" · "type"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProFileType`
+L11 · [enum] public StorageRide3ProFileType · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageRide3ProFileType.java`
+注解：
+
+枚举常量（2）：
+- `VIDEO()`  L12
+- `PHOTO()`  L13
+
+方法（1）：
+- `EnumEntries<StorageRide3ProFileType> getEntries()`  L17
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProFileTypePolicy`
+L16 · [class] public final StorageRide3ProFileTypePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageRide3ProFileTypePolicy.java`
+注解：
+
+方法（5）：
+- `private StorageRide3ProFileTypePolicy()`  L19
+- `String buildThumbnailApiPath(int fileIndex)`  L22
+    - 体内字面量："/api/playback/thumbnail?file_index="
+- `String buildThumbnailCacheKey(int fileIndex, String fileName, String time, long fileSize)`  L26
+    - 体内字面量："fileName" · "time" · "/" · "\\\\" · "Thumbnail_" · "_" · "_" · "_"
+- `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProFileType classifyByFileName(java.lang.String r3)`  L83
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProFileTypePolicy.classifyByFileName(java.lang.String):com.tuwinsmart.tuwin.presentation.ui.storage.fragment.StorageRide3ProFileType"
+- `List<StorageRide3ProRemoteFile> filterByTab(List<StorageRide3ProRemoteFile> files, String tabKey)`  L162
+    - 体内字面量："files" · "tabKey"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFile`
+L13 · [class] public final StorageRide3ProRemoteFile · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageRide3ProRemoteFile.java`
+注解：
+
+字段/常量（10）：
+- `int durationSeconds`  L14
+- `int fileIndex`  L15
+- `String fileName`  L16
+- `long fileSize`  L17
+- `String path`  L18
+- `String time`  L19
+- `int i4 = i`  L28
+- `String str4 = str2`  L32
+- `long j2 = j`  L36
+- `int i5 = i2`  L40
+
+方法（20）：
+- `StorageRide3ProRemoteFile copy$default(StorageRide3ProRemoteFile storageRide3ProRemoteFile, String str, int i, String str2, long j, int i2, String str3, int i3, Object obj)`  L21
+- `String getFileName()`  L48
+- `int getFileIndex()`  L53
+- `String getTime()`  L58
+- `long getFileSize()`  L63
+- `int getDurationSeconds()`  L68
+- `String getPath()`  L73
+- `StorageRide3ProRemoteFile copy(String fileName, int fileIndex, String time, long fileSize, int durationSeconds, String path)`  L77
+    - 体内字面量："fileName" · "time" · "path"
+- `boolean equals(Object other)`  L84
+- `int hashCode()`  L95
+- `String toString()`  L99
+    - 体内字面量："StorageRide3ProRemoteFile(fileName=" · ", fileIndex=" · ", time=" · ", fileSize=" · ", durationSeconds=" · ", path=" · ")"
+- `public StorageRide3ProRemoteFile(String fileName, int i, String time, long j, int i2, String path)`  L103
+    - 体内字面量："fileName" · "time" · "path"
+- ` StorageRide3ProRemoteFile(String str, int i, String str2, long j, int i2, String str3, int i3, DefaultConstructorMarker defaultConstructorMarker)`  L115
+- `String getFileName()`  L119
+- `int getFileIndex()`  L123
+- `String getTime()`  L127
+- `long getFileSize()`  L131
+- `int getDurationSeconds()`  L135
+- `String getPath()`  L139
+- `String getThumbnailCacheKey()`  L143
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageRide3ProRemoteFileIdentity`
+L17 · [class] public final StorageRide3ProRemoteFileIdentity · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageRide3ProRemoteFileIdentity.java`
+注解：
+
+字段/常量（2）：
+- `HashSet hashSet2 = hashSet`  L56
+- `List<StorageRide3ProRemoteFile> list = listDistinctByDeviceKey`  L57
+
+方法（5）：
+- `private StorageRide3ProRemoteFileIdentity()`  L20
+- `int deviceKey(StorageRide3ProRemoteFile file)`  L23
+    - 体内字面量："file"
+- `String cacheSignature(StorageRide3ProRemoteFile file)`  L28
+    - 体内字面量："file" · "|" · "|" · "|"
+- `List<StorageRide3ProRemoteFile> distinctByDeviceKey(List<StorageRide3ProRemoteFile> files)`  L33
+    - 体内字面量："files" · "<get-values>(...)"
+- `List<StorageRide3ProRemoteFile> mergePreferPrimary(List<StorageRide3ProRemoteFile> primaryFiles, List<StorageRide3ProRemoteFile> fallbackFiles, int limit)`  L44
+    - 体内字面量："primaryFiles" · "fallbackFiles"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageSdcardItemFragment`
+L88 · [class] public final StorageSdcardItemFragment · extends `BaseMainFragment` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageSdcardItemFragment.java`
+注解：
+
+字段/常量（70）：
+- `String ARG_SESSION_ID = "device_session_id"`  L89
+- `int RIDE3PRO_PAGE_SIZE = 16`  L93
+- `FragmentStorageListBinding binding`  L94
+- `boolean hasShownOnce`  L95
+- `Gloading.Holder holder`  L96
+- `StorageListAdapter mAdapter`  L97
+- `Job ride3ProLoadJob`  L98
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepository`  L99
+- `Job ride5HourLoadJob`  L100
+- `Job ride5ListJob`  L101
+- `String type`  L102
+- `FragmentStorageListBinding fragmentStorageListBinding = this.binding`  L188
+- `StorageListAdapter storageListAdapter = this.mAdapter`  L202
+- `String str = this.type`  L216
+- `Job job = this.ride3ProLoadJob`  L253
+- `Job job2 = this.ride5HourLoadJob`  L257
+- `Job job3 = this.ride5ListJob`  L261
+- `Gloading.Holder holder = null`  L277
+- `Gloading.Holder holder2 = this.holder`  L294
+- `Gloading.Holder holder = this$0.holder`  L308
+- `DailyDetailActivity.Companion companion = DailyDetailActivity.INSTANCE`  L348
+- `BaseActivity activity = StorageSdcardItemFragment.this.activity`  L349
+- `Object objM3074constructorimpl`  L362
+- `String str = string2`  L369
+- `StorageSdcardItemFragment storageSdcardItemFragment = StorageSdcardItemFragment.this`  L370
+- `Result.Companion companion = Result.INSTANCE`  L372
+- `Result.Companion companion2 = Result.INSTANCE`  L375
+- `BaseActivity baseActivity = this.activity`  L397
+- `String string`  L424
+- `Object objM3074constructorimpl`  L425
+- `Result.Companion companion = Result.INSTANCE`  L435
+- `StorageSdcardItemFragment storageSdcardItemFragment = this`  L436
+- `Result.Companion companion2 = Result.INSTANCE`  L439
+- `List<VideoItem> list = items`  L455
+- `DailyDetailActivity.Companion companion = DailyDetailActivity.INSTANCE`  L457
+- `BaseActivity activity = this.activity`  L458
+- `Job job = this.ride5HourLoadJob`  L474
+- `Gloading.Holder holder = this.holder`  L555
+- `String string`  L565
+- `String str = string2 != null ? string2 : "<binary/metadata>"`  L578
+- `Job job = this.ride5ListJob`  L579
+- `Gloading.Holder holder = null`  L662
+- `Gloading.Holder holder2 = this.holder`  L664
+- `Gloading.Holder holder3 = this.holder`  L682
+- `Job job = this.ride5ListJob`  L692
+- `Job job = this.ride3ProLoadJob`  L881
+- `int i`  L960
+- `String string`  L961
+- `DefaultConstructorMarker defaultConstructorMarker = null`  L974
+- `String str = null`  L975
+- `String str2 = null`  L976
+- `String str5 = str == null ? "<binary/metadata>" : str`  L1006
+- `Object objM3074constructorimpl`  L1021
+- `Result.Companion companion = Result.INSTANCE`  L1023
+- `StorageSdcardItemFragment storageSdcardItemFragment = this`  L1024
+- `Result.Companion companion2 = Result.INSTANCE`  L1027
+- `MatchResult matchResultFind$default`  L1049
+- `MatchGroupCollection groups`  L1050
+- `MatchGroup matchGroup`  L1051
+- `String value`  L1052
+- `Date date`  L1053
+- `String string`  L1054
+- `int i = 1`  L1057
+- `Gloading.Holder holder = null`  L1058
+- `String str = null`  L1059
+- `String str2 = null`  L1060
+- `String str4 = str3`  L1062
+- `String str7 = str == null ? "<binary/metadata>" : str`  L1084
+- `Gloading.Holder holder2 = this.holder`  L1095
+- `Gloading.Holder holder3 = this.holder`  L1104
+
+方法（49）：
+- `SimpleDateFormat invoke()`  L112 @Override
+    - 体内字面量："yyyyMMddHH" · "HH" · "HH:mm:ss" · "HH:mm" · "yyyy-MM-dd HH:mm" · "(\\d{4}_\\d{2}_\\d{2}_\\d{6})"
+- `Ride5HourFilesLoader invoke()`  L128 @Override
+- `Ride5SessionPortProvider invoke()`  L137 @Override
+- `VerifiedDeviceFileCatalog invoke()`  L146 @Override
+- `void fragmentHide()`  L152 @Override
+- `SimpleDateFormat getFormat()`  L155
+- `SimpleDateFormat getFormat2()`  L159
+- `SimpleDateFormat getFormat3()`  L163
+- `SimpleDateFormat getFormat4()`  L167
+- `SimpleDateFormat getFormat5()`  L171
+- `SimpleDateFormat getFormat6()`  L175
+- `SimpleDateFormat getRide3ProTimeFormat()`  L179
+- `Regex getRegex()`  L183
+- `FragmentStorageListBinding getBinding()`  L187
+- `void setBinding(FragmentStorageListBinding fragmentStorageListBinding)`  L196
+    - 体内字面量："<set-?>"
+- `StorageListAdapter getMAdapter()`  L201
+- `void setMAdapter(StorageListAdapter storageListAdapter)`  L210
+    - 体内字面量："<set-?>"
+- `String getType()`  L215
+- `void setType(String str)`  L224
+    - 体内字面量："<set-?>"
+- `Ride5HourFilesLoader getRide5HourFilesLoader()`  L230
+- `Ride5SessionPortProvider getRide5SessionPortProvider()`  L235
+- `VerifiedDeviceFileCatalog getVerifiedDeviceFileCatalog()`  L240
+- `void onAttach(Context context)`  L245 @Override
+    - 体内字面量："context"
+- `void onDestroyView()`  L252 @Override
+- `View getLayoutRoot(LayoutInflater inflater, ViewGroup container)`  L269 @Override
+    - 体内字面量："inflater" · "inflate(...)" · "wrap(...)"
+- `void run()`  L284 @Override
+- `void onRefresh()`  L290 @Override
+- `void getLayoutRoot$lambda$0(StorageSdcardItemFragment this$0)`  L306
+    - 体内字面量："this$0"
+- `void getLayoutRoot$lambda$1(StorageSdcardItemFragment this$0)`  L318
+    - 体内字面量："this$0"
+- `void initFragment()`  L324 @Override
+    - 体内字面量："type"
+- `void onItemClick(int actionId, int position, VideoData videoData)`  L334 @Override
+    - 体内字面量："null cannot be cast to non-null type com.tuwinsmart.tuwin.presentation.ui.storage.adapter.VideoItem" · "photo"
+- `Object invoke(String path)`  L361 @Override
+- `int getSpanSize(int position)`  L388 @Override
+- `AuthorizedDeviceResource authorizeRide3ProThumbnail(int fileIndex)`  L423
+- `void openRide5HourDetailWithLoading(VideoItem videoItem)`  L450
+- `void lazyInitData()`  L554 @Override
+- `void loadDataWithRecordGatePolicy()`  L564
+- `void initData$default(StorageSdcardItemFragment storageSdcardItemFragment, boolean z, boolean z2, int i, Object obj)`  L651
+- `void initData(boolean showLoading, boolean forceRefresh)`  L661
+- `boolean isRide3ProTab()`  L779
+- `void loadRide3ProData$default(StorageSdcardItemFragment storageSdcardItemFragment, boolean z, int i, Object obj)`  L783
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.fragment.StorageSdcardItemFragment$loadRide3ProData$1" · "StorageSdcardItemFragment.kt" · "invokeSuspend"
+- `void loadRide3ProData(boolean forceRefresh)`  L880
+- `List<VideoData> buildRide3ProVideoData(List<StorageRide3ProRemoteFile> files)`  L959
+- `int compare(T t, T t2)`  L967 @Override
+- `Date parseRide3ProTime(String raw)`  L1020
+- `void refreshData$default(StorageSdcardItemFragment storageSdcardItemFragment, boolean z, int i, Object obj)`  L1036
+- `void refreshData(boolean showLoading)`  L1043
+- `void renderRide5FileList(String origin)`  L1048
+- `void fragmentShow()`  L1114 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/fragment/StorageSdcardItemFragment$Companion;" · "()V" · "ARG_SESSION_ID" · "RIDE3PRO_PAGE_SIZE" · "getInstance" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/fragment/StorageSdcardItemFragment;" · "type" · "sessionId" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageSdcardItemFragment$C28221`
+L705 · [class] static final C28221 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageSdcardItemFragment.java`
+注解：
+
+字段/常量（7）：
+- `String $sessionId`  L706
+- `Object L$0`  L707
+- `int label`  L708
+- `Ride5SessionPort port`  L728
+- `int i = this.label`  L730
+- `Gloading.Holder holder = null`  L731
+- `Gloading.Holder holder2 = StorageSdcardItemFragment.this.holder`  L767
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L717 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L722 @Override
+- `Object invokeSuspend(Object obj)`  L727 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageSdcardItemFragment$C28242`
+L407 · [class] C28242 · extends `FunctionReferenceImpl implements Function1<Integer, AuthorizedDeviceResource>` · implements `Function1<Integer, AuthorizedDeviceResource>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageSdcardItemFragment.java`
+注解：
+
+方法（2）：
+- `AuthorizedDeviceResource invoke(int i)`  L412
+- `AuthorizedDeviceResource invoke(Integer num)`  L417 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageSdcardItemFragment$C28261`
+L595 · [class] static final C28261 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageSdcardItemFragment.java`
+注解：
+
+字段/常量（5）：
+- `String $sessionId`  L596
+- `int label`  L597
+- `int i = this.label`  L618
+- `Gloading.Holder holder = null`  L619
+- `Gloading.Holder holder2 = StorageSdcardItemFragment.this.holder`  L639
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L606 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L611 @Override
+- `Object invokeSuspend(Object obj)`  L616 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageSdcardItemFragment$C28271`
+L794 · [class] static final C28271 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageSdcardItemFragment.java`
+注解：
+
+字段/常量（12）：
+- `boolean $forceRefresh`  L795
+- `int label`  L796
+- `Object objM3074constructorimpl`  L816
+- `int i = this.label`  L818
+- `Gloading.Holder holder = null`  L819
+- `Result.Companion companion = Result.INSTANCE`  L834
+- `Result.Companion companion2 = Result.INSTANCE`  L839
+- `StorageSdcardItemFragment storageSdcardItemFragment = StorageSdcardItemFragment.this`  L843
+- `Gloading.Holder holder2 = storageSdcardItemFragment.holder`  L850
+- `Gloading.Holder holder3 = storageSdcardItemFragment.holder`  L857
+- `StorageSdcardItemFragment storageSdcardItemFragment2 = StorageSdcardItemFragment.this`  L865
+- `Gloading.Holder holder4 = storageSdcardItemFragment2.holder`  L868
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L805 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L810 @Override
+- `Object invokeSuspend(Object obj)`  L815 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageSdcardItemFragment$C28281`
+L488 · [class] static final C28281 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageSdcardItemFragment.java`
+注解：
+
+字段/常量（9）：
+- `String $deviceKey`  L489
+- `List<VideoItem> $hourItems`  L490
+- `VideoItem $videoItem`  L491
+- `int label`  L492
+- `List<Ride5HourRecording> listEmptyList`  L514
+- `int i = this.label`  L516
+- `List<Ride5HourRecording> list = listEmptyList`  L539
+- `Ride5HourDetailActivity.Companion companion = Ride5HourDetailActivity.INSTANCE`  L545
+- `BaseActivity baseActivity = StorageSdcardItemFragment.this.activity`  L546
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L503 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L508 @Override
+- `Object invokeSuspend(Object obj)`  L513 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageSdcardItemFragment$Companion`
+L1124 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageSdcardItemFragment.java`
+注解：
+
+字段/常量（1）：
+- `String str = sessionId`  L1144
+
+方法（4）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L1125
+- `private Companion()`  L1129
+- `StorageSdcardItemFragment getInstance$default(Companion companion, String str, String str2, int i, Object obj)`  L1132
+- `StorageSdcardItemFragment getInstance(String type, String sessionId)`  L1139
+    - 体内字面量："type" · "type"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageSdcardItemFragment$loadRide3ProData$1$result$1`
+L29 · [class] final StorageSdcardItemFragment$loadRide3ProData$1$result$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super StorageSdcardItemFragment.Ride3ProFileLoadResult>, Object>` · implements `Function2<CoroutineScope, Continuation<? super StorageSdcardItemFragment.Ride3ProFileLoadResult>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageSdcardItemFragment$loadRide3ProData$1$result$1.java`
+注解：
+
+字段/常量（19）：
+- `boolean $forceRefresh`  L30
+- `Object L$0`  L31
+- `int label`  L32
+- `StorageSdcardItemFragment this$0`  L33
+- `String str`  L59
+- `Object objM2859setPlaybackModeIoAF18A`  L60
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl`  L61
+- `Object objM2852getPlaybackFilesgIAlus`  L62
+- `String str2`  L63
+- `ArrayList arrayList`  L64
+- `Iterator<T> it`  L65
+- `int i = this.label`  L67
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl2 = null`  L68
+- `boolean z = this.$forceRefresh`  L80
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl3 = this.this$0.ride3ProPlaybackRepository`  L81
+- `Ride3ProPlaybackRepositoryImpl ride3ProPlaybackRepositoryImpl4 = this.this$0.ride3ProPlaybackRepository`  L87
+- `List<StorageRide3ProRemoteFile> list = listFilterByTab`  L115
+- `List<StorageRide3ProRemoteFile> list2 = listFilterByTab2`  L139
+- `List<StorageRide3ProRemoteFile> list3 = listFilterByTab3`  L164
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L43 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super StorageSdcardItemFragment.Ride3ProFileLoadResult> continuation)`  L48 @Override
+- `Object invokeSuspend(Object obj)`  L58 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageSdcardItemFragment$Ride3ProFileLoadResult`
+L893 · [class] static final Ride3ProFileLoadResult · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageSdcardItemFragment.java`
+注解：
+
+字段/常量（2）：
+- `List<StorageRide3ProRemoteFile> files`  L894
+- `List<VideoData> items`  L895
+
+方法（10）：
+- `Ride3ProFileLoadResult copy$default(Ride3ProFileLoadResult ride3ProFileLoadResult, List list, List list2, int i, Object obj)`  L898
+- `List<VideoData> component1()`  L908
+- `List<StorageRide3ProRemoteFile> component2()`  L912
+- `Ride3ProFileLoadResult copy(List<? extends VideoData> items, List<StorageRide3ProRemoteFile> files)`  L916
+    - 体内字面量："items" · "files"
+- `boolean equals(Object other)`  L922
+- `int hashCode()`  L933
+- `String toString()`  L937
+    - 体内字面量："Ride3ProFileLoadResult(items=" · ", files=" · ")"
+- `public Ride3ProFileLoadResult(List<? extends VideoData> items, List<StorageRide3ProRemoteFile> files)`  L942
+    - 体内字面量："items" · "files"
+- `List<VideoData> getItems()`  L949
+- `List<StorageRide3ProRemoteFile> getFiles()`  L953
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.fragment.StorageSdcardItemFragmentKt`
+L11 · [class] public final StorageSdcardItemFragmentKt · `com/tuwinsmart/tuwin/presentation/p010ui/storage/fragment/StorageSdcardItemFragmentKt.java`
+注解：
+
+方法（2）：
+- `boolean shouldSetRide3ProPlaybackModeOnEntry(boolean z, boolean z2)`  L12
+- `boolean shouldUseLegacyRecordGate(String tabType)`  L16
+    - 体内字面量："tabType"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.C2829x34d83e38`
+L20 · [class] final C2829x34d83e38 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Bitmap>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Bitmap>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/C2829x34d83e38.java`
+注解：
+
+字段/常量（3）：
+- `String $cacheKey`  L21
+- `int label`  L22
+- `M3FileAdapter.FileViewHolder this$0`  L23
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L33 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Bitmap> continuation)`  L38 @Override
+- `Object invokeSuspend(Object obj)`  L43 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3FileAdapter`
+L51 · [class] public final M3FileAdapter · extends `RecyclerView.Adapter<RecyclerView.ViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3FileAdapter.java`
+注解：
+
+字段/常量（19）：
+- `int VIEW_TYPE_DATE_HEADER = 0`  L52
+- `int VIEW_TYPE_FILE_ITEM = 1`  L53
+- `M3ThumbnailCache diskThumbnailCache`  L54
+- `boolean isSelectMode`  L55
+- `List<? extends ListItem> items`  L56
+- `LifecycleCoroutineScope lifecycleScope`  L57
+- `Mutex loadingMutex`  L58
+- `Function1<M3FileItem, Unit> onItemClick`  L59
+- `Function0<Unit> onSelectionChanged`  L60
+- `M3DeviceRepository repository`  L61
+- `Set<M3FileItem> selectedItems`  L62
+- `Map<String, Bitmap> thumbnailCache`  L63
+- `List<M3FileItem> list = files`  L87
+- `List<M3FileItem> list = dateGroupFiles`  L269
+- `List<M3FileItem> list = dateGroupFiles`  L286
+- `Function0<Unit> function0 = this.onSelectionChanged`  L303
+- `List<? extends ListItem> list = this.items`  L340
+- `int i = 0`  L341
+- `Function0<Unit> function0 = this.onSelectionChanged`  L360
+
+方法（22）：
+- `public M3FileAdapter(Context context, M3DeviceRepository repository, LifecycleCoroutineScope lifecycleScope, Function1<? super M3FileItem, Unit> onItemClick)`  L66
+    - 体内字面量："context" · "repository" · "lifecycleScope" · "onItemClick" · "getApplicationContext(...)"
+- `void submitList(List<M3FileItem> files)`  L83
+    - 体内字面量："files" · "M3FileAdapter: submitList called with " · " files"
+- `int compare(T t, T t2)`  L101 @Override
+    - 体内字面量："M3FileAdapter: Generated " · " items (headers + files)"
+- `int getItemViewType(int position)`  L122 @Override
+- `RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L134 @Override
+    - 体内字面量："parent" · "inflate(...)" · "inflate(...)"
+- `void onBindViewHolder(RecyclerView.ViewHolder holder, final int position)`  L198 @Override
+    - 体内字面量："holder"
+- `void onClick(View view)`  L206 @Override
+- `void onBindViewHolder$lambda$4(M3FileAdapter this$0, int i, View view)`  L218
+    - 体内字面量："this$0"
+- `boolean isSelected(M3FileItem file)`  L224
+- `boolean getIsSelectMode()`  L230
+- `int getItemCount()`  L235 @Override
+- `void setSelectMode(boolean isSelectMode)`  L239
+- `void clearSelection()`  L247
+- `void selectAll(boolean selectAll)`  L252
+- `boolean isDateGroupAllSelected(int headerPosition)`  L264
+- `void toggleDateGroupSelection(int headerPosition)`  L281
+- `List<M3FileItem> getDateGroupFiles(int headerPosition)`  L310
+- `List<M3FileItem> getSelectedItems()`  L331
+- `int getSelectedCount()`  L335
+- `int getFileCount()`  L339
+- `void toggleSelection(M3FileItem file)`  L354
+- `void setOnSelectionChangedListener(Function0<Unit> listener)`  L367
+    - 体内字面量："listener" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/m3/M3FileAdapter$DateHeaderViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemDateHeaderBinding;" · "(Lcom/tuwinsmart/tuwin/databinding/ItemDateHeaderBinding;)V" · "getBinding" · "()Lcom/tuwinsmart/tuwin/databinding/ItemDateHeaderBinding;" · "bind" · "isSelectMode" · "isGroupAllSelected" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/m3/M3FileAdapter$FileViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemM3StorageFileBinding;" · "adapter" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/m3/M3FileAdapter;" · "onItemClick" · "Lkotlin/Function1;" · "Lcom/tuwinsmart/tuwin/data/source/remote/dto/m3/M3FileItem;" · "onToggleSelection" · "isSelected" · "isInSelectMode" · "Lkotlin/Function0;" · "(Lcom/tuwinsmart/tuwin/databinding/ItemM3StorageFileBinding;Lcom/tuwinsmart/tuwin/presentation/ui/storage/m3/M3FileAdapter;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)V" · "currentFile" · "displayJob" · "Lkotlinx/coroutines/Job;" · "bind" · "file" · "loadThumbnailSerial" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/m3/M3FileAdapter$ListItem;" · "()V" · "DateHeader" · "FileItem" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/m3/M3FileAdapter$ListItem$DateHeader;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/m3/M3FileAdapter$ListItem$FileItem;" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3FileAdapter$C28301`
+L149 · [class] C28301 · extends `FunctionReferenceImpl implements Function1<M3FileItem, Unit>` · implements `Function1<M3FileItem, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3FileAdapter.java`
+注解：
+
+方法（2）：
+- `Unit invoke(M3FileItem m3FileItem)`  L155 @Override
+- `void invoke2(M3FileItem p0)`  L161
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3FileAdapter$C28312`
+L170 · [class] C28312 · extends `FunctionReferenceImpl implements Function1<M3FileItem, Boolean>` · implements `Function1<M3FileItem, Boolean>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3FileAdapter.java`
+注解：
+
+方法（1）：
+- `Boolean invoke(M3FileItem p0)`  L176 @Override
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3FileAdapter$C28323`
+L185 · [class] C28323 · extends `FunctionReferenceImpl implements Function0<Boolean>` · implements `Function0<Boolean>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3FileAdapter.java`
+注解：
+
+方法（1）：
+- `Boolean invoke()`  L192 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3FileAdapter$DateHeaderViewHolder`
+L374 · [class] public static final DateHeaderViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3FileAdapter.java`
+注解：
+
+字段/常量（3）：
+- `ItemDateHeaderBinding binding`  L375
+- `String string`  L389
+- `BLTextView bLTextView = this.binding.btnSelectAll`  L394
+
+方法（3）：
+- `ItemDateHeaderBinding getBinding()`  L377
+- `public DateHeaderViewHolder(ItemDateHeaderBinding binding)`  L382
+    - 体内字面量："binding"
+- `void bind(String date, boolean isSelectMode, boolean isGroupAllSelected)`  L388
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3FileAdapter$FileViewHolder`
+L412 · [class] public static final FileViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3FileAdapter.java`
+注解：
+
+字段/常量（9）：
+- `M3FileAdapter adapter`  L413
+- `ItemM3StorageFileBinding binding`  L414
+- `M3FileItem currentFile`  L415
+- `Job displayJob`  L416
+- `Function0<Boolean> isInSelectMode`  L417
+- `Function1<M3FileItem, Boolean> isSelected`  L418
+- `Function1<M3FileItem, Unit> onItemClick`  L419
+- `Function1<M3FileItem, Unit> onToggleSelection`  L420
+- `Job job = this.displayJob`  L443
+
+方法（5）：
+- `public FileViewHolder(ItemM3StorageFileBinding binding, M3FileAdapter adapter, Function1<? super M3FileItem, Unit> onItemClick, Function1<? super M3FileItem, Unit> onToggleSelection, Function1<? super M3FileItem, Boolean> isSelected, Function0<Boolean> isInSelectMode)`  L424
+    - 体内字面量："binding" · "adapter" · "onItemClick" · "onToggleSelection" · "isSelected" · "isInSelectMode"
+- `void bind(final M3FileItem file)`  L440
+    - 体内字面量："file" · "M3FileAdapter: Binding file " · ", type="
+- `void onClick(View view)`  L465 @Override
+- `void bind$lambda$0(FileViewHolder this$0, M3FileItem file, View view)`  L473
+    - 体内字面量："this$0" · "$file"
+- `void loadThumbnailSerial(M3FileItem file)`  L483
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3FileAdapter$FileViewHolder$loadThumbnailSerial$1`
+L28 · [class] final M3FileAdapter$FileViewHolder$loadThumbnailSerial$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3FileAdapter$FileViewHolder$loadThumbnailSerial$1.java`
+注解：
+
+字段/常量（32）：
+- `M3FileItem $file`  L29
+- `Object L$0`  L30
+- `Object L$1`  L31
+- `Object L$2`  L32
+- `int label`  L33
+- `M3FileAdapter.FileViewHolder this$0`  L34
+- `Object objWithContext`  L66
+- `M3FileAdapter.FileViewHolder fileViewHolder`  L67
+- `Mutex mutex`  L68
+- `M3FileItem m3FileItem`  L69
+- `Mutex mutex2`  L70
+- `Bitmap bitmap`  L71
+- `Object objMo2792getThumbnailgIAlus`  L72
+- `M3FileAdapter.FileViewHolder fileViewHolder2`  L73
+- `Object value`  L74
+- `M3FileItem m3FileItem2`  L75
+- `Throwable thM3077exceptionOrNullimpl`  L76
+- `Bitmap bitmap2`  L77
+- `int i = this.label`  L79
+- `Unit unit = Unit.INSTANCE`  L122
+- `Unit unit2 = Unit.INSTANCE`  L143
+- `Unit unit3 = Unit.INSTANCE`  L149
+- `M3DeviceRepository m3DeviceRepository = fileViewHolder.adapter.repository`  L154
+- `M3FileItem m3FileItem3 = m3FileItem`  L166
+- `Unit unit4 = Unit.INSTANCE`  L183
+- `Mutex mutex3 = this.this$0.adapter.loadingMutex`  L205
+- `M3FileItem m3FileItem4 = this.$file`  L207
+- `Unit unit5 = Unit.INSTANCE`  L223
+- `Unit unit6 = Unit.INSTANCE`  L229
+- `M3DeviceRepository m3DeviceRepository2 = fileViewHolder.adapter.repository`  L234
+- `M3FileItem m3FileItem5 = m3FileItem`  L246
+- `Unit unit7 = Unit.INSTANCE`  L263
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L44 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L49 @Override
+- `Object invokeSuspend(Object obj)`  L65 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3FileAdapter$ListItem`
+L490 · [class] public static abstract ListItem · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3FileAdapter.java`
+注解：
+
+方法（2）：
+- ` ListItem(DefaultConstructorMarker defaultConstructorMarker)`  L491
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/m3/M3FileAdapter$ListItem$DateHeader;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/m3/M3FileAdapter$ListItem;" · "(Ljava/lang/String;)V" · "getDate" · "()Ljava/lang/String;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+- `private ListItem()`  L544
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/m3/M3FileAdapter$ListItem$FileItem;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/m3/M3FileAdapter$ListItem;" · "file" · "Lcom/tuwinsmart/tuwin/data/source/remote/dto/m3/M3FileItem;" · "(Lcom/tuwinsmart/tuwin/data/source/remote/dto/m3/M3FileItem;)V" · "getFile" · "()Lcom/tuwinsmart/tuwin/data/source/remote/dto/m3/M3FileItem;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3FileAdapter$ListItem$DateHeader`
+L497 · [class] public static final DateHeader · extends `ListItem` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3FileAdapter.java`
+注解：
+
+字段/常量（1）：
+- `String date`  L498
+
+方法（8）：
+- `DateHeader copy$default(DateHeader dateHeader, String str, int i, Object obj)`  L500
+- `String getDate()`  L508
+- `DateHeader copy(String date)`  L512
+    - 体内字面量："date"
+- `boolean equals(Object other)`  L517
+- `int hashCode()`  L524
+- `String toString()`  L528
+    - 体内字面量："DateHeader(date=" · ")"
+- `public DateHeader(String date)`  L533
+    - 体内字面量："date"
+- `String getDate()`  L539
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3FileAdapter$ListItem$FileItem`
+L549 · [class] public static final FileItem · extends `ListItem` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3FileAdapter.java`
+注解：
+
+字段/常量（1）：
+- `M3FileItem file`  L550
+
+方法（8）：
+- `FileItem copy$default(FileItem fileItem, M3FileItem m3FileItem, int i, Object obj)`  L552
+- `M3FileItem getFile()`  L560
+- `FileItem copy(M3FileItem file)`  L564
+    - 体内字面量："file"
+- `boolean equals(Object other)`  L569
+- `int hashCode()`  L576
+- `String toString()`  L580
+    - 体内字面量："FileItem(file=" · ")"
+- `public FileItem(M3FileItem file)`  L585
+    - 体内字面量："file"
+- `M3FileItem getFile()`  L591
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageActivity`
+L94 · [class] public final M3StorageActivity · extends `BaseActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageActivity.java`
+注解：
+
+字段/常量（134）：
+- `String EXTRA_SESSION_ID = "device_session_id"`  L95
+- `long MIN_STAY_DURATION_MS = 2000`  L96
+- `ActivityM3StorageBinding binding`  L97
+- `Handler cooldownHandler`  L98
+- `Runnable cooldownRunnable`  L99
+- `List<M3FolderInfo> currentFolders`  L100
+- `long enterActivityTimestamp`  L101
+- `Lazy fileCatalog`  L104
+- `boolean isPendingBack`  L105
+- `Lazy m3DeviceRepository`  L108
+- `List<M3StorageFileFragment> mFragments`  L109
+- `Lazy repositoryFactory`  L112
+- `Lazy viewModel`  L115
+- `M3StorageActivity m3StorageActivity = this`  L119
+- `LazyThreadSafetyMode lazyThreadSafetyMode = LazyThreadSafetyMode.NONE`  L130
+- `Qualifier qualifier = null`  L131
+- `Object[] objArr = 0 == true ? 1 : 0`  L132
+- `CreationExtras defaultViewModelCreationExtras`  L138
+- `ComponentActivity componentActivity = m3StorageActivity`  L139
+- `Qualifier qualifier2 = qualifier`  L140
+- `Function0 function1 = objArr`  L141
+- `Function0 function2 = function0`  L142
+- `M3StorageActivity m3StorageActivity2 = this`  L150
+- `LazyThreadSafetyMode lazyThreadSafetyMode2 = LazyThreadSafetyMode.SYNCHRONIZED`  L151
+- `Object[] objArr2 = 0 == true ? 1 : 0`  L152
+- `Object[] objArr3 = 0 == true ? 1 : 0`  L153
+- `ComponentCallbacks componentCallbacks = m3StorageActivity2`  L158
+- `LazyThreadSafetyMode lazyThreadSafetyMode3 = LazyThreadSafetyMode.SYNCHRONIZED`  L173
+- `Object[] objArr4 = 0 == true ? 1 : 0`  L174
+- `Object[] objArr5 = 0 == true ? 1 : 0`  L175
+- `ComponentCallbacks componentCallbacks = m3StorageActivity2`  L180
+- `FileSelectionBottomBarInsets fileSelectionBottomBarInsets = FileSelectionBottomBarInsets.INSTANCE`  L239
+- `ActivityM3StorageBinding activityM3StorageBinding = this.binding`  L240
+- `ActivityM3StorageBinding activityM3StorageBinding2 = null`  L241
+- `ConstraintLayout constraintLayout = root`  L248
+- `ActivityM3StorageBinding activityM3StorageBinding3 = this.binding`  L249
+- `LinearLayout llBottomActions = activityM3StorageBinding3.llBottomActions`  L254
+- `ActivityM3StorageBinding activityM3StorageBinding4 = this.binding`  L257
+- `Runnable runnable = this.cooldownRunnable`  L307
+- `long j = 2000 - jCurrentTimeMillis`  L326
+- `Handler handler = this.cooldownHandler`  L337
+- `ActivityM3StorageBinding activityM3StorageBinding = this.binding`  L354
+- `ActivityM3StorageBinding activityM3StorageBinding2 = null`  L355
+- `ImageView btnBack = activityM3StorageBinding.btnBack`  L360
+- `ActivityM3StorageBinding activityM3StorageBinding3 = this.binding`  L368
+- `ImageView btnDownloading = activityM3StorageBinding3.btnDownloading`  L373
+- `ActivityM3StorageBinding activityM3StorageBinding4 = this.binding`  L381
+- `ImageView btnSelectAll = activityM3StorageBinding4.btnSelectAll`  L386
+- `ActivityM3StorageBinding activityM3StorageBinding5 = this.binding`  L394
+- `ImageView btnCloseSelect = activityM3StorageBinding5.btnCloseSelect`  L399
+- `ActivityM3StorageBinding activityM3StorageBinding6 = this.binding`  L407
+- `ActivityM3StorageBinding activityM3StorageBinding7 = this.binding`  L418
+- `LinearLayout btnDownload = activityM3StorageBinding7.btnDownload`  L423
+- `ActivityM3StorageBinding activityM3StorageBinding8 = this.binding`  L431
+- `LinearLayout btnDelete = activityM3StorageBinding2.btnDelete`  L437
+- `ActivityM3StorageBinding activityM3StorageBinding = this$0.binding`  L476
+- `List<M3FileItem> listEmptyList`  L497
+- `List<M3FileItem> listEmptyList`  L510
+- `ActivityM3StorageBinding activityM3StorageBinding = this.binding`  L522
+- `ActivityM3StorageBinding activityM3StorageBinding2 = null`  L523
+- `ActivityM3StorageBinding activityM3StorageBinding3 = this.binding`  L529
+- `ActivityM3StorageBinding activityM3StorageBinding4 = this.binding`  L535
+- `ActivityM3StorageBinding activityM3StorageBinding5 = this.binding`  L541
+- `ActivityM3StorageBinding activityM3StorageBinding6 = this.binding`  L547
+- `String string`  L568
+- `ActivityM3StorageBinding activityM3StorageBinding7 = M3StorageActivity.this.binding`  L569
+- `ActivityM3StorageBinding activityM3StorageBinding8 = null`  L570
+- `ActivityM3StorageBinding activityM3StorageBinding9 = M3StorageActivity.this.binding`  L576
+- `TextView textView = activityM3StorageBinding9.tvSelectAll`  L581
+- `ActivityM3StorageBinding activityM3StorageBinding10 = M3StorageActivity.this.binding`  L588
+- `boolean z2 = i > 0`  L594
+- `ActivityM3StorageBinding activityM3StorageBinding11 = M3StorageActivity.this.binding`  L595
+- `ActivityM3StorageBinding activityM3StorageBinding12 = M3StorageActivity.this.binding`  L601
+- `ActivityM3StorageBinding activityM3StorageBinding13 = M3StorageActivity.this.binding`  L607
+- `ActivityM3StorageBinding activityM3StorageBinding14 = M3StorageActivity.this.binding`  L613
+- `ActivityM3StorageBinding activityM3StorageBinding15 = M3StorageActivity.this.binding`  L619
+- `ActivityM3StorageBinding activityM3StorageBinding16 = M3StorageActivity.this.binding`  L625
+- `ActivityM3StorageBinding activityM3StorageBinding = this.binding`  L639
+- `ActivityM3StorageBinding activityM3StorageBinding2 = this.binding`  L645
+- `ActivityM3StorageBinding activityM3StorageBinding3 = this.binding`  L651
+- `ActivityM3StorageBinding activityM3StorageBinding4 = this.binding`  L657
+- `ActivityM3StorageBinding activityM3StorageBinding5 = this.binding`  L663
+- `ActivityM3StorageBinding activityM3StorageBinding = this.binding`  L676
+- `ActivityM3StorageBinding activityM3StorageBinding2 = this.binding`  L682
+- `Object objM3074constructorimpl`  L721
+- `Object objM3074constructorimpl2`  L722
+- `DeviceType deviceType = DeviceType.M3`  L723
+- `Result.Companion companion = Result.INSTANCE`  L725
+- `M3StorageActivity m3StorageActivity = this`  L726
+- `List<M3FileItem> list = selectedItems`  L729
+- `Result.Companion companion2 = Result.INSTANCE`  L737
+- `ArrayList arrayList3 = arrayList2`  L754
+- `Result.Companion companion3 = Result.INSTANCE`  L756
+- `M3StorageActivity m3StorageActivity2 = this`  L757
+- `Result.Companion companion4 = Result.INSTANCE`  L760
+- `M3StorageActivity m3StorageActivity3 = this`  L769
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L777
+- `List<M3FileItem> listEmptyList`  L805
+- `List<M3FileItem> list = listEmptyList`  L813
+- `ActivityM3StorageBinding activityM3StorageBinding = null`  L874
+- `ActivityM3StorageBinding activityM3StorageBinding2 = this.binding`  L876
+- `ActivityM3StorageBinding activityM3StorageBinding3 = this.binding`  L882
+- `ActivityM3StorageBinding activityM3StorageBinding4 = this.binding`  L891
+- `ActivityM3StorageBinding activityM3StorageBinding = this.binding`  L974
+- `String folder`  L984
+- `ArrayList arrayList2 = arrayList`  L991
+- `ArrayList<M3FolderInfo> arrayList3 = arrayList2`  L992
+- `ActivityM3StorageBinding activityM3StorageBinding = this.binding`  L1004
+- `ActivityM3StorageBinding activityM3StorageBinding2 = null`  L1005
+- `ActivityM3StorageBinding activityM3StorageBinding3 = this.binding`  L1012
+- `ActivityM3StorageBinding activityM3StorageBinding4 = this.binding`  L1030
+- `SlidingTabLayout slidingTabLayout = activityM3StorageBinding4.tabLayout`  L1035
+- `ActivityM3StorageBinding activityM3StorageBinding5 = this.binding`  L1036
+- `ActivityM3StorageBinding activityM3StorageBinding6 = this.binding`  L1042
+- `ActivityM3StorageBinding activityM3StorageBinding7 = this.binding`  L1049
+- `M3StorageActivity m3StorageActivity = this`  L1111
+- `ActivityM3StorageBinding activityM3StorageBinding = null`  L1313
+- `ActivityM3StorageBinding activityM3StorageBinding2 = this.binding`  L1315
+- `ActivityM3StorageBinding activityM3StorageBinding3 = this.binding`  L1326
+- `ActivityM3StorageBinding activityM3StorageBinding4 = this.binding`  L1336
+- `Object next`  L1348
+- `ActivityM3StorageBinding activityM3StorageBinding = this.binding`  L1352
+- `ActivityM3StorageBinding activityM3StorageBinding2 = null`  L1353
+- `ActivityM3StorageBinding activityM3StorageBinding3 = this.binding`  L1359
+- `TextView textView = activityM3StorageBinding3.tvEmptyState`  L1364
+- `ActivityM3StorageBinding activityM3StorageBinding4 = this.binding`  L1369
+- `ActivityM3StorageBinding activityM3StorageBinding5 = this.binding`  L1375
+- `ActivityM3StorageBinding activityM3StorageBinding6 = this.binding`  L1391
+- `ActivityM3StorageBinding activityM3StorageBinding7 = this.binding`  L1397
+- `ActivityM3StorageBinding activityM3StorageBinding = this.binding`  L1417
+- `ActivityM3StorageBinding activityM3StorageBinding2 = null`  L1418
+- `ActivityM3StorageBinding activityM3StorageBinding3 = this.binding`  L1425
+- `ActivityM3StorageBinding activityM3StorageBinding = null`  L1439
+- `ActivityM3StorageBinding activityM3StorageBinding2 = this.binding`  L1441
+
+方法（62）：
+- `public M3StorageActivity()`  L118
+- `ParametersHolder invoke()`  L126 @Override
+- `M3StorageViewModel invoke()`  L137 @Override
+- `M3SessionRepositoryFactory invoke()`  L157 @Override
+- `M3DeviceRepository invoke()`  L169 @Override
+- `VerifiedDeviceFileCatalog invoke()`  L179 @Override
+- `String getSessionId()`  L190
+    - 体内字面量："device_session_id"
+- `M3StorageViewModel getViewModel()`  L196
+- `M3SessionRepositoryFactory getRepositoryFactory()`  L201
+- `M3DeviceRepository getM3DeviceRepository()`  L206
+- `VerifiedDeviceFileCatalog getFileCatalog()`  L210
+- `View getContentRoot()`  L215 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L229 @Override
+- `void setupWindowInsets()`  L238
+- `WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat)`  L265 @Override
+- `WindowInsetsCompat setupWindowInsets$lambda$0(View v, WindowInsetsCompat insets)`  L272
+    - 体内字面量："v" · "insets" · "getInsets(...)"
+- `void onResume()`  L282 @Override
+- `void onPause()`  L294 @Override
+- `void onDestroy()`  L300 @Override
+- `void onBackPressed()`  L319 @Override
+    - 体内字面量："Back press ignored: back operation already pending"
+- `void run()`  L332 @Override
+- `void onBackPressed$lambda$2(M3StorageActivity this$0)`  L346
+    - 体内字面量："this$0"
+- `void setupToolbarButtons()`  L353
+- `void onClick(View view)`  L364 @Override
+- `void onClick(View view)`  L377 @Override
+- `void onClick(View view)`  L390 @Override
+- `void onClick(View view)`  L403 @Override
+- `void onClick(View view)`  L414 @Override
+- `void onClick(View view)`  L427 @Override
+- `void onClick(View view)`  L441 @Override
+- `void setupToolbarButtons$lambda$3(M3StorageActivity this$0, View view)`  L448
+    - 体内字面量："this$0"
+- `void setupToolbarButtons$lambda$4(M3StorageActivity this$0, View view)`  L454
+    - 体内字面量："this$0"
+- `void setupToolbarButtons$lambda$5(M3StorageActivity this$0, View view)`  L460
+    - 体内字面量："this$0"
+- `void setupToolbarButtons$lambda$6(M3StorageActivity this$0, View view)`  L468
+    - 体内字面量："this$0"
+- `void setupToolbarButtons$lambda$7(M3StorageActivity this$0, View view)`  L474
+    - 体内字面量："this$0"
+- `void setupToolbarButtons$lambda$8(M3StorageActivity this$0, View view)`  L496
+- `void setupToolbarButtons$lambda$9(M3StorageActivity this$0, View view)`  L509
+- `void enterSelectMode()`  L521
+- `Unit invoke(Integer num, Boolean bool)`  L562 @Override
+- `void invoke(int i, boolean z)`  L567
+- `void exitSelectMode()`  L638
+- `M3StorageFileFragment getCurrentFragment()`  L675
+- `void downloadSelectedFiles(final List<M3FileItem> selectedItems)`  L697
+- `void onGranted(List<String> permissions, boolean all)`  L701 @Override
+- `void onDenied(List<String> permissions, boolean never)`  L706 @Override
+- `void enqueueSelectedFilesDownload(List<M3FileItem> selectedItems)`  L720
+- `void showDeleteConfirmDialog(int count)`  L776
+- `Unit invoke()`  L791 @Override
+- `void invoke2()`  L797
+- `void deleteSelectedFiles()`  L804
+- `void updateDownloadBadge()`  L872
+- `void onTaskDownloadFinish(TaskDownloadFinishEvent event)`  L901 @Subscribe(threadMode = ThreadMode.MAIN)
+    - 体内字面量："event" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.m3.M3StorageActivity$observeFolderTabs$1" · "M3StorageActivity.kt" · "invokeSuspend"
+- `void observeFolderTabs()`  L967
+- `void clearTabs()`  L972
+- `void setupDynamicTabs(List<M3FolderInfo> folders)`  L983
+- `Fragment getItem(int position)`  L1019 @Override
+- `int getCount()`  L1026 @Override
+- `void observeSDCardInfo()`  L1110
+- `void updateSdCardStatusUi()`  L1310
+- `void refreshContentState()`  L1347
+- `void updateStorageProgress(String storageInfo)`  L1407
+    - 体内字面量："/" · "G" · "G"
+- `void updateStorageProgressTint(boolean isLow)`  L1438
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageActivity$C28331`
+L826 · [class] static final C28331 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageActivity.java`
+注解：
+
+字段/常量（6）：
+- `List<String> $fileNames`  L827
+- `Object L$0`  L828
+- `Object L$1`  L829
+- `Object L$2`  L830
+- `int label`  L831
+- `M3StorageActivity this$0`  L832
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L842 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L847 @Override
+- `java.lang.Object invokeSuspend(java.lang.Object r9)`  L863 @Override
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageActivity.C28331.invokeSuspend(java.lang.Object):java.lang.Object"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageActivity$C28361`
+L910 · [class] static final C28361 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageActivity.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L911
+- `int i = this.label`  L930
+- `M3StorageActivity m3StorageActivity = M3StorageActivity.this`  L934
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L918 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L923 @Override
+- `Object invokeSuspend(Object obj)`  L928 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L938 @Override
+- `Object emit(List<M3FolderInfo> list, Continuation<? super Unit> continuation)`  L942
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageActivity$C28371`
+L1063 · [class] static final C28371 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L1064
+- `int i = this.label`  L1083
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1071 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1076 @Override
+- `Object invokeSuspend(Object obj)`  L1081 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L1089 @Override
+- `Object emit(String str, Continuation<? super Unit> continuation)`  L1093
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageActivity$C28382`
+L1122 · [class] static final C28382 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageActivity.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L1123
+- `int i = this.label`  L1142
+- `M3StorageActivity m3StorageActivity = M3StorageActivity.this`  L1146
+- `ActivityM3StorageBinding activityM3StorageBinding = m3StorageActivity.binding`  L1155
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1130 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1135 @Override
+- `Object invokeSuspend(Object obj)`  L1140 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L1150 @Override
+- `Object emit(String str, Continuation<? super Unit> continuation)`  L1154
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageActivity$C28393`
+L1185 · [class] static final C28393 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageActivity.java`
+注解：
+
+字段/常量（7）：
+- `int label`  L1186
+- `int i = this.label`  L1205
+- `M3StorageActivity m3StorageActivity = M3StorageActivity.this`  L1209
+- `ActivityM3StorageBinding activityM3StorageBinding = m3StorageActivity.binding`  L1219
+- `ActivityM3StorageBinding activityM3StorageBinding2 = null`  L1220
+- `ActivityM3StorageBinding activityM3StorageBinding3 = m3StorageActivity.binding`  L1227
+- `M3StorageActivity m3StorageActivity2 = m3StorageActivity`  L1236
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1193 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1198 @Override
+- `Object invokeSuspend(Object obj)`  L1203 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L1213 @Override
+- `Object emit(String str, Continuation<? super Unit> continuation)`  L1217
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageActivity$C28404`
+L1260 · [class] static final C28404 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageActivity.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L1261
+- `int i = this.label`  L1280
+- `M3StorageActivity m3StorageActivity = M3StorageActivity.this`  L1284
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1268 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1273 @Override
+- `Object invokeSuspend(Object obj)`  L1278 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L1288 @Override
+- `Object emit(boolean z, Continuation<? super Unit> continuation)`  L1292
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageFileFragment`
+L66 · [class] public final M3StorageFileFragment · extends `Fragment` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageFileFragment.java`
+注解：
+
+字段/常量（45）：
+- `String ARG_FOLDER = "folder"`  L67
+- `FragmentM3StorageListBinding _binding`  L71
+- `M3FileAdapter adapter`  L72
+- `String folder`  L73
+- `boolean isSelectMode`  L74
+- `List<M3FileItem> latestFiles`  L75
+- `String latestSdError`  L76
+- `Lazy repository`  L79
+- `Lazy repositoryFactory`  L82
+- `Function2<? super Integer, ? super Boolean, Unit> selectModeCallback`  L83
+- `ActivityResultLauncher<Intent> videoPlayLauncher`  L84
+- `Lazy viewModel`  L87
+- `M3StorageFileFragment m3StorageFileFragment = this`  L91
+- `Qualifier qualifier = null`  L99
+- `Function0 function1 = null`  L100
+- `Function0 function2 = null`  L101
+- `CreationExtras defaultViewModelCreationExtras`  L107
+- `CreationExtras creationExtras`  L108
+- `CreationExtras creationExtras2`  L109
+- `Fragment fragment = m3StorageFileFragment`  L110
+- `Qualifier qualifier2 = qualifier`  L111
+- `Function0 function3 = function0`  L112
+- `Function0 function4 = function1`  L113
+- `Function0 function5 = function2`  L114
+- `M3StorageFileFragment m3StorageFileFragment2 = this`  L132
+- `LazyThreadSafetyMode lazyThreadSafetyMode = LazyThreadSafetyMode.SYNCHRONIZED`  L133
+- `Qualifier qualifier2 = null`  L134
+- `Object[] objArr = 0 == true ? 1 : 0`  L135
+- `ComponentCallbacks componentCallbacks = m3StorageFileFragment2`  L140
+- `FragmentM3StorageListBinding fragmentM3StorageListBinding = this._binding`  L168
+- `String str = stringExtra`  L200
+- `ShowPicsActivity.Companion companion = ShowPicsActivity.INSTANCE`  L271
+- `M3FileAdapter m3FileAdapter2 = M3StorageFileFragment.this.adapter`  L298
+- `M3FileAdapter m3FileAdapter2 = this.adapter`  L308
+- `String string = this.latestSdError`  L453
+- `M3FileAdapter m3FileAdapter = this.adapter`  L461
+- `M3FileAdapter m3FileAdapter = this.adapter`  L485
+- `M3FileAdapter m3FileAdapter2 = null`  L486
+- `M3FileAdapter m3FileAdapter3 = this.adapter`  L493
+- `M3FileAdapter m3FileAdapter = this.adapter`  L506
+- `M3FileAdapter m3FileAdapter = this.adapter`  L516
+- `M3FileAdapter m3FileAdapter = this.adapter`  L526
+- `M3FileAdapter m3FileAdapter2 = null`  L527
+- `M3FileAdapter m3FileAdapter3 = this.adapter`  L533
+- `Function2<? super Integer, ? super Boolean, Unit> function2 = this.selectModeCallback`  L540
+
+方法（29）：
+- `public M3StorageFileFragment()`  L90
+- `FragmentActivity invoke()`  L95 @Override
+- `M3StorageViewModel invoke()`  L106 @Override
+- `M3SessionRepositoryFactory invoke()`  L139 @Override
+- `M3DeviceRepository invoke()`  L151 @Override
+- `void onActivityResult(Object obj)`  L159 @Override
+    - 体内字面量："registerForActivityResult(...)"
+- `FragmentM3StorageListBinding getBinding()`  L167
+- `M3StorageViewModel getViewModel()`  L174
+- `M3SessionRepositoryFactory getRepositoryFactory()`  L179
+- `String getSessionId()`  L184
+    - 体内字面量："device_session_id"
+- `M3DeviceRepository getRepository()`  L189
+- `void videoPlayLauncher$lambda$0(M3StorageFileFragment this$0, ActivityResult result)`  L194
+    - 体内字面量："this$0" · "result"
+- `void onCreate(Bundle savedInstanceState)`  L210 @Override
+    - 体内字面量："folder" · "M3StorageFileFragment: onCreate with folder="
+- `View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)`  L222 @Override
+    - 体内字面量："inflater" · "getRoot(...)"
+- `void onViewCreated(View view, Bundle savedInstanceState)`  L231 @Override
+    - 体内字面量："view"
+- `void setupRecyclerView()`  L239
+    - 体内字面量："getApplicationContext(...)" · "getViewLifecycleOwner(...)"
+- `Unit invoke(M3FileItem m3FileItem)`  L251 @Override
+- `void invoke2(M3FileItem file)`  L257
+    - 体内字面量："file" · "M3StorageFileFragment: Clicking video file " · "device_session_id" · "extra_file_name" · "extra_create_time" · "yyyy-MM-dd HH:mm" · "extra_duration" · "extra_file_size" · "M3StorageFileFragment: Clicking image file "
+- `Unit invoke()`  L284 @Override
+- `void invoke2()`  L290
+- `int getSpanSize(int position)`  L297 @Override
+- `void observeFileList()`  L316
+    - 体内字面量："M3StorageFileFragment: observeFileList for folder=" · "getViewLifecycleOwner(...)" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.m3.M3StorageFileFragment$observeFileList$1" · "M3StorageFileFragment.kt" · "invokeSuspend" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.m3.M3StorageFileFragment$observeSDCardError$1" · "M3StorageFileFragment.kt" · "invokeSuspend"
+- `void observeSDCardError()`  L445
+    - 体内字面量："getViewLifecycleOwner(...)"
+- `void renderEmptyState()`  L452
+- `void onDestroyView()`  L472 @Override
+- `void showSelectMode(boolean isSelectMode, Function2<? super Integer, ? super Boolean, Unit> callback)`  L482
+- `void selectAll(boolean selectAll)`  L505
+- `List<M3FileItem> getSelectedItems()`  L515
+- `void notifySelectionChanged()`  L525
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageFileFragment$C28431`
+L327 · [class] static final C28431 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageFileFragment.java`
+注解：
+
+字段/常量（5）：
+- `int label`  L328
+- `int i = this.label`  L347
+- `M3StorageFileFragment m3StorageFileFragment = M3StorageFileFragment.this`  L351
+- `List<M3FileItem> listEmptyList`  L360
+- `M3FileAdapter m3FileAdapter = m3StorageFileFragment.adapter`  L369
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L335 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L340 @Override
+- `Object invokeSuspend(Object obj)`  L345 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L355 @Override
+- `Object emit(List<M3FolderInfo> list, Continuation<? super Unit> continuation)`  L359
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageFileFragment$C28441`
+L395 · [class] static final C28441 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageFileFragment.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L396
+- `int i = this.label`  L415
+- `M3StorageFileFragment m3StorageFileFragment = M3StorageFileFragment.this`  L419
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L403 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L408 @Override
+- `Object invokeSuspend(Object obj)`  L413 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L423 @Override
+- `Object emit(String str, Continuation<? super Unit> continuation)`  L427
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageFileFragment$Companion`
+L548 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageFileFragment.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L549
+- `private Companion()`  L553
+- `M3StorageFileFragment newInstance(String folder)`  L556
+    - 体内字面量："folder" · "folder"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageViewModel`
+L52 · [class] public final M3StorageViewModel · extends `ViewModel` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageViewModel.java`
+注解：
+
+字段/常量（24）：
+- `String FOLDER_ALL = "all"`  L53
+- `int RECORDING_FREE_MB_THRESHOLD = 0`  L54
+- `String TAG = "M3StorageViewModel"`  L55
+- `MutableStateFlow<List<M3FolderInfo>> _folderTabs`  L56
+- `MutableStateFlow<Boolean> _isStorageLow`  L57
+- `MutableStateFlow<String> _sdCardError`  L58
+- `MutableSharedFlow<String> _sdStatusPromptEvent`  L59
+- `MutableStateFlow<String> _storageInfo`  L60
+- `Map<String, List<M3FileItem>> filesByFolder`  L61
+- `StateFlow<List<M3FolderInfo>> folderTabs`  L62
+- `StateFlow<Boolean> isStorageLow`  L63
+- `Integer lastSdStatus`  L64
+- `M3DeviceRepository m3DeviceRepository`  L65
+- `StateFlow<String> sdCardError`  L66
+- `Job sdCardPollingJob`  L67
+- `SharedFlow<String> sdStatusPromptEvent`  L68
+- `StateFlow<String> storageInfo`  L69
+- `M3DeviceRepository m3DeviceRepository = this.m3DeviceRepository`  L96
+- `Job job = this.sdCardPollingJob`  L403
+- `Object next`  L412
+- `List<M3FileItem> list = value`  L418
+- `ArrayList<M3FolderInfo> arrayList2 = arrayList`  L441
+- `List<M3FileItem> list2 = listEmptyList`  L448
+- `Map<String, List<M3FileItem>> map = this.filesByFolder`  L462
+
+方法（18）：
+- `public M3StorageViewModel(M3DeviceRepository m3DeviceRepository)`  L71
+    - 体内字面量："m3DeviceRepository" · "0.0G/0.0G"
+- `void onCleared()`  L95 @Override
+- `StateFlow<String> getStorageInfo()`  L104
+- `StateFlow<String> getSdCardError()`  L108
+- `SharedFlow<String> getSdStatusPromptEvent()`  L112
+- `StateFlow<Boolean> isStorageLow()`  L116
+- `StateFlow<List<M3FolderInfo>> getFolderTabs()`  L120
+- `void clearFilesAndTabs()`  L125
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.m3.M3StorageViewModel$loadSDInfo$1" · "M3StorageViewModel.kt" · "invokeSuspend"
+- `void loadSDInfo()`  L202
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.m3.M3StorageViewModel$loadFileList$1" · "M3StorageViewModel.kt" · "invokeSuspend" · "$this$launch" · "L$0"
+- `void loadFileList()`  L316
+- `List<M3FileItem> getFilesForFolder(String folder)`  L320
+    - 体内字面量："folder" · "M3StorageViewModel: getFilesForFolder('" · "') returning " · " files"
+- `String formatStorage(int freeMB, int totalMB)`  L331
+    - 体内字面量："%.1fG/%.1fG" · "format(...)"
+- `void startSDCardPolling()`  L343
+    - 体内字面量："M3StorageViewModel: SD card polling started" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.m3.M3StorageViewModel$startSDCardPolling$1" · "M3StorageViewModel.kt" · "invokeSuspend"
+- `void stopSDCardPolling()`  L402
+- `void removeFile(String fileName)`  L411
+- `List<M3FileItem> buildAllFiles()`  L461
+- `int compare(T t, T t2)`  L472 @Override
+- `List<M3FolderInfo> buildFolderTabs(List<M3FolderInfo> folders, List<M3FileItem> allFiles)`  L479
+    - 体内字面量："all"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageViewModel$C28501`
+L210 · [class] static final C28501 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageViewModel.java`
+注解：
+
+字段/常量（10）：
+- `Object L$0`  L211
+- `int label`  L212
+- `Object objMo2786getFileListIoAF18A`  L232
+- `Object objM3074constructorimpl`  L233
+- `int i = this.label`  L235
+- `M3StorageViewModel m3StorageViewModel = M3StorageViewModel.this`  L257
+- `Result.Companion companion = Result.INSTANCE`  L270
+- `Result.Companion companion2 = Result.INSTANCE`  L279
+- `int count = 0`  L293
+- `M3StorageViewModel m3StorageViewModel2 = M3StorageViewModel.this`  L302
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L219 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L226 @Override
+- `Object invokeSuspend(Object obj)`  L231 @Override
+- `int compare(T t, T t2)`  L274 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageViewModel$C28521`
+L134 · [class] static final C28521 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageViewModel.java`
+注解：
+
+字段/常量（7）：
+- `int label`  L135
+- `Object objMo2791getSDInfoIoAF18A`  L153
+- `int i = this.label`  L155
+- `boolean z = true`  L156
+- `M3StorageViewModel m3StorageViewModel = M3StorageViewModel.this`  L171
+- `Integer num = m3StorageViewModel.lastSdStatus`  L174
+- `MutableStateFlow mutableStateFlow = m3StorageViewModel._isStorageLow`  L183
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L142 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L147 @Override
+- `Object invokeSuspend(Object obj)`  L152 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageViewModel$C28531`
+L353 · [class] static final C28531 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3StorageViewModel.java`
+注解：
+
+字段/常量（1）：
+- `int label`  L354
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L361 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L366 @Override
+- `java.lang.Object invokeSuspend(java.lang.Object r12)`  L393 @Override
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3StorageViewModel.C28531.invokeSuspend(java.lang.Object):java.lang.Object"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3VideoPlayActivity`
+L96 · [class] public final M3VideoPlayActivity · extends `BaseActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3VideoPlayActivity.java`
+注解：
+
+字段/常量（93）：
+- `String EXTRA_CREATE_TIME = "extra_create_time"`  L100
+- `String EXTRA_DELETED_FILE_NAME = "extra_deleted_file_name"`  L101
+- `String EXTRA_DURATION = "extra_duration"`  L102
+- `String EXTRA_FILE_NAME = "extra_file_name"`  L103
+- `String EXTRA_FILE_SIZE = "extra_file_size"`  L104
+- `String EXTRA_SESSION_ID = "device_session_id"`  L105
+- `ActivityM3VideoPlayBinding binding`  L106
+- `String currentFileName`  L107
+- `Lazy deviceSessions`  L110
+- `Lazy fileCatalog`  L113
+- `M3DeviceRepository m3DeviceRepository`  L114
+- `Lazy mediaCoordinator`  L117
+- `Lazy mediaCoordinatorFactory`  L120
+- `Lazy mediaPort`  L123
+- `MediaSessionHandle mediaSessionHandle`  L124
+- `Job mediaStartJob`  L125
+- `OrientationUtils orientationUtils`  L126
+- `Lazy playerAdapter`  L129
+- `Lazy repositoryFactory`  L132
+- `M3VideoPlayActivity m3VideoPlayActivity = this`  L136
+- `LazyThreadSafetyMode lazyThreadSafetyMode = LazyThreadSafetyMode.SYNCHRONIZED`  L137
+- `Qualifier qualifier = null`  L138
+- `Object[] objArr = 0 == true ? 1 : 0`  L139
+- `ComponentCallbacks componentCallbacks = m3VideoPlayActivity`  L144
+- `LazyThreadSafetyMode lazyThreadSafetyMode2 = LazyThreadSafetyMode.SYNCHRONIZED`  L148
+- `Object[] objArr2 = 0 == true ? 1 : 0`  L149
+- `Object[] objArr3 = 0 == true ? 1 : 0`  L150
+- `ComponentCallbacks componentCallbacks = m3VideoPlayActivity`  L155
+- `LazyThreadSafetyMode lazyThreadSafetyMode3 = LazyThreadSafetyMode.SYNCHRONIZED`  L159
+- `Object[] objArr4 = 0 == true ? 1 : 0`  L160
+- `Object[] objArr5 = 0 == true ? 1 : 0`  L161
+- `ComponentCallbacks componentCallbacks = m3VideoPlayActivity`  L166
+- `LazyThreadSafetyMode lazyThreadSafetyMode4 = LazyThreadSafetyMode.SYNCHRONIZED`  L170
+- `Object[] objArr6 = 0 == true ? 1 : 0`  L171
+- `Object[] objArr7 = 0 == true ? 1 : 0`  L172
+- `ComponentCallbacks componentCallbacks = m3VideoPlayActivity`  L177
+- `LazyThreadSafetyMode lazyThreadSafetyMode5 = LazyThreadSafetyMode.SYNCHRONIZED`  L181
+- `Object[] objArr8 = 0 == true ? 1 : 0`  L182
+- `Object[] objArr9 = 0 == true ? 1 : 0`  L183
+- `ComponentCallbacks componentCallbacks = m3VideoPlayActivity`  L188
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding = this.this$0.binding`  L200
+- `PlayListControlVideo playListControlVideo = activityM3VideoPlayBinding.videoPlayer`  L205
+- `M3VideoPlayActivity m3VideoPlayActivity2 = this.this$0`  L208
+- `String str = m3VideoPlayActivity2.currentFileName`  L216
+- `C28561 c28562 = c28561`  L220
+- `M3VideoPlayActivity m3VideoPlayActivity3 = this.this$0`  L221
+- `OrientationUtils orientationUtils = m3VideoPlayActivity3.orientationUtils`  L235
+- `M3VideoPlayActivity m3VideoPlayActivity4 = this.this$0`  L241
+- `OrientationUtils orientationUtils = m3VideoPlayActivity4.orientationUtils`  L255
+- `String str = stringExtra4 != null ? stringExtra4 : "<binary/metadata>"`  L372
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding = this.binding`  L374
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding2 = null`  L375
+- `String str2 = stringExtra2`  L380
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding3 = this.binding`  L382
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding4 = this.binding`  L393
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding5 = this.binding`  L404
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding6 = this.binding`  L415
+- `TextView textView = activityM3VideoPlayBinding6.tvVideoInfo`  L420
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding7 = this.binding`  L435
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L470
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding = null`  L480
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding2 = this.binding`  L482
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding3 = this.binding`  L488
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding4 = this.binding`  L497
+- `String str = stringExtra`  L514
+- `M3VideoPlayActivity m3VideoPlayActivity = this`  L519
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding = this.binding`  L520
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding2 = null`  L521
+- `OrientationUtils orientationUtils2 = this.orientationUtils`  L529
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding3 = this.binding`  L533
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding4 = this.binding`  L554
+- `Job job = this.mediaStartJob`  L576
+- `MediaSessionHandle mediaSessionHandle = this.mediaSessionHandle`  L580
+- `Job job = this.mediaStartJob`  L696
+- `MediaSessionHandle mediaSessionHandle = this.mediaSessionHandle`  L701
+- `String str = this.currentFileName`  L755
+- `Object objM3074constructorimpl`  L781
+- `Object objM3074constructorimpl2`  L782
+- `Result.Companion companion = Result.INSTANCE`  L785
+- `M3VideoPlayActivity m3VideoPlayActivity = this`  L786
+- `Result.Companion companion2 = Result.INSTANCE`  L789
+- `Result.Companion companion3 = Result.INSTANCE`  L803
+- `M3VideoPlayActivity m3VideoPlayActivity2 = this`  L804
+- `Result.Companion companion4 = Result.INSTANCE`  L807
+- `M3VideoPlayActivity m3VideoPlayActivity3 = this`  L815
+- `Job job`  L830
+- `String str`  L831
+- `M3DeviceRepository m3DeviceRepository = this.m3DeviceRepository`  L852
+- `OrientationUtils orientationUtils = this.orientationUtils`  L862
+- `OrientationUtils orientationUtils = this.orientationUtils`  L870
+- `String str = this.currentFileName`  L896
+- `String str2 = str`  L897
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding = this.binding`  L902
+
+方法（53）：
+- `public M3VideoPlayActivity()`  L135
+- `M3SessionRepositoryFactory invoke()`  L143 @Override
+- `VerifiedDeviceFileCatalog invoke()`  L154 @Override
+- `DeviceSessionManager invoke()`  L165 @Override
+- `M3DeviceMediaPort invoke()`  L176 @Override
+- `MediaSessionCoordinatorFactory invoke()`  L187 @Override
+- `GsyNativePlayerAdapter invoke()`  L199 @Override
+- `String invoke()`  L215 @Override
+- `Unit invoke()`  L228 @Override
+- `void invoke2()`  L234
+- `Unit invoke()`  L248 @Override
+- `void invoke2()`  L254
+- `MediaSessionCoordinator invoke()`  L291 @Override
+- `String getSessionId()`  L298
+    - 体内字面量："device_session_id"
+- `M3SessionRepositoryFactory getRepositoryFactory()`  L304
+- `VerifiedDeviceFileCatalog getFileCatalog()`  L308
+- `DeviceSessionManager getDeviceSessions()`  L313
+- `M3DeviceMediaPort getMediaPort()`  L318
+- `MediaSessionCoordinatorFactory getMediaCoordinatorFactory()`  L323
+- `GsyNativePlayerAdapter getPlayerAdapter()`  L328
+- `MediaSessionCoordinator getMediaCoordinator()`  L333
+- `View getContentRoot()`  L338 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L352 @Override
+- `void initView()`  L358
+- `void onClick(View view)`  L389 @Override
+- `void onClick(View view)`  L400 @Override
+- `void onClick(View view)`  L411 @Override
+- `void onClick(View view)`  L443 @Override
+- `void initView$lambda$0(M3VideoPlayActivity this$0, View view)`  L450
+    - 体内字面量："this$0"
+- `void initView$lambda$1(M3VideoPlayActivity this$0, View view)`  L456
+    - 体内字面量："this$0"
+- `void initView$lambda$2(M3VideoPlayActivity this$0, View view)`  L462
+    - 体内字面量："this$0"
+- `void initView$lambda$4(M3VideoPlayActivity this$0, View view)`  L468
+    - 体内字面量："this$0"
+- `void updateDownloadBadge()`  L478
+- `void onTaskDownloadFinish(TaskDownloadFinishEvent event)`  L507 @Subscribe(threadMode = ThreadMode.MAIN)
+    - 体内字面量："event"
+- `void initVideo()`  L512
+- `Unit invoke()`  L544 @Override
+- `void invoke2()`  L550
+- `void onClick(View view)`  L562 @Override
+- `void initVideo$lambda$5(M3VideoPlayActivity this$0, View view)`  L570
+    - 体内字面量："this$0"
+- `void startMediaPlayback(String fileName)`  L575
+- `void stopMediaSession()`  L695
+- `void handleDownload()`  L754
+- `void onGranted(List<String> permissions, boolean all)`  L762 @Override
+- `void onDenied(List<String> permissions, boolean never)`  L767 @Override
+- `void enqueueDownloadTask(String fileName)`  L780
+- `void onPause()`  L823 @Override
+- `void onResume()`  L829 @Override
+- `void onDestroy()`  L849 @Override
+- `void onBackPressed()`  L869 @Override
+- `void showDeleteConfirmDialog()`  L880
+- `void onClick(DialogInterface dialogInterface, int i)`  L883 @Override
+- `void showDeleteConfirmDialog$lambda$12(M3VideoPlayActivity this$0, DialogInterface dialogInterface, int i)`  L890
+    - 体内字面量："this$0"
+- `void deleteFile()`  L895
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3VideoPlayActivity$C28541`
+L915 · [class] static final C28541 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3VideoPlayActivity.java`
+注解：
+
+字段/常量（11）：
+- `String $fileName`  L916
+- `int label`  L917
+- `M3VideoPlayActivity this$0`  L918
+- `Object objMo2780deleteFilegIAlus`  L939
+- `int i = this.label`  L941
+- `M3DeviceRepository m3DeviceRepositoryCreate = this.this$0.m3DeviceRepository`  L945
+- `M3VideoPlayActivity m3VideoPlayActivity = this.this$0`  L962
+- `String str = this.$fileName`  L963
+- `Unit unit = Unit.INSTANCE`  L969
+- `M3VideoPlayActivity m3VideoPlayActivity2 = this.this$0`  L973
+- `ActivityM3VideoPlayBinding activityM3VideoPlayBinding = m3VideoPlayActivity2.binding`  L982
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L928 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L933 @Override
+- `Object invokeSuspend(Object obj)`  L938 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3VideoPlayActivity$C28561`
+L266 · [class] C28561 · extends `FunctionReferenceImpl implements Function1<RtspTransport, Unit>` · implements `Function1<RtspTransport, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3VideoPlayActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(RtspTransport rtspTransport)`  L272 @Override
+- `void invoke2(RtspTransport p0)`  L278
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3VideoPlayActivity$C28601`
+L589 · [class] static final C28601 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3VideoPlayActivity.java`
+注解：
+
+字段/常量（14）：
+- `String $fileName`  L590
+- `MediaSessionHandle $previous`  L591
+- `Object L$0`  L592
+- `int label`  L593
+- `M3VideoPlayActivity this$0`  L594
+- `M3VideoPlayActivity m3VideoPlayActivity`  L620
+- `Object objM3074constructorimpl`  L621
+- `Object objStart`  L622
+- `MediaStartResult mediaStartResult`  L623
+- `int i = this.label`  L625
+- `MediaSessionHandle mediaSessionHandle = this.$previous`  L648
+- `Result.Companion companion = Result.INSTANCE`  L656
+- `Result.Companion companion2 = Result.INSTANCE`  L659
+- `M3VideoPlayActivity m3VideoPlayActivity2 = this.this$0`  L663
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L605 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L612 @Override
+- `Object invokeSuspend(Object obj)`  L619 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3VideoPlayActivity$C28611`
+L713 · [class] static final C28611 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3VideoPlayActivity.java`
+注解：
+
+字段/常量（3）：
+- `MediaSessionHandle $handle`  L714
+- `int label`  L715
+- `int i = this.label`  L736
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L724 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L729 @Override
+- `Object invokeSuspend(Object obj)`  L734 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.p011m3.M3VideoPlayActivity$Companion`
+L995 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/p011m3/M3VideoPlayActivity.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L996
+- `private Companion()`  L1000
+- `void launch(Context context, String fileName, String createTime, String duration, String fileSize, String sessionId)`  L1003
+    - 体内字面量："context" · "fileName" · "createTime" · "duration" · "fileSize" · "sessionId" · "device_session_id"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.C2895x56f093f2`
+L14 · [class] public final C2895x56f093f2 · extends `Lambda implements Function0<ViewModelProvider.Factory>` · implements `Function0<ViewModelProvider.Factory>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/C2895x56f093f2.java`
+注解：
+
+字段/常量（1）：
+- `ComponentActivity $this_viewModels`  L15
+
+方法（2）：
+- `public C2895x56f093f2(ComponentActivity componentActivity)`  L18
+- `ViewModelProvider.Factory invoke()`  L25 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.C2909x56db0a77`
+L18 · [class] public final C2909x56db0a77 · extends `Lambda implements Function0<ViewModelProvider.Factory>` · implements `Function0<ViewModelProvider.Factory>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/C2909x56db0a77.java`
+注解：
+
+字段/常量（3）：
+- `Lazy $owner$delegate`  L19
+- `Fragment $this_viewModels`  L20
+- `ViewModelProvider.Factory defaultViewModelProviderFactory`  L32
+
+方法（2）：
+- `public C2909x56db0a77(Fragment fragment, Lazy lazy)`  L23
+- `ViewModelProvider.Factory invoke()`  L31 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.C2960xb19301e6`
+L18 · [class] public final C2960xb19301e6 · extends `Lambda implements Function0<ViewModelProvider.Factory>` · implements `Function0<ViewModelProvider.Factory>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/C2960xb19301e6.java`
+注解：
+
+字段/常量（3）：
+- `Lazy $owner$delegate`  L19
+- `Fragment $this_viewModels`  L20
+- `ViewModelProvider.Factory defaultViewModelProviderFactory`  L32
+
+方法（2）：
+- `public C2960xb19301e6(Fragment fragment, Lazy lazy)`  L23
+- `ViewModelProvider.Factory invoke()`  L31 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity`
+L97 · [class] public final Ride3ProHourDetailActivity · extends `BaseActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+字段/常量（112）：
+- `int COLUMN_COUNT = 3`  L98
+- `float DISABLED_ALPHA = 0.5f`  L102
+- `String EXTRA_DATE = "ride3pro_indexed_date"`  L103
+- `String EXTRA_DEVICE_KEY = "ride3pro_indexed_device_key"`  L104
+- `String EXTRA_DEVICE_TYPE_CODE = "device_type_code"`  L105
+- `String EXTRA_HOUR = "ride3pro_indexed_hour"`  L106
+- `String EXTRA_SESSION_ID = "device_session_id"`  L107
+- `int INVALID_DATE = -1`  L108
+- `int INVALID_HOUR = -1`  L109
+- `String STATE_HOUR_TRACE_FINISHED = "hour_trace_finished"`  L110
+- `ActivityRide3proHourDetailBinding binding`  L111
+- `Ride3ProPreDrawTraceSession hourTraceSession`  L112
+- `Lazy playbackModeRecovery`  L115
+- `boolean playbackNavigationInFlight`  L116
+- `boolean skipNextPlaybackModeRecovery`  L117
+- `Lazy viewModel`  L120
+- `DeviceType deviceType`  L171
+- `int length = deviceTypeArrValues.length`  L175
+- `int i = 0`  L176
+- `Ride3ProIndexedPlaybackRuntimeFactory ride3ProIndexedPlaybackRuntimeFactory = Ride3ProIndexedPlaybackRuntimeFactory.INSTANCE`  L251
+- `Ride3ProHourDetailActivity ride3ProHourDetailActivity = this.this$0`  L252
+- `Ride3ProHourDetailActivity ride3ProHourDetailActivity2 = ride3ProHourDetailActivity`  L253
+- `Ride3ProIndexedPlaybackRuntimeFactory ride3ProIndexedPlaybackRuntimeFactory = Ride3ProIndexedPlaybackRuntimeFactory.INSTANCE`  L389
+- `Ride3ProHourDetailActivity ride3ProHourDetailActivity = this`  L439
+- `Function0 function0 = null`  L440
+- `CreationExtras creationExtras`  L470
+- `Function0 function1 = function0`  L471
+- `CreationExtras creationExtras`  L520
+- `Function0 function1 = function0`  L521
+- `Ride3ProStatusBarInsets ride3ProStatusBarInsets = Ride3ProStatusBarInsets.INSTANCE`  L620
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding = this.binding`  L621
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding2 = null`  L622
+- `FrameLayout toolbarContainer = activityRide3proHourDetailBinding.toolbarContainer`  L627
+- `FileSelectionBottomBarInsets fileSelectionBottomBarInsets = FileSelectionBottomBarInsets.INSTANCE`  L630
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding3 = this.binding`  L631
+- `ConstraintLayout constraintLayout = root`  L638
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding4 = this.binding`  L639
+- `LinearLayout llBottomActions = activityRide3proHourDetailBinding4.llBottomActions`  L644
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding5 = this.binding`  L647
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding6 = this.binding`  L653
+- `ImageView btnBack = activityRide3proHourDetailBinding6.btnBack`  L658
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding7 = this.binding`  L666
+- `ImageView btnDownloading = activityRide3proHourDetailBinding7.btnDownloading`  L671
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding8 = this.binding`  L679
+- `ImageView btnEdit = activityRide3proHourDetailBinding8.btnEdit`  L684
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding9 = this.binding`  L692
+- `ImageView btnCloseSelect = activityRide3proHourDetailBinding9.btnCloseSelect`  L697
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding10 = this.binding`  L705
+- `TextView tvSelectAll = activityRide3proHourDetailBinding10.tvSelectAll`  L710
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding11 = this.binding`  L718
+- `LinearLayout btnDelete = activityRide3proHourDetailBinding11.btnDelete`  L723
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding12 = this.binding`  L731
+- `LinearLayout btnDownload = activityRide3proHourDetailBinding12.btnDownload`  L736
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding13 = this.binding`  L744
+- `Button btnRetry = activityRide3proHourDetailBinding13.btnRetry`  L749
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding14 = this.binding`  L757
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding15 = this.binding`  L763
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding = this$0.binding`  L802
+- `Ride3ProPreDrawTraceSession ride3ProPreDrawTraceSession = this.hourTraceSession`  L855
+- `Ride3ProPreDrawTraceSession ride3ProPreDrawTraceSession = this.hourTraceSession`  L865
+- `Object objM3074constructorimpl`  L1117
+- `Result.Companion companion = Result.INSTANCE`  L1120
+- `Ride3ProHourDetailActivity ride3ProHourDetailActivity = this`  L1121
+- `Result.Companion companion2 = Result.INSTANCE`  L1134
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding = this.binding`  L1144
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding2 = null`  L1145
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding3 = this.binding`  L1151
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding4 = this.binding`  L1157
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding5 = this.binding`  L1163
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding6 = this.binding`  L1169
+- `Object objM3074constructorimpl`  L1182
+- `Result.Companion companion = Result.INSTANCE`  L1184
+- `Ride3ProHourDetailActivity ride3ProHourDetailActivity = this`  L1185
+- `Result.Companion companion2 = Result.INSTANCE`  L1191
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding = null`  L1202
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding2 = this.binding`  L1204
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding3 = this.binding`  L1212
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding = this.binding`  L1238
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding2 = null`  L1239
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding3 = this.binding`  L1245
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding4 = this.binding`  L1251
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding5 = this.binding`  L1258
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding6 = this.binding`  L1264
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding7 = this.binding`  L1270
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding8 = this.binding`  L1276
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding = this.binding`  L1290
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding2 = null`  L1291
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding3 = this.binding`  L1297
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding4 = this.binding`  L1303
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding = this.binding`  L1323
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding2 = null`  L1324
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding3 = this.binding`  L1330
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding4 = this.binding`  L1336
+- `List<Ride3ProPlaybackFile> list = selectedFiles`  L1420
+- `List<Ride3ProPlaybackFile> list2 = selectedFiles`  L1427
+- `int i = 0`  L1429
+- `int i2 = i + 1`  L1431
+- `HttpUrl url`  L1454
+- `String url2`  L1455
+- `Object obj = null`  L1498
+- `boolean z = false`  L1499
+- `Object obj2 = null`  L1500
+- `LinearLayout linearLayout`  L1528
+- `Ride3ProIndexedVisibilityOutcome ride3ProIndexedVisibilityOutcome`  L1529
+- `Ride3ProPreDrawTraceSession ride3ProPreDrawTraceSession = null`  L1530
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding = this.binding`  L1532
+- `RecyclerView recyclerView = activityRide3proHourDetailBinding.recyclerView`  L1537
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding2 = this.binding`  L1542
+- `TextView tvEmpty = activityRide3proHourDetailBinding2.tvEmpty`  L1547
+- `ActivityRide3proHourDetailBinding activityRide3proHourDetailBinding3 = this.binding`  L1555
+- `LinearLayout errorContainer = activityRide3proHourDetailBinding3.errorContainer`  L1560
+- `Ride3ProPreDrawTraceSession ride3ProPreDrawTraceSession2 = this.hourTraceSession`  L1565
+
+方法（85）：
+- `String invoke()`  L129 @Override
+    - 体内字面量："ride3pro_indexed_device_key" · "Required value was null." · "device key is required"
+- `String invoke()`  L149 @Override
+    - 体内字面量："device_session_id" · "Required value was null." · "hour detail device session is required"
+- `DeviceType invoke()`  L170 @Override
+- `VerifiedDeviceFileCatalog invoke()`  L201 @Override
+- `Ride3ProHourKey invoke()`  L214 @Override
+    - 体内字面量："ride3pro_indexed_date" · "hour detail date is required" · "ride3pro_indexed_hour" · "hour detail hour is required" · "ride3pro_indexed_date" · "ride3pro_indexed_hour"
+- `Ride3ProIndexedTraceContext invoke()`  L235 @Override
+    - 体内字面量："getIntent(...)"
+- `Ride3ProIndexedPlaybackRuntime invoke()`  L250 @Override
+- `Ride3ProHourPlaybackVideoItemMapper invoke()`  L264 @Override
+    - 体内字面量："getDefault(...)"
+- `Ride3ProHourDownloadTaskFactory invoke()`  L279 @Override
+    - 体内字面量："getDefault(...)"
+- `Ride3ProHourFileAdapter invoke()`  L294 @Override
+    - 体内字面量："access$getDeviceKey(...)"
+- `Ride3ProIndexedPlaybackModeAction invoke()`  L388 @Override
+- `Ride3ProIndexedPerformanceTracer invoke()`  L400 @Override
+- `void onActivityResult(Object obj)`  L406 @Override
+- `public Ride3ProHourDetailActivity()`  L438
+- `ViewModelStore invoke()`  L448 @Override
+- `ViewModelProvider.Factory invoke()`  L458 @Override
+- `CreationExtras invoke()`  L469 @Override
+- `ViewModelStore invoke()`  L482 @Override
+- `ViewModelProvider.Factory invoke()`  L508 @Override
+- `CreationExtras invoke()`  L519 @Override
+- `String getDeviceKey()`  L528
+- `String getDeviceSessionId()`  L532
+- `DeviceType getDeviceType()`  L537
+- `VerifiedDeviceFileCatalog getFileCatalog()`  L541
+- `Ride3ProHourKey getHourKey()`  L546
+- `Ride3ProIndexedTraceContext getTraceContext()`  L551
+- `Ride3ProIndexedPlaybackRuntime getRuntime()`  L556
+- `Ride3ProHourDetailViewModel getViewModel()`  L561
+- `Ride3ProHourPlaybackVideoItemMapper getPlaybackMapper()`  L565
+- `Ride3ProHourDownloadTaskFactory getDownloadTaskFactory()`  L569
+- `Ride3ProHourFileAdapter getAdapter()`  L573
+- `Ride3ProIndexedPlaybackModeAction getPlaybackModeAction()`  L578
+- `Ride3ProIndexedPerformanceTracer getPerformanceTracer()`  L583
+- `void playbackLauncher$lambda$0(Ride3ProHourDetailActivity this$0, ActivityResult result)`  L588
+    - 体内字面量："this$0" · "result"
+- `Ride3ProIndexedPlaybackModeRecoveryViewModel getPlaybackModeRecovery()`  L598
+- `View getContentRoot()`  L603 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L617 @Override
+- `void onClick(View view)`  L662 @Override
+- `void onClick(View view)`  L675 @Override
+- `void onClick(View view)`  L688 @Override
+- `void onClick(View view)`  L701 @Override
+- `void onClick(View view)`  L714 @Override
+- `void onClick(View view)`  L727 @Override
+- `void onClick(View view)`  L740 @Override
+- `void onClick(View view)`  L753 @Override
+- `void onCreate$lambda$1(Ride3ProHourDetailActivity this$0, View view)`  L775
+    - 体内字面量："this$0"
+- `void onCreate$lambda$2(Ride3ProHourDetailActivity this$0, View view)`  L781
+    - 体内字面量："this$0"
+- `void onCreate$lambda$3(Ride3ProHourDetailActivity this$0, View view)`  L787
+    - 体内字面量："this$0"
+- `void onCreate$lambda$4(Ride3ProHourDetailActivity this$0, View view)`  L793
+    - 体内字面量："this$0"
+- `void onCreate$lambda$5(Ride3ProHourDetailActivity this$0, View view)`  L799
+    - 体内字面量："this$0"
+- `void onCreate$lambda$6(Ride3ProHourDetailActivity this$0, View view)`  L811
+    - 体内字面量："this$0"
+- `void onCreate$lambda$7(Ride3ProHourDetailActivity this$0, View view)`  L822
+    - 体内字面量："this$0"
+- `void onCreate$lambda$8(Ride3ProHourDetailActivity this$0, View view)`  L828
+    - 体内字面量："this$0"
+- `void onResume()`  L834 @Override
+- `void onStop()`  L845 @Override
+- `void onSaveInstanceState(Bundle outState)`  L852 @Override
+    - 体内字面量："outState"
+- `void onDestroy()`  L864 @Override
+- `void observeState()`  L1002
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProHourDetailActivity$observePlaybackModeRecovery$1" · "Ride3ProHourDetailActivity.kt" · "invokeSuspend"
+- `void observePlaybackModeRecovery()`  L1111
+- `void renderState(Ride3ProHourDetailUiState state)`  L1116
+- `AuthorizedDeviceResource authorizeThumbnail(int fileIndex)`  L1181
+- `void renderDeleteState(Ride3ProHourDetailUiState state)`  L1201
+- `void renderSelection(int selectedCount, boolean allSelected)`  L1237
+- `void enterSelectMode()`  L1285
+- `void handleFileLongClick(Ride3ProPlaybackFile file)`  L1313
+- `void exitSelectMode()`  L1321
+- `void handleBack()`  L1345
+- `void showDeleteConfirmDialog(final List<Ride3ProPlaybackFile> files)`  L1353
+- `Unit invoke()`  L1361 @Override
+- `void invoke2()`  L1367
+- `void requestSelectedFilesDownload()`  L1373
+- `void onGranted(List<String> permissions, boolean all)`  L1386 @Override
+- `void onDenied(List<String> permissions, boolean never)`  L1391 @Override
+- `void enqueueSelectedFilesDownload(List<Ride3ProPlaybackFile> selectedFiles)`  L1403
+    - 体内字面量："Ride3Pro session is not ready"
+- `String invoke(Integer num)`  L1449 @Override
+- `String invoke(int i3)`  L1453
+- `String invoke(Integer num)`  L1464 @Override
+- `String invoke(int i3)`  L1468
+    - 体内字面量："Ride3Pro hour batch download must create every task: expected=" · ", added=" · "Ride3Pro hour batch download task creation failed"
+- `void markCatalogChangedIfNeeded(Ride3ProHourDetailUiState state)`  L1485
+- `void deletePlaybackFile(int fileIndex)`  L1491
+- `void traceHourVisibility(final Ride3ProHourDetailUiState state)`  L1527
+- `Unit invoke()`  L1578 @Override
+- `void invoke2()`  L1584
+- `void run()`  L1593 @Override
+- `void openPlayback(Ride3ProPlaybackFile file)`  L1600
+    - 体内字面量："<get-deviceKey>(...)" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProHourDetailActivity$Companion;" · "()V" · "COLUMN_COUNT" · "DISABLED_ALPHA" · "EXTRA_DATE" · "EXTRA_DEVICE_KEY" · "EXTRA_DEVICE_TYPE_CODE" · "EXTRA_HOUR" · "EXTRA_SESSION_ID" · "INVALID_DATE" · "INVALID_HOUR" · "STATE_HOUR_TRACE_FINISHED" · "createIntent" · "Landroid/content/Intent;" · "Landroid/content/Context;" · "deviceKey" · "deviceSessionId" · "hourKey" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProHourKey;" · "traceContext" · "Lcom/tuwinsmart/tuwin/core/util/logging/Ride3ProIndexedTraceContext;" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceType;" · "createIntent$app_release_64" · "launchActivity" · "activity" · "Lcom/tuwinsmart/tuwin/presentation/ui/base/BaseActivity;" · "launchActivity$app_release_64" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$C28621`
+L303 · [class] C28621 · extends `FunctionReferenceImpl implements Function1<Integer, AuthorizedDeviceResource>` · implements `Function1<Integer, AuthorizedDeviceResource>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+方法（2）：
+- `AuthorizedDeviceResource invoke(int i)`  L308
+- `AuthorizedDeviceResource invoke(Integer num)`  L313 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$C28632`
+L321 · [class] C28632 · extends `FunctionReferenceImpl implements Function1<Ride3ProPlaybackFile, Unit>` · implements `Function1<Ride3ProPlaybackFile, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(Ride3ProPlaybackFile ride3ProPlaybackFile)`  L327 @Override
+- `void invoke2(Ride3ProPlaybackFile p0)`  L333
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$C28643`
+L342 · [class] C28643 · extends `FunctionReferenceImpl implements Function1<Ride3ProPlaybackFile, Unit>` · implements `Function1<Ride3ProPlaybackFile, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(Ride3ProPlaybackFile ride3ProPlaybackFile)`  L348 @Override
+- `void invoke2(Ride3ProPlaybackFile p0)`  L354
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$C28654`
+L363 · [class] C28654 · extends `FunctionReferenceImpl implements Function2<Integer, Boolean, Unit>` · implements `Function2<Integer, Boolean, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(Integer num, Boolean bool)`  L369 @Override
+- `void invoke(int i, boolean z)`  L374
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$C28681`
+L1010 · [class] static final C28681 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L1011
+- `int i = this.label`  L1094
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1018 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1023 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProHourDetailActivity$observePlaybackModeRecovery$1$1" · "Ride3ProHourDetailActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L1092 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$C28681$AnonymousClass1`
+L1031 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L1032
+- `Ride3ProHourDetailActivity this$0`  L1033
+- `int i = this.label`  L1054
+- `Ride3ProHourDetailActivity ride3ProHourDetailActivity = this.this$0`  L1058
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1042 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1047 @Override
+- `Object invokeSuspend(Object obj)`  L1052 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L1062 @Override
+- `Object emit(Ride3ProIndexedPlaybackModeRecoveryState ride3ProIndexedPlaybackModeRecoveryState, Continuation<? super Unit> continuation)`  L1066
+    - 体内字面量："Ride3Pro hour detail playback mode recovery failed" · "call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$C28691`
+L878 · [class] static final C28691 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L879
+- `int i = this.label`  L985
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L886 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L891 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProHourDetailActivity$observeState$1$1" · "Ride3ProHourDetailActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L983 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$C28691$AnonymousClass1`
+L899 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L900
+- `Ride3ProHourDetailActivity this$0`  L901
+- `int i = this.label`  L959
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L910 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L915 @Override
+- `Object invokeSuspend(Object obj)`  L957 @Override
+- `Object invokeSuspend$renderState(Ride3ProHourDetailActivity ride3ProHourDetailActivity, Ride3ProHourDetailUiState ride3ProHourDetailUiState, Continuation continuation)`  L976
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$C28691$AnonymousClass1$C44001`
+L922 · [class] C44001 · implements `FlowCollector, FunctionAdapter` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+字段/常量（1）：
+- `Ride3ProHourDetailActivity $tmp0`  L923
+
+方法（5）：
+- `boolean equals(Object obj)`  L929
+- `Function<?> getFunctionDelegate()`  L937 @Override
+    - 体内字面量："renderState" · "renderState(Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProHourDetailUiState;)V"
+- `int hashCode()`  L941
+- `Object emit(Ride3ProHourDetailUiState ride3ProHourDetailUiState, Continuation<? super Unit> continuation)`  L945
+- `Object emit(Object obj, Continuation continuation)`  L951 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$C28701`
+L493 · [class] C28701 · extends `FunctionReferenceImpl implements Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+方法（1）：
+- `Object invoke(Continuation<? super Result<Unit>> continuation)`  L500 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$Companion`
+L1615 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+方法（6）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L1616
+- `private Companion()`  L1620
+- `void launchActivity$app_release_64$default(Companion companion, BaseActivity baseActivity, String str, String str2, Ride3ProHourKey ride3ProHourKey, Ride3ProIndexedTraceContext ride3ProIndexedTraceContext, DeviceType deviceType, int i, Object obj)`  L1623
+- `void launchActivity$app_release_64(BaseActivity activity, String deviceKey, String deviceSessionId, Ride3ProHourKey hourKey, Ride3ProIndexedTraceContext traceContext, DeviceType deviceType)`  L1630
+    - 体内字面量："activity" · "deviceKey" · "deviceSessionId" · "hourKey" · "traceContext" · "deviceType"
+- `Intent createIntent$app_release_64$default(Companion companion, Context context, String str, String str2, Ride3ProHourKey ride3ProHourKey, Ride3ProIndexedTraceContext ride3ProIndexedTraceContext, DeviceType deviceType, int i, Object obj)`  L1640
+- `Intent createIntent$app_release_64(Context context, String deviceKey, String deviceSessionId, Ride3ProHourKey hourKey, Ride3ProIndexedTraceContext traceContext, DeviceType deviceType)`  L1647
+    - 体内字面量："context" · "deviceKey" · "deviceSessionId" · "hourKey" · "traceContext" · "deviceType" · "device_session_id" · "device_type_code"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$special$$inlined$viewModels$default$1`
+L13 · [class] public final Ride3ProHourDetailActivity$special$$inlined$viewModels$default$1 · extends `Lambda implements Function0<ViewModelProvider.Factory>` · implements `Function0<ViewModelProvider.Factory>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity$special$$inlined$viewModels$default$1.java`
+注解：
+
+字段/常量（1）：
+- `ComponentActivity $this_viewModels`  L14
+
+方法（2）：
+- `public Ride3ProHourDetailActivity$special$$inlined$viewModels$default$1(ComponentActivity componentActivity)`  L17
+- `ViewModelProvider.Factory invoke()`  L24 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$special$$inlined$viewModels$default$4`
+L13 · [class] public final Ride3ProHourDetailActivity$special$$inlined$viewModels$default$4 · extends `Lambda implements Function0<ViewModelProvider.Factory>` · implements `Function0<ViewModelProvider.Factory>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity$special$$inlined$viewModels$default$4.java`
+注解：
+
+字段/常量（1）：
+- `ComponentActivity $this_viewModels`  L14
+
+方法（2）：
+- `public Ride3ProHourDetailActivity$special$$inlined$viewModels$default$4(ComponentActivity componentActivity)`  L17
+- `ViewModelProvider.Factory invoke()`  L24 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailActivity$WhenMappings`
+L413 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailActivity.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L414
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailDeleteState`
+L11 · [enum] public Ride3ProHourDetailDeleteState · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailDeleteState.java`
+注解：
+
+枚举常量（4）：
+- `IDLE()`  L12
+- `DELETING()`  L13
+- `SUCCEEDED()`  L14
+- `FAILED()`  L15
+
+方法（1）：
+- `EnumEntries<Ride3ProHourDetailDeleteState> getEntries()`  L19
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailLoadState`
+L11 · [enum] public Ride3ProHourDetailLoadState · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailLoadState.java`
+注解：
+
+枚举常量（3）：
+- `LOADING()`  L12
+- `LOADED()`  L13
+- `FAILED()`  L14
+
+方法（1）：
+- `EnumEntries<Ride3ProHourDetailLoadState> getEntries()`  L18
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailTitleFormatter`
+L16 · [class] public final Ride3ProHourDetailTitleFormatter · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailTitleFormatter.java`
+注解：
+
+字段/常量（6）：
+- `int DAY_MODULUS = 100`  L17
+- `int MONTH_DIVISOR = 100`  L19
+- `int MONTH_MODULUS = 100`  L20
+- `String TITLE_FORMAT = "%04d-%02d-%02d %02d:00"`  L21
+- `int YEAR_DIVISOR = 10000`  L22
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L30
+
+方法（2）：
+- `private Ride3ProHourDetailTitleFormatter()`  L24
+- `String format(Ride3ProHourKey hourKey)`  L27
+    - 体内字面量："hourKey"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailUiState`
+L14 · [class] public final Ride3ProHourDetailUiState · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailUiState.java`
+注解：
+
+字段/常量（9）：
+- `Ride3ProHourDetailDeleteState deleteState`  L15
+- `int deletedFileCount`  L16
+- `Throwable error`  L17
+- `List<Ride3ProPlaybackFile> files`  L18
+- `Ride3ProHourDetailLoadState loadState`  L19
+- `Ride3ProHourDetailLoadState ride3ProHourDetailLoadState2 = ride3ProHourDetailLoadState`  L33
+- `Ride3ProHourDetailDeleteState ride3ProHourDetailDeleteState2 = ride3ProHourDetailDeleteState`  L37
+- `int i3 = i`  L41
+- `Throwable th = this.error`  L92
+
+方法（18）：
+- `public Ride3ProHourDetailUiState()`  L21
+- `Ride3ProHourDetailUiState copy$default(Ride3ProHourDetailUiState ride3ProHourDetailUiState, List list, Ride3ProHourDetailLoadState ride3ProHourDetailLoadState, Ride3ProHourDetailDeleteState ride3ProHourDetailDeleteState, int i, Throwable th, int i2, Object obj)`  L26
+- `List<Ride3ProPlaybackFile> component1()`  L48
+- `Ride3ProHourDetailLoadState getLoadState()`  L53
+- `Ride3ProHourDetailDeleteState getDeleteState()`  L58
+- `int getDeletedFileCount()`  L63
+- `Throwable getError()`  L68
+- `Ride3ProHourDetailUiState copy(List<Ride3ProPlaybackFile> files, Ride3ProHourDetailLoadState loadState, Ride3ProHourDetailDeleteState deleteState, int deletedFileCount, Throwable error)`  L72
+    - 体内字面量："files" · "loadState" · "deleteState"
+- `boolean equals(Object other)`  L79
+- `int hashCode()`  L90
+- `String toString()`  L96
+    - 体内字面量："Ride3ProHourDetailUiState(files=" · ", loadState=" · ", deleteState=" · ", deletedFileCount=" · ", error=" · ")"
+- `public Ride3ProHourDetailUiState(List<Ride3ProPlaybackFile> files, Ride3ProHourDetailLoadState loadState, Ride3ProHourDetailDeleteState deleteState, int i, Throwable th)`  L100
+    - 体内字面量："files" · "loadState" · "deleteState"
+- ` Ride3ProHourDetailUiState(List list, Ride3ProHourDetailLoadState ride3ProHourDetailLoadState, Ride3ProHourDetailDeleteState ride3ProHourDetailDeleteState, int i, Throwable th, int i2, DefaultConstructorMarker defaultConstructorMarker)`  L111
+- `List<Ride3ProPlaybackFile> getFiles()`  L115
+- `Ride3ProHourDetailLoadState getLoadState()`  L119
+- `Ride3ProHourDetailDeleteState getDeleteState()`  L123
+- `int getDeletedFileCount()`  L127
+- `Throwable getError()`  L131
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailViewModel`
+L34 · [class] public final Ride3ProHourDetailViewModel · extends `ViewModel` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailViewModel.java`
+注解：
+
+字段/常量（28）：
+- `MutableStateFlow<Ride3ProHourDetailUiState> _uiState`  L35
+- `Boolean activeForceRefresh`  L36
+- `Job deleteJob`  L37
+- `Ride3ProHourKey hourKey`  L38
+- `Job interruptedLoadJob`  L39
+- `Job loadJob`  L40
+- `Boolean pendingForceRefresh`  L41
+- `boolean playbackModeReady`  L42
+- `Ride3ProIndexedPlaybackRepository repository`  L43
+- `Job resumeJob`  L44
+- `StateFlow<Ride3ProHourDetailUiState> uiState`  L45
+- `Job job = this.loadJob`  L64
+- `Job job2 = this.resumeJob`  L66
+- `Job job3 = this.interruptedLoadJob`  L68
+- `Job job = this.deleteJob`  L133
+- `MutableStateFlow<Ride3ProHourDetailUiState> mutableStateFlow = this._uiState`  L139
+- `Job job2 = this.resumeJob`  L142
+- `Job job3 = this.loadJob`  L147
+- `boolean z = this.activeForceRefresh`  L155
+- `Job job = this.loadJob`  L166
+- `Job job = this.deleteJob`  L178
+- `MutableStateFlow<Ride3ProHourDetailUiState> mutableStateFlow = this._uiState`  L183
+- `MutableStateFlow<Ride3ProHourDetailUiState> mutableStateFlow = this._uiState`  L244
+- `Boolean bool = this.pendingForceRefresh`  L250
+- `Job job = this.loadJob`  L254
+- `MutableStateFlow<Ride3ProHourDetailUiState> mutableStateFlow = this._uiState`  L258
+- `MutableStateFlow<Ride3ProHourDetailUiState> mutableStateFlow = this._uiState`  L343
+- `MutableStateFlow<Ride3ProHourDetailUiState> mutableStateFlow = this._uiState`  L349
+
+方法（10）：
+- `public Ride3ProHourDetailViewModel(Ride3ProIndexedPlaybackRepository repository, Ride3ProHourKey hourKey)`  L47
+    - 体内字面量："repository" · "hourKey"
+- `StateFlow<Ride3ProHourDetailUiState> getUiState()`  L58
+- `void onPlaybackModeReady()`  L62
+- `void onHostStopped(boolean isChangingConfigurations)`  L128
+- `void retry()`  L165
+- `void deleteFiles(List<Ride3ProPlaybackFile> files)`  L173
+    - 体内字面量："files"
+- `void consumeDeleteResult()`  L240
+- `void startPendingLoadIfReady()`  L249
+- `void applyFailure(Throwable error)`  L342
+- `void applyDeleteFailure(Throwable error)`  L348
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailViewModel$C28742`
+L193 · [class] static final C28742 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailViewModel.java`
+注解：
+
+字段/常量（5）：
+- `List<Ride3ProPlaybackFile> $files`  L194
+- `Object L$0`  L195
+- `Object L$1`  L196
+- `int label`  L197
+- `Ride3ProHourDetailViewModel this$0`  L198
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L208 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L213 @Override
+- `java.lang.Object invokeSuspend(java.lang.Object r18)`  L231 @Override
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailViewModel.C28742.invokeSuspend(java.lang.Object):java.lang.Object"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailViewModel$C28751`
+L82 · [class] static final C28751 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailViewModel.java`
+注解：
+
+字段/常量（4）：
+- `Job $interrupted`  L83
+- `int label`  L84
+- `Ride3ProHourDetailViewModel this$0`  L85
+- `int i = this.label`  L107
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L95 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L100 @Override
+- `Object invokeSuspend(Object obj)`  L105 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailViewModel$C28761`
+L270 · [class] static final C28761 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailViewModel.java`
+注解：
+
+字段/常量（6）：
+- `boolean $forceRefresh`  L271
+- `int label`  L272
+- `Object objMo2824loadHourFiles0E7RQCE`  L292
+- `int i = this.label`  L294
+- `MutableStateFlow mutableStateFlow = Ride3ProHourDetailViewModel.this._uiState`  L313
+- `Unit unit = Unit.INSTANCE`  L322
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L281 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L286 @Override
+- `Object invokeSuspend(Object obj)`  L291 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDetailViewModelFactory`
+L15 · [class] public final Ride3ProHourDetailViewModelFactory · implements `ViewModelProvider.Factory` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDetailViewModelFactory.java`
+注解：
+
+字段/常量（2）：
+- `Ride3ProHourKey hourKey`  L16
+- `Ride3ProIndexedPlaybackRepository repository`  L17
+
+方法（2）：
+- `public Ride3ProHourDetailViewModelFactory(Ride3ProIndexedPlaybackRepository repository, Ride3ProHourKey hourKey)`  L19
+    - 体内字面量："repository" · "hourKey"
+- `T create(Class<T> modelClass)`  L27 @Override
+    - 体内字面量："modelClass" · "Failed requirement."
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourDownloadTaskFactory`
+L29 · [class] public final Ride3ProHourDownloadTaskFactory · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourDownloadTaskFactory.java`
+注解：
+
+字段/常量（6）：
+- `DeviceType deviceType`  L30
+- `Ride3ProHourPlaybackVideoItemMapper playbackMapper`  L31
+- `TimeZone timeZone`  L32
+- `Function1 function3 = function1`  L67
+- `List<Ride3ProPlaybackFile> list = hourFiles`  L99
+- `List<Ride3ProPlaybackFile> list2 = selectedFiles`  L107
+
+方法（8）：
+- `public Ride3ProHourDownloadTaskFactory(TimeZone timeZone, DeviceType deviceType)`  L34
+    - 体内字面量："timeZone" · "deviceType" · "null cannot be cast to non-null type java.util.TimeZone"
+- ` Ride3ProHourDownloadTaskFactory(TimeZone timeZone, DeviceType deviceType, int i, DefaultConstructorMarker defaultConstructorMarker)`  L45
+- `List create$default(Ride3ProHourDownloadTaskFactory ride3ProHourDownloadTaskFactory, String str, List list, List list2, Function1 function1, Function1 function2, int i, Object obj)`  L50
+- `String invoke(Integer num)`  L58 @Override
+- `String invoke(int i2)`  L62
+- `String invoke(Integer num)`  L75 @Override
+- `String invoke(int i2)`  L79
+- `List<String> create(String deviceKey, List<Ride3ProPlaybackFile> hourFiles, List<Ride3ProPlaybackFile> selectedFiles, Function1<? super Integer, String> downloadUrlForIndex, Function1<? super Integer, String> thumbnailUrlForIndex)`  L87
+    - 体内字面量："deviceKey" · "hourFiles" · "selectedFiles" · "downloadUrlForIndex" · "thumbnailUrlForIndex" · "device key is required" · "at least one selected file is required"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourFileAdapter`
+L35 · [class] public final Ride3ProHourFileAdapter · extends `RecyclerView.Adapter<RecyclerView.ViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourFileAdapter.java`
+注解：
+
+字段/常量（17）：
+- `String TIME_DISPLAY_FORMAT = "%02d:%02d"`  L37
+- `String deviceKey`  L38
+- `List<Ride3ProPlaybackFile> files`  L39
+- `Function1<Ride3ProPlaybackFile, Unit> onFileClick`  L40
+- `Function1<Ride3ProPlaybackFile, Unit> onFileLongClick`  L41
+- `Function2<Integer, Boolean, Unit> onSelectionChanged`  L42
+- `boolean selectMode`  L43
+- `LinkedHashSet<Integer> selectedFileIndices`  L44
+- `Ride3ProIndexedThumbnailLoader thumbnailLoader`  L45
+- `Function1<Integer, AuthorizedDeviceResource> thumbnailResourceForIndex`  L46
+- `List<Ride3ProPlaybackFile> list = files`  L68
+- `LinkedHashSet<Integer> linkedHashSet = this.selectedFileIndices`  L70
+- `LinkedHashSet<Integer> linkedHashSet = this.selectedFileIndices`  L98
+- `List<Ride3ProPlaybackFile> list = this.files`  L99
+- `List<Ride3ProPlaybackFile> list = this.files`  L112
+- `List<Ride3ProPlaybackFile> list = this.files`  L125
+- `int i = 0`  L134
+
+方法（12）：
+- `public Ride3ProHourFileAdapter(String deviceKey, Ride3ProIndexedThumbnailLoader thumbnailLoader, Function1<? super Integer, AuthorizedDeviceResource> thumbnailResourceForIndex, Function1<? super Ride3ProPlaybackFile, Unit> onFileClick, Function1<? super Ride3ProPlaybackFile, Unit> onFileLongClick, Function2<? super Integer, ? super Boolean, Unit> onSelectionChanged)`  L49
+    - 体内字面量："deviceKey" · "thumbnailLoader" · "thumbnailResourceForIndex" · "onFileClick" · "onFileLongClick" · "onSelectionChanged"
+- `void submitList(List<Ride3ProPlaybackFile> files)`  L66
+    - 体内字面量："files"
+- `void setSelectMode(boolean enabled)`  L81
+- `boolean getSelectMode()`  L91
+- `void selectAll(boolean selectAll)`  L95
+- `List<Ride3ProPlaybackFile> getSelectedFiles()`  L111
+- `void selectFile(Ride3ProPlaybackFile file)`  L122
+    - 体内字面量："file"
+- `RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L155 @Override
+    - 体内字面量："parent" · "inflate(...)"
+- `void onBindViewHolder(RecyclerView.ViewHolder holder, int position)`  L163 @Override
+    - 体内字面量："holder"
+- `int getItemCount()`  L169 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProHourFileAdapter$FileViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemStorageListVideoItemBinding;" · "(Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProHourFileAdapter;Lcom/tuwinsmart/tuwin/databinding/ItemStorageListVideoItemBinding;)V" · "bind" · "file" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProPlaybackFile;" · "app_release_64"
+- `void toggleSelection(Ride3ProPlaybackFile file)`  L260
+- `void notifySelectionChanged()`  L267
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProHourFileAdapter$Companion;" · "()V" · "TIME_DISPLAY_FORMAT" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourFileAdapter$Companion`
+L274 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourFileAdapter.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L275
+- `private Companion()`  L279
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourFileAdapter$FileViewHolder`
+L176 · [class] final FileViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourFileAdapter.java`
+注解：
+
+字段/常量（8）：
+- `ItemStorageListVideoItemBinding binding`  L177
+- `Ride3ProHourFileAdapter this$0`  L178
+- `TextView textView = this.binding.tvHourTime`  L192
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L193
+- `Ride3ProIndexedThumbnailLoader ride3ProIndexedThumbnailLoader = this.this$0.thumbnailLoader`  L199
+- `RoundImageView ivVideo = this.binding.ivVideo`  L200
+- `Ride3ProHourFileAdapter ride3ProHourFileAdapter = this.this$0`  L205
+- `Ride3ProHourFileAdapter ride3ProHourFileAdapter2 = this.this$0`  L213
+
+方法（8）：
+- `public FileViewHolder(Ride3ProHourFileAdapter ride3ProHourFileAdapter, ItemStorageListVideoItemBinding binding)`  L181
+    - 体内字面量："binding"
+- `void bind(final Ride3ProPlaybackFile file)`  L188
+    - 体内字面量："file"
+- `void onClick(View view)`  L208 @Override
+- `boolean onLongClick(View view)`  L216 @Override
+- `void onClick(View view)`  L222 @Override
+- `void bind$lambda$0(Ride3ProHourFileAdapter this$0, Ride3ProPlaybackFile file, FileViewHolder this$1, View view)`  L229
+    - 体内字面量："this$0" · "$file" · "this$1"
+- `boolean bind$lambda$1(Ride3ProHourFileAdapter this$0, Ride3ProPlaybackFile file, View view)`  L242
+    - 体内字面量："this$0" · "$file"
+- `void bind$lambda$2(FileViewHolder this$0, View view)`  L253
+    - 体内字面量："this$0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourFileThumbnailRequestFactory`
+L14 · [class] public final Ride3ProHourFileThumbnailRequestFactory · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourFileThumbnailRequestFactory.java`
+注解：
+
+字段/常量（2）：
+- `String CACHE_KEY_NAMESPACE = "ride3pro-hour-file"`  L15
+- `String CACHE_KEY_SEPARATOR = "|"`  L16
+
+方法（3）：
+- `private Ride3ProHourFileThumbnailRequestFactory()`  L19
+- `Ride3ProIndexedThumbnailRequest create$default(Ride3ProHourFileThumbnailRequestFactory ride3ProHourFileThumbnailRequestFactory, String str, Ride3ProPlaybackFile ride3ProPlaybackFile, AuthorizedDeviceResource authorizedDeviceResource, int i, Object obj)`  L22
+- `Ride3ProIndexedThumbnailRequest create(String deviceKey, Ride3ProPlaybackFile file, AuthorizedDeviceResource resource)`  L29
+    - 体内字面量："deviceKey" · "file"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourOpenTraceSession`
+L16 · [class] public final Ride3ProHourOpenTraceSession · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourOpenTraceSession.java`
+注解：
+
+字段/常量（5）：
+- `Ride3ProPreDrawTraceSession failureTraceSession`  L17
+- `Ride3ProPendingHourTraceSnapshot pending`  L18
+- `Ride3ProPendingHourTraceSnapshot ride3ProPendingHourTraceSnapshot = this.pending`  L40
+- `Ride3ProPendingHourTraceSnapshot ride3ProPendingHourTraceSnapshot = this.pending`  L52
+- `Ride3ProPendingHourTraceSnapshot ride3ProPendingHourTraceSnapshot = this.pending`  L88
+
+方法（12）：
+- `public Ride3ProHourOpenTraceSession()`  L21
+- `public Ride3ProHourOpenTraceSession(Ride3ProPendingHourTraceSnapshot ride3ProPendingHourTraceSnapshot)`  L25
+- ` Ride3ProHourOpenTraceSession(Ride3ProPendingHourTraceSnapshot ride3ProPendingHourTraceSnapshot, int i, DefaultConstructorMarker defaultConstructorMarker)`  L30
+- `Ride3ProPendingHourTraceSnapshot getPending()`  L34
+- `void start(Ride3ProPendingHourTraceSnapshot snapshot)`  L38
+    - 体内字面量："snapshot"
+- `Function0<Unit> scheduleFailure(Ride3ProHourKey hourKey, final Function1<? super Ride3ProPendingHourTraceSnapshot, Unit> finishTrace)`  L49
+    - 体内字面量："hourKey" · "finishTrace"
+- `Unit invoke()`  L66 @Override
+- `void invoke2()`  L72
+- `Ride3ProPendingHourTraceSnapshot consumeForNavigation(Ride3ProHourKey hourKey)`  L86
+    - 体内字面量："hourKey"
+- `void invalidateScheduled()`  L100
+- `void cancelPending()`  L104
+- `Ride3ProPendingHourTraceSnapshot snapshot()`  L109
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourPlaybackVideoItemMapper`
+L26 · [class] public final Ride3ProHourPlaybackVideoItemMapper · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourPlaybackVideoItemMapper.java`
+注解：
+
+字段/常量（11）：
+- `String DAY_DISPLAY_FORMAT = "%04d-%02d-%02d"`  L28
+- `int DAY_MODULUS = 100`  L29
+- `long MILLIS_PER_SECOND = 1000`  L30
+- `int MONTH_DIVISOR = 100`  L31
+- `int MONTH_MODULUS = 100`  L32
+- `String TIME_DISPLAY_FORMAT = "%02d:%02d:00"`  L33
+- `int YEAR_DIVISOR = 10000`  L34
+- `TimeZone timeZone`  L35
+- `List<Ride3ProPlaybackFile> list = hourFiles`  L63
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L79
+- `StringCompanionObject stringCompanionObject2 = StringCompanionObject.INSTANCE`  L82
+
+方法（5）：
+- `public Ride3ProHourPlaybackVideoItemMapper(TimeZone timeZone)`  L37
+    - 体内字面量："timeZone" · "null cannot be cast to non-null type java.util.TimeZone"
+- `VideoItem map(String deviceKey, Ride3ProPlaybackFile selectedFile, List<Ride3ProPlaybackFile> hourFiles)`  L44
+    - 体内字面量："deviceKey" · "selectedFile" · "hourFiles" · "selected file must belong to the supplied hour file list"
+- `List<VideoItem> mapAll(String deviceKey, List<Ride3ProPlaybackFile> hourFiles)`  L57
+    - 体内字面量："deviceKey" · "hourFiles" · "device key is required"
+- `VideoItem mapFile(String deviceKey, Ride3ProPlaybackFile file)`  L72
+    - 体内字面量："toStrictDate(...)"
+- `Date toStrictDate(Ride3ProPlaybackTimestamp ride3ProPlaybackTimestamp)`  L88
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProHourPlaybackVideoItemMapper$Companion;" · "()V" · "DAY_DISPLAY_FORMAT" · "DAY_MODULUS" · "MILLIS_PER_SECOND" · "MONTH_DIVISOR" · "MONTH_MODULUS" · "TIME_DISPLAY_FORMAT" · "YEAR_DIVISOR" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProHourPlaybackVideoItemMapper$Companion`
+L104 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProHourPlaybackVideoItemMapper.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L105
+- `private Companion()`  L109
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackModeAction`
+L21 · [class] public final Ride3ProIndexedPlaybackModeAction · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackModeAction.java`
+注解：
+
+字段/常量（12）：
+- `int MODE_PLAYBACK = 2`  L25 @Deprecated
+- `String SET_MODE_ENDPOINT = "/api/setmode"`  L28 @Deprecated
+- `Function0<Unit> deviceScopeValidator`  L29
+- `Function0<Unit> refreshNetworkBinding`  L30
+- `Function0<Ride3ProApiService> serviceProvider`  L31
+- `Ride3ProIndexedPlaybackModeAction$execute$1 ride3ProIndexedPlaybackModeAction$execute$1`  L46
+- `Ride3ProIndexedPlaybackModeAction ride3ProIndexedPlaybackModeAction`  L47
+- `Object mode = ride3ProIndexedPlaybackModeAction$execute$1.result`  L58
+- `int i = ride3ProIndexedPlaybackModeAction$execute$1.label`  L60
+- `Result.Companion companion = Result.INSTANCE`  L84
+- `Result.Companion companion2 = Result.INSTANCE`  L87
+- `Result.Companion companion3 = Result.INSTANCE`  L92
+
+方法（2）：
+- `public Ride3ProIndexedPlaybackModeAction(Function0<? extends Ride3ProApiService> serviceProvider, Function0<Unit> refreshNetworkBinding, Function0<Unit> deviceScopeValidator)`  L34
+    - 体内字面量："serviceProvider" · "refreshNetworkBinding" · "deviceScopeValidator"
+- `Object m3033executeIoAF18A(Continuation<? super Result<Unit>> continuation)`  L45
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackModeAction$Companion`
+L99 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackModeAction.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L100
+- `private Companion()`  L104
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackModeAction$execute$1`
+L15 · [class] final Ride3ProIndexedPlaybackModeAction$execute$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackModeAction$execute$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `Ride3ProIndexedPlaybackModeAction this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackModeRecoveryController`
+L25 · [class] public final Ride3ProIndexedPlaybackModeRecoveryController · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryController.java`
+注解：
+
+字段/常量（10）：
+- `Function1<Continuation<? super Result<Unit>>, Object> enterPlaybackMode`  L26
+- `Function1<Throwable, Unit> onFailure`  L27
+- `Function0<Unit> onReady`  L28
+- `long recoveryGeneration`  L29
+- `Job recoveryJob`  L30
+- `boolean recoveryRequired`  L31
+- `CoroutineScope scope`  L32
+- `Job job = this.recoveryJob`  L66
+- `Job job = this.recoveryJob`  L76
+- `long j = this.recoveryGeneration + 1`  L78
+
+方法（6）：
+- `public Ride3ProIndexedPlaybackModeRecoveryController(CoroutineScope scope, Function1<? super Continuation<? super Result<Unit>>, ? extends Object> enterPlaybackMode, Function0<Unit> onReady, Function1<? super Throwable, Unit> onFailure)`  L35
+    - 体内字面量："scope" · "enterPlaybackMode" · "onReady" · "onFailure"
+- ` Ride3ProIndexedPlaybackModeRecoveryController(CoroutineScope coroutineScope, Function1 function1, C28801 c28801, Function1 function2, int i, DefaultConstructorMarker defaultConstructorMarker)`  L47
+- `void invoke2()`  L50
+- `Unit invoke()`  L54 @Override
+- `void onStop(boolean isChangingConfigurations)`  L61
+- `void onResume()`  L74
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackModeRecoveryController$C28811`
+L89 · [class] static final C28811 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryController.java`
+注解：
+
+字段/常量（4）：
+- `long $generation`  L90
+- `int label`  L91
+- `int i = this.label`  L112
+- `Function1 function1 = Ride3ProIndexedPlaybackModeRecoveryController.this.enterPlaybackMode`  L115
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L100 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L105 @Override
+- `Object invokeSuspend(Object obj)`  L110 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackModeRecoveryState`
+L10 · [interface] public Ride3ProIndexedPlaybackModeRecoveryState · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryState.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryState$Pending;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryState;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryState$Ready;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryState;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryState$Failed;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryState;" · "cause" · "(Ljava/lang/Throwable;)V" · "getCause" · "()Ljava/lang/Throwable;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackModeRecoveryState$Failed`
+L68 · [class] public static final Failed · implements `Ride3ProIndexedPlaybackModeRecoveryState` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryState.java`
+注解：
+
+字段/常量（1）：
+- `Throwable cause`  L69
+
+方法（8）：
+- `Failed copy$default(Failed failed, Throwable th, int i, Object obj)`  L71
+- `Throwable getCause()`  L79
+- `Failed copy(Throwable cause)`  L83
+    - 体内字面量："cause"
+- `boolean equals(Object other)`  L88
+- `int hashCode()`  L95
+- `String toString()`  L99
+    - 体内字面量："Failed(cause=" · ")"
+- `public Failed(Throwable cause)`  L103
+    - 体内字面量："cause"
+- `Throwable getCause()`  L108
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackModeRecoveryState$Pending`
+L14 · [class] public static final Pending · implements `Ride3ProIndexedPlaybackModeRecoveryState` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryState.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L17
+- `int hashCode()`  L27
+- `String toString()`  L31
+    - 体内字面量："Pending"
+- `private Pending()`  L35
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackModeRecoveryState$Ready`
+L41 · [class] public static final Ready · implements `Ride3ProIndexedPlaybackModeRecoveryState` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryState.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L44
+- `int hashCode()`  L54
+- `String toString()`  L58
+    - 体内字面量："Ready"
+- `private Ready()`  L62
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackModeRecoveryViewModel`
+L22 · [class] public final Ride3ProIndexedPlaybackModeRecoveryViewModel · extends `ViewModel` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryViewModel.java`
+注解：
+
+字段/常量（3）：
+- `MutableStateFlow<Ride3ProIndexedPlaybackModeRecoveryState> _state`  L23
+- `Ride3ProIndexedPlaybackModeRecoveryController controller`  L24
+- `StateFlow<Ride3ProIndexedPlaybackModeRecoveryState> state`  L25
+
+方法（8）：
+- `public Ride3ProIndexedPlaybackModeRecoveryViewModel(Function1<? super Continuation<? super Result<Unit>>, ? extends Object> enterPlaybackMode)`  L27
+    - 体内字面量："enterPlaybackMode"
+- `Unit invoke()`  L38 @Override
+- `void invoke2()`  L44
+- `Unit invoke(Throwable th)`  L53 @Override
+- `void invoke2(Throwable error)`  L59
+    - 体内字面量："error"
+- `StateFlow<Ride3ProIndexedPlaybackModeRecoveryState> getState()`  L66
+- `void onResume()`  L70
+- `void onStop(boolean isChangingConfigurations)`  L74
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackModeRecoveryViewModelFactory`
+L17 · [class] public final Ride3ProIndexedPlaybackModeRecoveryViewModelFactory · implements `ViewModelProvider.Factory` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackModeRecoveryViewModelFactory.java`
+注解：
+
+字段/常量（1）：
+- `Function1<Continuation<? super Result<Unit>>, Object> enterPlaybackMode`  L18
+
+方法（2）：
+- `public Ride3ProIndexedPlaybackModeRecoveryViewModelFactory(Function1<? super Continuation<? super Result<Unit>>, ? extends Object> enterPlaybackMode)`  L21
+    - 体内字面量："enterPlaybackMode"
+- `T create(Class<T> modelClass)`  L27 @Override
+    - 体内字面量："modelClass" · "Failed requirement."
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntime`
+L11 · [class] public final Ride3ProIndexedPlaybackRuntime · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntime.java`
+注解：
+
+字段/常量（2）：
+- `String deviceKey`  L12
+- `Ride3ProIndexedPlaybackRepository repository`  L13
+
+方法（10）：
+- `Ride3ProIndexedPlaybackRuntime copy$default(Ride3ProIndexedPlaybackRuntime ride3ProIndexedPlaybackRuntime, String str, Ride3ProIndexedPlaybackRepository ride3ProIndexedPlaybackRepository, int i, Object obj)`  L15
+- `String getDeviceKey()`  L26
+- `Ride3ProIndexedPlaybackRepository getRepository()`  L31
+- `Ride3ProIndexedPlaybackRuntime copy(String deviceKey, Ride3ProIndexedPlaybackRepository repository)`  L35
+    - 体内字面量："deviceKey" · "repository"
+- `boolean equals(Object other)`  L41
+- `int hashCode()`  L52
+- `String toString()`  L56
+    - 体内字面量："Ride3ProIndexedPlaybackRuntime(deviceKey=" · ", repository=" · ")"
+- `public Ride3ProIndexedPlaybackRuntime(String deviceKey, Ride3ProIndexedPlaybackRepository repository)`  L60
+    - 体内字面量："deviceKey" · "repository"
+- `String getDeviceKey()`  L67
+- `Ride3ProIndexedPlaybackRepository getRepository()`  L71
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntimeFactory`
+L44 · [class] public final Ride3ProIndexedPlaybackRuntimeFactory · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntimeFactory.java`
+注解：
+
+方法（19）：
+- `private Ride3ProIndexedPlaybackRuntimeFactory()`  L48
+- `String resolveCurrentDeviceKey()`  L51
+- `Object m3034seedFileCount0E7RQCE(File rootDirectory, String deviceKey, Ride3ProPlaybackFileCountInfo info)`  L56
+    - 体内字面量："rootDirectory" · "deviceKey" · "info"
+- `void invoke2(String warning)`  L62
+    - 体内字面量："warning"
+- `Unit invoke(String str)`  L68 @Override
+- `Ride3ProIndexedPlaybackRuntime create(Context context, String deviceKey)`  L75
+    - 体内字面量："context" · "deviceKey" · "getFilesDir(...)"
+- `Unit invoke(String str)`  L84 @Override
+- `void invoke2(String warning)`  L90
+    - 体内字面量："warning"
+- `Unit invoke(String str)`  L96 @Override
+- `void invoke2(String warning)`  L102
+    - 体内字面量："warning"
+- `Ride3ProIndexedPlaybackModeAction createPlaybackModeAction(String deviceKey)`  L169
+    - 体内字面量："deviceKey"
+- `Ride3ProIndexedPerformanceTracer createPerformanceTracer()`  L215
+- `Ride3ProIndexedDeviceScopeValidator createScopeValidator(String deviceKey)`  L219
+    - 体内字面量："indexed playback device key is required"
+- `Function0<Ride3ProApiService> createScopedServiceProvider(final Ride3ProIndexedDeviceScopeValidator scopeValidator)`  L240
+- `Ride3ProApiService invoke()`  L248 @Override
+- `Ride3ProIndexedDiagnostics createDiagnostics()`  L255
+- `Boolean invoke()`  L259 @Override
+- `void emit(Ride3ProIndexedDiagnosticEvent ride3ProIndexedDiagnosticEvent)`  L264 @Override
+- `void createDiagnostics$lambda$1(Ride3ProIndexedDiagnosticEvent event)`  L303
+    - 体内字面量："event"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntimeFactory$C28821`
+L112 · [class] C28821 · extends `FunctionReferenceImpl implements Function0<Unit>` · implements `Function0<Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntimeFactory.java`
+注解：
+
+方法（2）：
+- `Unit invoke()`  L118 @Override
+- `void invoke2()`  L124
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntimeFactory$C28832`
+L132 · [class] C28832 · extends `FunctionReferenceImpl implements Function3<Ride3ProHourKey, Integer, Continuation<? super Result<? extends Ride3ProHourFilesLoadResult>>, Object>, SuspendFunction` · implements `Function3<Ride3ProHourKey, Integer, Continuation<? super Result<? extends Ride3ProHourFilesLoadResult>>, Object>, SuspendFunction` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntimeFactory.java`
+注解：
+
+方法（2）：
+- `Object invoke(Ride3ProHourKey ride3ProHourKey, Integer num, Continuation<? super Result<? extends Ride3ProHourFilesLoadResult>> continuation)`  L138 @Override
+- `Object m3035invoke0E7RQCE(Ride3ProHourKey ride3ProHourKey, int i, Continuation<? super Result<? extends Ride3ProHourFilesLoadResult>> continuation)`  L143
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntimeFactory$C28854`
+L152 · [class] C28854 · extends `FunctionReferenceImpl implements Function0<Unit>` · implements `Function0<Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntimeFactory.java`
+注解：
+
+方法（2）：
+- `Unit invoke()`  L158 @Override
+- `void invoke2()`  L164
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntimeFactory$C28872`
+L273 · [class] C28872 · extends `FunctionReferenceImpl implements Function0<Long>` · implements `Function0<Long>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntimeFactory.java`
+注解：
+
+方法（1）：
+- `Long invoke()`  L282 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntimeFactory$C28883`
+L290 · [class] C28883 · extends `FunctionReferenceImpl implements Function0<Long>` · implements `Function0<Long>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntimeFactory.java`
+注解：
+
+方法（1）：
+- `Long invoke()`  L297 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntimeFactory$C28891`
+L178 · [class] C28891 · extends `FunctionReferenceImpl implements Function0<Unit>` · implements `Function0<Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntimeFactory.java`
+注解：
+
+方法（2）：
+- `Unit invoke()`  L184 @Override
+- `void invoke2()`  L190
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntimeFactory$C28902`
+L198 · [class] C28902 · extends `FunctionReferenceImpl implements Function0<Unit>` · implements `Function0<Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntimeFactory.java`
+注解：
+
+方法（2）：
+- `Unit invoke()`  L204 @Override
+- `void invoke2()`  L210
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntimeFactory$C28912`
+L229 · [class] C28912 · extends `FunctionReferenceImpl implements Function0<String>` · implements `Function0<String>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntimeFactory.java`
+注解：
+
+方法（1）：
+- `String invoke()`  L235 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntimeFactory$create$hourFilesLoader$1`
+L13 · [class] Ride3ProIndexedPlaybackRuntimeFactory$create$hourFilesLoader$1 · extends `FunctionReferenceImpl implements Function0<Unit>` · implements `Function0<Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntimeFactory$create$hourFilesLoader$1.java`
+注解：
+
+方法（2）：
+- `Unit invoke()`  L19 @Override
+- `void invoke2()`  L25
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedPlaybackRuntimeFactory$seedFileCount$2`
+L13 · [class] Ride3ProIndexedPlaybackRuntimeFactory$seedFileCount$2 · extends `FunctionReferenceImpl implements Function0<Unit>` · implements `Function0<Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedPlaybackRuntimeFactory$seedFileCount$2.java`
+注解：
+
+方法（2）：
+- `Unit invoke()`  L19 @Override
+- `void invoke2()`  L25
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageActivity`
+L55 · [class] public final Ride3ProIndexedStorageActivity · extends `BaseActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageActivity.java`
+注解：
+
+字段/常量（22）：
+- `String EXTRA_DEVICE_KEY = "ride3pro_indexed_device_key"`  L59
+- `String EXTRA_DEVICE_TYPE_CODE = "device_type_code"`  L60
+- `String EXTRA_SESSION_ID = "device_session_id"`  L61
+- `String PLAYBACK_MODE_READY_REQUEST = "ride3pro_indexed_playback_mode_ready"`  L62
+- `ActivityRide3proIndexedStorageBinding binding`  L63
+- `Lazy playbackModeRecovery`  L66
+- `DeviceType deviceType`  L117
+- `int length = deviceTypeArrValues.length`  L121
+- `int i = 0`  L122
+- `Ride3ProIndexedPlaybackRuntimeFactory ride3ProIndexedPlaybackRuntimeFactory = Ride3ProIndexedPlaybackRuntimeFactory.INSTANCE`  L166
+- `Ride3ProIndexedStorageActivity ride3ProIndexedStorageActivity = this`  L174
+- `Function0 function0 = null`  L175
+- `CreationExtras creationExtras`  L221
+- `Function0 function1 = function0`  L222
+- `Ride3ProStatusBarInsets ride3ProStatusBarInsets = Ride3ProStatusBarInsets.INSTANCE`  L272
+- `ActivityRide3proIndexedStorageBinding activityRide3proIndexedStorageBinding = this.binding`  L273
+- `ActivityRide3proIndexedStorageBinding activityRide3proIndexedStorageBinding2 = null`  L274
+- `FrameLayout toolbarContainer = activityRide3proIndexedStorageBinding.toolbarContainer`  L279
+- `ActivityRide3proIndexedStorageBinding activityRide3proIndexedStorageBinding3 = this.binding`  L282
+- `ImageView btnBack = activityRide3proIndexedStorageBinding3.btnBack`  L287
+- `ActivityRide3proIndexedStorageBinding activityRide3proIndexedStorageBinding4 = this.binding`  L299
+- `Ride3ProIndexedStorageFragment.Companion companion = Ride3ProIndexedStorageFragment.INSTANCE`  L306
+
+方法（22）：
+- `String invoke()`  L75 @Override
+    - 体内字面量："ride3pro_indexed_device_key" · "Required value was null." · "indexed storage device key is required"
+- `String invoke()`  L95 @Override
+    - 体内字面量："device_session_id" · "Required value was null." · "indexed storage device session is required"
+- `DeviceType invoke()`  L116 @Override
+- `Ride3ProIndexedTraceContext invoke()`  L150 @Override
+    - 体内字面量："getIntent(...)"
+- `Ride3ProIndexedPlaybackModeAction invoke()`  L165 @Override
+- `public Ride3ProIndexedStorageActivity()`  L173
+- `ViewModelStore invoke()`  L183 @Override
+- `ViewModelProvider.Factory invoke()`  L209 @Override
+- `CreationExtras invoke()`  L220 @Override
+- `String getDeviceKey()`  L229
+- `String getDeviceSessionId()`  L233
+- `DeviceType getDeviceType$app_release_64()`  L237
+- `Ride3ProIndexedTraceContext getTraceContext()`  L241
+- `Ride3ProIndexedPlaybackModeAction getPlaybackModeAction()`  L246
+- `Ride3ProIndexedPlaybackModeRecoveryViewModel getPlaybackModeRecovery()`  L251
+- `View getContentRoot()`  L256 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L270 @Override
+- `void onClick(View view)`  L291 @Override
+    - 体内字面量："getSupportFragmentManager(...)"
+- `void onCreate$lambda$0(Ride3ProIndexedStorageActivity this$0, View view)`  L318
+    - 体内字面量："this$0"
+- `void onResume()`  L324 @Override
+- `void onStop()`  L330 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProIndexedStorageActivity$observePlaybackModeRecovery$1" · "Ride3ProIndexedStorageActivity.kt" · "invokeSuspend"
+- `void observePlaybackModeRecovery()`  L440
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageActivity$Companion;" · "()V" · "EXTRA_DEVICE_KEY" · "EXTRA_DEVICE_TYPE_CODE" · "EXTRA_SESSION_ID" · "PLAYBACK_MODE_READY_REQUEST" · "launchActivity" · "activity" · "Lcom/tuwinsmart/tuwin/presentation/ui/base/BaseActivity;" · "deviceKey" · "deviceSessionId" · "traceContext" · "Lcom/tuwinsmart/tuwin/core/util/logging/Ride3ProIndexedTraceContext;" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceType;" · "launchActivity$app_release_64" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageActivity$C28931`
+L339 · [class] static final C28931 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L340
+- `int i = this.label`  L423
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L347 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L352 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProIndexedStorageActivity$observePlaybackModeRecovery$1$1" · "Ride3ProIndexedStorageActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L421 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageActivity$C28931$AnonymousClass1`
+L360 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageActivity.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L361
+- `Ride3ProIndexedStorageActivity this$0`  L362
+- `int i = this.label`  L383
+- `Ride3ProIndexedStorageActivity ride3ProIndexedStorageActivity = this.this$0`  L387
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L371 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L376 @Override
+- `Object invokeSuspend(Object obj)`  L381 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L391 @Override
+- `Object emit(Ride3ProIndexedPlaybackModeRecoveryState ride3ProIndexedPlaybackModeRecoveryState, Continuation<? super Unit> continuation)`  L395
+    - 体内字面量："Ride3Pro indexed storage playback mode recovery failed" · "call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageActivity$C28941`
+L194 · [class] C28941 · extends `FunctionReferenceImpl implements Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageActivity.java`
+注解：
+
+方法（1）：
+- `Object invoke(Continuation<? super Result<Unit>> continuation)`  L201 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageActivity$Companion`
+L446 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageActivity.java`
+注解：
+
+方法（4）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L447
+- `private Companion()`  L451
+- `void launchActivity$app_release_64$default(Companion companion, BaseActivity baseActivity, String str, String str2, Ride3ProIndexedTraceContext ride3ProIndexedTraceContext, DeviceType deviceType, int i, Object obj)`  L454
+- `void launchActivity$app_release_64(BaseActivity activity, String deviceKey, String deviceSessionId, Ride3ProIndexedTraceContext traceContext, DeviceType deviceType)`  L461
+    - 体内字面量："activity" · "deviceKey" · "deviceSessionId" · "traceContext" · "deviceType" · "indexed storage device key is required" · "indexed storage device session is required" · "device_session_id" · "device_type_code"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageAdapter`
+L34 · [class] public final Ride3ProIndexedStorageAdapter · extends `RecyclerView.Adapter<RecyclerView.ViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageAdapter.java`
+注解：
+
+字段/常量（21）：
+- `int DATE_HEADER_SPAN_SIZE = 3`  L35
+- `int HOUR_GROUP_SPAN_SIZE = 1`  L36
+- `float IDLE_ALPHA = 1.0f`  L37
+- `float LOADING_ALPHA = 0.5f`  L38
+- `int VIEW_TYPE_DATE_HEADER = 0`  L39
+- `int VIEW_TYPE_HOUR_GROUP = 1`  L40
+- `String deviceKey`  L41
+- `boolean interactionEnabled`  L42
+- `List<? extends Ride3ProStorageListItem> items`  L43
+- `Function1<Ride3ProStorageListItem.HourGroup, Unit> onHourClick`  L44
+- `GridLayoutManager.SpanSizeLookup spanSizeLookup`  L45
+- `Ride3ProIndexedThumbnailLoader thumbnailLoader`  L46
+- `boolean thumbnailRequestsEnabled`  L47
+- `Function1<Integer, AuthorizedDeviceResource> thumbnailResourceForIndex`  L48
+- `String INTERACTION_PAYLOAD = "ride3pro-indexed-interaction"`  L52
+- `String THUMBNAIL_PAYLOAD = "ride3pro-indexed-thumbnail"`  L53
+- `boolean z = this.interactionEnabled != interactionEnabled`  L101
+- `boolean z2 = this.thumbnailRequestsEnabled`  L102
+- `boolean z3 = !z2 && thumbnailRequestsEnabled`  L103
+- `boolean z4 = z2 != thumbnailRequestsEnabled`  L104
+- `List<Object> list = payloads`  L165
+
+方法（11）：
+- `public Ride3ProIndexedStorageAdapter(String deviceKey, Ride3ProIndexedThumbnailLoader thumbnailLoader, Function1<? super Integer, AuthorizedDeviceResource> thumbnailResourceForIndex, Function1<? super Ride3ProStorageListItem.HourGroup, Unit> onHourClick)`  L57
+    - 体内字面量："deviceKey" · "thumbnailLoader" · "thumbnailResourceForIndex" · "onHourClick"
+- `int getSpanSize(int position)`  L71 @Override
+    - 体内字面量："Unknown indexed storage view type"
+- `GridLayoutManager.SpanSizeLookup getSpanSizeLookup()`  L84
+- `void submitList(List<? extends Ride3ProStorageListItem> items)`  L88
+    - 体内字面量："items"
+- `void submitList(List<? extends Ride3ProStorageListItem> items, boolean interactionEnabled)`  L93
+    - 体内字面量："items"
+- `void submitList(List<? extends Ride3ProStorageListItem> items, boolean interactionEnabled, boolean thumbnailRequestsEnabled)`  L98
+    - 体内字面量："items"
+- `int getItemViewType(int position)`  L122 @Override
+- `RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L134 @Override
+    - 体内字面量："parent" · "inflate(...)" · "inflate(...)" · "Unknown indexed storage view type: "
+- `void onBindViewHolder(RecyclerView.ViewHolder holder, int position)`  L150 @Override
+    - 体内字面量："holder"
+- `void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads)`  L161 @Override
+    - 体内字面量："holder" · "payloads"
+- `int getItemCount()`  L189 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageAdapter$DateHeaderViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemStorageListVideoDateTitleBinding;" · "(Lcom/tuwinsmart/tuwin/databinding/ItemStorageListVideoDateTitleBinding;)V" · "bind" · "item" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageListItem$DateHeader;" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageAdapter$HourGroupViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemStorageListVideoItemBinding;" · "(Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageAdapter;Lcom/tuwinsmart/tuwin/databinding/ItemStorageListVideoItemBinding;)V" · "bind" · "item" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageListItem$HourGroup;" · "bindInteraction" · "bindThumbnail" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageAdapter$StorageListDiff;" · "Landroidx/recyclerview/widget/DiffUtil$Callback;" · "oldItems" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageListItem;" · "newItems" · "(Ljava/util/List;Ljava/util/List;)V" · "areContentsTheSame" · "oldItemPosition" · "newItemPosition" · "areItemsTheSame" · "getNewListSize" · "getOldListSize" · "identityOf" · "item" · "DateIdentity" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageAdapter$Companion;" · "()V" · "DATE_HEADER_SPAN_SIZE" · "HOUR_GROUP_SPAN_SIZE" · "IDLE_ALPHA" · "INTERACTION_PAYLOAD" · "LOADING_ALPHA" · "PARTIAL_BIND_PAYLOADS" · "THUMBNAIL_PAYLOAD" · "VIEW_TYPE_DATE_HEADER" · "VIEW_TYPE_HOUR_GROUP" · "itemAlpha" · "loadState" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProGroupLoadState;" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageAdapter$Companion`
+L379 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageAdapter.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L380
+- `private Companion()`  L384
+- `float itemAlpha(Ride3ProGroupLoadState loadState)`  L388
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageAdapter$DateHeaderViewHolder`
+L195 · [class] private static final DateHeaderViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageAdapter.java`
+注解：
+
+字段/常量（1）：
+- `ItemStorageListVideoDateTitleBinding binding`  L196
+
+方法（2）：
+- `public DateHeaderViewHolder(ItemStorageListVideoDateTitleBinding binding)`  L199
+    - 体内字面量："binding"
+- `void bind(Ride3ProStorageListItem.DateHeader item)`  L205
+    - 体内字面量："item"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageAdapter$HourGroupViewHolder`
+L217 · [class] final HourGroupViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageAdapter.java`
+注解：
+
+字段/常量（8）：
+- `ItemStorageListVideoItemBinding binding`  L218
+- `Ride3ProIndexedStorageAdapter this$0`  L219
+- `View.OnClickListener onClickListener`  L245
+- `Ride3ProIndexedStorageAdapter ride3ProIndexedStorageAdapter = this.this$0`  L251
+- `Ride3ProIndexedThumbnailLoader ride3ProIndexedThumbnailLoader = this.this$0.thumbnailLoader`  L274
+- `RoundImageView ivVideo = this.binding.ivVideo`  L275
+- `Ride3ProIndexedThumbnailLoader ride3ProIndexedThumbnailLoader2 = this.this$0.thumbnailLoader`  L280
+- `RoundImageView ivVideo2 = this.binding.ivVideo`  L281
+
+方法（6）：
+- `public HourGroupViewHolder(Ride3ProIndexedStorageAdapter ride3ProIndexedStorageAdapter, ItemStorageListVideoItemBinding binding)`  L222
+    - 体内字面量："binding"
+- `void bind(Ride3ProStorageListItem.HourGroup item)`  L229
+    - 体内字面量："item"
+- `void bindInteraction(final Ride3ProStorageListItem.HourGroup item)`  L244
+- `void onClick(View view)`  L254 @Override
+- `void bindInteraction$lambda$0(Ride3ProIndexedStorageAdapter this$0, Ride3ProStorageListItem.HourGroup item, View view)`  L265
+    - 体内字面量："this$0" · "$item"
+- `void bindThumbnail(Ride3ProStorageListItem.HourGroup item)`  L271
+    - 体内字面量："item"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageAdapter$StorageListDiff`
+L289 · [class] private static final StorageListDiff · extends `DiffUtil.Callback` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageAdapter.java`
+注解：
+
+字段/常量（2）：
+- `List<Ride3ProStorageListItem> newItems`  L290
+- `List<Ride3ProStorageListItem> oldItems`  L291
+
+方法（6）：
+- `public StorageListDiff(List<? extends Ride3ProStorageListItem> oldItems, List<? extends Ride3ProStorageListItem> newItems)`  L294
+    - 体内字面量："oldItems" · "newItems"
+- `int getOldListSize()`  L302 @Override
+- `int getNewListSize()`  L307 @Override
+- `boolean areItemsTheSame(int oldItemPosition, int newItemPosition)`  L312 @Override
+- `boolean areContentsTheSame(int oldItemPosition, int newItemPosition)`  L317 @Override
+- `Object identityOf(Ride3ProStorageListItem item)`  L321
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageAdapter$StorageListDiff$DateIdentity;" · "(I)V" · "getDate" · "()I" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageAdapter$StorageListDiff$DateIdentity`
+L333 · [class] private static final DateIdentity · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageAdapter.java`
+注解：
+
+字段/常量（1）：
+- `int date`  L334
+
+方法（8）：
+- `DateIdentity copy$default(DateIdentity dateIdentity, int i, int i2, Object obj)`  L336
+- `int getDate()`  L344
+- `DateIdentity copy(int date)`  L348
+- `boolean equals(Object other)`  L352
+- `int hashCode()`  L359
+- `String toString()`  L363
+    - 体内字面量："DateIdentity(date=" · ")"
+- `public DateIdentity(int i)`  L367
+- `int getDate()`  L371
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageDependencies`
+L15 · [class] public final Ride3ProIndexedStorageDependencies · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageDependencies.java`
+注解：
+
+字段/常量（4）：
+- `String deviceKey`  L16
+- `Function1<Ride3ProPlaybackCatalog, List<Ride3ProStorageListItem>> mapCatalogToListItems`  L17
+- `Ride3ProIndexedPerformanceTracer performanceTracer`  L18
+- `Ride3ProIndexedPlaybackRepository repository`  L19
+
+方法（14）：
+- `Ride3ProIndexedStorageDependencies copy$default(Ride3ProIndexedStorageDependencies ride3ProIndexedStorageDependencies, String str, Ride3ProIndexedPlaybackRepository ride3ProIndexedPlaybackRepository, Ride3ProIndexedPerformanceTracer ride3ProIndexedPerformanceTracer, Function1 function1, int i, Object obj)`  L22
+- `String getDeviceKey()`  L39
+- `Ride3ProIndexedPlaybackRepository getRepository()`  L44
+- `Ride3ProIndexedPerformanceTracer getPerformanceTracer()`  L49
+- `Function1<Ride3ProPlaybackCatalog, List<Ride3ProStorageListItem>> component4()`  L53
+- `Ride3ProIndexedStorageDependencies copy(String deviceKey, Ride3ProIndexedPlaybackRepository repository, Ride3ProIndexedPerformanceTracer performanceTracer, Function1<? super Ride3ProPlaybackCatalog, ? extends List<? extends Ride3ProStorageListItem>> mapCatalogToListItems)`  L57
+    - 体内字面量："deviceKey" · "repository" · "performanceTracer" · "mapCatalogToListItems"
+- `boolean equals(Object other)`  L65
+- `int hashCode()`  L76
+- `String toString()`  L80
+    - 体内字面量："Ride3ProIndexedStorageDependencies(deviceKey=" · ", repository=" · ", performanceTracer=" · ", mapCatalogToListItems=" · ")"
+- `public Ride3ProIndexedStorageDependencies(String deviceKey, Ride3ProIndexedPlaybackRepository repository, Ride3ProIndexedPerformanceTracer performanceTracer, Function1<? super Ride3ProPlaybackCatalog, ? extends List<? extends Ride3ProStorageListItem>> mapCatalogToListItems)`  L85
+    - 体内字面量："deviceKey" · "repository" · "performanceTracer" · "mapCatalogToListItems"
+- `String getDeviceKey()`  L96
+- `Ride3ProIndexedPlaybackRepository getRepository()`  L100
+- `Ride3ProIndexedPerformanceTracer getPerformanceTracer()`  L104
+- `Function1<Ride3ProPlaybackCatalog, List<Ride3ProStorageListItem>> getMapCatalogToListItems()`  L108
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageError`
+L12 · [interface] public Ride3ProIndexedStorageError · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageError.java`
+注解：
+
+方法（1）：
+- `Throwable getCause()`  L13
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageError$Initial;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageError;" · "cause" · "(Ljava/lang/Throwable;)V" · "getCause" · "()Ljava/lang/Throwable;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageError$Refresh;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageError;" · "cause" · "(Ljava/lang/Throwable;)V" · "getCause" · "()Ljava/lang/Throwable;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageError$Day;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageError;" · "cause" · "(ILjava/lang/Throwable;)V" · "getCause" · "()Ljava/lang/Throwable;" · "getDate" · "()I" · "component1" · "component2" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageError$Hour;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageError;" · "hourKey" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProHourKey;" · "cause" · "(Lcom/tuwinsmart/tuwin/domain/model/Ride3ProHourKey;Ljava/lang/Throwable;)V" · "getCause" · "()Ljava/lang/Throwable;" · "getHourKey" · "()Lcom/tuwinsmart/tuwin/domain/model/Ride3ProHourKey;" · "component1" · "component2" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageError$Day`
+L113 · [class] public static final Day · implements `Ride3ProIndexedStorageError` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageError.java`
+注解：
+
+字段/常量（2）：
+- `Throwable cause`  L114
+- `int date`  L115
+
+方法（10）：
+- `Day copy$default(Day day, int i, Throwable th, int i2, Object obj)`  L117
+- `int getDate()`  L128
+- `Throwable getCause()`  L133
+- `Day copy(int date, Throwable cause)`  L137
+    - 体内字面量："cause"
+- `boolean equals(Object other)`  L142
+- `int hashCode()`  L153
+- `String toString()`  L157
+    - 体内字面量："Day(date=" · ", cause=" · ")"
+- `public Day(int i, Throwable cause)`  L161
+    - 体内字面量："cause"
+- `int getDate()`  L167
+- `Throwable getCause()`  L172 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageError$Hour`
+L179 · [class] public static final Hour · implements `Ride3ProIndexedStorageError` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageError.java`
+注解：
+
+字段/常量（2）：
+- `Throwable cause`  L180
+- `Ride3ProHourKey hourKey`  L181
+
+方法（10）：
+- `Hour copy$default(Hour hour, Ride3ProHourKey ride3ProHourKey, Throwable th, int i, Object obj)`  L183
+- `Ride3ProHourKey getHourKey()`  L194
+- `Throwable getCause()`  L199
+- `Hour copy(Ride3ProHourKey hourKey, Throwable cause)`  L203
+    - 体内字面量："hourKey" · "cause"
+- `boolean equals(Object other)`  L209
+- `int hashCode()`  L220
+- `String toString()`  L224
+    - 体内字面量："Hour(hourKey=" · ", cause=" · ")"
+- `public Hour(Ride3ProHourKey hourKey, Throwable cause)`  L228
+    - 体内字面量："hourKey" · "cause"
+- `Ride3ProHourKey getHourKey()`  L235
+- `Throwable getCause()`  L240 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageError$Initial`
+L17 · [class] public static final Initial · implements `Ride3ProIndexedStorageError` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageError.java`
+注解：
+
+字段/常量（1）：
+- `Throwable cause`  L18
+
+方法（8）：
+- `Initial copy$default(Initial initial, Throwable th, int i, Object obj)`  L20
+- `Throwable getCause()`  L28
+- `Initial copy(Throwable cause)`  L32
+    - 体内字面量："cause"
+- `boolean equals(Object other)`  L37
+- `int hashCode()`  L44
+- `String toString()`  L48
+    - 体内字面量："Initial(cause=" · ")"
+- `public Initial(Throwable cause)`  L52
+    - 体内字面量："cause"
+- `Throwable getCause()`  L58 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageError$Refresh`
+L65 · [class] public static final Refresh · implements `Ride3ProIndexedStorageError` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageError.java`
+注解：
+
+字段/常量（1）：
+- `Throwable cause`  L66
+
+方法（8）：
+- `Refresh copy$default(Refresh refresh, Throwable th, int i, Object obj)`  L68
+- `Throwable getCause()`  L76
+- `Refresh copy(Throwable cause)`  L80
+    - 体内字面量："cause"
+- `boolean equals(Object other)`  L85
+- `int hashCode()`  L92
+- `String toString()`  L96
+    - 体内字面量："Refresh(cause=" · ")"
+- `public Refresh(Throwable cause)`  L100
+    - 体内字面量："cause"
+- `Throwable getCause()`  L106 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageFragment`
+L92 · [class] public final Ride3ProIndexedStorageFragment · extends `Fragment` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageFragment.java`
+注解：
+
+字段/常量（57）：
+- `String ARG_DEVICE_KEY = "ride3pro_indexed_device_key"`  L93
+- `String ARG_SESSION_ID = "device_session_id"`  L94
+- `int COLUMN_COUNT = 3`  L95
+- `int MONTH_MULTIPLIER = 100`  L99
+- `String STATE_STORAGE_TRACE_FINISHED = "storage_trace_finished"`  L100
+- `int YEAR_MULTIPLIER = 10000`  L101
+- `FragmentRide3proIndexedStorageBinding _binding`  L102
+- `Lazy adapter`  L105
+- `Lazy dependencies`  L108
+- `ActivityResultLauncher<Intent> hourDetailLauncher`  L109
+- `Ride3ProHourOpenTraceSession hourOpenTraceSession`  L110
+- `Ride3ProPreDrawTraceSession storageTraceSession`  L111
+- `Lazy viewModel`  L114
+- `DeviceType deviceType$app_release_64`  L165
+- `FragmentRide3proIndexedStorageBinding fragmentRide3proIndexedStorageBinding = this._binding`  L228
+- `Ride3ProPreDrawTraceSession ride3ProPreDrawTraceSession = this.storageTraceSession`  L347
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession = this.hourOpenTraceSession`  L353
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession = this.hourOpenTraceSession`  L368
+- `Ride3ProPreDrawTraceSession ride3ProPreDrawTraceSession = this.storageTraceSession`  L382
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession = this.hourOpenTraceSession`  L388
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession = null`  L631
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession2 = this.hourOpenTraceSession`  L642
+- `ActivityResultLauncher<Intent> activityResultLauncher = this.hourDetailLauncher`  L649
+- `Ride3ProHourDetailActivity.Companion companion = Ride3ProHourDetailActivity.INSTANCE`  L650
+- `Object objM3074constructorimpl`  L663
+- `ArrayList arrayList2 = arrayList`  L672
+- `Result.Companion companion = Result.INSTANCE`  L683
+- `Ride3ProIndexedStorageFragment ride3ProIndexedStorageFragment = this`  L684
+- `Result.Companion companion2 = Result.INSTANCE`  L691
+- `Object objM3074constructorimpl`  L703
+- `Result.Companion companion = Result.INSTANCE`  L705
+- `Ride3ProIndexedStorageFragment ride3ProIndexedStorageFragment = this`  L706
+- `Result.Companion companion2 = Result.INSTANCE`  L712
+- `int i`  L734
+- `LinearLayout linearLayout`  L735
+- `Ride3ProIndexedVisibilityOutcome ride3ProIndexedVisibilityOutcome`  L736
+- `Ride3ProPreDrawTraceSession ride3ProPreDrawTraceSession`  L737
+- `Function0<Unit> function0Schedule`  L738
+- `int i2 = 0`  L740
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession = null`  L840
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession2 = this.hourOpenTraceSession`  L845
+- `LinearLayout linearLayout = errorContainer`  L873
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession = this.hourOpenTraceSession`  L941
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession2 = null`  L942
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession3 = this.hourOpenTraceSession`  L954
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession = this.hourOpenTraceSession`  L964
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession2 = null`  L965
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession3 = this.hourOpenTraceSession`  L982
+- `Object obj2 = null`  L1001
+- `boolean z = false`  L1002
+- `Object obj3 = null`  L1003
+- `Ride3ProIndexedPlaybackRuntimeFactory ride3ProIndexedPlaybackRuntimeFactory = Ride3ProIndexedPlaybackRuntimeFactory.INSTANCE`  L1027
+- `int i`  L1050
+- `Ride3ProIndexedStorageFragment ride3ProIndexedStorageFragment = this`  L1121
+- `Function0 function2 = null`  L1155
+- `CreationExtras creationExtras`  L1175
+- `Function0 function3 = function2`  L1176
+
+方法（66）：
+- `String invoke()`  L123 @Override
+    - 体内字面量："ride3pro_indexed_device_key" · "Required value was null." · "indexed storage device key is required"
+- `String invoke()`  L143 @Override
+    - 体内字面量："device_session_id" · "Required value was null." · "indexed storage device session is required"
+- `DeviceType invoke()`  L164 @Override
+- `VerifiedDeviceFileCatalog invoke()`  L180 @Override
+- `Ride3ProIndexedTraceContext invoke()`  L193 @Override
+    - 体内字面量："requireArguments(...)"
+- `int toVisibility(boolean z)`  L223
+- `FragmentRide3proIndexedStorageBinding getBinding()`  L227
+- `String getDeviceKey()`  L235
+- `String getDeviceSessionId()`  L239
+- `DeviceType getDeviceType()`  L243
+- `VerifiedDeviceFileCatalog getFileCatalog()`  L247
+- `Ride3ProIndexedTraceContext getTraceContext()`  L252
+- `void hourDetailLauncher$lambda$0(Ride3ProIndexedStorageFragment this$0, ActivityResult result)`  L257
+    - 体内字面量："this$0" · "result"
+- `Ride3ProIndexedStorageDependencies getDependencies()`  L266
+- `Ride3ProIndexedStorageViewModel getViewModel()`  L271
+- `Ride3ProIndexedStorageAdapter getAdapter()`  L275
+- `void onCreate(Bundle savedInstanceState)`  L280 @Override
+- `void onFragmentResult(String str, Bundle bundle)`  L286 @Override
+- `void onCreate$lambda$1(Ride3ProIndexedStorageFragment this$0, String str, Bundle bundle)`  L293
+    - 体内字面量："this$0" · "<anonymous parameter 0>" · "<anonymous parameter 1>"
+- `View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)`  L301 @Override
+    - 体内字面量："inflater" · "getRoot(...)"
+- `void onViewCreated(View view, Bundle savedInstanceState)`  L310 @Override
+    - 体内字面量："view"
+- `void onRefresh()`  L320 @Override
+- `void onClick(View view2)`  L326 @Override
+- `void onViewCreated$lambda$2(Ride3ProIndexedStorageFragment this$0)`  L334
+    - 体内字面量："this$0"
+- `void onViewCreated$lambda$3(Ride3ProIndexedStorageFragment this$0, View view)`  L340
+    - 体内字面量："this$0"
+- `void onDestroyView()`  L346 @Override
+- `void onStop()`  L365 @Override
+- `void onSaveInstanceState(Bundle outState)`  L379 @Override
+    - 体内字面量："outState"
+- `void setupList()`  L399
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProIndexedStorageFragment$observeState$1" · "Ride3ProIndexedStorageFragment.kt" · "invokeSuspend"
+- `void observeState()`  L612
+    - 体内字面量："getViewLifecycleOwner(...)"
+- `void renderState(Ride3ProIndexedStorageUiState state)`  L619
+- `void recordVisibleThumbnailIndices(Ride3ProIndexedStorageUiState state)`  L662
+- `AuthorizedDeviceResource authorizeThumbnail(int fileIndex)`  L702
+- `void renderHourFileLoading(Ride3ProIndexedStorageUiState state)`  L722
+- `void traceStorageVisibility(Ride3ProIndexedStorageUiState state, Ride3ProIndexedStorageRenderModel renderModel)`  L733
+- `Unit invoke()`  L784 @Override
+- `void invoke2()`  L790
+- `void run()`  L799 @Override
+    - 体内字面量："storageTraceSession"
+- `Unit invoke()`  L817 @Override
+- `void invoke2()`  L823
+- `void run()`  L832 @Override
+- `void traceHourFailure(Ride3ProIndexedStorageUiState state)`  L838
+- `Unit invoke(Ride3ProPendingHourTraceSnapshot ride3ProPendingHourTraceSnapshot)`  L857 @Override
+- `void invoke2(Ride3ProPendingHourTraceSnapshot pending)`  L863
+    - 体内字面量："pending" · "errorContainer"
+- `void run()`  L876 @Override
+- `String formatError(Ride3ProIndexedStorageError error)`  L882
+    - 体内字面量："getString(...)" · " (" · ")" · " (" · " " · "0" · ":00)"
+- `void retryLastFailure()`  L898
+- `Boolean invoke()`  L917 @Override
+- `void onHourClick(final Ride3ProStorageListItem.HourGroup item)`  L925
+- `Boolean invoke()`  L934 @Override
+- `void requestHourOpen(Ride3ProStorageListItem.HourGroup item, Function0<Boolean> request)`  L940
+- `void startHourTrace(Ride3ProStorageListItem.HourGroup item)`  L963
+- `Ride3ProStorageListItem.HourGroup requireHourGroup(Ride3ProHourKey hourKey)`  L993
+- `Ride3ProIndexedStorageDependencies createDependencies()`  L1026
+- `List<Ride3ProStorageListItem> invoke(Ride3ProPlaybackCatalog catalog)`  L1041 @Override
+    - 体内字面量："catalog"
+- `String relativeDateLabel(Ride3ProRelativeDateLabel label)`  L1049
+- `int todayDate()`  L1068
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageFragment$Companion;" · "()V" · "ARG_DEVICE_KEY" · "ARG_SESSION_ID" · "COLUMN_COUNT" · "MONTH_MULTIPLIER" · "STATE_STORAGE_TRACE_FINISHED" · "YEAR_MULTIPLIER" · "newInstance" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageFragment;" · "deviceKey" · "deviceSessionId" · "traceContext" · "Lcom/tuwinsmart/tuwin/core/util/logging/Ride3ProIndexedTraceContext;" · "newInstance$app_release_64" · "app_release_64"
+- `public Ride3ProIndexedStorageFragment()`  L1101
+- `void onActivityResult(Object obj)`  L1104 @Override
+    - 体内字面量："registerForActivityResult(...)"
+- `Ride3ProIndexedStorageDependencies invoke()`  L1117 @Override
+- `ViewModelProvider.Factory invoke()`  L1129 @Override
+- `Fragment invoke()`  L1140 @Override
+- `ViewModelStoreOwner invoke()`  L1151 @Override
+- `ViewModelStore invoke()`  L1163 @Override
+- `CreationExtras invoke()`  L1174 @Override
+- `Ride3ProIndexedStorageAdapter invoke()`  L1192 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageFragment$C28991`
+L1199 · [class] C28991 · extends `FunctionReferenceImpl implements Function1<Integer, AuthorizedDeviceResource>` · implements `Function1<Integer, AuthorizedDeviceResource>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageFragment.java`
+注解：
+
+方法（2）：
+- `AuthorizedDeviceResource invoke(int i)`  L1204
+- `AuthorizedDeviceResource invoke(Integer num)`  L1209 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageFragment$C29002`
+L1217 · [class] C29002 · extends `FunctionReferenceImpl implements Function1<Ride3ProStorageListItem.HourGroup, Unit>` · implements `Function1<Ride3ProStorageListItem.HourGroup, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageFragment.java`
+注解：
+
+方法（2）：
+- `Unit invoke(Ride3ProStorageListItem.HourGroup hourGroup)`  L1223 @Override
+- `void invoke2(Ride3ProStorageListItem.HourGroup p0)`  L1229
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageFragment$C29021`
+L412 · [class] static final C29021 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageFragment.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L413
+- `int i = this.label`  L593
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L420 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L425 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProIndexedStorageFragment$observeState$1$1" · "Ride3ProIndexedStorageFragment.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L591 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageFragment$C29021$AnonymousClass1`
+L433 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageFragment.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L434
+- `int label`  L435
+- `Ride3ProIndexedStorageFragment this$0`  L436
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L445 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L452 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProIndexedStorageFragment$observeState$1$1$1" · "Ride3ProIndexedStorageFragment.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L513 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProIndexedStorageFragment$observeState$1$1$2" · "Ride3ProIndexedStorageFragment.kt" · "invokeSuspend"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageFragment$C29021$AnonymousClass1$AnonymousClass2`
+L529 · [class] static final AnonymousClass2 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageFragment.java`
+注解：
+
+字段/常量（5）：
+- `int label`  L530
+- `Ride3ProIndexedStorageFragment this$0`  L531
+- `int i = this.label`  L552
+- `Ride3ProIndexedStorageFragment ride3ProIndexedStorageFragment = this.this$0`  L556
+- `Ride3ProHourOpenTraceSession ride3ProHourOpenTraceSession = ride3ProIndexedStorageFragment.hourOpenTraceSession`  L566
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L540 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L545 @Override
+- `Object invokeSuspend(Object obj)`  L550 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L560 @Override
+- `Object emit(Ride3ProIndexedStoragePromptEvent ride3ProIndexedStoragePromptEvent, Continuation<? super Unit> continuation)`  L564
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageFragment$C29021$AnonymousClass1$C44021`
+L460 · [class] static final C44021 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageFragment.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L461
+- `Ride3ProIndexedStorageFragment this$0`  L462
+- `int i = this.label`  L483
+- `Ride3ProIndexedStorageFragment ride3ProIndexedStorageFragment = this.this$0`  L487
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L471 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L476 @Override
+- `Object invokeSuspend(Object obj)`  L481 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L491 @Override
+- `Object emit(Ride3ProIndexedStorageUiState ride3ProIndexedStorageUiState, Continuation<? super Unit> continuation)`  L495
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageFragment$Companion`
+L1075 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageFragment.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L1076
+- `private Companion()`  L1080
+- `Ride3ProIndexedStorageFragment newInstance$app_release_64(String deviceKey, String deviceSessionId, Ride3ProIndexedTraceContext traceContext)`  L1083
+    - 体内字面量："deviceKey" · "deviceSessionId" · "traceContext" · "indexed storage device key is required" · "indexed storage device session is required" · "device_session_id"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageFragment$createDependencies$listMapper$1`
+L12 · [class] Ride3ProIndexedStorageFragment$createDependencies$listMapper$1 · extends `FunctionReferenceImpl implements Function1<Ride3ProRelativeDateLabel, String>` · implements `Function1<Ride3ProRelativeDateLabel, String>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageFragment$createDependencies$listMapper$1.java`
+注解：
+
+方法（1）：
+- `String invoke(Ride3ProRelativeDateLabel p0)`  L18 @Override
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageFragment$WhenMappings`
+L202 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageFragment.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L203
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageInitialLoadState`
+L11 · [enum] public Ride3ProIndexedStorageInitialLoadState · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageInitialLoadState.java`
+注解：
+
+枚举常量（4）：
+- `IDLE()`  L12
+- `LOADING()`  L13
+- `LOADED()`  L14
+- `FAILED()`  L15
+
+方法（1）：
+- `EnumEntries<Ride3ProIndexedStorageInitialLoadState> getEntries()`  L19
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageListMapper`
+L27 · [class] public final Ride3ProIndexedStorageListMapper · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageListMapper.java`
+注解：
+
+字段/常量（15）：
+- `String DATE_DISPLAY_FORMAT = "%04d-%02d-%02d"`  L29
+- `long DAY_BEFORE_YESTERDAY_OFFSET_DAYS = 2`  L30
+- `int DAY_MODULUS = 100`  L31
+- `String HOUR_DISPLAY_FORMAT = "%02d:00"`  L32
+- `long MILLIS_PER_DAY = 86400000`  L33
+- `int MONTH_DIVISOR = 100`  L34
+- `int MONTH_MODULUS = 100`  L35
+- `long TODAY_OFFSET_DAYS = 0`  L36
+- `TimeZone UTC_TIME_ZONE`  L37
+- `int YEAR_DIVISOR = 10000`  L38
+- `long YESTERDAY_OFFSET_DAYS = 1`  L39
+- `Function1<Ride3ProRelativeDateLabel, String> relativeDateLabel`  L40
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L68
+- `Ride3ProRelativeDateLabel ride3ProRelativeDateLabel`  L78
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L79
+
+方法（9）：
+- `public Ride3ProIndexedStorageListMapper(Function1<? super Ride3ProRelativeDateLabel, String> relativeDateLabel)`  L43
+    - 体内字面量："relativeDateLabel"
+- `List<Ride3ProStorageListItem> map(Ride3ProPlaybackCatalog catalog, int todayDate)`  L48
+    - 体内字面量："catalog"
+- `int compare(T t, T t2)`  L55 @Override
+- `int compare(T t, T t2)`  L63 @Override
+- `String displayDate(int date, long todayEpochDay)`  L77
+- `long toUtcEpochDay(int i)`  L96
+- `int year(int i)`  L106
+- `int month(int i)`  L110
+- `int dayOfMonth(int i)`  L114
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageListMapper$Companion;" · "()V" · "DATE_DISPLAY_FORMAT" · "DAY_BEFORE_YESTERDAY_OFFSET_DAYS" · "DAY_MODULUS" · "HOUR_DISPLAY_FORMAT" · "MILLIS_PER_DAY" · "MONTH_DIVISOR" · "MONTH_MODULUS" · "TODAY_OFFSET_DAYS" · "UTC_TIME_ZONE" · "Ljava/util/TimeZone;" · "YEAR_DIVISOR" · "YESTERDAY_OFFSET_DAYS" · "app_release_64" · "UTC" · "getTimeZone(...)"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageListMapper$Companion`
+L120 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageListMapper.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L121
+- `private Companion()`  L125
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStoragePromptEvent`
+L9 · [interface] public Ride3ProIndexedStoragePromptEvent · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStoragePromptEvent.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStoragePromptEvent$NoValidRecordings;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStoragePromptEvent;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStoragePromptEvent$NoValidRecordings`
+L13 · [class] public static final NoValidRecordings · implements `Ride3ProIndexedStoragePromptEvent` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStoragePromptEvent.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L16
+- `int hashCode()`  L26
+- `String toString()`  L30
+    - 体内字面量："NoValidRecordings"
+- `private NoValidRecordings()`  L34
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageRenderModel`
+L10 · [class] public final Ride3ProIndexedStorageRenderModel · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageRenderModel.java`
+注解：
+
+字段/常量（8）：
+- `boolean refreshing`  L11
+- `boolean showEmpty`  L12
+- `boolean showError`  L13
+- `boolean showInitialLoading`  L14
+- `boolean showList`  L15
+- `boolean z6 = z2`  L28
+- `boolean z7 = z3`  L32
+- `boolean z8 = z4`  L36
+
+方法（18）：
+- `public Ride3ProIndexedStorageRenderModel()`  L17
+- `Ride3ProIndexedStorageRenderModel copy$default(Ride3ProIndexedStorageRenderModel ride3ProIndexedStorageRenderModel, boolean z, boolean z2, boolean z3, boolean z4, boolean z5, int i, Object obj)`  L21
+- `boolean getShowList()`  L44
+- `boolean getShowInitialLoading()`  L49
+- `boolean getShowEmpty()`  L54
+- `boolean getShowError()`  L59
+- `boolean getRefreshing()`  L64
+- `Ride3ProIndexedStorageRenderModel copy(boolean showList, boolean showInitialLoading, boolean showEmpty, boolean showError, boolean refreshing)`  L68
+- `boolean equals(Object other)`  L72
+- `int hashCode()`  L83
+- `String toString()`  L87
+    - 体内字面量："Ride3ProIndexedStorageRenderModel(showList=" · ", showInitialLoading=" · ", showEmpty=" · ", showError=" · ", refreshing=" · ")"
+- `public Ride3ProIndexedStorageRenderModel(boolean z, boolean z2, boolean z3, boolean z4, boolean z5)`  L91
+- ` Ride3ProIndexedStorageRenderModel(boolean z, boolean z2, boolean z3, boolean z4, boolean z5, int i, DefaultConstructorMarker defaultConstructorMarker)`  L99
+- `boolean getShowList()`  L103
+- `boolean getShowInitialLoading()`  L107
+- `boolean getShowEmpty()`  L111
+- `boolean getShowError()`  L115
+- `boolean getRefreshing()`  L119
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageRenderPolicy`
+L16 · [class] public final Ride3ProIndexedStorageRenderPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageRenderPolicy.java`
+注解：
+
+字段/常量（2）：
+- `Ride3ProPlaybackCatalog catalog`  L23
+- `List<Ride3ProDayGroup> days`  L24
+
+方法（3）：
+- `private Ride3ProIndexedStorageRenderPolicy()`  L19
+- `Ride3ProIndexedStorageRenderModel render(Ride3ProIndexedStorageUiState state)`  L22
+- `Ride3ProIndexedStorageRetryAction retryAction(Ride3ProIndexedStorageError error)`  L30
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageRetryAction`
+L12 · [interface] public Ride3ProIndexedStorageRetryAction · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction$Initial;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction$Refresh;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction$Day;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction;" · "(I)V" · "getDate" · "()I" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction$Hour;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction;" · "hourKey" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProHourKey;" · "(Lcom/tuwinsmart/tuwin/domain/model/Ride3ProHourKey;)V" · "getHourKey" · "()Lcom/tuwinsmart/tuwin/domain/model/Ride3ProHourKey;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageRetryAction$Day`
+L70 · [class] public static final Day · implements `Ride3ProIndexedStorageRetryAction` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction.java`
+注解：
+
+字段/常量（1）：
+- `int date`  L71
+
+方法（8）：
+- `Day copy$default(Day day, int i, int i2, Object obj)`  L73
+- `int getDate()`  L81
+- `Day copy(int date)`  L85
+- `boolean equals(Object other)`  L89
+- `int hashCode()`  L96
+- `String toString()`  L100
+    - 体内字面量："Day(date=" · ")"
+- `public Day(int i)`  L104
+- `int getDate()`  L108
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageRetryAction$Hour`
+L115 · [class] public static final Hour · implements `Ride3ProIndexedStorageRetryAction` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction.java`
+注解：
+
+字段/常量（1）：
+- `Ride3ProHourKey hourKey`  L116
+
+方法（8）：
+- `Hour copy$default(Hour hour, Ride3ProHourKey ride3ProHourKey, int i, Object obj)`  L118
+- `Ride3ProHourKey getHourKey()`  L126
+- `Hour copy(Ride3ProHourKey hourKey)`  L130
+    - 体内字面量："hourKey"
+- `boolean equals(Object other)`  L135
+- `int hashCode()`  L142
+- `String toString()`  L146
+    - 体内字面量："Hour(hourKey=" · ")"
+- `public Hour(Ride3ProHourKey hourKey)`  L150
+    - 体内字面量："hourKey"
+- `Ride3ProHourKey getHourKey()`  L155
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageRetryAction$Initial`
+L16 · [class] public static final Initial · implements `Ride3ProIndexedStorageRetryAction` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L19
+- `int hashCode()`  L29
+- `String toString()`  L33
+    - 体内字面量："Initial"
+- `private Initial()`  L37
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageRetryAction$Refresh`
+L43 · [class] public static final Refresh · implements `Ride3ProIndexedStorageRetryAction` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageRetryAction.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L46
+- `int hashCode()`  L56
+- `String toString()`  L60
+    - 体内字面量："Refresh"
+- `private Refresh()`  L64
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageUiState`
+L18 · [class] public final Ride3ProIndexedStorageUiState · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageUiState.java`
+注解：
+
+字段/常量（13）：
+- `Ride3ProPlaybackCatalog catalog`  L19
+- `Ride3ProIndexedStorageError error`  L20
+- `Ride3ProIndexedStorageInitialLoadState initialLoadState`  L21
+- `List<Ride3ProStorageListItem> listItems`  L22
+- `Set<Integer> loadingDates`  L23
+- `Ride3ProHourKey navigationReadyHour`  L24
+- `Ride3ProHourKey openingHour`  L25
+- `boolean playbackModeReady`  L26
+- `boolean refreshing`  L27
+- `Ride3ProPlaybackCatalog ride3ProPlaybackCatalog = this.catalog`  L95
+- `Ride3ProHourKey ride3ProHourKey = this.openingHour`  L97
+- `Ride3ProHourKey ride3ProHourKey2 = this.navigationReadyHour`  L99
+- `Ride3ProIndexedStorageError ride3ProIndexedStorageError = this.error`  L101
+
+方法（25）：
+- `public Ride3ProIndexedStorageUiState()`  L29
+- `Ride3ProPlaybackCatalog getCatalog()`  L34
+- `List<Ride3ProStorageListItem> component2()`  L38
+- `boolean getPlaybackModeReady()`  L43
+- `Ride3ProIndexedStorageInitialLoadState getInitialLoadState()`  L48
+- `boolean getRefreshing()`  L53
+- `Set<Integer> component6()`  L57
+- `Ride3ProHourKey getOpeningHour()`  L62
+- `Ride3ProHourKey getNavigationReadyHour()`  L67
+- `Ride3ProIndexedStorageError getError()`  L72
+- `Ride3ProIndexedStorageUiState copy(Ride3ProPlaybackCatalog catalog, List<? extends Ride3ProStorageListItem> listItems, boolean playbackModeReady, Ride3ProIndexedStorageInitialLoadState initialLoadState, boolean refreshing, Set<Integer> loadingDates, Ride3ProHourKey openingHour, Ride3ProHourKey navigationReadyHour, Ride3ProIndexedStorageError error)`  L76
+    - 体内字面量："listItems" · "initialLoadState" · "loadingDates"
+- `boolean equals(Object other)`  L83
+- `int hashCode()`  L94
+- `String toString()`  L105
+    - 体内字面量："Ride3ProIndexedStorageUiState(catalog=" · ", listItems=" · ", playbackModeReady=" · ", initialLoadState=" · ", refreshing=" · ", loadingDates=" · ", openingHour=" · ", navigationReadyHour=" · ", error=" · ")"
+- `public Ride3ProIndexedStorageUiState(Ride3ProPlaybackCatalog ride3ProPlaybackCatalog, List<? extends Ride3ProStorageListItem> listItems, boolean z, Ride3ProIndexedStorageInitialLoadState initialLoadState, boolean z2, Set<Integer> loadingDates, Ride3ProHourKey ride3ProHourKey, Ride3ProHourKey ride3ProHourKey2, Ride3ProIndexedStorageError ride3ProIndexedStorageError)`  L110
+    - 体内字面量："listItems" · "initialLoadState" · "loadingDates"
+- `Ride3ProPlaybackCatalog getCatalog()`  L125
+- ` Ride3ProIndexedStorageUiState(Ride3ProPlaybackCatalog ride3ProPlaybackCatalog, List list, boolean z, Ride3ProIndexedStorageInitialLoadState ride3ProIndexedStorageInitialLoadState, boolean z2, Set set, Ride3ProHourKey ride3ProHourKey, Ride3ProHourKey ride3ProHourKey2, Ride3ProIndexedStorageError ride3ProIndexedStorageError, int i, DefaultConstructorMarker defaultConstructorMarker)`  L129
+- `List<Ride3ProStorageListItem> getListItems()`  L133
+- `boolean getPlaybackModeReady()`  L137
+- `Ride3ProIndexedStorageInitialLoadState getInitialLoadState()`  L141
+- `boolean getRefreshing()`  L145
+- `Set<Integer> getLoadingDates()`  L149
+- `Ride3ProHourKey getOpeningHour()`  L153
+- `Ride3ProHourKey getNavigationReadyHour()`  L157
+- `Ride3ProIndexedStorageError getError()`  L161
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel`
+L59 · [class] public final Ride3ProIndexedStorageViewModel · extends `ViewModel` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModel.java`
+注解：
+
+字段/常量（56）：
+- `MutableSharedFlow<Ride3ProIndexedStoragePromptEvent> _promptEvent`  L60
+- `MutableStateFlow<Ride3ProIndexedStorageUiState> _uiState`  L61
+- `Job catalogJob`  L62
+- `Map<Integer, Job> dayJobs`  L63
+- `Mutex dayRequestMutex`  L64
+- `Job hourJob`  L65
+- `List<? extends Job> interruptedJobs`  L66
+- `long lifecycleGeneration`  L67
+- `Function1<Ride3ProPlaybackCatalog, List<Ride3ProStorageListItem>> mapCatalogToListItems`  L68
+- `Boolean pendingCatalogForceRefresh`  L69
+- `Job progressiveDatesJob`  L70
+- `SharedFlow<Ride3ProIndexedStoragePromptEvent> promptEvent`  L71
+- `Ride3ProIndexedPlaybackRepository repository`  L72
+- `Job resumeJob`  L73
+- `StateFlow<Ride3ProIndexedStorageUiState> uiState`  L74
+- `MutableStateFlow<Ride3ProIndexedStorageUiState> mutableStateFlow = this._uiState`  L151
+- `Job job = this.resumeJob`  L157
+- `List<? extends Job> list = this.interruptedJobs`  L159
+- `Job job = this.resumeJob`  L229
+- `MutableStateFlow<Ride3ProIndexedStorageUiState> mutableStateFlow = this._uiState`  L234
+- `Job job = this.catalogJob`  L255
+- `Job job = this.catalogJob`  L269
+- `Job job2 = this.progressiveDatesJob`  L271
+- `Job job3 = this.hourJob`  L282
+- `Boolean bool = this.pendingCatalogForceRefresh`  L493
+- `Job job = this.catalogJob`  L510
+- `Job job2 = this.progressiveDatesJob`  L514
+- `Job job3 = this.hourJob`  L519
+- `Ride3ProIndexedStorageUiState ride3ProIndexedStorageUiStateCopy`  L534
+- `MutableStateFlow<Ride3ProIndexedStorageUiState> mutableStateFlow = this._uiState`  L536
+- `ArrayList arrayList2 = arrayList`  L561
+- `Ride3ProIndexedStorageUiState ride3ProIndexedStorageUiStateCopy`  L572
+- `MutableStateFlow<Ride3ProIndexedStorageUiState> mutableStateFlow = this._uiState`  L574
+- `Ride3ProIndexedStorageUiState ride3ProIndexedStorageUiStateCopy`  L585
+- `MutableStateFlow<Ride3ProIndexedStorageUiState> mutableStateFlow = this._uiState`  L587
+- `Ride3ProIndexedStorageInitialLoadState ride3ProIndexedStorageInitialLoadState`  L598
+- `Ride3ProIndexedStorageUiState ride3ProIndexedStorageUiStateCopy`  L599
+- `MutableStateFlow<Ride3ProIndexedStorageUiState> mutableStateFlow = this._uiState`  L601
+- `Object next`  L713
+- `Object next`  L790
+- `Ride3ProPlaybackCatalog catalog`  L877
+- `Object next`  L878
+- `List<Ride3ProHourGroup> hours`  L879
+- `Object next2`  L880
+- `Ride3ProIndexedStorageViewModel c29171`  L1021
+- `Ride3ProGroupLoadState ride3ProGroupLoadState2`  L1022
+- `Object objMo2824loadHourFiles0E7RQCE`  L1023
+- `Ride3ProIndexedStorageUiState value`  L1024
+- `MutableStateFlow<Ride3ProIndexedStorageUiState> mutableStateFlow`  L1025
+- `Throwable thM3077exceptionOrNullimpl`  L1026
+- `Ride3ProHourKey ride3ProHourKey2 = ride3ProHourKey`  L1027
+- `Object obj = c29171.result`  L1039
+- `int i = c29171.label`  L1041
+- `Ride3ProHourKey openingHour = null`  L1042
+- `Ride3ProIndexedPlaybackRepository ride3ProIndexedPlaybackRepository = this.repository`  L1048
+- `Ride3ProPlaybackCatalog hourLoadState`  L1186
+
+方法（40）：
+- `public Ride3ProIndexedStorageViewModel(Ride3ProIndexedPlaybackRepository repository, Function1<? super Ride3ProPlaybackCatalog, ? extends List<? extends Ride3ProStorageListItem>> mapCatalogToListItems)`  L125
+    - 体内字面量："repository" · "mapCatalogToListItems"
+- `StateFlow<Ride3ProIndexedStorageUiState> getUiState()`  L142
+- `SharedFlow<Ride3ProIndexedStoragePromptEvent> getPromptEvent()`  L146
+- `void onPlaybackModeReady()`  L150
+- `void onHostStopped(boolean isChangingConfigurations)`  L224
+- `void loadCatalog()`  L249
+- `void refreshCatalog()`  L263
+- `void reloadCatalogAfterHourMutation()`  L290
+- `void loadDay(int date)`  L300
+- `void retryDay(int date)`  L306
+- `boolean openHour(Ride3ProHourKey hourKey)`  L312
+    - 体内字面量："hourKey"
+- `boolean retryHour(Ride3ProHourKey hourKey)`  L320
+    - 体内字面量："hourKey"
+- `void consumeNavigationReadyHour(Ride3ProHourKey hourKey)`  L328
+    - 体内字面量："hourKey"
+- `void startCatalogLoad(boolean forceRefresh)`  L336
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$startCatalogLoad$1" · "Ride3ProIndexedStorageViewModel.kt" · "invokeSuspend" · "dates" · "L$0"
+- `void startPendingCatalogLoadIfReady()`  L492
+- `boolean hasActiveDataJobs()`  L504
+- `List<Job> activeDataJobs()`  L508
+- `void updateCatalogLoadingState(boolean forceRefresh)`  L533
+- `List<Integer> datesToLoad(Ride3ProPlaybackCatalog catalog, boolean forceRefresh)`  L546
+- `int compare(T t, T t2)`  L550 @Override
+- `void completeCatalogLoading(boolean forceRefresh)`  L571
+- `void applyCatalogFailure(boolean forceRefresh, Throwable failure)`  L584
+- `void applyCatalogCancellation(boolean forceRefresh)`  L597
+- `void launchProgressiveDates(List<Integer> dates)`  L616
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$launchProgressiveDates$1" · "Ride3ProIndexedStorageViewModel.kt" · "invokeSuspend"
+- `void launchDayLoad(int date, boolean forceRefresh)`  L693
+- `Object loadDaySequentially(int i, boolean z, Continuation<? super Unit> continuation)`  L703
+- `Ride3ProGroupLoadState prepareDayLoad(int date, boolean forceRefresh, boolean clearError)`  L712
+- `java.lang.Object executeDayLoad(int r25, boolean r26, com.tuwinsmart.tuwin.domain.model.Ride3ProGroupLoadState r27, kotlin.coroutines.Continuation<? super kotlin.Unit> r28)`  L743
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel.executeDayLoad(int, boolean, com.tuwinsmart.tuwin.domain.model.Ride3ProGroupLoadState, kotlin.coroutines.Continuation):java.lang.Object"
+- `void applyLoadedDay(Ride3ProDayGroup day)`  L751
+- `void applyDayFailure(int date, Throwable failure)`  L770
+- `void restoreDayLoadState(int date, Ride3ProGroupLoadState originalLoadState)`  L789
+- `boolean launchHourLoad(Ride3ProHourKey hourKey, boolean forceRefresh)`  L810
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$launchHourLoad$1" · "Ride3ProIndexedStorageViewModel.kt" · "invokeSuspend"
+- `HourLoadPreparation prepareHourLoad(Ride3ProHourKey hourKey, boolean forceRefresh)`  L876
+- `Object executeHourLoad(Ride3ProHourKey ride3ProHourKey, boolean z, Ride3ProGroupLoadState ride3ProGroupLoadState, Continuation<? super Unit> continuation)`  L1020
+- `void applyLoadedHour(Ride3ProHourKey hourKey, List<Ride3ProPlaybackFile> files)`  L1177
+- `void applyHourFailure(Ride3ProHourKey hourKey, Throwable failure)`  L1185
+- `void restoreHourLoadState(Ride3ProHourKey hourKey, Ride3ProGroupLoadState originalLoadState)`  L1203
+    - 体内字面量："Collection contains no element matching the predicate." · "Collection contains no element matching the predicate."
+- `void publishCatalog$default(Ride3ProIndexedStorageViewModel ride3ProIndexedStorageViewModel, Ride3ProPlaybackCatalog ride3ProPlaybackCatalog, Ride3ProIndexedStorageUiState ride3ProIndexedStorageUiState, int i, Object obj)`  L1225
+- `void publishCatalog(Ride3ProPlaybackCatalog catalog, Ride3ProIndexedStorageUiState state)`  L1232
+- `boolean hasHour(Ride3ProPlaybackCatalog ride3ProPlaybackCatalog, Ride3ProHourKey ride3ProHourKey)`  L1236
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$C29161`
+L80 · [class] static final C29161 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModel.java`
+注解：
+
+字段/常量（7）：
+- `int I$0`  L81
+- `Object L$0`  L82
+- `Object L$1`  L83
+- `Object L$2`  L84
+- `boolean Z$0`  L85
+- `int label`  L86
+- `Object result`  L87
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L94 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$C29171`
+L105 · [class] static final C29171 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModel.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L106
+- `Object L$1`  L107
+- `Object L$2`  L108
+- `int label`  L109
+- `Object result`  L110
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L117 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$C29181`
+L826 · [class] static final C29181 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModel.java`
+注解：
+
+字段/常量（5）：
+- `boolean $forceRefresh`  L827
+- `Ride3ProHourKey $hourKey`  L828
+- `Ride3ProGroupLoadState $originalLoadState`  L829
+- `int label`  L830
+- `int i = this.label`  L853
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L841 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L846 @Override
+- `Object invokeSuspend(Object obj)`  L851 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$C29191`
+L627 · [class] static final C29191 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModel.java`
+注解：
+
+字段/常量（9）：
+- `List<Integer> $dates`  L628
+- `Object L$0`  L629
+- `Object L$1`  L630
+- `int label`  L631
+- `Ride3ProIndexedStorageViewModel this$0`  L632
+- `Ride3ProIndexedStorageViewModel ride3ProIndexedStorageViewModel`  L653
+- `Iterator it`  L654
+- `int i = this.label`  L656
+- `List<Integer> list = this.$dates`  L661
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L642 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L647 @Override
+- `Object invokeSuspend(Object obj)`  L652 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$C29201`
+L172 · [class] static final C29201 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModel.java`
+注解：
+
+字段/常量（5）：
+- `long $generation`  L173
+- `List<Job> $jobsToJoin`  L174
+- `int label`  L175
+- `Ride3ProIndexedStorageViewModel this$0`  L176
+- `int i = this.label`  L200
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L188 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L193 @Override
+- `Object invokeSuspend(Object obj)`  L198 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$C29211`
+L346 · [class] static final C29211 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModel.java`
+注解：
+
+字段/常量（12）：
+- `boolean $forceRefresh`  L347
+- `boolean $presentAsRefresh`  L348
+- `Object L$0`  L349
+- `Object L$1`  L350
+- `int label`  L351
+- `Object objMo2825loadPlaybackCataloggIAlus`  L377
+- `List listDatesToLoad`  L378
+- `Unit unit`  L379
+- `Ride3ProIndexedStorageViewModel ride3ProIndexedStorageViewModel`  L380
+- `Iterator it`  L381
+- `int iIntValue`  L382
+- `int i = this.label`  L384
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L361 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L366 @Override
+- `Object invokeSuspend(Object obj)`  L376 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$HourLoadPreparation`
+L918 · [interface] private HourLoadPreparation · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModel.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageViewModel$HourLoadPreparation$NavigateCached;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageViewModel$HourLoadPreparation;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageViewModel$HourLoadPreparation$Load;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProIndexedStorageViewModel$HourLoadPreparation;" · "originalLoadState" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProGroupLoadState;" · "(Lcom/tuwinsmart/tuwin/domain/model/Ride3ProGroupLoadState;)V" · "getOriginalLoadState" · "()Lcom/tuwinsmart/tuwin/domain/model/Ride3ProGroupLoadState;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$HourLoadPreparation$Load`
+L949 · [class] public static final Load · implements `HourLoadPreparation` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModel.java`
+注解：
+
+字段/常量（1）：
+- `Ride3ProGroupLoadState originalLoadState`  L950
+
+方法（8）：
+- `Load copy$default(Load load, Ride3ProGroupLoadState ride3ProGroupLoadState, int i, Object obj)`  L952
+- `Ride3ProGroupLoadState getOriginalLoadState()`  L960
+- `Load copy(Ride3ProGroupLoadState originalLoadState)`  L964
+    - 体内字面量："originalLoadState"
+- `boolean equals(Object other)`  L969
+- `int hashCode()`  L976
+- `String toString()`  L980
+    - 体内字面量："Load(originalLoadState=" · ")"
+- `public Load(Ride3ProGroupLoadState originalLoadState)`  L984
+    - 体内字面量："originalLoadState"
+- `Ride3ProGroupLoadState getOriginalLoadState()`  L989
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$HourLoadPreparation$NavigateCached`
+L922 · [class] public static final NavigateCached · implements `HourLoadPreparation` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModel.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L925
+- `int hashCode()`  L935
+- `String toString()`  L939
+    - 体内字面量："NavigateCached"
+- `private NavigateCached()`  L943
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModel$launchDayLoad$job$1`
+L20 · [class] final Ride3ProIndexedStorageViewModel$launchDayLoad$job$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModel$launchDayLoad$job$1.java`
+注解：
+
+字段/常量（6）：
+- `int $date`  L21
+- `boolean $forceRefresh`  L22
+- `Ride3ProGroupLoadState $prepared`  L23
+- `int label`  L24
+- `Ride3ProIndexedStorageViewModel this$0`  L25
+- `int i = this.label`  L49
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L37 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L42 @Override
+- `Object invokeSuspend(Object obj)`  L47 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedStorageViewModelFactory`
+L17 · [class] public final Ride3ProIndexedStorageViewModelFactory · implements `ViewModelProvider.Factory` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedStorageViewModelFactory.java`
+注解：
+
+字段/常量（2）：
+- `Function1<Ride3ProPlaybackCatalog, List<Ride3ProStorageListItem>> mapCatalogToListItems`  L18
+- `Ride3ProIndexedPlaybackRepository repository`  L19
+
+方法（2）：
+- `public Ride3ProIndexedStorageViewModelFactory(Ride3ProIndexedPlaybackRepository repository, Function1<? super Ride3ProPlaybackCatalog, ? extends List<? extends Ride3ProStorageListItem>> mapCatalogToListItems)`  L22
+    - 体内字面量："repository" · "mapCatalogToListItems"
+- `T create(Class<T> modelClass)`  L30 @Override
+    - 体内字面量："modelClass" · "Failed requirement."
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedThumbnailGlideLoader`
+L18 · [class] public final Ride3ProIndexedThumbnailGlideLoader · implements `Ride3ProIndexedThumbnailLoader` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedThumbnailGlideLoader.java`
+注解：
+
+字段/常量（1）：
+- `ImageView imageView = target`  L34
+
+方法（3）：
+- `private Ride3ProIndexedThumbnailGlideLoader()`  L21
+- `void load(ImageView target, Ride3ProIndexedThumbnailRequest request)`  L25 @Override
+    - 体内字面量："target" · "request"
+- `void clear(ImageView target)`  L32 @Override
+    - 体内字面量："target"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedThumbnailLoader`
+L12 · [interface] public Ride3ProIndexedThumbnailLoader · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedThumbnailLoader.java`
+注解：
+
+方法（2）：
+- `void clear(ImageView target)`  L22
+- `void load(ImageView target, Ride3ProIndexedThumbnailRequest request)`  L24
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedThumbnailLoader$DefaultImpls`
+L16 · [class] public static final DefaultImpls · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedThumbnailLoader.java`
+注解：
+
+方法（1）：
+- `void clear(Ride3ProIndexedThumbnailLoader ride3ProIndexedThumbnailLoader, ImageView target)`  L17
+    - 体内字面量："target"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedThumbnailRequest`
+L11 · [class] public final Ride3ProIndexedThumbnailRequest · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedThumbnailRequest.java`
+注解：
+
+字段/常量（3）：
+- `String cacheKey`  L12
+- `AuthorizedDeviceResource resource`  L13
+- `AuthorizedDeviceResource authorizedDeviceResource = this.resource`  L52
+
+方法（10）：
+- `Ride3ProIndexedThumbnailRequest copy$default(Ride3ProIndexedThumbnailRequest ride3ProIndexedThumbnailRequest, AuthorizedDeviceResource authorizedDeviceResource, String str, int i, Object obj)`  L15
+- `AuthorizedDeviceResource getResource()`  L26
+- `String getCacheKey()`  L31
+- `Ride3ProIndexedThumbnailRequest copy(AuthorizedDeviceResource resource, String cacheKey)`  L35
+    - 体内字面量："cacheKey"
+- `boolean equals(Object other)`  L40
+- `int hashCode()`  L51
+- `String toString()`  L56
+    - 体内字面量："Ride3ProIndexedThumbnailRequest(resource=" · ", cacheKey=" · ")"
+- `public Ride3ProIndexedThumbnailRequest(AuthorizedDeviceResource authorizedDeviceResource, String cacheKey)`  L60
+    - 体内字面量："cacheKey"
+- `AuthorizedDeviceResource getResource()`  L66
+- `String getCacheKey()`  L70
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedThumbnailRequestFactory`
+L13 · [class] public final Ride3ProIndexedThumbnailRequestFactory · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedThumbnailRequestFactory.java`
+注解：
+
+字段/常量（2）：
+- `String CACHE_KEY_NAMESPACE = "ride3pro-indexed-hour"`  L14
+- `String CACHE_KEY_SEPARATOR = "|"`  L15
+
+方法（3）：
+- `private Ride3ProIndexedThumbnailRequestFactory()`  L18
+- `Ride3ProIndexedThumbnailRequest create$default(Ride3ProIndexedThumbnailRequestFactory ride3ProIndexedThumbnailRequestFactory, String str, Ride3ProStorageListItem.HourGroup hourGroup, AuthorizedDeviceResource authorizedDeviceResource, int i, Object obj)`  L21
+- `Ride3ProIndexedThumbnailRequest create(String deviceKey, Ride3ProStorageListItem.HourGroup hourGroup, AuthorizedDeviceResource resource)`  L28
+    - 体内字面量："deviceKey" · "hourGroup"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProIndexedTraceContextExtrasKt`
+L14 · [class] public final Ride3ProIndexedTraceContextExtrasKt · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProIndexedTraceContextExtrasKt.java`
+注解：
+
+字段/常量（4）：
+- `String DEFAULT_PREFIX = "ride3pro_indexed_trace"`  L15
+- `long INVALID_TRACE_VALUE = -1`  L16
+- `String TRACE_ID_KEY = "ride3pro_indexed_trace.trace_id"`  L17
+- `String TRACE_STARTED_AT_KEY = "ride3pro_indexed_trace.started_at_elapsed_ms"`  L18
+
+方法（10）：
+- `Intent putRide3ProIndexedTraceContext(Intent intent, Ride3ProIndexedTraceContext traceContext)`  L20
+    - 体内字面量："<this>" · "traceContext"
+- `Ride3ProIndexedTraceContext requireRide3ProIndexedTraceContext(Intent intent)`  L28
+    - 体内字面量："<this>" · "Ride3Pro indexed trace id is required" · "Ride3Pro indexed trace start time is required"
+- `void putRide3ProIndexedTraceContext$default(Bundle bundle, Ride3ProIndexedTraceContext ride3ProIndexedTraceContext, String str, int i, Object obj)`  L39
+- `void putRide3ProIndexedTraceContext(Bundle bundle, Ride3ProIndexedTraceContext traceContext, String prefix)`  L46
+    - 体内字面量："<this>" · "traceContext" · "prefix"
+- `Ride3ProIndexedTraceContext getRide3ProIndexedTraceContext$default(Bundle bundle, String str, int i, Object obj)`  L54
+- `Ride3ProIndexedTraceContext getRide3ProIndexedTraceContext(Bundle bundle, String prefix)`  L61
+    - 体内字面量："<this>" · "prefix" · "Ride3Pro indexed trace id is required: prefix=" · "Ride3Pro indexed trace start time is required: prefix="
+- `Ride3ProIndexedTraceContext requireRide3ProIndexedTraceContext$default(Bundle bundle, String str, int i, Object obj)`  L78
+- `Ride3ProIndexedTraceContext requireRide3ProIndexedTraceContext(Bundle bundle, String prefix)`  L85
+    - 体内字面量："<this>" · "prefix" · "Ride3Pro indexed trace context is required: prefix="
+- `String traceIdKey(String str)`  L95
+    - 体内字面量：".trace_id"
+- `String traceStartedAtKey(String str)`  L99
+    - 体内字面量：".started_at_elapsed_ms"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProPendingHourTraceSnapshot`
+L13 · [class] public final Ride3ProPendingHourTraceSnapshot · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProPendingHourTraceSnapshot.java`
+注解：
+
+字段/常量（2）：
+- `Ride3ProIndexedTraceContext context`  L14
+- `Ride3ProHourKey hourKey`  L15
+
+方法（10）：
+- `Ride3ProPendingHourTraceSnapshot copy$default(Ride3ProPendingHourTraceSnapshot ride3ProPendingHourTraceSnapshot, Ride3ProHourKey ride3ProHourKey, Ride3ProIndexedTraceContext ride3ProIndexedTraceContext, int i, Object obj)`  L17
+- `Ride3ProHourKey getHourKey()`  L28
+- `Ride3ProIndexedTraceContext getContext()`  L33
+- `Ride3ProPendingHourTraceSnapshot copy(Ride3ProHourKey hourKey, Ride3ProIndexedTraceContext context)`  L37
+    - 体内字面量："hourKey" · "context"
+- `boolean equals(Object other)`  L43
+- `int hashCode()`  L54
+- `String toString()`  L58
+    - 体内字面量："Ride3ProPendingHourTraceSnapshot(hourKey=" · ", context=" · ")"
+- `public Ride3ProPendingHourTraceSnapshot(Ride3ProHourKey hourKey, Ride3ProIndexedTraceContext context)`  L62
+    - 体内字面量："hourKey" · "context"
+- `Ride3ProHourKey getHourKey()`  L69
+- `Ride3ProIndexedTraceContext getContext()`  L73
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProPendingHourTraceStateKt`
+L14 · [class] public final Ride3ProPendingHourTraceStateKt · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProPendingHourTraceStateKt.java`
+注解：
+
+字段/常量（1）：
+- `String DEFAULT_PENDING_HOUR_TRACE_PREFIX = "ride3pro_pending_hour_trace"`  L15
+
+方法（7）：
+- `void putRide3ProPendingHourTraceSnapshot$default(Bundle bundle, Ride3ProPendingHourTraceSnapshot ride3ProPendingHourTraceSnapshot, String str, int i, Object obj)`  L17
+- `void putRide3ProPendingHourTraceSnapshot(Bundle bundle, Ride3ProPendingHourTraceSnapshot snapshot, String prefix)`  L24
+    - 体内字面量："<this>" · "snapshot" · "prefix"
+- `Ride3ProPendingHourTraceSnapshot getRide3ProPendingHourTraceSnapshot$default(Bundle bundle, String str, int i, Object obj)`  L33
+- `Ride3ProPendingHourTraceSnapshot getRide3ProPendingHourTraceSnapshot(Bundle bundle, String prefix)`  L40
+    - 体内字面量："<this>" · "prefix" · "Ride3Pro pending hour trace date is required: prefix=" · "Ride3Pro pending hour trace hour is required: prefix=" · "Ride3Pro pending hour trace context is required: prefix="
+- `String dateKey(String str)`  L61
+    - 体内字面量：".date"
+- `String hourKey(String str)`  L65
+    - 体内字面量：".hour"
+- `String contextPrefix(String str)`  L69
+    - 体内字面量：".context"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProPreDrawTraceSession`
+L13 · [class] public final Ride3ProPreDrawTraceSession · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProPreDrawTraceSession.java`
+注解：
+
+字段/常量（6）：
+- `boolean isFinished`  L14
+- `long nextRegistrationToken`  L15
+- `Long scheduledRegistrationToken`  L16
+- `long j = this.nextRegistrationToken + 1`  L40
+- `Long l = Ride3ProPreDrawTraceSession.this.scheduledRegistrationToken`  L60
+- `long j2 = j`  L61
+
+方法（8）：
+- `public Ride3ProPreDrawTraceSession()`  L18
+- `public Ride3ProPreDrawTraceSession(boolean z)`  L22
+- ` Ride3ProPreDrawTraceSession(boolean z, int i, DefaultConstructorMarker defaultConstructorMarker)`  L26
+- `boolean getIsFinished()`  L31
+- `Function0<Unit> schedule(final Function0<Unit> finishTrace)`  L35
+    - 体内字面量："finishTrace"
+- `Unit invoke()`  L50 @Override
+- `void invoke2()`  L56
+- `void invalidateScheduled()`  L71
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProRelativeDateLabel`
+L11 · [enum] public Ride3ProRelativeDateLabel · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProRelativeDateLabel.java`
+注解：
+
+枚举常量（3）：
+- `TODAY()`  L12
+- `YESTERDAY()`  L13
+- `DAY_BEFORE_YESTERDAY()`  L14
+
+方法（1）：
+- `EnumEntries<Ride3ProRelativeDateLabel> getEntries()`  L18
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStatusBarInsets`
+L14 · [class] public final Ride3ProStatusBarInsets · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStatusBarInsets.java`
+注解：
+
+方法（4）：
+- `private Ride3ProStatusBarInsets()`  L17
+- `void apply(View toolbarContainer)`  L20
+    - 体内字面量："toolbarContainer"
+- `WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat)`  L28 @Override
+- `WindowInsetsCompat apply$lambda$0(int i, int i2, int i3, int i4, View view, WindowInsetsCompat insets)`  L36
+    - 体内字面量："view" · "insets"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity`
+L93 · [class] public final Ride3ProStorageActivity · extends `BaseActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（108）：
+- `String EXTRA_DEVICE_TYPE_CODE = "device_type_code"`  L97
+- `String EXTRA_SESSION_ID = "device_session_id"`  L98
+- `boolean awaitingInitialFiles`  L99
+- `ActivityRide3proStorageBinding binding`  L100
+- `Job enterPlaybackModeJob`  L101
+- `boolean resumePlaybackModeEnsureInFlight`  L102
+- `Job resumePlaybackModeJob`  L103
+- `boolean shouldRecoverPlaybackModeAfterStop`  L104
+- `boolean shouldShowOverlayWhenRecovering`  L105
+- `boolean skipRecoveryOnNextStop`  L106
+- `boolean tabsInitialized`  L107
+- `Lazy viewModel`  L110
+- `Function0 function0 = null`  L250
+- `Ride3ProStorageActivity ride3ProStorageActivity = this`  L251
+- `CreationExtras creationExtras`  L281
+- `Function0 function1 = function0`  L282
+- `DeviceType deviceType`  L305
+- `int length = deviceTypeArrValues.length`  L309
+- `int i = 0`  L310
+- `Object objM3074constructorimpl`  L342
+- `Result.Companion companion = Result.INSTANCE`  L347
+- `Ride3ProStorageActivity ride3ProStorageActivity = this`  L348
+- `Result.Companion companion2 = Result.INSTANCE`  L351
+- `boolean z = this.skipRecoveryOnNextStop`  L399
+- `FileSelectionBottomBarInsets fileSelectionBottomBarInsets = FileSelectionBottomBarInsets.INSTANCE`  L413
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding = this.binding`  L414
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding2 = null`  L415
+- `ConstraintLayout constraintLayout = root`  L422
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding3 = this.binding`  L423
+- `LinearLayout llBottomActions = activityRide3proStorageBinding3.llBottomActions`  L428
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding4 = this.binding`  L431
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding = this.binding`  L456
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding2 = null`  L457
+- `ImageView btnBack = activityRide3proStorageBinding.btnBack`  L462
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding3 = this.binding`  L470
+- `ImageView btnDownloading = activityRide3proStorageBinding3.btnDownloading`  L475
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding4 = this.binding`  L483
+- `ImageView btnSelectAll = activityRide3proStorageBinding4.btnSelectAll`  L488
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding5 = this.binding`  L496
+- `ImageView btnCloseSelect = activityRide3proStorageBinding5.btnCloseSelect`  L501
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding6 = this.binding`  L509
+- `TextView tvSelectAll = activityRide3proStorageBinding6.tvSelectAll`  L514
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding7 = this.binding`  L522
+- `LinearLayout btnDownload = activityRide3proStorageBinding7.btnDownload`  L527
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding8 = this.binding`  L535
+- `LinearLayout btnDelete = activityRide3proStorageBinding2.btnDelete`  L541
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding = this$0.binding`  L581
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding = this.binding`  L618
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding2 = null`  L619
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding3 = this.binding`  L635
+- `SlidingTabLayout slidingTabLayout = activityRide3proStorageBinding3.tabLayout`  L640
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding4 = this.binding`  L641
+- `SwipeViewPager swipeViewPager = activityRide3proStorageBinding4.viewPager`  L646
+- `List<Ride3ProStorageTab> list = this.tabs`  L647
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding5 = this.binding`  L654
+- `Job job = this.enterPlaybackModeJob`  L665
+- `boolean z = this.shouldRecoverPlaybackModeAfterStop`  L1050
+- `Job job = this.resumePlaybackModeJob`  L1053
+- `Job job = this.enterPlaybackModeJob`  L1123
+- `Job job2 = this.resumePlaybackModeJob`  L1128
+- `Job job`  L1157
+- `Job job2 = this.enterPlaybackModeJob`  L1158
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding = this.binding`  L1168
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding2 = this.binding`  L1174
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding = this.binding`  L1187
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding2 = null`  L1188
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding3 = this.binding`  L1196
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding4 = this.binding`  L1202
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding5 = this.binding`  L1208
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding6 = this.binding`  L1214
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding7 = this.binding`  L1220
+- `String string`  L1241
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding8 = Ride3ProStorageActivity.this.binding`  L1242
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding9 = null`  L1243
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding10 = Ride3ProStorageActivity.this.binding`  L1249
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding11 = Ride3ProStorageActivity.this.binding`  L1255
+- `TextView textView = activityRide3proStorageBinding9.tvSelectAll`  L1261
+- `StorageRide3ProRemoteFile storageRide3ProRemoteFileFindFileByIndex$app_release_64`  L1280
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding = this.binding`  L1291
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding2 = this.binding`  L1297
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding3 = this.binding`  L1303
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding4 = this.binding`  L1309
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding5 = this.binding`  L1315
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding = this.binding`  L1333
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding2 = null`  L1334
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding3 = this.binding`  L1340
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding4 = this.binding`  L1346
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding5 = this.binding`  L1352
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding6 = this.binding`  L1358
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding7 = this.binding`  L1364
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding = this.binding`  L1464
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding2 = null`  L1465
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding3 = this.binding`  L1471
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding4 = this.binding`  L1477
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding = this.binding`  L1488
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding2 = null`  L1489
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding3 = this.binding`  L1495
+- `Object objM3074constructorimpl`  L1505
+- `Object objM3074constructorimpl2`  L1506
+- `Result.Companion companion = Result.INSTANCE`  L1522
+- `Ride3ProStorageActivity ride3ProStorageActivity = this`  L1523
+- `List<StorageRide3ProRemoteFile> list = selectedItems`  L1526
+- `Result.Companion companion2 = Result.INSTANCE`  L1534
+- `ArrayList arrayList3 = arrayList2`  L1557
+- `Result.Companion companion3 = Result.INSTANCE`  L1559
+- `Ride3ProStorageActivity ride3ProStorageActivity2 = this`  L1560
+- `Result.Companion companion4 = Result.INSTANCE`  L1563
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L1584
+
+方法（64）：
+- `Ride3ProDeviceRepository invoke()`  L118 @Override
+- `VerifiedDeviceFileCatalog invoke()`  L127 @Override
+    - 体内字面量："<anonymous>" · "file" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/fragment/StorageRide3ProRemoteFile;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageActivity$thumbnailPrefetchScheduler$2$1" · "Ride3ProStorageActivity.kt" · "invokeSuspend"
+- `Ride3ProThumbnailPrefetchScheduler invoke()`  L192 @Override
+    - 体内字面量："<anonymous>" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProThumbnailPrefetchResult;" · "file" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/fragment/StorageRide3ProRemoteFile;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageActivity$thumbnailPrefetchScheduler$2$2" · "Ride3ProStorageActivity.kt" · "invokeSuspend"
+- `public Ride3ProStorageActivity()`  L249
+- `ViewModelStore invoke()`  L259 @Override
+- `ViewModelProvider.Factory invoke()`  L269 @Override
+- `CreationExtras invoke()`  L280 @Override
+- `Ride3ProDeviceRepository getRide3ProDeviceRepository()`  L289
+- `Ride3ProStorageViewModel getViewModel()`  L294
+- `String getSessionId()`  L299
+    - 体内字面量："device_session_id"
+- `DeviceType getDeviceType$app_release_64()`  L304
+- `VerifiedDeviceFileCatalog getFileCatalog()`  L331
+- `Ride3ProThumbnailPrefetchScheduler getThumbnailPrefetchScheduler()`  L336
+- `AuthorizedDeviceResource authorizeThumbnail(int fileIndex)`  L341
+- `View getContentRoot()`  L362 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L376 @Override
+- `void onResume()`  L388 @Override
+- `void onStop()`  L396 @Override
+- `void prepareForInternalNavigation$app_release_64()`  L407
+- `void setupWindowInsets()`  L412
+- `WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat)`  L439 @Override
+- `WindowInsetsCompat setupWindowInsets$lambda$4(View view, WindowInsetsCompat insets)`  L446
+    - 体内字面量："view" · "insets" · "getInsets(...)"
+- `void setupToolbar()`  L455
+- `void onClick(View view)`  L466 @Override
+- `void onClick(View view)`  L479 @Override
+- `void onClick(View view)`  L492 @Override
+- `void onClick(View view)`  L505 @Override
+- `void onClick(View view)`  L518 @Override
+- `void onClick(View view)`  L531 @Override
+- `void onClick(View view)`  L545 @Override
+- `void setupToolbar$lambda$5(Ride3ProStorageActivity this$0, View view)`  L552
+    - 体内字面量："this$0"
+- `void setupToolbar$lambda$6(Ride3ProStorageActivity this$0, View view)`  L558
+    - 体内字面量："this$0"
+- `void setupToolbar$lambda$7(Ride3ProStorageActivity this$0, View view)`  L565
+    - 体内字面量："this$0"
+- `void setupToolbar$lambda$8(Ride3ProStorageActivity this$0, View view)`  L571
+    - 体内字面量："this$0"
+- `void setupToolbar$lambda$9(Ride3ProStorageActivity this$0, View view)`  L577
+    - 体内字面量："this$0"
+- `void setupToolbar$lambda$10(Ride3ProStorageActivity this$0, View view)`  L591
+    - 体内字面量："this$0"
+- `void setupToolbar$lambda$11(Ride3ProStorageActivity this$0, View view)`  L602
+    - 体内字面量："this$0"
+- `void setupTabs()`  L616
+- `Fragment getItem(int position)`  L626 @Override
+- `int getCount()`  L631 @Override
+- `void enterPlaybackModeBeforeLoadingFiles()`  L663
+- `void observeInitialLoadingOverlay()`  L925
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageActivity$observeThumbnailPrefetch$1" · "Ride3ProStorageActivity.kt" · "invokeSuspend"
+- `void observeThumbnailPrefetch()`  L1037
+- `void hideInitialLoadingOverlayIfNeeded(boolean isLoading, boolean loadFailed)`  L1042
+- `void ensurePlaybackModeOnResumeIfNeeded()`  L1049
+- `void cancelStorageBackgroundWork()`  L1122
+- `void loadFilesWithOverlay(boolean forceRefresh)`  L1137
+- `void loadFilesWithRecoveryUi(boolean forceRefresh)`  L1144
+- `void markPlaybackModeRecoveryAndPauseLoadingIfNeeded()`  L1156
+- `Ride3ProStorageFileFragment getCurrentFragment()`  L1167
+- `void enterSelectMode()`  L1186
+- `Unit invoke(Integer num, Boolean bool)`  L1235 @Override
+- `void invoke(int i, boolean z)`  L1240
+- `void deletePendingPlaybackFile$app_release_64(int fileIndex)`  L1279
+- `void exitSelectMode()`  L1290
+- `void updateBottomActionState(boolean enabled)`  L1332
+- `void refreshSdCardInfo()`  L1458
+- `void showSdCardError()`  L1463
+- `void updateDownloadBadge()`  L1486
+- `void downloadSelectedFiles(List<StorageRide3ProRemoteFile> selectedItems)`  L1504
+- `void showDeleteConfirmDialog(final List<StorageRide3ProRemoteFile> selectedItems)`  L1580
+- `Unit invoke()`  L1599 @Override
+- `void invoke2()`  L1605
+- `void deleteSelectedFiles(List<StorageRide3ProRemoteFile> selectedItems)`  L1612
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageActivity$deleteSelectedFiles$1" · "Ride3ProStorageActivity.kt" · "invokeSuspend" · "destination$iv$iv" · "L$1" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageActivity$Companion;" · "()V" · "EXTRA_DEVICE_TYPE_CODE" · "EXTRA_SESSION_ID" · "launchActivity" · "activity" · "Lcom/tuwinsmart/tuwin/presentation/ui/base/BaseActivity;" · "sessionId" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceType;" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29231`
+L1624 · [class] static final C29231 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（7）：
+- `List<StorageRide3ProRemoteFile> $selectedItems`  L1625
+- `Object L$0`  L1626
+- `Object L$1`  L1627
+- `Object L$2`  L1628
+- `Object L$3`  L1629
+- `int label`  L1630
+- `Ride3ProStorageActivity this$0`  L1631
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1641 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1646 @Override
+- `java.lang.Object invokeSuspend(java.lang.Object r7)`  L1661 @Override
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity.C29231.invokeSuspend(java.lang.Object):java.lang.Object"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29241`
+L1065 · [class] static final C29241 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（4）：
+- `boolean $shouldRecoverAfterStop`  L1066
+- `int label`  L1067
+- `Object objM2859setPlaybackModeIoAF18A`  L1087
+- `int i = this.label`  L1089
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1076 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1081 @Override
+- `Object invokeSuspend(Object obj)`  L1086 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29251`
+L676 · [class] static final C29251 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L677
+- `Object objM2859setPlaybackModeIoAF18A`  L695
+- `int i = this.label`  L697
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L684 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L689 @Override
+- `Object invokeSuspend(Object obj)`  L694 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29271`
+L733 · [class] static final C29271 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L734
+- `int i = this.label`  L908
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L741 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L746 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageActivity$observeInitialLoadingOverlay$1$1" · "Ride3ProStorageActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L906 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29271$AnonymousClass1`
+L754 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L755
+- `int label`  L756
+- `Ride3ProStorageActivity this$0`  L757
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L766 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L773 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageActivity$observeInitialLoadingOverlay$1$1$1" · "Ride3ProStorageActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L835 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageActivity$observeInitialLoadingOverlay$1$1$2" · "Ride3ProStorageActivity.kt" · "invokeSuspend"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29271$AnonymousClass1$AnonymousClass2`
+L851 · [class] static final AnonymousClass2 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（5）：
+- `int label`  L852
+- `Ride3ProStorageActivity this$0`  L853
+- `int i = this.label`  L874
+- `Ride3ProStorageActivity ride3ProStorageActivity = this.this$0`  L878
+- `Ride3ProStorageActivity ride3ProStorageActivity2 = ride3ProStorageActivity`  L887
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L862 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L867 @Override
+- `Object invokeSuspend(Object obj)`  L872 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L882 @Override
+- `Object emit(boolean z, Continuation<? super Unit> continuation)`  L886
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29271$AnonymousClass1$C44051`
+L781 · [class] static final C44051 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（5）：
+- `int label`  L782
+- `Ride3ProStorageActivity this$0`  L783
+- `int i = this.label`  L804
+- `Ride3ProStorageActivity ride3ProStorageActivity = this.this$0`  L808
+- `Ride3ProStorageActivity ride3ProStorageActivity2 = ride3ProStorageActivity`  L817
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L792 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L797 @Override
+- `Object invokeSuspend(Object obj)`  L802 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L812 @Override
+- `Object emit(boolean z, Continuation<? super Unit> continuation)`  L816
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29281`
+L933 · [class] static final C29281 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L934
+- `int i = this.label`  L1020
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L941 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L946 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageActivity$observeThumbnailPrefetch$1$1" · "Ride3ProStorageActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L1018 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29281$AnonymousClass1`
+L954 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（5）：
+- `int label`  L955
+- `Ride3ProStorageActivity this$0`  L956
+- `int i = this.label`  L977
+- `Ride3ProStorageActivity ride3ProStorageActivity = this.this$0`  L981
+- `List<StorageRide3ProRemoteFile> list2 = list`  L993
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L965 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L970 @Override
+- `Object invokeSuspend(Object obj)`  L975 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L985 @Override
+- `Object emit(List<StorageRide3ProRemoteFile> list, Continuation<? super Unit> continuation)`  L989
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29291`
+L1377 · [class] static final C29291 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（12）：
+- `int label`  L1378
+- `Object objMo2815getSDInfoIoAF18A`  L1396
+- `Integer free`  L1397
+- `Integer total`  L1398
+- `int i = this.label`  L1400
+- `Ride3ProStorageActivity ride3ProStorageActivity = Ride3ProStorageActivity.this`  L1415
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding = ride3ProStorageActivity.binding`  L1420
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding2 = null`  L1421
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding3 = ride3ProStorageActivity.binding`  L1427
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding4 = ride3ProStorageActivity.binding`  L1434
+- `ActivityRide3proStorageBinding activityRide3proStorageBinding5 = ride3ProStorageActivity.binding`  L1441
+- `Ride3ProStorageActivity ride3ProStorageActivity2 = Ride3ProStorageActivity.this`  L1449
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1385 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1390 @Override
+- `Object invokeSuspend(Object obj)`  L1395 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29321`
+L142 · [class] static final C29321 · extends `SuspendLambda implements Function2<StorageRide3ProRemoteFile, Continuation<? super Boolean>, Object>` · implements `Function2<StorageRide3ProRemoteFile, Continuation<? super Boolean>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L143
+- `int label`  L144
+- `Ride3ProStorageActivity this$0`  L145
+- `int i = this.label`  L168
+- `Ride3ProThumbnailGlidePrefetcher ride3ProThumbnailGlidePrefetcher = Ride3ProThumbnailGlidePrefetcher.INSTANCE`  L172
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L154 @Override
+- `Object invoke(StorageRide3ProRemoteFile storageRide3ProRemoteFile, Continuation<? super Boolean> continuation)`  L161 @Override
+- `Object invokeSuspend(Object obj)`  L166 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$C29332`
+L200 · [class] static final C29332 · extends `SuspendLambda implements Function2<StorageRide3ProRemoteFile, Continuation<? super Ride3ProThumbnailPrefetchResult>, Object>` · implements `Function2<StorageRide3ProRemoteFile, Continuation<? super Ride3ProThumbnailPrefetchResult>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L201
+- `int label`  L202
+- `Ride3ProStorageActivity this$0`  L203
+- `int i = this.label`  L226
+- `Ride3ProThumbnailGlidePrefetcher ride3ProThumbnailGlidePrefetcher = Ride3ProThumbnailGlidePrefetcher.INSTANCE`  L230
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L212 @Override
+- `Object invoke(StorageRide3ProRemoteFile storageRide3ProRemoteFile, Continuation<? super Ride3ProThumbnailPrefetchResult> continuation)`  L219 @Override
+- `Object invokeSuspend(Object obj)`  L224 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageActivity$Companion`
+L1672 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageActivity.java`
+注解：
+
+字段/常量（1）：
+- `String str = sessionId`  L1694
+
+方法（4）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L1673
+- `private Companion()`  L1677
+- `void launchActivity$default(Companion companion, BaseActivity baseActivity, String str, DeviceType deviceType, int i, Object obj)`  L1680
+- `void launchActivity(BaseActivity activity, String sessionId, DeviceType deviceType)`  L1690
+    - 体内字面量："activity" · "deviceType"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageCachedVideoLoadMorePolicy`
+L25 · [class] public final Ride3ProStorageCachedVideoLoadMorePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageCachedVideoLoadMorePolicy.java`
+注解：
+
+字段/常量（7）：
+- `Locale ROOT = Locale.ROOT`  L40
+- `String lowerCase`  L50
+- `Set<String> set = localCachedVideoNames`  L57
+- `Locale ROOT = Locale.ROOT`  L60
+- `List<StorageRide3ProRemoteFile> list = newlyLoadedFiles`  L68
+- `Locale ROOT2 = Locale.ROOT`  L76
+- `Locale ROOT3 = Locale.ROOT`  L84
+
+方法（3）：
+- `private Ride3ProStorageCachedVideoLoadMorePolicy()`  L28
+- `boolean shouldAutoExpand(List<StorageRide3ProRemoteFile> allFiles, List<StorageRide3ProRemoteFile> newlyLoadedFiles)`  L31
+    - 体内字面量："allFiles" · "newlyLoadedFiles" · "getName(...)"
+- `boolean shouldAutoExpand(List<StorageRide3ProRemoteFile> allFiles, List<StorageRide3ProRemoteFile> newlyLoadedFiles, Set<String> localCachedVideoNames)`  L49
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageCapabilityProbe`
+L25 · [class] public final Ride3ProStorageCapabilityProbe · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageCapabilityProbe.java`
+注解：
+
+字段/常量（30）：
+- `String FILE_COUNT_ENDPOINT = "/api/playback/filecount"`  L29 @Deprecated
+- `int MODE_PLAYBACK = 2`  L32 @Deprecated
+- `String SET_MODE_ENDPOINT = "/api/setmode"`  L35 @Deprecated
+- `Function2<String, Ride3ProPlaybackFileCountInfo, Result<Unit>> commitIndexedFileCount`  L36
+- `Function0<Unit> refreshNetworkBinding`  L37
+- `Function0<String> resolveDeviceKey`  L38
+- `Function0<Ride3ProApiService> serviceProvider`  L39
+- `Ride3ProStorageCapabilityProbe$probe$1 ride3ProStorageCapabilityProbe$probe$1`  L85
+- `Ride3ProApiService ride3ProApiServiceInvoke`  L86
+- `Ride3ProStorageCapabilityProbe ride3ProStorageCapabilityProbe`  L87
+- `String str`  L88
+- `String str2`  L89
+- `Ride3ProStorageCapabilityProbe ride3ProStorageCapabilityProbe2`  L90
+- `Ride3ProApiResponse ride3ProApiResponse`  L91
+- `Ride3ProPlaybackFileCountInfo ride3ProPlaybackFileCountInfo`  L92
+- `String strInvoke`  L93
+- `int i`  L94
+- `Ride3ProStorageEntryDestination.Legacy indexed`  L95
+- `Object playbackFileCount = ride3ProStorageCapabilityProbe$probe$1.result`  L106
+- `int i2 = ride3ProStorageCapabilityProbe$probe$1.label`  L108
+- `Result.Companion companion = Result.INSTANCE`  L126
+- `Result.Companion companion2 = Result.INSTANCE`  L131
+- `Result.Companion companion3 = Result.INSTANCE`  L136
+- `Result.Companion companion4 = Result.INSTANCE`  L149
+- `Result.Companion companion5 = Result.INSTANCE`  L169
+- `Result.Companion companion6 = Result.INSTANCE`  L184
+- `Result.Companion companion7 = Result.INSTANCE`  L189
+- `Result.Companion companion8 = Result.INSTANCE`  L194
+- `Result.Companion companion9 = Result.INSTANCE`  L207
+- `Result.Companion companion10 = Result.INSTANCE`  L212
+
+方法（2）：
+- `public Ride3ProStorageCapabilityProbe(Function0<? extends Ride3ProApiService> serviceProvider, Function0<Unit> refreshNetworkBinding, Function0<String> resolveDeviceKey, Function2<? super String, ? super Ride3ProPlaybackFileCountInfo, Result<Unit>> commitIndexedFileCount)`  L61
+    - 体内字面量："serviceProvider" · "refreshNetworkBinding" · "resolveDeviceKey" · "commitIndexedFileCount"
+- `Object m3044probeIoAF18A(Continuation<? super Result<? extends Ride3ProStorageEntryDestination>> continuation)`  L84
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageCapabilityProbe$Companion`
+L219 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageCapabilityProbe.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L220
+- `private Companion()`  L224
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageCapabilityProbe$probe$1`
+L16 · [class] final Ride3ProStorageCapabilityProbe$probe$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageCapabilityProbe$probe$1.java`
+注解：
+
+字段/常量（6）：
+- `Object L$0`  L17
+- `Object L$1`  L18
+- `Object L$2`  L19
+- `int label`  L20
+- `Object result`  L21
+- `Ride3ProStorageCapabilityProbe this$0`  L22
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L31 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageCapabilityProbe$WhenMappings`
+L43 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageCapabilityProbe.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L44
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageCapabilityProbeFactory`
+L21 · [class] public final Ride3ProStorageCapabilityProbeFactory · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageCapabilityProbeFactory.java`
+注解：
+
+字段/常量（2）：
+- `Ride3ProIndexedPlaybackRuntimeFactory ride3ProIndexedPlaybackRuntimeFactory = Ride3ProIndexedPlaybackRuntimeFactory.INSTANCE`  L45
+- `Result.Companion companion = Result.INSTANCE`  L50
+
+方法（4）：
+- `private Ride3ProStorageCapabilityProbeFactory()`  L24
+- `Ride3ProStorageCapabilityProbe create(Context context)`  L27
+    - 体内字面量："context"
+- `Result<? extends Unit> invoke(String str, Ride3ProPlaybackFileCountInfo ride3ProPlaybackFileCountInfo)`  L37 @Override
+- `Object m3045invokegIAlus(String deviceKey, Ride3ProPlaybackFileCountInfo info)`  L42
+    - 体内字面量："deviceKey" · "info"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageCapabilityProbeFactory$C29341`
+L61 · [class] C29341 · extends `FunctionReferenceImpl implements Function0<Ride3ProApiService>` · implements `Function0<Ride3ProApiService>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageCapabilityProbeFactory.java`
+注解：
+
+方法（1）：
+- `Ride3ProApiService invoke()`  L68 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageCapabilityProbeFactory$C29352`
+L76 · [class] C29352 · extends `FunctionReferenceImpl implements Function0<Unit>` · implements `Function0<Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageCapabilityProbeFactory.java`
+注解：
+
+方法（2）：
+- `Unit invoke()`  L82 @Override
+- `void invoke2()`  L88
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageCapabilityProbeFactory$C29363`
+L96 · [class] C29363 · extends `FunctionReferenceImpl implements Function0<String>` · implements `Function0<String>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageCapabilityProbeFactory.java`
+注解：
+
+方法（1）：
+- `String invoke()`  L102 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageCapabilityRoute`
+L11 · [enum] public Ride3ProStorageCapabilityRoute · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageCapabilityRoute.java`
+注解：
+
+枚举常量（2）：
+- `LEGACY()`  L12
+- `INDEXED()`  L13
+
+方法（1）：
+- `EnumEntries<Ride3ProStorageCapabilityRoute> getEntries()`  L17
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageCapabilityRouteResolver`
+L9 · [class] public final Ride3ProStorageCapabilityRouteResolver · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageCapabilityRouteResolver.java`
+注解：
+
+方法（2）：
+- `private Ride3ProStorageCapabilityRouteResolver()`  L12
+- `Ride3ProStorageCapabilityRoute resolve(Integer dayCount)`  L15
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageEntryDestination`
+L11 · [interface] public Ride3ProStorageEntryDestination · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageEntryDestination.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageEntryDestination$Legacy;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageEntryDestination;" · "()V" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageEntryDestination$Indexed;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageEntryDestination;" · "deviceKey" · "(Ljava/lang/String;)V" · "getDeviceKey" · "()Ljava/lang/String;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageEntryDestination$Indexed`
+L24 · [class] public static final Indexed · implements `Ride3ProStorageEntryDestination` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageEntryDestination.java`
+注解：
+
+字段/常量（1）：
+- `String deviceKey`  L25
+
+方法（8）：
+- `Indexed copy$default(Indexed indexed, String str, int i, Object obj)`  L27
+- `String getDeviceKey()`  L35
+- `Indexed copy(String deviceKey)`  L39
+    - 体内字面量："deviceKey"
+- `boolean equals(Object other)`  L44
+- `int hashCode()`  L51
+- `String toString()`  L55
+    - 体内字面量："Indexed(deviceKey=" · ")"
+- `public Indexed(String deviceKey)`  L59
+    - 体内字面量："deviceKey" · "indexed storage device key is required"
+- `String getDeviceKey()`  L67
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageEntryDestination$Legacy`
+L15 · [class] public static final Legacy · implements `Ride3ProStorageEntryDestination` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageEntryDestination.java`
+注解：
+
+方法（1）：
+- `private Legacy()`  L18
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageEntryTraceSession`
+L19 · [class] public final Ride3ProStorageEntryTraceSession · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageEntryTraceSession.java`
+注解：
+
+字段/常量（5）：
+- `Ride3ProIndexedTraceContext currentContext`  L20
+- `Function2<Ride3ProIndexedTraceContext, Ride3ProIndexedVisibilityOutcome, Unit> finishTrace`  L21
+- `Set<Ride3ProIndexedTraceContext> finishedContexts`  L22
+- `Ride3ProIndexedTraceContext ride3ProIndexedTraceContext = this.currentContext`  L52
+- `Ride3ProIndexedTraceContext ride3ProIndexedTraceContext = this.currentContext`  L78
+
+方法（10）：
+- `public Ride3ProStorageEntryTraceSession(Ride3ProIndexedTraceContext initialContext, boolean z, Function2<? super Ride3ProIndexedTraceContext, ? super Ride3ProIndexedVisibilityOutcome, Unit> finishTrace)`  L25
+    - 体内字面量："initialContext" · "finishTrace"
+- ` Ride3ProStorageEntryTraceSession(Ride3ProIndexedTraceContext ride3ProIndexedTraceContext, boolean z, Function2 function2, int i, DefaultConstructorMarker defaultConstructorMarker)`  L37
+- `Ride3ProIndexedTraceContext getCurrentContext()`  L41
+- `void restart(Ride3ProIndexedTraceContext context)`  L45
+    - 体内字面量："context"
+- `Function0<Unit> finishAction(final Ride3ProIndexedVisibilityOutcome outcome)`  L50
+    - 体内字面量："outcome"
+- `Unit invoke()`  L60 @Override
+- `void invoke2()`  L66
+- `void finishCurrent(Ride3ProIndexedVisibilityOutcome outcome)`  L72
+    - 体内字面量："outcome"
+- `Ride3ProStorageEntryTraceSessionSnapshot snapshot()`  L77
+- `void finish(Ride3ProIndexedTraceContext context, Ride3ProIndexedVisibilityOutcome outcome)`  L83
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageEntryTraceSessionSnapshot`
+L11 · [class] public final Ride3ProStorageEntryTraceSessionSnapshot · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageEntryTraceSessionSnapshot.java`
+注解：
+
+字段/常量（2）：
+- `Ride3ProIndexedTraceContext currentContext`  L12
+- `boolean currentFinished`  L13
+
+方法（10）：
+- `Ride3ProStorageEntryTraceSessionSnapshot copy$default(Ride3ProStorageEntryTraceSessionSnapshot ride3ProStorageEntryTraceSessionSnapshot, Ride3ProIndexedTraceContext ride3ProIndexedTraceContext, boolean z, int i, Object obj)`  L15
+- `Ride3ProIndexedTraceContext getCurrentContext()`  L26
+- `boolean getCurrentFinished()`  L31
+- `Ride3ProStorageEntryTraceSessionSnapshot copy(Ride3ProIndexedTraceContext currentContext, boolean currentFinished)`  L35
+    - 体内字面量："currentContext"
+- `boolean equals(Object other)`  L40
+- `int hashCode()`  L51
+- `String toString()`  L55
+    - 体内字面量："Ride3ProStorageEntryTraceSessionSnapshot(currentContext=" · ", currentFinished=" · ")"
+- `public Ride3ProStorageEntryTraceSessionSnapshot(Ride3ProIndexedTraceContext currentContext, boolean z)`  L59
+    - 体内字面量："currentContext"
+- `Ride3ProIndexedTraceContext getCurrentContext()`  L65
+- `boolean getCurrentFinished()`  L69
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageEntryTraceSessionStateKt`
+L12 · [class] public final Ride3ProStorageEntryTraceSessionStateKt · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageEntryTraceSessionStateKt.java`
+注解：
+
+字段/常量（2）：
+- `String TRACE_CONTEXT_PREFIX = "ride3pro_storage_entry_trace_session"`  L13
+- `String TRACE_FINISHED_KEY = "ride3pro_storage_entry_trace_session.finished"`  L14
+
+方法（2）：
+- `void putRide3ProStorageEntryTraceSessionSnapshot(Bundle bundle, Ride3ProStorageEntryTraceSessionSnapshot snapshot)`  L16
+    - 体内字面量："<this>" · "snapshot"
+- `Ride3ProStorageEntryTraceSessionSnapshot getRide3ProStorageEntryTraceSessionSnapshot(Bundle bundle)`  L23
+    - 体内字面量："<this>" · "Ride3Pro storage entry trace context is required" · "Ride3Pro storage entry trace completion flag is required"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageEntryUiState`
+L11 · [class] public final Ride3ProStorageEntryUiState · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageEntryUiState.java`
+注解：
+
+字段/常量（5）：
+- `Ride3ProStorageEntryDestination destination`  L12
+- `Throwable error`  L13
+- `boolean isLoading`  L14
+- `Ride3ProStorageEntryDestination ride3ProStorageEntryDestination = this.destination`  L65
+- `Throwable th = this.error`  L67
+
+方法（14）：
+- `public Ride3ProStorageEntryUiState()`  L16
+- `Ride3ProStorageEntryUiState copy$default(Ride3ProStorageEntryUiState ride3ProStorageEntryUiState, boolean z, Ride3ProStorageEntryDestination ride3ProStorageEntryDestination, Throwable th, int i, Object obj)`  L20
+- `boolean getIsLoading()`  L34
+- `Ride3ProStorageEntryDestination getDestination()`  L39
+- `Throwable getError()`  L44
+- `Ride3ProStorageEntryUiState copy(boolean isLoading, Ride3ProStorageEntryDestination destination, Throwable error)`  L48
+- `boolean equals(Object other)`  L52
+- `int hashCode()`  L63
+- `String toString()`  L71
+    - 体内字面量："Ride3ProStorageEntryUiState(isLoading=" · ", destination=" · ", error=" · ")"
+- `public Ride3ProStorageEntryUiState(boolean z, Ride3ProStorageEntryDestination ride3ProStorageEntryDestination, Throwable th)`  L75
+- ` Ride3ProStorageEntryUiState(boolean z, Ride3ProStorageEntryDestination ride3ProStorageEntryDestination, Throwable th, int i, DefaultConstructorMarker defaultConstructorMarker)`  L81
+- `boolean isLoading()`  L85
+- `Ride3ProStorageEntryDestination getDestination()`  L89
+- `Throwable getError()`  L93
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageEntryViewModel`
+L30 · [class] public final Ride3ProStorageEntryViewModel · extends `ViewModel` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageEntryViewModel.java`
+注解：
+
+字段/常量（5）：
+- `MutableStateFlow<Ride3ProStorageEntryUiState> _uiState`  L31
+- `Job loadJob`  L32
+- `Function1<Continuation<? super Result<? extends Ride3ProStorageEntryDestination>>, Object> probeCapability`  L33
+- `StateFlow<Ride3ProStorageEntryUiState> uiState`  L34
+- `Job job = this.loadJob`  L55
+
+方法（4）：
+- `public Ride3ProStorageEntryViewModel(Function1<? super Continuation<? super Result<? extends Ride3ProStorageEntryDestination>>, ? extends Object> probeCapability)`  L37
+    - 体内字面量："probeCapability"
+- `StateFlow<Ride3ProStorageEntryUiState> getUiState()`  L46
+- `void retry()`  L50
+- `void load()`  L54
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageEntryViewModel$C29391`
+L66 · [class] static final C29391 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageEntryViewModel.java`
+注解：
+
+字段/常量（5）：
+- `int label`  L67
+- `Ride3ProStorageEntryUiState ride3ProStorageEntryUiState`  L85
+- `int i = this.label`  L87
+- `Function1 function1 = Ride3ProStorageEntryViewModel.this.probeCapability`  L92
+- `MutableStateFlow mutableStateFlow = Ride3ProStorageEntryViewModel.this._uiState`  L105
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L74 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L79 @Override
+- `Object invokeSuspend(Object obj)`  L84 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageEntryViewModelFactory`
+L16 · [class] public final Ride3ProStorageEntryViewModelFactory · implements `ViewModelProvider.Factory` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageEntryViewModelFactory.java`
+注解：
+
+字段/常量（1）：
+- `Function1<Continuation<? super Result<? extends Ride3ProStorageEntryDestination>>, Object> probeCapability`  L17
+
+方法（2）：
+- `public Ride3ProStorageEntryViewModelFactory(Function1<? super Continuation<? super Result<? extends Ride3ProStorageEntryDestination>>, ? extends Object> probeCapability)`  L20
+    - 体内字面量："probeCapability"
+- `T create(Class<T> modelClass)`  L26 @Override
+    - 体内字面量："modelClass" · "Failed requirement."
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileAdapter`
+L52 · [class] public final Ride3ProStorageFileAdapter · extends `RecyclerView.Adapter<RecyclerView.ViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileAdapter.java`
+注解：
+
+字段/常量（26）：
+- `long FILE_ID_MASK = 4294967295L`  L53
+- `long FILE_ID_NAMESPACE = 4611686018427387904L`  L54
+- `long FNV_64_OFFSET_BASIS = -3750763034362895579L`  L55
+- `long FNV_64_PRIME = 1099511628211L`  L56
+- `long HEADER_ID_NAMESPACE = Long.MIN_VALUE`  L57
+- `String PAYLOAD_SELECTION_STATE = "payload_selection_state"`  L58
+- `String PAYLOAD_SELECT_MODE = "payload_select_mode"`  L59
+- `int VIEW_TYPE_DATE_HEADER = 0`  L60
+- `int VIEW_TYPE_FILE_ITEM = 1`  L61
+- `SimpleDateFormat dateFormatter`  L62
+- `List<ListItem> items`  L63
+- `Function1<StorageRide3ProRemoteFile, Unit> onItemClick`  L64
+- `SimpleDateFormat overlayTimeFormatter`  L65
+- `boolean selectAllActive`  L66
+- `boolean selectMode`  L67
+- `LinkedHashSet<StorageRide3ProRemoteFile> selectedItems`  L68
+- `Function2<? super Integer, ? super Boolean, Unit> selectionChangedListener`  L69
+- `Function1<Integer, AuthorizedDeviceResource> thumbnailModelForIndex`  L70
+- `List<ListItem> list = this.items`  L154
+- `List<ListItem> list = this.items`  L179
+- `ArrayList arrayList2 = arrayList`  L186
+- `List<ListItem> list = this.items`  L202
+- `int i = 0`  L203
+- `Function2<? super Integer, ? super Boolean, Unit> function2 = this.selectionChangedListener`  L281
+- `String str = value`  L430
+- `long jCharAt = FNV_64_OFFSET_BASIS`  L431
+
+方法（27）：
+- ` Ride3ProStorageFileAdapter(C29401 c29401, Function1 function1, int i, DefaultConstructorMarker defaultConstructorMarker)`  L72
+- `Void invoke(int i2)`  L74
+- `Object invoke(Object obj)`  L79 @Override
+- `public Ride3ProStorageFileAdapter(Function1<? super Integer, AuthorizedDeviceResource> thumbnailModelForIndex, Function1<? super StorageRide3ProRemoteFile, Unit> onItemClick)`  L86
+    - 体内字面量："thumbnailModelForIndex" · "onItemClick" · "yyyy-MM-dd" · "HH:mm"
+- `void submitList(List<StorageRide3ProRemoteFile> files)`  L98
+    - 体内字面量："files"
+- `int getOldListSize()`  L104 @Override
+- `int getNewListSize()`  L109 @Override
+- `boolean areItemsTheSame(int oldItemPosition, int newItemPosition)`  L114 @Override
+- `boolean areContentsTheSame(int oldItemPosition, int newItemPosition)`  L119 @Override
+    - 体内字面量："calculateDiff(...)"
+- `void setSelectionChangedListener(Function2<? super Integer, ? super Boolean, Unit> listener)`  L135
+    - 体内字面量："listener"
+- `void setSelectMode(boolean enabled)`  L140
+- `void selectAll(boolean selectAll)`  L150
+- `List<StorageRide3ProRemoteFile> getSelectedItems()`  L170
+- `void removeFiles(Collection<StorageRide3ProRemoteFile> files)`  L174
+    - 体内字面量："files"
+- `int getFileCount()`  L201
+- `int getItemViewType(int position)`  L216 @Override
+- `RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L228 @Override
+    - 体内字面量："parent" · "inflate(...)" · "inflate(...)"
+- `void onBindViewHolder(RecyclerView.ViewHolder holder, int position)`  L241 @Override
+    - 体内字面量："holder"
+- `void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads)`  L252 @Override
+    - 体内字面量："holder" · "payloads" · "null cannot be cast to non-null type com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageFileAdapter.ListItem.FileItem"
+- `int getItemCount()`  L269 @Override
+- `long getItemId(int position)`  L274 @Override
+- `void notifySelectionChanged()`  L279
+- `void notifySelectionUiChanged(Object payload)`  L372
+- `List<ListItem> buildItems(List<StorageRide3ProRemoteFile> files)`  L379
+- `int compare(T t, T t2)`  L399 @Override
+- `long stableItemIdOf(ListItem item)`  L419
+- `long stableHash64(String value)`  L429
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileAdapter$DateHeaderViewHolder`
+L289 · [class] private final DateHeaderViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileAdapter.java`
+注解：
+
+字段/常量（2）：
+- `ItemDateHeaderBinding binding`  L290
+- `Ride3ProStorageFileAdapter this$0`  L291
+
+方法（2）：
+- `public DateHeaderViewHolder(Ride3ProStorageFileAdapter ride3ProStorageFileAdapter, ItemDateHeaderBinding binding)`  L294
+    - 体内字面量："binding"
+- `void bind(String date)`  L301
+    - 体内字面量："date"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileAdapter$FileViewHolder`
+L310 · [class] final FileViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileAdapter.java`
+注解：
+
+字段/常量（6）：
+- `ItemM3StorageFileBinding binding`  L311
+- `Ride3ProStorageFileAdapter this$0`  L312
+- `String str`  L323
+- `TextView textView = this.binding.tvTime`  L328
+- `Ride3ProStorageFileAdapter ride3ProStorageFileAdapter = this.this$0`  L336
+- `int fileCount`  L347
+
+方法（5）：
+- `public FileViewHolder(Ride3ProStorageFileAdapter ride3ProStorageFileAdapter, ItemM3StorageFileBinding binding)`  L315
+    - 体内字面量："binding"
+- `void bind(final StorageRide3ProRemoteFile file)`  L322
+- `void onClick(View view)`  L339 @Override
+- `void bind$lambda$0(Ride3ProStorageFileAdapter this$0, StorageRide3ProRemoteFile file, FileViewHolder this$1, View view)`  L346
+- `void bindSelectionUi(StorageRide3ProRemoteFile file)`  L365
+    - 体内字面量："file"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileAdapter$ListItem`
+L441 · [class] static abstract ListItem · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileAdapter.java`
+注解：
+
+方法（2）：
+- ` ListItem(DefaultConstructorMarker defaultConstructorMarker)`  L442
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageFileAdapter$ListItem$DateHeader;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageFileAdapter$ListItem;" · "(Ljava/lang/String;)V" · "getDate" · "()Ljava/lang/String;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+- `private ListItem()`  L495
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageFileAdapter$ListItem$FileItem;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageFileAdapter$ListItem;" · "file" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/fragment/StorageRide3ProRemoteFile;" · "(Lcom/tuwinsmart/tuwin/presentation/ui/storage/fragment/StorageRide3ProRemoteFile;)V" · "getFile" · "()Lcom/tuwinsmart/tuwin/presentation/ui/storage/fragment/StorageRide3ProRemoteFile;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileAdapter$ListItem$DateHeader`
+L448 · [class] public static final DateHeader · extends `ListItem` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileAdapter.java`
+注解：
+
+字段/常量（1）：
+- `String date`  L449
+
+方法（8）：
+- `DateHeader copy$default(DateHeader dateHeader, String str, int i, Object obj)`  L451
+- `String getDate()`  L459
+- `DateHeader copy(String date)`  L463
+    - 体内字面量："date"
+- `boolean equals(Object other)`  L468
+- `int hashCode()`  L475
+- `String toString()`  L479
+    - 体内字面量："DateHeader(date=" · ")"
+- `public DateHeader(String date)`  L484
+    - 体内字面量："date"
+- `String getDate()`  L490
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileAdapter$ListItem$FileItem`
+L500 · [class] public static final FileItem · extends `ListItem` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileAdapter.java`
+注解：
+
+字段/常量（1）：
+- `StorageRide3ProRemoteFile file`  L501
+
+方法（8）：
+- `FileItem copy$default(FileItem fileItem, StorageRide3ProRemoteFile storageRide3ProRemoteFile, int i, Object obj)`  L503
+- `StorageRide3ProRemoteFile getFile()`  L511
+- `FileItem copy(StorageRide3ProRemoteFile file)`  L515
+    - 体内字面量："file"
+- `boolean equals(Object other)`  L520
+- `int hashCode()`  L527
+- `String toString()`  L531
+    - 体内字面量："FileItem(file=" · ")"
+- `public FileItem(StorageRide3ProRemoteFile file)`  L536
+    - 体内字面量："file"
+- `StorageRide3ProRemoteFile getFile()`  L542
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileFragment`
+L81 · [class] public final Ride3ProStorageFileFragment · extends `Fragment` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileFragment.java`
+注解：
+
+字段/常量（50）：
+- `String ARG_TAB = "tab"`  L82
+- `FragmentRide3proStorageListBinding _binding`  L88
+- `Ride3ProStorageFileAdapter adapter`  L89
+- `float lastTouchY`  L90
+- `GridLayoutManager layoutManager`  L91
+- `boolean pendingLoadMoreWhenIdle`  L92
+- `float pullDistancePx`  L93
+- `Function2<? super Integer, ? super Boolean, Unit> selectionChangedListener`  L94
+- `Ride3ProStorageTab tab`  L95
+- `Lazy viewModel`  L98
+- `Ride3ProStorageFileFragment ride3ProStorageFileFragment = this`  L135
+- `Function0 function0 = null`  L136
+- `CreationExtras creationExtras`  L156
+- `Function0 function1 = function0`  L157
+- `FragmentRide3proStorageListBinding fragmentRide3proStorageListBinding = this._binding`  L174
+- `DeviceType deviceType$app_release_64`  L192
+- `String upperCase`  L210
+- `Ride3ProStorageFileAdapter ride3ProStorageFileAdapter = this.adapter`  L259
+- `Function2 function2 = this.this$0.selectionChangedListener`  L276
+- `Ride3ProStorageFileAdapter ride3ProStorageFileAdapter = this.adapter`  L285
+- `Ride3ProStorageFileAdapter ride3ProStorageFileAdapter = this.adapter`  L294
+- `Object next`  L303
+- `Ride3ProStorageFileAdapter ride3ProStorageFileAdapter = this.adapter`  L316
+- `List<StorageRide3ProRemoteFile> list = this.currentFiles`  L326
+- `Ride3ProStorageFileAdapter ride3ProStorageFileAdapter = this.adapter`  L334
+- `Function2 function2 = Ride3ProStorageFileFragment.this.selectionChangedListener`  L397
+- `Ride3ProStorageFileAdapter ride3ProStorageFileAdapter2 = Ride3ProStorageFileFragment.this.adapter`  L408
+- `GridLayoutManager gridLayoutManager2 = this.layoutManager`  L417
+- `Ride3ProStorageFileAdapter ride3ProStorageFileAdapter2 = null`  L418
+- `Ride3ProStorageFileAdapter ride3ProStorageFileAdapter3 = this.adapter`  L425
+- `Object objM3074constructorimpl`  L548
+- `Result.Companion companion = Result.INSTANCE`  L553
+- `Ride3ProStorageFileFragment ride3ProStorageFileFragment = this`  L554
+- `Result.Companion companion2 = Result.INSTANCE`  L557
+- `boolean z2 = this.pullDistancePx > 0.0f`  L756
+- `Ride3ProStorageLoadMorePullPolicy ride3ProStorageLoadMorePullPolicy = Ride3ProStorageLoadMorePullPolicy.INSTANCE`  L809
+- `float f = this.pullDistancePx`  L812
+- `RecyclerView recyclerView`  L823
+- `FragmentRide3proStorageListBinding fragmentRide3proStorageListBinding = this._binding`  L824
+- `List<StorageRide3ProRemoteFile> list = this.currentFiles`  L853
+- `Object next`  L874
+- `List<StorageRide3ProRemoteFile> list = this.currentFiles`  L876
+- `ArrayList arrayList2 = arrayList`  L882
+- `int i = 0`  L884
+- `ShowPicsActivity.Companion companion = ShowPicsActivity.INSTANCE`  L888
+- `ShowPicsActivity.Companion companion2 = ShowPicsActivity.INSTANCE`  L898
+- `List<StorageRide3ProRemoteFile> list2 = this.currentFiles`  L904
+- `Ride3ProDailyDetailActivity.Companion companion3 = Ride3ProDailyDetailActivity.INSTANCE`  L934
+- `Date date2 = date`  L945
+- `Ride3ProStorageTab ride3ProStorageTab = this.tab`  L1002
+
+方法（45）：
+- `VerifiedDeviceFileCatalog invoke()`  L104 @Override
+- `void onScrollStateChanged(RecyclerView recyclerView, int newState)`  L111 @Override
+    - 体内字面量："recyclerView"
+- `public Ride3ProStorageFileFragment()`  L134
+- `ViewModelStore invoke()`  L144 @Override
+- `CreationExtras invoke()`  L155 @Override
+- `ViewModelProvider.Factory invoke()`  L167 @Override
+- `FragmentRide3proStorageListBinding getBinding()`  L173
+- `Ride3ProStorageViewModel getViewModel()`  L180
+- `String getDeviceSessionId()`  L185
+    - 体内字面量："device_session_id"
+- `DeviceType getDeviceType()`  L191
+- `VerifiedDeviceFileCatalog getFileCatalog()`  L203
+- `void onCreate(Bundle savedInstanceState)`  L209 @Override
+- `View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)`  L226 @Override
+    - 体内字面量："inflater" · "getRoot(...)"
+- `void onViewCreated(View view, Bundle savedInstanceState)`  L235 @Override
+    - 体内字面量："view"
+- `void onResume()`  L244 @Override
+- `void onDestroyView()`  L250 @Override
+- `void setSelectionChangedListener$app_release_64(Function2<? super Integer, ? super Boolean, Unit> listener)`  L257
+- `Unit invoke(Integer num, Boolean bool)`  L270 @Override
+- `void invoke(int i, boolean z)`  L275
+- `void showSelectMode$app_release_64(boolean enabled)`  L284
+- `void selectAll$app_release_64(boolean selectAll)`  L293
+- `StorageRide3ProRemoteFile findFileByIndex$app_release_64(int fileIndex)`  L302
+- `List<StorageRide3ProRemoteFile> getSelectedItems$app_release_64()`  L315
+- `void removeFiles$app_release_64(Collection<StorageRide3ProRemoteFile> files)`  L324
+    - 体内字面量："files"
+- `void setupRecyclerView()`  L382
+- `Unit invoke(Integer num, Boolean bool)`  L391 @Override
+- `void invoke(int i, boolean z)`  L396
+- `int getSpanSize(int position)`  L407 @Override
+- `boolean onTouch(View view, MotionEvent motionEvent)`  L434 @Override
+- `boolean setupRecyclerView$lambda$2(Ride3ProStorageFileFragment this$0, View view, MotionEvent motionEvent)`  L442
+    - 体内字面量："this$0" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageFileFragment$observeFiles$1" · "Ride3ProStorageFileFragment.kt" · "invokeSuspend"
+- `void observeFiles()`  L540
+    - 体内字面量："getViewLifecycleOwner(...)"
+- `AuthorizedDeviceResource authorizeThumbnail(int fileIndex)`  L547
+- `void observeLoading()`  L622
+    - 体内字面量："getViewLifecycleOwner(...)" · "getViewLifecycleOwner(...)" · "getViewLifecycleOwner(...)" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageFileFragment$observeLoading$2" · "Ride3ProStorageFileFragment.kt" · "invokeSuspend" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageFileFragment$observeLoading$3" · "Ride3ProStorageFileFragment.kt" · "invokeSuspend"
+- `void handleLoadMorePullGesture(MotionEvent event)`  L744
+- `void run()`  L783 @Override
+- `void handleLoadMorePullGesture$lambda$5(Ride3ProStorageFileFragment this$0)`  L791
+    - 体内字面量："this$0"
+- `void renderLoadMoreHint()`  L797
+- `Ride3ProStorageLoadMorePullState buildLoadMorePullState()`  L808
+- `void triggerPendingLoadIfNeeded()`  L822
+- `void renderState$default(Ride3ProStorageFileFragment ride3ProStorageFileFragment, boolean z, boolean z2, int i, Object obj)`  L834
+- `void renderState(boolean isLoading, boolean error)`  L842
+- `void applyPendingDeleteSelectionIfNeeded()`  L849
+- `void handleFileClick(StorageRide3ProRemoteFile file)`  L873
+- `VideoItem toVideoItem(StorageRide3ProRemoteFile storageRide3ProRemoteFile)`  L940
+- `StateFlow<List<StorageRide3ProRemoteFile>> targetFlow()`  L1001
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileFragment$C29431`
+L453 · [class] static final C29431 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileFragment.java`
+注解：
+
+字段/常量（11）：
+- `Object L$0`  L454
+- `int label`  L455
+- `int i = this.label`  L476
+- `Ride3ProStorageFileFragment ride3ProStorageFileFragment = Ride3ProStorageFileFragment.this`  L481
+- `Object objM3074constructorimpl`  L490
+- `Ride3ProStorageFileFragment ride3ProStorageFileFragment2 = ride3ProStorageFileFragment`  L493
+- `Result.Companion companion = Result.INSTANCE`  L495
+- `List<StorageRide3ProRemoteFile> list2 = list`  L498
+- `Result.Companion companion2 = Result.INSTANCE`  L507
+- `Ride3ProStorageFileAdapter ride3ProStorageFileAdapter = ride3ProStorageFileFragment.adapter`  L515
+- `Ride3ProStorageFileFragment ride3ProStorageFileFragment3 = ride3ProStorageFileFragment`  L521
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L462 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L469 @Override
+- `Object invokeSuspend(Object obj)`  L474 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L485 @Override
+- `Object emit(List<StorageRide3ProRemoteFile> list, Continuation<? super Unit> continuation)`  L489
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileFragment$C29441`
+L571 · [class] static final C29441 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileFragment.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L572
+- `int i = this.label`  L591
+- `Ride3ProStorageFileFragment ride3ProStorageFileFragment = Ride3ProStorageFileFragment.this`  L595
+- `Ride3ProStorageFileFragment ride3ProStorageFileFragment2 = ride3ProStorageFileFragment`  L604
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L579 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L584 @Override
+- `Object invokeSuspend(Object obj)`  L589 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L599 @Override
+- `Object emit(boolean z, Continuation<? super Unit> continuation)`  L603
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileFragment$C29452`
+L638 · [class] static final C29452 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileFragment.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L639
+- `int i = this.label`  L658
+- `Ride3ProStorageFileFragment ride3ProStorageFileFragment = Ride3ProStorageFileFragment.this`  L662
+- `Ride3ProStorageFileFragment ride3ProStorageFileFragment2 = ride3ProStorageFileFragment`  L671
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L646 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L651 @Override
+- `Object invokeSuspend(Object obj)`  L656 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L666 @Override
+- `Object emit(boolean z, Continuation<? super Unit> continuation)`  L670
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileFragment$C29463`
+L693 · [class] static final C29463 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileFragment.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L694
+- `int i = this.label`  L713
+- `Ride3ProStorageFileFragment ride3ProStorageFileFragment = Ride3ProStorageFileFragment.this`  L717
+- `Ride3ProStorageFileFragment ride3ProStorageFileFragment2 = ride3ProStorageFileFragment`  L726
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L701 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L706 @Override
+- `Object invokeSuspend(Object obj)`  L711 @Override
+- `Object emit(Object obj2, Continuation continuation)`  L721 @Override
+- `Object emit(boolean z, Continuation<? super Unit> continuation)`  L725
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileFragment$C29471`
+L346 · [class] C29471 · extends `FunctionReferenceImpl implements Function1<StorageRide3ProRemoteFile, Unit>` · implements `Function1<StorageRide3ProRemoteFile, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileFragment.java`
+注解：
+
+方法（2）：
+- `Unit invoke(StorageRide3ProRemoteFile storageRide3ProRemoteFile)`  L352 @Override
+- `void invoke2(StorageRide3ProRemoteFile p0)`  L358
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileFragment$C29482`
+L367 · [class] C29482 · extends `FunctionReferenceImpl implements Function1<Integer, AuthorizedDeviceResource>` · implements `Function1<Integer, AuthorizedDeviceResource>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileFragment.java`
+注解：
+
+方法（2）：
+- `AuthorizedDeviceResource invoke(int i)`  L372
+- `AuthorizedDeviceResource invoke(Integer num)`  L377 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileFragment$Companion`
+L958 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileFragment.java`
+注解：
+
+方法（4）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L975
+- `private Companion()`  L979
+- `Ride3ProStorageFileFragment newInstance$app_release_64(Ride3ProStorageTab tab)`  L982
+    - 体内字面量："tab"
+- `boolean shouldShow(StorageRide3ProRemoteFile file, Ride3ProStorageTab tab)`  L991
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileFragment$Companion$WhenMappings`
+L962 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileFragment.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L963
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileFragment$WhenMappings`
+L120 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileFragment.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L121
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageFileFragmentKt`
+L10 · [class] public final Ride3ProStorageFileFragmentKt · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageFileFragmentKt.java`
+注解：
+
+方法（1）：
+- `int dpToPx(Context context, int i)`  L12
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageInitialLoadingOverlayPolicy`
+L9 · [class] public final Ride3ProStorageInitialLoadingOverlayPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageInitialLoadingOverlayPolicy.java`
+注解：
+
+方法（2）：
+- `boolean shouldHideOverlay(boolean awaitingInitialFiles, boolean isLoading, boolean loadFailed)`  L12
+- `private Ride3ProStorageInitialLoadingOverlayPolicy()`  L19
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageListItem`
+L14 · [interface] public Ride3ProStorageListItem · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageListItem.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageListItem$DateHeader;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageListItem;" · "displayText" · "loadState" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProGroupLoadState;" · "(ILjava/lang/String;Lcom/tuwinsmart/tuwin/domain/model/Ride3ProGroupLoadState;)V" · "getDate" · "()I" · "getDisplayText" · "()Ljava/lang/String;" · "getLoadState" · "()Lcom/tuwinsmart/tuwin/domain/model/Ride3ProGroupLoadState;" · "component1" · "component2" · "component3" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageListItem$HourGroup;" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageListItem;" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProHourKey;" · "displayHour" · "reportedFileCount" · "thumbnailFileIndex" · "loadState" · "Lcom/tuwinsmart/tuwin/domain/model/Ride3ProGroupLoadState;" · "(Lcom/tuwinsmart/tuwin/domain/model/Ride3ProHourKey;Ljava/lang/String;Ljava/lang/Integer;ILcom/tuwinsmart/tuwin/domain/model/Ride3ProGroupLoadState;)V" · "getDisplayHour" · "()Ljava/lang/String;" · "getKey" · "()Lcom/tuwinsmart/tuwin/domain/model/Ride3ProHourKey;" · "getLoadState" · "()Lcom/tuwinsmart/tuwin/domain/model/Ride3ProGroupLoadState;" · "getReportedFileCount" · "()Ljava/lang/Integer;" · "Ljava/lang/Integer;" · "getThumbnailFileIndex" · "()I" · "component1" · "component2" · "component3" · "component4" · "component5" · "copy" · "(Lcom/tuwinsmart/tuwin/domain/model/Ride3ProHourKey;Ljava/lang/String;Ljava/lang/Integer;ILcom/tuwinsmart/tuwin/domain/model/Ride3ProGroupLoadState;)Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageListItem$HourGroup;" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageListItem$DateHeader`
+L18 · [class] public static final DateHeader · implements `Ride3ProStorageListItem` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageListItem.java`
+注解：
+
+字段/常量（3）：
+- `int date`  L19
+- `String displayText`  L20
+- `Ride3ProGroupLoadState loadState`  L21
+
+方法（12）：
+- `DateHeader copy$default(DateHeader dateHeader, int i, String str, Ride3ProGroupLoadState ride3ProGroupLoadState, int i2, Object obj)`  L23
+- `int getDate()`  L37
+- `String getDisplayText()`  L42
+- `Ride3ProGroupLoadState getLoadState()`  L47
+- `DateHeader copy(int date, String displayText, Ride3ProGroupLoadState loadState)`  L51
+    - 体内字面量："displayText" · "loadState"
+- `boolean equals(Object other)`  L57
+- `int hashCode()`  L68
+- `String toString()`  L72
+    - 体内字面量："DateHeader(date=" · ", displayText=" · ", loadState=" · ")"
+- `public DateHeader(int i, String displayText, Ride3ProGroupLoadState loadState)`  L76
+    - 体内字面量："displayText" · "loadState"
+- `int getDate()`  L84
+- `String getDisplayText()`  L88
+- `Ride3ProGroupLoadState getLoadState()`  L92
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageListItem$HourGroup`
+L99 · [class] public static final HourGroup · implements `Ride3ProStorageListItem` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageListItem.java`
+注解：
+
+字段/常量（9）：
+- `String displayHour`  L100
+- `Ride3ProHourKey key`  L101
+- `Ride3ProGroupLoadState loadState`  L102
+- `Integer reportedFileCount`  L103
+- `int thumbnailFileIndex`  L104
+- `String str2 = str`  L113
+- `Integer num2 = num`  L117
+- `int i3 = i`  L121
+- `Integer num = this.reportedFileCount`  L173
+
+方法（16）：
+- `HourGroup copy$default(HourGroup hourGroup, Ride3ProHourKey ride3ProHourKey, String str, Integer num, int i, Ride3ProGroupLoadState ride3ProGroupLoadState, int i2, Object obj)`  L106
+- `Ride3ProHourKey getKey()`  L129
+- `String getDisplayHour()`  L134
+- `Integer getReportedFileCount()`  L139
+- `int getThumbnailFileIndex()`  L144
+- `Ride3ProGroupLoadState getLoadState()`  L149
+- `HourGroup copy(Ride3ProHourKey key, String displayHour, Integer reportedFileCount, int thumbnailFileIndex, Ride3ProGroupLoadState loadState)`  L153
+    - 体内字面量："key" · "displayHour" · "loadState"
+- `boolean equals(Object other)`  L160
+- `int hashCode()`  L171
+- `String toString()`  L177
+    - 体内字面量："HourGroup(key=" · ", displayHour=" · ", reportedFileCount=" · ", thumbnailFileIndex=" · ", loadState=" · ")"
+- `public HourGroup(Ride3ProHourKey key, String displayHour, Integer num, int i, Ride3ProGroupLoadState loadState)`  L181
+    - 体内字面量："key" · "displayHour" · "loadState"
+- `Ride3ProHourKey getKey()`  L192
+- `String getDisplayHour()`  L196
+- `Integer getReportedFileCount()`  L200
+- `int getThumbnailFileIndex()`  L204
+- `Ride3ProGroupLoadState getLoadState()`  L208
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageLoadingDialog`
+L71 · [class] public final Ride3ProStorageLoadingDialog · extends `DialogFragment` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageLoadingDialog.java`
+注解：
+
+字段/常量（28）：
+- `String ARG_DEVICE_TYPE_CODE = "device_type_code"`  L72
+- `String TAG = "Ride3ProStorageLoadingDialog"`  L76
+- `DialogRide3proStorageLoadingBinding _binding`  L77
+- `boolean hasHandledResult`  L78
+- `Ride3ProStorageEntryTraceSession traceSession`  L79
+- `Lazy viewModel`  L82
+- `Ride3ProStorageCapabilityProbeFactory ride3ProStorageCapabilityProbeFactory = Ride3ProStorageCapabilityProbeFactory.INSTANCE`  L102
+- `DialogRide3proStorageLoadingBinding dialogRide3proStorageLoadingBinding = this._binding`  L110
+- `Ride3ProIndexedTraceContext ride3ProIndexedTraceContextRequireRide3ProIndexedTraceContext$default`  L134
+- `Window window`  L321
+- `Ride3ProStorageEntryTraceSession ride3ProStorageEntryTraceSession = this.traceSession`  L334
+- `Ride3ProStorageEntryTraceSession ride3ProStorageEntryTraceSession = this.traceSession`  L357
+- `String sessionId`  L377
+- `Ride3ProRequestExecutor ride3ProRequestExecutorCurrent`  L378
+- `DeviceType deviceType`  L379
+- `DeviceType deviceType2`  L380
+- `String string`  L381
+- `DeviceType deviceType3`  L382
+- `Ride3ProStorageEntryTraceSession ride3ProStorageEntryTraceSession = null`  L385
+- `int length = deviceTypeArrValues.length`  L405
+- `int i = 0`  L406
+- `Ride3ProStorageEntryTraceSession ride3ProStorageEntryTraceSession2 = this.traceSession`  L433
+- `Ride3ProIndexedStorageActivity.Companion companion = Ride3ProIndexedStorageActivity.INSTANCE`  L444
+- `Ride3ProStorageEntryTraceSession ride3ProStorageEntryTraceSession3 = this.traceSession`  L446
+- `Ride3ProStorageLoadingDialog ride3ProStorageLoadingDialog = this`  L492
+- `Function0 function2 = null`  L542
+- `CreationExtras creationExtras`  L562
+- `Function0 function3 = function2`  L563
+
+方法（23）：
+- `Ride3ProIndexedPerformanceTracer invoke()`  L88 @Override
+- `Ride3ProStorageCapabilityProbe invoke()`  L101 @Override
+- `DialogRide3proStorageLoadingBinding getBinding()`  L109
+- `Ride3ProIndexedPerformanceTracer getPerformanceTracer()`  L118
+- `Ride3ProStorageCapabilityProbe getCapabilityProbe()`  L123
+- `Ride3ProStorageEntryViewModel getViewModel()`  L128
+- `void onCreate(Bundle savedInstanceState)`  L133 @Override
+- `Unit invoke(Ride3ProIndexedTraceContext ride3ProIndexedTraceContext, Ride3ProIndexedVisibilityOutcome ride3ProIndexedVisibilityOutcome)`  L149 @Override
+- `void invoke2(Ride3ProIndexedTraceContext context, Ride3ProIndexedVisibilityOutcome outcome)`  L155
+    - 体内字面量："context" · "outcome"
+- `Dialog onCreateDialog(Bundle savedInstanceState)`  L164 @Override
+- `View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)`  L171 @Override
+    - 体内字面量："inflater" · "getRoot(...)"
+- `void onViewCreated(View view, Bundle savedInstanceState)`  L180 @Override
+    - 体内字面量："view" · "getViewLifecycleOwner(...)" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageLoadingDialog$onViewCreated$1" · "Ride3ProStorageLoadingDialog.kt" · "invokeSuspend"
+- `void onStart()`  L320 @Override
+- `void onSaveInstanceState(Bundle outState)`  L331 @Override
+    - 体内字面量："outState"
+- `void onDestroyView()`  L343 @Override
+- `void renderState(Ride3ProStorageEntryUiState state)`  L349
+    - 体内字面量："Ride3Pro storage capability probe failed"
+- `void navigate(Ride3ProStorageEntryDestination destination)`  L376
+- `public Ride3ProStorageLoadingDialog()`  L491
+- `ViewModelProvider.Factory invoke()`  L516 @Override
+- `Fragment invoke()`  L527 @Override
+- `ViewModelStoreOwner invoke()`  L538 @Override
+- `ViewModelStore invoke()`  L550 @Override
+- `CreationExtras invoke()`  L561 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageLoadingDialog$C29551`
+L193 · [class] static final C29551 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageLoadingDialog.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L194
+- `int i = this.label`  L300
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L201 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L206 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageLoadingDialog$onViewCreated$1$1" · "Ride3ProStorageLoadingDialog.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L298 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageLoadingDialog$C29551$AnonymousClass1`
+L214 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageLoadingDialog.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L215
+- `Ride3ProStorageLoadingDialog this$0`  L216
+- `int i = this.label`  L274
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L225 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L230 @Override
+- `Object invokeSuspend(Object obj)`  L272 @Override
+- `Object invokeSuspend$renderState(Ride3ProStorageLoadingDialog ride3ProStorageLoadingDialog, Ride3ProStorageEntryUiState ride3ProStorageEntryUiState, Continuation continuation)`  L291
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageLoadingDialog$C29551$AnonymousClass1$C44091`
+L237 · [class] C44091 · implements `FlowCollector, FunctionAdapter` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageLoadingDialog.java`
+注解：
+
+字段/常量（1）：
+- `Ride3ProStorageLoadingDialog $tmp0`  L238
+
+方法（5）：
+- `boolean equals(Object obj)`  L244
+- `Function<?> getFunctionDelegate()`  L252 @Override
+    - 体内字面量："renderState" · "renderState(Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProStorageEntryUiState;)V"
+- `int hashCode()`  L256
+- `Object emit(Ride3ProStorageEntryUiState ride3ProStorageEntryUiState, Continuation<? super Unit> continuation)`  L260
+- `Object emit(Object obj, Continuation continuation)`  L266 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageLoadingDialog$C29611`
+L501 · [class] C29611 · extends `FunctionReferenceImpl implements Function1<Continuation<? super Result<? extends Ride3ProStorageEntryDestination>>, Object>, SuspendFunction` · implements `Function1<Continuation<? super Result<? extends Ride3ProStorageEntryDestination>>, Object>, SuspendFunction` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageLoadingDialog.java`
+注解：
+
+方法（1）：
+- `Object invoke(Continuation<? super Result<? extends Ride3ProStorageEntryDestination>> continuation)`  L508 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageLoadingDialog$Companion`
+L458 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageLoadingDialog.java`
+注解：
+
+方法（4）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L459
+- `private Companion()`  L463
+- `void show$default(Companion companion, BaseActivity baseActivity, DeviceType deviceType, int i, Object obj)`  L466
+- `void show(BaseActivity activity, DeviceType deviceType)`  L473
+    - 体内字面量："activity" · "deviceType" · "getSupportFragmentManager(...)" · "device_type_code"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageLoadMorePullPolicy`
+L11 · [class] public final Ride3ProStorageLoadMorePullPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageLoadMorePullPolicy.java`
+注解：
+
+字段/常量（1）：
+- `int i`  L18
+
+方法（2）：
+- `private Ride3ProStorageLoadMorePullPolicy()`  L14
+- `Ride3ProStorageLoadMorePullState buildState(boolean hasMoreFiles, boolean isLoadingMore, float pullDistancePx, int triggerThresholdPx, int bufferHeightPx)`  L17
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageLoadMorePullState`
+L11 · [class] public final Ride3ProStorageLoadMorePullState · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageLoadMorePullState.java`
+注解：
+
+字段/常量（4）：
+- `boolean isVisible`  L12
+- `int messageRes`  L13
+- `boolean shouldTriggerOnRelease`  L14
+- `int visibleHeightPx`  L15
+
+方法（16）：
+- `public Ride3ProStorageLoadMorePullState()`  L17
+- `Ride3ProStorageLoadMorePullState copy$default(Ride3ProStorageLoadMorePullState ride3ProStorageLoadMorePullState, int i, int i2, boolean z, boolean z2, int i3, Object obj)`  L21
+- `int getVisibleHeightPx()`  L38
+- `int getMessageRes()`  L43
+- `boolean getShouldTriggerOnRelease()`  L48
+- `boolean getIsVisible()`  L53
+- `Ride3ProStorageLoadMorePullState copy(int visibleHeightPx, int messageRes, boolean shouldTriggerOnRelease, boolean isVisible)`  L57
+- `boolean equals(Object other)`  L61
+- `int hashCode()`  L72
+- `String toString()`  L76
+    - 体内字面量："Ride3ProStorageLoadMorePullState(visibleHeightPx=" · ", messageRes=" · ", shouldTriggerOnRelease=" · ", isVisible=" · ")"
+- `public Ride3ProStorageLoadMorePullState(int i, int i2, boolean z, boolean z2)`  L80
+- `int getVisibleHeightPx()`  L87
+- ` Ride3ProStorageLoadMorePullState(int i, int i2, boolean z, boolean z2, int i3, DefaultConstructorMarker defaultConstructorMarker)`  L91
+- `int getMessageRes()`  L95
+- `boolean getShouldTriggerOnRelease()`  L99
+- `boolean isVisible()`  L103
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageLoadMoreReleasePolicy`
+L9 · [class] public final Ride3ProStorageLoadMoreReleasePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageLoadMoreReleasePolicy.java`
+注解：
+
+方法（3）：
+- `boolean shouldPendLoadOnRelease(boolean shouldTriggerOnRelease, boolean hasMoreFiles, boolean isLoading, boolean isLoadingMore)`  L12
+- `boolean shouldTriggerPendingLoadWhenIdle(boolean hasPendingLoad, boolean isRecyclerIdle, boolean isAtBottom, boolean hasMoreFiles, boolean isLoading, boolean isLoadingMore)`  L16
+- `private Ride3ProStorageLoadMoreReleasePolicy()`  L20
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageOverlayTimeFormatter`
+L14 · [class] public final Ride3ProStorageOverlayTimeFormatter · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageOverlayTimeFormatter.java`
+注解：
+
+方法（3）：
+- `private Ride3ProStorageOverlayTimeFormatter()`  L17
+- `String format$default(Ride3ProStorageOverlayTimeFormatter ride3ProStorageOverlayTimeFormatter, String str, SimpleDateFormat simpleDateFormat, int i, Object obj)`  L20
+    - 体内字面量："HH:mm"
+- `String format(String raw, SimpleDateFormat formatter)`  L27
+    - 体内字面量："raw" · "formatter"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageResumePlaybackModePolicy`
+L9 · [class] public final Ride3ProStorageResumePlaybackModePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageResumePlaybackModePolicy.java`
+注解：
+
+方法（3）：
+- `boolean shouldEnsurePlaybackModeOnResume(boolean tabsInitialized, boolean ensureInFlight, boolean shouldRecoverAfterStop)`  L12
+- `boolean shouldRecoverAfterStop(boolean isChangingConfigurations, boolean skipRecoveryOnStop)`  L16
+- `private Ride3ProStorageResumePlaybackModePolicy()`  L20
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageTab`
+L12 · [enum] public Ride3ProStorageTab · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageTab.java`
+注解：
+
+字段/常量（2）：
+- `int titleRes`  L16
+- `String value`  L17
+
+枚举常量（2）：
+- `VIDEO("video", C1870R.string.tab_video)`  L13
+- `Ride3ProStorageTab(String str, int i)`  L23
+
+方法（3）：
+- `EnumEntries<Ride3ProStorageTab> getEntries()`  L19
+- `int getTitleRes()`  L28
+- `String getValue()`  L32
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageTabPolicy`
+L11 · [class] public final Ride3ProStorageTabPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageTabPolicy.java`
+注解：
+
+方法（2）：
+- `private Ride3ProStorageTabPolicy()`  L14
+- `List<Ride3ProStorageTab> availableTabs()`  L17
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageTimeParser`
+L15 · [class] public final Ride3ProStorageTimeParser · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageTimeParser.java`
+注解：
+
+字段/常量（4）：
+- `Object objM3074constructorimpl`  L23
+- `Result.Companion companion = Result.INSTANCE`  L26
+- `Ride3ProStorageTimeParser ride3ProStorageTimeParser = this`  L27
+- `Result.Companion companion2 = Result.INSTANCE`  L30
+
+方法（2）：
+- `private Ride3ProStorageTimeParser()`  L19
+- `Date parse(String raw)`  L22
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageViewModel`
+L45 · [class] public final Ride3ProStorageViewModel · extends `ViewModel` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageViewModel.java`
+注解：
+
+字段/常量（30）：
+- `MutableStateFlow<List<StorageRide3ProRemoteFile>> _allFiles`  L46
+- `MutableStateFlow<Boolean> _hasMoreFiles`  L47
+- `MutableStateFlow<Boolean> _isLoading`  L48
+- `MutableStateFlow<Boolean> _isLoadingMore`  L49
+- `MutableStateFlow<Boolean> _loadFailed`  L50
+- `MutableStateFlow<List<StorageRide3ProRemoteFile>> _photoFiles`  L51
+- `MutableStateFlow<List<StorageRide3ProRemoteFile>> _videoFiles`  L52
+- `StateFlow<List<StorageRide3ProRemoteFile>> allFiles`  L53
+- `StateFlow<Boolean> hasMoreFiles`  L54
+- `StateFlow<Boolean> isLoading`  L55
+- `StateFlow<Boolean> isLoadingMore`  L56
+- `StateFlow<Boolean> loadFailed`  L57
+- `Job loadJob`  L58
+- `Job loadMoreJob`  L59
+- `Function5<Boolean, Integer, Ride3ProPlaybackPageState, Function1<? super Continuation<? super Unit>, ? extends Object>, Continuation<? super Result<Ride3ProPlaybackPageLoadResult>>, Object> loadPlaybackFilesPage`  L60
+- `Ride3ProPlaybackPageState nextPageState`  L61
+- `StateFlow<List<StorageRide3ProRemoteFile>> photoFiles`  L62
+- `Function2<List<StorageRide3ProRemoteFile>, List<StorageRide3ProRemoteFile>, Boolean> shouldAutoExpandAfterLoadMore`  L63
+- `StateFlow<List<StorageRide3ProRemoteFile>> videoFiles`  L64
+- `Job job = this.loadJob`  L209
+- `?? r1 = this.nextPageState`  L232
+- `Job job = this.loadMoreJob`  L237
+- `Job job = this.loadJob`  L254
+- `Job job2 = this.loadMoreJob`  L259
+- `Job job = this.loadJob`  L270
+- `Job job2 = this.loadMoreJob`  L274
+- `MutableStateFlow<List<StorageRide3ProRemoteFile>> mutableStateFlow = this._allFiles`  L287
+- `MutableStateFlow<List<StorageRide3ProRemoteFile>> mutableStateFlow2 = this._videoFiles`  L296
+- `MutableStateFlow<List<StorageRide3ProRemoteFile>> mutableStateFlow3 = this._photoFiles`  L305
+- `HashSet hashSet2 = hashSet`  L335
+
+方法（23）：
+- `public Ride3ProStorageViewModel()`  L67
+    - 体内字面量："<anonymous>" · "Lkotlin/Result;" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackPageLoadResult;" · "forceRefresh" · "batchSize" · "pageState" · "Lcom/tuwinsmart/tuwin/data/repository/Ride3ProPlaybackPageState;" · "awaitIfResumed" · "Lkotlin/Function1;" · "Lkotlin/coroutines/Continuation;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProStorageViewModel$1" · "Ride3ProStorageViewModel.kt" · "invokeSuspend"
+- ` Ride3ProStorageViewModel(C29621 c29621, C29632 c29632, int i, DefaultConstructorMarker defaultConstructorMarker)`  L128
+- `Boolean invoke(List<? extends StorageRide3ProRemoteFile> list, List<? extends StorageRide3ProRemoteFile> list2)`  L131 @Override
+- `Boolean invoke2(List<StorageRide3ProRemoteFile> allFiles, List<StorageRide3ProRemoteFile> newlyLoadedFiles)`  L136
+    - 体内字面量："allFiles" · "newlyLoadedFiles"
+- `public Ride3ProStorageViewModel(Function5<? super Boolean, ? super Integer, ? super Ride3ProPlaybackPageState, ? super Function1<? super Continuation<? super Unit>, ? extends Object>, ? super Continuation<? super Result<Ride3ProPlaybackPageLoadResult>>, ? extends Object> loadPlaybackFilesPage, Function2<? super List<StorageRide3ProRemoteFile>, ? super List<StorageRide3ProRemoteFile>, Boolean> shouldAutoExpandAfterLoadMore)`  L145
+    - 体内字面量："loadPlaybackFilesPage" · "shouldAutoExpandAfterLoadMore"
+- `StateFlow<List<StorageRide3ProRemoteFile>> getAllFiles$app_release_64()`  L173
+- `StateFlow<List<StorageRide3ProRemoteFile>> getVideoFiles$app_release_64()`  L177
+- `StateFlow<List<StorageRide3ProRemoteFile>> getPhotoFiles$app_release_64()`  L181
+- `StateFlow<Boolean> isLoading$app_release_64()`  L185
+- `StateFlow<Boolean> isLoadingMore$app_release_64()`  L189
+- `StateFlow<Boolean> getHasMoreFiles$app_release_64()`  L193
+- `StateFlow<Boolean> getLoadFailed$app_release_64()`  L197
+- `void loadFiles$app_release_64$default(Ride3ProStorageViewModel ride3ProStorageViewModel, boolean z, boolean z2, int i, Object obj)`  L201
+- `void loadFiles$app_release_64(boolean forceRefresh, boolean preserveExistingFiles)`  L208
+- `void loadNextPage$app_release_64()`  L227
+- `void cancelLoading$app_release_64$default(Ride3ProStorageViewModel ride3ProStorageViewModel, boolean z, int i, Object obj)`  L246
+- `void cancelLoading$app_release_64(boolean keepLoadingIndicator)`  L253
+- `boolean hasActiveLoadingJob$app_release_64()`  L269
+- `boolean hasFiles$app_release_64()`  L278
+- `void removeFiles$app_release_64(Collection<StorageRide3ProRemoteFile> files)`  L282
+    - 体内字面量："files"
+- `void applyPageResult(Ride3ProPlaybackPageLoadResult result)`  L317
+- `List<StorageRide3ProRemoteFile> resolveNewlyLoadedFiles(List<StorageRide3ProRemoteFile> previousFiles, List<StorageRide3ProRemoteFile> currentFiles)`  L326
+- `List<StorageRide3ProRemoteFile> filterByType(List<StorageRide3ProRemoteFile> list, StorageRide3ProFileType storageRide3ProFileType)`  L345
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageViewModel$C29621`
+L75 · [class] static final C29621 · extends `SuspendLambda implements Function5<Boolean, Integer, Ride3ProPlaybackPageState, Function1<? super Continuation<? super Unit>, ? extends Object>, Continuation<? super Result<? extends Ride3ProPlaybackPageLoadResult>>, Object>` · implements `Function5<Boolean, Integer, Ride3ProPlaybackPageState, Function1<? super Continuation<? super Unit>, ? extends Object>, Continuation<? super Result<? extends Ride3ProPlaybackPageLoadResult>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageViewModel.java`
+注解：
+
+字段/常量（9）：
+- `int I$0`  L76
+- `Object L$0`  L77
+- `Object L$1`  L78
+- `boolean Z$0`  L79
+- `int label`  L80
+- `Object objM2848loadPlaybackFilesPagehUnOzRk$default`  L102
+- `int i = this.label`  L104
+- `boolean z = this.Z$0`  L107
+- `int i2 = this.I$0`  L108
+
+方法（3）：
+- `Object invoke(Boolean bool, Integer num, Ride3ProPlaybackPageState ride3ProPlaybackPageState, Function1<? super Continuation<? super Unit>, ? extends Object> function1, Continuation<? super Result<? extends Ride3ProPlaybackPageLoadResult>> continuation)`  L87 @Override
+- `Object invoke(boolean z, int i, Ride3ProPlaybackPageState ride3ProPlaybackPageState, Function1<? super Continuation<? super Unit>, ? extends Object> function1, Continuation<? super Result<Ride3ProPlaybackPageLoadResult>> continuation)`  L91
+- `Object invokeSuspend(Object obj)`  L101 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageViewModel$loadFiles$1`
+L25 · [class] final Ride3ProStorageViewModel$loadFiles$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageViewModel$loadFiles$1.java`
+注解：
+
+字段/常量（7）：
+- `boolean $forceRefresh`  L26
+- `boolean $preserveExistingFiles`  L27
+- `int label`  L28
+- `Ride3ProStorageViewModel this$0`  L29
+- `int i = this.label`  L52
+- `Function5 function5 = this.this$0.loadPlaybackFilesPage`  L57
+- `Ride3ProStorageViewModel ride3ProStorageViewModel = this.this$0`  L74
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L40 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L45 @Override
+- `Object invokeSuspend(Object obj)`  L50 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageViewModel$loadFiles$1$result$1`
+L21 · [class] final Ride3ProStorageViewModel$loadFiles$1$result$1 · extends `SuspendLambda implements Function1<Continuation<? super Unit>, Object>` · implements `Function1<Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageViewModel$loadFiles$1$result$1.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L22
+- `DeviceType deviceType`  L40
+- `int i = this.label`  L42
+- `Ride3ProPlaybackConflictGate ride3ProPlaybackConflictGate = Ride3ProPlaybackConflictGate.INSTANCE`  L45
+
+方法（3）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L29 @Override
+- `Object invoke(Continuation<? super Unit> continuation)`  L34 @Override
+- `Object invokeSuspend(Object obj)`  L39 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageViewModel$loadNextPage$1`
+L18 · [class] final Ride3ProStorageViewModel$loadNextPage$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageViewModel$loadNextPage$1.java`
+注解：
+
+字段/常量（5）：
+- `Ref.ObjectRef<Ride3ProPlaybackPageState> $pageState`  L19
+- `Object L$0`  L20
+- `Object L$1`  L21
+- `int label`  L22
+- `Ride3ProStorageViewModel this$0`  L23
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L33 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L38 @Override
+- `java.lang.Object invokeSuspend(java.lang.Object r13)`  L57 @Override
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageViewModel$loadNextPage$1.invokeSuspend(java.lang.Object):java.lang.Object"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProStorageViewModel$loadNextPage$1$result$1`
+L21 · [class] final Ride3ProStorageViewModel$loadNextPage$1$result$1 · extends `SuspendLambda implements Function1<Continuation<? super Unit>, Object>` · implements `Function1<Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProStorageViewModel$loadNextPage$1$result$1.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L22
+- `DeviceType deviceType`  L40
+- `int i = this.label`  L42
+- `Ride3ProPlaybackConflictGate ride3ProPlaybackConflictGate = Ride3ProPlaybackConflictGate.INSTANCE`  L45
+
+方法（3）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L29 @Override
+- `Object invoke(Continuation<? super Unit> continuation)`  L34 @Override
+- `Object invokeSuspend(Object obj)`  L39 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProThumbnailGlidePrefetcher`
+L40 · [class] public final Ride3ProThumbnailGlidePrefetcher · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProThumbnailGlidePrefetcher.java`
+注解：
+
+方法（4）：
+- `private Ride3ProThumbnailGlidePrefetcher()`  L43
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProThumbnailGlidePrefetcher$isCached$2" · "Ride3ProThumbnailPrefetchScheduler.kt" · "invokeSuspend" · "target" · "requestManager" · "L$0" · "L$1"
+- `Object isCached(Context context, StorageRide3ProRemoteFile storageRide3ProRemoteFile, AuthorizedDeviceResource authorizedDeviceResource, Continuation<? super Boolean> continuation)`  L154
+    - 体内字面量："<anonymous>" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProThumbnailPrefetchResult;" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.ride3pro.Ride3ProThumbnailGlidePrefetcher$prefetch$2" · "Ride3ProThumbnailPrefetchScheduler.kt" · "invokeSuspend" · "requestManager" · "target" · "requestManager" · "target" · "L$0" · "L$1" · "L$0" · "L$1"
+- `Object prefetch(Context context, StorageRide3ProRemoteFile storageRide3ProRemoteFile, AuthorizedDeviceResource authorizedDeviceResource, Continuation<? super Ride3ProThumbnailPrefetchResult> continuation)`  L328
+- `RequestOptions buildRequestOptions(StorageRide3ProRemoteFile file)`  L333
+    - 体内字面量："signature(...)"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProThumbnailGlidePrefetcher$C29642`
+L50 · [class] static final C29642 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Boolean>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Boolean>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProThumbnailGlidePrefetcher.java`
+注解：
+
+字段/常量（16）：
+- `Context $context`  L51
+- `StorageRide3ProRemoteFile $file`  L52
+- `AuthorizedDeviceResource $resource`  L53
+- `Object L$0`  L54
+- `Object L$1`  L55
+- `int label`  L56
+- `Object objM3074constructorimpl`  L80
+- `FutureTarget futureTarget`  L81
+- `Throwable th`  L82
+- `RequestManager requestManager`  L83
+- `int i = this.label`  L85
+- `AuthorizedDeviceResource authorizedDeviceResource = this.$resource`  L89
+- `Context context = this.$context`  L93
+- `StorageRide3ProRemoteFile storageRide3ProRemoteFile = this.$file`  L94
+- `Result.Companion companion = Result.INSTANCE`  L95
+- `Result.Companion companion2 = Result.INSTANCE`  L147
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L67 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Boolean> continuation)`  L74 @Override
+- `Object invokeSuspend(Object obj)`  L79 @Override
+- `File invoke()`  L109 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProThumbnailGlidePrefetcher$C29652`
+L162 · [class] static final C29652 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Ride3ProThumbnailPrefetchResult>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Ride3ProThumbnailPrefetchResult>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProThumbnailGlidePrefetcher.java`
+注解：
+
+字段/常量（16）：
+- `Context $context`  L163
+- `StorageRide3ProRemoteFile $file`  L164
+- `AuthorizedDeviceResource $resource`  L165
+- `Object L$0`  L166
+- `Object L$1`  L167
+- `int label`  L168
+- `RequestManager requestManagerWith`  L198
+- `FutureTarget<File> futureTargetSubmit`  L199
+- `Object objIsCached`  L200
+- `FutureTarget<File> futureTarget`  L201
+- `CancellationException e`  L202
+- `FutureTarget<File> futureTarget2`  L203
+- `Ride3ProThumbnailPrefetchResult ride3ProThumbnailPrefetchResult`  L204
+- `?? r1 = this.label`  L206
+- `AuthorizedDeviceResource authorizedDeviceResource = this.$resource`  L211
+- `Ride3ProThumbnailPrefetchResult ride3ProThumbnailPrefetchResult2 = Ride3ProThumbnailPrefetchResult.COMPLETED`  L315
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L179 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Ride3ProThumbnailPrefetchResult> continuation)`  L184 @Override
+- `Object invokeSuspend(Object obj)`  L197 @Override
+- `File invoke()`  L232 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProThumbnailPrefetchResult`
+L11 · [enum] public Ride3ProThumbnailPrefetchResult · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProThumbnailPrefetchResult.java`
+注解：
+
+枚举常量（3）：
+- `COMPLETED()`  L12
+- `RETRY()`  L13
+- `FAILED()`  L14
+
+方法（1）：
+- `EnumEntries<Ride3ProThumbnailPrefetchResult> getEntries()`  L18
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProThumbnailPrefetchScheduler`
+L27 · [class] public final Ride3ProThumbnailPrefetchScheduler · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProThumbnailPrefetchScheduler.java`
+注解：
+
+字段/常量（12）：
+- `long RETRY_DELAY_MS = 1000`  L29
+- `Set<String> completedKeys`  L30
+- `Set<String> failedKeys`  L31
+- `Function2<StorageRide3ProRemoteFile, Continuation<? super Boolean>, Object> isThumbnailCached`  L32
+- `LinkedHashMap<String, StorageRide3ProRemoteFile> pendingFiles`  L33
+- `Job prefetchJob`  L34
+- `Function2<StorageRide3ProRemoteFile, Continuation<? super Ride3ProThumbnailPrefetchResult>, Object> prefetchThumbnail`  L35
+- `Unit unit = Unit.INSTANCE`  L103
+- `Job job = this.prefetchJob`  L111
+- `Unit unit = Unit.INSTANCE`  L114
+- `Job job = this.prefetchJob`  L121
+- `Unit unit = Unit.INSTANCE`  L127
+
+方法（5）：
+- `public Ride3ProThumbnailPrefetchScheduler(Function2<? super StorageRide3ProRemoteFile, ? super Continuation<? super Boolean>, ? extends Object> isThumbnailCached, Function2<? super StorageRide3ProRemoteFile, ? super Continuation<? super Ride3ProThumbnailPrefetchResult>, ? extends Object> prefetchThumbnail)`  L83
+    - 体内字面量："isThumbnailCached" · "prefetchThumbnail"
+- `void enqueue(List<StorageRide3ProRemoteFile> files, CoroutineScope scope)`  L93
+    - 体内字面量："files" · "scope"
+- `void start(CoroutineScope scope)`  L108
+    - 体内字面量："scope"
+- `void stop()`  L119
+- `java.lang.Object drainQueue(kotlin.coroutines.Continuation<? super kotlin.Unit> r12)`  L156
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProThumbnailPrefetchScheduler.drainQueue(kotlin.coroutines.Continuation):java.lang.Object" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/ride3pro/Ride3ProThumbnailPrefetchScheduler$Companion;" · "()V" · "RETRY_DELAY_MS" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProThumbnailPrefetchScheduler$C29661`
+L64 · [class] static final C29661 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProThumbnailPrefetchScheduler.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L65
+- `Object L$1`  L66
+- `int label`  L67
+- `Object result`  L68
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L75 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProThumbnailPrefetchScheduler$Companion`
+L166 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProThumbnailPrefetchScheduler.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L167
+- `private Companion()`  L171
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProThumbnailPrefetchScheduler$start$1$1`
+L18 · [class] final Ride3ProThumbnailPrefetchScheduler$start$1$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProThumbnailPrefetchScheduler$start$1$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L19
+- `Ride3ProThumbnailPrefetchScheduler this$0`  L20
+- `int i = this.label`  L41
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L29 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L34 @Override
+- `Object invokeSuspend(Object obj)`  L39 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.ride3pro.Ride3ProThumbnailPrefetchScheduler$WhenMappings`
+L39 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/storage/ride3pro/Ride3ProThumbnailPrefetchScheduler.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L40
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.Ride3ProFormatScope`
+L11 · [class] final Ride3ProFormatScope · `com/tuwinsmart/tuwin/presentation/p010ui/storage/Ride3ProFormatScope.java`
+注解：
+
+字段/常量（2）：
+- `ConnectedDevice device`  L12
+- `String deviceKey`  L13
+
+方法（10）：
+- `Ride3ProFormatScope copy$default(Ride3ProFormatScope ride3ProFormatScope, String str, ConnectedDevice connectedDevice, int i, Object obj)`  L15
+- `String getDeviceKey()`  L26
+- `ConnectedDevice getDevice()`  L31
+- `Ride3ProFormatScope copy(String deviceKey, ConnectedDevice device)`  L35
+    - 体内字面量："deviceKey" · "device"
+- `boolean equals(Object other)`  L41
+- `int hashCode()`  L52
+- `String toString()`  L56
+    - 体内字面量："Ride3ProFormatScope(deviceKey=" · ", device=" · ")"
+- `public Ride3ProFormatScope(String deviceKey, ConnectedDevice device)`  L60
+    - 体内字面量："deviceKey" · "device"
+- `String getDeviceKey()`  L67
+- `ConnectedDevice getDevice()`  L71
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageEffectiveTypeResolver`
+L15 · [class] public final StorageEffectiveTypeResolver · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageEffectiveTypeResolver.java`
+注解：
+
+字段/常量（1）：
+- `Object next`  L22
+
+方法（2）：
+- `private StorageEffectiveTypeResolver()`  L18
+- `DeviceType resolve(String currentSsid, String globalSsid, List<ConnectedDevice> cachedDevices)`  L21
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageManagerActivity`
+L56 · [class] public final StorageManagerActivity · extends `ToolBarActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageManagerActivity.java`
+注解：
+
+字段/常量（33）：
+- `String EXTRA_FORMAT_SUCCESS = "extra_format_success"`  L60
+- `String EXTRA_SESSION_ID = "device_session_id"`  L61
+- `ActivityStorageManagerBinding binding`  L62
+- `DeviceType effectiveDeviceType`  L63
+- `ActivityStorageManagerBinding activityStorageManagerBinding = this.binding`  L162
+- `ActivityStorageManagerBinding activityStorageManagerBinding2 = null`  L163
+- `ConstraintLayout btnRestoreSdcard = activityStorageManagerBinding.btnRestoreSdcard`  L168
+- `ActivityStorageManagerBinding activityStorageManagerBinding3 = this.binding`  L176
+- `TextView btnRemoveSdcard = activityStorageManagerBinding2.btnRemoveSdcard`  L182
+- `int i`  L385
+- `DeviceType deviceType = this.effectiveDeviceType`  L404
+- `ActivityStorageManagerBinding activityStorageManagerBinding = null`  L594
+- `ActivityStorageManagerBinding activityStorageManagerBinding2 = this.binding`  L596
+- `ActivityStorageManagerBinding activityStorageManagerBinding3 = this.binding`  L602
+- `ActivityStorageManagerBinding activityStorageManagerBinding4 = this.binding`  L608
+- `ActivityStorageManagerBinding activityStorageManagerBinding5 = this.binding`  L619
+- `ActivityStorageManagerBinding activityStorageManagerBinding6 = this.binding`  L625
+- `ActivityStorageManagerBinding activityStorageManagerBinding7 = this.binding`  L631
+- `ActivityStorageManagerBinding activityStorageManagerBinding8 = this.binding`  L637
+- `ActivityStorageManagerBinding activityStorageManagerBinding9 = this.binding`  L643
+- `ActivityStorageManagerBinding activityStorageManagerBinding10 = this.binding`  L652
+- `ActivityStorageManagerBinding activityStorageManagerBinding11 = this.binding`  L658
+- `ActivityStorageManagerBinding activityStorageManagerBinding12 = this.binding`  L664
+- `ConnectedDevice connectedDeviceResolveCurrentRideDevice`  L679
+- `DeviceType deviceType = this.effectiveDeviceType`  L680
+- `DeviceType deviceType = this.effectiveDeviceType`  L689
+- `ActivityStorageManagerBinding activityStorageManagerBinding = this.binding`  L705
+- `ActivityStorageManagerBinding activityStorageManagerBinding2 = null`  L706
+- `ActivityStorageManagerBinding activityStorageManagerBinding3 = this.binding`  L712
+- `ActivityStorageManagerBinding activityStorageManagerBinding4 = this.binding`  L718
+- `ActivityStorageManagerBinding activityStorageManagerBinding = this.binding`  L728
+- `String str`  L737
+- `Object obj = null`  L738
+
+方法（35）：
+- `Ride3ProDeviceRepository invoke()`  L69 @Override
+- `SdCardFormatReminderUseCase invoke()`  L78 @Override
+- `Ride3ProPlaybackCacheClearCoordinator invoke()`  L87 @Override
+- `Ride5SessionPortProvider invoke()`  L96 @Override
+- `String invoke()`  L108 @Override
+    - 体内字面量："device_session_id"
+- `void onCreate$lambda$1(View view)`  L115
+- `Ride3ProDeviceRepository getRide3ProDeviceRepository()`  L119
+- `SdCardFormatReminderUseCase getSdCardFormatReminderUseCase()`  L124
+- `Ride3ProPlaybackCacheClearCoordinator getPlaybackCacheClearCoordinator()`  L129
+- `Ride5SessionPortProvider getRide5SessionPortProvider()`  L134
+- `String getDeviceSessionId()`  L139
+- `View getContentRoot()`  L144 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L158 @Override
+- `void onClick(View view)`  L172 @Override
+- `void onClick(View view)`  L186 @Override
+- `void onCreate$lambda$0(StorageManagerActivity this$0, View view)`  L195
+    - 体内字面量："this$0"
+- `void onResume()`  L205 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.StorageManagerActivity$checkRide3ProSdStatusBeforeFormat$1" · "StorageManagerActivity.kt" · "invokeSuspend"
+- `void checkRide3ProSdStatusBeforeFormat()`  L267
+- `void showFormatConfirmDialog()`  L272
+- `void onClick(View view)`  L275 @Override
+- `void showFormatConfirmDialog$lambda$2(StorageManagerActivity this$0, View view)`  L282
+    - 体内字面量："this$0" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.StorageManagerActivity$formatRide3ProSdCard$1" · "StorageManagerActivity.kt" · "invokeSuspend" · "formatScope" · "L$0"
+- `void formatRide3ProSdCard()`  L379
+- `void showRide3ProFormatFailure(Throwable error)`  L384
+- `boolean isTimeout(Throwable th)`  L394
+- `Ride3ProFormatScope captureRide3ProFormatScope()`  L403
+- `void handleRide3ProFormatScopeFailure(Exception error)`  L422
+    - 体内字面量："Ride3Pro SD card format device scope is invalid"
+- `void getSDStatus()`  L429
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.StorageManagerActivity$getLegacySdStatus$1" · "StorageManagerActivity.kt" · "invokeSuspend"
+- `void getLegacySdStatus()`  L506
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.StorageManagerActivity$getRide3ProSdStatus$1" · "StorageManagerActivity.kt" · "invokeSuspend" · "$this$launch" · "L$0"
+- `void getRide3ProSdStatus()`  L587
+- `void renderSdStatus(StorageSdInfoUiModel model)`  L592
+- `DeviceType resolveEffectiveDeviceType()`  L673
+- `void recordSdFormatSuccess()`  L678
+- `void renderSdFormatReminder()`  L688
+- `void hideSdFormatReminder()`  L727
+- `ConnectedDevice resolveCurrentRideDevice(DeviceType deviceType)`  L736
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageManagerActivity$C28071`
+L213 · [class] static final C28071 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageManagerActivity.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L214
+- `Object objMo2815getSDInfoIoAF18A`  L232
+- `int i = this.label`  L234
+- `StorageManagerActivity storageManagerActivity = StorageManagerActivity.this`  L254
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L221 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L226 @Override
+- `Object invokeSuspend(Object obj)`  L231 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageManagerActivity$C28081`
+L296 · [class] static final C28081 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageManagerActivity.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L297
+- `int label`  L298
+- `Ride3ProFormatScope ride3ProFormatScope`  L316
+- `Object value`  L317
+- `int i = this.label`  L319
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L305 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L310 @Override
+- `Object invokeSuspend(Object obj)`  L315 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageManagerActivity$C28091`
+L441 · [class] static final C28091 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageManagerActivity.java`
+注解：
+
+字段/常量（6）：
+- `int label`  L442
+- `int i = this.label`  L461
+- `ActivityStorageManagerBinding activityStorageManagerBinding = StorageManagerActivity.this.binding`  L481
+- `ActivityStorageManagerBinding activityStorageManagerBinding2 = null`  L482
+- `ActivityStorageManagerBinding activityStorageManagerBinding3 = StorageManagerActivity.this.binding`  L488
+- `ActivityStorageManagerBinding activityStorageManagerBinding4 = StorageManagerActivity.this.binding`  L494
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L449 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L454 @Override
+- `Object invokeSuspend(Object obj)`  L459 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageManagerActivity$C28101`
+L514 · [class] static final C28101 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageManagerActivity.java`
+注解：
+
+字段/常量（9）：
+- `Object L$0`  L515
+- `int label`  L516
+- `Object objMo2815getSDInfoIoAF18A`  L536
+- `int i = this.label`  L538
+- `ActivityStorageManagerBinding activityStorageManagerBinding = null`  L554
+- `StorageManagerActivity storageManagerActivity = StorageManagerActivity.this`  L563
+- `ActivityStorageManagerBinding activityStorageManagerBinding2 = storageManagerActivity.binding`  L564
+- `ActivityStorageManagerBinding activityStorageManagerBinding3 = storageManagerActivity.binding`  L570
+- `ActivityStorageManagerBinding activityStorageManagerBinding4 = storageManagerActivity.binding`  L576
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L523 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L530 @Override
+- `Object invokeSuspend(Object obj)`  L535 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageManagerActivity$Companion`
+L753 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageManagerActivity.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L754
+- `private Companion()`  L758
+- `Intent createIntent(Context context, String sessionId)`  L761
+    - 体内字面量："context" · "sessionId" · "device_session_id" · "putExtra(...)"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageManagerActivity$showFormatConfirmDialog$1$1`
+L23 · [class] final StorageManagerActivity$showFormatConfirmDialog$1$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageManagerActivity$showFormatConfirmDialog$1$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L24
+- `StorageManagerActivity this$0`  L25
+- `int i = this.label`  L46
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L34 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L39 @Override
+- `Object invokeSuspend(Object obj)`  L44 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageManagerActivityKt`
+L17 · [class] public final StorageManagerActivityKt · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageManagerActivityKt.java`
+注解：
+
+字段/常量（3）：
+- `C28111 c28111`  L42
+- `Object obj = c28111.result`  L53
+- `int i = c28111.label`  L55
+
+方法（1）：
+- `Object formatRide5SdCard(Ride5SessionPort ride5SessionPort, Continuation<? super Unit> continuation)`  L41
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageManagerActivityKt$C28111`
+L23 · [class] static final C28111 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageManagerActivityKt.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L24
+- `int label`  L25
+- `Object result`  L26
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L33 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageManagerTitlePolicy`
+L12 · [class] public final StorageManagerTitlePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageManagerTitlePolicy.java`
+注解：
+
+方法（2）：
+- `private StorageManagerTitlePolicy()`  L34
+- `int titleRes(DeviceType deviceType)`  L37
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageManagerTitlePolicy$WhenMappings`
+L17 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageManagerTitlePolicy.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L18
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageSdFormatReminderPolicy`
+L10 · [class] public final StorageSdFormatReminderPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageSdFormatReminderPolicy.java`
+注解：
+
+字段/常量（3）：
+- `long MILLIS_PER_DAY = 86400000`  L12
+- `int OVERDUE_DAYS = 30`  L13
+- `int i`  L19
+
+方法（2）：
+- `private StorageSdFormatReminderPolicy()`  L15
+- `StorageSdFormatReminderUiModel resolve(long startMillis, long nowMillis)`  L18
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageSdFormatReminderUiModel`
+L9 · [class] public final StorageSdFormatReminderUiModel · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageSdFormatReminderUiModel.java`
+注解：
+
+字段/常量（2）：
+- `int colorRes`  L10
+- `int daysSinceLastFormat`  L11
+
+方法（10）：
+- `StorageSdFormatReminderUiModel copy$default(StorageSdFormatReminderUiModel storageSdFormatReminderUiModel, int i, int i2, int i3, Object obj)`  L13
+- `int getDaysSinceLastFormat()`  L24
+- `int getColorRes()`  L29
+- `StorageSdFormatReminderUiModel copy(int daysSinceLastFormat, int colorRes)`  L33
+- `boolean equals(Object other)`  L37
+- `int hashCode()`  L48
+- `String toString()`  L52
+    - 体内字面量："StorageSdFormatReminderUiModel(daysSinceLastFormat=" · ", colorRes=" · ")"
+- `public StorageSdFormatReminderUiModel(int i, int i2)`  L56
+- `int getDaysSinceLastFormat()`  L61
+- `int getColorRes()`  L65
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageSdInfoPolicy`
+L15 · [class] public final StorageSdInfoPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageSdInfoPolicy.java`
+注解：
+
+字段/常量（10）：
+- `int UI_STATUS_ABNORMAL = -1`  L17
+- `int UI_STATUS_NORMAL = 1`  L18
+- `int UI_STATUS_NO_CARD = 0`  L19
+- `String str`  L33
+- `String str2`  L34
+- `String str3`  L35
+- `Integer intOrNull`  L36
+- `Integer intOrNull2 = null`  L44
+- `Integer status`  L53
+- `Integer total`  L65
+
+方法（7）：
+- `private StorageSdInfoPolicy()`  L21
+- `boolean shouldUseRide3ProSdInfo(DeviceType deviceType)`  L24
+- `boolean shouldUseLegacyFormatRecordGate(DeviceType deviceType)`  L28
+- `StorageSdInfoUiModel fromLegacy(Map<String, String> data)`  L32
+- `StorageSdInfoUiModel fromRide3Pro(Ride3ProSdInfo info)`  L52
+- `int inferRide3ProStatusByCapacity(Ride3ProSdInfo info)`  L64
+- `float toGb(Integer value, boolean unitIsMb)`  L69
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageSdInfoUiModel`
+L9 · [class] public final StorageSdInfoUiModel · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageSdInfoUiModel.java`
+注解：
+
+字段/常量（3）：
+- `float freeGb`  L10
+- `float totalGb`  L11
+- `int uiStatus`  L12
+
+方法（12）：
+- `StorageSdInfoUiModel copy$default(StorageSdInfoUiModel storageSdInfoUiModel, int i, float f, float f2, int i2, Object obj)`  L14
+- `int getUiStatus()`  L28
+- `float getFreeGb()`  L33
+- `float getTotalGb()`  L38
+- `StorageSdInfoUiModel copy(int uiStatus, float freeGb, float totalGb)`  L42
+- `boolean equals(Object other)`  L46
+- `int hashCode()`  L57
+- `String toString()`  L61
+    - 体内字面量："StorageSdInfoUiModel(uiStatus=" · ", freeGb=" · ", totalGb=" · ")"
+- `public StorageSdInfoUiModel(int i, float f, float f2)`  L65
+- `int getUiStatus()`  L71
+- `float getFreeGb()`  L75
+- `float getTotalGb()`  L79
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageTabActivity`
+L62 · [class] public final StorageTabActivity · extends `ToolBarActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageTabActivity.java`
+注解：
+
+字段/常量（12）：
+- `String EXTRA_SESSION_ID = "device_session_id"`  L66
+- `int REQUEST_STORAGE_MANAGER = 1001`  L67
+- `ActivityStorageTabBinding binding`  L68
+- `DeviceType effectiveDeviceType`  L69
+- `Gloading.Holder holder`  L70
+- `StorageSdcardItemFragment[] mFragments`  L71
+- `ActivityStorageTabBinding activityStorageTabBinding = this.binding`  L105
+- `StorageSdcardItemFragment[] storageSdcardItemFragmentArr = StorageTabActivity.this.mFragments`  L247
+- `StorageSdcardItemFragment storageSdcardItemFragment = storageSdcardItemFragmentArr != null ? storageSdcardItemFragmentArr[position] : null`  L248
+- `StorageSdcardItemFragment.Companion companion = StorageSdcardItemFragment.INSTANCE`  L250
+- `StorageSdcardItemFragment[] storageSdcardItemFragmentArr2 = StorageTabActivity.this.mFragments`  L254
+- `StorageSdcardItemFragment[] storageSdcardItemFragmentArr = this.mFragments`  L446
+
+方法（25）：
+- `Ride3ProDeviceRepository invoke()`  L77 @Override
+- `Ride5SessionPortProvider invoke()`  L86 @Override
+- `String invoke()`  L98 @Override
+    - 体内字面量："device_session_id"
+- `ActivityStorageTabBinding getBinding()`  L104
+- `void setBinding(ActivityStorageTabBinding activityStorageTabBinding)`  L113
+    - 体内字面量："<set-?>"
+- `Ride3ProDeviceRepository getRide3ProDeviceRepository()`  L119
+- `Ride5SessionPortProvider getRide5SessionPortProvider()`  L124
+- `String getDeviceSessionId()`  L129
+- `View getContentRoot()`  L134 @Override
+    - 体内字面量："inflate(...)" · "wrap(...)" · "holder"
+- `void run()`  L147 @Override
+    - 体内字面量："getRoot(...)"
+- `void getContentRoot$lambda$0(StorageTabActivity this$0)`  L157
+    - 体内字面量："this$0"
+- `void onCreate(Bundle savedInstanceState)`  L163 @Override
+    - 体内字面量："getRoot(...)"
+- `void onClick(View view)`  L170 @Override
+- `void onCreate$lambda$1(StorageTabActivity this$0, View view)`  L178
+    - 体内字面量："this$0"
+- `void initData()`  L183
+- `void initDir()`  L188
+    - 体内字面量："boardversion"
+- `String resolveTabTitle(String tabKey)`  L200
+    - 体内字面量："ride3pro_photo" · "getString(...)" · "ride3pro_video" · "getString(...)" · "back_photo" · "getString(...)" · "emr" · "getString(...)" · "norm" · "getString(...)" · "photo" · "getString(...)" · "back_norm" · "getString(...)" · "back_emr" · "getString(...)"
+- `void initTab(final LinkedHashMap<String, String> tabKey)`  L239
+    - 体内字面量："<get-keys>(...)"
+- `Fragment getItem(int position)`  L246 @Override
+- `int getCount()`  L264 @Override
+    - 体内字面量："<get-values>(...)"
+- `void refreshSdcard()`  L276
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.StorageTabActivity$refreshLegacySdcard$1" · "StorageTabActivity.kt" · "invokeSuspend"
+- `void refreshLegacySdcard()`  L336
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.storage.StorageTabActivity$refreshRide3ProSdcard$1" · "StorageTabActivity.kt" · "invokeSuspend"
+- `void refreshRide3ProSdcard()`  L394
+- `void renderSdcard(StorageSdInfoUiModel model)`  L399
+    - 体内字面量："#.##" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/StorageTabActivity$Companion;" · "()V" · "EXTRA_SESSION_ID" · "REQUEST_STORAGE_MANAGER" · "launchActivity" · "activity" · "Lcom/tuwinsmart/tuwin/presentation/ui/base/BaseActivity;" · "sessionId" · "app_release_64"
+- `void onActivityResult(int requestCode, int resultCode, Intent data)`  L441 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageTabActivity$C28131`
+L288 · [class] static final C28131 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageTabActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L289
+- `int i = this.label`  L308
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L296 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L301 @Override
+- `Object invokeSuspend(Object obj)`  L306 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageTabActivity$C28141`
+L344 · [class] static final C28141 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageTabActivity.java`
+注解：
+
+字段/常量（5）：
+- `int label`  L345
+- `Object objMo2815getSDInfoIoAF18A`  L363
+- `int i = this.label`  L365
+- `StorageTabActivity storageTabActivity = StorageTabActivity.this`  L380
+- `StorageTabActivity storageTabActivity2 = StorageTabActivity.this`  L384
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L352 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L357 @Override
+- `Object invokeSuspend(Object obj)`  L362 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageTabActivity$Companion`
+L425 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageTabActivity.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L426
+- `private Companion()`  L430
+- `void launchActivity(BaseActivity activity, String sessionId)`  L433
+    - 体内字面量："activity" · "sessionId" · "device_session_id"
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageTabKeys`
+L9 · [class] public final StorageTabKeys · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageTabKeys.java`
+注解：
+
+字段/常量（8）：
+- `String BACK_EMR = "back_emr"`  L10
+- `String BACK_NORM = "back_norm"`  L11
+- `String BACK_PHOTO = "back_photo"`  L12
+- `String EMR = "emr"`  L13
+- `String NORM = "norm"`  L15
+- `String PHOTO = "photo"`  L16
+- `String RIDE3PRO_PHOTO = "ride3pro_photo"`  L17
+- `String RIDE3PRO_VIDEO = "ride3pro_video"`  L18
+
+方法（1）：
+- `private StorageTabKeys()`  L20
+### `com.tuwinsmart.tuwin.presentation.p010ui.storage.StorageTabPolicy`
+L16 · [class] public final StorageTabPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/storage/StorageTabPolicy.java`
+注解：
+
+字段/常量（4）：
+- `String BOARD_COMPANY_MARKER = "SYX"`  L17
+- `String strSubstringAfter`  L32
+- `String string`  L33
+- `String strSubstring = strSubstringAfter != null ? strSubstringAfter : "<binary/metadata>"`  L45
+
+方法（3）：
+- `private StorageTabPolicy()`  L20
+- `List<String> resolveTabKeys(DeviceType deviceType, String boardVersion)`  L23
+    - 体内字面量："photo" · "photo"
+- `boolean isDualCameraBoardVersion(String boardVersion)`  L31

@@ -82,7 +82,7 @@ class HisiliconProtocol(
     /** SSConstant.SS_IP — the AP hands out itself as the gateway, on every firmware. */
     override val fixedHost: String? get() = "192.168.0.1"
 
-    /** docs/03: the XTU factory passphrase, what the official app fills in silently. */
+    /** docs/analysis/protocol-matrix: the XTU factory passphrase, what the official app fills in silently. */
     override val defaultWifiPassword: String? get() = "12345678"
 
     /** `getwifi.cgi` exists on the hi3510 CGI family — see [getWifi]'s note. */
@@ -935,7 +935,7 @@ class HisiliconProtocol(
         // connection and `getSettings` never reaches the legacy walk for it, so they exist
         // for the firmware that answers only this surface.
         //
-        // ⚠️ docs/04 §7.2 (B16–B21) records three of these as unconfirmed — the unit of
+        // ⚠️ docs/analysis/ota-and-gaps §7.2 (B16–B21) records three of these as unconfirmed — the unit of
         // `screenautosleep`, the value domain `bootaction` really accepts (the code lists
         // idle/record/timelapse, a resource array lists six), and whether `timeosd` also
         // shows up in the NewAPP menu. The labels stay on the firmware's own spelling
@@ -1481,7 +1481,7 @@ class HisiliconProtocol(
 
     /**
      * No reboot endpoint exists on this family — the archive's literal sweep found none
-     * (`docs/08-官方APK全量逆向档案/02-XTUGO-档案.md` §8.4, §12). Declaring it here is
+     * (`docs/evidence/xtugo.md` §8.4, §12). Declaring it here is
      * what keeps `reboot()` on the interface default and the button out of the UI.
      */
     override val supportsReboot: Boolean = false

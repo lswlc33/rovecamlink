@@ -33,8 +33,8 @@ import kotlinx.serialization.json.jsonObject
  *    camera found" for a device sitting right there.
  *
  * `info` and the top level are both searched, in that order, because the archive's field
- * list and this plugin's original reads disagree about which holds the data (`docs/08
- * 01-TUWIN-档案.md` §2.1 row 4 vs. the flat names the first implementation used). The
+ * list and this plugin's original reads disagree about which holds the data
+ * (`docs/evidence/tuwin` §2.1 row 4 vs. the flat names the first implementation used). The
  * disagreement is recorded here rather than guessed at.
  */
 internal object TuwinStatus {
@@ -96,7 +96,7 @@ internal object TuwinStatus {
      *
      * `recording` is always false here and that is not a claim: this family's status reply
      * has **no** recording field at all — the official app tracks recording as a local
-     * event (`docs/08 01-TUWIN-档案.md` §5.3, "不用 `recording_time` 字段") — which is why
+     * event (`docs/evidence/tuwin` §5.3, "不用 `recording_time` 字段") — which is why
      * the plugin declares `reportsRecordingState = false` so this `false` never overwrites
      * what the record button actually established.
      */
@@ -125,7 +125,7 @@ internal object TuwinStatus {
      * `/api/device/info` — the facts the About page and the diagnostics header show.
      *
      * Found by the same mistake [parse] was: this endpoint's fields live in `info` too
-     * (`docs/08 01-TUWIN-档案.md` §2.1 row 3), so reading them off the top level left the
+     * (`docs/evidence/tuwin` §2.1 row 3), so reading them off the top level left the
      * model, firmware version, serial, MAC, SSID and SoC all blank on a camera that was
      * answering perfectly well.
      *
@@ -159,7 +159,7 @@ internal object TuwinStatus {
      * Drop secrets from a raw echo before it reaches the diagnostics log.
      *
      * `DeviceInfo.raw` travels into exported logs, and this family's `/api/device/info`
-     * answers a `pwd` beside the SSID (`docs/08 01-TUWIN-档案.md` §2.1 row 3) — the camera's
+     * answers a `pwd` beside the SSID (`docs/evidence/tuwin` §2.1 row 3) — the camera's
      * own hotspot passphrase. `core.model.CameraWifi` exists for exactly this reason ("a
      * secret must not travel in a bag like that"), so the key is removed here rather than
      * masked: a reader of the log has no use for the length of a password either.
@@ -176,7 +176,7 @@ internal object TuwinStatus {
      * "preview/record" — the point of the *stream*, not the shooting mode, since photo vs.
      * video is a menu item on this family and not a mode — so it is deliberately not mapped
      * to [WorkMode.VIDEO]. `1` has no constant or use site anywhere in the decompiled app
-     * (`docs/08 01-TUWIN-档案.md` §2.1 row 11).
+     * (`docs/evidence/tuwin` §2.1 row 11).
      */
     private fun workModeOf(currentMode: Int): WorkMode? = when (currentMode) {
         2 -> WorkMode.PLAYBACK
@@ -185,7 +185,7 @@ internal object TuwinStatus {
 
     /**
      * The SD code, which on this family is **not** the hi3510 family's vocabulary: here `0`
-     * means a healthy card and `2` means no card (`docs/08 01-TUWIN-档案.md` §5.2.2, the
+     * means a healthy card and `2` means no card (`docs/evidence/tuwin` §5.2.2, the
      * three-set table). Feeding `0` to [SdCardState.fromRaw] — which reads the XTU family's
      * `SDOK` / `NOSD` words — reports a perfectly good card as an error, and that is what
      * this plugin used to do.

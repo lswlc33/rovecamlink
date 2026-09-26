@@ -2,14 +2,14 @@
  * Citation checker: verifies that every `File.ext:LINE` reference inside the
  * reverse-engineering docs resolves to a real file that actually has that line.
  *
- * Exists because the whole point of docs/08 is "every value is traceable" — a
+ * Exists because the whole point of docs/evidence is "every value is traceable" — a
  * hallucinated line number is worse than no citation. References may be written
  * as a full repo path (`_work/xtu_src/sources/.../Foo.java:12`) or a suffix
  * (`Foo.java:12`); suffixes are resolved against an index of the corpus, and a
  * reference that matches several files is reported as ambiguous (not wrong).
  *
  * Usage:
- *   node tools/re/check-citations.mjs [path ...]     # default: docs/08-官方APK全量逆向档案
+ *   node tools/re/check-citations.mjs [path ...]     # default: docs/evidence
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -61,7 +61,7 @@ function buildIndex() {
 
 const index = buildIndex();
 const targets = process.argv.slice(2).filter((a) => !a.startsWith('-'));
-const roots = targets.length ? targets.map((t) => path.resolve(REPO, t)) : [path.resolve(REPO, 'docs/08-官方APK全量逆向档案')];
+const roots = targets.length ? targets.map((t) => path.resolve(REPO, t)) : [path.resolve(REPO, 'docs/evidence')];
 const docs = [];
 for (const root of roots) {
   if (fs.statSync(root).isDirectory()) docs.push(...walk(root, (f) => f.endsWith('.md')));

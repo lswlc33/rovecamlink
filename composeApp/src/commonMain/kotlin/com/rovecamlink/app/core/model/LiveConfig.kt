@@ -17,7 +17,7 @@ import org.jetbrains.compose.resources.StringResource
  *
  * The camera is the RTMP client, not this app: the official client hands it a Wi-Fi
  * network to join and an RTMP URL to push to, then shows a timer while the camera does
- * the work (`docs/08-官方APK全量逆向档案/02-XTUGO-档案.md` §10.4-10.5, and
+ * the work (`docs/evidence/xtugo.md` §10.4-10.5, and
  * `BroadcastDouyinFragment3.java:247-302` for the whole hand-off). So a config is
  * exactly the set of fields that travel in the one payload the firmware takes:
  *

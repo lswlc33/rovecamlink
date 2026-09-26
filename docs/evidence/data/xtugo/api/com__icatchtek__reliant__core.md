@@ -1,0 +1,95 @@
+# XTU GO — 类与成员明细：com.icatchtek.reliant.core
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 7 个文件 / 7 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.icatchtek.reliant.core.jni.JDepthNetTransportLogger`
+L4 · [class] public JDepthNetTransportLogger · `com/icatchtek/reliant/core/jni/JDepthNetTransportLogger.java`
+
+方法（4）：
+- `void setDebugMode(boolean z)`  L5
+- `void setFileLogOutput(boolean z)`  L7
+- `void setFileLogPath(String str)`  L9
+- `void setSystemLogOutput(boolean z)`  L11
+    - 体内字面量："depth_net_transport"
+### `com.icatchtek.reliant.core.jni.JUsbTransportBulk`
+L10 · [class] public JUsbTransportBulk · `com/icatchtek/reliant/core/jni/JUsbTransportBulk.java`
+
+方法（8）：
+- `boolean setUSBConfigurationInfo(int i, UsbConfiguration usbConfiguration)`  L11
+- `boolean setUSBInterfaceInfo(int i, int i2, int i3, UsbInterface usbInterface)`  L13
+- `boolean setUsbDeviceConnection(UsbDeviceConnection usbDeviceConnection)`  L15
+- `boolean setUsbEndpoint(int i, int i2, int i3, int i4, UsbEndpoint usbEndpoint)`  L17
+    - 体内字面量："usb_transport"
+- `boolean setUsbDeviceConnection_Jni(UsbDeviceConnection usbDeviceConnection)`  L23
+- `boolean setUsbConfigurationInfo_Jni(int i, UsbConfiguration usbConfiguration)`  L27
+- `boolean setUSBInterfaceInfo_Jni(int i, int i2, int i3, UsbInterface usbInterface)`  L31
+- `boolean setUsbEndpoint_Jni(int i, int i2, int i3, int i4, UsbEndpoint usbEndpoint)`  L35
+### `com.icatchtek.reliant.core.jni.JUsbTransportCore`
+L7 · [class] public JUsbTransportCore · `com/icatchtek/reliant/core/jni/JUsbTransportCore.java`
+
+字段/常量（1）：
+- `int USB_TRANSPORT_SUCCESS = 0`  L8
+
+方法（8）：
+- `int initMsdcScsi(String str)`  L10
+- `int initUvcBulk()`  L12
+- `int initUvcIso(int i, int i2, String str, int i3)`  L14
+- `int release()`  L16
+    - 体内字面量："usb_transport"
+- `boolean initUvc_Jni()`  L22
+    - 体内字面量："Transport error, code: "
+- `boolean initUvc_Jni(int i, int i2, String str, int i3)`  L30
+    - 体内字面量："Transport error, code: "
+- `boolean initMsdcScsi_Jni(String str)`  L38
+    - 体内字面量："Transport error, code: "
+- `boolean release_Jni()`  L46
+    - 体内字面量："Transport error, code: "
+### `com.icatchtek.reliant.core.jni.JUsbTransportLogger`
+L4 · [class] public JUsbTransportLogger · `com/icatchtek/reliant/core/jni/JUsbTransportLogger.java`
+
+方法（5）：
+- `void setDebugMode(boolean z)`  L5
+- `void setFileLogOutput(boolean z)`  L7
+- `void setFileLogPath(String str)`  L9
+- `void setSystemLogOutput(boolean z)`  L11
+- `void writeLog(String str, String str2)`  L13
+    - 体内字面量："usb_transport"
+### `com.icatchtek.reliant.core.jni.JUsbTransportMsdc`
+L6 · [class] public JUsbTransportMsdc · `com/icatchtek/reliant/core/jni/JUsbTransportMsdc.java`
+
+方法（8）：
+- `int executeScsiCommand(String str, byte[] bArr)`  L7
+- `int getCurrentMode()`  L9
+- `int switchToPlayback()`  L11
+- `int switchToPreview()`  L13
+    - 体内字面量："usb_transport"
+- `int executeScsiCommand_Jni(ICatchScsiCommandInfo iCatchScsiCommandInfo, byte[] bArr)`  L19
+- `int getCurrentMode_Jni()`  L23
+- `int switchToPreview_Jni()`  L27
+- `int switchToPlayback_Jni()`  L31
+### `com.icatchtek.reliant.core.jni.routines.NativeLibraryLoader`
+L4 · [class] public NativeLibraryLoader · `com/icatchtek/reliant/core/jni/routines/NativeLibraryLoader.java`
+
+字段/常量（3）：
+- `boolean bLoaded = false`  L5
+- `String intelArch = "x86"`  L6
+- `String[] neonArmArchArray = {"armv7a", "armeabi-v7a"}`  L7
+
+方法（3）：
+- `boolean doSupportNeonArmArch(String str)`  L9
+- `void loadLibrary(String str)`  L18
+- `void loadLibrary_1(String str)`  L26
+### `com.icatchtek.reliant.core.UsbTransportBulkUtil`
+L11 · [class] public UsbTransportBulkUtil · `com/icatchtek/reliant/core/UsbTransportBulkUtil.java`
+
+方法（3）：
+- `void updateConnection(UsbDeviceConnection usbDeviceConnection)`  L12
+- `void updateInformation(UsbDevice usbDevice)`  L16
+- `void updateInformationJellyBean(UsbDevice usbDevice)`  L37

@@ -8,7 +8,7 @@ import kotlinx.datetime.toLocalDateTime
  * Text rendering for the `rovdiag/1` log grammar, plus the sanitising and
  * redaction rules that keep a submitted file safe to share.
  *
- * Grammar (one entry per line; `docs/06-诊断日志系统.md` is the prose version):
+ * Grammar (one entry per line; `docs/impl/diagnostics-log.md` is the prose version):
  *
  * ```
  * 000451 2026-09-21T18:32:11.482+08:00 +12.345s I HTTP  op=7:capture REQ #231 GET http://…

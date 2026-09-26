@@ -17,7 +17,7 @@ import kotlinx.coroutines.CancellationException
  * camera, and the Hi35xx family — the X7 Pro / S7PRO line this app targets — is exactly
  * that. There is no `*.cgi` for it anywhere in the APK: the whole command face of "start a
  * live stream" is one payload on the same socket the firmware image is pushed through
- * (`docs/08-官方APK全量逆向档案/data/xtugo/catalog-http.md` holds no live endpoint;
+ * (`docs/evidence/data/xtugo/catalog-http.md` holds no live endpoint;
  * `BroadcastDouyinFragment3.sendRtmp2Hisi`, `_work/xtu_src/sources/com/gku/actioncam/amba/ui/stream/BroadcastDouyinFragment3.java:247-302`).
  *
  * The exchange, in the order the official client walks it:

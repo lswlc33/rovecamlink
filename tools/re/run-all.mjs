@@ -64,7 +64,7 @@ export function main(keys = Object.keys(APPS)) {
     const apkPath = p(app.apk);
     const dir = p('_work/re', key);
     const artefacts = walk(dir).filter((f) => /\.(md|tsv|json)$/.test(f));
-    const docsDir = p('docs/08-官方APK全量逆向档案/data', key);
+    const docsDir = p('docs/evidence/data', key);
     rows.push({
       label: app.label,
       apkSize: exists(apkPath) ? (fs.statSync(apkPath).size / 1048576).toFixed(1) + ' MiB' : '缺失',
@@ -88,7 +88,7 @@ export function main(keys = Object.keys(APPS)) {
     ]),
     mdTable(['App', 'APK 体积', 'sha256(16)', '产出文件', '入库文件', '产出字节', '资源值条目', '类型数', '自有字面量'],
       rows.map((r) => [r.label, r.apkSize, r.sha, r.artefacts, r.committed, r.bytes.toLocaleString('en-US'), r.values, r.types, r.literals])),
-    '_注：`产出行数` 统计 scratch 目录；`入库文件` 指 `docs/08-官方APK全量逆向档案/data/<app>/` 下实际提交的附录数。',
+    '_注：`产出行数` 统计 scratch 目录；`入库文件` 指 `docs/evidence/data/<app>/` 下实际提交的附录数。',
   ].join('\n'), { docs: true });
   log('corpus fingerprint written');
 }

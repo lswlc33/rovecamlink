@@ -1,0 +1,5283 @@
+# TUWIN — 类与成员明细：com.tuwinsmart.tuwin.presentation.p010ui.album
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 108 个文件 / 211 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.adapter.DailyListAdapter`
+L48 · [class] public final DailyListAdapter · extends `RecyclerView.Adapter<ItemViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/adapter/DailyListAdapter.java`
+注解：
+
+字段/常量（24）：
+- `int ACTION_ENTER_SELECT_MODE = 4`  L49
+- `int ACTION_EXIT_SELECT_MODE = 5`  L50
+- `int ACTION_IS_ALL_SELECT_MODE = 1`  L51
+- `int ACTION_NOT_ALL_SELECT_MODE = 2`  L52
+- `int ACTION_VIDEO_ITEM_CLICK = 3`  L53
+- `boolean isLocal`  L54
+- `boolean isPhotoMode`  L55
+- `OnStorageListActionListener listener`  L56
+- `List<VideoItem> mSelectItems`  L57
+- `List<VideoItem> mediaList`  L58
+- `Function1<Integer, AuthorizedDeviceResource> ride3ProThumbnailModel`  L59
+- `Function1<String, Object> ride5PreviewModel`  L60
+- `int selectIndex`  L61
+- `boolean selectMode`  L62
+- `OnStorageListActionListener onStorageListActionListener = this.listener`  L114
+- `VideoItem videoItem = item`  L172
+- `long j = 60`  L258
+- `long j2 = totalSeconds / j`  L259
+- `long j3 = totalSeconds % j`  L260
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L261
+- `boolean z = false`  L323
+- `OnStorageListActionListener onStorageListActionListener = this$0.listener`  L332
+- `OnStorageListActionListener onStorageListActionListener2 = this$0.listener`  L344
+- `List<VideoItem> list = this.mSelectItems`  L398
+
+方法（36）：
+- `void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i, List list)`  L65 @Override
+- ` DailyListAdapter(boolean z, boolean z2, List list, OnStorageListActionListener onStorageListActionListener, C25161 c25161, C25172 c25172, int i, DefaultConstructorMarker defaultConstructorMarker)`  L69
+- `Void invoke(int i2)`  L71
+- `Object invoke(Object obj)`  L76 @Override
+- `Void invoke(String it)`  L81 @Override
+    - 体内字面量："it"
+- `public DailyListAdapter(boolean z, boolean z2, List<VideoItem> mediaList, OnStorageListActionListener onStorageListActionListener, Function1<? super Integer, AuthorizedDeviceResource> ride3ProThumbnailModel, Function1<? super String, ? extends Object> ride5PreviewModel)`  L89
+    - 体内字面量："mediaList" · "ride3ProThumbnailModel" · "ride5PreviewModel"
+- `boolean getSelectMode()`  L103
+- `void setSelectMode(boolean z)`  L107
+    - 体内字面量："changeMode"
+- `ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L121 @Override
+    - 体内字面量："parent" · "inflate(...)"
+- `void onBindViewHolder(ItemViewHolder holder, int position, List<Object> payloads)`  L128
+    - 体内字面量："holder" · "payloads" · "update" · "selectAll" · "changeMode"
+- `void getVideoDuration(final VideoItem item)`  L156
+- `Unit invoke(Long l)`  L165 @Override
+- `void invoke2(Long l)`  L171
+- `void accept(Object obj)`  L183 @Override
+- `Unit invoke(Throwable th)`  L194 @Override
+- `void invoke2(Throwable th)`  L200
+    - 体内字面量："update"
+- `void accept(Object obj)`  L210 @Override
+- `void getVideoDuration$lambda$0(Function1 tmp0, Object obj)`  L217
+    - 体内字面量："$tmp0"
+- `void getVideoDuration$lambda$1(Function1 tmp0, Object obj)`  L223
+    - 体内字面量："$tmp0"
+- `Single<Long> getDurationSingle(final String filePath)`  L228
+- `void subscribe(SingleEmitter singleEmitter)`  L231 @Override
+    - 体内字面量："create(...)"
+- `void getDurationSingle$lambda$2(String filePath, SingleEmitter emitter)`  L240
+    - 体内字面量："$filePath" · "emitter"
+- `String formatSecondsToMinutesAndSeconds(long totalSeconds)`  L257
+- `void onBindViewHolder(final ItemViewHolder holder, int position)`  L268 @Override
+    - 体内字面量："holder" · "Thumbnail_"
+- `void onClick(View view)`  L296 @Override
+    - 体内字面量："ckSelect"
+- `void onClick(View view)`  L304 @Override
+- `void onBindViewHolder$lambda$3(ItemViewHolder holder, DailyListAdapter this$0, View view)`  L315
+    - 体内字面量："$holder" · "this$0"
+- `void onBindViewHolder$lambda$4(ItemViewHolder holder, View view)`  L351
+    - 体内字面量："$holder"
+- `int getItemCount()`  L357 @Override
+- `boolean isSelectAll()`  L361
+- `void deleteSelectedItems()`  L365
+- `void select(boolean select)`  L374
+    - 体内字面量："selectAll" · "selectAll"
+- `boolean hasSelectedItems()`  L385
+- `int hasSelectedCount()`  L389
+- `List<VideoItem> getSelectedItems()`  L393
+- `List<String> getDownloadPaths()`  L397
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.adapter.ItemViewHolder`
+L12 · [class] public final ItemViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/album/adapter/ItemViewHolder.java`
+注解：
+
+字段/常量（1）：
+- `ItemDailyVideoItemBinding binding`  L13
+
+方法（2）：
+- `ItemDailyVideoItemBinding getBinding()`  L15
+- `public ItemViewHolder(ItemDailyVideoItemBinding binding)`  L20
+    - 体内字面量："binding"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.C2471x94184691`
+L19 · [class] final C2471x94184691 · extends `SuspendLambda implements Function1<Continuation<? super Result<? extends Unit>>, Object>` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/C2471x94184691.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L20
+- `Ride3ProDailyDetailActivity this$0`  L21
+- `Object objM2909startAuthorizedMediaPlaybackIoAF18A`  L46
+- `int i = this.label`  L48
+
+方法（4）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L30 @Override
+- `Object invoke(Continuation<? super Result<? extends Unit>> continuation)`  L35 @Override
+- `Object invoke2(Continuation<? super Result<Unit>> continuation)`  L40
+- `Object invokeSuspend(Object obj)`  L45 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.C2473x3cd86db3`
+L19 · [class] final C2473x3cd86db3 · extends `SuspendLambda implements Function1<Continuation<? super Result<? extends Unit>>, Object>` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/C2473x3cd86db3.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L20
+- `Ride3ProDailyDetailActivity this$0`  L21
+- `Object objM2912stopPlaybackSessionAndReleaseConflictWindowIoAF18A`  L46
+- `int i = this.label`  L48
+
+方法（4）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L30 @Override
+- `Object invoke(Continuation<? super Result<? extends Unit>> continuation)`  L35 @Override
+- `Object invoke2(Continuation<? super Result<Unit>> continuation)`  L40
+- `Object invokeSuspend(Object obj)`  L45 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.C2475xa14c960c`
+L16 · [class] final C2475xa14c960c · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/C2475xa14c960c.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L17
+- `int label`  L18
+- `Object result`  L19
+- `Ride3ProDailyDetailActivity this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.C2476xa14c960d`
+L17 · [class] C2476xa14c960d · extends `FunctionReferenceImpl implements Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · `com/tuwinsmart/tuwin/presentation/p010ui/album/C2476xa14c960d.java`
+注解：
+
+方法（1）：
+- `Object invoke(Continuation<? super Result<Unit>> continuation)`  L24 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.C2477xa14c960e`
+L17 · [class] C2477xa14c960e · extends `FunctionReferenceImpl implements Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · `com/tuwinsmart/tuwin/presentation/p010ui/album/C2477xa14c960e.java`
+注解：
+
+方法（1）：
+- `Object invoke(Continuation<? super Result<Unit>> continuation)`  L24 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.C2478xc89fa65b`
+L16 · [class] final C2478xc89fa65b · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/C2478xc89fa65b.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L17
+- `int label`  L18
+- `Object result`  L19
+- `Ride3ProDailyDetailActivity this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.C2479xc89fa65c`
+L17 · [class] C2479xc89fa65c · extends `FunctionReferenceImpl implements Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · `com/tuwinsmart/tuwin/presentation/p010ui/album/C2479xc89fa65c.java`
+注解：
+
+方法（1）：
+- `Object invoke(Continuation<? super Result<Unit>> continuation)`  L24 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.C2480xc89fa65d`
+L17 · [class] C2480xc89fa65d · extends `FunctionReferenceImpl implements Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>, SuspendFunction` · `com/tuwinsmart/tuwin/presentation/p010ui/album/C2480xc89fa65d.java`
+注解：
+
+方法（1）：
+- `Object invoke(Continuation<? super Result<Unit>> continuation)`  L24 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.C2485xb1d29107`
+L14 · [class] final C2485xb1d29107 · extends `Lambda implements Function2<Integer, Integer, Unit>` · implements `Function2<Integer, Integer, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/C2485xb1d29107.java`
+注解：
+
+字段/常量（4）：
+- `long $token`  L15
+- `Ride3ProDailyDetailActivity this$0`  L16
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = this.this$0`  L32
+- `long j = this.$token`  L33
+
+方法（4）：
+- `Unit invoke(Integer num, Integer num2)`  L26 @Override
+- `void invoke(final int i, final int i2)`  L31
+- `void run()`  L36 @Override
+- `void invoke$lambda$0(Ride3ProDailyDetailActivity this$0, long j, int i, int i2)`  L43
+    - 体内字面量："this$0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.C2499xd35d495f`
+L19 · [class] final C2499xd35d495f · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/C2499xd35d495f.java`
+注解：
+
+字段/常量（4）：
+- `Function2<Integer, Integer, Unit> $it`  L20
+- `int label`  L21
+- `Ride3ProLocalVideoTranscoder this$0`  L22
+- `int i = this.label`  L45
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L33 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L38 @Override
+- `Object invokeSuspend(Object obj)`  L43 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.C2500xa52d81a0`
+L20 · [class] final C2500xa52d81a0 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Integer>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Integer>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/C2500xa52d81a0.java`
+注解：
+
+字段/常量（4）：
+- `File $inputFile`  L21
+- `File $outputFile`  L22
+- `int label`  L23
+- `Ride3ProLocalVideoTranscoder this$0`  L24
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L35 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Integer> continuation)`  L40 @Override
+- `Object invokeSuspend(Object obj)`  L45 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity`
+L87 · [class] public final DailyDetailActivity · extends `BaseActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+字段/常量（112）：
+- `String EXTRA_SESSION_ID = "device_session_id"`  L91
+- `ActivityDailyDetailBinding binding`  L92
+- `ViewPropertyAnimator hideAnimation`  L93
+- `VideoItem item`  L94
+- `DailyListAdapter mAdapter`  L95
+- `OrientationUtils orientationUtils`  L96
+- `VideoItem videoItem`  L162
+- `ActivityDailyDetailBinding activityDailyDetailBinding = this.binding`  L168
+- `ActivityDailyDetailBinding activityDailyDetailBinding2 = null`  L169
+- `ActivityDailyDetailBinding activityDailyDetailBinding3 = this.binding`  L175
+- `ToolBar toolBar = activityDailyDetailBinding3.toolBar`  L180
+- `VideoItem videoItem2 = this.item`  L181
+- `VideoItem videoItem3 = this.item`  L187
+- `ActivityDailyDetailBinding activityDailyDetailBinding4 = this.binding`  L193
+- `ActivityDailyDetailBinding activityDailyDetailBinding5 = this.binding`  L199
+- `ActivityDailyDetailBinding activityDailyDetailBinding6 = this.binding`  L211
+- `ActivityDailyDetailBinding activityDailyDetailBinding7 = this.binding`  L217
+- `VideoItem videoItem4 = this.item`  L229
+- `ActivityDailyDetailBinding activityDailyDetailBinding8 = this.binding`  L235
+- `ActivityDailyDetailBinding activityDailyDetailBinding9 = this.binding`  L242
+- `PlayListControlVideo videoView = activityDailyDetailBinding9.videoView`  L247
+- `ActivityDailyDetailBinding activityDailyDetailBinding10 = this.binding`  L251
+- `ActivityDailyDetailBinding activityDailyDetailBinding11 = this.binding`  L272
+- `ActivityDailyDetailBinding activityDailyDetailBinding12 = this.binding`  L278
+- `BLTextView tvDownloadState = activityDailyDetailBinding12.tvDownloadState`  L283
+- `DailyDetailActivity dailyDetailActivity = this`  L291
+- `ActivityDailyDetailBinding activityDailyDetailBinding13 = this.binding`  L292
+- `OrientationUtils orientationUtils2 = this.orientationUtils`  L300
+- `ActivityDailyDetailBinding activityDailyDetailBinding14 = this.binding`  L304
+- `OrientationUtils orientationUtils3 = DailyDetailActivity.this.orientationUtils`  L314
+- `OrientationUtils orientationUtils3 = DailyDetailActivity.this.orientationUtils`  L324
+- `VideoItem videoItem5 = this.item`  L336
+- `VideoItem[] videoItemArr = new VideoItem[1]`  L343
+- `VideoItem[] videoItemArr2 = new VideoItem[1]`  L356
+- `List<VideoItem> list = items`  L366
+- `VideoItem videoItem6 = this.item`  L367
+- `Object objM3074constructorimpl`  L379
+- `DailyDetailActivity dailyDetailActivity2 = DailyDetailActivity.this`  L381
+- `Result.Companion companion = Result.INSTANCE`  L383
+- `Result.Companion companion2 = Result.INSTANCE`  L386
+- `ActivityDailyDetailBinding activityDailyDetailBinding15 = this.binding`  L395
+- `ActivityDailyDetailBinding activityDailyDetailBinding16 = this.binding`  L401
+- `RecyclerView recyclerView = activityDailyDetailBinding16.recyclerView`  L406
+- `DailyListAdapter dailyListAdapter = this.mAdapter`  L407
+- `ActivityDailyDetailBinding activityDailyDetailBinding17 = this.binding`  L413
+- `LinearLayout btnDownload = activityDailyDetailBinding17.btnDownload`  L418
+- `ActivityDailyDetailBinding activityDailyDetailBinding18 = this.binding`  L426
+- `LinearLayout btnDelete = activityDailyDetailBinding2.btnDelete`  L432
+- `DailyListAdapter dailyListAdapter = this$0.mAdapter`  L445
+- `DailyListAdapter dailyListAdapter2 = null`  L446
+- `DailyListAdapter dailyListAdapter3 = this$0.mAdapter`  L452
+- `DailyListAdapter dailyListAdapter = this$0.mAdapter`  L468
+- `ActivityDailyDetailBinding activityDailyDetailBinding = null`  L469
+- `DailyListAdapter dailyListAdapter2 = this$0.mAdapter`  L475
+- `DailyListAdapter dailyListAdapter3 = this$0.mAdapter`  L481
+- `ActivityDailyDetailBinding activityDailyDetailBinding2 = this$0.binding`  L487
+- `DailyListAdapter dailyListAdapter4 = this$0.mAdapter`  L496
+- `ActivityDailyDetailBinding activityDailyDetailBinding3 = this$0.binding`  L502
+- `DailyListAdapter dailyListAdapter5 = this$0.mAdapter`  L511
+- `ActivityDailyDetailBinding activityDailyDetailBinding4 = this$0.binding`  L517
+- `ActivityDailyDetailBinding activityDailyDetailBinding5 = this$0.binding`  L523
+- `DailyListAdapter dailyListAdapter = this$0.mAdapter`  L829
+- `DailyListAdapter dailyListAdapter2 = null`  L830
+- `int i = C1870R.string.dialog_confirm_delete_videos`  L840
+- `DailyListAdapter dailyListAdapter3 = this$0.mAdapter`  L841
+- `Object objM3074constructorimpl`  L863
+- `Object objM3074constructorimpl2`  L864
+- `DailyListAdapter dailyListAdapter = this.mAdapter`  L865
+- `DailyListAdapter dailyListAdapter2 = null`  L866
+- `DailyListAdapter dailyListAdapter3 = this.mAdapter`  L875
+- `Result.Companion companion = Result.INSTANCE`  L888
+- `DailyDetailActivity dailyDetailActivity = this`  L889
+- `List<VideoItem> list = selectedItems`  L892
+- `Result.Companion companion2 = Result.INSTANCE`  L900
+- `List<VideoItem> list3 = selectedItems`  L911
+- `int i = 0`  L913
+- `int i2 = i + 1`  L915
+- `ArrayList arrayList3 = arrayList2`  L922
+- `Result.Companion companion3 = Result.INSTANCE`  L924
+- `DailyDetailActivity dailyDetailActivity2 = this`  L925
+- `Result.Companion companion4 = Result.INSTANCE`  L928
+- `DailyListAdapter dailyListAdapter4 = this.mAdapter`  L937
+- `ViewPropertyAnimator viewPropertyAnimator = this.hideAnimation`  L949
+- `ActivityDailyDetailBinding activityDailyDetailBinding = null`  L953
+- `ActivityDailyDetailBinding activityDailyDetailBinding2 = this.binding`  L955
+- `ActivityDailyDetailBinding activityDailyDetailBinding3 = this.binding`  L961
+- `ActivityDailyDetailBinding activityDailyDetailBinding4 = this.binding`  L967
+- `ActivityDailyDetailBinding activityDailyDetailBinding5 = this.binding`  L973
+- `ActivityDailyDetailBinding activityDailyDetailBinding6 = DailyDetailActivity.this.binding`  L998
+- `ActivityDailyDetailBinding activityDailyDetailBinding7 = null`  L999
+- `ActivityDailyDetailBinding activityDailyDetailBinding8 = DailyDetailActivity.this.binding`  L1005
+- `ActivityDailyDetailBinding activityDailyDetailBinding = this.binding`  L1183
+- `ActivityDailyDetailBinding activityDailyDetailBinding2 = null`  L1184
+- `PlayListControlVideo videoView = activityDailyDetailBinding.videoView`  L1189
+- `ActivityDailyDetailBinding activityDailyDetailBinding3 = this.binding`  L1192
+- `ActivityDailyDetailBinding activityDailyDetailBinding = this.binding`  L1205
+- `ActivityDailyDetailBinding activityDailyDetailBinding2 = null`  L1206
+- `PlayListControlVideo videoView = activityDailyDetailBinding.videoView`  L1211
+- `ActivityDailyDetailBinding activityDailyDetailBinding3 = this.binding`  L1214
+- `Object objM3074constructorimpl`  L1226
+- `Result.Companion companion = Result.INSTANCE`  L1236
+- `DailyDetailActivity dailyDetailActivity = this`  L1237
+- `Result.Companion companion2 = Result.INSTANCE`  L1240
+- `Object objM3074constructorimpl`  L1255
+- `Result.Companion companion = Result.INSTANCE`  L1262
+- `DailyDetailActivity dailyDetailActivity = this`  L1263
+- `Result.Companion companion2 = Result.INSTANCE`  L1266
+- `ActivityDailyDetailBinding activityDailyDetailBinding = this.binding`  L1518
+- `ActivityDailyDetailBinding activityDailyDetailBinding2 = null`  L1519
+- `PlayListControlVideo videoView = activityDailyDetailBinding.videoView`  L1524
+- `ActivityDailyDetailBinding activityDailyDetailBinding3 = this.binding`  L1527
+- `OrientationUtils orientationUtils = this.orientationUtils`  L1539
+
+方法（47）：
+- `Ride5SessionPortProvider invoke()`  L102 @Override
+- `VerifiedDeviceFileCatalog invoke()`  L111 @Override
+- `String invoke()`  L123 @Override
+    - 体内字面量："device_session_id"
+- `Ride5SessionPortProvider getRide5SessionPortProvider()`  L130
+- `VerifiedDeviceFileCatalog getFileCatalog()`  L135
+- `String getDeviceSessionId()`  L140
+- `View getContentRoot()`  L145 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L161 @Override
+- `void onClick(View view)`  L206 @Override
+- `void onClick(View view)`  L224 @Override
+- `Unit invoke()`  L262 @Override
+- `void invoke2()`  L268
+- `void onClick(View view)`  L287 @Override
+- `void onQuitFullscreen(String url, Object... objects)`  L311 @Override
+    - 体内字面量："objects"
+- `void onEnterFullscreen(String url, Object... objects)`  L321 @Override
+    - 体内字面量："objects"
+- `void onAutoComplete(String url, Object... objects)`  L331 @Override
+    - 体内字面量："objects"
+- `Object invoke(String path)`  L378 @Override
+- `void onClick(View view)`  L422 @Override
+- `void onClick(View view)`  L436 @Override
+- `void onCreate$lambda$0(DailyDetailActivity this$0, View view)`  L443
+    - 体内字面量："this$0"
+- `void onCreate$lambda$1(DailyDetailActivity this$0, View view)`  L466
+    - 体内字面量："this$0"
+- `void onCreate$lambda$2(DailyDetailActivity this$0, View view)`  L553
+    - 体内字面量："this$0" · "com/tuwinsmart/tuwin/presentation/ui/album/DailyDetailActivity$onCreate$7" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/adapter/OnStorageListActionListener;" · "onItemClick" · "actionId" · "videoData" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/adapter/VideoData;" · "app_release_64"
+- `void onCreate$lambda$4(final DailyDetailActivity this$0, View view)`  L797
+    - 体内字面量："this$0"
+- `void onGranted(List<String> permissions, boolean all)`  L806 @Override
+- `void onDenied(List<String> permissions, boolean never)`  L811 @Override
+- `void onCreate$lambda$6(final DailyDetailActivity this$0, View view)`  L823
+    - 体内字面量："this$0"
+- `void onClick(View view2)`  L849 @Override
+- `void onCreate$lambda$6$lambda$5(DailyDetailActivity this$0, View view)`  L856
+    - 体内字面量："this$0"
+- `void download()`  L862
+- `void showBottomDownload(int count)`  L948
+- `void onAnimationCancel(Animator animation)`  L981 @Override
+    - 体内字面量："animation"
+- `void onAnimationRepeat(Animator animation)`  L986 @Override
+    - 体内字面量："animation"
+- `void onAnimationStart(Animator animation)`  L991 @Override
+    - 体内字面量："animation"
+- `void onAnimationEnd(Animator animation)`  L996 @Override
+    - 体内字面量："animation"
+- `void batchDeleteFiles()`  L1175
+- `void onResume()`  L1181 @Override
+- `void onPause()`  L1203 @Override
+- `void share(VideoItem videoItem)`  L1225
+- `AuthorizedDeviceResource authorizeRide3ProThumbnail(int fileIndex)`  L1254
+- `void shareAuthorized(final String url, final DownloadNetworkRoute.Device route)`  L1276
+- `void onGranted(List<String> permissions, boolean all)`  L1288 @Override
+- `void onDenied(List<String> permissions, boolean never)`  L1293 @Override
+- `void validateShareFileAndShare(String url, File localFile, DownloadNetworkRoute.Device route)`  L1303
+    - 体内字面量："<anonymous>" · "remoteFileSize" · "invoke" · "(Ljava/lang/Long;)V"
+- `void downloadShare(String url, DownloadNetworkRoute.Device route)`  L1389
+    - 体内字面量："<anonymous>" · "it" · "invoke" · "<anonymous>" · "it" · "invoke" · "<anonymous>" · "it" · "Lcom/lzy/okgo/model/Progress;" · "invoke"
+- `void shareVideo(File file)`  L1504
+    - 体内字面量：".fileProvider" · "getUriForFile(...)" · "android.intent.action.SEND" · "android.intent.extra.STREAM"
+- `void onDestroy()`  L1516 @Override
+- `void onBackPressed()`  L1538 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity$C24091`
+L1024 · [class] static final C24091 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+字段/常量（11）：
+- `Object L$0`  L1025
+- `Object L$1`  L1026
+- `int label`  L1027
+- `Iterator it`  L1048
+- `Ride5SessionPort ride5SessionPort`  L1049
+- `String str`  L1050
+- `int i = this.label`  L1052
+- `DailyListAdapter dailyListAdapter = null`  L1053
+- `VideoItem videoItem = DailyDetailActivity.this.item`  L1059
+- `DailyListAdapter dailyListAdapter2 = DailyDetailActivity.this.mAdapter`  L1066
+- `DailyListAdapter dailyListAdapter3 = DailyDetailActivity.this.mAdapter`  L1107
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1034 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1039 @Override
+- `Object invokeSuspend(Object obj)`  L1047 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity$C24091$AnonymousClass2`
+L1133 · [class] static final AnonymousClass2 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L1134
+- `DailyDetailActivity this$0`  L1135
+- `DailyListAdapter dailyListAdapter = this.this$0.mAdapter`  L1158
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1144 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1149 @Override
+- `Object invokeSuspend(Object obj)`  L1154 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity$C24101`
+L1397 · [class] static final C24101 · extends `Lambda implements Function1<String, Unit>` · implements `Function1<String, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+字段/常量（3）：
+- `String $url`  L1398
+- `DailyDetailActivity dailyDetailActivity = DailyDetailActivity.this`  L1415
+- `String str = this.$url`  L1416
+
+方法（4）：
+- `Unit invoke(String str)`  L1407 @Override
+- `void invoke2(String it)`  L1413
+    - 体内字面量："it"
+- `void run()`  L1419 @Override
+- `void invoke$lambda$0(DailyDetailActivity this$0, String url)`  L1426
+    - 体内字面量："this$0" · "$url"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity$C24112`
+L1438 · [class] static final C24112 · extends `Lambda implements Function1<String, Unit>` · implements `Function1<String, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+字段/常量（1）：
+- `DailyDetailActivity dailyDetailActivity = DailyDetailActivity.this`  L1452
+
+方法（4）：
+- `Unit invoke(String str)`  L1444 @Override
+- `void invoke2(String it)`  L1450
+    - 体内字面量："it"
+- `void run()`  L1455 @Override
+- `void invoke$lambda$0(DailyDetailActivity this$0)`  L1462
+    - 体内字面量："this$0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity$C24123`
+L1472 · [class] static final C24123 · extends `Lambda implements Function1<Progress, Unit>` · implements `Function1<Progress, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+字段/常量（1）：
+- `DailyDetailActivity dailyDetailActivity = DailyDetailActivity.this`  L1486
+
+方法（4）：
+- `Unit invoke(Progress progress)`  L1478 @Override
+- `void invoke2(final Progress it)`  L1484
+    - 体内字面量："it"
+- `void run()`  L1489 @Override
+- `void invoke$lambda$0(DailyDetailActivity this$0, Progress it)`  L1496
+    - 体内字面量："this$0" · "$it"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity$C24144`
+L535 · [class] C24144 · extends `FunctionReferenceImpl implements Function0<Unit>` · implements `Function0<Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke()`  L541 @Override
+- `void invoke2()`  L547
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity$C24167`
+L561 · [class] public static final C24167 · implements `OnStorageListActionListener` · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+字段/常量（33）：
+- `List<VideoItem> $detailItems`  L562
+- `boolean $isPhotoMode`  L563
+- `DailyDetailActivity this$0`  L564
+- `String path`  L574
+- `ActivityDailyDetailBinding activityDailyDetailBinding = null`  L575
+- `ActivityDailyDetailBinding activityDailyDetailBinding2 = this.this$0.binding`  L577
+- `ActivityDailyDetailBinding activityDailyDetailBinding3 = this.this$0.binding`  L587
+- `ActivityDailyDetailBinding activityDailyDetailBinding4 = this.this$0.binding`  L598
+- `ActivityDailyDetailBinding activityDailyDetailBinding5 = this.this$0.binding`  L604
+- `ActivityDailyDetailBinding activityDailyDetailBinding6 = this.this$0.binding`  L610
+- `ActivityDailyDetailBinding activityDailyDetailBinding7 = this.this$0.binding`  L622
+- `ActivityDailyDetailBinding activityDailyDetailBinding8 = this.this$0.binding`  L628
+- `ActivityDailyDetailBinding activityDailyDetailBinding9 = this.this$0.binding`  L634
+- `List<VideoItem> list = this.$detailItems`  L644
+- `DailyDetailActivity dailyDetailActivity = this.this$0`  L645
+- `VideoItem videoItem2 = dailyDetailActivity.item`  L648
+- `ArrayList arrayList2 = arrayList`  L667
+- `VideoItem videoItem3 = this.this$0.item`  L668
+- `List<VideoItem> list2 = this.$detailItems`  L674
+- `ShowPicsActivity.Companion companion = ShowPicsActivity.INSTANCE`  L681
+- `DailyDetailActivity dailyDetailActivity2 = this.this$0`  L682
+- `ActivityDailyDetailBinding activityDailyDetailBinding10 = this.this$0.binding`  L692
+- `ActivityDailyDetailBinding activityDailyDetailBinding11 = this.this$0.binding`  L698
+- `ActivityDailyDetailBinding activityDailyDetailBinding12 = this.this$0.binding`  L705
+- `ActivityDailyDetailBinding activityDailyDetailBinding13 = this.this$0.binding`  L711
+- `ToolBar toolBar = activityDailyDetailBinding13.toolBar`  L716
+- `DailyDetailActivity dailyDetailActivity3 = this.this$0`  L717
+- `Ride3ProDailyDetailActivity.Companion companion2 = Ride3ProDailyDetailActivity.INSTANCE`  L726
+- `DailyDetailActivity dailyDetailActivity4 = this.this$0`  L727
+- `ActivityDailyDetailBinding activityDailyDetailBinding14 = this.this$0.binding`  L736
+- `ActivityDailyDetailBinding activityDailyDetailBinding15 = this.this$0.binding`  L742
+- `ActivityDailyDetailBinding activityDailyDetailBinding16 = this.this$0.binding`  L748
+- `ActivityDailyDetailBinding activityDailyDetailBinding17 = this.this$0.binding`  L754
+
+方法（4）：
+- `void onItemClick(int actionId, int position, VideoData videoData)`  L573 @Override
+- `void onClick(View view)`  L720 @Override
+- `void onStateChanged(int state)`  L762 @Override
+- `void onItemClick$lambda$2(DailyDetailActivity this$0, VideoItem videoItem, View view)`  L771
+    - 体内字面量："this$0" · "$videoItem"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity$C24178`
+L781 · [class] C24178 · extends `FunctionReferenceImpl implements Function1<Integer, AuthorizedDeviceResource>` · implements `Function1<Integer, AuthorizedDeviceResource>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+方法（2）：
+- `AuthorizedDeviceResource invoke(int i)`  L786
+- `AuthorizedDeviceResource invoke(Integer num)`  L791 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity$C24211`
+L1314 · [class] static final C24211 · extends `Lambda implements Function1<Long, Unit>` · implements `Function1<Long, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+字段/常量（7）：
+- `File $localFile`  L1315
+- `DownloadNetworkRoute.Device $route`  L1316
+- `String $url`  L1317
+- `DailyDetailActivity dailyDetailActivity = DailyDetailActivity.this`  L1355
+- `File file = this.$localFile`  L1356
+- `String str = this.$url`  L1357
+- `DownloadNetworkRoute.Device device = this.$route`  L1358
+
+方法（4）：
+- `Unit invoke(Long l)`  L1348 @Override
+- `void invoke2(final Long l)`  L1354
+- `void run()`  L1361 @Override
+- `void invoke$lambda$0(File localFile, Long l, DailyDetailActivity this$0, String url, DownloadNetworkRoute.Device route)`  L1368
+    - 体内字面量："$localFile" · "this$0" · "$url" · "$route"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity$C24211$WhenMappings`
+L1322 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L1323
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailActivity$Companion`
+L1551 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailActivity.java`
+注解：
+
+方法（4）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L1552
+- `private Companion()`  L1556
+- `void launchActivity$default(Companion companion, BaseActivity baseActivity, VideoItem videoItem, boolean z, String str, int i, Object obj)`  L1559
+- `void launchActivity(BaseActivity activity, VideoItem videoItem, boolean photo, String deviceSessionId)`  L1566
+    - 体内字面量："activity" · "videoItem" · "photo" · "device_session_id"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DailyDetailEntryRoutePolicy`
+L16 · [class] public final DailyDetailEntryRoutePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/DailyDetailEntryRoutePolicy.java`
+注解：
+
+字段/常量（1）：
+- `List<VideoItem> items`  L28
+
+方法（3）：
+- `private DailyDetailEntryRoutePolicy()`  L19
+- `Class<? extends BaseActivity> resolve(VideoItem videoItem)`  L22
+    - 体内字面量："videoItem"
+- `boolean isRide5RemoteHourEntry(VideoItem videoItem)`  L27
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DevicePhotoRequestPolicy`
+L19 · [class] public final DevicePhotoRequestPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/DevicePhotoRequestPolicy.java`
+注解：
+
+字段/常量（6）：
+- `Object objM3074constructorimpl`  L53
+- `Object objInvoke`  L54
+- `String str = deviceSessionId`  L58
+- `Result.Companion companion = Result.INSTANCE`  L66
+- `DevicePhotoRequestPolicy devicePhotoRequestPolicy = this`  L67
+- `Result.Companion companion2 = Result.INSTANCE`  L83
+
+方法（2）：
+- `private DevicePhotoRequestPolicy()`  L49
+- `Object resolveModel(String path, String deviceSessionId, DeviceType deviceType, Function2<? super String, ? super String, ? extends Object> authorizeM3Preview, Function2<? super String, ? super String, ? extends Object> authorizeRide5Preview)`  L52
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DevicePhotoRequestPolicy$WhenMappings`
+L24 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/album/DevicePhotoRequestPolicy.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L25
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.DownloadProgressTextFormatter`
+L17 · [class] public final DownloadProgressTextFormatter · `com/tuwinsmart/tuwin/presentation/p010ui/album/DownloadProgressTextFormatter.java`
+注解：
+
+字段/常量（2）：
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L27
+- `Locale locale = Locale.US`  L28
+
+方法（2）：
+- `private DownloadProgressTextFormatter()`  L20
+- `String formatProgressText(long currentBytes, long totalBytes, float fraction)`  L23
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.fragment.AlbumFragment`
+L53 · [class] public final AlbumFragment · extends `BaseMainFragment` · `com/tuwinsmart/tuwin/presentation/p010ui/album/fragment/AlbumFragment.java`
+注解：
+
+字段/常量（73）：
+- `FragmentAlbumBinding binding`  L54
+- `LocalDownloadItemFragment[] mFragments = new LocalDownloadItemFragment[3]`  L55
+- `ViewGroup tabGroup`  L56
+- `FragmentAlbumBinding fragmentAlbumBinding = this.binding`  L94
+- `FragmentAlbumBinding fragmentAlbumBinding2 = null`  L95
+- `ImageView btnDownloading = fragmentAlbumBinding.btnDownloading`  L100
+- `FragmentAlbumBinding fragmentAlbumBinding3 = this.binding`  L108
+- `ImageView btnSelectAll = fragmentAlbumBinding3.btnSelectAll`  L113
+- `FragmentAlbumBinding fragmentAlbumBinding4 = this.binding`  L121
+- `ImageView btnCloseSelect = fragmentAlbumBinding4.btnCloseSelect`  L126
+- `FragmentAlbumBinding fragmentAlbumBinding5 = this.binding`  L134
+- `LinearLayout btnDelete = fragmentAlbumBinding5.btnDelete`  L139
+- `FragmentAlbumBinding fragmentAlbumBinding6 = this.binding`  L147
+- `FragmentAlbumBinding fragmentAlbumBinding7 = this.binding`  L162
+- `FragmentAlbumBinding fragmentAlbumBinding8 = this.binding`  L168
+- `FragmentAlbumBinding fragmentAlbumBinding9 = this.binding`  L174
+- `BLTextView btnRequestPermission = fragmentAlbumBinding2.btnRequestPermission`  L180
+- `DownloadListActivity.Companion companion = DownloadListActivity.INSTANCE`  L193
+- `FragmentAlbumBinding fragmentAlbumBinding = this$0.binding`  L202
+- `FragmentAlbumBinding fragmentAlbumBinding2 = null`  L203
+- `FragmentAlbumBinding fragmentAlbumBinding3 = this$0.binding`  L209
+- `FragmentAlbumBinding fragmentAlbumBinding4 = this$0.binding`  L215
+- `FragmentAlbumBinding fragmentAlbumBinding5 = this$0.binding`  L221
+- `FragmentAlbumBinding fragmentAlbumBinding6 = this$0.binding`  L227
+- `LocalDownloadItemFragment[] localDownloadItemFragmentArr = this$0.mFragments`  L238
+- `FragmentAlbumBinding fragmentAlbumBinding7 = this$0.binding`  L239
+- `FragmentAlbumBinding fragmentAlbumBinding8 = this.this$0.binding`  L259
+- `FragmentAlbumBinding fragmentAlbumBinding9 = null`  L260
+- `FragmentAlbumBinding fragmentAlbumBinding10 = this.this$0.binding`  L266
+- `FragmentAlbumBinding fragmentAlbumBinding11 = this.this$0.binding`  L272
+- `FragmentAlbumBinding fragmentAlbumBinding12 = this.this$0.binding`  L278
+- `FragmentAlbumBinding fragmentAlbumBinding13 = this.this$0.binding`  L284
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L305
+- `FragmentAlbumBinding fragmentAlbumBinding = this.this$0.binding`  L327
+- `FragmentAlbumBinding fragmentAlbumBinding = this$0.binding`  L344
+- `FragmentAlbumBinding fragmentAlbumBinding2 = null`  L345
+- `LocalDownloadItemFragment[] localDownloadItemFragmentArr = this$0.mFragments`  L351
+- `FragmentAlbumBinding fragmentAlbumBinding3 = this$0.binding`  L352
+- `LocalDownloadItemFragment[] localDownloadItemFragmentArr2 = this$0.mFragments`  L365
+- `FragmentAlbumBinding fragmentAlbumBinding4 = this$0.binding`  L366
+- `String[] strArr`  L380
+- `FragmentAlbumBinding fragmentAlbumBinding = this$0.binding`  L388
+- `FragmentAlbumBinding fragmentAlbumBinding2 = null`  L389
+- `FragmentAlbumBinding fragmentAlbumBinding3 = this$0.binding`  L395
+- `FragmentAlbumBinding fragmentAlbumBinding4 = this.this$0.binding`  L412
+- `FragmentAlbumBinding fragmentAlbumBinding5 = null`  L413
+- `FragmentAlbumBinding fragmentAlbumBinding6 = this.this$0.binding`  L419
+- `FragmentAlbumBinding fragmentAlbumBinding = this.binding`  L433
+- `FragmentAlbumBinding fragmentAlbumBinding2 = this.binding`  L439
+- `FragmentAlbumBinding fragmentAlbumBinding3 = this.binding`  L445
+- `FragmentAlbumBinding fragmentAlbumBinding4 = this.binding`  L451
+- `FragmentAlbumBinding fragmentAlbumBinding5 = this.binding`  L457
+- `LocalDownloadItemFragment[] localDownloadItemFragmentArr = this.mFragments`  L468
+- `FragmentAlbumBinding fragmentAlbumBinding6 = this.binding`  L469
+- `FragmentAlbumBinding fragmentAlbumBinding = this.binding`  L482
+- `FragmentAlbumBinding fragmentAlbumBinding2 = null`  L483
+- `FragmentAlbumBinding fragmentAlbumBinding3 = this.binding`  L489
+- `FragmentAlbumBinding fragmentAlbumBinding4 = this.binding`  L521
+- `SlidingTabLayout slidingTabLayout = fragmentAlbumBinding4.tabLayout`  L526
+- `FragmentAlbumBinding fragmentAlbumBinding5 = this.binding`  L527
+- `FragmentAlbumBinding fragmentAlbumBinding6 = this.binding`  L533
+- `FragmentAlbumBinding fragmentAlbumBinding7 = this.binding`  L556
+- `ViewGroup viewGroup = this.tabGroup`  L570
+- `FragmentAlbumBinding fragmentAlbumBinding = this.binding`  L588
+- `FragmentAlbumBinding fragmentAlbumBinding2 = this.binding`  L594
+- `FragmentAlbumBinding fragmentAlbumBinding3 = this.binding`  L601
+- `LocalDownloadItemFragment[] localDownloadItemFragmentArr = this.mFragments`  L608
+- `FragmentAlbumBinding fragmentAlbumBinding4 = this.binding`  L609
+- `FragmentAlbumBinding fragmentAlbumBinding = this.binding`  L625
+- `FragmentAlbumBinding fragmentAlbumBinding2 = this.binding`  L631
+- `FragmentAlbumBinding fragmentAlbumBinding3 = this.binding`  L638
+- `LocalDownloadItemFragment[] localDownloadItemFragmentArr = this.mFragments`  L645
+- `FragmentAlbumBinding fragmentAlbumBinding4 = this.binding`  L646
+
+方法（37）：
+- `void lazyInitData()`  L59 @Override
+- `LocalDownloadItemFragment[] getMFragments()`  L62
+- `ViewGroup getTabGroup()`  L66
+- `void setTabGroup(ViewGroup viewGroup)`  L70
+- `View getLayoutRoot(LayoutInflater inflater, ViewGroup container)`  L75 @Override
+    - 体内字面量："inflater" · "inflate(...)" · "binding" · "getRoot(...)"
+- `void initFragment()`  L90 @Override
+- `void onClick(View view)`  L104 @Override
+- `void onClick(View view)`  L117 @Override
+- `void onClick(View view)`  L130 @Override
+- `void onClick(View view)`  L143 @Override
+- `void onClick(View view)`  L154 @Override
+- `void onClick(View view)`  L184 @Override
+- `void initFragment$lambda$0(AlbumFragment this$0, View view)`  L191
+    - 体内字面量："this$0"
+- `void initFragment$lambda$1(final AlbumFragment this$0, View view)`  L200
+    - 体内字面量："this$0"
+- `Unit invoke(Integer num, Boolean bool)`  L253 @Override
+- `void invoke(int i, boolean z)`  L258
+- `void initFragment$lambda$2(AlbumFragment this$0, View view)`  L297
+    - 体内字面量："this$0"
+- `void initFragment$lambda$3(final AlbumFragment this$0, View view)`  L303
+    - 体内字面量："this$0"
+- `Unit invoke()`  L319 @Override
+- `void invoke2()`  L325
+- `void initFragment$lambda$4(AlbumFragment this$0, View view)`  L342
+    - 体内字面量："this$0"
+- `void initFragment$lambda$5(final AlbumFragment this$0, View view)`  L379
+- `void onDenied(List<String> permissions, boolean never)`  L407 @Override
+- `void onGranted(List<String> permissions, boolean all)`  L411 @Override
+- `void exitSelectMode()`  L432
+- `void initTab()`  L481
+- `int getCount()`  L496 @Override
+- `Fragment getItem(int position)`  L501 @Override
+    - 体内字面量："0"
+- `Object instantiateItem(ViewGroup container, int position)`  L512 @Override
+    - 体内字面量："container" · "null cannot be cast to non-null type com.tuwinsmart.tuwin.presentation.ui.download.fragment.LocalDownloadItemFragment"
+- `void onPageScrollStateChanged(int state)`  L540 @Override
+- `void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)`  L544 @Override
+- `void onPageSelected(int position)`  L548 @Override
+- `void updateTab(int position)`  L569
+- `void fragmentShow()`  L584 @Override
+    - 体内字面量："fragmentShow "
+- `void onTaskDownloadFinish(TaskDownloadFinishEvent event)`  L621 @Subscribe(threadMode = ThreadMode.MAIN)
+    - 体内字面量："event"
+- `void fragmentHide()`  L658 @Override
+    - 体内字面量："fragmentHide "
+- `void onDestroyView()`  L663 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.LocalVideoShareFilePolicy`
+L13 · [class] public final LocalVideoShareFilePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/LocalVideoShareFilePolicy.java`
+注解：
+
+方法（4）：
+- `private LocalVideoShareFilePolicy()`  L16
+- `boolean shouldTranscodeBeforeShare(File file)`  L19
+    - 体内字面量："file" · "getName(...)" · ".avi" · "getName(...)" · ".mov"
+- `String resolveTranscodedOutputFileName(File file)`  L31
+    - 体内字面量："file" · "shared_video" · ".MP4"
+- `File resolveTranscodedOutputFile(File file)`  L40
+    - 体内字面量："file"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity`
+L137 · [class] public final Ride3ProDailyDetailActivity · extends `BaseActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（395）：
+- `String EXTRA_DELETED_FILE_INDEX = "deleted_file_index"`  L141
+- `String EXTRA_DELETE_CAPABILITY = "delete_capability"`  L142
+- `String EXTRA_DEVICE_TYPE_CODE = "device_type_code"`  L143
+- `String EXTRA_PHOTO_MODE = "photo"`  L144
+- `String EXTRA_RETURN_TO_PLAYBACK_LIST = "return_to_playback_list"`  L145
+- `String EXTRA_SESSION_ID = "device_session_id"`  L146
+- `String EXTRA_USE_HOUR_PLAYBACK_LAYOUT = "use_hour_playback_layout"`  L147
+- `String EXTRA_VIDEO_ITEM = "videoItem"`  L148
+- `float FULL_EFFECT_CARD_SPAN = 2.0f`  L149
+- `int HOURS_PER_DAY = 24`  L150
+- `String HOUR_IDENTITY_FORMAT = "yyyyMMddHH"`  L151
+- `int NO_SELECTED_VIDEO_SCROLL_TARGET = -1`  L152
+- `long PLAYBACK_CONTROLS_HIDE_DELAY_MS = 3000`  L153
+- `long PLAYBACK_PROGRESS_TICK_MS = 250`  L154
+- `long PLAYBACK_START_DELAY_MS = 500`  L155
+- `float SELECTED_VIDEO_CAMERA_DISTANCE_DP = 1000.0f`  L156
+- `float SELECTED_VIDEO_MAX_ELEVATION_DP = 12.0f`  L157
+- `boolean allowDirectFinish`  L158
+- `ActivityRide3ProDailyDetailBinding binding`  L159
+- `VideoItem completedPlaybackItem`  L160
+- `VideoItem currentPlaybackItem`  L161
+- `int currentPlaybackSpeedIndex`  L162
+- `Ride3ProPlaybackDeleteCapability deleteCapability`  L163
+- `ViewRide3proPlaybackOverlayBinding fullscreenOverlayBinding`  L164
+- `float gestureDownX`  L165
+- `float gestureDownY`  L166
+- `long gestureSeekOriginMs`  L167
+- `Long gestureSeekTargetMs`  L168
+- `boolean gestureSeeking`  L169
+- `ActivityRide3proHourPlaybackDetailBinding hourBinding`  L170
+- `Integer hourRecordingScrollTargetIndex`  L171
+- `ViewRide3proPlaybackOverlayBinding inlineOverlayBinding`  L172
+- `VideoItem item`  L173
+- `MediaSessionHandle mediaSessionHandle`  L174
+- `boolean pendingFinishAfterPlaybackStop`  L175
+- `String pendingShareDownloadInputFileName`  L176
+- `File pendingShareDownloadedFile`  L177
+- `File pendingShareTranscodedFile`  L178
+- `VideoItem pendingShareVideoItem`  L179
+- `boolean playbackConflictGateEntered`  L180
+- `Job playbackControlsHideJob`  L181
+- `boolean playbackControlsVisible`  L182
+- `int playbackDurationSeconds`  L183
+- `Job playbackPauseJob`  L184
+- `boolean playbackPaused`  L185
+- `Job playbackProgressJob`  L186
+- `long playbackProgressMs`  L187
+- `Job playbackSwitchJob`  L188
+- `VideoItem playingVideo`  L189
+- `boolean recoverPlaybackModeInFlight`  L190
+- `boolean ride3ProPlaybackActive`  L191
+- `Job ride3ProPrepareJob`  L192
+- `VideoItem selectedVideo`  L193
+- `Integer selectedVideoScrollTargetIndex`  L194
+- `Integer selectedVideoTickCenterIndex`  L195
+- `boolean selectedVideoUserScrollActive`  L196
+- `Job sharePrepareJob`  L197
+- `Job shareTranscodeJob`  L198
+- `boolean shouldRecoverPlaybackModeAfterStop`  L199
+- `DeviceType deviceType`  L223
+- `int length = deviceTypeArrValues.length`  L227
+- `int i = 0`  L228
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = this.this$0`  L431
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity2 = this.this$0`  L446
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.this$0.binding`  L477
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.this$0.binding`  L498
+- `int gestureActivePointerId = -1`  L509
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = this.this$0`  L578
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = ride3ProDailyDetailActivity.binding`  L587
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity2 = this.this$0`  L595
+- `Job job = this.this$0.sharePrepareJob`  L651
+- `Job job = this.this$0.shareTranscodeJob`  L670
+- `TextView textView`  L890
+- `VideoItem videoItem = null`  L897
+- `ShowPicsActivity.Companion companion = ShowPicsActivity.INSTANCE`  L899
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = this`  L900
+- `VideoItem videoItem2 = this.item`  L901
+- `VideoItem videoItem3 = this.item`  L914
+- `VideoItem videoItem4 = this.item`  L920
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = this.hourBinding`  L927
+- `TextView textView2 = activityRide3proHourPlaybackDetailBinding != null ? activityRide3proHourPlaybackDetailBinding.tvTitleDate : null`  L928
+- `VideoItem videoItem5 = this.item`  L930
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding2 = this.hourBinding`  L937
+- `TextView textView3 = activityRide3proHourPlaybackDetailBinding2 != null ? activityRide3proHourPlaybackDetailBinding2.tvTitleTime : null`  L938
+- `VideoItem videoItem6 = this.item`  L940
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L948
+- `TextView textView4 = activityRide3ProDailyDetailBinding.tvTitle`  L953
+- `VideoItem videoItem7 = this.item`  L954
+- `VideoItem videoItem8 = this.item`  L960
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = this.binding`  L967
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L978
+- `ImageView btnShare = activityRide3ProDailyDetailBinding3.btnShare`  L983
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding4 = this.binding`  L991
+- `LinearLayout btnDownload = activityRide3ProDailyDetailBinding4.btnDownload`  L996
+- `LinearLayout linearLayout = btnDownload`  L998
+- `VideoItem videoItem9 = this.item`  L999
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding5 = this.binding`  L1005
+- `LinearLayout btnDelete = activityRide3ProDailyDetailBinding5.btnDelete`  L1010
+- `LinearLayout linearLayout2 = btnDelete`  L1012
+- `Ride3ProPlaybackDeleteCapability ride3ProPlaybackDeleteCapability = this.deleteCapability`  L1013
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding6 = this.binding`  L1020
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding7 = this.binding`  L1033
+- `TextView btnShareDownloadCancel = activityRide3ProDailyDetailBinding7.btnShareDownloadCancel`  L1038
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding8 = this.binding`  L1046
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding9 = this.binding`  L1060
+- `LinearLayout btnReplayPlayback = activityRide3ProDailyDetailBinding9.btnReplayPlayback`  L1065
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding3 = this.hourBinding`  L1073
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding10 = this.binding`  L1082
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding11 = this.binding`  L1088
+- `LinearLayout btnDownload2 = activityRide3ProDailyDetailBinding11.btnDownload`  L1093
+- `Ride3ProPlaybackDeleteCapability ride3ProPlaybackDeleteCapability2 = this.deleteCapability`  L1101
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding12 = this.binding`  L1107
+- `LinearLayout btnDelete2 = activityRide3ProDailyDetailBinding12.btnDelete`  L1112
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding13 = this.binding`  L1121
+- `VideoItem videoItem10 = this.item`  L1129
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L1158
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L1208
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = null`  L1209
+- `LinearLayout llBottomActions = activityRide3ProDailyDetailBinding.llBottomActions`  L1214
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L1218
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding4 = this.binding`  L1229
+- `LinearLayout linearLayout = bottomActions`  L1244
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = this.hourBinding`  L1257
+- `VideoItem videoItem = this.item`  L1261
+- `VideoItem videoItem2 = this.item`  L1273
+- `List<VideoItem> list = items`  L1279
+- `Ride3ProHourPlaybackTimelinePolicy ride3ProHourPlaybackTimelinePolicy = Ride3ProHourPlaybackTimelinePolicy.INSTANCE`  L1288
+- `VideoItem videoItem4 = this.item`  L1289
+- `int i = 0`  L1296
+- `VideoItem videoItem5 = this.item`  L1303
+- `VideoItem videoItem6 = this.item`  L1320
+- `LinearLayout hourTimelineSection = activityRide3proHourPlaybackDetailBinding.hourTimelineSection`  L1327
+- `RecordingControlEventsView recordingControlEvents = activityRide3proHourPlaybackDetailBinding.recordingControlEvents`  L1330
+- `Ride3ProHourTimelineView hourTimeline = activityRide3proHourPlaybackDetailBinding.hourTimeline`  L1337
+- `RecyclerView recyclerHourRecordings = activityRide3proHourPlaybackDetailBinding.recyclerHourRecordings`  L1378
+- `RecyclerView recyclerView = recyclerHourRecordings`  L1380
+- `RecyclerView recyclerHourRecordings2 = activityRide3proHourPlaybackDetailBinding.recyclerHourRecordings`  L1382
+- `RecyclerView recyclerHourRecordings3 = activityRide3proHourPlaybackDetailBinding.recyclerHourRecordings`  L1393
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = this`  L1397
+- `RecyclerView recyclerSelectedVideos = specializedBinding.recyclerSelectedVideos`  L1409
+- `RecyclerView recyclerView = recyclerSelectedVideos`  L1418
+- `RecyclerView recyclerView2 = recyclerSelectedVideos`  L1430
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = Ride3ProDailyDetailActivity.this`  L1452
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = Ride3ProDailyDetailActivity.this.hourBinding`  L1476
+- `int position`  L1489
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = this.hourBinding`  L1508
+- `RecyclerView recyclerSelectedVideos = activityRide3proHourPlaybackDetailBinding.recyclerSelectedVideos`  L1512
+- `RecyclerView recyclerView = recyclerSelectedVideos`  L1524
+- `int iRoundToInt`  L1528
+- `float width`  L1547
+- `View viewFindSnapView`  L1590
+- `int position`  L1591
+- `int i = 0`  L1603
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = Ride3ProDailyDetailActivity.this.hourBinding`  L1623
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = this.hourBinding`  L1637
+- `RecyclerView recyclerView`  L1657
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = this.hourBinding`  L1666
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding2 = this.hourBinding`  L1672
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = this.hourBinding`  L1697
+- `RecyclerView recyclerHourRecordings = activityRide3proHourPlaybackDetailBinding.recyclerHourRecordings`  L1701
+- `int i = 0`  L1755
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = this.hourBinding`  L1771
+- `VideoItem videoItem = this.selectedVideo`  L1782
+- `Job job = this.playbackSwitchJob`  L1788
+- `boolean z = false`  L1795
+- `Job job2 = this.playbackSwitchJob`  L1797
+- `VideoItem videoItem2 = this.currentPlaybackItem`  L1803
+- `Job job3 = this.playbackSwitchJob`  L1809
+- `VideoItem videoItem3 = this.currentPlaybackItem`  L1811
+- `VideoItem videoItem4 = this.currentPlaybackItem`  L1815
+- `Job job`  L1824
+- `Job job2 = this.playbackSwitchJob`  L1825
+- `boolean z = false`  L1826
+- `Job job3 = null`  L1834
+- `C24811 c24811`  L1998
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity`  L1999
+- `VideoItem videoItem2`  L2000
+- `Integer num`  L2001
+- `Object value`  L2002
+- `Object obj = c24811.result`  L2013
+- `int i = c24811.label`  L2015
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = this.hourBinding`  L2077
+- `LinearLayout playbackErrorState = activityRide3proHourPlaybackDetailBinding.playbackErrorState`  L2079
+- `ImageView playerDefaultBackground = activityRide3proHourPlaybackDetailBinding.playerDefaultBackground`  L2083
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = this.hourBinding`  L2092
+- `ImageView imageView = activityRide3proHourPlaybackDetailBinding != null ? activityRide3proHourPlaybackDetailBinding.playerDefaultBackground : null`  L2093
+- `Integer num = null`  L2105
+- `int i = 0`  L2108
+- `VideoItem videoItem = this.playingVideo`  L2115
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L2134
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = null`  L2135
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L2147
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = Ride3ProDailyDetailActivity.this`  L2161
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity2 = Ride3ProDailyDetailActivity.this`  L2165
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = this`  L2178
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.this$0.binding`  L2190
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L2206
+- `VideoItem videoItem = this.selectedVideo`  L2249
+- `Job job = this.playbackControlsHideJob`  L2281
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = null`  L2282
+- `Ride3ProPlaybackGestureSeekPolicy ride3ProPlaybackGestureSeekPolicy = Ride3ProPlaybackGestureSeekPolicy.INSTANCE`  L2286
+- `long j = this.gestureSeekOriginMs`  L2287
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = this.binding`  L2288
+- `long j = targetMs - this.gestureSeekOriginMs`  L2314
+- `Long l = this.gestureSeekTargetMs`  L2334
+- `ImageView btnPlaybackFullscreen = overlayBinding.btnPlaybackFullscreen`  L2373
+- `ImageView btnPlaybackPause = overlayBinding.btnPlaybackPause`  L2381
+- `LinearLayout btnPlaybackSpeed = overlayBinding.btnPlaybackSpeed`  L2389
+- `TextView btnPlaybackScreenshot = overlayBinding.btnPlaybackScreenshot`  L2397
+- `TextView btnPlaybackDownload = overlayBinding.btnPlaybackDownload`  L2405
+- `Job job`  L2423
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this$0.binding`  L2441
+- `ViewRide3proPlaybackOverlayBinding[] viewRide3proPlaybackOverlayBindingArr = new ViewRide3proPlaybackOverlayBinding[2]`  L2479
+- `ViewRide3proPlaybackOverlayBinding viewRide3proPlaybackOverlayBinding = this.inlineOverlayBinding`  L2480
+- `int i`  L2492
+- `int i2`  L2493
+- `int i3`  L2494
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding`  L2495
+- `String string`  L2496
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = this.binding`  L2497
+- `int i4 = i`  L2507
+- `int i5 = i2`  L2513
+- `long j = 0`  L2515
+- `int i6 = this.playbackControlsVisible ? 0 : 8`  L2517
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L2518
+- `ImageView imageView = activityRide3ProDailyDetailBinding3.btnShare`  L2523
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding4 = this.binding`  L2530
+- `ImageView imageView2 = activityRide3ProDailyDetailBinding.btnShare`  L2537
+- `int i7 = i6`  L2546
+- `boolean z`  L2564
+- `ProgressBar progressBar2 = progressBar`  L2571
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L2575
+- `FFmpegPlayerView videoView = activityRide3ProDailyDetailBinding.videoView`  L2580
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L2603
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding = this.hourBinding`  L2613
+- `TextView textView = activityRide3proHourPlaybackDetailBinding != null ? activityRide3proHourPlaybackDetailBinding.tvTitleDate : null`  L2614
+- `ActivityRide3proHourPlaybackDetailBinding activityRide3proHourPlaybackDetailBinding2 = this.hourBinding`  L2618
+- `TextView textView2 = activityRide3proHourPlaybackDetailBinding2 != null ? activityRide3proHourPlaybackDetailBinding2.tvTitleTime : null`  L2619
+- `Job job = this.ride3ProPrepareJob`  L2638
+- `Object objM3074constructorimpl`  L2650
+- `Result.Companion companion = Result.INSTANCE`  L2655
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = this`  L2656
+- `Result.Companion companion2 = Result.INSTANCE`  L2659
+- `Ride3ProDailyDetailActivity$startAuthorizedMediaPlayback$1 ride3ProDailyDetailActivity$startAuthorizedMediaPlayback$1`  L2676
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding`  L2677
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity`  L2678
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity2 = "trace-"`  L2679
+- `Object objStart = ride3ProDailyDetailActivity$startAuthorizedMediaPlayback$1.result`  L2690
+- `int i = ride3ProDailyDetailActivity$startAuthorizedMediaPlayback$1.label`  L2692
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = this.binding`  L2706
+- `Result.Companion companion = Result.INSTANCE`  L2721
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = ride3ProDailyDetailActivity2.binding`  L2726
+- `Result.Companion companion2 = Result.INSTANCE`  L2734
+- `Result.Companion companion3 = Result.INSTANCE`  L2747
+- `Result.Companion companion4 = Result.INSTANCE`  L2757
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding4 = ride3ProDailyDetailActivity.binding`  L2761
+- `Result.Companion companion5 = Result.INSTANCE`  L2767
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding5 = ride3ProDailyDetailActivity.binding`  L2773
+- `Result.Companion companion6 = Result.INSTANCE`  L2779
+- `Job job = this.ride3ProPrepareJob`  L2792
+- `Job job2 = this.playbackPauseJob`  L2796
+- `VideoItem videoItem = this.currentPlaybackItem`  L2864
+- `VideoItem videoItem = this.completedPlaybackItem`  L2877
+- `VideoItem videoItem = this.currentPlaybackItem`  L2888
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L2959
+- `LinearLayout btnReplayPlayback = activityRide3ProDailyDetailBinding.btnReplayPlayback`  L2964
+- `Job job = this.playbackControlsHideJob`  L2978
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L2990
+- `Job job = this.playbackControlsHideJob`  L3015
+- `VideoItem videoItem = this.currentPlaybackItem`  L3077
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L3081
+- `Job job = this.playbackPauseJob`  L3089
+- `boolean z = this.playbackPaused`  L3091
+- `boolean z2 = !z`  L3092
+- `VideoItem videoItem = this.currentPlaybackItem`  L3176
+- `Integer ride3ProFileIndex`  L3249
+- `VideoItem videoItem = this.currentPlaybackItem`  L3250
+- `Integer ride3ProFileIndex`  L3260
+- `VideoItem videoItem = this.currentPlaybackItem`  L3261
+- `Job job = this.playbackProgressJob`  L3452
+- `VideoItem videoItem = this.currentPlaybackItem`  L3485
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L3596
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = null`  L3597
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L3603
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L3639
+- `VideoItem videoItem`  L3699
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L3701
+- `String elapsedTime`  L3711
+- `String str = strSubstringAfterLast$default`  L3716
+- `VideoItem videoItem = this.currentPlaybackItem`  L3767
+- `Ride3ProPlaybackDeleteCapability ride3ProPlaybackDeleteCapability = null`  L3768
+- `Ride3ProPlaybackDeleteCapability ride3ProPlaybackDeleteCapability2 = this.deleteCapability`  L3778
+- `Object objM3074constructorimpl`  L3796
+- `VideoItem videoItem = this.currentPlaybackItem`  L3797
+- `Result.Companion companion = Result.INSTANCE`  L3812
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = this`  L3813
+- `Result.Companion companion2 = Result.INSTANCE`  L3816
+- `Ride3ProShareVideoFilePolicy ride3ProShareVideoFilePolicy = Ride3ProShareVideoFilePolicy.INSTANCE`  L3862
+- `VideoItem videoItem = this.pendingShareVideoItem`  L3863
+- `VideoItem videoItem2 = this.pendingShareVideoItem`  L3865
+- `Job job = this.sharePrepareJob`  L3962
+- `String strResolveDownloadedInputFileName = this.pendingShareDownloadInputFileName`  L3971
+- `Ride3ProShareVideoFilePolicy ride3ProShareVideoFilePolicy = Ride3ProShareVideoFilePolicy.INSTANCE`  L3973
+- `VideoItem videoItem = this.pendingShareVideoItem`  L3974
+- `VideoItem videoItem2 = this.pendingShareVideoItem`  L3976
+- `String str = strResolveDownloadedInputFileName`  L3979
+- `boolean z`  L3998
+- `File file = Ride3ProDailyDetailActivity.this.pendingShareDownloadedFile`  L4000
+- `Ride3ProDownloadTranscodePolicy ride3ProDownloadTranscodePolicy = Ride3ProDownloadTranscodePolicy.INSTANCE`  L4002
+- `VideoItem videoItem = this.pendingShareVideoItem`  L4181
+- `File fileCreateLocalMediaFile = this.pendingShareDownloadedFile`  L4182
+- `DownloadUtil downloadUtil = DownloadUtil.INSTANCE`  L4184
+- `String strResolveDownloadedInputFileName = this.pendingShareDownloadInputFileName`  L4185
+- `File file = fileCreateLocalMediaFile`  L4192
+- `Ride3ProShareVideoFilePolicy ride3ProShareVideoFilePolicy = Ride3ProShareVideoFilePolicy.INSTANCE`  L4199
+- `Job job = this.shareTranscodeJob`  L4206
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L4307
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = null`  L4308
+- `FrameLayout layoutShareDownloadProgress = activityRide3ProDailyDetailBinding.layoutShareDownloadProgress`  L4313
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L4316
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding4 = this.binding`  L4322
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding5 = this.binding`  L4328
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding6 = this.binding`  L4334
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L4344
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = null`  L4345
+- `FrameLayout layoutShareDownloadProgress = activityRide3ProDailyDetailBinding.layoutShareDownloadProgress`  L4350
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L4353
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding4 = this.binding`  L4359
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding5 = this.binding`  L4365
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding6 = this.binding`  L4371
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L4382
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = null`  L4383
+- `FrameLayout layoutShareDownloadProgress = activityRide3ProDailyDetailBinding.layoutShareDownloadProgress`  L4388
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L4391
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding4 = this.binding`  L4397
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding5 = this.binding`  L4403
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding6 = this.binding`  L4409
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L4419
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = null`  L4420
+- `FrameLayout layoutShareDownloadProgress = activityRide3ProDailyDetailBinding.layoutShareDownloadProgress`  L4425
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L4428
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding4 = this.binding`  L4434
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding5 = this.binding`  L4440
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding6 = this.binding`  L4446
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L4457
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = null`  L4458
+- `FrameLayout layoutShareDownloadProgress = activityRide3ProDailyDetailBinding.layoutShareDownloadProgress`  L4463
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L4466
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding4 = this.binding`  L4472
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding5 = this.binding`  L4478
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding6 = this.binding`  L4484
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L4494
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = null`  L4495
+- `FrameLayout layoutShareDownloadProgress = activityRide3ProDailyDetailBinding.layoutShareDownloadProgress`  L4500
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L4503
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding4 = this.binding`  L4509
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding5 = this.binding`  L4515
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding6 = this.binding`  L4521
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L4590
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L4602
+- `Job job = this.playbackSwitchJob`  L4614
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = null`  L4615
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding2 = this.binding`  L4622
+- `FFmpegPlayerView videoView = activityRide3ProDailyDetailBinding2.videoView`  L4627
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding3 = this.binding`  L4630
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.binding`  L4666
+- `C2478xc89fa65b c2478xc89fa65b`  L4862
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity`  L4863
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity2`  L4864
+- `Object objM2935stop0E7RQCE`  L4865
+- `Object obj = c2478xc89fa65b.result`  L4876
+- `int i = c2478xc89fa65b.label`  L4878
+- `Ride3ProPlaybackStopCoordinator ride3ProPlaybackStopCoordinator = Ride3ProPlaybackStopCoordinator.INSTANCE`  L4888
+- `Ride3ProPlaybackStopCoordinator ride3ProPlaybackStopCoordinator2 = Ride3ProPlaybackStopCoordinator.INSTANCE`  L4908
+- `C2475xa14c960c c2475xa14c960c`  L4948
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity`  L4949
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity2`  L4950
+- `Object objM2935stop0E7RQCE`  L4951
+- `Object obj = c2475xa14c960c.result`  L4962
+- `int i = c2475xa14c960c.label`  L4964
+- `Ride3ProPlaybackStopCoordinator ride3ProPlaybackStopCoordinator = Ride3ProPlaybackStopCoordinator.INSTANCE`  L4975
+- `Ride3ProPlaybackStopCoordinator ride3ProPlaybackStopCoordinator2 = Ride3ProPlaybackStopCoordinator.INSTANCE`  L4995
+- `C24241 c24241`  L5033
+- `Job job`  L5034
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity`  L5035
+- `Job job2`  L5036
+- `Object obj = c24241.result`  L5047
+- `int i = c24241.label`  L5049
+- `Ride3ProDailyDetailActivity$stopMediaSession$1 ride3ProDailyDetailActivity$stopMediaSession$1`  L5090
+- `Object obj = ride3ProDailyDetailActivity$stopMediaSession$1.result`  L5101
+- `int i = ride3ProDailyDetailActivity$stopMediaSession$1.label`  L5103
+- `MediaSessionHandle mediaSessionHandle = this.mediaSessionHandle`  L5107
+- `Result.Companion companion = Result.INSTANCE`  L5109
+- `Result.Companion companion2 = Result.INSTANCE`  L5123
+- `Result.Companion companion3 = Result.INSTANCE`  L5128
+
+方法（214）：
+- `String invoke()`  L208 @Override
+    - 体内字面量："device_session_id"
+- `DeviceType invoke()`  L222 @Override
+- `VerifiedDeviceFileCatalog invoke()`  L253 @Override
+- `DeviceSessionManager invoke()`  L262 @Override
+- `Ride3ProDeviceMediaPort invoke()`  L275 @Override
+    - 体内字面量："ride6DeviceMediaPort"
+- `MediaSessionCoordinatorFactory invoke()`  L287 @Override
+- `Ride3ProHourRecordingAdapter invoke()`  L325 @Override
+- `Ride3ProSelectedVideoAdapter invoke()`  L377 @Override
+- `Ride3ProRecordRepositoryImpl invoke()`  L430 @Override
+- `Ride3ProApiService invoke()`  L439 @Override
+- `Ride3ProRequestExecutor invoke()`  L454 @Override
+- `Unit invoke()`  L470 @Override
+- `void invoke2()`  L476
+- `Unit invoke()`  L491 @Override
+- `void invoke2()`  L497
+- `void onRetrying(int retryCount, int maxRetry)`  L512 @Override
+- `void onPlaying()`  L516 @Override
+- `void onStopped()`  L528 @Override
+- `void onBuffering()`  L536 @Override
+- `void onError(String message)`  L541 @Override
+- `void onFullscreenChanged(boolean isFullscreen)`  L554 @Override
+- `FFmpegNativePlayerAdapter invoke()`  L570 @Override
+- `FFmpegTexturePlayerView invoke()`  L574 @Override
+- `FFmpegPlayerView invoke()`  L586 @Override
+- `FFmpegPlayerView.PlayerCallback invoke()`  L603 @Override
+- `MediaSessionCoordinator invoke()`  L618 @Override
+- `Ride3ProLocalVideoTranscoder invoke()`  L631 @Override
+    - 体内字面量："getApplicationContext(...)"
+- `Unit invoke()`  L644 @Override
+- `void invoke2()`  L650
+- `Unit invoke()`  L662 @Override
+- `void invoke2()`  L668
+- `String getDeviceSessionId()`  L807
+- `DeviceType getDeviceType()`  L812
+- `VerifiedDeviceFileCatalog getFileCatalog()`  L816
+- `DeviceSessionManager getDeviceSessions()`  L820
+- `Ride3ProDeviceMediaPort getMediaPort()`  L825
+- `MediaSessionCoordinatorFactory getMediaCoordinatorFactory()`  L830
+- `Ride3ProHourRecordingAdapter getHourRecordingAdapter()`  L835
+- `Ride3ProSelectedVideoAdapter getSelectedVideoAdapter()`  L840
+- `Ride3ProRecordRepositoryImpl getRide3ProRecordRepository()`  L845
+- `FFmpegNativePlayerAdapter getPlayerAdapter()`  L850
+- `MediaSessionCoordinator getMediaCoordinator()`  L854
+- `Ride3ProLocalVideoTranscoder getShareVideoTranscoder()`  L859
+- `View getContentRoot()`  L864 @Override
+    - 体内字面量："inflate(...)" · "bind(...)" · "getRoot(...)" · "inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L889 @Override
+- `void onClick(View view)`  L974 @Override
+- `void onClick(View view)`  L987 @Override
+- `void onClick(View view)`  L1027 @Override
+- `void onClick(View view)`  L1042 @Override
+- `void onClick(View view)`  L1053 @Override
+- `void onClick(View view)`  L1069 @Override
+- `void onClick(View view)`  L1077 @Override
+- `void onClick(View view)`  L1097 @Override
+- `void onClick(View view)`  L1116 @Override
+- `void onCreate$lambda$0(Ride3ProDailyDetailActivity this$0, View view)`  L1139
+    - 体内字面量："this$0"
+- `void onCreate$lambda$1(Ride3ProDailyDetailActivity this$0, View view)`  L1146
+    - 体内字面量："this$0"
+- `void onCreate$lambda$2(Ride3ProDailyDetailActivity this$0, View view)`  L1156
+    - 体内字面量："this$0"
+- `void onCreate$lambda$3(Ride3ProDailyDetailActivity this$0, View view)`  L1167
+    - 体内字面量："this$0"
+- `void onCreate$lambda$4(Ride3ProDailyDetailActivity this$0, View view)`  L1173
+    - 体内字面量："this$0"
+- `void onCreate$lambda$5(Ride3ProDailyDetailActivity this$0, View view)`  L1179
+    - 体内字面量："this$0"
+- `void onCreate$lambda$6(Ride3ProDailyDetailActivity this$0, View view)`  L1185
+    - 体内字面量："this$0"
+- `void onCreate$lambda$7(Ride3ProDailyDetailActivity this$0, View view)`  L1191
+    - 体内字面量："this$0"
+- `void onCreate$lambda$8(Ride3ProDailyDetailActivity this$0, View view)`  L1197
+    - 体内字面量："this$0"
+- `boolean getUsesHourPlaybackLayout()`  L1203
+- `void configureHourPlaybackBottomActionsForSystemBars()`  L1207
+- `WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat)`  L1225 @Override
+- `WindowInsetsCompat configureHourPlaybackBottomActionsForSystemBars$lambda$10(int i, int i2, LinearLayout bottomActions, View view, WindowInsetsCompat windowInsets)`  L1239
+    - 体内字面量："$bottomActions" · "<anonymous parameter 0>" · "windowInsets"
+- `void configureHourTimeline()`  L1255
+- `Unit invoke(Integer num, Boolean bool)`  L1346 @Override
+- `void invoke(int i3, boolean z)`  L1351
+- `Unit invoke(Integer num)`  L1361 @Override
+- `void invoke(int i3)`  L1366
+- `void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom)`  L1391 @Override
+- `void configureSelectedVideoCarousel(ActivityRide3proHourPlaybackDetailBinding specializedBinding, final int selectedVideoIndex)`  L1407
+- `void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom)`  L1427 @Override
+- `RecyclerView.OnScrollListener createSelectedVideoScrollListener(final LinearLayoutManager layoutManager)`  L1437
+- `void onScrolled(RecyclerView recyclerView, int dx, int dy)`  L1440 @Override
+    - 体内字面量："recyclerView"
+- `void onScrollStateChanged(RecyclerView recyclerView, int newState)`  L1447 @Override
+    - 体内字面量："recyclerView"
+- `void playSelectedVideoScrollTickIfNeeded(RecyclerView recyclerView, LinearLayoutManager layoutManager)`  L1488
+- `void centerSelectedVideo$default(Ride3ProDailyDetailActivity ride3ProDailyDetailActivity, int i, boolean z, int i2, Object obj)`  L1499
+- `void centerSelectedVideo(final int index, boolean animate)`  L1507
+- `void run()`  L1527 @Override
+- `void applySelectedVideoCarouselTransform(RecyclerView recyclerView)`  L1546
+- `RecyclerView.OnScrollListener createHourRecordingScrollListener(final LinearLayoutManager layoutManager)`  L1580
+- `void onScrolled(RecyclerView recyclerView, int dx, int dy)`  L1583 @Override
+    - 体内字面量："recyclerView"
+- `void onScrollStateChanged(RecyclerView recyclerView, int newState)`  L1589 @Override
+- `void focusHourRecordingForPointer(int pointerSeconds, boolean animateCard)`  L1634
+- `void updateHourRecordingSelection$default(Ride3ProDailyDetailActivity ride3ProDailyDetailActivity, Ride3ProHourRecordingSelection ride3ProHourRecordingSelection, boolean z, boolean z2, boolean z3, int i, Object obj)`  L1646
+- `void updateHourRecordingSelection(Ride3ProHourRecordingSelection selection, boolean centerCard, boolean animateCard, boolean centerSelectedCarousel)`  L1656
+- `void centerHourRecording$default(Ride3ProDailyDetailActivity ride3ProDailyDetailActivity, int i, boolean z, int i2, Object obj)`  L1688
+- `void centerHourRecording(int index, boolean animate)`  L1696
+- `void run()`  L1715 @Override
+- `void centerHourRecording$lambda$23(Ride3ProDailyDetailActivity this$0, RecyclerView recyclerView)`  L1729
+    - 体内字面量："this$0" · "$recyclerView"
+- `void applyHourRecordingCarouselTransform(RecyclerView recyclerView)`  L1736
+- `void selectHourVideo(VideoItem video)`  L1753
+- `void playSelectedVideo(VideoItem selected)`  L1780
+- `void launchPlaybackSwitch(VideoItem playbackTarget)`  L1823
+- `boolean canContinuePlaybackSelection()`  L1991
+- `Object switchPlaybackTo(VideoItem videoItem, Continuation<? super Unit> continuation)`  L1997
+- `String hourIdentity(VideoItem videoItem)`  L2069
+    - 体内字面量："format(...)"
+- `void setHourPlaybackErrorVisible(boolean visible)`  L2076
+- `void setHourPlayerDefaultBackgroundVisible(boolean visible)`  L2091
+- `void setHourPlayingStatusVisible(boolean visible)`  L2101
+- `void initPlaybackControls()`  L2131
+    - 体内字面量："getLayoutInflater(...)"
+- `View invoke(Context context)`  L2159 @Override
+    - 体内字面量："context"
+- `void configureHourPlaybackGestures()`  L2177
+- `boolean onDown(MotionEvent event)`  L2182 @Override
+    - 体内字面量："event"
+- `boolean onSingleTapConfirmed(MotionEvent event)`  L2188 @Override
+    - 体内字面量："event"
+- `boolean onDoubleTap(MotionEvent event)`  L2200 @Override
+    - 体内字面量："event"
+- `boolean onTouch(View view, MotionEvent motionEvent)`  L2213 @Override
+- `boolean configureHourPlaybackGestures$lambda$31(GestureDetector gestureDetector, Ride3ProDailyDetailActivity this$0, int i, View view, MotionEvent motionEvent)`  L2220
+    - 体内字面量："$gestureDetector" · "this$0"
+- `void playSelectedHourRecording()`  L2248
+- `void beginGestureTouch(View view, MotionEvent event)`  L2255
+- `void updateGestureSeek(MotionEvent event, int touchSlop)`  L2268
+- `void endGestureTouch(View view, boolean commit)`  L2300
+- `boolean isHorizontalSeekGesture(float horizontalDistance, float verticalDistance, int touchSlop)`  L2309
+- `void showGestureSeekPreview(long targetMs)`  L2313
+- `boolean finishGestureSeek(boolean commit)`  L2330
+- `ViewRide3proPlaybackOverlayBinding createPlaybackOverlayBinding(LayoutInflater inflater, ViewGroup parent, boolean attachToParent)`  L2353
+    - 体内字面量："inflate(...)" · "playback overlay parent is required when attaching" · "bind(...)"
+- `void configurePlaybackOverlay(ViewRide3proPlaybackOverlayBinding overlayBinding)`  L2372
+- `void onClick(View view)`  L2377 @Override
+- `void onClick(View view)`  L2385 @Override
+- `void onClick(View view)`  L2393 @Override
+- `void onClick(View view)`  L2401 @Override
+- `void onClick(View view)`  L2409 @Override
+- `void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)`  L2415 @Override
+- `void onStartTrackingTouch(SeekBar seekBar)`  L2422 @Override
+- `void onStopTrackingTouch(SeekBar seekBar)`  L2431 @Override
+- `void configurePlaybackOverlay$lambda$39(Ride3ProDailyDetailActivity this$0, View view)`  L2439
+    - 体内字面量："this$0"
+- `void configurePlaybackOverlay$lambda$40(Ride3ProDailyDetailActivity this$0, View view)`  L2451
+    - 体内字面量："this$0"
+- `void configurePlaybackOverlay$lambda$41(Ride3ProDailyDetailActivity this$0, View view)`  L2458
+    - 体内字面量："this$0"
+- `void configurePlaybackOverlay$lambda$42(Ride3ProDailyDetailActivity this$0, View view)`  L2465
+    - 体内字面量："this$0"
+- `void configurePlaybackOverlay$lambda$43(Ride3ProDailyDetailActivity this$0, View view)`  L2472
+    - 体内字面量："this$0"
+- `List<ViewRide3proPlaybackOverlayBinding> allPlaybackOverlays()`  L2478
+- `void syncOverlayState()`  L2491
+- `void syncHourPersistentPlaybackProgress(ViewRide3proPlaybackOverlayBinding overlayBinding, long totalMs, long positionMs)`  L2563
+- `Job startVideoPlayback(VideoItem videoItem)`  L2596
+- `AuthorizedDeviceResource authorizeThumbnail(int fileIndex)`  L2649
+- `Object m2909startAuthorizedMediaPlaybackIoAF18A(Continuation<? super Result<Unit>> continuation)`  L2675
+- `void resetPlaybackUi()`  L2790
+- `void requestPlaybackStopIfNeeded()`  L2858
+- `void handlePlaybackCompleted()`  L2863
+- `void replayCompletedPlayback()`  L2876
+- `void retryCurrentPlayback()`  L2887
+- `void resetPlaybackProgressState()`  L2950
+- `void updateReplayButtonVisibility()`  L2958
+- `void showPlaybackControls()`  L2969
+- `void hidePlaybackControls()`  L2976
+- `void togglePlaybackControls()`  L2988
+- `void schedulePlaybackControlsAutoHide()`  L3013
+- `void updatePlaybackProgressUi(long positionMs)`  L3070
+- `void togglePlaybackPause()`  L3076
+- `void showPlaybackSpeedSelector()`  L3175
+- `void onItemClick(View view, int i)`  L3182 @Override
+- `void showPlaybackSpeedSelector$lambda$48(Ride3ProDailyDetailActivity this$0, View view, int i)`  L3189
+    - 体内字面量："this$0" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.album.Ride3ProDailyDetailActivity$applyPlaybackSpeed$1" · "Ride3ProDailyDetailActivity.kt" · "invokeSuspend"
+- `void applyPlaybackSpeed(int index, boolean showError)`  L3248
+- `void seekPlaybackTo(long targetMs)`  L3259
+- `void startPlaybackProgressLoop()`  L3320
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.album.Ride3ProDailyDetailActivity$startPlaybackProgressLoop$1" · "Ride3ProDailyDetailActivity.kt" · "invokeSuspend" · "call to 'resume' before 'invoke' with coroutine" · "binding"
+- `void stopPlaybackProgressLoop()`  L3451
+- `void requestCurrentPlaybackDownload()`  L3459
+- `void onGranted(List<String> permissions, boolean all)`  L3467 @Override
+- `void onDenied(List<String> permissions, boolean never)`  L3472 @Override
+- `void downloadCurrentPlayback()`  L3484
+- `void enqueueCurrentPlaybackDownload(VideoItem selected, int fileIndex)`  L3572
+    - 体内字面量："complete Ride3Pro playback list is required for download naming" · "Ride3Pro playback download requires an explicit device session" · "Ride3Pro playback download must create exactly one task: added=" · "selected Ride3Pro playback file is missing from the naming list: fileIndex="
+- `void captureCurrentPlaybackScreenshot()`  L3595
+- `void onGranted(List<String> permissions, boolean all)`  L3616 @Override
+- `void onDenied(List<String> permissions, boolean never)`  L3621 @Override
+- `void savePlaybackScreenshot()`  L3637
+- `String buildRide3ProScreenshotName()`  L3694
+    - 体内字面量："ride3pro_" · "yyyy_MM_dd_HHmmss" · ".jpg"
+- `void renderPlayingVideoInfo()`  L3698
+- `String buildPlaybackInfoText(VideoItem videoItem)`  L3710
+- `void showDeleteConfirmDialog()`  L3737
+- `void returnToPlaybackListForDelete()`  L3762
+- `void shareCurrentPlayback()`  L3795
+- `void share(final String url, final DownloadNetworkRoute.Device route)`  L3829
+    - 体内字面量："http"
+- `void onGranted(List<String> permissions, boolean all)`  L3841 @Override
+- `void onDenied(List<String> permissions, boolean never)`  L3846 @Override
+- `long beginShareFlow()`  L3859
+- `void stopPlaybackBeforeShareDownload(String url, DownloadNetworkRoute.Device route, long token)`  L3961
+- `void downloadShare(String url, DownloadNetworkRoute.Device route, final long token)`  L3970
+- `Unit invoke(String str2)`  L3990 @Override
+- `void invoke2(String it)`  L3997
+- `Unit invoke(Function0<? extends Unit> function0)`  L4082 @Override
+- `void invoke2(Function0<Unit> cancel)`  L4088
+    - 体内字面量："cancel" · "<anonymous>" · "it" · "invoke" · "<anonymous>" · "progress" · "Lcom/lzy/okgo/model/Progress;" · "invoke"
+- `void transcodeDownloadedShareVideo(long token)`  L4179
+- `void showSharePreparingProgress()`  L4306
+- `void showShareDownloadProgress()`  L4343
+- `void updateShareDownloadProgress(Progress progress)`  L4381
+- `void showShareTranscodingProgress()`  L4418
+- `void updateShareTranscodingProgress(int processedFrames, int totalFrames)`  L4456
+- `void hideShareDownloadProgress()`  L4493
+- `void cancelShareFlow()`  L4530
+- `void finishShareFlow(long token)`  L4541
+- `void clearShareFlowState()`  L4548
+- `void clearShareTemporaryFiles(boolean deleteTranscodedFile)`  L4558
+- `void deleteFileQuietly(File file)`  L4568
+- `void shareVideo(File file)`  L4576
+    - 体内字面量：".fileProvider" · "getUriForFile(...)" · "android.intent.action.SEND" · "android.intent.extra.STREAM"
+- `void onResume()`  L4588 @Override
+- `void onPause()`  L4600 @Override
+- `void onDestroy()`  L4612 @Override
+- `void onStop()`  L4643 @Override
+- `void onBackPressed()`  L4654 @Override
+- `void finish()`  L4678 @Override
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.album.Ride3ProDailyDetailActivity$restorePreviewRecordingIfNeeded$1" · "Ride3ProDailyDetailActivity.kt" · "invokeSuspend"
+- `void restorePreviewRecordingIfNeeded()`  L4750
+- `void ensurePlaybackModeOnResumeIfNeeded()`  L4754
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.album.Ride3ProDailyDetailActivity$ensurePlaybackModeOnResumeIfNeeded$1" · "Ride3ProDailyDetailActivity.kt" · "invokeSuspend"
+- `Object m2912stopPlaybackSessionAndReleaseConflictWindowIoAF18A(Continuation<? super Result<Unit>> continuation)`  L4861
+- `Object m2911stopPlaybackForExitAndReleaseConflictWindowIoAF18A(Continuation<? super Result<Unit>> continuation)`  L4947
+- `Object cancelAndAwaitPlaybackPreparation(Continuation<? super Unit> continuation)`  L5032
+- `Object m2910stopMediaSessionIoAF18A(Continuation<? super Result<Unit>> continuation)`  L5089
+- `boolean shouldBypassPlaybackExitGuard()`  L5133
+- `void requestFinishAfterPlaybackStop()`  L5137
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.album.Ride3ProDailyDetailActivity$requestFinishAfterPlaybackStop$1" · "Ride3ProDailyDetailActivity.kt" · "invokeSuspend"
+- `void enterPlaybackConflictWindow()`  L5208
+- `boolean isReturningToPlaybackList()`  L5217
+    - 体内字面量："return_to_playback_list"
+- `void exitPlaybackConflictWindow()`  L5222
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$AnonymousClass1`
+L4021 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（6）：
+- `File $downloadedFile`  L4022
+- `boolean $shouldTranscode`  L4023
+- `long $token`  L4024
+- `int label`  L4025
+- `Ride3ProDailyDetailActivity this$0`  L4026
+- `File file = this.$downloadedFile`  L4058
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L4038 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L4043 @Override
+- `Object invokeSuspend(Object obj)`  L4048 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$applyPlaybackSpeed$1$result$1`
+L19 · [class] final Ride3ProDailyDetailActivity$applyPlaybackSpeed$1$result$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$applyPlaybackSpeed$1$result$1.java`
+注解：
+
+字段/常量（5）：
+- `int $index`  L20
+- `int label`  L21
+- `Ride3ProDailyDetailActivity this$0`  L22
+- `Object objM2860setPlaybackSpeedgIAlus`  L48
+- `int i = this.label`  L50
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L32 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L37 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L42
+- `Object invokeSuspend(Object obj)`  L47 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24231`
+L3198 · [class] static final C24231 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（4）：
+- `int $index`  L3199
+- `boolean $showError`  L3200
+- `int label`  L3201
+- `int i = this.label`  L3223
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L3211 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L3216 @Override
+- `Object invokeSuspend(Object obj)`  L3221 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24241`
+L704 · [class] static final C24241 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L705
+- `Object L$1`  L706
+- `int label`  L707
+- `Object result`  L708
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L715 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24351`
+L3500 · [class] static final C24351 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（9）：
+- `int $fileIndex`  L3501
+- `VideoItem $selected`  L3502
+- `int label`  L3503
+- `Object objM2923stopPlaybackBeforeDownload0E7RQCE`  L3524
+- `int i = this.label`  L3526
+- `Ride3ProPlaybackDownloadGate ride3ProPlaybackDownloadGate = Ride3ProPlaybackDownloadGate.INSTANCE`  L3529
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = Ride3ProDailyDetailActivity.this`  L3531
+- `VideoItem videoItem = this.$selected`  L3532
+- `int i2 = this.$fileIndex`  L3533
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L3513 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L3518 @Override
+- `Object invokeSuspend(Object obj)`  L3523 @Override
+- `Unit invoke()`  L3542 @Override
+- `void invoke2()`  L3548
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine" · "Ride3Pro: playback stop failed before download"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24372`
+L4098 · [class] static final C24372 · extends `Lambda implements Function1<String, Unit>` · implements `Function1<String, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（3）：
+- `long $token`  L4099
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = Ride3ProDailyDetailActivity.this`  L4116
+- `long j = this.$token`  L4117
+
+方法（4）：
+- `Unit invoke(String str)`  L4108 @Override
+- `void invoke2(String it)`  L4114
+    - 体内字面量："it"
+- `void run()`  L4120 @Override
+- `void invoke$lambda$0(Ride3ProDailyDetailActivity this$0, long j)`  L4127
+    - 体内字面量："this$0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24393`
+L4140 · [class] static final C24393 · extends `Lambda implements Function1<Progress, Unit>` · implements `Function1<Progress, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（3）：
+- `long $token`  L4141
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = Ride3ProDailyDetailActivity.this`  L4158
+- `long j = this.$token`  L4159
+
+方法（4）：
+- `Unit invoke(Progress progress)`  L4150 @Override
+- `void invoke2(final Progress progress)`  L4156
+    - 体内字面量："progress"
+- `void run()`  L4162 @Override
+- `void invoke$lambda$0(Ride3ProDailyDetailActivity this$0, long j, Progress progress)`  L4169
+    - 体内字面量："this$0" · "$progress"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24421`
+L4766 · [class] static final C24421 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L4767
+- `Object objM2859setPlaybackModeIoAF18A`  L4785
+- `int i = this.label`  L4787
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L4774 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L4779 @Override
+- `Object invokeSuspend(Object obj)`  L4784 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24421$AnonymousClass1`
+L4818 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（3）：
+- `Object $result`  L4819
+- `int label`  L4820
+- `Ride3ProDailyDetailActivity this$0`  L4821
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L4831 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L4836 @Override
+- `Object invokeSuspend(Object obj)`  L4841 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24431`
+L305 · [class] C24431 · extends `FunctionReferenceImpl implements Function1<VideoItem, Unit>` · implements `Function1<VideoItem, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(VideoItem videoItem)`  L311 @Override
+- `void invoke2(VideoItem p0)`  L317
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24442`
+L332 · [class] C24442 · extends `FunctionReferenceImpl implements Function1<Integer, AuthorizedDeviceResource>` · implements `Function1<Integer, AuthorizedDeviceResource>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+方法（2）：
+- `AuthorizedDeviceResource invoke(int i)`  L337
+- `AuthorizedDeviceResource invoke(Integer num)`  L342 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24462`
+L1855 · [class] static final C24462 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（13）：
+- `Ref.ObjectRef<Job> $launchedJob`  L1856
+- `VideoItem $playbackTarget`  L1857
+- `Object L$0`  L1858
+- `int label`  L1859
+- `Ride3ProDailyDetailActivity this$0`  L1860
+- `Integer num`  L1889
+- `Throwable th`  L1890
+- `Job job`  L1891
+- `Job job2`  L1892
+- `VideoItem videoItem`  L1893
+- `Job job3`  L1894
+- `int i = this.label`  L1896
+- `Job job4 = this.this$0.playbackSwitchJob`  L1966
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1871 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1876 @Override
+- `Object invokeSuspend(Object obj)`  L1888 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24551`
+L5150 · [class] static final C24551 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L5151
+- `Object objM2924requestExitIoAF18A`  L5169
+- `int i = this.label`  L5171
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L5158 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L5163 @Override
+- `Object invokeSuspend(Object obj)`  L5168 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24561`
+L2814 · [class] static final C24561 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L2815
+- `Object objM2912stopPlaybackSessionAndReleaseConflictWindowIoAF18A`  L2833
+- `int i = this.label`  L2835
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L2822 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L2827 @Override
+- `Object invokeSuspend(Object obj)`  L2832 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24571`
+L4690 · [class] static final C24571 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L4691
+- `Object objM2865startRecordingInPreviewModeIoAF18A`  L4710
+- `Throwable thM3077exceptionOrNullimpl`  L4711
+- `int i = this.label`  L4713
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L4698 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L4703 @Override
+- `Object invokeSuspend(Object obj)`  L4709 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24581`
+L2901 · [class] static final C24581 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（4）：
+- `VideoItem $retryItem`  L2902
+- `int label`  L2903
+- `Object objM2912stopPlaybackSessionAndReleaseConflictWindowIoAF18A`  L2923
+- `int i = this.label`  L2925
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L2912 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L2917 @Override
+- `Object invokeSuspend(Object obj)`  L2922 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24611`
+L3650 · [class] static final C24611 · extends `Lambda implements Function1<Result<? extends File>, Unit>` · implements `Function1<Result<? extends File>, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（3）：
+- `File $snapshotFile`  L3651
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = Ride3ProDailyDetailActivity.this`  L3667
+- `File file = this.$snapshotFile`  L3668
+
+方法（4）：
+- `Unit invoke(Result<? extends File> result)`  L3660 @Override
+- `void m2914invoke(final Object obj)`  L3666
+- `void run()`  L3671 @Override
+- `void invoke$lambda$2(Object obj, Ride3ProDailyDetailActivity this$0, File snapshotFile)`  L3678
+    - 体内字面量："this$0" · "$snapshotFile"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24631`
+L3029 · [class] static final C24631 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L3030
+- `int i = this.label`  L3049
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L3037 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L3042 @Override
+- `Object invokeSuspend(Object obj)`  L3047 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24641`
+L3275 · [class] static final C24641 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（3）：
+- `int $targetSecond`  L3276
+- `int label`  L3277
+- `int i = this.label`  L3298
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L3286 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L3291 @Override
+- `Object invokeSuspend(Object obj)`  L3296 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24651`
+L357 · [class] C24651 · extends `FunctionReferenceImpl implements Function1<VideoItem, Unit>` · implements `Function1<VideoItem, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(VideoItem videoItem)`  L363 @Override
+- `void invoke2(VideoItem p0)`  L369
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24662`
+L384 · [class] C24662 · extends `FunctionReferenceImpl implements Function1<VideoItem, Unit>` · implements `Function1<VideoItem, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(VideoItem videoItem)`  L390 @Override
+- `void invoke2(VideoItem p0)`  L396
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24673`
+L405 · [class] C24673 · extends `FunctionReferenceImpl implements Function1<Integer, AuthorizedDeviceResource>` · implements `Function1<Integer, AuthorizedDeviceResource>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+方法（2）：
+- `AuthorizedDeviceResource invoke(int i)`  L410
+- `AuthorizedDeviceResource invoke(Integer num)`  L415 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24691`
+L3744 · [class] C24691 · extends `FunctionReferenceImpl implements Function0<Unit>` · implements `Function0<Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke()`  L3750 @Override
+- `void invoke2()`  L3756
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24701`
+L3332 · [class] static final C24701 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（1）：
+- `int label`  L3333
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L3340 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L3345 @Override
+- `java.lang.Object invokeSuspend(java.lang.Object r12)`  L3368 @Override
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity.C24701.invokeSuspend(java.lang.Object):java.lang.Object"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24721`
+L3879 · [class] static final C24721 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（11）：
+- `DownloadNetworkRoute.Device $route`  L3880
+- `long $token`  L3881
+- `String $url`  L3882
+- `int label`  L3883
+- `Object objM2923stopPlaybackBeforeDownload0E7RQCE`  L3905
+- `int i = this.label`  L3907
+- `Ride3ProPlaybackDownloadGate ride3ProPlaybackDownloadGate = Ride3ProPlaybackDownloadGate.INSTANCE`  L3910
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = Ride3ProDailyDetailActivity.this`  L3912
+- `long j = this.$token`  L3913
+- `String str = this.$url`  L3914
+- `DownloadNetworkRoute.Device device = this.$route`  L3915
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L3894 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L3899 @Override
+- `Object invokeSuspend(Object obj)`  L3904 @Override
+- `Unit invoke()`  L3924 @Override
+- `void invoke2()`  L3930
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine" · "Ride3Pro: playback stop failed before share download"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24811`
+L726 · [class] static final C24811 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L727
+- `Object L$1`  L728
+- `Object L$2`  L729
+- `int label`  L730
+- `Object result`  L731
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L738 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24821`
+L3104 · [class] static final C24821 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（7）：
+- `boolean $shouldPause`  L3105
+- `int label`  L3106
+- `Ride3ProDailyDetailActivity this$0`  L3107
+- `Object objM2926resumeIoAF18A`  L3128
+- `int i = this.label`  L3130
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = this.this$0`  L3155
+- `ActivityRide3ProDailyDetailBinding activityRide3ProDailyDetailBinding = this.this$0.binding`  L3158
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L3117 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L3122 @Override
+- `Object invokeSuspend(Object obj)`  L3127 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$C24831`
+L4218 · [class] static final C24831 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（14）：
+- `File $downloadedFile`  L4219
+- `VideoItem $shareItem`  L4220
+- `long $token`  L4221
+- `File $transcodedFile`  L4222
+- `int label`  L4223
+- `Object objM2922transcodeyxL6bBk`  L4246
+- `int i = this.label`  L4248
+- `File file = this.$downloadedFile`  L4252
+- `File file2 = this.$transcodedFile`  L4253
+- `VideoItem videoItem = this.$shareItem`  L4254
+- `Object obj2 = objM2922transcodeyxL6bBk`  L4268
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = Ride3ProDailyDetailActivity.this`  L4269
+- `long j = this.$token`  L4270
+- `File file3 = this.$downloadedFile`  L4271
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L4235 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L4240 @Override
+- `Object invokeSuspend(Object obj)`  L4245 @Override
+- `void run()`  L4274 @Override
+- `void invokeSuspend$lambda$3(Ride3ProDailyDetailActivity ride3ProDailyDetailActivity, long j, Object obj, File file)`  L4282
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$Companion`
+L747 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（1）：
+- `String str = deviceSessionId`  L775
+
+方法（6）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L748
+- `private Companion()`  L752
+- `void launchActivity(BaseActivity activity, VideoItem videoItem, boolean photo, boolean returnToPlaybackList, Ride3ProPlaybackDeleteCapability deleteCapability, boolean useHourPlaybackLayout, String deviceSessionId, DeviceType deviceType)`  L755
+    - 体内字面量："activity" · "videoItem" · "deleteCapability" · "deviceType"
+- `Intent createIntent$app_release_64(Context context, VideoItem videoItem, boolean photo, boolean returnToPlaybackList, Ride3ProPlaybackDeleteCapability deleteCapability, boolean useHourPlaybackLayout, String deviceSessionId, DeviceType deviceType)`  L763
+    - 体内字面量："context" · "videoItem" · "deleteCapability" · "deviceType" · "videoItem" · "photo" · "return_to_playback_list" · "device_type_code"
+- `Intent createDeletedFileResult$app_release_64(int fileIndex)`  L782
+    - 体内字面量："deleted Ride3Pro file index must not be negative" · "putExtra(...)"
+- `int deletedFileIndexFromResult$app_release_64(Intent data)`  L791
+    - 体内字面量："indexed playback delete result data is missing" · "indexed playback delete result file index is missing" · "indexed playback delete result file index must not be negative"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$configureHourTimeline$7$1`
+L10 · [class] final Ride3ProDailyDetailActivity$configureHourTimeline$7$1 · implements `Runnable` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$configureHourTimeline$7$1.java`
+注解：
+
+字段/常量（2）：
+- `RecyclerView $recyclerView`  L11
+- `Ride3ProDailyDetailActivity this$0`  L12
+
+方法（1）：
+- `void run()`  L20 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$downloadCurrentPlayback$1$result$1`
+L18 · [class] final Ride3ProDailyDetailActivity$downloadCurrentPlayback$1$result$1 · extends `SuspendLambda implements Function1<Continuation<? super Result<? extends Unit>>, Object>` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$downloadCurrentPlayback$1$result$1.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L19
+- `Ride3ProDailyDetailActivity this$0`  L20
+- `Object objM2912stopPlaybackSessionAndReleaseConflictWindowIoAF18A`  L45
+- `int i = this.label`  L47
+
+方法（4）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L29 @Override
+- `Object invoke(Continuation<? super Result<? extends Unit>> continuation)`  L34 @Override
+- `Object invoke2(Continuation<? super Result<Unit>> continuation)`  L39
+- `Object invokeSuspend(Object obj)`  L44 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$playbackExitGuard$1`
+L18 · [class] final Ride3ProDailyDetailActivity$playbackExitGuard$1 · extends `SuspendLambda implements Function1<Continuation<? super Result<? extends Unit>>, Object>` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$playbackExitGuard$1.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L19
+- `Ride3ProDailyDetailActivity this$0`  L20
+- `Object objM2911stopPlaybackForExitAndReleaseConflictWindowIoAF18A`  L45
+- `int i = this.label`  L47
+
+方法（4）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L29 @Override
+- `Object invoke(Continuation<? super Result<? extends Unit>> continuation)`  L34 @Override
+- `Object invoke2(Continuation<? super Result<Unit>> continuation)`  L39
+- `Object invokeSuspend(Object obj)`  L44 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$playbackPauseController$3`
+L23 · [class] final Ride3ProDailyDetailActivity$playbackPauseController$3 · extends `SuspendLambda implements Function1<Continuation<? super Result<? extends Unit>>, Object>` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$playbackPauseController$3.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L24
+- `Ride3ProDailyDetailActivity this$0`  L25
+- `int i = this.label`  L103
+
+方法（4）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L34 @Override
+- `Object invoke(Continuation<? super Result<? extends Unit>> continuation)`  L39 @Override
+- `Object invoke2(Continuation<? super Result<Unit>> continuation)`  L44
+    - 体内字面量："<anonymous>" · "Lkotlin/Result;" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.album.Ride3ProDailyDetailActivity$playbackPauseController$3$1" · "Ride3ProDailyDetailActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L101 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$playbackPauseController$3$C24471`
+L52 · [class] static final C24471 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$playbackPauseController$3.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L53
+- `Ride3ProDailyDetailActivity this$0`  L54
+- `Object objM2849sendPlaybackPausegIAlus$default`  L79
+- `int i = this.label`  L81
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L63 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L68 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L73
+- `Object invokeSuspend(Object obj)`  L78 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$playbackSessionController$1`
+L22 · [class] final Ride3ProDailyDetailActivity$playbackSessionController$1 · extends `SuspendLambda implements Function1<Continuation<? super Result<? extends Unit>>, Object>` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$playbackSessionController$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L23
+- `Ride3ProDailyDetailActivity this$0`  L24
+- `int i = this.label`  L102
+
+方法（4）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L33 @Override
+- `Object invoke(Continuation<? super Result<? extends Unit>> continuation)`  L38 @Override
+- `Object invoke2(Continuation<? super Result<Unit>> continuation)`  L43
+    - 体内字面量："<anonymous>" · "Lkotlin/Result;" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.album.Ride3ProDailyDetailActivity$playbackSessionController$1$1" · "Ride3ProDailyDetailActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L100 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$playbackSessionController$1$C24481`
+L51 · [class] static final C24481 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$playbackSessionController$1.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L52
+- `Ride3ProDailyDetailActivity this$0`  L53
+- `Object objM2855preparePlaybackRtspStreamIoAF18A`  L78
+- `int i = this.label`  L80
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L62 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L67 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L72
+- `Object invokeSuspend(Object obj)`  L77 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$playbackSessionController$2`
+L21 · [class] final Ride3ProDailyDetailActivity$playbackSessionController$2 · extends `SuspendLambda implements Function2<Integer, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<Integer, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$playbackSessionController$2.java`
+注解：
+
+字段/常量（5）：
+- `int I$0`  L22
+- `int label`  L23
+- `Ride3ProDailyDetailActivity this$0`  L24
+- `int i = this.label`  L105
+- `int i2 = this.I$0`  L108
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L33 @Override
+- `Object invoke(int i, Continuation<? super Result<Unit>> continuation)`  L39
+- `Object invoke(Integer num, Continuation<? super Result<? extends Unit>> continuation)`  L44 @Override
+    - 体内字面量："<anonymous>" · "Lkotlin/Result;" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.album.Ride3ProDailyDetailActivity$playbackSessionController$2$1" · "Ride3ProDailyDetailActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L103 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$playbackSessionController$2$C24491`
+L52 · [class] static final C24491 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$playbackSessionController$2.java`
+注解：
+
+字段/常量（5）：
+- `int $fileIndex`  L53
+- `int label`  L54
+- `Ride3ProDailyDetailActivity this$0`  L55
+- `Object objM2857sendPlaybackStartgIAlus`  L81
+- `int i = this.label`  L83
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L65 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L70 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L75
+- `Object invokeSuspend(Object obj)`  L80 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$playbackSessionController$3`
+L22 · [class] final Ride3ProDailyDetailActivity$playbackSessionController$3 · extends `SuspendLambda implements Function1<Continuation<? super Result<? extends Unit>>, Object>` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$playbackSessionController$3.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L23
+- `Ride3ProDailyDetailActivity this$0`  L24
+- `int i = this.label`  L102
+
+方法（4）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L33 @Override
+- `Object invoke(Continuation<? super Result<? extends Unit>> continuation)`  L38 @Override
+- `Object invoke2(Continuation<? super Result<Unit>> continuation)`  L43
+    - 体内字面量："<anonymous>" · "Lkotlin/Result;" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.album.Ride3ProDailyDetailActivity$playbackSessionController$3$1" · "Ride3ProDailyDetailActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L100 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$playbackSessionController$3$C24501`
+L51 · [class] static final C24501 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$playbackSessionController$3.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L52
+- `Ride3ProDailyDetailActivity this$0`  L53
+- `Object objM2858sendPlaybackStopIoAF18A`  L78
+- `int i = this.label`  L80
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L62 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L67 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L72
+- `Object invokeSuspend(Object obj)`  L77 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$seekPlaybackTo$1$result$1`
+L19 · [class] final Ride3ProDailyDetailActivity$seekPlaybackTo$1$result$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$seekPlaybackTo$1$result$1.java`
+注解：
+
+字段/常量（5）：
+- `int $targetSecond`  L20
+- `int label`  L21
+- `Ride3ProDailyDetailActivity this$0`  L22
+- `Object objM2861setPlaybackTimegIAlus`  L48
+- `int i = this.label`  L50
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L32 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L37 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L42
+- `Object invokeSuspend(Object obj)`  L47 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$startAuthorizedMediaPlayback$1`
+L15 · [class] final Ride3ProDailyDetailActivity$startAuthorizedMediaPlayback$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$startAuthorizedMediaPlayback$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `Ride3ProDailyDetailActivity this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$startVideoPlayback$preparation$1`
+L24 · [class] final Ride3ProDailyDetailActivity$startVideoPlayback$preparation$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$startVideoPlayback$preparation$1.java`
+注解：
+
+字段/常量（13）：
+- `Integer $fileIndex`  L25
+- `Job $previousPreparation`  L26
+- `VideoItem $videoItem`  L27
+- `int label`  L28
+- `Ride3ProDailyDetailActivity this$0`  L29
+- `Object objM2932switchTo0E7RQCE`  L55
+- `int i = this.label`  L57
+- `Job job = this.$previousPreparation`  L61
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity = this.this$0`  L80
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity2 = this.this$0`  L94
+- `Ride3ProPlaybackSessionController ride3ProPlaybackSessionController = this.this$0.playbackSessionController`  L98
+- `Integer num = this.$fileIndex`  L99
+- `Ride3ProDailyDetailActivity ride3ProDailyDetailActivity3 = this.this$0`  L108
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L41 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L46 @Override
+- `Object invokeSuspend(Object obj)`  L54 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$stopMediaSession$1`
+L15 · [class] final Ride3ProDailyDetailActivity$stopMediaSession$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity$stopMediaSession$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProDailyDetailActivity this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDailyDetailActivity$WhenMappings`
+L679 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDailyDetailActivity.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L680
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDownloadFileNamePolicy`
+L32 · [class] public final Ride3ProDownloadFileNamePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDownloadFileNamePolicy.java`
+注解：
+
+字段/常量（3）：
+- `int i = 0`  L144
+- `int i2 = i + 1`  L146
+- `DeviceType deviceType`  L206
+
+方法（9）：
+- `private Ride3ProDownloadFileNamePolicy()`  L35
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/Ride3ProDownloadFileNamePolicy$FileRecord;" · "fileIndex" · "Ljava/util/Date;" · "(ILjava/util/Date;)V" · "getFileIndex" · "()I" · "getTime" · "()Ljava/util/Date;" · "component1" · "component2" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+- `Map buildNamesByFileIndex$default(Ride3ProDownloadFileNamePolicy ride3ProDownloadFileNamePolicy, List list, TimeZone timeZone, DeviceType deviceType, int i, Object obj)`  L103
+    - 体内字面量："getDefault(...)"
+- `Map<Integer, String> buildNamesByFileIndex(List<FileRecord> records, TimeZone timeZone, DeviceType deviceType)`  L114
+    - 体内字面量："records" · "timeZone" · "deviceType" · "yyyy_MM_dd_HHmmss"
+- `int compare(T t, T t2)`  L139 @Override
+- `Map buildNamesByVideoItems$default(Ride3ProDownloadFileNamePolicy ride3ProDownloadFileNamePolicy, List list, TimeZone timeZone, DeviceType deviceType, int i, Object obj)`  L158
+    - 体内字面量："getDefault(...)"
+- `Map<Integer, String> buildNamesByVideoItems(List<VideoItem> items, TimeZone timeZone, DeviceType deviceType)`  L169
+    - 体内字面量："items" · "timeZone" · "deviceType"
+- `Map buildNamesByRemoteFiles$default(Ride3ProDownloadFileNamePolicy ride3ProDownloadFileNamePolicy, List list, DeviceType deviceType, int i, Object obj)`  L184
+- `Map<Integer, String> buildNamesByRemoteFiles(List<StorageRide3ProRemoteFile> files, DeviceType deviceType)`  L191
+    - 体内字面量："files" · "deviceType"
+- `DeviceType currentDeviceType()`  L205
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProDownloadFileNamePolicy$FileRecord`
+L40 · [class] public static final FileRecord · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProDownloadFileNamePolicy.java`
+注解：
+
+字段/常量（2）：
+- `int fileIndex`  L41
+- `Date time`  L42
+
+方法（10）：
+- `FileRecord copy$default(FileRecord fileRecord, int i, Date date, int i2, Object obj)`  L44
+- `int getFileIndex()`  L55
+- `Date getTime()`  L60
+- `FileRecord copy(int fileIndex, Date time)`  L64
+    - 体内字面量："time"
+- `boolean equals(Object other)`  L69
+- `int hashCode()`  L80
+- `String toString()`  L84
+    - 体内字面量："FileRecord(fileIndex=" · ", time=" · ")"
+- `public FileRecord(int i, Date time)`  L88
+    - 体内字面量："time"
+- `int getFileIndex()`  L94
+- `Date getTime()`  L98
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourPlaybackTimelinePolicy`
+L21 · [class] public final Ride3ProHourPlaybackTimelinePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourPlaybackTimelinePolicy.java`
+注解：
+
+字段/常量（20）：
+- `int CONTIGUOUS_TOLERANCE_SECONDS = 1`  L22
+- `int HOUR_SECONDS = 3600`  L23
+- `int LAST_SECOND_OF_HOUR = 3599`  L25
+- `int MAX_RECORDING_DURATION_SECONDS = 60`  L26
+- `long MILLIS_PER_SECOND = 1000`  L27
+- `int MIN_RECORDING_DURATION_SECONDS = 1`  L28
+- `int SECONDS_PER_MINUTE = 60`  L29
+- `int SNAP_WINDOW_SECONDS = 60`  L30
+- `Integer num = ride3ProFileIndex`  L67
+- `Integer next`  L83
+- `int size`  L84
+- `int endSecondsExclusive`  L85
+- `List<VideoItem> list = videos`  L90
+- `ArrayList arrayList2 = arrayList`  L96
+- `Integer num = next`  L110
+- `ArrayList arrayList3 = arrayList2`  L114
+- `int i = 0`  L116
+- `int i2 = 0`  L117
+- `int i3 = i2 + 1`  L119
+- `List<VideoItem> list = videos`  L180
+
+方法（14）：
+- `private Ride3ProHourPlaybackTimelinePolicy()`  L32
+- `int secondsFromRatio(float ratio)`  L35
+- `int secondsInHour(VideoItem videoItem)`  L39
+    - 体内字面量："videoItem"
+- `List<VideoItem> sortVideos(List<VideoItem> videos)`  L46
+    - 体内字面量："videos"
+- `int compare(T t, T t2)`  L51 @Override
+- `int compare(T t, T t2)`  L58 @Override
+    - 体内字面量："Required value was null."
+- `Ride3ProHourRecordingSelection recordingSelection(List<VideoItem> videos, int pointerSeconds)`  L77
+    - 体内字面量："videos"
+- `Ride3ProHourTimelineFocus recordingFocus(List<VideoItem> videos, int pointerSeconds)`  L82
+- `int compare(T t, T t2)`  L141 @Override
+- `int compare(T t, T t2)`  L148 @Override
+- `List<Ride3ProTimelineRecordingSegment> mergedRecordingSegments(List<VideoItem> videos)`  L178
+    - 体内字面量："videos"
+- `int compare(T t, T t2)`  L189 @Override
+- `Ride3ProTimelineRecordingSegment recordingSegment(VideoItem video)`  L209
+    - 体内字面量："video"
+- `int durationSeconds(VideoItem videoItem)`  L215
+    - 体内字面量："Ride3Pro timeline recording duration must be in 1..60 seconds: "
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourRecordingAdapter`
+L36 · [class] public final Ride3ProHourRecordingAdapter · extends `RecyclerView.Adapter<VideoViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourRecordingAdapter.java`
+注解：
+
+字段/常量（7）：
+- `Function1<VideoItem, Unit> onVideoClick`  L37
+- `Ride3ProHourRecordingSelection selection`  L38
+- `Function1<Integer, AuthorizedDeviceResource> thumbnailModelForIndex`  L39
+- `List<VideoItem> videos`  L40
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L185
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L194
+- `int iIntValue`  L201
+
+方法（13）：
+- ` Ride3ProHourRecordingAdapter(Function1 function1, C24921 c24921, int i, DefaultConstructorMarker defaultConstructorMarker)`  L42
+- `Void invoke(int i2)`  L44
+- `Object invoke(Object obj)`  L49 @Override
+- `public Ride3ProHourRecordingAdapter(Function1<? super VideoItem, Unit> onVideoClick, Function1<? super Integer, AuthorizedDeviceResource> thumbnailModelForIndex)`  L56
+    - 体内字面量："onVideoClick" · "thumbnailModelForIndex"
+- `void submit(List<VideoItem> videos, Ride3ProHourRecordingSelection selection)`  L65
+    - 体内字面量："videos" · "selection"
+- `void setSelection(Ride3ProHourRecordingSelection selection)`  L74
+    - 体内字面量："selection"
+- `VideoItem videoAt(int cardIndex)`  L87
+    - 体内字面量："Failed requirement."
+- `VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L102 @Override
+    - 体内字面量："parent" · "inflate(...)"
+- `void onBindViewHolder(VideoViewHolder holder, int position)`  L110 @Override
+    - 体内字面量："holder"
+- `int getItemCount()`  L116 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/Ride3ProHourRecordingAdapter$VideoViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemRide3proHourRecordingBinding;" · "(Lcom/tuwinsmart/tuwin/presentation/ui/album/Ride3ProHourRecordingAdapter;Lcom/tuwinsmart/tuwin/databinding/ItemRide3proHourRecordingBinding;)V" · "bind" · "video" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/adapter/VideoItem;" · "app_release_64"
+- `String formatStartTime(VideoItem video)`  L182
+- `String formatDuration(long durationMillis)`  L192
+- `void validateSelection(List<VideoItem> videos, Ride3ProHourRecordingSelection selection)`  L200
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourRecordingAdapter$VideoViewHolder`
+L122 · [class] public final VideoViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourRecordingAdapter.java`
+注解：
+
+字段/常量（3）：
+- `ItemRide3proHourRecordingBinding binding`  L123
+- `Ride3ProHourRecordingAdapter this$0`  L124
+- `Ride3ProHourRecordingAdapter ride3ProHourRecordingAdapter = this.this$0`  L156
+
+方法（4）：
+- `public VideoViewHolder(Ride3ProHourRecordingAdapter ride3ProHourRecordingAdapter, ItemRide3proHourRecordingBinding binding)`  L127
+    - 体内字面量："binding"
+- `void bind(final VideoItem video)`  L134
+    - 体内字面量："hour Ride3Pro playback item requires file index" · "hour Ride3Pro playback item requires thumbnail cache key"
+- `void onClick(View view)`  L159 @Override
+- `void bind$lambda$2(Ride3ProHourRecordingAdapter this$0, VideoItem videoItem, View view)`  L175
+    - 体内字面量："this$0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourRecordingCardTransform`
+L9 · [class] public final Ride3ProHourRecordingCardTransform · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourRecordingCardTransform.java`
+注解：
+
+字段/常量（2）：
+- `float alpha`  L10
+- `float scale`  L11
+
+方法（10）：
+- `Ride3ProHourRecordingCardTransform copy$default(Ride3ProHourRecordingCardTransform ride3ProHourRecordingCardTransform, float f, float f2, int i, Object obj)`  L13
+- `float getScale()`  L24
+- `float getAlpha()`  L29
+- `Ride3ProHourRecordingCardTransform copy(float scale, float alpha)`  L33
+- `boolean equals(Object other)`  L37
+- `int hashCode()`  L48
+- `String toString()`  L52
+    - 体内字面量："Ride3ProHourRecordingCardTransform(scale=" · ", alpha=" · ")"
+- `public Ride3ProHourRecordingCardTransform(float f, float f2)`  L56
+- `float getScale()`  L61
+- `float getAlpha()`  L65
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourRecordingCarouselPolicy`
+L10 · [class] public final Ride3ProHourRecordingCarouselPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourRecordingCarouselPolicy.java`
+注解：
+
+字段/常量（4）：
+- `float CENTER_ALPHA = 1.0f`  L11
+- `float CENTER_SCALE = 1.0f`  L12
+- `float EDGE_ALPHA = 0.68f`  L13
+- `float EDGE_SCALE = 0.86f`  L14
+
+方法（4）：
+- `private Ride3ProHourRecordingCarouselPolicy()`  L17
+- `Ride3ProHourRecordingCardTransform cardTransform(float distanceFromCenter, float fullEffectDistance)`  L20
+    - 体内字面量："Failed requirement."
+- `int centerOffset(int viewStart, int viewEnd, int boxStart, int boxEnd)`  L28
+- `boolean shouldAcceptIdleSelection(int centeredCardIndex, Integer programmaticTargetIndex)`  L32
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourRecordingSelection`
+L12 · [class] public final Ride3ProHourRecordingSelection · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourRecordingSelection.java`
+注解：
+
+字段/常量（5）：
+- `int cardIndex`  L16
+- `Integer emptyCardInsertionIndex`  L17
+- `Integer videoIndex`  L18
+- `Integer num = this.videoIndex`  L64
+- `Integer num2 = this.emptyCardInsertionIndex`  L66
+
+方法（12）：
+- `Ride3ProHourRecordingSelection copy$default(Ride3ProHourRecordingSelection ride3ProHourRecordingSelection, Integer num, int i, Integer num2, int i2, Object obj)`  L20
+- `Integer getVideoIndex()`  L34
+- `int getCardIndex()`  L39
+- `Integer getEmptyCardInsertionIndex()`  L44
+- `Ride3ProHourRecordingSelection copy(Integer videoIndex, int cardIndex, Integer emptyCardInsertionIndex)`  L48
+- `boolean equals(Object other)`  L52
+- `int hashCode()`  L63
+- `String toString()`  L70
+    - 体内字面量："Ride3ProHourRecordingSelection(videoIndex=" · ", cardIndex=" · ", emptyCardInsertionIndex=" · ")"
+- `public Ride3ProHourRecordingSelection(Integer num, int i, Integer num2)`  L74
+    - 体内字面量："Failed requirement." · "Failed requirement." · "Failed requirement." · "Failed requirement."
+- `Integer getVideoIndex()`  L92
+- `int getCardIndex()`  L96
+- `Integer getEmptyCardInsertionIndex()`  L100
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/Ride3ProHourRecordingSelection$Companion;" · "()V" · "empty" · "Lcom/tuwinsmart/tuwin/presentation/ui/album/Ride3ProHourRecordingSelection;" · "insertionIndex" · "video" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourRecordingSelection$Companion`
+L106 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourRecordingSelection.java`
+注解：
+
+方法（4）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L107
+- `private Companion()`  L111
+- `Ride3ProHourRecordingSelection video(int index)`  L114
+    - 体内字面量："Failed requirement."
+- `Ride3ProHourRecordingSelection empty(int insertionIndex)`  L121
+    - 体内字面量："Failed requirement."
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourRecordingSmoothScroller`
+L16 · [class] public final Ride3ProHourRecordingSmoothScroller · extends `LinearSmoothScroller` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourRecordingSmoothScroller.java`
+注解：
+
+字段/常量（5）：
+- `int MAX_DECELERATION_DURATION_MS = 520`  L20 @Deprecated
+- `int MAX_SCROLL_DURATION_MS = 360`  L23 @Deprecated
+- `float MILLISECONDS_PER_INCH = 110.0f`  L26 @Deprecated
+- `int MIN_DECELERATION_DURATION_MS = 220`  L29 @Deprecated
+- `int MIN_SCROLL_DURATION_MS = 120`  L32 @Deprecated
+
+方法（5）：
+- `public Ride3ProHourRecordingSmoothScroller(Context context)`  L35
+    - 体内字面量："context"
+- `float calculateSpeedPerPixel(DisplayMetrics displayMetrics)`  L41 @Override
+    - 体内字面量："displayMetrics"
+- `int calculateTimeForScrolling(int dx)`  L47 @Override
+- `int calculateTimeForDeceleration(int dx)`  L55 @Override
+- `int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int snapPreference)`  L63 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/Ride3ProHourRecordingSmoothScroller$Companion;" · "()V" · "MAX_DECELERATION_DURATION_MS" · "MAX_SCROLL_DURATION_MS" · "MILLISECONDS_PER_INCH" · "MIN_DECELERATION_DURATION_MS" · "MIN_SCROLL_DURATION_MS" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourRecordingSmoothScroller$Companion`
+L69 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourRecordingSmoothScroller.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L70
+- `private Companion()`  L74
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourTimelineFocus`
+L10 · [class] public final Ride3ProHourTimelineFocus · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourTimelineFocus.java`
+注解：
+
+字段/常量（2）：
+- `int pointerSeconds`  L11
+- `Ride3ProHourRecordingSelection selection`  L12
+
+方法（10）：
+- `Ride3ProHourTimelineFocus copy$default(Ride3ProHourTimelineFocus ride3ProHourTimelineFocus, int i, Ride3ProHourRecordingSelection ride3ProHourRecordingSelection, int i2, Object obj)`  L14
+- `int getPointerSeconds()`  L25
+- `Ride3ProHourRecordingSelection getSelection()`  L30
+- `Ride3ProHourTimelineFocus copy(int pointerSeconds, Ride3ProHourRecordingSelection selection)`  L34
+    - 体内字面量："selection"
+- `boolean equals(Object other)`  L39
+- `int hashCode()`  L50
+- `String toString()`  L54
+    - 体内字面量："Ride3ProHourTimelineFocus(pointerSeconds=" · ", selection=" · ")"
+- `public Ride3ProHourTimelineFocus(int i, Ride3ProHourRecordingSelection selection)`  L58
+    - 体内字面量："selection"
+- `int getPointerSeconds()`  L64
+- `Ride3ProHourRecordingSelection getSelection()`  L68
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourTimelineSnapCandidate`
+L9 · [class] final Ride3ProHourTimelineSnapCandidate · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourTimelineSnapCandidate.java`
+注解：
+
+字段/常量（3）：
+- `int distanceSeconds`  L10
+- `int pointerSeconds`  L11
+- `int videoIndex`  L12
+
+方法（12）：
+- `Ride3ProHourTimelineSnapCandidate copy$default(Ride3ProHourTimelineSnapCandidate ride3ProHourTimelineSnapCandidate, int i, int i2, int i3, int i4, Object obj)`  L14
+- `int getVideoIndex()`  L28
+- `int getPointerSeconds()`  L33
+- `int getDistanceSeconds()`  L38
+- `Ride3ProHourTimelineSnapCandidate copy(int videoIndex, int pointerSeconds, int distanceSeconds)`  L42
+- `boolean equals(Object other)`  L46
+- `int hashCode()`  L57
+- `String toString()`  L61
+    - 体内字面量："Ride3ProHourTimelineSnapCandidate(videoIndex=" · ", pointerSeconds=" · ", distanceSeconds=" · ")"
+- `public Ride3ProHourTimelineSnapCandidate(int i, int i2, int i3)`  L65
+- `int getVideoIndex()`  L71
+- `int getPointerSeconds()`  L75
+- `int getDistanceSeconds()`  L79
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourTimelineView`
+L39 · [class] public final Ride3ProHourTimelineView · extends `View` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourTimelineView.java`
+注解：
+
+字段/常量（41）：
+- `int LAST_SECOND_OF_HOUR = 3599`  L43 @Deprecated
+- `float MIN_SEGMENT_WIDTH_DP = 4.0f`  L46 @Deprecated
+- `long POINTER_ANIMATION_MILLIS = 180`  L49 @Deprecated
+- `RectF bubble`  L50
+- `float density`  L51
+- `float downX`  L52
+- `float downY`  L53
+- `boolean draggingPointer`  L54
+- `int hour`  L55
+- `Paint labelPaint`  L56
+- `Paint markPaint`  L57
+- `Function2<? super Integer, ? super Boolean, Unit> moveListener`  L58
+- `ValueAnimator pointerAnimator`  L59
+- `Paint pointerBubblePaint`  L60
+- `Paint pointerCirclePaint`  L61
+- `int pointerGradientEndColor`  L62
+- `int pointerGradientStartColor`  L63
+- `Paint pointerInnerPaint`  L64
+- `Paint pointerPaint`  L65
+- `int pointerSeconds`  L66
+- `Paint pointerTextPaint`  L67
+- `List<Ride3ProTimelineRecordingSegment> recordingSegments`  L68
+- `Ride3ProTimelineRecordingSegment selectedRecordingSegment`  L69
+- `Paint selectedSegmentPaint`  L70
+- `Function1<? super Integer, Unit> selectionListener`  L71
+- `Paint tickPaint`  L72
+- `int touchSlop`  L73
+- `Paint.Align align`  L210
+- `int i = 0`  L217
+- `boolean z = i2 % 10 == 0`  L220
+- `Paint paint = this.labelPaint`  L223
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L233
+- `int i4 = i + 1`  L240
+- `Function1<? super Integer, Unit> function1 = this.selectionListener`  L279
+- `ValueAnimator valueAnimator = this.pointerAnimator`  L318
+- `Function2<? super Integer, ? super Boolean, Unit> function2 = this.moveListener`  L328
+- `float f = fCoerceIn - fM526dp`  L340
+- `float f2 = fCoerceIn + fM526dp`  L341
+- `Ride3ProTimelineRecordingSegment ride3ProTimelineRecordingSegment = this.selectedRecordingSegment`  L349
+- `int i = 0`  L354
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L387
+
+方法（29）：
+- `public Ride3ProHourTimelineView(Context context)`  L77
+    - 体内字面量："context"
+- ` Ride3ProHourTimelineView(Context context, AttributeSet attributeSet, int i, DefaultConstructorMarker defaultConstructorMarker)`  L82
+- `public Ride3ProHourTimelineView(Context context, AttributeSet attributeSet)`  L87
+    - 体内字面量："context" · "#9A9FA9" · "#6F747E" · "#69C7FF" · "#4DA8FF" · "#69C7FF" · "#3B82F6"
+- `void setHour(int hour)`  L132
+    - 体内字面量："Failed requirement."
+- `void setRecordingSegments(List<Ride3ProTimelineRecordingSegment> segments)`  L141
+    - 体内字面量："segments"
+- `void setSelectedRecordingSegment(Ride3ProTimelineRecordingSegment segment)`  L147
+- `void setPointerSeconds$default(Ride3ProHourTimelineView ride3ProHourTimelineView, int i, boolean z, int i2, Object obj)`  L152
+- `void setPointerSeconds(int seconds, boolean animate)`  L159
+- `void onAnimationUpdate(ValueAnimator valueAnimator)`  L171 @Override
+- `void onAnimationEnd(Animator animation)`  L177 @Override
+    - 体内字面量："animation"
+- `void setPointerSeconds$lambda$8$lambda$7(Ride3ProHourTimelineView this$0, ValueAnimator animator)`  L190
+    - 体内字面量："this$0" · "animator" · "null cannot be cast to non-null type kotlin.Int"
+- `void setOnPointerChangedListener(Function2<? super Integer, ? super Boolean, Unit> listener)`  L200
+- `void setOnPointerSelectedListener(Function1<? super Integer, Unit> listener)`  L204
+- `void onDraw(Canvas canvas)`  L209 @Override
+- `boolean onTouchEvent(MotionEvent event)`  L260 @Override
+    - 体内字面量："event"
+- `boolean performClick()`  L307 @Override
+- `void onDetachedFromWindow()`  L312 @Override
+- `void cancelPointerAnimation()`  L317
+- `void updatePointerFromX(float x, boolean isDragging)`  L325
+- `void drawPointerBubble(Canvas canvas, float pointerX)`  L336
+- `void drawSelectedRecordingSegment(Canvas canvas, float markY)`  L348
+- `RectF segmentBounds(Ride3ProTimelineRecordingSegment segment, int trackIndex, float markY)`  L375
+- `void updateContentDescription()`  L382
+- `String formatPointerTime(int seconds)`  L386
+- `float secondsToX(int seconds)`  L393
+- `float secondBoundaryToX(int seconds)`  L397
+- `float contentLeft()`  L401
+- `float contentRight()`  L405
+- `float m526dp(float value)`  L410
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/Ride3ProHourTimelineView$Companion;" · "()V" · "LAST_SECOND_OF_HOUR" · "MIN_SEGMENT_WIDTH_DP" · "POINTER_ANIMATION_MILLIS" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProHourTimelineView$Companion`
+L416 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProHourTimelineView.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L417
+- `private Companion()`  L421
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProLocalVideoTranscoder`
+L41 · [class] public final Ride3ProLocalVideoTranscoder · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProLocalVideoTranscoder.java`
+注解：
+
+字段/常量（21）：
+- `long PROGRESS_POLL_INTERVAL_MILLIS = 50`  L43
+- `int PROGRESS_TOTAL = 100`  L44
+- `int STALE_INITIAL_PROGRESS = 99`  L45
+- `Context context`  L46
+- `Function0<Integer> nativeCancel`  L47
+- `Function0<Integer> nativeProgress`  L48
+- `Function2<File, File, Integer> nativeTranscode`  L49
+- `Ride3ProLocalVideoTranscoder$transcode$1 ride3ProLocalVideoTranscoder$transcode$1`  L145
+- `Object objWithContext = ride3ProLocalVideoTranscoder$transcode$1.result`  L156
+- `int i = ride3ProLocalVideoTranscoder$transcode$1.label`  L158
+- `C25011 c25011`  L184
+- `Ride3ProLocalVideoTranscoder ride3ProLocalVideoTranscoder`  L185
+- `Object objRunNativeTranscodeWithProgress = c25011.result`  L196
+- `int i = c25011.label`  L198
+- `C24971 c24971`  L373
+- `Ride3ProLocalVideoTranscoder ride3ProLocalVideoTranscoder`  L374
+- `int i`  L375
+- `Function2<? super Integer, ? super Integer, Unit> function3`  L376
+- `int i2`  L377
+- `Object obj = c24971.result`  L388
+- `int i3 = c24971.label`  L390
+
+方法（13）：
+- `public Ride3ProLocalVideoTranscoder(Context context, Function2<? super File, ? super File, Integer> nativeTranscode, Function0<Integer> nativeProgress, Function0<Integer> nativeCancel)`  L99
+    - 体内字面量："context" · "nativeTranscode" · "nativeProgress" · "nativeCancel"
+- ` Ride3ProLocalVideoTranscoder(Context context, C24941 c24941, C24952 c24952, C24963 c24963, int i, DefaultConstructorMarker defaultConstructorMarker)`  L110
+- `Integer invoke(File inputFile, File outputFile)`  L113 @Override
+    - 体内字面量："inputFile" · "outputFile"
+- `Integer invoke()`  L121 @Override
+- `Integer invoke()`  L127 @Override
+- `Object m2921transcodeyxL6bBk$default(Ride3ProLocalVideoTranscoder ride3ProLocalVideoTranscoder, File file, File file2, Integer num, Function2 function2, Continuation continuation, int i, Object obj)`  L135
+- `Object m2922transcodeyxL6bBk(File file, File file2, Integer num, Function2<? super Integer, ? super Integer, Unit> function2, Continuation<? super Result<? extends File>> continuation)`  L144
+- `void cancelCurrentTranscode()`  L177
+- `Object transcodeInternal(File file, File file2, Function2<? super Integer, ? super Integer, Unit> function2, Continuation<? super File> continuation)`  L183
+- `Object runNativeTranscodeWithProgress(File file, File file2, Function2<? super Integer, ? super Integer, Unit> function2, Continuation<? super Integer> continuation)`  L366
+- `Object pollNativeTranscodeProgress(Function2<? super Integer, ? super Integer, Unit> function2, Continuation<? super Unit> continuation)`  L372
+- `Void throwNativeTranscodeError(int result)`  L440
+    - 体内字面量："native video to mp4 conversion failed: code=" · ": "
+- `String resolveNativeTranscodeErrorMessage(int result)`  L448
+    - 体内字面量："unsupported video codec" · "transcode cancelled" · "transcode failed" · "output open failed" · "aac encoder missing" · "video encoder missing" · "decoder open failed" · "video stream missing" · "input open failed" · "unknown error" · "Lcom/tuwinsmart/tuwin/presentation/ui/album/Ride3ProLocalVideoTranscoder$Companion;" · "()V" · "PROGRESS_POLL_INTERVAL_MILLIS" · "PROGRESS_TOTAL" · "STALE_INITIAL_PROGRESS" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProLocalVideoTranscoder$C24971`
+L55 · [class] static final C24971 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProLocalVideoTranscoder.java`
+注解：
+
+字段/常量（6）：
+- `int I$0`  L56
+- `int I$1`  L57
+- `Object L$0`  L58
+- `Object L$1`  L59
+- `int label`  L60
+- `Object result`  L61
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L68 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProLocalVideoTranscoder$C24982`
+L262 · [class] static final C24982 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Integer>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Integer>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProLocalVideoTranscoder.java`
+注解：
+
+字段/常量（12）：
+- `File $inputFile`  L263
+- `Function2<Integer, Integer, Unit> $onProgress`  L264
+- `File $outputFile`  L265
+- `int I$0`  L266
+- `Object L$0`  L267
+- `int label`  L268
+- `Ride3ProLocalVideoTranscoder this$0`  L269
+- `Throwable th`  L301
+- `int iIntValue`  L302
+- `int i`  L303
+- `?? r1 = this.label`  L305
+- `Function2<Integer, Integer, Unit> function2 = this.$onProgress`  L329
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L282 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Integer> continuation)`  L289 @Override
+- `Object invokeSuspend(Object obj)`  L300 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProLocalVideoTranscoder$C25011`
+L79 · [class] static final C25011 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProLocalVideoTranscoder.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L80
+- `Object L$1`  L81
+- `Object L$2`  L82
+- `int label`  L83
+- `Object result`  L84
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L91 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProLocalVideoTranscoder$Companion`
+L475 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProLocalVideoTranscoder.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L476
+- `private Companion()`  L480
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProLocalVideoTranscoder$transcode$1`
+L15 · [class] final Ride3ProLocalVideoTranscoder$transcode$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProLocalVideoTranscoder$transcode$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProLocalVideoTranscoder this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProLocalVideoTranscoder$transcode$2`
+L20 · [class] final Ride3ProLocalVideoTranscoder$transcode$2 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends File>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends File>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProLocalVideoTranscoder$transcode$2.java`
+注解：
+
+字段/常量（14）：
+- `File $inputFile`  L21
+- `Function2<Integer, Integer, Unit> $onProgress`  L22
+- `File $outputFile`  L23
+- `Object L$0`  L24
+- `int label`  L25
+- `Ride3ProLocalVideoTranscoder this$0`  L26
+- `Object objM3074constructorimpl`  L52
+- `int i = this.label`  L54
+- `Ride3ProLocalVideoTranscoder ride3ProLocalVideoTranscoder = this.this$0`  L58
+- `File file = this.$inputFile`  L59
+- `File file2 = this.$outputFile`  L60
+- `Function2<Integer, Integer, Unit> function2 = this.$onProgress`  L61
+- `Result.Companion companion = Result.INSTANCE`  L62
+- `Result.Companion companion2 = Result.INSTANCE`  L76
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L39 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends File>> continuation)`  L46 @Override
+- `Object invokeSuspend(Object obj)`  L51 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackBottomBarLayout`
+L9 · [class] public final Ride3ProPlaybackBottomBarLayout · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackBottomBarLayout.java`
+注解：
+
+字段/常量（2）：
+- `int bottomPadding`  L10
+- `int height`  L11
+
+方法（10）：
+- `Ride3ProPlaybackBottomBarLayout copy$default(Ride3ProPlaybackBottomBarLayout ride3ProPlaybackBottomBarLayout, int i, int i2, int i3, Object obj)`  L13
+- `int getHeight()`  L24
+- `int getBottomPadding()`  L29
+- `Ride3ProPlaybackBottomBarLayout copy(int height, int bottomPadding)`  L33
+- `boolean equals(Object other)`  L37
+- `int hashCode()`  L48
+- `String toString()`  L52
+    - 体内字面量："Ride3ProPlaybackBottomBarLayout(height=" · ", bottomPadding=" · ")"
+- `public Ride3ProPlaybackBottomBarLayout(int i, int i2)`  L56
+- `int getHeight()`  L61
+- `int getBottomPadding()`  L65
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackBottomBarLayoutPolicy`
+L9 · [class] public final Ride3ProPlaybackBottomBarLayoutPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackBottomBarLayoutPolicy.java`
+注解：
+
+方法（2）：
+- `private Ride3ProPlaybackBottomBarLayoutPolicy()`  L12
+- `Ride3ProPlaybackBottomBarLayout resolve(int baseHeight, int baseBottomPadding, int navigationBarInset)`  L15
+    - 体内字面量："bottom bar base height must not be negative" · "bottom bar base padding must not be negative" · "navigation bar inset must not be negative"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackConflictGate`
+L25 · [class] public final Ride3ProPlaybackConflictGate · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackConflictGate.java`
+注解：
+
+方法（8）：
+- `int onPlaybackStopped$lambda$0(int i)`  L31
+- `private Ride3ProPlaybackConflictGate()`  L38
+- `void onPlaybackStarted()`  L41
+- `void onPlaybackStopped()`  L46
+- `int applyAsInt(int i)`  L49 @Override
+- `boolean shouldAllowThumbnailRequest(DeviceType deviceType)`  L55
+    - 体内字面量："deviceType"
+- `Object awaitPlaybackIdle(DeviceType deviceType, Continuation<? super Unit> continuation)`  L60
+    - 体内字面量："<anonymous>" · "isActive" · "com.tuwinsmart.tuwin.presentation.ui.album.Ride3ProPlaybackConflictGate$awaitPlaybackIdle$2" · "Ride3ProPlaybackConflictGate.kt" · "invokeSuspend"
+- `void resetForTest()`  L107
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackConflictGate$C25022`
+L72 · [class] static final C25022 · extends `SuspendLambda implements Function2<Boolean, Continuation<? super Boolean>, Object>` · implements `Function2<Boolean, Continuation<? super Boolean>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackConflictGate.java`
+注解：
+
+字段/常量（2）：
+- `boolean Z$0`  L73
+- `int label`  L74
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L81 @Override
+- `Object invoke(Boolean bool, Continuation<? super Boolean> continuation)`  L88 @Override
+- `Object invoke(boolean z, Continuation<? super Boolean> continuation)`  L92
+- `Object invokeSuspend(Object obj)`  L97 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackDeleteCapability`
+L11 · [enum] public Ride3ProPlaybackDeleteCapability · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackDeleteCapability.java`
+注解：
+
+字段/常量（1）：
+- `boolean canDelete`  L17
+
+枚举常量（4）：
+- `LEGACY_SUPPORTED(true)`  L12
+- `INDEXED_SUPPORTED(true)`  L13
+- `UNSUPPORTED(false)`  L14
+- `Ride3ProPlaybackDeleteCapability(boolean z)`  L23
+
+方法（2）：
+- `EnumEntries<Ride3ProPlaybackDeleteCapability> getEntries()`  L19
+- `boolean getCanDelete()`  L27
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackDeleteCapabilityResolver`
+L11 · [class] public final Ride3ProPlaybackDeleteCapabilityResolver · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackDeleteCapabilityResolver.java`
+注解：
+
+字段/常量（2）：
+- `Ride3ProPlaybackDeleteCapability next`  L18
+- `Ride3ProPlaybackDeleteCapability ride3ProPlaybackDeleteCapability = next`  L30
+
+方法（2）：
+- `private Ride3ProPlaybackDeleteCapabilityResolver()`  L14
+- `Ride3ProPlaybackDeleteCapability resolve(String serializedName)`  L17
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackDeleteSelectionGate`
+L9 · [class] public final Ride3ProPlaybackDeleteSelectionGate · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackDeleteSelectionGate.java`
+注解：
+
+字段/常量（2）：
+- `Integer pendingDeleteFileIndex`  L11
+- `Integer num = pendingDeleteFileIndex`  L32
+
+方法（6）：
+- `private Ride3ProPlaybackDeleteSelectionGate()`  L13
+- `void markPendingDelete(int fileIndex)`  L16
+- `Integer peekPendingDelete()`  L20
+- `Integer consumePendingDelete$default(Ride3ProPlaybackDeleteSelectionGate ride3ProPlaybackDeleteSelectionGate, Integer num, int i, Object obj)`  L24
+- `Integer consumePendingDelete(Integer expectedFileIndex)`  L31
+- `void clearForTest()`  L44
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackDownloadGate`
+L17 · [class] public final Ride3ProPlaybackDownloadGate · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackDownloadGate.java`
+注解：
+
+字段/常量（5）：
+- `Ride3ProPlaybackDownloadGate$stopPlaybackBeforeDownload$1 ride3ProPlaybackDownloadGate$stopPlaybackBeforeDownload$1`  L26
+- `Object objInvoke = ride3ProPlaybackDownloadGate$stopPlaybackBeforeDownload$1.result`  L37
+- `int i = ride3ProPlaybackDownloadGate$stopPlaybackBeforeDownload$1.label`  L39
+- `Result.Companion companion = Result.INSTANCE`  L61
+- `Result.Companion companion2 = Result.INSTANCE`  L66
+
+方法（2）：
+- `private Ride3ProPlaybackDownloadGate()`  L20
+- `Object m2923stopPlaybackBeforeDownload0E7RQCE(Function1<? super Continuation<? super Result<Unit>>, ? extends Object> function1, Function0<Unit> function0, Continuation<? super Result<Unit>> continuation)`  L25
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackDownloadGate$stopPlaybackBeforeDownload$1`
+L15 · [class] final Ride3ProPlaybackDownloadGate$stopPlaybackBeforeDownload$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackDownloadGate$stopPlaybackBeforeDownload$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `Ride3ProPlaybackDownloadGate this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackDurationPolicy`
+L12 · [class] public final Ride3ProPlaybackDurationPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackDurationPolicy.java`
+注解：
+
+方法（2）：
+- `private Ride3ProPlaybackDurationPolicy()`  L15
+- `int resolveDurationSeconds(VideoItem item)`  L18
+    - 体内字面量："item"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackExitGuard`
+L29 · [class] public final Ride3ProPlaybackExitGuard · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackExitGuard.java`
+注解：
+
+字段/常量（18）：
+- `boolean isExitInFlight`  L30
+- `long maxBlockMs`  L31
+- `Mutex mutex`  L32
+- `Function1<Continuation<? super Result<Unit>>, Object> stopPlayback`  L33
+- `CoroutineScope stopPlaybackScope`  L34
+- `Ride3ProPlaybackExitGuard$requestExit$1 ride3ProPlaybackExitGuard$requestExit$1`  L64
+- `Mutex mutex`  L65
+- `Ride3ProPlaybackExitGuard ride3ProPlaybackExitGuard`  L66
+- `Throwable th`  L67
+- `Ride3ProPlaybackExitGuard ride3ProPlaybackExitGuard2`  L68
+- `Mutex mutex2`  L69
+- `Result result`  L70
+- `Object objM3074constructorimpl`  L71
+- `Object obj = ride3ProPlaybackExitGuard$requestExit$1.result`  L82
+- `int i = ride3ProPlaybackExitGuard$requestExit$1.label`  L84
+- `Result.Companion companion = Result.INSTANCE`  L111
+- `long j = ride3ProPlaybackExitGuard.maxBlockMs`  L130
+- `Result.Companion companion2 = Result.INSTANCE`  L146
+
+方法（4）：
+- `public Ride3ProPlaybackExitGuard(long j, CoroutineScope stopPlaybackScope, Function1<? super Continuation<? super Result<Unit>>, ? extends Object> stopPlayback)`  L37
+    - 体内字面量："stopPlaybackScope" · "stopPlayback"
+- ` Ride3ProPlaybackExitGuard(long j, CoroutineScope coroutineScope, Function1 function1, int i, DefaultConstructorMarker defaultConstructorMarker)`  L46
+- `boolean getIsExitInFlight()`  L51
+- `Object m2924requestExitIoAF18A(Continuation<? super Result<Unit>> continuation)`  L63
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackExitGuard$requestExit$1`
+L15 · [class] final Ride3ProPlaybackExitGuard$requestExit$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackExitGuard$requestExit$1.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L16
+- `Object L$1`  L17
+- `int label`  L18
+- `Object result`  L19
+- `Ride3ProPlaybackExitGuard this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackExitGuard$requestExit$2$1`
+L22 · [class] final Ride3ProPlaybackExitGuard$requestExit$2$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackExitGuard$requestExit$2$1.java`
+注解：
+
+字段/常量（7）：
+- `CompletableDeferred<Result<Unit>> $stopDeferred`  L23
+- `Object L$0`  L24
+- `int label`  L25
+- `Ride3ProPlaybackExitGuard this$0`  L26
+- `Object obj2`  L47
+- `int i = this.label`  L49
+- `Function1 function1 = this.this$0.stopPlayback`  L52
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L36 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L41 @Override
+- `Object invokeSuspend(Object obj)`  L46 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackExitGuard$requestExit$2$2`
+L20 · [class] final Ride3ProPlaybackExitGuard$requestExit$2$2 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackExitGuard$requestExit$2$2.java`
+注解：
+
+字段/常量（3）：
+- `CompletableDeferred<Result<Unit>> $stopDeferred`  L21
+- `int label`  L22
+- `int i = this.label`  L48
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L31 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L36 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L41
+- `Object invokeSuspend(Object obj)`  L46 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackExitRecordRestorePolicy`
+L9 · [class] public final Ride3ProPlaybackExitRecordRestorePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackExitRecordRestorePolicy.java`
+注解：
+
+方法（2）：
+- `boolean shouldRestoreRecordingOnStop(boolean isFinishing, boolean returningToPlaybackList)`  L12
+- `private Ride3ProPlaybackExitRecordRestorePolicy()`  L16
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackGestureSeekPolicy`
+L11 · [class] public final Ride3ProPlaybackGestureSeekPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackGestureSeekPolicy.java`
+注解：
+
+字段/常量（1）：
+- `long MAX_FULL_SWIPE_SEEK_MS = 60000`  L13
+
+方法（2）：
+- `private Ride3ProPlaybackGestureSeekPolicy()`  L15
+- `long resolveTargetMs(long originMs, float horizontalDistancePx, int viewWidthPx, long durationMs)`  L18
+    - 体内字面量："æ­æ¾å¨å®½åº¦å¿é¡»å¤§äº 0" · "è§é¢æ¶é¿å¿é¡»å¤§äº 0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackInternalNavigationGate`
+L10 · [class] public final Ride3ProPlaybackInternalNavigationGate · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackInternalNavigationGate.java`
+注解：
+
+字段/常量（2）：
+- `long DEFAULT_SUPPRESSION_MS = 2000`  L11
+- `long suppressAutoResumeUntilMs`  L13
+
+方法（6）：
+- `private Ride3ProPlaybackInternalNavigationGate()`  L15
+- `void markReturningToPlaybackList$default(Ride3ProPlaybackInternalNavigationGate ride3ProPlaybackInternalNavigationGate, long j, long j2, int i, Object obj)`  L18
+- `void markReturningToPlaybackList(long nowMs, long durationMs)`  L28
+- `boolean shouldSuppressAutoResume$default(Ride3ProPlaybackInternalNavigationGate ride3ProPlaybackInternalNavigationGate, long j, int i, Object obj)`  L32
+- `boolean shouldSuppressAutoResume(long nowMs)`  L39
+- `void clearForTest()`  L43
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackPauseController`
+L17 · [class] public final Ride3ProPlaybackPauseController · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackPauseController.java`
+注解：
+
+字段/常量（12）：
+- `Function1<Continuation<? super Result<Unit>>, Object> pauseDevice`  L18
+- `Function0<Unit> pausePlayer`  L19
+- `Function0<Unit> resumePlayer`  L20
+- `Ride3ProPlaybackPauseController$pause$1 ride3ProPlaybackPauseController$pause$1`  L35
+- `Object objInvoke = ride3ProPlaybackPauseController$pause$1.result`  L46
+- `int i = ride3ProPlaybackPauseController$pause$1.label`  L48
+- `Function1<Continuation<? super Result<Unit>>, Object> function1 = this.pauseDevice`  L52
+- `Ride3ProPlaybackPauseController$resume$1 ride3ProPlaybackPauseController$resume$1`  L70
+- `Ride3ProPlaybackPauseController ride3ProPlaybackPauseController`  L71
+- `Object objInvoke = ride3ProPlaybackPauseController$resume$1.result`  L82
+- `int i = ride3ProPlaybackPauseController$resume$1.label`  L84
+- `Function1<Continuation<? super Result<Unit>>, Object> function1 = this.pauseDevice`  L87
+
+方法（3）：
+- `public Ride3ProPlaybackPauseController(Function0<Unit> pausePlayer, Function0<Unit> resumePlayer, Function1<? super Continuation<? super Result<Unit>>, ? extends Object> pauseDevice)`  L23
+    - 体内字面量："pausePlayer" · "resumePlayer" · "pauseDevice"
+- `Object m2925pauseIoAF18A(Continuation<? super Result<Unit>> continuation)`  L34
+- `Object m2926resumeIoAF18A(Continuation<? super Result<Unit>> continuation)`  L69
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackPauseController$pause$1`
+L15 · [class] final Ride3ProPlaybackPauseController$pause$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackPauseController$pause$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProPlaybackPauseController this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackPauseController$resume$1`
+L15 · [class] final Ride3ProPlaybackPauseController$resume$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackPauseController$resume$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `Ride3ProPlaybackPauseController this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackRelation`
+L11 · [enum] public Ride3ProPlaybackRelation · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackRelation.java`
+注解：
+
+枚举常量（3）：
+- `SYNCED()`  L12
+- `PENDING_SWITCH()`  L13
+- `NO_SELECTION()`  L14
+
+方法（1）：
+- `EnumEntries<Ride3ProPlaybackRelation> getEntries()`  L18
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackRelationAction`
+L11 · [enum] public Ride3ProPlaybackRelationAction · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackRelationAction.java`
+注解：
+
+枚举常量（3）：
+- `REPLAY()`  L12
+- `SWITCH()`  L13
+- `DISABLED()`  L14
+
+方法（1）：
+- `EnumEntries<Ride3ProPlaybackRelationAction> getEntries()`  L18
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackRelationPolicy`
+L11 · [class] public final Ride3ProPlaybackRelationPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackRelationPolicy.java`
+注解：
+
+方法（3）：
+- `private Ride3ProPlaybackRelationPolicy()`  L37
+- `Ride3ProPlaybackRelation resolve(Integer selectedFileIndex, Integer playingFileIndex)`  L40
+- `Ride3ProPlaybackRelationAction actionFor(Ride3ProPlaybackRelation relation)`  L47
+    - 体内字面量："relation"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackRelationPolicy$WhenMappings`
+L16 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackRelationPolicy.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L17
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackResumeModePolicy`
+L9 · [class] public final Ride3ProPlaybackResumeModePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackResumeModePolicy.java`
+注解：
+
+方法（2）：
+- `boolean shouldRecoverPlaybackModeOnResume(boolean shouldRecoverAfterStop, boolean recoveryInFlight)`  L12
+- `private Ride3ProPlaybackResumeModePolicy()`  L16
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackSelectionQueue`
+L12 · [class] public final Ride3ProPlaybackSelectionQueue · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackSelectionQueue.java`
+注解：
+
+字段/常量（4）：
+- `T activeTarget`  L13
+- `boolean closed`  L14
+- `T pendingTarget`  L15
+- `T t = this.pendingTarget`  L35
+
+方法（5）：
+- `T submit(T target)`  L17
+    - 体内字面量："target"
+- `T complete()`  L34
+- `void discardPending()`  L41
+- `void clear()`  L45
+- `void close()`  L50
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackSessionController`
+L20 · [class] public final Ride3ProPlaybackSessionController · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackSessionController.java`
+注解：
+
+字段/常量（50）：
+- `boolean exitStopRequired`  L21
+- `Mutex mutex`  L22
+- `boolean playbackActive`  L23
+- `Function1<Continuation<? super Result<Unit>>, Object> preparePlaybackRtspStream`  L24
+- `Function2<Integer, Continuation<? super Result<Unit>>, Object> sendPlaybackStart`  L25
+- `Function1<Continuation<? super Result<Unit>>, Object> sendPlaybackStop`  L26
+- `Ride3ProPlaybackSessionController$switchTo$1 ride3ProPlaybackSessionController$switchTo$1`  L63
+- `Ride3ProPlaybackSessionController ride3ProPlaybackSessionController`  L64
+- `Function1<? super Continuation<? super Result<Unit>>, ? extends Object> function2`  L65
+- `?? r13`  L66
+- `Mutex mutex`  L67
+- `Ride3ProPlaybackSessionController ride3ProPlaybackSessionController2`  L68
+- `?? r14`  L69
+- `Ride3ProPlaybackSessionController ride3ProPlaybackSessionController3`  L70
+- `Object value`  L71
+- `?? r15`  L72
+- `Ride3ProPlaybackSessionController ride3ProPlaybackSessionController4`  L73
+- `Object value2`  L74
+- `Object objInvoke = ride3ProPlaybackSessionController$switchTo$1.result`  L85
+- `int i2 = ride3ProPlaybackSessionController$switchTo$1.label`  L87
+- `Mutex mutex2 = this.mutex`  L91
+- `int i3 = ride3ProPlaybackSessionController$switchTo$1.I$0`  L108
+- `Function2<Integer, Continuation<? super Result<Unit>>, Object> function3 = ride3ProPlaybackSessionController3.sendPlaybackStart`  L139
+- `int i4 = ride3ProPlaybackSessionController$switchTo$1.I$0`  L150
+- `Function2<Integer, Continuation<? super Result<Unit>>, Object> function4 = ride3ProPlaybackSessionController3.sendPlaybackStart`  L163
+- `int i5 = ride3ProPlaybackSessionController$switchTo$1.I$0`  L188
+- `Function1<Continuation<? super Result<Unit>>, Object> function5 = ride3ProPlaybackSessionController.preparePlaybackRtspStream`  L201
+- `Function2<Integer, Continuation<? super Result<Unit>>, Object> function6 = ride3ProPlaybackSessionController3.sendPlaybackStart`  L237
+- `Ride3ProPlaybackSessionController$stopIfActive$1 ride3ProPlaybackSessionController$stopIfActive$1`  L268
+- `Mutex mutex`  L269
+- `Ride3ProPlaybackSessionController ride3ProPlaybackSessionController`  L270
+- `Mutex mutex2`  L271
+- `Throwable th`  L272
+- `Object value`  L273
+- `Object obj = ride3ProPlaybackSessionController$stopIfActive$1.result`  L284
+- `int i = ride3ProPlaybackSessionController$stopIfActive$1.label`  L286
+- `Ride3ProPlaybackSessionController$stopForExit$1 ride3ProPlaybackSessionController$stopForExit$1`  L342
+- `Mutex mutex`  L343
+- `Ride3ProPlaybackSessionController ride3ProPlaybackSessionController`  L344
+- `Mutex mutex2`  L345
+- `Throwable th`  L346
+- `Object value`  L347
+- `Object obj = ride3ProPlaybackSessionController$stopForExit$1.result`  L358
+- `int i = ride3ProPlaybackSessionController$stopForExit$1.label`  L360
+- `Ride3ProPlaybackSessionController$stopPlaybackLocked$1 ride3ProPlaybackSessionController$stopPlaybackLocked$1`  L417
+- `Ride3ProPlaybackSessionController ride3ProPlaybackSessionController`  L418
+- `Object objInvoke = ride3ProPlaybackSessionController$stopPlaybackLocked$1.result`  L429
+- `int i = ride3ProPlaybackSessionController$stopPlaybackLocked$1.label`  L431
+- `Result.Companion companion = Result.INSTANCE`  L435
+- `Function1<Continuation<? super Result<Unit>>, Object> function1 = this.sendPlaybackStop`  L438
+
+方法（6）：
+- `public Ride3ProPlaybackSessionController(Function1<? super Continuation<? super Result<Unit>>, ? extends Object> preparePlaybackRtspStream, Function2<? super Integer, ? super Continuation<? super Result<Unit>>, ? extends Object> sendPlaybackStart, Function1<? super Continuation<? super Result<Unit>>, ? extends Object> sendPlaybackStop)`  L29
+    - 体内字面量："preparePlaybackRtspStream" · "sendPlaybackStart" · "sendPlaybackStop"
+- `Object m2932switchTo0E7RQCE(int i, Function1<? super Continuation<? super Result<Unit>>, ? extends Object> function1, Continuation<? super Result<Unit>> continuation)`  L62
+- `Object m2929switchTo0E7RQCE$default(Ride3ProPlaybackSessionController ride3ProPlaybackSessionController, int i, Function1 function1, Continuation continuation, int i2, Object obj)`  L258
+- `Object m2931stopIfActiveIoAF18A(Continuation<? super Result<Unit>> continuation)`  L267
+- `Object m2930stopForExitIoAF18A(Continuation<? super Result<Unit>> continuation)`  L341
+- `Object m2928stopPlaybackLockedgIAlus(boolean z, Continuation<? super Result<Unit>> continuation)`  L416
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackSessionController$stopForExit$1`
+L15 · [class] final Ride3ProPlaybackSessionController$stopForExit$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackSessionController$stopForExit$1.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L16
+- `Object L$1`  L17
+- `int label`  L18
+- `Object result`  L19
+- `Ride3ProPlaybackSessionController this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackSessionController$stopIfActive$1`
+L15 · [class] final Ride3ProPlaybackSessionController$stopIfActive$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackSessionController$stopIfActive$1.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L16
+- `Object L$1`  L17
+- `int label`  L18
+- `Object result`  L19
+- `Ride3ProPlaybackSessionController this$0`  L20
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L29 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackSessionController$stopPlaybackLocked$1`
+L15 · [class] final Ride3ProPlaybackSessionController$stopPlaybackLocked$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackSessionController$stopPlaybackLocked$1.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L16
+- `int label`  L17
+- `Object result`  L18
+- `Ride3ProPlaybackSessionController this$0`  L19
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L28 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackSessionController$switchTo$1`
+L15 · [class] final Ride3ProPlaybackSessionController$switchTo$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackSessionController$switchTo$1.java`
+注解：
+
+字段/常量（7）：
+- `int I$0`  L16
+- `Object L$0`  L17
+- `Object L$1`  L18
+- `Object L$2`  L19
+- `int label`  L20
+- `Object result`  L21
+- `Ride3ProPlaybackSessionController this$0`  L22
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L31 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackSessionController$switchTo$2`
+L18 · [class] final Ride3ProPlaybackSessionController$switchTo$2 · extends `SuspendLambda implements Function1<Continuation<? super Result<? extends Unit>>, Object>` · implements `Function1<Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackSessionController$switchTo$2.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L19
+- `Result.Companion companion = Result.INSTANCE`  L47
+
+方法（4）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L26 @Override
+- `Object invoke(Continuation<? super Result<? extends Unit>> continuation)`  L31 @Override
+- `Object invoke2(Continuation<? super Result<Unit>> continuation)`  L36
+- `Object invokeSuspend(Object obj)`  L41 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackStopCoordinator`
+L17 · [class] public final Ride3ProPlaybackStopCoordinator · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackStopCoordinator.java`
+注解：
+
+字段/常量（6）：
+- `Ride3ProPlaybackStopCoordinator$stop$1 ride3ProPlaybackStopCoordinator$stop$1`  L26
+- `Object objCoroutineScope = ride3ProPlaybackStopCoordinator$stop$1.result`  L37
+- `int i = ride3ProPlaybackStopCoordinator$stop$1.label`  L39
+- `Result.Companion companion = Result.INSTANCE`  L66
+- `Result.Companion companion2 = Result.INSTANCE`  L70
+- `Result.Companion companion3 = Result.INSTANCE`  L73
+
+方法（3）：
+- `private Ride3ProPlaybackStopCoordinator()`  L20
+- `Object m2935stop0E7RQCE(Function1<? super Continuation<? super Result<Unit>>, ? extends Object> function1, Function1<? super Continuation<? super Result<Unit>>, ? extends Object> function2, Continuation<? super Result<Unit>> continuation)`  L25
+- `Object m2934mergeResults0fmBdY(Object mediaResult, Object deviceResult)`  L59
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackStopCoordinator$stop$1`
+L15 · [class] final Ride3ProPlaybackStopCoordinator$stop$1 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackStopCoordinator$stop$1.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L16
+- `Object result`  L17
+- `Ride3ProPlaybackStopCoordinator this$0`  L18
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L27 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackStopCoordinator$stop$2`
+L23 · [class] final Ride3ProPlaybackStopCoordinator$stop$2 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackStopCoordinator$stop$2.java`
+注解：
+
+字段/常量（8）：
+- `Function1<Continuation<? super Result<Unit>>, Object> $stopDevice`  L24
+- `Function1<Continuation<? super Result<Unit>>, Object> $stopMedia`  L25
+- `Object L$0`  L26
+- `int label`  L27
+- `Deferred deferredAsync$default`  L56
+- `Object obj2`  L57
+- `int i = this.label`  L59
+- `Function1<Continuation<? super Result<Unit>>, Object> function1 = this.$stopDevice`  L63
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L38 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L45 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L50
+- `Object invokeSuspend(Object obj)`  L55 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProPlaybackStopCoordinator$stop$2$mediaStop$1`
+L20 · [class] final Ride3ProPlaybackStopCoordinator$stop$2$mediaStop$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProPlaybackStopCoordinator$stop$2$mediaStop$1.java`
+注解：
+
+字段/常量（4）：
+- `Function1<Continuation<? super Result<Unit>>, Object> $stopMedia`  L21
+- `int label`  L22
+- `int i = this.label`  L49
+- `Function1<Continuation<? super Result<Unit>>, Object> function1 = this.$stopMedia`  L52
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L32 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L37 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L42
+- `Object invokeSuspend(Object obj)`  L47 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProSelectedVideoAdapter`
+L38 · [class] public final Ride3ProSelectedVideoAdapter · extends `RecyclerView.Adapter<VideoViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProSelectedVideoAdapter.java`
+注解：
+
+字段/常量（13）：
+- `String CREATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss"`  L41 @Deprecated
+- `long MILLIS_PER_SECOND = 1000`  L45 @Deprecated
+- `String START_TIME_FORMAT = "HH:mm"`  L48 @Deprecated
+- `Function1<VideoItem, Unit> onPlayClick`  L49
+- `Function1<VideoItem, Unit> onVideoClick`  L50
+- `Integer playingIndex`  L51
+- `Integer selectedIndex`  L52
+- `Function1<Integer, AuthorizedDeviceResource> thumbnailModelForIndex`  L53
+- `List<VideoItem> videos`  L54
+- `Integer num = this.selectedIndex`  L95
+- `Integer num = this.playingIndex`  L110
+- `Integer num = this.selectedIndex`  L139
+- `Integer num2 = this.playingIndex`  L141
+
+方法（12）：
+- ` Ride3ProSelectedVideoAdapter(Function1 function1, Function1 function2, C25031 c25031, int i, DefaultConstructorMarker defaultConstructorMarker)`  L56
+- `Void invoke(int i2)`  L58
+- `Object invoke(Object obj)`  L63 @Override
+- `public Ride3ProSelectedVideoAdapter(Function1<? super VideoItem, Unit> onVideoClick, Function1<? super VideoItem, Unit> onPlayClick, Function1<? super Integer, AuthorizedDeviceResource> thumbnailModelForIndex)`  L70
+    - 体内字面量："onVideoClick" · "onPlayClick" · "thumbnailModelForIndex"
+- `void submit(List<VideoItem> videos, Integer selectedIndex, Integer playingIndex)`  L80
+    - 体内字面量："videos"
+- `void setSelectedIndex(Integer index)`  L90
+- `void setPlayingIndex(Integer index)`  L105
+- `VideoItem videoAt(int position)`  L120
+    - 体内字面量："Failed requirement."
+- `VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L128 @Override
+    - 体内字面量："parent" · "inflate(...)"
+- `void onBindViewHolder(VideoViewHolder holder, int position)`  L136 @Override
+    - 体内字面量："holder"
+- `int getItemCount()`  L146 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/Ride3ProSelectedVideoAdapter$VideoViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemRide3proSelectedVideoBinding;" · "(Lcom/tuwinsmart/tuwin/presentation/ui/album/Ride3ProSelectedVideoAdapter;Lcom/tuwinsmart/tuwin/databinding/ItemRide3proSelectedVideoBinding;)V" · "bind" · "video" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/adapter/VideoItem;" · "selected" · "playing" · "app_release_64"
+- `void validateIndex(List<VideoItem> videos, Integer index)`  L246
+    - 体内字面量："Failed requirement." · "Lcom/tuwinsmart/tuwin/presentation/ui/album/Ride3ProSelectedVideoAdapter$Companion;" · "()V" · "CREATE_TIME_FORMAT" · "MILLIS_PER_SECOND" · "START_TIME_FORMAT" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProSelectedVideoAdapter$Companion`
+L257 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProSelectedVideoAdapter.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L258
+- `private Companion()`  L262
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProSelectedVideoAdapter$VideoViewHolder`
+L152 · [class] public final VideoViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProSelectedVideoAdapter.java`
+注解：
+
+字段/常量（11）：
+- `ItemRide3proSelectedVideoBinding binding`  L153
+- `Ride3ProSelectedVideoAdapter this$0`  L154
+- `int i`  L165
+- `int i2`  L166
+- `AppCompatTextView btnPlayVideo = this.binding.btnPlayVideo`  L180
+- `AppCompatTextView appCompatTextView = this.binding.btnPlayVideo`  L185
+- `View selectedVideoGlow = this.binding.selectedVideoGlow`  L192
+- `ConstraintLayout constraintLayout = this.binding.cardSelectedVideo`  L195
+- `AppCompatTextView appCompatTextView2 = this.binding.btnPlayVideo`  L213
+- `Ride3ProSelectedVideoAdapter ride3ProSelectedVideoAdapter = this.this$0`  L214
+- `Ride3ProSelectedVideoAdapter ride3ProSelectedVideoAdapter2 = this.this$0`  L222
+
+方法（6）：
+- `public VideoViewHolder(Ride3ProSelectedVideoAdapter ride3ProSelectedVideoAdapter, ItemRide3proSelectedVideoBinding binding)`  L157
+    - 体内字面量："binding"
+- `void bind(final VideoItem video, boolean selected, boolean playing)`  L164
+- `void onClick(View view)`  L217 @Override
+- `void onClick(View view)`  L225 @Override
+- `void bind$lambda$3(Ride3ProSelectedVideoAdapter this$0, VideoItem video, View view)`  L232
+    - 体内字面量："this$0" · "$video"
+- `void bind$lambda$4(Ride3ProSelectedVideoAdapter this$0, VideoItem video, View view)`  L239
+    - 体内字面量："this$0" · "$video"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProSelectedVideoCardTransform`
+L9 · [class] public final Ride3ProSelectedVideoCardTransform · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProSelectedVideoCardTransform.java`
+注解：
+
+字段/常量（10）：
+- `float alpha`  L10
+- `float elevationFraction`  L11
+- `float rotationY`  L12
+- `float scale`  L13
+- `float translationXFraction`  L14
+- `float translationYFraction`  L15
+- `float f7 = f2`  L24
+- `float f8 = f3`  L28
+- `float f9 = f4`  L32
+- `float f10 = f5`  L36
+
+方法（18）：
+- `Ride3ProSelectedVideoCardTransform copy$default(Ride3ProSelectedVideoCardTransform ride3ProSelectedVideoCardTransform, float f, float f2, float f3, float f4, float f5, float f6, int i, Object obj)`  L17
+- `float getScale()`  L44
+- `float getAlpha()`  L49
+- `float getElevationFraction()`  L54
+- `float getRotationY()`  L59
+- `float getTranslationXFraction()`  L64
+- `float getTranslationYFraction()`  L69
+- `Ride3ProSelectedVideoCardTransform copy(float scale, float alpha, float elevationFraction, float rotationY, float translationXFraction, float translationYFraction)`  L73
+- `boolean equals(Object other)`  L77
+- `int hashCode()`  L88
+- `String toString()`  L92
+    - 体内字面量："Ride3ProSelectedVideoCardTransform(scale=" · ", alpha=" · ", elevationFraction=" · ", rotationY=" · ", translationXFraction=" · ", translationYFraction=" · ")"
+- `public Ride3ProSelectedVideoCardTransform(float f, float f2, float f3, float f4, float f5, float f6)`  L96
+- `float getScale()`  L105
+- `float getAlpha()`  L109
+- `float getElevationFraction()`  L113
+- `float getRotationY()`  L117
+- `float getTranslationXFraction()`  L121
+- `float getTranslationYFraction()`  L125
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProSelectedVideoCarouselPolicy`
+L10 · [class] public final Ride3ProSelectedVideoCarouselPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProSelectedVideoCarouselPolicy.java`
+注解：
+
+字段/常量（7）：
+- `float CENTER_ALPHA = 1.0f`  L11
+- `float CENTER_SCALE = 1.0f`  L12
+- `float SIDE_ALPHA = 0.52f`  L14
+- `float SIDE_OVERLAP_FRACTION = 0.26f`  L15
+- `float SIDE_ROTATION_Y_DEGREES = 12.0f`  L16
+- `float SIDE_SCALE = 0.85f`  L17
+- `float SIDE_VERTICAL_OFFSET_FRACTION = 0.025f`  L18
+
+方法（3）：
+- `private Ride3ProSelectedVideoCarouselPolicy()`  L20
+- `boolean shouldPlayScrollTick(boolean userScrollActive, Integer previousCenteredIndex, int centeredIndex)`  L23
+- `Ride3ProSelectedVideoCardTransform cardTransform(float distanceFromCenter, float fullEffectDistance)`  L27
+    - 体内字面量："Failed requirement."
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProShareFlowController`
+L16 · [class] public final Ride3ProShareFlowController · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProShareFlowController.java`
+注解：
+
+字段/常量（14）：
+- `long activeToken`  L17
+- `Function0<Unit> cancelPreparing`  L18
+- `Function0<Unit> cancelTranscode`  L19
+- `Function0<Unit> downloadCancellation`  L20
+- `Object lock`  L21
+- `ShareStage stage`  L22
+- `boolean z`  L76
+- `long j`  L88
+- `boolean z`  L99
+- `boolean z`  L112
+- `boolean z`  L129
+- `Unit unit = Unit.INSTANCE`  L147
+- `boolean zCanContinueLocked`  L153
+- `Function0<Unit> function0`  L161
+
+方法（11）：
+- `public Ride3ProShareFlowController(Function0<Unit> cancelPreparing, Function0<Unit> cancelTranscode)`  L66
+    - 体内字面量："cancelPreparing" · "cancelTranscode"
+- `boolean isInProgress()`  L75
+- `boolean getShouldBlockUi()`  L83
+- `long beginPreparing()`  L87
+- `boolean moveToDownloading(long token)`  L98
+- `boolean registerDownloadCancellation(long token, Function0<Unit> cancellation)`  L111
+- `boolean moveToTranscoding(long token)`  L128
+- `void finish(long token)`  L142
+- `boolean canContinue(long token)`  L152
+- `void cancel()`  L160
+- `boolean canContinueLocked(long token)`  L185
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProShareFlowController$ShareStage`
+L26 · [enum] private ShareStage · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProShareFlowController.java`
+注解：
+
+枚举常量（4）：
+- `IDLE()`  L27
+- `PREPARING()`  L28
+- `DOWNLOADING()`  L29
+- `TRANSCODING()`  L30
+
+方法（1）：
+- `EnumEntries<ShareStage> getEntries()`  L34
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProShareFlowController$WhenMappings`
+L41 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProShareFlowController.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L42
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProShareVideoFilePolicy`
+L22 · [class] public final Ride3ProShareVideoFilePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProShareVideoFilePolicy.java`
+注解：
+
+字段/常量（8）：
+- `String strSubstringAfterLast$default`  L36
+- `String str = deviceType == DeviceType.RIDE6 ? "mov" : "avi"`  L38
+- `String str2 = null`  L39
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L53
+- `String strSubstringAfterLast$default`  L62
+- `List<String> groupValues`  L63
+- `String str`  L64
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L78
+
+方法（4）：
+- `private Ride3ProShareVideoFilePolicy()`  L28
+- `String resolveDownloadedInputFileName(String sourcePath, Integer fileIndex)`  L31
+- `String resolveDownloadedInputFileName(String sourcePath, Integer fileIndex, DeviceType deviceType)`  L35
+- `String resolveOutputFileName(String sourcePath, String downloadedFileName, Integer fileIndex, Date captureTime)`  L61
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProTimelineRecordingSegment`
+L9 · [class] public final Ride3ProTimelineRecordingSegment · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProTimelineRecordingSegment.java`
+注解：
+
+字段/常量（2）：
+- `int endSecondsExclusive`  L10
+- `int startSeconds`  L11
+
+方法（10）：
+- `Ride3ProTimelineRecordingSegment copy$default(Ride3ProTimelineRecordingSegment ride3ProTimelineRecordingSegment, int i, int i2, int i3, Object obj)`  L13
+- `int getStartSeconds()`  L24
+- `int getEndSecondsExclusive()`  L29
+- `Ride3ProTimelineRecordingSegment copy(int startSeconds, int endSecondsExclusive)`  L33
+- `boolean equals(Object other)`  L37
+- `int hashCode()`  L48
+- `String toString()`  L52
+    - 体内字面量："Ride3ProTimelineRecordingSegment(startSeconds=" · ", endSecondsExclusive=" · ")"
+- `public Ride3ProTimelineRecordingSegment(int i, int i2)`  L56
+    - 体内字面量："Failed requirement." · "Failed requirement."
+- `int getStartSeconds()`  L67
+- `int getEndSecondsExclusive()`  L71
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.Ride3ProTranscodeProgressTextFormatter`
+L13 · [class] public final Ride3ProTranscodeProgressTextFormatter · `com/tuwinsmart/tuwin/presentation/p010ui/album/Ride3ProTranscodeProgressTextFormatter.java`
+注解：
+
+方法（2）：
+- `private Ride3ProTranscodeProgressTextFormatter()`  L16
+- `String formatProgressText(int processedFrames, int totalFrames)`  L19
+    - 体内字面量："getString(...)"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourDetailActivity`
+L76 · [class] public final Ride5HourDetailActivity · extends `BaseActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourDetailActivity.java`
+注解：
+
+字段/常量（117）：
+- `int COLUMN_COUNT = 3`  L77
+- `float DISABLED_ALPHA = 0.5f`  L81
+- `String EXTRA_DEVICE_TYPE = "deviceType"`  L82
+- `String EXTRA_PRELOADED_RECORDINGS = "preloaded_recordings"`  L83
+- `String EXTRA_SESSION_ID = "device_session_id"`  L84
+- `String EXTRA_VIDEO_ITEM = "videoItem"`  L85
+- `ActivityRide5HourDetailBinding binding`  L86
+- `DeviceType deviceType`  L87
+- `VideoItem hourItem`  L88
+- `Job loadJob`  L89
+- `boolean playbackNavigationInFlight`  L90
+- `Object objM3074constructorimpl`  L264
+- `Result.Companion companion = Result.INSTANCE`  L266
+- `Ride5HourDetailActivity ride5HourDetailActivity = this`  L267
+- `Result.Companion companion2 = Result.INSTANCE`  L270
+- `String strDeletedFilePathFromResult$app_release_64`  L281
+- `FileSelectionBottomBarInsets fileSelectionBottomBarInsets = FileSelectionBottomBarInsets.INSTANCE`  L323
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding = this.binding`  L324
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding2 = null`  L325
+- `ConstraintLayout constraintLayout = root`  L332
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding3 = this.binding`  L333
+- `LinearLayout llBottomActions = activityRide5HourDetailBinding3.llBottomActions`  L338
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding4 = this.binding`  L341
+- `TextView textView = activityRide5HourDetailBinding4.tvTitle`  L346
+- `VideoItem videoItem = this.hourItem`  L347
+- `VideoItem videoItem2 = this.hourItem`  L353
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding5 = this.binding`  L359
+- `ImageView btnBack = activityRide5HourDetailBinding5.btnBack`  L364
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding6 = this.binding`  L372
+- `ImageView btnDownloading = activityRide5HourDetailBinding6.btnDownloading`  L377
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding7 = this.binding`  L385
+- `ImageView btnEdit = activityRide5HourDetailBinding7.btnEdit`  L390
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding8 = this.binding`  L398
+- `ImageView btnCloseSelect = activityRide5HourDetailBinding8.btnCloseSelect`  L403
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding9 = this.binding`  L411
+- `TextView tvSelectAll = activityRide5HourDetailBinding9.tvSelectAll`  L416
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding10 = this.binding`  L424
+- `LinearLayout btnDelete = activityRide5HourDetailBinding10.btnDelete`  L429
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding11 = this.binding`  L437
+- `LinearLayout btnDownload = activityRide5HourDetailBinding11.btnDownload`  L442
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding12 = this.binding`  L450
+- `Button btnRetry = activityRide5HourDetailBinding12.btnRetry`  L455
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding13 = this.binding`  L463
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding14 = this.binding`  L469
+- `DownloadListActivity.Companion companion = DownloadListActivity.INSTANCE`  L488
+- `Ride5HourDetailActivity ride5HourDetailActivity = this$0`  L489
+- `DeviceType deviceType = this$0.deviceType`  L490
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding = this$0.binding`  L514
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding = this.binding`  L546
+- `FrameLayout toolbarContainer = activityRide5HourDetailBinding.toolbarContainer`  L551
+- `FrameLayout frameLayout = toolbarContainer`  L554
+- `VideoItem videoItem = this.hourItem`  L581
+- `Job job = this.loadJob`  L595
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding = this.binding`  L664
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding2 = null`  L665
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding3 = this.binding`  L671
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding4 = this.binding`  L677
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding5 = this.binding`  L683
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding6 = this.binding`  L689
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding = this.binding`  L700
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding2 = null`  L701
+- `int i = 8`  L706
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding3 = this.binding`  L708
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding4 = this.binding`  L714
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding5 = this.binding`  L720
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding6 = this.binding`  L726
+- `ImageView imageView = activityRide5HourDetailBinding2.btnEdit`  L732
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding = this.binding`  L740
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding2 = null`  L741
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding3 = this.binding`  L747
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding4 = this.binding`  L753
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding5 = this.binding`  L759
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding6 = this.binding`  L765
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding = this.binding`  L776
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding2 = null`  L777
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding3 = this.binding`  L783
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding4 = this.binding`  L789
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding5 = this.binding`  L795
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding6 = this.binding`  L801
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding = this.binding`  L815
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding2 = null`  L816
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding3 = this.binding`  L822
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding4 = this.binding`  L828
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding = this.binding`  L849
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding2 = null`  L850
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding3 = this.binding`  L856
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding4 = this.binding`  L862
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding = this.binding`  L881
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding2 = null`  L882
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding3 = this.binding`  L888
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding4 = this.binding`  L894
+- `boolean z = selectedCount > 0`  L900
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding5 = this.binding`  L901
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding6 = this.binding`  L907
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding7 = this.binding`  L913
+- `ActivityRide5HourDetailBinding activityRide5HourDetailBinding8 = this.binding`  L919
+- `VideoItem videoItem`  L937
+- `VideoItem videoItem2`  L938
+- `Object next`  L939
+- `VideoItem videoItem3 = this.hourItem`  L943
+- `DeviceType deviceType = null`  L944
+- `VideoItem videoItem4 = this.hourItem`  L980
+- `DeviceType deviceType2 = this.deviceType`  L991
+- `List<Ride5HourRecording> list = this.recordings`  L1006
+- `Object objM3074constructorimpl`  L1124
+- `Object objM3074constructorimpl2`  L1125
+- `Result.Companion companion = Result.INSTANCE`  L1127
+- `Ride5HourDetailActivity ride5HourDetailActivity = this`  L1128
+- `List<Ride5HourRecording> list = selectedFiles`  L1131
+- `Result.Companion companion2 = Result.INSTANCE`  L1139
+- `ArrayList arrayList3 = arrayList2`  L1156
+- `Result.Companion companion3 = Result.INSTANCE`  L1158
+- `Ride5HourDetailActivity ride5HourDetailActivity2 = this`  L1159
+- `Result.Companion companion4 = Result.INSTANCE`  L1162
+- `DownloadListActivity.Companion companion5 = DownloadListActivity.INSTANCE`  L1173
+- `Ride5HourDetailActivity ride5HourDetailActivity3 = this`  L1174
+- `DeviceType deviceType = this.deviceType`  L1175
+
+方法（55）：
+- `Ride5HourFilesLoader invoke()`  L96 @Override
+- `Ride5SessionPortProvider invoke()`  L105 @Override
+- `VerifiedDeviceFileCatalog invoke()`  L114 @Override
+- `Ride5HourFileAdapter invoke()`  L149 @Override
+- `void onActivityResult(Object obj)`  L210 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourDetailActivity$Companion;" · "()V" · "COLUMN_COUNT" · "DISABLED_ALPHA" · "EXTRA_DEVICE_TYPE" · "EXTRA_PRELOADED_RECORDINGS" · "EXTRA_SESSION_ID" · "EXTRA_VIDEO_ITEM" · "launchActivity" · "activity" · "Lcom/tuwinsmart/tuwin/presentation/ui/base/BaseActivity;" · "videoItem" · "Lcom/tuwinsmart/tuwin/presentation/ui/storage/adapter/VideoItem;" · "deviceType" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceType;" · "sessionId" · "preloadedRecordings" · "Lcom/tuwinsmart/tuwin/domain/model/ride5/Ride5HourRecording;" · "app_release_64"
+- `Ride5HourFilesLoader getHourFilesLoader()`  L244
+- `Ride5SessionPortProvider getSessionPortProvider()`  L249
+- `VerifiedDeviceFileCatalog getFileCatalog()`  L253
+- `Ride5HourFileAdapter getAdapter()`  L258
+- `Object authorizePreviewModel(String path)`  L263
+- `void playbackLauncher$lambda$1(Ride5HourDetailActivity this$0, ActivityResult result)`  L280
+- `String getDeviceKey()`  L292
+    - 体内字面量："device_session_id"
+- `View getContentRoot()`  L298 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L312 @Override
+    - 体内字面量："videoItem" · "null cannot be cast to non-null type com.tuwinsmart.tuwin.presentation.ui.storage.adapter.VideoItem" · "deviceType" · "RIDE5"
+- `void onClick(View view)`  L368 @Override
+- `void onClick(View view)`  L381 @Override
+- `void onClick(View view)`  L394 @Override
+- `void onClick(View view)`  L407 @Override
+- `void onClick(View view)`  L420 @Override
+- `void onClick(View view)`  L433 @Override
+- `void onClick(View view)`  L446 @Override
+- `void onClick(View view)`  L459 @Override
+- `void onCreate$lambda$2(Ride5HourDetailActivity this$0, View view)`  L480
+    - 体内字面量："this$0"
+- `void onCreate$lambda$3(Ride5HourDetailActivity this$0, View view)`  L486
+    - 体内字面量："this$0"
+- `void onCreate$lambda$4(Ride5HourDetailActivity this$0, View view)`  L499
+    - 体内字面量："this$0"
+- `void onCreate$lambda$5(Ride5HourDetailActivity this$0, View view)`  L505
+    - 体内字面量："this$0"
+- `void onCreate$lambda$6(Ride5HourDetailActivity this$0, View view)`  L511
+    - 体内字面量："this$0"
+- `void onCreate$lambda$7(Ride5HourDetailActivity this$0, View view)`  L523
+    - 体内字面量："this$0"
+- `void onCreate$lambda$8(Ride5HourDetailActivity this$0, View view)`  L534
+    - 体内字面量："this$0"
+- `void onCreate$lambda$9(Ride5HourDetailActivity this$0, View view)`  L540
+    - 体内字面量："this$0"
+- `void applyStatusBarInsets()`  L545
+- `WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat)`  L557 @Override
+- `WindowInsetsCompat applyStatusBarInsets$lambda$10(int i, View view, WindowInsetsCompat insets)`  L565
+    - 体内字面量："view" · "insets"
+- `void loadHourRecordings()`  L572
+    - 体内字面量："preloaded_recordings"
+- `void showLoading()`  L663
+- `void renderContent()`  L699
+- `void renderEmpty()`  L739
+- `void renderError()`  L775
+- `void enterSelectMode()`  L810
+- `void handleFileLongClick(Ride5HourRecording recording)`  L838
+- `void exitSelectMode()`  L847
+- `void handleBack()`  L871
+- `void renderSelection(int selectedCount, boolean allSelected)`  L880
+- `void openPlayback(Ride5HourRecording recording)`  L936
+- `void removeDeletedRecording(String deletedPath)`  L1005
+- `void showDeleteConfirmDialog(final List<Ride5HourRecording> files)`  L1021
+- `void onClick(View view)`  L1024 @Override
+- `void showDeleteConfirmDialog$lambda$14(Ride5HourDetailActivity this$0, List files, View view)`  L1031
+    - 体内字面量："this$0" · "$files" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.album.ride5.Ride5HourDetailActivity$deleteSelectedFiles$1" · "Ride5HourDetailActivity.kt" · "invokeSuspend" · "file" · "L$2"
+- `void deleteSelectedFiles(List<Ride5HourRecording> files)`  L1088
+- `void requestSelectedFilesDownload()`  L1093
+- `void onGranted(List<String> permissions, boolean all)`  L1106 @Override
+- `void onDenied(List<String> permissions, boolean never)`  L1111 @Override
+- `void enqueueSelectedFilesDownload(List<Ride5HourRecording> selectedFiles)`  L1123
+- `void onResume()`  L1184 @Override
+- `void onBackPressed()`  L1190 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourDetailActivity$C25221`
+L129 · [class] C25221 · extends `FunctionReferenceImpl implements Function1<Ride5HourRecording, Unit>` · implements `Function1<Ride5HourRecording, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourDetailActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(Ride5HourRecording ride5HourRecording)`  L135 @Override
+- `void invoke2(Ride5HourRecording p0)`  L141
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourDetailActivity$C25232`
+L156 · [class] C25232 · extends `FunctionReferenceImpl implements Function1<Ride5HourRecording, Unit>` · implements `Function1<Ride5HourRecording, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourDetailActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(Ride5HourRecording ride5HourRecording)`  L162 @Override
+- `void invoke2(Ride5HourRecording p0)`  L168
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourDetailActivity$C25243`
+L177 · [class] C25243 · extends `FunctionReferenceImpl implements Function2<Integer, Boolean, Unit>` · implements `Function2<Integer, Boolean, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourDetailActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(Integer num, Boolean bool)`  L183 @Override
+- `void invoke(int i, boolean z)`  L188
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourDetailActivity$C25254`
+L196 · [class] C25254 · extends `FunctionReferenceImpl implements Function1<String, Object>` · implements `Function1<String, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourDetailActivity.java`
+注解：
+
+方法（1）：
+- `Object invoke(String p0)`  L202 @Override
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourDetailActivity$C25261`
+L1041 · [class] static final C25261 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourDetailActivity.java`
+注解：
+
+字段/常量（6）：
+- `List<Ride5HourRecording> $files`  L1042
+- `Object L$0`  L1043
+- `Object L$1`  L1044
+- `Object L$2`  L1045
+- `int label`  L1046
+- `Ride5HourDetailActivity this$0`  L1047
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1057 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1062 @Override
+- `java.lang.Object invokeSuspend(java.lang.Object r10)`  L1079 @Override
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourDetailActivity.C25261.invokeSuspend(java.lang.Object):java.lang.Object"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourDetailActivity$C25271`
+L606 · [class] static final C25271 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourDetailActivity.java`
+注解：
+
+字段/常量（4）：
+- `List<VideoItem> $hourItems`  L607
+- `int label`  L608
+- `List listEmptyList`  L628
+- `int i = this.label`  L630
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L617 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L622 @Override
+- `Object invokeSuspend(Object obj)`  L627 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourDetailActivity$Companion`
+L217 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourDetailActivity.java`
+注解：
+
+字段/常量（1）：
+- `String str = sessionId`  L232
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L218
+- `private Companion()`  L222
+- `void launchActivity(BaseActivity activity, VideoItem videoItem, DeviceType deviceType, String sessionId, List<Ride5HourRecording> preloadedRecordings)`  L225
+    - 体内字面量："activity" · "videoItem" · "deviceType" · "videoItem" · "deviceType"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourFileAdapter`
+L37 · [class] public final Ride5HourFileAdapter · extends `RecyclerView.Adapter<RecyclerView.ViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourFileAdapter.java`
+注解：
+
+字段/常量（15）：
+- `String TIME_DISPLAY_FORMAT = "%02d:%02d"`  L39
+- `Function1<Ride5HourRecording, Unit> onFileClick`  L40
+- `Function1<Ride5HourRecording, Unit> onFileLongClick`  L41
+- `Function2<Integer, Boolean, Unit> onSelectionChanged`  L42
+- `Function1<String, Object> previewModel`  L43
+- `List<Ride5HourRecording> recordings`  L44
+- `boolean selectMode`  L45
+- `LinkedHashSet<String> selectedPaths`  L46
+- `List<Ride5HourRecording> list = recordings`  L64
+- `LinkedHashSet<String> linkedHashSet = this.selectedPaths`  L66
+- `LinkedHashSet<String> linkedHashSet = this.selectedPaths`  L94
+- `List<Ride5HourRecording> list = this.recordings`  L95
+- `List<Ride5HourRecording> list = this.recordings`  L108
+- `List<Ride5HourRecording> list = this.recordings`  L121
+- `int i = 0`  L130
+
+方法（12）：
+- `public Ride5HourFileAdapter(Function1<? super Ride5HourRecording, Unit> onFileClick, Function1<? super Ride5HourRecording, Unit> onFileLongClick, Function2<? super Integer, ? super Boolean, Unit> onSelectionChanged, Function1<? super String, ? extends Object> previewModel)`  L49
+    - 体内字面量："onFileClick" · "onFileLongClick" · "onSelectionChanged" · "previewModel"
+- `void submitList(List<Ride5HourRecording> recordings)`  L62
+    - 体内字面量："recordings"
+- `void setSelectMode(boolean enabled)`  L77
+- `boolean getSelectMode()`  L87
+- `void selectAll(boolean selectAll)`  L91
+- `List<Ride5HourRecording> getSelectedFiles()`  L107
+- `void selectFile(Ride5HourRecording recording)`  L118
+    - 体内字面量："recording"
+- `RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L151 @Override
+    - 体内字面量："parent" · "inflate(...)"
+- `void onBindViewHolder(RecyclerView.ViewHolder holder, int position)`  L159 @Override
+    - 体内字面量："holder"
+- `int getItemCount()`  L165 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourFileAdapter$FileViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemStorageListVideoItemBinding;" · "(Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourFileAdapter;Lcom/tuwinsmart/tuwin/databinding/ItemStorageListVideoItemBinding;)V" · "bind" · "recording" · "Lcom/tuwinsmart/tuwin/domain/model/ride5/Ride5HourRecording;" · "app_release_64"
+- `void toggleSelection(Ride5HourRecording recording)`  L254
+- `void notifySelectionChanged()`  L261
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourFileAdapter$Companion;" · "()V" · "TIME_DISPLAY_FORMAT" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourFileAdapter$Companion`
+L268 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourFileAdapter.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L269
+- `private Companion()`  L273
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourFileAdapter$FileViewHolder`
+L172 · [class] final FileViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourFileAdapter.java`
+注解：
+
+字段/常量（6）：
+- `ItemStorageListVideoItemBinding binding`  L173
+- `Ride5HourFileAdapter this$0`  L174
+- `TextView textView = this.binding.tvHourTime`  L189
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L190
+- `Ride5HourFileAdapter ride5HourFileAdapter = this.this$0`  L199
+- `Ride5HourFileAdapter ride5HourFileAdapter2 = this.this$0`  L207
+
+方法（8）：
+- `public FileViewHolder(Ride5HourFileAdapter ride5HourFileAdapter, ItemStorageListVideoItemBinding binding)`  L177
+    - 体内字面量："binding"
+- `void bind(final Ride5HourRecording recording)`  L184
+    - 体内字面量："recording"
+- `void onClick(View view)`  L202 @Override
+- `boolean onLongClick(View view)`  L210 @Override
+- `void onClick(View view)`  L216 @Override
+- `void bind$lambda$1(Ride5HourFileAdapter this$0, Ride5HourRecording recording, FileViewHolder this$1, View view)`  L223
+    - 体内字面量："this$0" · "$recording" · "this$1"
+- `boolean bind$lambda$2(Ride5HourFileAdapter this$0, Ride5HourRecording recording, View view)`  L236
+    - 体内字面量："this$0" · "$recording"
+- `void bind$lambda$3(FileViewHolder this$0, View view)`  L247
+    - 体内字面量："this$0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity`
+L126 · [class] public final Ride5HourlyPlaybackActivity · extends `BaseActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（281）：
+- `String EXTRA_DELETED_FILE_PATH = "deleted_file_path"`  L130
+- `String EXTRA_DEVICE_TYPE = "deviceType"`  L131
+- `String EXTRA_PHOTO_MODE = "photo"`  L132
+- `String EXTRA_PRELOADED_RECORDINGS = "preloaded_recordings"`  L133
+- `String EXTRA_RETURN_TO_PLAYBACK_LIST = "return_to_playback_list"`  L134
+- `String EXTRA_SESSION_ID = "device_session_id"`  L135
+- `String EXTRA_VIDEO_ITEM = "videoItem"`  L136
+- `float FULL_EFFECT_CARD_SPAN = 2.0f`  L137
+- `int HOURS_PER_DAY = 24`  L138
+- `int NO_SELECTED_VIDEO_SCROLL_TARGET = -1`  L139
+- `long PLAYBACK_CONTROLS_HIDE_DELAY_MS = 3000`  L140
+- `float SELECTED_VIDEO_CAMERA_DISTANCE_DP = 1000.0f`  L141
+- `float SELECTED_VIDEO_MAX_ELEVATION_DP = 12.0f`  L142
+- `ActivityRide5HourPlaybackDetailBinding binding`  L143
+- `int currentPlaybackSpeedIndex`  L144
+- `DeviceType deviceType`  L145
+- `FrameLayout fullscreenContainer`  L146
+- `ViewRide5HourPlaybackOverlayBinding fullscreenOverlayBinding`  L147
+- `float gestureDownX`  L148
+- `float gestureDownY`  L149
+- `long gestureSeekOriginMs`  L150
+- `Long gestureSeekTargetMs`  L151
+- `boolean gestureSeeking`  L152
+- `int gestureSurfaceWidthPx`  L153
+- `int hour`  L154
+- `Integer hourRecordingScrollTargetIndex`  L155
+- `boolean isFullscreen`  L156
+- `VideoItem item`  L157
+- `Job loadRecordingsJob`  L158
+- `MediaSessionHandle mediaSessionHandle`  L159
+- `Job mediaStartJob`  L160
+- `ViewGroup.LayoutParams originalPlayerLayoutParams`  L161
+- `ViewGroup originalPlayerParent`  L162
+- `ViewRide5HourPlaybackOverlayBinding overlayBinding`  L163
+- `Ride5HourlyPlaybackController playbackController`  L164
+- `Job playbackControlsHideJob`  L165
+- `boolean playbackControlsVisible`  L166
+- `long playbackProgressMs`  L167
+- `Ride5HourRecording playingRecording`  L168
+- `boolean returnToPlaybackList`  L169
+- `Ride5HourRecording selectedRecording`  L170
+- `Integer selectedVideoScrollTargetIndex`  L171
+- `Integer selectedVideoTickCenterIndex`  L172
+- `boolean selectedVideoUserScrollActive`  L173
+- `Function0<Unit> shareDownloadCancel`  L174
+- `boolean shareInProgress`  L175
+- `int originalPlayerIndex = -1`  L176
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = this.this$0`  L280
+- `int gestureActivePointerId = -1`  L317
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController = this.this$0.playbackController`  L366
+- `Object objM3074constructorimpl`  L476
+- `Result.Companion companion = Result.INSTANCE`  L478
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = this`  L479
+- `Result.Companion companion2 = Result.INSTANCE`  L482
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L551
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = null`  L552
+- `PlayListControlVideo videoView = activityRide5HourPlaybackDetailBinding.videoView`  L557
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding3 = this.binding`  L560
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding4 = this.binding`  L571
+- `LinearLayout btnReplayPlayback = activityRide5HourPlaybackDetailBinding4.btnReplayPlayback`  L576
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding5 = this.binding`  L584
+- `TextView btnRetryPlayback = activityRide5HourPlaybackDetailBinding5.btnRetryPlayback`  L589
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding6 = this.binding`  L597
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding7 = this.binding`  L608
+- `TextView btnShareDownloadCancel = activityRide5HourPlaybackDetailBinding2.btnShareDownloadCancel`  L614
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L701
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L716
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = null`  L717
+- `LinearLayout llBottomActions = activityRide5HourPlaybackDetailBinding.llBottomActions`  L722
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding3 = this.binding`  L726
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding4 = this.binding`  L737
+- `LinearLayout linearLayout = bottomActions`  L752
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L764
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = null`  L765
+- `TextView textView = activityRide5HourPlaybackDetailBinding.tvTitleDate`  L770
+- `VideoItem videoItem = this.item`  L771
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding3 = this.binding`  L777
+- `TextView textView2 = activityRide5HourPlaybackDetailBinding3.tvTitleTime`  L782
+- `VideoItem videoItem2 = this.item`  L783
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding4 = this.binding`  L789
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding5 = this.binding`  L800
+- `ImageView btnShare = activityRide5HourPlaybackDetailBinding2.btnShare`  L806
+- `VideoItem videoItem = null`  L835
+- `VideoItem videoItem2 = this.item`  L841
+- `VideoItem videoItem3 = this.item`  L851
+- `DeviceType deviceType`  L926
+- `VideoItem videoItem = this.item`  L933
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = null`  L934
+- `VideoItem videoItem2 = this.item`  L941
+- `int i = 0`  L948
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = this.binding`  L967
+- `LinearLayout hourTimelineSection = activityRide5HourPlaybackDetailBinding2.hourTimelineSection`  L972
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding3 = this.binding`  L975
+- `RecordingControlEventsView recordingControlEventsView = activityRide5HourPlaybackDetailBinding3.recordingControlEvents`  L980
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = this`  L981
+- `DeviceType deviceType2 = this.deviceType`  L982
+- `VideoItem videoItem3 = this.item`  L990
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding4 = this.binding`  L996
+- `LinearLayout hourRecordingListSection = activityRide5HourPlaybackDetailBinding4.hourRecordingListSection`  L1001
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding5 = this.binding`  L1004
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding6 = this.binding`  L1010
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding7 = this.binding`  L1016
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L1029
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = null`  L1030
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding3 = this.binding`  L1036
+- `Ride5HourRecording ride5HourRecording = this.selectedRecording`  L1042
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding4 = this.binding`  L1044
+- `Ride5HourTimelineView hourTimeline = activityRide5HourPlaybackDetailBinding4.hourTimeline`  L1049
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding5 = this.binding`  L1052
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding6 = this.binding`  L1072
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding7 = this.binding`  L1093
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding8 = this.binding`  L1099
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding9 = this.binding`  L1105
+- `LinearSnapHelper linearSnapHelper = this.hourRecordingSnapHelper`  L1112
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding10 = this.binding`  L1113
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding11 = this.binding`  L1119
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding12 = this.binding`  L1125
+- `RecyclerView recyclerHourRecordings = activityRide5HourPlaybackDetailBinding2.recyclerHourRecordings`  L1131
+- `RecyclerView recyclerView = recyclerHourRecordings`  L1133
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = this.this$0`  L1146
+- `View viewFindSnapView`  L1165
+- `int position`  L1166
+- `int i = 0`  L1178
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = Ride5HourlyPlaybackActivity.this.binding`  L1197
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L1212
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L1231
+- `RecyclerView recyclerHourRecordings = activityRide5HourPlaybackDetailBinding.recyclerHourRecordings`  L1236
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L1289
+- `RecyclerView recyclerSelectedVideos = activityRide5HourPlaybackDetailBinding.recyclerSelectedVideos`  L1294
+- `RecyclerView recyclerView = recyclerSelectedVideos`  L1303
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = Ride5HourlyPlaybackActivity.this`  L1336
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = Ride5HourlyPlaybackActivity.this.binding`  L1359
+- `int position`  L1372
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L1391
+- `RecyclerView recyclerSelectedVideos = activityRide5HourPlaybackDetailBinding.recyclerSelectedVideos`  L1396
+- `RecyclerView recyclerView = recyclerSelectedVideos`  L1408
+- `int iRoundToInt`  L1412
+- `float width`  L1431
+- `int i = 0`  L1467
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L1482
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = null`  L1506
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = this.binding`  L1511
+- `Ride5HourTimelineSegment ride5HourTimelineSegmentRecordingSegment$default`  L1532
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = null`  L1534
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = this.binding`  L1540
+- `Ride5HourRecording ride5HourRecording = this.selectedRecording`  L1551
+- `Ride5HourRecording ride5HourRecording2 = this.playingRecording`  L1555
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = null`  L1556
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController = this.playbackController`  L1558
+- `int i = 0`  L1570
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = this.binding`  L1583
+- `Job job = this.mediaStartJob`  L1594
+- `MediaSessionHandle mediaSessionHandle = this.mediaSessionHandle`  L1598
+- `Job job = this.mediaStartJob`  L1723
+- `MediaSessionHandle mediaSessionHandle = this.mediaSessionHandle`  L1728
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = ride5HourlyPlaybackActivity.binding`  L1782
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = this`  L1794
+- `ViewRide5HourPlaybackOverlayBinding viewRide5HourPlaybackOverlayBinding = this.overlayBinding`  L1875
+- `Job job = this.playbackControlsHideJob`  L1885
+- `Long l = this.gestureSeekTargetMs`  L1908
+- `ViewRide5HourPlaybackOverlayBinding viewRide5HourPlaybackOverlayBinding = null`  L1910
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController = this.playbackController`  L1920
+- `ViewRide5HourPlaybackOverlayBinding viewRide5HourPlaybackOverlayBinding2 = this.overlayBinding`  L1927
+- `long j = targetMs - this.gestureSeekOriginMs`  L1943
+- `TextView tvPlaybackGestureSeek = viewRide5HourPlaybackOverlayBinding.tvPlaybackGestureSeek`  L1948
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L1956
+- `ViewRide5HourPlaybackOverlayBinding viewRide5HourPlaybackOverlayBinding = null`  L1957
+- `ViewRide5HourPlaybackOverlayBinding viewRide5HourPlaybackOverlayBinding2 = this.overlayBinding`  L1970
+- `ImageView btnPlaybackFullscreen = playbackOverlay.btnPlaybackFullscreen`  L1981
+- `ImageView btnPlaybackPause = playbackOverlay.btnPlaybackPause`  L1989
+- `LinearLayout btnPlaybackSpeed = playbackOverlay.btnPlaybackSpeed`  L1997
+- `TextView btnPlaybackScreenshot = playbackOverlay.btnPlaybackScreenshot`  L2005
+- `TextView btnPlaybackDownload = playbackOverlay.btnPlaybackDownload`  L2013
+- `Job job = this.playbackControlsHideJob`  L2034
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController = this.playbackController`  L2046
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L2107
+- `ViewRide5HourPlaybackOverlayBinding viewRide5HourPlaybackOverlayBinding = null`  L2108
+- `PlayListControlVideo videoView = activityRide5HourPlaybackDetailBinding.videoView`  L2113
+- `PlayListControlVideo playListControlVideo = videoView`  L2122
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = this`  L2125
+- `ViewRide5HourPlaybackOverlayBinding viewRide5HourPlaybackOverlayBinding2 = this.overlayBinding`  L2141
+- `ImageView imageView2 = imageView`  L2164
+- `Unit unit = Unit.INSTANCE`  L2175
+- `FrameLayout frameLayout`  L2186
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L2190
+- `PlayListControlVideo videoView = activityRide5HourPlaybackDetailBinding.videoView`  L2195
+- `FrameLayout frameLayout2 = this.fullscreenContainer`  L2197
+- `ViewGroup viewGroup2 = this.originalPlayerParent`  L2206
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L2252
+- `PlayListControlVideo videoView = activityRide5HourPlaybackDetailBinding.videoView`  L2257
+- `int i`  L2303
+- `boolean z`  L2304
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController = this.playbackController`  L2305
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = null`  L2306
+- `LinearLayout layoutPlaybackControls = viewRide5HourPlaybackOverlayBinding.layoutPlaybackControls`  L2321
+- `int i2 = 8`  L2323
+- `LinearLayout layoutPlaybackActions = viewRide5HourPlaybackOverlayBinding.layoutPlaybackActions`  L2325
+- `ProgressBar progressPlaybackPersistent = viewRide5HourPlaybackOverlayBinding.progressPlaybackPersistent`  L2328
+- `ProgressBar progressBar = progressPlaybackPersistent`  L2330
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = this.binding`  L2334
+- `PlayListControlVideo videoView = activityRide5HourPlaybackDetailBinding2.videoView`  L2339
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding3 = this.binding`  L2352
+- `ViewRide5HourPlaybackOverlayBinding viewRide5HourPlaybackOverlayBinding = this.overlayBinding`  L2363
+- `ArrayList arrayList2 = arrayList`  L2365
+- `ViewRide5HourPlaybackOverlayBinding viewRide5HourPlaybackOverlayBinding2 = this.fullscreenOverlayBinding`  L2372
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L2382
+- `PlayListControlVideo videoView = activityRide5HourPlaybackDetailBinding.videoView`  L2387
+- `Job job = this.playbackControlsHideJob`  L2408
+- `Job job = this.playbackControlsHideJob`  L2459
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController = this.playbackController`  L2468
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController2 = null`  L2469
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController3 = this.playbackController`  L2476
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController4 = this.playbackController`  L2486
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController = this$0.playbackController`  L2509
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L2519
+- `Ride5HourRecording ride5HourRecording = this.playingRecording`  L2528
+- `Ride5HourRecording ride5HourRecording = this.playingRecording`  L2537
+- `Job job = this.playbackControlsHideJob`  L2548
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L2560
+- `LinearLayout playbackErrorState = activityRide5HourPlaybackDetailBinding.playbackErrorState`  L2565
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L2571
+- `LinearLayout btnReplayPlayback = activityRide5HourPlaybackDetailBinding.btnReplayPlayback`  L2576
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L2582
+- `ImageView playerDefaultBackground = activityRide5HourPlaybackDetailBinding.playerDefaultBackground`  L2587
+- `ProgressBar progressBar = progressPlaybackSeekLoading`  L2601
+- `int i = 0`  L2602
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L2612
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = null`  L2613
+- `LinearLayout btnDownload = activityRide5HourPlaybackDetailBinding.btnDownload`  L2618
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding3 = this.binding`  L2621
+- `LinearLayout btnDelete = activityRide5HourPlaybackDetailBinding3.btnDelete`  L2626
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding4 = this.binding`  L2630
+- `LinearLayout btnDownload2 = activityRide5HourPlaybackDetailBinding4.btnDownload`  L2635
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding5 = this.binding`  L2644
+- `LinearLayout btnDelete2 = activityRide5HourPlaybackDetailBinding2.btnDelete`  L2650
+- `Ride5HourRecording ride5HourRecording = this.playingRecording`  L2677
+- `Object objM3074constructorimpl`  L2703
+- `Object objM3074constructorimpl2`  L2704
+- `Result.Companion companion = Result.INSTANCE`  L2706
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = this`  L2707
+- `Result.Companion companion2 = Result.INSTANCE`  L2710
+- `Result.Companion companion3 = Result.INSTANCE`  L2724
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity2 = this`  L2725
+- `Result.Companion companion4 = Result.INSTANCE`  L2728
+- `DownloadListActivity.Companion companion5 = DownloadListActivity.INSTANCE`  L2738
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity3 = this`  L2739
+- `DeviceType deviceType = this.deviceType`  L2740
+- `Ride5HourRecording ride5HourRecording = this.playingRecording`  L2764
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController = this.playbackController`  L2830
+- `Object objM3074constructorimpl`  L2846
+- `Ride5HourRecording ride5HourRecording = this.playingRecording`  L2847
+- `Result.Companion companion = Result.INSTANCE`  L2853
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = this`  L2854
+- `Result.Companion companion2 = Result.INSTANCE`  L2857
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L3118
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = null`  L3119
+- `FrameLayout layoutShareDownloadProgress = activityRide5HourPlaybackDetailBinding.layoutShareDownloadProgress`  L3124
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding3 = this.binding`  L3127
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding4 = this.binding`  L3133
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L3145
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = null`  L3146
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding3 = this.binding`  L3152
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = null`  L3164
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = this.binding`  L3166
+- `FrameLayout layoutShareDownloadProgress = activityRide5HourPlaybackDetailBinding.layoutShareDownloadProgress`  L3172
+- `Function0<Unit> function0 = this.shareDownloadCancel`  L3179
+- `Ride5HourRecording ride5HourRecording`  L3200
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = this.binding`  L3202
+- `PlayListControlVideo videoView = activityRide5HourPlaybackDetailBinding.videoView`  L3207
+- `Job job = this.mediaStartJob`  L3210
+- `Job job = this.loadRecordingsJob`  L3219
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = null`  L3220
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = this.binding`  L3226
+- `PlayListControlVideo videoView = activityRide5HourPlaybackDetailBinding2.videoView`  L3231
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding3 = this.binding`  L3234
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController = this.playbackController`  L3250
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = null`  L3251
+- `Function0<Unit> function0 = this.shareDownloadCancel`  L3257
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding2 = this.binding`  L3262
+- `PlayListControlVideo videoView = activityRide5HourPlaybackDetailBinding2.videoView`  L3267
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding3 = this.binding`  L3270
+
+方法（160）：
+- `Ride5HourFilesLoader invoke()`  L182 @Override
+- `Ride5SessionPortProvider invoke()`  L191 @Override
+- `Ride5HourRecordingAdapter invoke()`  L244 @Override
+- `Ride5SelectedVideoAdapter invoke()`  L278 @Override
+- `Unit invoke(Ride5HourRecording ride5HourRecording)`  L287 @Override
+- `void invoke2(Ride5HourRecording it)`  L293
+    - 体内字面量："it" · "1x" · "2x" · "4x" · "8x"
+- `VerifiedDeviceFileCatalog invoke()`  L323 @Override
+- `DeviceSessionManager invoke()`  L332 @Override
+- `Ride5DeviceMediaPort invoke()`  L341 @Override
+- `MediaSessionCoordinatorFactory invoke()`  L350 @Override
+- `MediaSessionCoordinator invoke()`  L363 @Override
+- `Ride5HourFilesLoader getHourFilesLoader()`  L456
+- `Ride5SessionPortProvider getSessionPortProvider()`  L461
+- `Ride5HourRecordingAdapter getHourRecordingAdapter()`  L466
+- `Ride5SelectedVideoAdapter getSelectedVideoAdapter()`  L470
+- `Object authorizePreviewModel(String path)`  L475
+- `String getDeviceKey()`  L492
+    - 体内字面量："device_session_id"
+- `VerifiedDeviceFileCatalog getFileCatalog()`  L497
+- `DeviceSessionManager getDeviceSessions()`  L502
+- `Ride5DeviceMediaPort getRide5MediaPort()`  L507
+- `MediaSessionCoordinatorFactory getMediaCoordinatorFactory()`  L512
+- `MediaSessionCoordinator getMediaCoordinator()`  L517
+- `View getContentRoot()`  L522 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L536 @Override
+    - 体内字面量："null cannot be cast to non-null type com.tuwinsmart.tuwin.presentation.ui.storage.adapter.VideoItem" · "RIDE5" · "photo"
+- `void onClick(View view)`  L580 @Override
+- `void onClick(View view)`  L593 @Override
+- `void onClick(View view)`  L604 @Override
+- `void onClick(View view)`  L618 @Override
+    - 体内字面量："com/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourlyPlaybackActivity$onCreate$1" · "Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourlyPlaybackController$Callbacks;" · "onPlaybackProgress" · "currentMs" · "totalMs" · "onPlaybackSeekChanged" · "isSeeking" · "onPlaybackStateChanged" · "Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5PlaybackState;" · "app_release_64"
+- `void onCreate$lambda$1(Ride5HourlyPlaybackActivity this$0, View view)`  L687
+    - 体内字面量："this$0"
+- `void onCreate$lambda$2(Ride5HourlyPlaybackActivity this$0, View view)`  L693
+    - 体内字面量："this$0"
+- `void onCreate$lambda$3(Ride5HourlyPlaybackActivity this$0, View view)`  L699
+    - 体内字面量："this$0"
+- `void onCreate$lambda$4(Ride5HourlyPlaybackActivity this$0, View view)`  L710
+    - 体内字面量："this$0"
+- `void configureBottomActionsForSystemBars()`  L715
+- `WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat)`  L733 @Override
+- `WindowInsetsCompat configureBottomActionsForSystemBars$lambda$6(LinearLayout bottomActions, int i, int i2, View view, WindowInsetsCompat windowInsets)`  L747
+    - 体内字面量："$bottomActions" · "<anonymous parameter 0>" · "windowInsets"
+- `void initToolbar()`  L763
+- `void onClick(View view)`  L796 @Override
+- `void onClick(View view)`  L810 @Override
+- `void initToolbar$lambda$7(Ride5HourlyPlaybackActivity this$0, View view)`  L817
+    - 体内字面量："this$0"
+- `void initToolbar$lambda$8(Ride5HourlyPlaybackActivity this$0, View view)`  L824
+    - 体内字面量："this$0"
+- `void loadHourRecordings()`  L833
+- `void startSingleFilePlayback(VideoItem videoItem)`  L920
+- `void setupHourPlayback(List<Ride5HourRecording> loaded)`  L925
+- `void configureHourTimeline()`  L1028
+- `Unit invoke(Integer num, Boolean bool)`  L1063 @Override
+- `void invoke(int i, boolean z)`  L1068
+- `Unit invoke(Integer num)`  L1083 @Override
+- `void invoke(int i)`  L1088
+- `void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom)`  L1142 @Override
+- `RecyclerView.OnScrollListener createHourRecordingScrollListener(final LinearLayoutManager layoutManager)`  L1155
+- `void onScrolled(RecyclerView recyclerView, int dx, int dy)`  L1158 @Override
+    - 体内字面量："recyclerView"
+- `void onScrollStateChanged(RecyclerView recyclerView, int newState)`  L1164 @Override
+- `void focusHourRecordingForPointer(int pointerSeconds, boolean animateCard)`  L1209
+- `void centerHourRecording$default(Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity, int i, boolean z, int i2, Object obj)`  L1222
+- `void centerHourRecording(int index, boolean animate)`  L1230
+- `void run()`  L1250 @Override
+- `void centerHourRecording$lambda$13(Ride5HourlyPlaybackActivity this$0, RecyclerView recyclerView)`  L1264
+    - 体内字面量："this$0" · "$recyclerView"
+- `void applyHourRecordingCarouselTransform(RecyclerView recyclerView)`  L1271
+- `void configureSelectedVideoCarousel(final int selectedIndex)`  L1287
+- `void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom)`  L1312 @Override
+- `RecyclerView.OnScrollListener createSelectedVideoScrollListener(final LinearLayoutManager layoutManager)`  L1321
+- `void onScrolled(RecyclerView recyclerView, int dx, int dy)`  L1324 @Override
+    - 体内字面量："recyclerView"
+- `void onScrollStateChanged(RecyclerView recyclerView, int newState)`  L1331 @Override
+    - 体内字面量："recyclerView"
+- `void playSelectedVideoScrollTickIfNeeded(RecyclerView recyclerView, LinearLayoutManager layoutManager)`  L1371
+- `void centerSelectedVideo$default(Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity, int i, boolean z, int i2, Object obj)`  L1382
+- `void centerSelectedVideo(final int index, boolean animate)`  L1390
+- `void run()`  L1411 @Override
+- `void applySelectedVideoCarouselTransform(RecyclerView recyclerView)`  L1430
+- `void selectHourRecording(Ride5HourRecording recording)`  L1465
+- `void updateSelection$default(Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity, Ride5HourRecordingSelection ride5HourRecordingSelection, boolean z, boolean z2, boolean z3, int i, Object obj)`  L1491
+- `void updateSelection(Ride5HourRecordingSelection newSelection, boolean centerCard, boolean animateCard, boolean centerSelectedCarousel)`  L1501
+- `void updateSelectedRecordingSegment()`  L1531
+- `void playSelectedRecording()`  L1550
+- `void startMediaPlayback(Ride5HourRecording recording)`  L1593
+- `void stopMediaSession()`  L1722
+- `void configurePlaybackGestures$default(Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity, PlayListControlVideo videoView, int i, Object obj)`  L1780
+- `void configurePlaybackGestures(final PlayListControlVideo player)`  L1793
+- `boolean onDown(MotionEvent event)`  L1798 @Override
+    - 体内字面量："event"
+- `boolean onSingleTapConfirmed(MotionEvent event)`  L1804 @Override
+    - 体内字面量："event"
+- `boolean onDoubleTap(MotionEvent event)`  L1812 @Override
+    - 体内字面量："event"
+- `boolean onTouch(View view, MotionEvent motionEvent)`  L1825 @Override
+- `boolean configurePlaybackGestures$lambda$21(GestureDetector gestureDetector, Ride5HourlyPlaybackActivity this$0, int i, View view, MotionEvent motionEvent)`  L1832
+    - 体内字面量："$gestureDetector" · "this$0"
+- `void updateGestureSeek(MotionEvent event, int touchSlop)`  L1867
+- `void endGestureTouch(View view, boolean commit)`  L1895
+- `boolean finishGestureSeek(boolean commit)`  L1904
+- `void showGestureSeekPreview(long targetMs)`  L1942
+- `void initPlaybackOverlay()`  L1954
+- `void configurePlaybackOverlay(final ViewRide5HourPlaybackOverlayBinding playbackOverlay)`  L1980
+- `void onClick(View view)`  L1985 @Override
+- `void onClick(View view)`  L1993 @Override
+- `void onClick(View view)`  L2001 @Override
+- `void onClick(View view)`  L2009 @Override
+- `void onClick(View view)`  L2017 @Override
+- `void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)`  L2023 @Override
+- `void onStartTrackingTouch(SeekBar seekBar)`  L2033 @Override
+- `void onStopTrackingTouch(SeekBar seekBar)`  L2042 @Override
+- `void configurePlaybackOverlay$lambda$26(Ride5HourlyPlaybackActivity this$0, View view)`  L2061
+    - 体内字面量："this$0"
+- `void configurePlaybackOverlay$lambda$27(Ride5HourlyPlaybackActivity this$0, View view)`  L2068
+    - 体内字面量："this$0"
+- `void configurePlaybackOverlay$lambda$28(Ride5HourlyPlaybackActivity this$0, View view)`  L2075
+    - 体内字面量："this$0"
+- `void configurePlaybackOverlay$lambda$29(Ride5HourlyPlaybackActivity this$0, View view)`  L2082
+    - 体内字面量："this$0"
+- `void configurePlaybackOverlay$lambda$30(Ride5HourlyPlaybackActivity this$0, View view)`  L2089
+    - 体内字面量："this$0"
+- `void toggleFullscreen()`  L2095
+- `void enterFullscreen()`  L2103
+- `void addFullscreenBackButton(FrameLayout container)`  L2154
+- `void onClick(View view)`  L2167 @Override
+- `void addFullscreenBackButton$lambda$33$lambda$32(Ride5HourlyPlaybackActivity this$0, View view)`  L2180
+    - 体内字面量："this$0"
+- `boolean exitFullscreen()`  L2185
+- `void handleFullscreenChanged(boolean fullscreen)`  L2218
+- `void setFullscreenSystemUi(boolean fullscreen)`  L2228
+- `int dpToPx(float dp)`  L2240
+- `void handlePlaybackStateChanged(Ride5PlaybackState state)`  L2245
+- `void updatePlaybackProgressUi(long currentMs, long totalMs)`  L2282
+- `void syncOverlayState()`  L2302
+- `List<ViewRide5HourPlaybackOverlayBinding> allPlaybackOverlays()`  L2361
+- `void togglePlaybackControls()`  L2380
+- `void showPlaybackControls()`  L2399
+- `void hidePlaybackControls()`  L2406
+- `void schedulePlaybackControlsAutoHide()`  L2458
+- `void togglePlaybackPause()`  L2467
+- `void showPlaybackSpeedSelector()`  L2496
+- `void onItemClick(View view, int i)`  L2499 @Override
+- `void showPlaybackSpeedSelector$lambda$40(Ride5HourlyPlaybackActivity this$0, View view, int i)`  L2506
+    - 体内字面量："this$0"
+- `void captureScreenshot()`  L2518
+- `void replayPlayback()`  L2527
+- `void retryPlayback()`  L2536
+- `void resetPlaybackUi()`  L2546
+- `void setPlaybackErrorVisible(boolean visible)`  L2559
+- `void setReplayVisible(boolean visible)`  L2570
+- `void setPlayerDefaultBackgroundVisible(boolean visible)`  L2581
+- `void setPlaybackSeekLoading(boolean visible)`  L2593
+    - 体内字面量："progressPlaybackSeekLoading"
+- `void initBottomActions()`  L2610
+- `void onClick(View view)`  L2639 @Override
+- `void onClick(View view)`  L2654 @Override
+- `void initBottomActions$lambda$42(Ride5HourlyPlaybackActivity this$0, View view)`  L2661
+    - 体内字面量："this$0"
+- `void initBottomActions$lambda$43(Ride5HourlyPlaybackActivity this$0, View view)`  L2667
+    - 体内字面量："this$0"
+- `void downloadCurrentRecording()`  L2672
+- `void onGranted(List<String> permissions, boolean all)`  L2683 @Override
+- `void onDenied(List<String> permissions, boolean never)`  L2688 @Override
+- `void enqueueDownload(Ride5HourRecording recording)`  L2702
+- `void showDeleteConfirmDialog()`  L2748
+- `void onClick(View view)`  L2751 @Override
+- `void showDeleteConfirmDialog$lambda$49(Ride5HourlyPlaybackActivity this$0, View view)`  L2758
+    - 体内字面量："this$0"
+- `void deleteCurrentRecording()`  L2763
+- `void finishWithDeletedResult(String deletedPath)`  L2828
+- `void shareCurrentRecording()`  L2845
+- `void onGranted(List<String> permissions, boolean all)`  L2872 @Override
+- `void onDenied(List<String> permissions, boolean never)`  L2877 @Override
+- `void shareFromCacheOrDownload(String url, DownloadNetworkRoute.Device route)`  L2890
+    - 体内字面量："<anonymous>" · "remoteSize" · "invoke" · "(Ljava/lang/Long;)V"
+- `void downloadForShare(String url, DownloadNetworkRoute.Device route)`  L2958
+- `Unit invoke(Function0<? extends Unit> function0)`  L2967 @Override
+- `void invoke2(Function0<Unit> cancel)`  L2973
+    - 体内字面量："cancel" · "<anonymous>" · "invoke" · "<anonymous>" · "<anonymous parameter 0>" · "invoke" · "<anonymous>" · "progress" · "Lcom/lzy/okgo/model/Progress;" · "invoke" · "<anonymous>" · "it" · "invoke"
+- `void showShareDownloadProgress()`  L3117
+- `void updateShareDownloadProgress(Progress progress)`  L3144
+- `void hideShareDownloadProgress()`  L3162
+- `void cancelShareFlow()`  L3178
+- `void shareVideo(File file)`  L3187
+    - 体内字面量：".fileProvider" · "getUriForFile(...)" · "android.intent.action.SEND" · "android.intent.extra.STREAM"
+- `void onResume()`  L3199 @Override
+- `void onPause()`  L3218 @Override
+- `void onDestroy()`  L3245 @Override
+- `void onBackPressed()`  L3281 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25411`
+L2776 · [class] static final C25411 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（3）：
+- `Ride5HourRecording $recording`  L2777
+- `int label`  L2778
+- `int i = this.label`  L2799
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L2787 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L2792 @Override
+- `Object invokeSuspend(Object obj)`  L2797 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25431`
+L2983 · [class] static final C25431 · extends `Lambda implements Function1<String, Unit>` · implements `Function1<String, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（1）：
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = Ride5HourlyPlaybackActivity.this`  L2997
+
+方法（4）：
+- `Unit invoke(String str)`  L2989 @Override
+- `void invoke2(final String filePath)`  L2995
+    - 体内字面量："filePath"
+- `void run()`  L3000 @Override
+- `void invoke$lambda$0(Ride5HourlyPlaybackActivity this$0, String filePath)`  L3007
+    - 体内字面量："this$0" · "$filePath"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25452`
+L3019 · [class] static final C25452 · extends `Lambda implements Function1<String, Unit>` · implements `Function1<String, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（1）：
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = Ride5HourlyPlaybackActivity.this`  L3033
+
+方法（4）：
+- `Unit invoke(String str)`  L3025 @Override
+- `void invoke2(String str)`  L3031
+    - 体内字面量："<anonymous parameter 0>"
+- `void run()`  L3036 @Override
+- `void invoke$lambda$0(Ride5HourlyPlaybackActivity this$0)`  L3043
+    - 体内字面量："this$0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25473`
+L3053 · [class] static final C25473 · extends `Lambda implements Function1<Progress, Unit>` · implements `Function1<Progress, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（1）：
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = Ride5HourlyPlaybackActivity.this`  L3074
+
+方法（4）：
+- `Unit invoke(Progress progress)`  L3059 @Override
+- `void invoke$lambda$0(Ride5HourlyPlaybackActivity this$0, Progress progress)`  L3065
+    - 体内字面量："this$0" · "$progress"
+- `void invoke2(final Progress progress)`  L3072
+    - 体内字面量："progress"
+- `void run()`  L3077 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25505`
+L3087 · [class] static final C25505 · extends `Lambda implements Function1<String, Unit>` · implements `Function1<String, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（1）：
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = Ride5HourlyPlaybackActivity.this`  L3107
+
+方法（4）：
+- `Unit invoke(String str)`  L3093 @Override
+- `void invoke$lambda$0(Ride5HourlyPlaybackActivity this$0)`  L3099
+    - 体内字面量："this$0"
+- `void invoke2(String it)`  L3105
+    - 体内字面量："it"
+- `void run()`  L3110 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25521`
+L209 · [class] C25521 · extends `FunctionReferenceImpl implements Function1<Ride5HourRecording, Unit>` · implements `Function1<Ride5HourRecording, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(Ride5HourRecording ride5HourRecording)`  L215 @Override
+- `void invoke2(Ride5HourRecording p0)`  L221
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25532`
+L230 · [class] C25532 · extends `FunctionReferenceImpl implements Function1<String, Object>` · implements `Function1<String, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+方法（1）：
+- `Object invoke(String p0)`  L236 @Override
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25541`
+L868 · [class] static final C25541 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（4）：
+- `List<VideoItem> $hourItems`  L869
+- `int label`  L870
+- `List listEmptyList`  L890
+- `int i = this.label`  L892
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L879 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L884 @Override
+- `Object invokeSuspend(Object obj)`  L889 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25551`
+L628 · [class] public static final C25551 · implements `Ride5HourlyPlaybackController.Callbacks` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（3）：
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = Ride5HourlyPlaybackActivity.this`  L642
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = Ride5HourlyPlaybackActivity.this`  L659
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = Ride5HourlyPlaybackActivity.this`  L676
+
+方法（9）：
+- `void onPlaybackStateChanged$lambda$0(Ride5HourlyPlaybackActivity this$0, Ride5PlaybackState state)`  L633
+    - 体内字面量："this$0" · "$state"
+- `void onPlaybackStateChanged(final Ride5PlaybackState state)`  L640 @Override
+    - 体内字面量："state"
+- `void run()`  L645 @Override
+- `void onPlaybackProgress$lambda$1(Ride5HourlyPlaybackActivity this$0, long j, long j2)`  L652
+    - 体内字面量："this$0"
+- `void onPlaybackProgress(final long currentMs, final long totalMs)`  L658 @Override
+- `void run()`  L662 @Override
+- `void onPlaybackSeekChanged$lambda$2(Ride5HourlyPlaybackActivity this$0, boolean z)`  L669
+    - 体内字面量："this$0"
+- `void onPlaybackSeekChanged(final boolean isSeeking)`  L675 @Override
+- `void run()`  L679 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25561`
+L2419 · [class] static final C25561 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L2420
+- `int i = this.label`  L2439
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L2427 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L2432 @Override
+- `Object invokeSuspend(Object obj)`  L2437 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25571`
+L258 · [class] C25571 · extends `FunctionReferenceImpl implements Function1<Ride5HourRecording, Unit>` · implements `Function1<Ride5HourRecording, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(Ride5HourRecording ride5HourRecording)`  L264 @Override
+- `void invoke2(Ride5HourRecording p0)`  L270
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25593`
+L303 · [class] C25593 · extends `FunctionReferenceImpl implements Function1<String, Object>` · implements `Function1<String, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+方法（1）：
+- `Object invoke(String p0)`  L309 @Override
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25611`
+L2907 · [class] static final C25611 · extends `Lambda implements Function1<Long, Unit>` · implements `Function1<Long, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（7）：
+- `File $localFile`  L2908
+- `DownloadNetworkRoute.Device $route`  L2909
+- `String $url`  L2910
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = Ride5HourlyPlaybackActivity.this`  L2928
+- `File file = this.$localFile`  L2929
+- `String str = this.$url`  L2930
+- `DownloadNetworkRoute.Device device = this.$route`  L2931
+
+方法（4）：
+- `Unit invoke(Long l)`  L2921 @Override
+- `void invoke2(final Long l)`  L2927
+- `void run()`  L2934 @Override
+- `void invoke$lambda$0(Long l, File localFile, Ride5HourlyPlaybackActivity this$0, String url, DownloadNetworkRoute.Device route)`  L2941
+    - 体内字面量："$localFile" · "this$0" · "$url" · "$route"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25631`
+L1607 · [class] static final C25631 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（14）：
+- `MediaSessionHandle $previous`  L1608
+- `Ride5HourRecording $recording`  L1609
+- `Object L$0`  L1610
+- `int label`  L1611
+- `Ride5HourlyPlaybackActivity this$0`  L1612
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity`  L1641
+- `Object objM3074constructorimpl`  L1642
+- `Object objStart`  L1643
+- `MediaStartResult mediaStartResult`  L1644
+- `int i = this.label`  L1646
+- `MediaSessionHandle mediaSessionHandle = this.$previous`  L1671
+- `Result.Companion companion = Result.INSTANCE`  L1679
+- `Result.Companion companion2 = Result.INSTANCE`  L1682
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity2 = this.this$0`  L1686
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1623 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1630 @Override
+- `Object invokeSuspend(Object obj)`  L1640 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$C25641`
+L1740 · [class] static final C25641 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（3）：
+- `MediaSessionHandle $handle`  L1741
+- `int label`  L1742
+- `int i = this.label`  L1763
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1751 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1756 @Override
+- `Object invokeSuspend(Object obj)`  L1761 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$Companion`
+L412 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（2）：
+- `String str2 = str`  L424
+- `String str = deviceSessionId`  L439
+
+方法（5）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L413
+- `private Companion()`  L417
+- `void launchActivity$default(Companion companion, BaseActivity baseActivity, VideoItem videoItem, boolean z, DeviceType deviceType, String str, boolean z2, int i, Object obj)`  L420
+- `void launchActivity(BaseActivity activity, VideoItem videoItem, boolean photo, DeviceType deviceType, String deviceSessionId, boolean returnToPlaybackList)`  L431
+    - 体内字面量："activity" · "videoItem" · "deviceType" · "photo"
+- `String deletedFilePathFromResult$app_release_64(Intent data)`  L447
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$configureHourTimeline$3$1`
+L12 · [class] final Ride5HourlyPlaybackActivity$configureHourTimeline$3$1 · implements `Runnable` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity$configureHourTimeline$3$1.java`
+注解：
+
+字段/常量（4）：
+- `Ride5HourlyPlaybackActivity this$0`  L13
+- `Ride5HourlyPlaybackActivity ride5HourlyPlaybackActivity = this.this$0`  L21
+- `ActivityRide5HourPlaybackDetailBinding activityRide5HourPlaybackDetailBinding = ride5HourlyPlaybackActivity.binding`  L22
+- `RecyclerView recyclerHourRecordings = activityRide5HourPlaybackDetailBinding.recyclerHourRecordings`  L27
+
+方法（1）：
+- `void run()`  L20 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackActivity$WhenMappings`
+L377 · [class] public WhenMappings · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackActivity.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L378
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackController`
+L40 · [class] public final Ride5HourlyPlaybackController · implements `NativePlayerAdapter` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackController.java`
+注解：
+
+字段/常量（22）：
+- `long PROGRESS_TICK_MS = 250`  L44 @Deprecated
+- `int SEEK_MAX_HOLD_TICKS = 32`  L47 @Deprecated
+- `long SEEK_SETTLE_TIMEOUT_MS = 250`  L50 @Deprecated
+- `long SEEK_SETTLE_TOLERANCE_MS = 1000`  L53 @Deprecated
+- `Callbacks callbacks`  L54
+- `CompletableDeferred<Unit> closeSignal`  L55
+- `NativePlayerCallbacks coordinatorCallbacks`  L56
+- `Ride5PlaybackState currentState`  L57
+- `String currentUrl`  L58
+- `long lastTotalMs`  L59
+- `Long pendingSeekPositionMs`  L60
+- `int pendingSeekTicks`  L61
+- `Job progressJob`  L62
+- `LifecycleCoroutineScope scope`  L63
+- `PlayListControlVideo videoView`  L64
+- `String str = this.currentUrl`  L116
+- `NativePlayerCallbacks nativePlayerCallbacks = Ride5HourlyPlaybackController.this.coordinatorCallbacks`  L256
+- `Long l = Ride5HourlyPlaybackController.this.pendingSeekPositionMs`  L260
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController = Ride5HourlyPlaybackController.this`  L280
+- `NativePlayerCallbacks nativePlayerCallbacks = Ride5HourlyPlaybackController.this.coordinatorCallbacks`  L295
+- `Job job = this.progressJob`  L376
+- `Job job = this.progressJob`  L384
+
+方法（19）：
+- `public Ride5HourlyPlaybackController(PlayListControlVideo videoView, LifecycleCoroutineScope scope, Callbacks callbacks)`  L76
+    - 体内字面量："videoView" · "scope" · "callbacks"
+- `Ride5PlaybackState getCurrentState()`  L88
+- `void play(String url)`  L92
+- `Object start(String str, RtspTransport rtspTransport, NativePlayerCallbacks nativePlayerCallbacks, Continuation<? super Unit> continuation)`  L105 @Override
+    - 体内字面量："RIDE5 HTTP playback does not support RTSP transport options"
+- `void startCurrentUrlPlayback()`  L115
+- `void pause()`  L127
+- `void resume()`  L135
+- `void seekTo(long positionMs)`  L143
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.album.ride5.Ride5HourlyPlaybackController$seekTo$1" · "Ride5HourlyPlaybackController.kt" · "invokeSuspend"
+- `void setSpeed(float speed)`  L216
+    - 体内字面量："Playback speed must be positive" · "[RIDE5_PLAYBACK_SPEED] apply speed=%.1f soundTouch=true state=%s"
+- `void requestStop()`  L225 @Override
+- `Object awaitClosed(Continuation<? super Unit> continuation)`  L232 @Override
+- `void release()`  L238 @Override
+- `void installGsYCallbacks()`  L249
+- `void onPrepared(String url, Object... objects)`  L252 @Override
+    - 体内字面量："objects"
+- `void onAutoComplete(String url, Object... objects)`  L273 @Override
+    - 体内字面量："objects"
+- `void onPlayError(String url, Object... objects)`  L287 @Override
+    - 体内字面量："objects"
+- `void startProgressLoop()`  L375
+- `void stopProgressLoop()`  L383
+- `void setState(Ride5PlaybackState state)`  L392
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourlyPlaybackController$Companion;" · "()V" · "PROGRESS_TICK_MS" · "SEEK_MAX_HOLD_TICKS" · "SEEK_SETTLE_TIMEOUT_MS" · "SEEK_SETTLE_TOLERANCE_MS" · "completedCloseSignal" · "Lkotlinx/coroutines/CompletableDeferred;" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackController$C25661`
+L169 · [class] static final C25661 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackController.java`
+注解：
+
+字段/常量（5）：
+- `long $targetMs`  L170
+- `int label`  L171
+- `int i = this.label`  L192
+- `Long l = Ride5HourlyPlaybackController.this.pendingSeekPositionMs`  L205
+- `long j = this.$targetMs`  L206
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L180 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L185 @Override
+- `Object invokeSuspend(Object obj)`  L190 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackController$C25671`
+L307 · [class] static final C25671 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackController.java`
+注解：
+
+字段/常量（6）：
+- `Object L$0`  L308
+- `int label`  L309
+- `CoroutineScope coroutineScope`  L329
+- `int i = this.label`  L331
+- `Long l = Ride5HourlyPlaybackController.this.pendingSeekPositionMs`  L344
+- `Ride5HourlyPlaybackController ride5HourlyPlaybackController = Ride5HourlyPlaybackController.this`  L346
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L316 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L323 @Override
+- `Object invokeSuspend(Object obj)`  L328 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackController$Callbacks`
+L68 · [interface] public Callbacks · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackController.java`
+注解：
+
+方法（3）：
+- `void onPlaybackProgress(long currentMs, long totalMs)`  L69
+- `void onPlaybackSeekChanged(boolean isSeeking)`  L71
+- `void onPlaybackStateChanged(Ride5PlaybackState state)`  L73
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourlyPlaybackController$Companion`
+L402 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourlyPlaybackController.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L403
+- `private Companion()`  L407
+- `CompletableDeferred<Unit> completedCloseSignal()`  L410
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourPlaybackTimelinePolicy`
+L23 · [class] public final Ride5HourPlaybackTimelinePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourPlaybackTimelinePolicy.java`
+注解：
+
+字段/常量（16）：
+- `int CONTIGUOUS_TOLERANCE_SECONDS = 1`  L24
+- `int HOUR_SECONDS = 3600`  L25
+- `int LAST_SECOND_OF_HOUR = 3599`  L27
+- `int SNAP_WINDOW_SECONDS = 60`  L28
+- `Integer next`  L60
+- `int size`  L61
+- `int endSecondsExclusive`  L62
+- `Ride5HourTimelineSnapCandidate ride5HourTimelineSnapCandidate`  L63
+- `List<Ride5HourRecording> list = videos`  L69
+- `ArrayList arrayList2 = arrayList`  L75
+- `Integer num = next`  L91
+- `ArrayList arrayList3 = arrayList2`  L95
+- `int i = 0`  L97
+- `int i2 = 0`  L98
+- `int i3 = i2 + 1`  L100
+- `int iCoerceAtMost`  L216
+
+方法（13）：
+- `private Ride5HourPlaybackTimelinePolicy()`  L30
+- `int secondsFromRatio(float ratio)`  L33
+- `Ride5HourRecordingSelection recordingSelection$default(Ride5HourPlaybackTimelinePolicy ride5HourPlaybackTimelinePolicy, List list, int i, TimeZone timeZone, int i2, Object obj)`  L37
+    - 体内字面量："getDefault(...)"
+- `Ride5HourRecordingSelection recordingSelection(List<Ride5HourRecording> videos, int pointerSeconds, TimeZone timeZone)`  L45
+    - 体内字面量："videos" · "timeZone"
+- `Ride5HourTimelineFocus recordingFocus$default(Ride5HourPlaybackTimelinePolicy ride5HourPlaybackTimelinePolicy, List list, int i, TimeZone timeZone, int i2, Object obj)`  L51
+    - 体内字面量："getDefault(...)"
+- `Ride5HourTimelineFocus recordingFocus(List<Ride5HourRecording> videos, int pointerSeconds, TimeZone timeZone)`  L59
+- `int compare(T t, T t2)`  L128 @Override
+- `int compare(T t, T t2)`  L135 @Override
+- `List mergedRecordingSegments$default(Ride5HourPlaybackTimelinePolicy ride5HourPlaybackTimelinePolicy, List list, TimeZone timeZone, int i, Object obj)`  L164
+    - 体内字面量："getDefault(...)"
+- `List<Ride5HourTimelineSegment> mergedRecordingSegments(List<Ride5HourRecording> videos, TimeZone timeZone)`  L173
+    - 体内字面量："videos" · "timeZone"
+- `int compare(T t, T t2)`  L187 @Override
+- `Ride5HourTimelineSegment recordingSegment$default(Ride5HourPlaybackTimelinePolicy ride5HourPlaybackTimelinePolicy, Ride5HourRecording ride5HourRecording, TimeZone timeZone, int i, Object obj)`  L207
+    - 体内字面量："getDefault(...)"
+- `Ride5HourTimelineSegment recordingSegment(Ride5HourRecording video, TimeZone timeZone)`  L215
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourPlaybackUiState`
+L15 · [class] public final Ride5HourPlaybackUiState · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourPlaybackUiState.java`
+注解：
+
+字段/常量（9）：
+- `int hour`  L19
+- `Integer playingIndex`  L20
+- `int pointerSeconds`  L21
+- `List<Ride5HourRecording> recordings`  L22
+- `Ride5HourRecordingSelection selection`  L23
+- `Ride5HourRecordingSelection ride5HourRecordingSelection2 = ride5HourRecordingSelection`  L33
+- `Integer num2 = num`  L37
+- `int i4 = i`  L41
+- `Integer num = this.playingIndex`  L91
+
+方法（16）：
+- `Ride5HourPlaybackUiState copy$default(Ride5HourPlaybackUiState ride5HourPlaybackUiState, List list, Ride5HourRecordingSelection ride5HourRecordingSelection, Integer num, int i, int i2, int i3, Object obj)`  L26
+- `List<Ride5HourRecording> component1()`  L48
+- `Ride5HourRecordingSelection getSelection()`  L53
+- `Integer getPlayingIndex()`  L58
+- `int getPointerSeconds()`  L63
+- `int getHour()`  L68
+- `Ride5HourPlaybackUiState copy(List<Ride5HourRecording> recordings, Ride5HourRecordingSelection selection, Integer playingIndex, int pointerSeconds, int hour)`  L72
+    - 体内字面量："recordings" · "selection"
+- `boolean equals(Object other)`  L78
+- `int hashCode()`  L89
+- `String toString()`  L95
+    - 体内字面量："Ride5HourPlaybackUiState(recordings=" · ", selection=" · ", playingIndex=" · ", pointerSeconds=" · ", hour=" · ")"
+- `public Ride5HourPlaybackUiState(List<Ride5HourRecording> recordings, Ride5HourRecordingSelection selection, Integer num, int i, int i2)`  L99
+    - 体内字面量："recordings" · "selection"
+- `List<Ride5HourRecording> getRecordings()`  L109
+- `Ride5HourRecordingSelection getSelection()`  L113
+- `Integer getPlayingIndex()`  L117
+- `int getPointerSeconds()`  L121
+- `int getHour()`  L125
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourPlaybackUiState$Companion;" · "()V" · "initial" · "Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourPlaybackUiState;" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourPlaybackUiState$Companion`
+L131 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourPlaybackUiState.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L132
+- `private Companion()`  L136
+- `Ride5HourPlaybackUiState initial()`  L139
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourRecordingAdapter`
+L36 · [class] public final Ride5HourRecordingAdapter · extends `RecyclerView.Adapter<VideoViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourRecordingAdapter.java`
+注解：
+
+字段/常量（8）：
+- `long MILLIS_PER_SECOND = 1000`  L40 @Deprecated
+- `String START_TIME_FORMAT = "HH:mm"`  L43 @Deprecated
+- `Function1<Ride5HourRecording, Unit> onVideoClick`  L44
+- `Function1<String, Object> previewModel`  L45
+- `List<Ride5HourRecording> recordings`  L46
+- `Ride5HourRecordingSelection selection`  L47
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L176
+- `int iIntValue`  L183
+
+方法（10）：
+- `public Ride5HourRecordingAdapter(Function1<? super Ride5HourRecording, Unit> onVideoClick, Function1<? super String, ? extends Object> previewModel)`  L50
+    - 体内字面量："onVideoClick" · "previewModel"
+- `void submit(List<Ride5HourRecording> recordings, Ride5HourRecordingSelection selection)`  L59
+    - 体内字面量："recordings" · "selection"
+- `void setSelection(Ride5HourRecordingSelection selection)`  L68
+    - 体内字面量："selection"
+- `Ride5HourRecording recordingAt(int cardIndex)`  L81
+    - 体内字面量："Failed requirement."
+- `VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L96 @Override
+    - 体内字面量："parent" · "inflate(...)"
+- `void onBindViewHolder(VideoViewHolder holder, int position)`  L104 @Override
+    - 体内字面量："holder"
+- `int getItemCount()`  L110 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourRecordingAdapter$VideoViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemRide5HourRecordingBinding;" · "(Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourRecordingAdapter;Lcom/tuwinsmart/tuwin/databinding/ItemRide5HourRecordingBinding;)V" · "bind" · "recording" · "Lcom/tuwinsmart/tuwin/domain/model/ride5/Ride5HourRecording;" · "app_release_64"
+- `String formatStartTime(Ride5HourRecording recording)`  L167
+    - 体内字面量："HH:mm" · "format(...)"
+- `String formatDuration(long durationMillis)`  L174
+- `void validateSelection(List<Ride5HourRecording> recordings, Ride5HourRecordingSelection selection)`  L182
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourRecordingAdapter$Companion`
+L199 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourRecordingAdapter.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L200
+- `private Companion()`  L204
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourRecordingAdapter$VideoViewHolder`
+L116 · [class] public final VideoViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourRecordingAdapter.java`
+注解：
+
+字段/常量（3）：
+- `ItemRide5HourRecordingBinding binding`  L117
+- `Ride5HourRecordingAdapter this$0`  L118
+- `Ride5HourRecordingAdapter ride5HourRecordingAdapter = this.this$0`  L141
+
+方法（4）：
+- `public VideoViewHolder(Ride5HourRecordingAdapter ride5HourRecordingAdapter, ItemRide5HourRecordingBinding binding)`  L121
+    - 体内字面量："binding"
+- `void bind(final Ride5HourRecording recording)`  L128
+- `void onClick(View view)`  L144 @Override
+- `void bind$lambda$0(Ride5HourRecordingAdapter this$0, Ride5HourRecording ride5HourRecording, View view)`  L160
+    - 体内字面量："this$0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourRecordingCardTransform`
+L9 · [class] public final Ride5HourRecordingCardTransform · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourRecordingCardTransform.java`
+注解：
+
+字段/常量（2）：
+- `float alpha`  L10
+- `float scale`  L11
+
+方法（10）：
+- `Ride5HourRecordingCardTransform copy$default(Ride5HourRecordingCardTransform ride5HourRecordingCardTransform, float f, float f2, int i, Object obj)`  L13
+- `float getScale()`  L24
+- `float getAlpha()`  L29
+- `Ride5HourRecordingCardTransform copy(float scale, float alpha)`  L33
+- `boolean equals(Object other)`  L37
+- `int hashCode()`  L48
+- `String toString()`  L52
+    - 体内字面量："Ride5HourRecordingCardTransform(scale=" · ", alpha=" · ")"
+- `public Ride5HourRecordingCardTransform(float f, float f2)`  L56
+- `float getScale()`  L61
+- `float getAlpha()`  L65
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourRecordingCarouselPolicy`
+L10 · [class] public final Ride5HourRecordingCarouselPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourRecordingCarouselPolicy.java`
+注解：
+
+字段/常量（4）：
+- `float CENTER_ALPHA = 1.0f`  L11
+- `float CENTER_SCALE = 1.0f`  L12
+- `float EDGE_ALPHA = 0.68f`  L13
+- `float EDGE_SCALE = 0.86f`  L14
+
+方法（4）：
+- `private Ride5HourRecordingCarouselPolicy()`  L17
+- `Ride5HourRecordingCardTransform cardTransform(float distanceFromCenter, float fullEffectDistance)`  L20
+    - 体内字面量："Failed requirement."
+- `int centerOffset(int viewStart, int viewEnd, int boxStart, int boxEnd)`  L28
+- `boolean shouldAcceptIdleSelection(int centeredCardIndex, Integer programmaticTargetIndex)`  L32
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourRecordingSmoothScroller`
+L16 · [class] public final Ride5HourRecordingSmoothScroller · extends `LinearSmoothScroller` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourRecordingSmoothScroller.java`
+注解：
+
+字段/常量（5）：
+- `int MAX_DECELERATION_DURATION_MS = 520`  L20 @Deprecated
+- `int MAX_SCROLL_DURATION_MS = 360`  L23 @Deprecated
+- `float MILLISECONDS_PER_INCH = 110.0f`  L26 @Deprecated
+- `int MIN_DECELERATION_DURATION_MS = 220`  L29 @Deprecated
+- `int MIN_SCROLL_DURATION_MS = 120`  L32 @Deprecated
+
+方法（5）：
+- `public Ride5HourRecordingSmoothScroller(Context context)`  L35
+    - 体内字面量："context"
+- `float calculateSpeedPerPixel(DisplayMetrics displayMetrics)`  L41 @Override
+    - 体内字面量："displayMetrics"
+- `int calculateTimeForScrolling(int dx)`  L47 @Override
+- `int calculateTimeForDeceleration(int dx)`  L55 @Override
+- `int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int snapPreference)`  L63 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourRecordingSmoothScroller$Companion;" · "()V" · "MAX_DECELERATION_DURATION_MS" · "MAX_SCROLL_DURATION_MS" · "MILLISECONDS_PER_INCH" · "MIN_DECELERATION_DURATION_MS" · "MIN_SCROLL_DURATION_MS" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourRecordingSmoothScroller$Companion`
+L69 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourRecordingSmoothScroller.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L70
+- `private Companion()`  L74
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourTimelineSnapCandidate`
+L9 · [class] final Ride5HourTimelineSnapCandidate · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourTimelineSnapCandidate.java`
+注解：
+
+字段/常量（3）：
+- `int distanceSeconds`  L10
+- `int pointerSeconds`  L11
+- `int videoIndex`  L12
+
+方法（12）：
+- `Ride5HourTimelineSnapCandidate copy$default(Ride5HourTimelineSnapCandidate ride5HourTimelineSnapCandidate, int i, int i2, int i3, int i4, Object obj)`  L14
+- `int getVideoIndex()`  L28
+- `int getPointerSeconds()`  L33
+- `int getDistanceSeconds()`  L38
+- `Ride5HourTimelineSnapCandidate copy(int videoIndex, int pointerSeconds, int distanceSeconds)`  L42
+- `boolean equals(Object other)`  L46
+- `int hashCode()`  L57
+- `String toString()`  L61
+    - 体内字面量："Ride5HourTimelineSnapCandidate(videoIndex=" · ", pointerSeconds=" · ", distanceSeconds=" · ")"
+- `public Ride5HourTimelineSnapCandidate(int i, int i2, int i3)`  L65
+- `int getVideoIndex()`  L71
+- `int getPointerSeconds()`  L75
+- `int getDistanceSeconds()`  L79
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourTimelineView`
+L40 · [class] public final Ride5HourTimelineView · extends `View` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourTimelineView.java`
+注解：
+
+字段/常量（41）：
+- `int LAST_SECOND_OF_HOUR = 3599`  L44 @Deprecated
+- `float MIN_SEGMENT_WIDTH_DP = 4.0f`  L47 @Deprecated
+- `long POINTER_ANIMATION_MILLIS = 180`  L50 @Deprecated
+- `RectF bubble`  L51
+- `float density`  L52
+- `float downX`  L53
+- `float downY`  L54
+- `boolean draggingPointer`  L55
+- `int hour`  L56
+- `Paint labelPaint`  L57
+- `Paint markPaint`  L58
+- `Function2<? super Integer, ? super Boolean, Unit> moveListener`  L59
+- `ValueAnimator pointerAnimator`  L60
+- `Paint pointerBubblePaint`  L61
+- `Paint pointerCirclePaint`  L62
+- `int pointerGradientEndColor`  L63
+- `int pointerGradientStartColor`  L64
+- `Paint pointerInnerPaint`  L65
+- `Paint pointerPaint`  L66
+- `int pointerSeconds`  L67
+- `Paint pointerTextPaint`  L68
+- `List<Ride5HourTimelineSegment> recordingSegments`  L69
+- `Ride5HourTimelineSegment selectedRecordingSegment`  L70
+- `Paint selectedSegmentPaint`  L71
+- `Function1<? super Integer, Unit> selectionListener`  L72
+- `Paint tickPaint`  L73
+- `int touchSlop`  L74
+- `Paint.Align align`  L211
+- `int i = 0`  L216
+- `boolean z = i2 % 10 == 0`  L219
+- `Paint paint = this.labelPaint`  L222
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L232
+- `int i4 = i + 1`  L239
+- `Function1<? super Integer, Unit> function1 = this.selectionListener`  L278
+- `ValueAnimator valueAnimator = this.pointerAnimator`  L317
+- `Function2<? super Integer, ? super Boolean, Unit> function2 = this.moveListener`  L327
+- `float f = fCoerceIn - fM527dp`  L339
+- `float f2 = fCoerceIn + fM527dp`  L340
+- `Ride5HourTimelineSegment ride5HourTimelineSegment = this.selectedRecordingSegment`  L348
+- `int i = 0`  L353
+- `StringCompanionObject stringCompanionObject = StringCompanionObject.INSTANCE`  L386
+
+方法（29）：
+- `public Ride5HourTimelineView(Context context)`  L78
+    - 体内字面量："context"
+- ` Ride5HourTimelineView(Context context, AttributeSet attributeSet, int i, DefaultConstructorMarker defaultConstructorMarker)`  L83
+- `public Ride5HourTimelineView(Context context, AttributeSet attributeSet)`  L88
+    - 体内字面量："context" · "#9A9FA9" · "#6F747E" · "#69C7FF" · "#4DA8FF" · "#69C7FF" · "#3B82F6"
+- `void setHour(int hour)`  L133
+    - 体内字面量："hour out of range: "
+- `void setRecordingSegments(List<Ride5HourTimelineSegment> segments)`  L142
+    - 体内字面量："segments"
+- `void setSelectedRecordingSegment(Ride5HourTimelineSegment segment)`  L148
+- `void setPointerSeconds$default(Ride5HourTimelineView ride5HourTimelineView, int i, boolean z, int i2, Object obj)`  L153
+- `void setPointerSeconds(int seconds, boolean animate)`  L160
+- `void onAnimationUpdate(ValueAnimator valueAnimator)`  L172 @Override
+- `void onAnimationEnd(Animator animation)`  L178 @Override
+    - 体内字面量："animation"
+- `void setPointerSeconds$lambda$9$lambda$8(Ride5HourTimelineView this$0, ValueAnimator animator)`  L191
+    - 体内字面量："this$0" · "animator" · "null cannot be cast to non-null type kotlin.Int"
+- `void setOnPointerChangedListener(Function2<? super Integer, ? super Boolean, Unit> listener)`  L201
+- `void setOnPointerSelectedListener(Function1<? super Integer, Unit> listener)`  L205
+- `void onDraw(Canvas canvas)`  L210 @Override
+- `boolean onTouchEvent(MotionEvent event)`  L259 @Override
+    - 体内字面量："event"
+- `boolean performClick()`  L306 @Override
+- `void onDetachedFromWindow()`  L311 @Override
+- `void cancelPointerAnimation()`  L316
+- `void updatePointerFromX(float x, boolean isDragging)`  L324
+- `void drawPointerBubble(Canvas canvas, float pointerX)`  L335
+- `void drawSelectedRecordingSegment(Canvas canvas, float markY)`  L347
+- `RectF segmentBounds(Ride5HourTimelineSegment segment, int trackIndex, float markY)`  L374
+- `void updateContentDescription()`  L381
+- `String formatPointerTime(int seconds)`  L385
+- `float secondsToX(int seconds)`  L392
+- `float secondBoundaryToX(int seconds)`  L396
+- `float contentLeft()`  L400
+- `float contentRight()`  L404
+- `float m527dp(float value)`  L409
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5HourTimelineView$Companion;" · "()V" · "LAST_SECOND_OF_HOUR" · "MIN_SEGMENT_WIDTH_DP" · "POINTER_ANIMATION_MILLIS" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5HourTimelineView$Companion`
+L415 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5HourTimelineView.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L416
+- `private Companion()`  L420
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5PlaybackState`
+L11 · [enum] public Ride5PlaybackState · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5PlaybackState.java`
+注解：
+
+枚举常量（6）：
+- `IDLE()`  L12
+- `PREPARING()`  L13
+- `PLAYING()`  L14
+- `PAUSED()`  L15
+- `COMPLETED()`  L16
+- `ERROR()`  L17
+
+方法（1）：
+- `EnumEntries<Ride5PlaybackState> getEntries()`  L21
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5SelectedVideoAdapter`
+L37 · [class] public final Ride5SelectedVideoAdapter · extends `RecyclerView.Adapter<VideoViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5SelectedVideoAdapter.java`
+注解：
+
+字段/常量（13）：
+- `String CREATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss"`  L40 @Deprecated
+- `long MILLIS_PER_SECOND = 1000`  L44 @Deprecated
+- `String START_TIME_FORMAT = "HH:mm"`  L47 @Deprecated
+- `Function1<Ride5HourRecording, Unit> onPlayClick`  L48
+- `Function1<Ride5HourRecording, Unit> onVideoClick`  L49
+- `Integer playingIndex`  L50
+- `Function1<String, Object> previewModel`  L51
+- `List<Ride5HourRecording> recordings`  L52
+- `Integer selectedIndex`  L53
+- `Integer num = this.selectedIndex`  L81
+- `Integer num = this.playingIndex`  L96
+- `Integer num = this.selectedIndex`  L125
+- `Integer num2 = this.playingIndex`  L127
+
+方法（9）：
+- `public Ride5SelectedVideoAdapter(Function1<? super Ride5HourRecording, Unit> onVideoClick, Function1<? super Ride5HourRecording, Unit> onPlayClick, Function1<? super String, ? extends Object> previewModel)`  L56
+    - 体内字面量："onVideoClick" · "onPlayClick" · "previewModel"
+- `void submit(List<Ride5HourRecording> recordings, Integer selectedIndex, Integer playingIndex)`  L66
+    - 体内字面量："recordings"
+- `void setSelectedIndex(Integer index)`  L76
+- `void setPlayingIndex(Integer index)`  L91
+- `Ride5HourRecording recordingAt(int position)`  L106
+    - 体内字面量："position out of range: "
+- `VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L114 @Override
+    - 体内字面量："parent" · "inflate(...)"
+- `void onBindViewHolder(VideoViewHolder holder, int position)`  L122 @Override
+    - 体内字面量："holder"
+- `int getItemCount()`  L132 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5SelectedVideoAdapter$VideoViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemRide5SelectedVideoBinding;" · "(Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5SelectedVideoAdapter;Lcom/tuwinsmart/tuwin/databinding/ItemRide5SelectedVideoBinding;)V" · "bind" · "recording" · "Lcom/tuwinsmart/tuwin/domain/model/ride5/Ride5HourRecording;" · "selected" · "playing" · "app_release_64"
+- `void validateIndex(List<Ride5HourRecording> recordings, Integer index)`  L223
+    - 体内字面量："index out of range: " · "Lcom/tuwinsmart/tuwin/presentation/ui/album/ride5/Ride5SelectedVideoAdapter$Companion;" · "()V" · "CREATE_TIME_FORMAT" · "MILLIS_PER_SECOND" · "START_TIME_FORMAT" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5SelectedVideoAdapter$Companion`
+L234 · [class] private static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5SelectedVideoAdapter.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L235
+- `private Companion()`  L239
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5SelectedVideoAdapter$VideoViewHolder`
+L138 · [class] public final VideoViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5SelectedVideoAdapter.java`
+注解：
+
+字段/常量（11）：
+- `ItemRide5SelectedVideoBinding binding`  L139
+- `Ride5SelectedVideoAdapter this$0`  L140
+- `int i`  L151
+- `int i2`  L152
+- `AppCompatTextView btnPlayVideo = this.binding.btnPlayVideo`  L166
+- `AppCompatTextView appCompatTextView = this.binding.btnPlayVideo`  L171
+- `View selectedVideoGlow = this.binding.selectedVideoGlow`  L178
+- `ConstraintLayout constraintLayout = this.binding.cardSelectedVideo`  L181
+- `AppCompatTextView appCompatTextView2 = this.binding.btnPlayVideo`  L190
+- `Ride5SelectedVideoAdapter ride5SelectedVideoAdapter = this.this$0`  L191
+- `Ride5SelectedVideoAdapter ride5SelectedVideoAdapter2 = this.this$0`  L199
+
+方法（6）：
+- `public VideoViewHolder(Ride5SelectedVideoAdapter ride5SelectedVideoAdapter, ItemRide5SelectedVideoBinding binding)`  L143
+    - 体内字面量："binding"
+- `void bind(final Ride5HourRecording recording, boolean selected, boolean playing)`  L150
+- `void onClick(View view)`  L194 @Override
+- `void onClick(View view)`  L202 @Override
+- `void bind$lambda$1(Ride5SelectedVideoAdapter this$0, Ride5HourRecording recording, View view)`  L209
+    - 体内字面量："this$0" · "$recording"
+- `void bind$lambda$2(Ride5SelectedVideoAdapter this$0, Ride5HourRecording recording, View view)`  L216
+    - 体内字面量："this$0" · "$recording"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5SelectedVideoCardTransform`
+L9 · [class] public final Ride5SelectedVideoCardTransform · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5SelectedVideoCardTransform.java`
+注解：
+
+字段/常量（10）：
+- `float alpha`  L10
+- `float elevationFraction`  L11
+- `float rotationY`  L12
+- `float scale`  L13
+- `float translationXFraction`  L14
+- `float translationYFraction`  L15
+- `float f7 = f2`  L24
+- `float f8 = f3`  L28
+- `float f9 = f4`  L32
+- `float f10 = f5`  L36
+
+方法（18）：
+- `Ride5SelectedVideoCardTransform copy$default(Ride5SelectedVideoCardTransform ride5SelectedVideoCardTransform, float f, float f2, float f3, float f4, float f5, float f6, int i, Object obj)`  L17
+- `float getScale()`  L44
+- `float getAlpha()`  L49
+- `float getElevationFraction()`  L54
+- `float getRotationY()`  L59
+- `float getTranslationXFraction()`  L64
+- `float getTranslationYFraction()`  L69
+- `Ride5SelectedVideoCardTransform copy(float scale, float alpha, float elevationFraction, float rotationY, float translationXFraction, float translationYFraction)`  L73
+- `boolean equals(Object other)`  L77
+- `int hashCode()`  L88
+- `String toString()`  L92
+    - 体内字面量："Ride5SelectedVideoCardTransform(scale=" · ", alpha=" · ", elevationFraction=" · ", rotationY=" · ", translationXFraction=" · ", translationYFraction=" · ")"
+- `public Ride5SelectedVideoCardTransform(float f, float f2, float f3, float f4, float f5, float f6)`  L96
+- `float getScale()`  L105
+- `float getAlpha()`  L109
+- `float getElevationFraction()`  L113
+- `float getRotationY()`  L117
+- `float getTranslationXFraction()`  L121
+- `float getTranslationYFraction()`  L125
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ride5.Ride5SelectedVideoCarouselPolicy`
+L10 · [class] public final Ride5SelectedVideoCarouselPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/ride5/Ride5SelectedVideoCarouselPolicy.java`
+注解：
+
+字段/常量（7）：
+- `float CENTER_ALPHA = 1.0f`  L11
+- `float CENTER_SCALE = 1.0f`  L12
+- `float SIDE_ALPHA = 0.52f`  L14
+- `float SIDE_OVERLAP_FRACTION = 0.26f`  L15
+- `float SIDE_ROTATION_Y_DEGREES = 12.0f`  L16
+- `float SIDE_SCALE = 0.85f`  L17
+- `float SIDE_VERTICAL_OFFSET_FRACTION = 0.025f`  L18
+
+方法（3）：
+- `private Ride5SelectedVideoCarouselPolicy()`  L20
+- `boolean shouldPlayScrollTick(boolean userScrollActive, Integer previousCenteredIndex, int centeredIndex)`  L23
+- `Ride5SelectedVideoCardTransform cardTransform(float distanceFromCenter, float fullEffectDistance)`  L27
+    - 体内字面量："Failed requirement."
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.RidePlaybackRtspTransportPolicy`
+L13 · [class] public final RidePlaybackRtspTransportPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/RidePlaybackRtspTransportPolicy.java`
+注解：
+
+方法（2）：
+- `private RidePlaybackRtspTransportPolicy()`  L16
+- `RtspTransport forDevice(DeviceType deviceType)`  L19
+    - 体内字面量："deviceType" · "Ride RTSP playback does not support "
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ShareFileValidationPolicy`
+L11 · [class] public final ShareFileValidationPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/album/ShareFileValidationPolicy.java`
+注解：
+
+方法（2）：
+- `private ShareFileValidationPolicy()`  L27
+- `ShareAction decideAction(long localFileSize, Long remoteFileSize)`  L30
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ShareFileValidationPolicy$ShareAction`
+L16 · [enum] public ShareAction · `com/tuwinsmart/tuwin/presentation/p010ui/album/ShareFileValidationPolicy.java`
+注解：
+
+枚举常量（2）：
+- `SHARE_LOCAL_FILE()`  L17
+- `REDOWNLOAD_AND_SHARE()`  L18
+
+方法（1）：
+- `EnumEntries<ShareAction> getEntries()`  L22
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ShowPicsActivity`
+L46 · [class] public final ShowPicsActivity · extends `ToolBarActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/album/ShowPicsActivity.java`
+注解：
+
+字段/常量（16）：
+- `ActivityShowPicsBinding binding`  L50
+- `List<String> imageUrls`  L60
+- `int sum`  L61
+- `List<String> mData`  L84
+- `ActivityShowPicsBinding activityShowPicsBinding = null`  L93
+- `ActivityShowPicsBinding activityShowPicsBinding2 = this.binding`  L108
+- `ActivityShowPicsBinding activityShowPicsBinding3 = this.binding`  L114
+- `List list = ShowPicsActivity.this.imageUrls`  L129
+- `DevicePhotoRequestPolicy devicePhotoRequestPolicy = DevicePhotoRequestPolicy.INSTANCE`  L145
+- `List list = ShowPicsActivity.this.imageUrls`  L146
+- `ShowPicsActivity showPicsActivity = ShowPicsActivity.this`  L154
+- `ShowPicsActivity showPicsActivity2 = ShowPicsActivity.this`  L167
+- `ActivityShowPicsBinding activityShowPicsBinding4 = this.binding`  L204
+- `ActivityShowPicsBinding activityShowPicsBinding5 = this.binding`  L210
+- `List list = this.imageUrls`  L231
+- `ShowPicsActivity showPicsActivity = this`  L237
+
+方法（15）：
+- `VerifiedDeviceFileCatalog invoke()`  L56 @Override
+- `VerifiedDeviceFileCatalog getFileCatalog()`  L64
+- `View getContentRoot()`  L69 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L83 @Override
+- `boolean isViewFromObject(View view, Object object)`  L121 @Override
+    - 体内字面量："view" · "object"
+- `int getCount()`  L128 @Override
+- `Object instantiateItem(ViewGroup container, int position)`  L138 @Override
+    - 体内字面量："container"
+- `Object invoke(String sessionId, String filePath)`  L161 @Override
+    - 体内字面量："sessionId" · "filePath"
+- `Object invoke(String sessionId, String filePath)`  L174 @Override
+    - 体内字面量："sessionId" · "filePath"
+- `boolean onLoadFailed(GlideException e, Object model, Target<Drawable> target, boolean isFirstResource)`  L181 @Override
+- `boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource)`  L187 @Override
+- `void destroyItem(ViewGroup container, int position, Object object)`  L198 @Override
+    - 体内字面量："container" · "object"
+- `void onPageScrollStateChanged(int state)`  L218 @Override
+- `void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)`  L222 @Override
+- `void onPageSelected(int position)`  L226 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ShowPicsActivity$Companion`
+L315 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/ShowPicsActivity.java`
+注解：
+
+方法（7）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L316
+- `private Companion()`  L320
+- `void launchActivity(BaseActivity activity, List<String> data)`  L323
+    - 体内字面量："activity"
+- `void launchActivity(BaseActivity activity, List<String> data, int position)`  L329
+    - 体内字面量："activity"
+- `void launchActivity(BaseActivity activity, List<String> data, int position, String fileName)`  L335
+    - 体内字面量："activity"
+- `void launchRide5Photos(BaseActivity activity, List<String> paths, int position, String sessionId)`  L341
+    - 体内字面量："activity" · "paths" · "sessionId"
+- `void launchM3Photos(BaseActivity activity, List<String> paths, int position, String fileName, String sessionId)`  L353
+    - 体内字面量："activity" · "paths" · "fileName" · "sessionId"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.ShowPicsActivity$EnterBean`
+L250 · [class] public static final EnterBean · `com/tuwinsmart/tuwin/presentation/p010ui/album/ShowPicsActivity.java`
+注解：
+
+字段/常量（5）：
+- `String deviceSessionId`  L251
+- `DeviceType deviceType`  L252
+- `String fileName`  L253
+- `List<String> mData`  L254
+- `int position`  L255
+
+方法（13）：
+- `List<String> getMData()`  L257
+- `void setMData(List<String> list)`  L261
+- `int getPosition()`  L265
+- `void setPosition(int i)`  L269
+- `String getFileName()`  L273
+- `void setFileName(String str)`  L277
+- `String getDeviceSessionId()`  L281
+- `void setDeviceSessionId(String str)`  L285
+- `DeviceType getDeviceType()`  L289
+- `void setDeviceType(DeviceType deviceType)`  L293
+- `public EnterBean(List<String> list)`  L297
+- `public EnterBean(List<String> list, int i)`  L301
+- `public EnterBean(List<String> list, int i, String str)`  L306
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.VideoPlayActivity`
+L57 · [class] public final VideoPlayActivity · extends `BaseActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/album/VideoPlayActivity.java`
+注解：
+
+字段/常量（79）：
+- `ActivityPlayVideoBinding binding`  L61
+- `File currentFile`  L62
+- `OrientationUtils orientationUtils`  L63
+- `File pendingShareSourceFile`  L64
+- `File pendingShareTranscodedFile`  L65
+- `Job sharePrepareJob`  L66
+- `Job shareTranscodeJob`  L67
+- `Job job = this.this$0.sharePrepareJob`  L96
+- `Job job = this.this$0.shareTranscodeJob`  L115
+- `ActivityPlayVideoBinding activityPlayVideoBinding = this.binding`  L160
+- `File file = null`  L161
+- `ActivityPlayVideoBinding activityPlayVideoBinding2 = this.binding`  L167
+- `ActivityPlayVideoBinding activityPlayVideoBinding3 = this.binding`  L173
+- `ActivityPlayVideoBinding activityPlayVideoBinding4 = this.binding`  L184
+- `TextView btnShareDownloadCancel = activityPlayVideoBinding4.btnShareDownloadCancel`  L189
+- `VideoPlayActivity videoPlayActivity = this`  L199
+- `ActivityPlayVideoBinding activityPlayVideoBinding5 = this.binding`  L200
+- `OrientationUtils orientationUtils2 = this.orientationUtils`  L208
+- `ActivityPlayVideoBinding activityPlayVideoBinding6 = this.binding`  L212
+- `ActivityPlayVideoBinding activityPlayVideoBinding7 = this.binding`  L218
+- `OrientationUtils orientationUtils3 = VideoPlayActivity.this.orientationUtils`  L228
+- `OrientationUtils orientationUtils3 = VideoPlayActivity.this.orientationUtils`  L238
+- `ActivityPlayVideoBinding activityPlayVideoBinding8 = this.binding`  L244
+- `ActivityPlayVideoBinding activityPlayVideoBinding9 = this.binding`  L251
+- `PlayListControlVideo playListControlVideo = activityPlayVideoBinding9.videoView`  L256
+- `File file2 = this.currentFile`  L257
+- `ActivityPlayVideoBinding activityPlayVideoBinding10 = this.binding`  L263
+- `ActivityPlayVideoBinding activityPlayVideoBinding11 = this.binding`  L269
+- `ActivityPlayVideoBinding activityPlayVideoBinding12 = this.binding`  L275
+- `ActivityPlayVideoBinding activityPlayVideoBinding13 = this.binding`  L289
+- `File file3 = this.currentFile`  L301
+- `File file = this.currentFile`  L334
+- `File file2 = null`  L335
+- `File file3 = this.currentFile`  L341
+- `LocalVideoShareFilePolicy localVideoShareFilePolicy = LocalVideoShareFilePolicy.INSTANCE`  L347
+- `File file4 = this.currentFile`  L348
+- `File file5 = this.currentFile`  L354
+- `File file = this.currentFile`  L375
+- `File file2 = null`  L376
+- `LocalVideoShareFilePolicy localVideoShareFilePolicy = LocalVideoShareFilePolicy.INSTANCE`  L382
+- `File file3 = this.currentFile`  L383
+- `Job job = this.sharePrepareJob`  L461
+- `Job job = this.shareTranscodeJob`  L476
+- `ActivityPlayVideoBinding activityPlayVideoBinding = this.binding`  L572
+- `ActivityPlayVideoBinding activityPlayVideoBinding = this.binding`  L581
+- `ActivityPlayVideoBinding activityPlayVideoBinding2 = null`  L582
+- `FrameLayout layoutShareDownloadProgress = activityPlayVideoBinding.layoutShareDownloadProgress`  L587
+- `ActivityPlayVideoBinding activityPlayVideoBinding3 = this.binding`  L590
+- `ActivityPlayVideoBinding activityPlayVideoBinding4 = this.binding`  L596
+- `ActivityPlayVideoBinding activityPlayVideoBinding5 = this.binding`  L602
+- `ActivityPlayVideoBinding activityPlayVideoBinding6 = this.binding`  L608
+- `ActivityPlayVideoBinding activityPlayVideoBinding = this.binding`  L618
+- `ActivityPlayVideoBinding activityPlayVideoBinding2 = null`  L619
+- `FrameLayout layoutShareDownloadProgress = activityPlayVideoBinding.layoutShareDownloadProgress`  L624
+- `ActivityPlayVideoBinding activityPlayVideoBinding3 = this.binding`  L627
+- `ActivityPlayVideoBinding activityPlayVideoBinding4 = this.binding`  L633
+- `ActivityPlayVideoBinding activityPlayVideoBinding5 = this.binding`  L639
+- `ActivityPlayVideoBinding activityPlayVideoBinding6 = this.binding`  L645
+- `ActivityPlayVideoBinding activityPlayVideoBinding = this.binding`  L656
+- `ActivityPlayVideoBinding activityPlayVideoBinding2 = null`  L657
+- `FrameLayout layoutShareDownloadProgress = activityPlayVideoBinding.layoutShareDownloadProgress`  L662
+- `ActivityPlayVideoBinding activityPlayVideoBinding3 = this.binding`  L665
+- `ActivityPlayVideoBinding activityPlayVideoBinding4 = this.binding`  L671
+- `ActivityPlayVideoBinding activityPlayVideoBinding5 = this.binding`  L677
+- `ActivityPlayVideoBinding activityPlayVideoBinding6 = this.binding`  L683
+- `ActivityPlayVideoBinding activityPlayVideoBinding = this.binding`  L693
+- `ActivityPlayVideoBinding activityPlayVideoBinding2 = null`  L694
+- `FrameLayout layoutShareDownloadProgress = activityPlayVideoBinding.layoutShareDownloadProgress`  L699
+- `ActivityPlayVideoBinding activityPlayVideoBinding3 = this.binding`  L702
+- `ActivityPlayVideoBinding activityPlayVideoBinding4 = this.binding`  L708
+- `ActivityPlayVideoBinding activityPlayVideoBinding5 = this.binding`  L714
+- `ActivityPlayVideoBinding activityPlayVideoBinding6 = this.binding`  L720
+- `int i`  L730
+- `ActivityPlayVideoBinding activityPlayVideoBinding = this.binding`  L734
+- `ToolBar toolBar = activityPlayVideoBinding.toolBar`  L739
+- `OrientationUtils orientationUtils = this.orientationUtils`  L806
+- `OrientationUtils orientationUtils = this.orientationUtils`  L818
+- `ActivityPlayVideoBinding activityPlayVideoBinding = null`  L822
+- `ActivityPlayVideoBinding activityPlayVideoBinding2 = this.binding`  L824
+
+方法（36）：
+- `Ride3ProLocalVideoTranscoder invoke()`  L77 @Override
+    - 体内字面量："getApplicationContext(...)"
+- `Unit invoke()`  L89 @Override
+- `void invoke2()`  L95
+- `Unit invoke()`  L107 @Override
+- `void invoke2()`  L113
+- `void access$transcodeLocalShareVideo(VideoPlayActivity videoPlayActivity, long j, File file)`  L122
+- `Ride3ProLocalVideoTranscoder getLocalVideoTranscoder()`  L127
+- `View getContentRoot()`  L132 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L146 @Override
+    - 体内字面量："path"
+- `void onClick(View view)`  L180 @Override
+- `void onClick(View view)`  L193 @Override
+- `void onQuitFullscreen(String url, Object... objects)`  L225 @Override
+    - 体内字面量："objects"
+- `void onEnterFullscreen(String url, Object... objects)`  L235 @Override
+    - 体内字面量："objects"
+- `void onStateChanged(int state)`  L282 @Override
+- `void onClick(View view)`  L296 @Override
+- `void onCreate$lambda$1(VideoPlayActivity this$0, View view)`  L311
+    - 体内字面量："this$0"
+- `void onCreate$lambda$2(VideoPlayActivity this$0, View view)`  L318
+    - 体内字面量："this$0"
+- `void onCreate$lambda$3(VideoPlayActivity this$0, View view)`  L324
+    - 体内字面量："this$0"
+- `void shareCurrentVideo()`  L333
+- `long beginShareFlow()`  L373
+- `void prepareLocalShareTranscode(long token)`  L460
+- `void transcodeLocalShareVideo(long token, File sourceFile)`  L469
+- `void updateFileInfo(File file)`  L571
+- `void showSharePreparingProgress()`  L580
+- `void showShareTranscodingProgress()`  L617
+- `void updateShareTranscodingProgress(int processedFrames, int totalFrames)`  L655
+- `void hideShareDownloadProgress()`  L692
+- `void syncShareActionState()`  L729
+- `void cancelShareFlow()`  L748
+- `void finishShareFlow(long token)`  L759
+- `void clearShareFlowState()`  L766
+- `void clearShareTemporaryFiles(boolean deleteTranscodedFile)`  L774
+- `void deleteFileQuietly(File file)`  L782
+- `void shareVideo(File file)`  L790
+    - 体内字面量：".fileProvider" · "getUriForFile(...)" · "android.intent.action.SEND" · "android.intent.extra.STREAM"
+- `void onBackPressed()`  L802 @Override
+- `void onDestroy()`  L814 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.VideoPlayActivity$C25101`
+L399 · [class] static final C25101 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/VideoPlayActivity.java`
+注解：
+
+字段/常量（7）：
+- `long $token`  L400
+- `int label`  L401
+- `File file = VideoPlayActivity.this.pendingShareSourceFile`  L424
+- `VideoPlayActivity videoPlayActivity = VideoPlayActivity.this`  L429
+- `long j = this.$token`  L430
+- `VideoPlayActivity videoPlayActivity2 = VideoPlayActivity.this`  L439
+- `long j2 = this.$token`  L440
+
+方法（6）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L410 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L415 @Override
+- `Object invokeSuspend(Object obj)`  L420 @Override
+- `void run()`  L433 @Override
+- `void run()`  L443 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+- `void invokeSuspend$lambda$0(VideoPlayActivity videoPlayActivity, long j)`  L453
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.VideoPlayActivity$C25131`
+L487 · [class] static final C25131 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/VideoPlayActivity.java`
+注解：
+
+字段/常量（10）：
+- `File $sourceFile`  L488
+- `long $token`  L489
+- `File $transcodedFile`  L490
+- `int label`  L491
+- `Object objM2922transcodeyxL6bBk`  L513
+- `int i = this.label`  L515
+- `Object obj2 = objM2922transcodeyxL6bBk`  L530
+- `VideoPlayActivity videoPlayActivity = VideoPlayActivity.this`  L531
+- `long j = this.$token`  L532
+- `File file = this.$sourceFile`  L533
+
+方法（5）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L502 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L507 @Override
+- `Object invokeSuspend(Object obj)`  L512 @Override
+- `void run()`  L536 @Override
+- `void invokeSuspend$lambda$2(VideoPlayActivity videoPlayActivity, long j, Object obj, File file)`  L544
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.VideoPlayActivity$Companion`
+L836 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/album/VideoPlayActivity.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L837
+- `private Companion()`  L841
+- `void launchActivity(BaseActivity activity, String path, Long time)`  L844
+    - 体内字面量："activity" · "path"
+### `com.tuwinsmart.tuwin.presentation.p010ui.album.VideoPlayActivity$transcodeLocalShareVideo$1$result$1`
+L13 · [class] final VideoPlayActivity$transcodeLocalShareVideo$1$result$1 · extends `Lambda implements Function2<Integer, Integer, Unit>` · implements `Function2<Integer, Integer, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/album/VideoPlayActivity$transcodeLocalShareVideo$1$result$1.java`
+注解：
+
+字段/常量（4）：
+- `long $token`  L14
+- `VideoPlayActivity this$0`  L15
+- `VideoPlayActivity videoPlayActivity = this.this$0`  L31
+- `long j = this.$token`  L32
+
+方法（4）：
+- `Unit invoke(Integer num, Integer num2)`  L25 @Override
+- `void invoke(final int i, final int i2)`  L30
+- `void run()`  L35 @Override
+- `void invoke$lambda$0(VideoPlayActivity this$0, long j, int i, int i2)`  L42
+    - 体内字面量："this$0"

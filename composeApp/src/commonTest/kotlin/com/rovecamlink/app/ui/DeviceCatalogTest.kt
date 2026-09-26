@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
  * The page is a promise to a user holding a camera in their hand: 「这个型号本 App 能连」
  * must never be claimed about a platform that has no protocol plugin, and the model
  * list has to stay aligned with the archive it was transcribed from
- * (`docs/03-品牌型号与协议矩阵.md`) — a typo in a model name there is a user who
+ * (`docs/analysis/protocol-matrix.md`) — a typo in a model name there is a user who
  * cannot find their camera here.
  */
 class DeviceCatalogTest {

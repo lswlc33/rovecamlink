@@ -41,7 +41,7 @@ class HisiliconOtaTransport(private val http: CameraHttp) : OtaTransport {
     ): CmdResult = Diag.inOp("hi3510-ota", "package=${pkg.fileName} size=${pkg.sizeBytes}B") {
         // This channel hands `CameraHttp` one byte array for the whole multipart body,
         // so its peak cost is twice the package. Every real XTU package measured so far
-        // is 16–54 MB (docs/04 §5), which is why this transport is the *fallback* and the
+        // is 16–54 MB (docs/analysis/ota-and-gaps §5), which is why this transport is the *fallback* and the
         // socket channel is the default; refusing here is honest, and an OOM in the
         // middle of a firmware push is the one failure mode this app must not offer.
         if (pkg.sizeBytes > MAX_IN_MEMORY_PACKAGE) {
@@ -112,7 +112,7 @@ class HisiliconOtaTransport(private val http: CameraHttp) : OtaTransport {
          * Ceiling for a package this channel will load into memory.
          *
          * 24 MB is not a round number chosen for looks: it is roughly what the
-         * smallest real vendor package (idGoLive's 16 MB ja build, `docs/04 §5.3`) plus
+         * smallest real vendor package (idGoLive's 16 MB ja build, `docs/analysis/ota-and-gaps §5.3`) plus
          * its multipart envelope costs, so a hand-picked small image still goes through
          * this path while the 54 MB S7PRO build is refused with a reason instead of an
          * OutOfMemoryError halfway through a flash.

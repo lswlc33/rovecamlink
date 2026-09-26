@@ -84,7 +84,7 @@ interface WifiController {
      * This exists because reaching a camera and reaching the internet are mutually
      * exclusive here on purpose: [connect] and [adoptCurrentNetwork] call
      * `bindProcessToNetwork` so the camera's isolated, internet-less hotspot cannot
-     * be shadowed by a VPN (`docs/07` P0), and that same binding sends every other
+     * be shadowed by a VPN (`docs/analysis/ble-and-vpn` P0), and that same binding sends every other
      * socket into a network with no route off it. A vendor firmware index is
      * therefore unreachable while a camera is connected unless somebody steps aside.
      *
@@ -148,7 +148,7 @@ data class CameraNetwork(val ssid: String, val secured: Boolean, val rssi: Int)
  *
  * These entries predate the plugin registry and none of them is a documented hotspot
  * prefix — `X7`, `RIDE`, `M3`, `R3`, `R6` are *model* names, and `GO` is the official
- * XTU app's name (`docs/03 §1.1`, `§2.1`). They are kept verbatim because removing a
+ * XTU app's name (`docs/analysis/protocol-matrix §1.1`, `§2.1`). They are kept verbatim because removing a
  * matcher can only lose cameras, and they cost one `startsWith` each.
  *
  * **A new brand must not add anything here.** Declare `wifiSsidPrefixes` on its plugin;

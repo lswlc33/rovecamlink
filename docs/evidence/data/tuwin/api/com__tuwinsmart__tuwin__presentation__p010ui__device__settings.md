@@ -1,0 +1,1669 @@
+# TUWIN — 类与成员明细：com.tuwinsmart.tuwin.presentation.p010ui.device.settings
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 40 个文件 / 76 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3DeviceSettingsActivity`
+L64 · [class] public final M3DeviceSettingsActivity · extends `ToolBarActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3DeviceSettingsActivity.java`
+注解：
+
+字段/常量（40）：
+- `String EXTRA_IDENTITY_SESSION_ID = "device_identity_session_id"`  L65
+- `String EXTRA_SESSION_ID = "device_session_id"`  L66
+- `String TAG = "M3DeviceSettingsActivity"`  L67
+- `ActivityM3DeviceSettingsBinding binding`  L68
+- `List<M3ParamItem> latestSettings`  L69
+- `Lazy m3DeviceRepository`  L72
+- `Lazy repositoryFactory`  L75
+- `M3SettingsAdapter settingsAdapter`  L76
+- `Lazy viewModel`  L79
+- `M3DeviceSettingsActivity m3DeviceSettingsActivity = this`  L83
+- `LazyThreadSafetyMode lazyThreadSafetyMode = LazyThreadSafetyMode.SYNCHRONIZED`  L84
+- `Qualifier qualifier = null`  L85
+- `Object[] objArr = 0 == true ? 1 : 0`  L86
+- `ComponentCallbacks componentCallbacks = m3DeviceSettingsActivity`  L91
+- `M3DeviceSettingsActivity m3DeviceSettingsActivity2 = this`  L106
+- `LazyThreadSafetyMode lazyThreadSafetyMode2 = LazyThreadSafetyMode.NONE`  L117
+- `Object[] objArr2 = 0 == true ? 1 : 0`  L118
+- `Object[] objArr3 = 0 == true ? 1 : 0`  L119
+- `CreationExtras defaultViewModelCreationExtras`  L125
+- `ComponentActivity componentActivity = m3DeviceSettingsActivity2`  L126
+- `Qualifier qualifier2 = objArr2`  L127
+- `Function0 function1 = objArr3`  L128
+- `Function0 function2 = function0`  L129
+- `String string`  L148
+- `M3DeviceSettingsActivity m3DeviceSettingsActivity = M3DeviceSettingsActivity.this`  L230
+- `M3DeviceSettingsActivity m3DeviceSettingsActivity2 = M3DeviceSettingsActivity.this`  L237
+- `M3DeviceSettingsActivity m3DeviceSettingsActivity3 = M3DeviceSettingsActivity.this`  L249
+- `M3DeviceSettingsActivity m3DeviceSettingsActivity4 = M3DeviceSettingsActivity.this`  L251
+- `M3DeviceSettingsActivity m3DeviceSettingsActivity5 = M3DeviceSettingsActivity.this`  L259
+- `ActivityM3DeviceSettingsBinding activityM3DeviceSettingsBinding = this.binding`  L270
+- `M3SettingsAdapter m3SettingsAdapter = null`  L271
+- `RecyclerView recyclerView = activityM3DeviceSettingsBinding.rvSettings`  L276
+- `M3SettingsAdapter m3SettingsAdapter2 = this.settingsAdapter`  L278
+- `String string`  L620
+- `String version`  L621
+- `M3SettingsMenuPolicy m3SettingsMenuPolicy = M3SettingsMenuPolicy.INSTANCE`  L624
+- `M3SettingsAdapter m3SettingsAdapter = null`  L627
+- `M3SettingsAdapter m3SettingsAdapter2 = this.settingsAdapter`  L632
+- `String remark`  L657
+- `String string2 = string`  L663
+
+方法（29）：
+- `public M3DeviceSettingsActivity()`  L82
+- `M3SessionRepositoryFactory invoke()`  L90 @Override
+- `M3DeviceRepository invoke()`  L102 @Override
+- `ParametersHolder invoke()`  L113 @Override
+- `M3DeviceSettingsViewModel invoke()`  L124 @Override
+- `String getSessionId()`  L141
+    - 体内字面量："device_session_id"
+- `String getIdentitySessionId()`  L147
+- `M3SessionRepositoryFactory getRepositoryFactory()`  L162
+- `M3DeviceRepository getM3DeviceRepository()`  L167
+- `M3DeviceSettingsViewModel getViewModel()`  L172
+- `View getContentRoot()`  L177 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L191 @Override
+- `void setupRecyclerView()`  L200
+- `Unit invoke(String str, Integer num)`  L207 @Override
+- `void invoke(String paramName, int i)`  L212
+    - 体内字面量："paramName" · "M3DeviceSettingsActivity: Setting changed - " · " = "
+- `Unit invoke(Integer num)`  L223 @Override
+- `void invoke(int i)`  L228
+- `void enterMenuMode()`  L338
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.device.settings.M3DeviceSettingsActivity$exitMenuMode$1" · "M3DeviceSettingsActivity.kt" · "invokeSuspend"
+- `void exitMenuMode()`  L393
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.device.settings.M3DeviceSettingsActivity$loadCurrentModeSettings$1" · "M3DeviceSettingsActivity.kt" · "invokeSuspend"
+- `void loadCurrentModeSettings()`  L464
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.device.settings.M3DeviceSettingsActivity$observeUiState$1" · "M3DeviceSettingsActivity.kt" · "invokeSuspend"
+- `void observeUiState()`  L614
+- `void displaySettings(List<M3ParamItem> settings)`  L619
+- `void onDestroy()`  L642 @Override
+- `ConnectedDevice getConnectedDevice()`  L652
+- `String getDeviceNoteDisplayName()`  L656
+- `SessionBoundOtaIdentity resolveOtaIdentity()`  L672
+- `void showEditDeviceNoteDialog()`  L677
+- `boolean onInput(String str, String str2)`  L684 @Override
+- `boolean showEditDeviceNoteDialog$lambda$3(ConnectedDevice connectedDevice, M3DeviceSettingsActivity this$0, String str, String str2)`  L692
+    - 体内字面量："this$0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3DeviceSettingsActivity$C26971`
+L291 · [class] static final C26971 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3DeviceSettingsActivity.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L292
+- `Object objMo2793setMenuModegIAlus`  L310
+- `int i = this.label`  L312
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L299 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L304 @Override
+- `Object invokeSuspend(Object obj)`  L309 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3DeviceSettingsActivity$C26981`
+L346 · [class] static final C26981 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3DeviceSettingsActivity.java`
+注解：
+
+字段/常量（3）：
+- `int label`  L347
+- `Object objMo2793setMenuModegIAlus`  L365
+- `int i = this.label`  L367
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L354 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L359 @Override
+- `Object invokeSuspend(Object obj)`  L364 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3DeviceSettingsActivity$C26991`
+L401 · [class] static final C26991 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3DeviceSettingsActivity.java`
+注解：
+
+字段/常量（8）：
+- `int label`  L402
+- `Object objMo2784getCurrentModeIoAF18A`  L420
+- `int i = this.label`  L422
+- `M3DeviceSettingsActivity m3DeviceSettingsActivity = M3DeviceSettingsActivity.this`  L437
+- `M3DeviceSettingsActivity m3DeviceSettingsActivity2 = M3DeviceSettingsActivity.this`  L443
+- `ActivityM3DeviceSettingsBinding activityM3DeviceSettingsBinding = m3DeviceSettingsActivity2.binding`  L447
+- `TextView textView = activityM3DeviceSettingsBinding.tvStatus`  L452
+- `int i2 = C1870R.string.get_device_mode_failed_format`  L453
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L409 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L414 @Override
+- `Object invokeSuspend(Object obj)`  L419 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3DeviceSettingsActivity$C27001`
+L472 · [class] static final C27001 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3DeviceSettingsActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L473
+- `int i = this.label`  L597
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L480 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L485 @Override
+    - 体内字面量："<anonymous>" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/SettingsUiState;" · "com.tuwinsmart.tuwin.presentation.ui.device.settings.M3DeviceSettingsActivity$observeUiState$1$1" · "M3DeviceSettingsActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L595 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3DeviceSettingsActivity$C27001$AnonymousClass1`
+L493 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<SettingsUiState, Continuation<? super Unit>, Object>` · implements `Function2<SettingsUiState, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3DeviceSettingsActivity.java`
+注解：
+
+字段/常量（15）：
+- `Object L$0`  L494
+- `int label`  L495
+- `M3DeviceSettingsActivity this$0`  L496
+- `ActivityM3DeviceSettingsBinding activityM3DeviceSettingsBinding = null`  L524
+- `ActivityM3DeviceSettingsBinding activityM3DeviceSettingsBinding2 = this.this$0.binding`  L526
+- `ActivityM3DeviceSettingsBinding activityM3DeviceSettingsBinding3 = this.this$0.binding`  L532
+- `ActivityM3DeviceSettingsBinding activityM3DeviceSettingsBinding4 = this.this$0.binding`  L538
+- `ActivityM3DeviceSettingsBinding activityM3DeviceSettingsBinding5 = this.this$0.binding`  L546
+- `ActivityM3DeviceSettingsBinding activityM3DeviceSettingsBinding6 = this.this$0.binding`  L552
+- `ActivityM3DeviceSettingsBinding activityM3DeviceSettingsBinding7 = this.this$0.binding`  L561
+- `ActivityM3DeviceSettingsBinding activityM3DeviceSettingsBinding8 = this.this$0.binding`  L567
+- `ActivityM3DeviceSettingsBinding activityM3DeviceSettingsBinding9 = this.this$0.binding`  L573
+- `TextView textView = activityM3DeviceSettingsBinding.tvStatus`  L579
+- `M3DeviceSettingsActivity m3DeviceSettingsActivity = this.this$0`  L580
+- `int i = C1870R.string.load_config_failed_format`  L581
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L505 @Override
+- `Object invoke(SettingsUiState settingsUiState, Continuation<? super Unit> continuation)`  L512 @Override
+- `Object invokeSuspend(Object obj)`  L517 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3DeviceSettingsViewModel`
+L32 · [class] public final M3DeviceSettingsViewModel · extends `ViewModel` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3DeviceSettingsViewModel.java`
+注解：
+
+字段/常量（5）：
+- `MutableStateFlow<SettingsUiState> _uiState`  L33
+- `Integer currentModeId`  L34
+- `M3DeviceRepository m3DeviceRepository`  L35
+- `StateFlow<SettingsUiState> uiState`  L36
+- `int i = 0`  L197
+
+方法（5）：
+- `public M3DeviceSettingsViewModel(M3DeviceRepository m3DeviceRepository)`  L38
+    - 体内字面量："m3DeviceRepository"
+- `StateFlow<SettingsUiState> getUiState()`  L46
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.device.settings.M3DeviceSettingsViewModel$loadSettings$1" · "M3DeviceSettingsViewModel.kt" · "invokeSuspend"
+- `void loadSettings(int modeId)`  L112
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.device.settings.M3DeviceSettingsViewModel$updateSetting$1" · "M3DeviceSettingsViewModel.kt" · "invokeSuspend"
+- `void updateSetting(String paramName, int value)`  L184
+    - 体内字面量："paramName"
+- `void updateCurrentSelection(String paramName, int value)`  L190
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3DeviceSettingsViewModel$C27031`
+L54 · [class] static final C27031 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3DeviceSettingsViewModel.java`
+注解：
+
+字段/常量（7）：
+- `int $modeId`  L55
+- `int label`  L56
+- `Object objMo2790getParamItemsByModegIAlus`  L76
+- `int i = this.label`  L78
+- `M3DeviceSettingsViewModel m3DeviceSettingsViewModel = M3DeviceSettingsViewModel.this`  L94
+- `M3DeviceSettingsViewModel m3DeviceSettingsViewModel2 = M3DeviceSettingsViewModel.this`  L98
+- `MutableStateFlow mutableStateFlow = m3DeviceSettingsViewModel2._uiState`  L101
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L65 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L70 @Override
+- `Object invokeSuspend(Object obj)`  L75 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3DeviceSettingsViewModel$C27041`
+L121 · [class] static final C27041 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3DeviceSettingsViewModel.java`
+注解：
+
+字段/常量（10）：
+- `String $paramName`  L122
+- `int $value`  L123
+- `int label`  L124
+- `Object objMo2795setParamValue0E7RQCE`  L145
+- `Integer num`  L146
+- `int i = this.label`  L148
+- `String str = this.$paramName`  L163
+- `M3DeviceSettingsViewModel m3DeviceSettingsViewModel = M3DeviceSettingsViewModel.this`  L164
+- `M3DeviceSettingsViewModel m3DeviceSettingsViewModel2 = M3DeviceSettingsViewModel.this`  L170
+- `MutableStateFlow mutableStateFlow = m3DeviceSettingsViewModel2._uiState`  L173
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L134 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L139 @Override
+- `Object invokeSuspend(Object obj)`  L144 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3FactoryResetActivity`
+L42 · [class] public final M3FactoryResetActivity · extends `ToolBarActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3FactoryResetActivity.java`
+注解：
+
+字段/常量（11）：
+- `ActivityM3FactoryResetBinding binding`  L43
+- `Lazy m3DeviceRepository`  L46
+- `Lazy repositoryFactory`  L49
+- `M3FactoryResetActivity m3FactoryResetActivity = this`  L53
+- `LazyThreadSafetyMode lazyThreadSafetyMode = LazyThreadSafetyMode.SYNCHRONIZED`  L54
+- `Qualifier qualifier = null`  L55
+- `Object[] objArr = 0 == true ? 1 : 0`  L56
+- `ComponentCallbacks componentCallbacks = m3FactoryResetActivity`  L61
+- `ActivityM3FactoryResetBinding activityM3FactoryResetBinding = this.binding`  L112
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L132
+- `ActivityM3FactoryResetBinding activityM3FactoryResetBinding = this.binding`  L157
+
+方法（15）：
+- `public M3FactoryResetActivity()`  L52
+- `M3SessionRepositoryFactory invoke()`  L60 @Override
+- `M3DeviceRepository invoke()`  L72 @Override
+- `String getSessionId()`  L79
+    - 体内字面量："device_session_id"
+- `M3SessionRepositoryFactory getRepositoryFactory()`  L85
+- `M3DeviceRepository getM3DeviceRepository()`  L90
+- `View getContentRoot()`  L95 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L109 @Override
+- `void onClick(View view)`  L119 @Override
+- `void onCreate$lambda$0(M3FactoryResetActivity this$0, View view)`  L126
+    - 体内字面量："this$0"
+- `void showConfirmDialog()`  L131
+- `Unit invoke()`  L143 @Override
+- `void invoke2()`  L149
+- `void doFactoryReset()`  L156
+- `void onDestroy()`  L232 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3FactoryResetActivity$C27051`
+L171 · [class] static final C27051 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3FactoryResetActivity.java`
+注解：
+
+字段/常量（7）：
+- `int label`  L172
+- `Object objMo2781factoryResetIoAF18A`  L190
+- `int i = this.label`  L192
+- `M3FactoryResetActivity m3FactoryResetActivity = M3FactoryResetActivity.this`  L207
+- `M3FactoryResetActivity m3FactoryResetActivity2 = M3FactoryResetActivity.this`  L211
+- `int i2 = C1870R.string.factory_reset_failed_with_code`  L214
+- `ActivityM3FactoryResetBinding activityM3FactoryResetBinding = M3FactoryResetActivity.this.binding`  L221
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L179 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L184 @Override
+- `Object invokeSuspend(Object obj)`  L189 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3SettingsAdapter`
+L40 · [class] public final M3SettingsAdapter · extends `RecyclerView.Adapter<RecyclerView.ViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3SettingsAdapter.java`
+注解：
+
+字段/常量（6）：
+- `int VIEW_TYPE_GENERAL = 2`  L41
+- `int VIEW_TYPE_HEADER = 0`  L42
+- `int VIEW_TYPE_PARAM = 1`  L43
+- `List<? extends Item> items`  L44
+- `Function1<Integer, Unit> onGeneralMenuClick`  L45
+- `Function2<String, Integer, Unit> onSettingChanged`  L46
+
+方法（7）：
+- ` M3SettingsAdapter(Function2 function2, Function1 function1, int i, DefaultConstructorMarker defaultConstructorMarker)`  L48
+- `public M3SettingsAdapter(Function2<? super String, ? super Integer, Unit> onSettingChanged, Function1<? super Integer, Unit> function1)`  L53
+    - 体内字面量："onSettingChanged" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item;" · "()V" · "GeneralMenuItem" · "Header" · "ParamSetting" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item$GeneralMenuItem;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item$Header;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item$ParamSetting;" · "app_release_64"
+- `void submitList(List<? extends Item> newItems)`  L236
+    - 体内字面量："newItems"
+- `int getItemCount()`  L243 @Override
+- `int getItemViewType(int position)`  L248 @Override
+- `RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L263 @Override
+    - 体内字面量："parent" · "inflate(...)" · "inflate(...)" · "inflate(...)" · "Unknown view type: "
+- `void onBindViewHolder(RecyclerView.ViewHolder holder, int position)`  L284 @Override
+    - 体内字面量："holder" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$HeaderViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemDeviceHeaderBinding;" · "(Lcom/tuwinsmart/tuwin/databinding/ItemDeviceHeaderBinding;)V" · "bind" · "item" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item$Header;" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$GeneralMenuItemViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemM3SettingBinding;" · "onGeneralMenuClick" · "Lkotlin/Function1;" · "(Lcom/tuwinsmart/tuwin/databinding/ItemM3SettingBinding;Lkotlin/jvm/functions/Function1;)V" · "bind" · "item" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item$GeneralMenuItem;" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$ParamSettingViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemM3SettingBinding;" · "onSettingChanged" · "Lkotlin/Function2;" · "(Lcom/tuwinsmart/tuwin/databinding/ItemM3SettingBinding;Lkotlin/jvm/functions/Function2;)V" · "bind" · "item" · "Lcom/tuwinsmart/tuwin/data/source/remote/dto/m3/M3ParamItem;" · "bindSwitch" · "isEnabled" · "bindValueDisplay" · "getDisplayValue" · "Landroid/content/Context;" · "settingName" · "value" · "isToggleSetting" · "showSelectionDialog" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$SettingOptionsAdapter;" · "Landroidx/recyclerview/widget/RecyclerView$Adapter;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$SettingOptionsAdapter$OptionViewHolder;" · "items" · "disabledItems" · "currentPosition" · "valueFormatter" · "Lkotlin/Function2;" · "Landroid/content/Context;" · "onItemClick" · "Lkotlin/Function1;" · "(Ljava/util/List;Ljava/util/List;ILkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;)V" · "getItemCount" · "onBindViewHolder" · "holder" · "onCreateViewHolder" · "parent" · "Landroid/view/ViewGroup;" · "viewType" · "OptionViewHolder" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3SettingsAdapter$GeneralMenuItemViewHolder`
+L317 · [class] static final GeneralMenuItemViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3SettingsAdapter.java`
+注解：
+
+字段/常量（3）：
+- `ItemM3SettingBinding binding`  L318
+- `Function1<Integer, Unit> onGeneralMenuClick`  L319
+- `Function1<Integer, Unit> function1 = this$0.onGeneralMenuClick`  L361
+
+方法（4）：
+- `public GeneralMenuItemViewHolder(ItemM3SettingBinding binding, Function1<? super Integer, Unit> function1)`  L323
+    - 体内字面量："binding"
+- `void bind(final Item.GeneralMenuItem item)`  L330
+    - 体内字面量："item"
+- `void onClick(View view)`  L348 @Override
+- `void bind$lambda$0(GeneralMenuItemViewHolder this$0, Item.GeneralMenuItem item, View view)`  L358
+    - 体内字面量："this$0" · "$item"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3SettingsAdapter$HeaderViewHolder`
+L298 · [class] private static final HeaderViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3SettingsAdapter.java`
+注解：
+
+字段/常量（1）：
+- `ItemDeviceHeaderBinding binding`  L299
+
+方法（2）：
+- `public HeaderViewHolder(ItemDeviceHeaderBinding binding)`  L302
+    - 体内字面量："binding"
+- `void bind(Item.Header item)`  L308
+    - 体内字面量："item"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3SettingsAdapter$Item`
+L62 · [class] public static abstract Item · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3SettingsAdapter.java`
+注解：
+
+方法（2）：
+- ` Item(DefaultConstructorMarker defaultConstructorMarker)`  L63
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item$Header;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item;" · "titleResId" · "(I)V" · "getTitleResId" · "()I" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+- `private Item()`  L113
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item$ParamSetting;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item;" · "param" · "Lcom/tuwinsmart/tuwin/data/source/remote/dto/m3/M3ParamItem;" · "(Lcom/tuwinsmart/tuwin/data/source/remote/dto/m3/M3ParamItem;)V" · "getParam" · "()Lcom/tuwinsmart/tuwin/data/source/remote/dto/m3/M3ParamItem;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item$GeneralMenuItem;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$Item;" · "titleResId" · "subtitle" · "(ILjava/lang/String;)V" · "getSubtitle" · "()Ljava/lang/String;" · "getTitleResId" · "()I" · "component1" · "component2" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3SettingsAdapter$Item$GeneralMenuItem`
+L167 · [class] public static final GeneralMenuItem · extends `Item` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3SettingsAdapter.java`
+注解：
+
+字段/常量（3）：
+- `String subtitle`  L168
+- `int titleResId`  L169
+- `String str = this.subtitle`  L208
+
+方法（11）：
+- `GeneralMenuItem copy$default(GeneralMenuItem generalMenuItem, int i, String str, int i2, Object obj)`  L171
+- `int getTitleResId()`  L182
+- `String getSubtitle()`  L187
+- `GeneralMenuItem copy(int titleResId, String subtitle)`  L191
+- `boolean equals(Object other)`  L195
+- `int hashCode()`  L206
+- `String toString()`  L212
+    - 体内字面量："GeneralMenuItem(titleResId=" · ", subtitle=" · ")"
+- `public GeneralMenuItem(int i, String str)`  L216
+- ` GeneralMenuItem(int i, String str, int i2, DefaultConstructorMarker defaultConstructorMarker)`  L222
+- `String getSubtitle()`  L226
+- `int getTitleResId()`  L230
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3SettingsAdapter$Item$Header`
+L69 · [class] public static final Header · extends `Item` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3SettingsAdapter.java`
+注解：
+
+字段/常量（1）：
+- `int titleResId`  L70
+
+方法（8）：
+- `Header copy$default(Header header, int i, int i2, Object obj)`  L72
+- `int getTitleResId()`  L80
+- `Header copy(int titleResId)`  L84
+- `boolean equals(Object other)`  L88
+- `int hashCode()`  L95
+- `String toString()`  L99
+    - 体内字面量："Header(titleResId=" · ")"
+- `public Header(int i)`  L103
+- `int getTitleResId()`  L108
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3SettingsAdapter$Item$ParamSetting`
+L118 · [class] public static final ParamSetting · extends `Item` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3SettingsAdapter.java`
+注解：
+
+字段/常量（1）：
+- `M3ParamItem param`  L119
+
+方法（8）：
+- `ParamSetting copy$default(ParamSetting paramSetting, M3ParamItem m3ParamItem, int i, Object obj)`  L121
+- `M3ParamItem getParam()`  L129
+- `ParamSetting copy(M3ParamItem param)`  L133
+    - 体内字面量："param"
+- `boolean equals(Object other)`  L138
+- `int hashCode()`  L145
+- `String toString()`  L149
+    - 体内字面量："ParamSetting(param=" · ")"
+- `public ParamSetting(M3ParamItem param)`  L154
+    - 体内字面量："param"
+- `M3ParamItem getParam()`  L160
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3SettingsAdapter$ParamSettingViewHolder`
+L370 · [class] public static final ParamSettingViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3SettingsAdapter.java`
+注解：
+
+字段/常量（17）：
+- `ItemM3SettingBinding binding`  L371
+- `Function2<String, Integer, Unit> onSettingChanged`  L372
+- `String string`  L385
+- `TextView textView = this.binding.tvSettingName`  L395
+- `String str`  L421
+- `List<Integer> list = index`  L430
+- `List<String> list2 = items`  L435
+- `String str`  L469
+- `TextView textView = this.binding.tvSettingValue`  L491
+- `List<String> items`  L515
+- `List<Integer> index`  L516
+- `List<String> list = itemsDisable`  L528
+- `Context context2 = context`  L565
+- `TextView textView = this.binding.tvSettingValue`  L571
+- `M3SettingsAdapter.ParamSettingViewHolder paramSettingViewHolder = this`  L572
+- `Context context3 = context`  L573
+- `RecyclerView recyclerView = dialogSettingSelectionBindingInflate.rvOptions`  L580
+
+方法（16）：
+- `public ParamSettingViewHolder(ItemM3SettingBinding binding, Function2<? super String, ? super Integer, Unit> onSettingChanged)`  L376
+    - 体内字面量："binding" · "onSettingChanged"
+- `void bind(M3ParamItem item)`  L384
+- `boolean isToggleSetting(M3ParamItem item)`  L412
+    - 体内字面量："0"
+- `void bindSwitch(M3ParamItem item, final String name, final boolean isEnabled)`  L420
+- `void onCheckedChanged(CompoundButton compoundButton, boolean z)`  L446 @Override
+- `void bindSwitch$lambda$0(boolean z, List itemsList, List indexList, ParamSettingViewHolder this$0, String name, CompoundButton compoundButton, boolean z2)`  L453
+    - 体内字面量："$itemsList" · "$indexList" · "this$0" · "$name" · "<anonymous parameter 0>"
+- `void bindValueDisplay(final M3ParamItem item, String name, boolean isEnabled)`  L468
+- `void onClick(View view)`  L498 @Override
+- `void bindValueDisplay$lambda$1(ParamSettingViewHolder this$0, M3ParamItem item, View view)`  L508
+    - 体内字面量："this$0" · "$item"
+- `void showSelectionDialog(M3ParamItem item)`  L514
+- `String invoke(String value, Context formatterContext)`  L545 @Override
+    - 体内字面量："value" · "formatterContext"
+- `Unit invoke(Integer num)`  L557 @Override
+- `void invoke(int i)`  L562
+- `void onClick(View view)`  L585 @Override
+- `void showSelectionDialog$lambda$3(BottomSheetDialog dialog, View view)`  L593
+    - 体内字面量："$dialog"
+- `String getDisplayValue(Context context, String settingName, String value)`  L599
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3SettingsAdapter$SettingOptionsAdapter`
+L619 · [class] static final SettingOptionsAdapter · extends `RecyclerView.Adapter<OptionViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3SettingsAdapter.java`
+注解：
+
+字段/常量（9）：
+- `int currentPosition`  L620
+- `List<String> disabledItems`  L621
+- `List<String> items`  L622
+- `Function1<Integer, Unit> onItemClick`  L623
+- `Function2<String, Context, String> valueFormatter`  L624
+- `String string`  L649
+- `int color`  L650
+- `boolean z = position == this.currentPosition`  L654
+- `Function2<String, Context, String> function2 = this.valueFormatter`  L655
+
+方法（6）：
+- `public SettingOptionsAdapter(List<String> items, List<String> disabledItems, int i, Function2<? super String, ? super Context, String> valueFormatter, Function1<? super Integer, Unit> onItemClick)`  L627
+    - 体内字面量："items" · "disabledItems" · "valueFormatter" · "onItemClick"
+- `OptionViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L640 @Override
+    - 体内字面量："parent"
+- `void onBindViewHolder(OptionViewHolder holder, final int position)`  L648 @Override
+- `void onClick(View view)`  L678 @Override
+- `void onBindViewHolder$lambda$0(SettingOptionsAdapter this$0, int i, View view)`  L685
+    - 体内字面量："this$0"
+- `int getItemCount()`  L691 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/M3SettingsAdapter$SettingOptionsAdapter$OptionViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "view" · "Landroid/view/View;" · "(Landroid/view/View;)V" · "textView" · "Landroid/widget/TextView;" · "getTextView" · "()Landroid/widget/TextView;" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3SettingsAdapter$SettingOptionsAdapter$OptionViewHolder`
+L697 · [class] public static final OptionViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3SettingsAdapter.java`
+注解：
+
+字段/常量（1）：
+- `TextView textView`  L698
+
+方法（2）：
+- `public OptionViewHolder(View view)`  L701
+    - 体内字面量："view" · "findViewById(...)"
+- `TextView getTextView()`  L709
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3SettingsMenuPolicy`
+L19 · [class] public final M3SettingsMenuPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3SettingsMenuPolicy.java`
+注解：
+
+方法（2）：
+- `private M3SettingsMenuPolicy()`  L24
+- `List<M3SettingsAdapter.Item> build(List<M3ParamItem> settings, String deviceNote, String otaVersion)`  L27
+    - 体内字面量："settings" · "deviceNote"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3StorageSettingsActivity`
+L42 · [class] public final M3StorageSettingsActivity · extends `ToolBarActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3StorageSettingsActivity.java`
+注解：
+
+字段/常量（11）：
+- `ActivityM3StorageSettingsBinding binding`  L43
+- `Lazy m3DeviceRepository`  L46
+- `Lazy repositoryFactory`  L49
+- `M3StorageSettingsActivity m3StorageSettingsActivity = this`  L53
+- `LazyThreadSafetyMode lazyThreadSafetyMode = LazyThreadSafetyMode.SYNCHRONIZED`  L54
+- `Qualifier qualifier = null`  L55
+- `Object[] objArr = 0 == true ? 1 : 0`  L56
+- `ComponentCallbacks componentCallbacks = m3StorageSettingsActivity`  L61
+- `ActivityM3StorageSettingsBinding activityM3StorageSettingsBinding = this.binding`  L112
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L132
+- `ActivityM3StorageSettingsBinding activityM3StorageSettingsBinding = this.binding`  L157
+
+方法（15）：
+- `public M3StorageSettingsActivity()`  L52
+- `M3SessionRepositoryFactory invoke()`  L60 @Override
+- `M3DeviceRepository invoke()`  L72 @Override
+- `String getSessionId()`  L79
+    - 体内字面量："device_session_id"
+- `M3SessionRepositoryFactory getRepositoryFactory()`  L85
+- `M3DeviceRepository getM3DeviceRepository()`  L90
+- `View getContentRoot()`  L95 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L109 @Override
+- `void onClick(View view)`  L119 @Override
+- `void onCreate$lambda$0(M3StorageSettingsActivity this$0, View view)`  L126
+    - 体内字面量："this$0"
+- `void showFormatConfirmDialog()`  L131
+- `Unit invoke()`  L143 @Override
+- `void invoke2()`  L149
+- `void formatSdCard()`  L156
+- `void onDestroy()`  L231 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3StorageSettingsActivity$C27141`
+L170 · [class] static final C27141 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3StorageSettingsActivity.java`
+注解：
+
+字段/常量（7）：
+- `int label`  L171
+- `Object objMo2782formatSdCardIoAF18A`  L189
+- `int i = this.label`  L191
+- `M3StorageSettingsActivity m3StorageSettingsActivity = M3StorageSettingsActivity.this`  L206
+- `M3StorageSettingsActivity m3StorageSettingsActivity2 = M3StorageSettingsActivity.this`  L210
+- `int i2 = C1870R.string.modify_failed_with_code`  L213
+- `ActivityM3StorageSettingsBinding activityM3StorageSettingsBinding = M3StorageSettingsActivity.this.binding`  L220
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L178 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L183 @Override
+- `Object invokeSuspend(Object obj)`  L188 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3WifiSettingsActivity`
+L34 · [class] public final M3WifiSettingsActivity · extends `ToolBarActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3WifiSettingsActivity.java`
+注解：
+
+字段/常量（19）：
+- `ActivityM3WifiSettingsBinding binding`  L35
+- `Lazy m3DeviceRepository`  L38
+- `Lazy prefHelper`  L41
+- `Lazy repositoryFactory`  L44
+- `M3WifiSettingsActivity m3WifiSettingsActivity = this`  L48
+- `LazyThreadSafetyMode lazyThreadSafetyMode = LazyThreadSafetyMode.SYNCHRONIZED`  L49
+- `Qualifier qualifier = null`  L50
+- `Object[] objArr = 0 == true ? 1 : 0`  L51
+- `ComponentCallbacks componentCallbacks = m3WifiSettingsActivity`  L56
+- `LazyThreadSafetyMode lazyThreadSafetyMode2 = LazyThreadSafetyMode.SYNCHRONIZED`  L71
+- `Object[] objArr2 = 0 == true ? 1 : 0`  L72
+- `Object[] objArr3 = 0 == true ? 1 : 0`  L73
+- `ComponentCallbacks componentCallbacks = m3WifiSettingsActivity`  L78
+- `ActivityM3WifiSettingsBinding activityM3WifiSettingsBinding = this.binding`  L123
+- `ActivityM3WifiSettingsBinding activityM3WifiSettingsBinding2 = null`  L124
+- `TextView textView = activityM3WifiSettingsBinding.tvWifiNameValue`  L129
+- `ActivityM3WifiSettingsBinding activityM3WifiSettingsBinding3 = this.binding`  L135
+- `ActivityM3WifiSettingsBinding activityM3WifiSettingsBinding4 = this.binding`  L146
+- `ActivityM3WifiSettingsBinding activityM3WifiSettingsBinding = this.binding`  L174
+
+方法（21）：
+- `public M3WifiSettingsActivity()`  L47
+- `M3SessionRepositoryFactory invoke()`  L55 @Override
+- `M3DeviceRepository invoke()`  L67 @Override
+- `PreferenceHelper invoke()`  L77 @Override
+- `String getSessionId()`  L85
+    - 体内字面量："device_session_id"
+- `M3SessionRepositoryFactory getRepositoryFactory()`  L91
+- `M3DeviceRepository getM3DeviceRepository()`  L96
+- `PreferenceHelper getPrefHelper()`  L101
+- `View getContentRoot()`  L106 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L120 @Override
+- `void onClick(View view)`  L142 @Override
+- `void onClick(View view)`  L154 @Override
+- `void onCreate$lambda$0(M3WifiSettingsActivity this$0, View view)`  L161
+    - 体内字面量："this$0"
+- `void onCreate$lambda$1(M3WifiSettingsActivity this$0, View view)`  L167
+    - 体内字面量："this$0"
+- `void showEditWifiSsidDialog()`  L172
+- `boolean onInput(String str, String str2)`  L181 @Override
+- `boolean showEditWifiSsidDialog$lambda$2(M3WifiSettingsActivity this$0, String str, String str2)`  L188
+    - 体内字面量："this$0"
+- `void showEditWifiPasswordDialog()`  L201
+- `boolean onInput(String str, String str2)`  L204 @Override
+- `boolean showEditWifiPasswordDialog$lambda$3(M3WifiSettingsActivity this$0, String str, String str2)`  L211
+    - 体内字面量："this$0"
+- `void onDestroy()`  L225 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3WifiSettingsActivity$showEditWifiPasswordDialog$1$1`
+L24 · [class] final M3WifiSettingsActivity$showEditWifiPasswordDialog$1$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3WifiSettingsActivity$showEditWifiPasswordDialog$1$1.java`
+注解：
+
+字段/常量（9）：
+- `String $password`  L25
+- `int label`  L26
+- `M3WifiSettingsActivity this$0`  L27
+- `Object objMo2798setWifiPasswordgIAlus`  L48
+- `int i = this.label`  L50
+- `M3WifiSettingsActivity m3WifiSettingsActivity = this.this$0`  L65
+- `String str = this.$password`  L66
+- `M3WifiSettingsActivity m3WifiSettingsActivity2 = this.this$0`  L73
+- `int i2 = C1870R.string.modify_failed_with_code`  L76
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L37 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L42 @Override
+- `Object invokeSuspend(Object obj)`  L47 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.M3WifiSettingsActivity$showEditWifiSsidDialog$1$1`
+L23 · [class] final M3WifiSettingsActivity$showEditWifiSsidDialog$1$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/M3WifiSettingsActivity$showEditWifiSsidDialog$1$1.java`
+注解：
+
+字段/常量（10）：
+- `String $ssid`  L24
+- `int label`  L25
+- `M3WifiSettingsActivity this$0`  L26
+- `Object objMo2799setWifiSsidgIAlus`  L47
+- `int i = this.label`  L49
+- `M3WifiSettingsActivity m3WifiSettingsActivity = this.this$0`  L64
+- `String str = this.$ssid`  L65
+- `ActivityM3WifiSettingsBinding activityM3WifiSettingsBinding = m3WifiSettingsActivity.binding`  L67
+- `M3WifiSettingsActivity m3WifiSettingsActivity2 = this.this$0`  L75
+- `int i2 = C1870R.string.modify_failed_with_code`  L78
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L36 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L41 @Override
+- `Object invokeSuspend(Object obj)`  L46 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProMenuSection`
+L12 · [class] public final Ride3ProMenuSection · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProMenuSection.java`
+注解：
+
+字段/常量（2）：
+- `String name`  L13
+- `List<Ride3ProMenuSetting> settings`  L14
+
+方法（10）：
+- `Ride3ProMenuSection copy$default(Ride3ProMenuSection ride3ProMenuSection, String str, List list, int i, Object obj)`  L17
+- `String getName()`  L28
+- `List<Ride3ProMenuSetting> component2()`  L32
+- `Ride3ProMenuSection copy(String name, List<Ride3ProMenuSetting> settings)`  L36
+    - 体内字面量："name" · "settings"
+- `boolean equals(Object other)`  L42
+- `int hashCode()`  L53
+- `String toString()`  L57
+    - 体内字面量："Ride3ProMenuSection(name=" · ", settings=" · ")"
+- `public Ride3ProMenuSection(String name, List<Ride3ProMenuSetting> settings)`  L61
+    - 体内字面量："name" · "settings"
+- `String getName()`  L68
+- `List<Ride3ProMenuSetting> getSettings()`  L72
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProMenuSetting`
+L13 · [class] public final Ride3ProMenuSetting · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProMenuSetting.java`
+注解：
+
+字段/常量（12）：
+- `String defaultValue`  L14
+- `String id`  L15
+- `String name`  L16
+- `String requestId`  L17
+- `String type`  L18
+- `List<Ride3ProMenuValue> values`  L19
+- `String str6 = str2`  L29
+- `String str7 = str3`  L33
+- `String str8 = str4`  L37
+- `List list2 = list`  L41
+- `String str = this.defaultValue`  L98
+- `String str2 = this.requestId`  L100
+
+方法（19）：
+- `Ride3ProMenuSetting copy$default(Ride3ProMenuSetting ride3ProMenuSetting, String str, String str2, String str3, String str4, List list, String str5, int i, Object obj)`  L22
+- `String getName()`  L49
+- `String getId()`  L54
+- `String getType()`  L59
+- `String getDefaultValue()`  L64
+- `List<Ride3ProMenuValue> component5()`  L68
+- `String getRequestId()`  L73
+- `Ride3ProMenuSetting copy(String name, String id, String type, String defaultValue, List<Ride3ProMenuValue> values, String requestId)`  L77
+    - 体内字面量："name" · "id" · "type" · "values"
+- `boolean equals(Object other)`  L85
+- `int hashCode()`  L96
+- `String toString()`  L104
+    - 体内字面量："Ride3ProMenuSetting(name=" · ", id=" · ", type=" · ", defaultValue=" · ", values=" · ", requestId=" · ")"
+- `public Ride3ProMenuSetting(String name, String id, String type, String str, List<Ride3ProMenuValue> values, String str2)`  L108
+    - 体内字面量："name" · "id" · "type" · "values"
+- ` Ride3ProMenuSetting(String str, String str2, String str3, String str4, List list, String str5, int i, DefaultConstructorMarker defaultConstructorMarker)`  L121
+- `String getName()`  L125
+- `String getId()`  L129
+- `String getType()`  L133
+- `String getDefaultValue()`  L137
+- `List<Ride3ProMenuValue> getValues()`  L141
+- `String getRequestId()`  L145
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProMenuValue`
+L11 · [class] public final Ride3ProMenuValue · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProMenuValue.java`
+注解：
+
+字段/常量（2）：
+- `String id`  L12
+- `String name`  L13
+
+方法（10）：
+- `Ride3ProMenuValue copy$default(Ride3ProMenuValue ride3ProMenuValue, String str, String str2, int i, Object obj)`  L15
+- `String getName()`  L26
+- `String getId()`  L31
+- `Ride3ProMenuValue copy(String name, String id)`  L35
+    - 体内字面量："name" · "id"
+- `boolean equals(Object other)`  L41
+- `int hashCode()`  L52
+- `String toString()`  L56
+    - 体内字面量："Ride3ProMenuValue(name=" · ", id=" · ")"
+- `public Ride3ProMenuValue(String name, String id)`  L60
+    - 体内字面量："name" · "id"
+- `String getName()`  L67
+- `String getId()`  L71
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProMenuXmlParser`
+L24 · [class] public final Ride3ProMenuXmlParser · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProMenuXmlParser.java`
+注解：
+
+字段/常量（9）：
+- `NodeList nodeList`  L31
+- `int i = 0`  L44
+- `int i2 = 10`  L55
+- `String str = strChildText2 == null ? "<binary/metadata>" : strChildText2`  L59
+- `String str2 = strChildText3 == null ? "<binary/metadata>" : strChildText3`  L61
+- `String str3 = strChildText4 == null ? "<binary/metadata>" : strChildText4`  L63
+- `NodeList nodeList2 = elementsByTagName`  L66
+- `Iterator it2 = it`  L72
+- `String str4 = strChildText6 == null ? "<binary/metadata>" : strChildText6`  L73
+
+方法（2）：
+- `private Ride3ProMenuXmlParser()`  L27
+- `List<Ride3ProMenuSection> parse(String xml)`  L30
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity`
+L80 · [class] public final Ride3ProSettingsActivity · extends `ToolBarActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity.java`
+注解：
+
+字段/常量（82）：
+- `String EXTRA_DEVICE_TYPE_CODE = "device_type_code"`  L81
+- `String EXTRA_IDENTITY_SESSION_ID = "device_identity_session_id"`  L82
+- `String EXTRA_SESSION_ID = "device_session_id"`  L83
+- `ActivityRide3ProSettingsBinding binding`  L84
+- `boolean loadingRide6Settings`  L85
+- `Lazy networkRuntime`  L88
+- `Lazy ride3ProDeviceRepository`  L91
+- `Ride3ProSettingsAdapter ride6SettingsAdapter`  L92
+- `Lazy ride6SettingsClient`  L95
+- `Ride3ProSettingsActivity ride3ProSettingsActivity = this`  L99
+- `LazyThreadSafetyMode lazyThreadSafetyMode = LazyThreadSafetyMode.SYNCHRONIZED`  L100
+- `Qualifier qualifier = null`  L101
+- `Object[] objArr = 0 == true ? 1 : 0`  L102
+- `ComponentCallbacks componentCallbacks = ride3ProSettingsActivity`  L107
+- `LazyThreadSafetyMode lazyThreadSafetyMode2 = LazyThreadSafetyMode.SYNCHRONIZED`  L111
+- `Object[] objArr2 = 0 == true ? 1 : 0`  L112
+- `Object[] objArr3 = 0 == true ? 1 : 0`  L113
+- `ComponentCallbacks componentCallbacks = ride3ProSettingsActivity`  L118
+- `Ride3ProSettingsActivity ride3ProSettingsActivity2 = this.this$0`  L131
+- `DeviceType deviceType`  L175
+- `int length = deviceTypeArrValues.length`  L179
+- `int i = 0`  L180
+- `String string`  L200
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding = this.binding`  L243
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding2 = null`  L244
+- `Ride3ProSimpleSettingsMenuPolicy ride3ProSimpleSettingsMenuPolicy = Ride3ProSimpleSettingsMenuPolicy.INSTANCE`  L251
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding3 = this.binding`  L257
+- `TextView textView = activityRide3ProSettingsBinding3.tvDeviceName`  L262
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding4 = this.binding`  L266
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding5 = this.binding`  L272
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding6 = this.binding`  L278
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding7 = this.binding`  L284
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding8 = this.binding`  L290
+- `List<Ride3ProSimpleSettingsItem> list = items`  L304
+- `String str`  L318
+- `String version`  L319
+- `String string`  L320
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding = this.binding`  L321
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding2 = null`  L322
+- `TextView textView = activityRide3ProSettingsBinding.tvFirmwareVersion`  L327
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding3 = this.binding`  L338
+- `FrameLayout btnDeviceName = activityRide3ProSettingsBinding3.btnDeviceName`  L343
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding4 = this.binding`  L351
+- `TextView btnWifiSetting = activityRide3ProSettingsBinding4.btnWifiSetting`  L356
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding5 = this.binding`  L364
+- `TextView btnStorageSetting = activityRide3ProSettingsBinding5.btnStorageSetting`  L369
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding6 = this.binding`  L377
+- `FrameLayout btnFirmwareUpgrade = activityRide3ProSettingsBinding6.btnFirmwareUpgrade`  L382
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding7 = this.binding`  L390
+- `TextView btnFactoryReset = activityRide3ProSettingsBinding7.btnFactoryReset`  L395
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding8 = this.binding`  L403
+- `TextView btnReboot = activityRide3ProSettingsBinding2.btnReboot`  L409
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding = this$0.binding`  L423
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding = this$0.binding`  L439
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding = this.binding`  L478
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding2 = null`  L479
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding3 = this.binding`  L485
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding4 = this.binding`  L491
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding5 = this.binding`  L497
+- `RecyclerView recyclerView = activityRide3ProSettingsBinding5.rvSettings`  L502
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding6 = this.binding`  L507
+- `TextView tvSettingsError = activityRide3ProSettingsBinding2.tvSettingsError`  L513
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding = this.binding`  L552
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding2 = null`  L553
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding3 = this.binding`  L563
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding = this.binding`  L577
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding`  L658
+- `ArrayList arrayList3 = arrayList`  L678
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding2 = this.binding`  L679
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding3 = this.binding`  L685
+- `int i = C1870R.string.ride6_settings_current_value`  L715
+- `int i = 0`  L732
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L772
+- `String string = "<binary/metadata>"`  L796
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L915
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L1036
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L1125
+- `String currentSSID`  L1214
+- `Object objM3074constructorimpl`  L1223
+- `Result.Companion companion = Result.INSTANCE`  L1228
+- `Ride3ProSettingsActivity ride3ProSettingsActivity = this`  L1229
+- `Result.Companion companion2 = Result.INSTANCE`  L1237
+
+方法（67）：
+- `public Ride3ProSettingsActivity()`  L98
+- `Ride3ProDeviceRepository invoke()`  L106 @Override
+- `NetworkRuntime invoke()`  L117 @Override
+- `Ride6SettingsProtocolClient invoke()`  L130 @Override
+- `Ride3ProApiService invoke()`  L139 @Override
+- `Ride3ProDeviceRepository access$getRide3ProDeviceRepository(Ride3ProSettingsActivity ride3ProSettingsActivity)`  L147
+- `Ride3ProDeviceRepository getRide3ProDeviceRepository()`  L152
+- `NetworkRuntime getNetworkRuntime()`  L156
+- `Ride6SettingsProtocolClient getRide6SettingsClient()`  L161
+- `String getSessionId()`  L166
+    - 体内字面量："device_session_id"
+- `DeviceType getDeviceType()`  L174
+- `String getIdentitySessionId()`  L199
+- `View getContentRoot()`  L214 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L228 @Override
+- `void bindRide3ProMenu()`  L241
+- `int menuItemVisibility(List<Ride3ProSimpleSettingsItem> items, Ride3ProSimpleSettingsItemType type)`  L303
+- `void bindRide3ProActions()`  L317
+- `void onClick(View view)`  L347 @Override
+- `void onClick(View view)`  L360 @Override
+- `void onClick(View view)`  L373 @Override
+- `void onClick(View view)`  L386 @Override
+- `void onClick(View view)`  L399 @Override
+- `void onClick(View view)`  L413 @Override
+- `void bindRide3ProActions$lambda$6(final Ride3ProSettingsActivity this$0, View view)`  L420
+    - 体内字面量："this$0"
+- `boolean onInput(String str, String str2)`  L430 @Override
+- `boolean bindRide3ProActions$lambda$6$lambda$5(Ride3ProSettingsActivity this$0, String str, String str2)`  L437
+    - 体内字面量："this$0"
+- `void bindRide3ProActions$lambda$7(Ride3ProSettingsActivity this$0, View view)`  L453
+    - 体内字面量："this$0"
+- `void bindRide3ProActions$lambda$8(Ride3ProSettingsActivity this$0, View view)`  L459
+    - 体内字面量："this$0"
+- `void bindRide3ProActions$lambda$9(Ride3ProSettingsActivity this$0, View view)`  L465
+    - 体内字面量："this$0"
+- `void bindRide3ProActions$lambda$10(Ride3ProSettingsActivity this$0, View view)`  L471
+    - 体内字面量："this$0"
+- `void bindRide6DynamicMenu()`  L476
+- `void onClick(View view)`  L517 @Override
+- `void bindRide6DynamicMenu$lambda$12(Ride3ProSettingsActivity this$0, View view)`  L546
+    - 体内字面量："this$0"
+- `void setLegacySettingsLayout(int height)`  L551
+- `void loadRide6Settings()`  L572
+- `void renderRide6Settings(Ride6SettingsSnapshot snapshot)`  L657
+- `void onRide6SettingClicked(Ride3ProSettingsItem item)`  L696
+- `void showRide6SelectionDialog(final Ride3ProSettingsItem item)`  L726
+- `void onClick(DialogInterface dialogInterface, int i2)`  L757 @Override
+- `void showRide6SelectionDialog$lambda$19(Ride3ProSettingsActivity this$0, Ride3ProSettingsItem item, DialogInterface dialogInterface, int i)`  L764
+    - 体内字面量："this$0" · "$item"
+- `void showRide6ActionConfirmDialog(final Ride3ProSettingsItem item)`  L771
+- `Unit invoke()`  L782 @Override
+- `void invoke2()`  L788
+- `void showRide6InputDialog(final Ride3ProSettingsItem item)`  L794
+- `boolean onInput(String str, String str2)`  L803 @Override
+- `boolean showRide6InputDialog$lambda$20(boolean z, Ride3ProSettingsActivity this$0, Ride3ProSettingsItem item, String str, String str2)`  L810
+    - 体内字面量："this$0" · "$item" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.device.settings.Ride3ProSettingsActivity$updateRide6Setting$1" · "Ride3ProSettingsActivity.kt" · "invokeSuspend"
+- `void updateRide6Setting(Ride3ProSettingsItem item, String value)`  L903
+- `boolean isRide6WifiPassword(Ride3ProSettingsItem item)`  L909
+- `void showWifiPasswordUpdatedDialog()`  L914
+- `void launchUpgrade$default(Ride3ProSettingsActivity ride3ProSettingsActivity, View view, int i, Object obj)`  L923
+- `void launchUpgrade(View view)`  L931
+    - 体内字面量："%s åºä»¶åçº§å¥å£ç¼ºå°å¯ä¸ä¼è¯è®¾å¤èº«ä»½: session=%s" · "device_type_code" · "device_session_id" · "device_identity_session_id"
+- `void showRide3ProWifiPasswordInput()`  L944
+- `boolean onInput(String str, String str2)`  L947 @Override
+- `boolean showRide3ProWifiPasswordInput$lambda$22(Ride3ProSettingsActivity this$0, String str, String str2)`  L954
+    - 体内字面量："this$0" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.device.settings.Ride3ProSettingsActivity$setRide3ProWifiPassword$1" · "Ride3ProSettingsActivity.kt" · "invokeSuspend"
+- `void setRide3ProWifiPassword(String password)`  L1030
+- `void showFactoryResetConfirmDialog()`  L1035
+- `Unit invoke()`  L1047 @Override
+- `void invoke2()`  L1053
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.device.settings.Ride3ProSettingsActivity$doFactoryReset$1" · "Ride3ProSettingsActivity.kt" · "invokeSuspend"
+- `void doFactoryReset()`  L1119
+- `void showRebootConfirmDialog()`  L1124
+- `Unit invoke()`  L1136 @Override
+- `void invoke2()`  L1142
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.presentation.ui.device.settings.Ride3ProSettingsActivity$rebootDevice$1" · "Ride3ProSettingsActivity.kt" · "invokeSuspend"
+- `void rebootDevice()`  L1207
+- `void updateCachedWifiPassword(String password)`  L1213
+- `Set<String> resolveRideProtocolFeatures()`  L1222
+- `String resolveDeviceName()`  L1248
+    - 体内字面量："getString(...)"
+- `SessionBoundOtaIdentity resolveOtaIdentity()`  L1261
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity$C27162`
+L527 · [class] C27162 · extends `FunctionReferenceImpl implements Function1<Ride3ProSettingsItem, Unit>` · implements `Function1<Ride3ProSettingsItem, Unit>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity.java`
+注解：
+
+方法（2）：
+- `Unit invoke(Ride3ProSettingsItem ride3ProSettingsItem)`  L533 @Override
+- `void invoke2(Ride3ProSettingsItem p0)`  L539
+    - 体内字面量："p0"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity$C27171`
+L1063 · [class] static final C27171 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity.java`
+注解：
+
+字段/常量（5）：
+- `int label`  L1064
+- `int i = this.label`  L1083
+- `Ride3ProSettingsActivity ride3ProSettingsActivity = Ride3ProSettingsActivity.this`  L1099
+- `Ride3ProSettingsActivity ride3ProSettingsActivity2 = Ride3ProSettingsActivity.this`  L1104
+- `int i2 = C1870R.string.factory_reset_failed_with_code`  L1107
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1071 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1076 @Override
+- `Object invokeSuspend(Object obj)`  L1081 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity$C27181`
+L591 · [class] static final C27181 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity.java`
+注解：
+
+字段/常量（7）：
+- `int label`  L592
+- `int i = this.label`  L611
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding = null`  L612
+- `Ride3ProSettingsActivity ride3ProSettingsActivity = Ride3ProSettingsActivity.this`  L629
+- `Ride3ProSettingsActivity ride3ProSettingsActivity2 = Ride3ProSettingsActivity.this`  L633
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding2 = ride3ProSettingsActivity2.binding`  L637
+- `ActivityRide3ProSettingsBinding activityRide3ProSettingsBinding3 = ride3ProSettingsActivity2.binding`  L643
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L599 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L604 @Override
+- `Object invokeSuspend(Object obj)`  L609 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity$C27191`
+L1152 · [class] static final C27191 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity.java`
+注解：
+
+字段/常量（5）：
+- `int label`  L1153
+- `int i = this.label`  L1172
+- `Ride3ProSettingsActivity ride3ProSettingsActivity = Ride3ProSettingsActivity.this`  L1188
+- `Ride3ProSettingsActivity ride3ProSettingsActivity2 = Ride3ProSettingsActivity.this`  L1192
+- `int i2 = C1870R.string.modify_failed_with_code`  L1195
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1160 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L1165 @Override
+- `Object invokeSuspend(Object obj)`  L1170 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity$C27211`
+L969 · [class] static final C27211 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity.java`
+注解：
+
+字段/常量（6）：
+- `String $password`  L970
+- `int label`  L971
+- `int i = this.label`  L992
+- `CommonDialog.Companion companion = CommonDialog.INSTANCE`  L1010
+- `Ride3ProSettingsActivity ride3ProSettingsActivity = Ride3ProSettingsActivity.this`  L1017
+- `int i2 = C1870R.string.modify_failed_with_code`  L1018
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L980 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L985 @Override
+- `Object invokeSuspend(Object obj)`  L990 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity$C27251`
+L825 · [class] static final C27251 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity.java`
+注解：
+
+字段/常量（10）：
+- `Ride3ProSettingsItem $item`  L826
+- `String $value`  L827
+- `int label`  L828
+- `int i = this.label`  L850
+- `Ride3ProSettingsActivity ride3ProSettingsActivity = Ride3ProSettingsActivity.this`  L866
+- `Ride3ProSettingsItem ride3ProSettingsItem = this.$item`  L867
+- `String str = this.$value`  L868
+- `Ride3ProSettingsItem ride3ProSettingsItem2 = this.$item`  L886
+- `Ride3ProSettingsActivity ride3ProSettingsActivity2 = Ride3ProSettingsActivity.this`  L887
+- `int i2 = C1870R.string.modify_failed_with_code`  L891
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L838 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L843 @Override
+- `Object invokeSuspend(Object obj)`  L848 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity$doFactoryReset$1$result$1`
+L19 · [class] final Ride3ProSettingsActivity$doFactoryReset$1$result$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity$doFactoryReset$1$result$1.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L20
+- `Ride3ProSettingsActivity this$0`  L21
+- `Object objMo2809factoryResetIoAF18A`  L46
+- `int i = this.label`  L48
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L30 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L35 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L40
+- `Object invokeSuspend(Object obj)`  L45 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity$loadRide6Settings$1$result$1`
+L21 · [class] final Ride3ProSettingsActivity$loadRide6Settings$1$result$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Ride6SettingsSnapshot>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Ride6SettingsSnapshot>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity$loadRide6Settings$1$result$1.java`
+注解：
+
+字段/常量（8）：
+- `Object L$0`  L22
+- `int label`  L23
+- `Ride3ProSettingsActivity this$0`  L24
+- `Object objM3074constructorimpl`  L51
+- `int i = this.label`  L53
+- `Ride3ProSettingsActivity ride3ProSettingsActivity = this.this$0`  L57
+- `Result.Companion companion = Result.INSTANCE`  L58
+- `Result.Companion companion2 = Result.INSTANCE`  L75
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L33 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Ride6SettingsSnapshot>> continuation)`  L40 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Ride6SettingsSnapshot>> continuation)`  L45
+- `Object invokeSuspend(Object obj)`  L50 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity$rebootDevice$1$result$1`
+L19 · [class] final Ride3ProSettingsActivity$rebootDevice$1$result$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity$rebootDevice$1$result$1.java`
+注解：
+
+字段/常量（4）：
+- `int label`  L20
+- `Ride3ProSettingsActivity this$0`  L21
+- `Object objMo2816rebootIoAF18A`  L46
+- `int i = this.label`  L48
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L30 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L35 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L40
+- `Object invokeSuspend(Object obj)`  L45 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity$setRide3ProWifiPassword$1$result$1`
+L19 · [class] final Ride3ProSettingsActivity$setRide3ProWifiPassword$1$result$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Unit>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity$setRide3ProWifiPassword$1$result$1.java`
+注解：
+
+字段/常量（5）：
+- `String $password`  L20
+- `int label`  L21
+- `Ride3ProSettingsActivity this$0`  L22
+- `Object objMo2817setWifiPasswordgIAlus`  L48
+- `int i = this.label`  L50
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L32 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Unit>> continuation)`  L37 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Unit>> continuation)`  L42
+- `Object invokeSuspend(Object obj)`  L47 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivity$updateRide6Setting$1$result$1`
+L21 · [class] final Ride3ProSettingsActivity$updateRide6Setting$1$result$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Result<? extends Ride6SettingsSnapshot>>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Result<? extends Ride6SettingsSnapshot>>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivity$updateRide6Setting$1$result$1.java`
+注解：
+
+字段/常量（17）：
+- `Ride3ProSettingsItem $item`  L22
+- `String $value`  L23
+- `Object L$0`  L24
+- `Object L$1`  L25
+- `int label`  L26
+- `Ride3ProSettingsActivity this$0`  L27
+- `Object objM3074constructorimpl`  L58
+- `Object objM3074constructorimpl2`  L59
+- `Ride3ProSettingsActivity ride3ProSettingsActivity`  L60
+- `int i = this.label`  L62
+- `Object obj2 = null`  L63
+- `Ride3ProSettingsItem ride3ProSettingsItem = this.$item`  L70
+- `String str = this.$value`  L71
+- `Result.Companion companion = Result.INSTANCE`  L72
+- `Result.Companion companion2 = Result.INSTANCE`  L97
+- `Result.Companion companion3 = Result.INSTANCE`  L110
+- `Result.Companion companion4 = Result.INSTANCE`  L118
+
+方法（4）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L38 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Result<? extends Ride6SettingsSnapshot>> continuation)`  L45 @Override
+- `Object invoke2(CoroutineScope coroutineScope, Continuation<? super Result<Ride6SettingsSnapshot>> continuation)`  L50
+- `Object invokeSuspend(Object obj)`  L57 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsActivityKt`
+L9 · [class] public final Ride3ProSettingsActivityKt · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsActivityKt.java`
+注解：
+
+字段/常量（1）：
+- `String PASSWORD_MASK = "********"`  L10
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsAdapter`
+L26 · [class] public final Ride3ProSettingsAdapter · extends `RecyclerView.Adapter<RecyclerView.ViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsAdapter.java`
+注解：
+
+字段/常量（5）：
+- `int VIEW_TYPE_ITEM = 1`  L27
+- `int VIEW_TYPE_SECTION = 0`  L28
+- `List<? extends DisplayItem> displayItems`  L29
+- `Function1<? super Ride3ProSettingsItem, Unit> onItemClick`  L30
+- `int settingMetaResId`  L31
+
+方法（9）：
+- `public Ride3ProSettingsAdapter()`  L33
+- ` Ride3ProSettingsAdapter(int i, int i2, DefaultConstructorMarker defaultConstructorMarker)`  L37
+- `public Ride3ProSettingsAdapter(int i)`  L41
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsAdapter$DisplayItem;" · "()V" · "Item" · "Section" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsAdapter$DisplayItem$Item;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsAdapter$DisplayItem$Section;" · "app_release_64"
+- `void setOnItemClickListener(Function1<? super Ride3ProSettingsItem, Unit> listener)`  L155
+    - 体内字面量："listener"
+- `void submitSections(List<Ride3ProSettingsSection> sections)`  L160
+    - 体内字面量："sections"
+- `int getItemCount()`  L175 @Override
+- `int getItemViewType(int position)`  L180 @Override
+- `RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L192 @Override
+    - 体内字面量："parent" · "inflate(...)" · "inflate(...)" · "Unknown view type: "
+- `void onBindViewHolder(RecyclerView.ViewHolder holder, int position)`  L208 @Override
+    - 体内字面量："holder" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsAdapter$SectionViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemRide3ProSettingsSectionBinding;" · "(Lcom/tuwinsmart/tuwin/databinding/ItemRide3ProSettingsSectionBinding;)V" · "bind" · "item" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsAdapter$DisplayItem$Section;" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsAdapter$ItemViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemRide3ProSettingsItemBinding;" · "settingMetaResId" · "(Lcom/tuwinsmart/tuwin/databinding/ItemRide3ProSettingsItemBinding;I)V" · "bind" · "item" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsItem;" · "onItemClick" · "Lkotlin/Function1;" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsAdapter$DisplayItem`
+L48 · [class] public static abstract DisplayItem · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsAdapter.java`
+注解：
+
+方法（2）：
+- ` DisplayItem(DefaultConstructorMarker defaultConstructorMarker)`  L49
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsAdapter$DisplayItem$Section;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsAdapter$DisplayItem;" · "sectionName" · "(Ljava/lang/String;)V" · "getSectionName" · "()Ljava/lang/String;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+- `private DisplayItem()`  L102
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsAdapter$DisplayItem$Item;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsAdapter$DisplayItem;" · "setting" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsItem;" · "(Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsItem;)V" · "getSetting" · "()Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/Ride3ProSettingsItem;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsAdapter$DisplayItem$Item`
+L107 · [class] public static final Item · extends `DisplayItem` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsAdapter.java`
+注解：
+
+字段/常量（1）：
+- `Ride3ProSettingsItem setting`  L108
+
+方法（8）：
+- `Item copy$default(Item item, Ride3ProSettingsItem ride3ProSettingsItem, int i, Object obj)`  L110
+- `Ride3ProSettingsItem getSetting()`  L118
+- `Item copy(Ride3ProSettingsItem setting)`  L122
+    - 体内字面量："setting"
+- `boolean equals(Object other)`  L127
+- `int hashCode()`  L134
+- `String toString()`  L138
+    - 体内字面量："Item(setting=" · ")"
+- `public Item(Ride3ProSettingsItem setting)`  L143
+    - 体内字面量："setting"
+- `Ride3ProSettingsItem getSetting()`  L149
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsAdapter$DisplayItem$Section`
+L55 · [class] public static final Section · extends `DisplayItem` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsAdapter.java`
+注解：
+
+字段/常量（1）：
+- `String sectionName`  L56
+
+方法（8）：
+- `Section copy$default(Section section, String str, int i, Object obj)`  L58
+- `String getSectionName()`  L66
+- `Section copy(String sectionName)`  L70
+    - 体内字面量："sectionName"
+- `boolean equals(Object other)`  L75
+- `int hashCode()`  L82
+- `String toString()`  L86
+    - 体内字面量："Section(sectionName=" · ")"
+- `public Section(String sectionName)`  L91
+    - 体内字面量："sectionName"
+- `String getSectionName()`  L97
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsAdapter$ItemViewHolder`
+L239 · [class] static final ItemViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsAdapter.java`
+注解：
+
+字段/常量（2）：
+- `ItemRide3ProSettingsItemBinding binding`  L240
+- `int settingMetaResId`  L241
+
+方法（4）：
+- `public ItemViewHolder(ItemRide3ProSettingsItemBinding binding, int i)`  L244
+    - 体内字面量："binding"
+- `void bind(final Ride3ProSettingsItem item, final Function1<? super Ride3ProSettingsItem, Unit> onItemClick)`  L251
+    - 体内字面量："item" · "-"
+- `void onClick(View view)`  L261 @Override
+- `void bind$lambda$1(Function1 function1, Ride3ProSettingsItem item, View view)`  L268
+    - 体内字面量："$item"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsAdapter$SectionViewHolder`
+L220 · [class] private static final SectionViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsAdapter.java`
+注解：
+
+字段/常量（1）：
+- `ItemRide3ProSettingsSectionBinding binding`  L221
+
+方法（2）：
+- `public SectionViewHolder(ItemRide3ProSettingsSectionBinding binding)`  L224
+    - 体内字面量："binding"
+- `void bind(DisplayItem.Section item)`  L230
+    - 体内字面量："item"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsItem`
+L14 · [class] public final Ride3ProSettingsItem · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsItem.java`
+注解：
+
+字段/常量（10）：
+- `String defaultValue`  L15
+- `String displayValue`  L16
+- `String id`  L17
+- `String name`  L18
+- `String rawValue`  L19
+- `String requestId`  L20
+- `String type`  L21
+- `List<Ride3ProMenuValue> values`  L22
+- `String str = this.defaultValue`  L86
+- `String str2 = this.requestId`  L88
+
+方法（22）：
+- `String getName()`  L25
+- `String getId()`  L30
+- `String getType()`  L35
+- `String getDisplayValue()`  L40
+- `String getRawValue()`  L45
+- `List<Ride3ProMenuValue> component6()`  L49
+- `String getDefaultValue()`  L54
+- `String getRequestId()`  L59
+- `Ride3ProSettingsItem copy(String name, String id, String type, String displayValue, String rawValue, List<Ride3ProMenuValue> values, String defaultValue, String requestId)`  L63
+    - 体内字面量："name" · "id" · "type" · "displayValue" · "rawValue" · "values"
+- `boolean equals(Object other)`  L73
+- `int hashCode()`  L84
+- `String toString()`  L92
+    - 体内字面量："Ride3ProSettingsItem(name=" · ", id=" · ", type=" · ", displayValue=" · ", rawValue=" · ", values=" · ", defaultValue=" · ", requestId=" · ")"
+- `public Ride3ProSettingsItem(String name, String id, String type, String displayValue, String rawValue, List<Ride3ProMenuValue> values, String str, String str2)`  L96
+    - 体内字面量："name" · "id" · "type" · "displayValue" · "rawValue" · "values"
+- ` Ride3ProSettingsItem(String str, String str2, String str3, String str4, String str5, List list, String str6, String str7, int i, DefaultConstructorMarker defaultConstructorMarker)`  L113
+- `String getName()`  L117
+- `String getId()`  L121
+- `String getType()`  L125
+- `String getDisplayValue()`  L129
+- `String getRawValue()`  L133
+- `List<Ride3ProMenuValue> getValues()`  L137
+- `String getDefaultValue()`  L141
+- `String getRequestId()`  L145
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsMenuPolicy`
+L12 · [class] public final Ride3ProSettingsMenuPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsMenuPolicy.java`
+注解：
+
+方法（2）：
+- `private Ride3ProSettingsMenuPolicy()`  L15
+- `List<Ride3ProSettingsSection> buildSections()`  L18
+    - 体内字面量："Record" · "Resolution" · "0x0000000" · "0x00" · "Exposure" · "0x0000001" · "0x00" · "Motion Detection" · "0x0000002" · "0x00" · "Loop Recording" · "0x0000003" · "0x00" · "WDR" · "0x0000004" · "0x00" · "Record Audio" · "0x0000005" · "0x00" · "Date Stamp" · "0x0000006" · "0x00" · "Capture" · "Resolution" · "0x00000100" · "0x00" · "Exposure" · "0x0000101" · "0x00" · "Quality" · "0x00000102" · "0x00" · "Sequence" · "0x00000103" · "0x00" · "0x00000104" · "0x00" · "0x00000105" · "0x00" · "Anti-Shaking" · "0x00000106" · "0x00" · "Date/Time" · "0x00000107" · "0x00" · "White Balance" · "0x00000108" · "0x00" · "System" · "Frequency" · "0x00000200" · "0x00" · "Screen Saver" · "0x00000201" · "0x00" · "Auto Power Off" · "0x00000202" · "0x00" · "Language" · "0x00000203" · "0x00" · "Beep Sound" · "0x00000204" · "0x00" · "Date/Time" · "0x00000205" · "0x00" · "Clear Buffer" · "0x00000206" · "0x04" · "Format" · "0x00000207" · "0x01" · "Default Setting" · "0x00000208" · "0x01" · "Version" · "0x00000209" · "0x03" · "Wifi" · "WifiName" · "0x00000300" · "0x02" · "Password" · "0x00000301" · "0x02"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsOtaEntryPolicy`
+L14 · [class] public final Ride3ProSettingsOtaEntryPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsOtaEntryPolicy.java`
+注解：
+
+字段/常量（3）：
+- `String OTA_ENTRY_ID = "__ride3pro_ota_upgrade__"`  L16
+- `String OTA_ENTRY_TYPE = "__ride3pro_action__"`  L17
+- `int i = 0`  L32
+
+方法（2）：
+- `private Ride3ProSettingsOtaEntryPolicy()`  L19
+- `List<Ride3ProSettingsSection> attachOtaEntry(List<Ride3ProSettingsSection> sections, String systemSectionName, String otaName, String otaActionText)`  L22
+    - 体内字面量："sections" · "systemSectionName" · "otaName" · "otaActionText"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsRuntimeMapper`
+L16 · [class] public final Ride3ProSettingsRuntimeMapper · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsRuntimeMapper.java`
+注解：
+
+字段/常量（9）：
+- `String defaultValue`  L30
+- `List<Ride3ProMenuSection> list = menuSections`  L34
+- `Ride3ProSettingsRuntimeMapper ride3ProSettingsRuntimeMapper = INSTANCE`  L41
+- `String string`  L54
+- `String string2`  L55
+- `String name`  L56
+- `Object next`  L97
+- `Object next`  L111
+- `String str2`  L112
+
+方法（6）：
+- `private Ride3ProSettingsRuntimeMapper()`  L19
+- `List toDisplaySections$default(Ride3ProSettingsRuntimeMapper ride3ProSettingsRuntimeMapper, List list, Map map, String str, int i, Object obj)`  L22
+    - 体内字面量："Execute"
+- `List<Ride3ProSettingsSection> toDisplaySections(List<Ride3ProMenuSection> menuSections, Map<String, ? extends Object> parameterMap, String actionLabel)`  L29
+- `String resolveDisplayValue(Ride3ProMenuSetting setting, Object value, String actionLabel)`  L53
+- `Ride3ProMenuValue findSelectedOption(List<Ride3ProMenuValue> values, Object raw)`  L96
+- `Object findValueBySettingId(Map<String, ? extends Object> map, String str)`  L110
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsRuntimeMapperKt`
+L16 · [class] public final Ride3ProSettingsRuntimeMapperKt · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsRuntimeMapperKt.java`
+注解：
+
+字段/常量（1）：
+- `String textContent`  L50
+
+方法（5）：
+- `Integer ride3ProSettingTypeCode(String type)`  L17
+    - 体内字面量："type"
+- `Long toFlexibleLong(String str)`  L27
+    - 体内字面量："0x" · "substring(...)"
+- `Long toFlexibleLong(Object obj)`  L38
+- `String childText(Node node, String str)`  L49
+- `List<Node> childElements(Node node, String str)`  L59
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSettingsSection`
+L12 · [class] public final Ride3ProSettingsSection · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSettingsSection.java`
+注解：
+
+字段/常量（2）：
+- `List<Ride3ProSettingsItem> items`  L13
+- `String name`  L14
+
+方法（10）：
+- `Ride3ProSettingsSection copy$default(Ride3ProSettingsSection ride3ProSettingsSection, String str, List list, int i, Object obj)`  L17
+- `String getName()`  L28
+- `List<Ride3ProSettingsItem> component2()`  L32
+- `Ride3ProSettingsSection copy(String name, List<Ride3ProSettingsItem> items)`  L36
+    - 体内字面量："name" · "items"
+- `boolean equals(Object other)`  L42
+- `int hashCode()`  L53
+- `String toString()`  L57
+    - 体内字面量："Ride3ProSettingsSection(name=" · ", items=" · ")"
+- `public Ride3ProSettingsSection(String name, List<Ride3ProSettingsItem> items)`  L61
+    - 体内字面量："name" · "items"
+- `String getName()`  L68
+- `List<Ride3ProSettingsItem> getItems()`  L72
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSimpleSettingsItem`
+L11 · [class] public final Ride3ProSimpleSettingsItem · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSimpleSettingsItem.java`
+注解：
+
+字段/常量（3）：
+- `int titleResId`  L12
+- `Ride3ProSimpleSettingsItemType type`  L13
+- `String value`  L14
+
+方法（13）：
+- `Ride3ProSimpleSettingsItem copy$default(Ride3ProSimpleSettingsItem ride3ProSimpleSettingsItem, Ride3ProSimpleSettingsItemType ride3ProSimpleSettingsItemType, int i, String str, int i2, Object obj)`  L16
+- `Ride3ProSimpleSettingsItemType getType()`  L30
+- `int getTitleResId()`  L35
+- `String getValue()`  L40
+- `Ride3ProSimpleSettingsItem copy(Ride3ProSimpleSettingsItemType type, int titleResId, String value)`  L44
+    - 体内字面量："type" · "value"
+- `boolean equals(Object other)`  L50
+- `int hashCode()`  L61
+- `String toString()`  L65
+    - 体内字面量："Ride3ProSimpleSettingsItem(type=" · ", titleResId=" · ", value=" · ")"
+- `public Ride3ProSimpleSettingsItem(Ride3ProSimpleSettingsItemType type, int i, String value)`  L69
+    - 体内字面量："type" · "value"
+- `Ride3ProSimpleSettingsItemType getType()`  L77
+- `int getTitleResId()`  L81
+- ` Ride3ProSimpleSettingsItem(Ride3ProSimpleSettingsItemType ride3ProSimpleSettingsItemType, int i, String str, int i2, DefaultConstructorMarker defaultConstructorMarker)`  L85
+- `String getValue()`  L89
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSimpleSettingsItemType`
+L11 · [enum] public Ride3ProSimpleSettingsItemType · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSimpleSettingsItemType.java`
+注解：
+
+枚举常量（6）：
+- `DEVICE_NAME()`  L12
+- `WIFI()`  L13
+- `STORAGE()`  L14
+- `FIRMWARE()`  L15
+- `FACTORY_RESET()`  L16
+- `REBOOT()`  L17
+
+方法（1）：
+- `EnumEntries<Ride3ProSimpleSettingsItemType> getEntries()`  L21
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProSimpleSettingsMenuPolicy`
+L17 · [class] public final Ride3ProSimpleSettingsMenuPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProSimpleSettingsMenuPolicy.java`
+注解：
+
+方法（3）：
+- `private Ride3ProSimpleSettingsMenuPolicy()`  L20
+- `List build$default(Ride3ProSimpleSettingsMenuPolicy ride3ProSimpleSettingsMenuPolicy, String str, Collection collection, int i, Object obj)`  L24
+- `List<Ride3ProSimpleSettingsItem> build(String deviceName, Collection<String> features)`  L31
+    - 体内字面量："deviceName" · "features"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProWifiParameterRequest`
+L10 · [class] public final Ride3ProWifiParameterRequest · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProWifiParameterRequest.java`
+注解：
+
+字段/常量（2）：
+- `String id`  L11
+- `String value`  L12
+
+方法（10）：
+- `Ride3ProWifiParameterRequest copy$default(Ride3ProWifiParameterRequest ride3ProWifiParameterRequest, String str, String str2, int i, Object obj)`  L14
+- `String getId()`  L25
+- `String getValue()`  L30
+- `Ride3ProWifiParameterRequest copy(String id, String value)`  L34
+    - 体内字面量："id" · "value"
+- `boolean equals(Object other)`  L40
+- `int hashCode()`  L51
+- `String toString()`  L55
+    - 体内字面量："Ride3ProWifiParameterRequest(id=" · ", value=" · ")"
+- `public Ride3ProWifiParameterRequest(String id, String value)`  L59
+    - 体内字面量："id" · "value"
+- `String getId()`  L66
+- `String getValue()`  L70
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProWifiSettingsAction`
+L13 · [class] public final Ride3ProWifiSettingsAction · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProWifiSettingsAction.java`
+注解：
+
+方法（2）：
+- `private Ride3ProWifiSettingsAction()`  L16
+- `Object setPassword(Ride3ProApiService ride3ProApiService, String str, Continuation<? super Ride3ProApiResponse<Object>> continuation)`  L19
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride3ProWifiSettingsPolicy`
+L10 · [class] public final Ride3ProWifiSettingsPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride3ProWifiSettingsPolicy.java`
+注解：
+
+字段/常量（1）：
+- `int WIFI_PASSWORD_LENGTH = 8`  L12
+
+方法（3）：
+- `private Ride3ProWifiSettingsPolicy()`  L14
+- `Ride3ProWifiParameterRequest passwordRequest(String password)`  L17
+    - 体内字面量："password"
+- `boolean isValidPassword(String password)`  L22
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride6ParameterRequestIds`
+L17 · [class] public final Ride6ParameterRequestIds · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride6ParameterRequestIds.java`
+注解：
+
+字段/常量（11）：
+- `String ALL = "all"`  L18
+- `String FACTORY_RESET = "factory_reset"`  L19
+- `String RECORD_EXPOSURE = "record_exposure"`  L21
+- `String RECORD_LOOP_RECORDING = "record_loop_recording"`  L22
+- `String RECORD_RESOLUTION = "record_resolution"`  L23
+- `String SYSTEM_FREQUENCY = "system_frequency"`  L24
+- `String SYSTEM_VERSION = "system_version"`  L25
+- `String WIFI_NAME = "wifi_name"`  L26
+- `String WIFI_PASSWD = "wifi_passwd"`  L27
+- `Locale ROOT = Locale.ROOT`  L168
+- `String str = lowerCase`  L172
+
+方法（4）：
+- `private Ride6ParameterRequestIds()`  L29
+- `String forSetting$default(Ride6ParameterRequestIds ride6ParameterRequestIds, String str, String str2, int i, Object obj)`  L32
+- `String forSetting(String sectionName, String settingName)`  L40
+    - 体内字面量："settingName" · "defaultsetting" · "system" · "exposure" · "record" · "factoryreset" · "looprecording" · "record" · "record" · "wifiname" · "recordresolution" · "frequency" · "system" · "recordlooprecording" · "system" · "systemversion" · "wifipasswd" · "password" · "recordexposure" · "systemfrequency"
+- `String normalize(String value)`  L163
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride6SettingsCompatibilityPolicy`
+L16 · [class] public final Ride6SettingsCompatibilityPolicy · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride6SettingsCompatibilityPolicy.java`
+注解：
+
+字段/常量（2）：
+- `String FACTORY_RESET_ID = "0x0000208"`  L17
+- `String WIFI_PASSWORD_ID = "0x0000301"`  L19
+
+方法（5）：
+- `private Ride6SettingsCompatibilityPolicy()`  L21
+- `Set<String> supplementalMenuFeatures(Collection<String> features)`  L24
+    - 体内字面量："features"
+- `boolean isWifiPassword(Ride3ProSettingsItem item)`  L36
+    - 体内字面量："item" · "Password"
+- `boolean isFactoryReset(Ride3ProSettingsItem item)`  L41
+    - 体内字面量："item"
+- `String passwordToCacheAfterSuccessfulUpdate(Ride3ProSettingsItem item, String value)`  L46
+    - 体内字面量："item"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride6SettingsLocalizer`
+L27 · [class] public final Ride6SettingsLocalizer · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride6SettingsLocalizer.java`
+注解：
+
+字段/常量（6）：
+- `List<Ride3ProSettingsSection> list = sections`  L39
+- `int i = 10`  L40
+- `Ride6SettingsLocalizer ride6SettingsLocalizer = INSTANCE`  L47
+- `Map<String, Integer> map = sectionNameMap`  L65
+- `Map<String, Integer> map = settingNameMap`  L74
+- `Map<String, Integer> map = valueMap`  L83
+
+方法（5）：
+- `private Ride6SettingsLocalizer()`  L33
+- `List<Ride3ProSettingsSection> localizeSections(Context context, List<Ride3ProSettingsSection> sections)`  L36
+    - 体内字面量："context" · "sections"
+- `String localizeSectionName(Context context, String raw)`  L64
+- `String localizeSettingName(Context context, String raw)`  L73
+- `String localizeValueName(Context context, String raw)`  L82
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride6SettingsProtocolClient`
+L41 · [class] public final Ride6SettingsProtocolClient · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride6SettingsProtocolClient.java`
+注解：
+
+字段/常量（39）：
+- `Function0<Ride3ProApiService> serviceProvider`  L45
+- `C27261 c27261`  L125
+- `Ride3ProApiService ride3ProApiServiceInvoke`  L126
+- `String str2`  L127
+- `Object menuXml`  L128
+- `Ride6SettingsProtocolClient ride6SettingsProtocolClient`  L129
+- `Closeable closeable`  L130
+- `List<Ride3ProMenuSection> list`  L131
+- `String str3`  L132
+- `Object obj = c27261.result`  L143
+- `int i = c27261.label`  L145
+- `int i2 = 10`  L181
+- `ArrayList arrayList3 = arrayList`  L192
+- `C27281 c27281`  L221
+- `Ride3ProApiResponse ride3ProApiResponse`  L222
+- `Object parameter = c27281.result`  L233
+- `int i = c27281.label`  L235
+- `C27271 c27271`  L293
+- `LinkedHashMap linkedHashMap`  L294
+- `ArrayList arrayList`  L295
+- `Object parameter`  L296
+- `Ride6SettingsProtocolClient ride6SettingsProtocolClient`  L297
+- `Ride3ProApiService ride3ProApiService2`  L298
+- `Iterator it`  L299
+- `Ride6SettingsProtocolClient ride6SettingsProtocolClient2`  L300
+- `LinkedHashMap linkedHashMap2`  L301
+- `Object next`  L302
+- `String id`  L303
+- `Ride3ProMenuSetting ride3ProMenuSetting`  L304
+- `Ride3ProMenuSetting ride3ProMenuSetting2`  L305
+- `String requestId`  L306
+- `Object objFindParameterValue`  L307
+- `Ride3ProApiService ride3ProApiService3 = ride3ProApiService`  L308
+- `Object parameter2 = c27271.result`  L319
+- `int i = c27271.label`  L321
+- `LinkedHashMap linkedHashMap3 = linkedHashMap`  L436
+- `String string`  L456
+- `Set<Map.Entry> setEntrySet`  L474
+- `Object obj`  L493
+
+方法（7）：
+- `public Ride6SettingsProtocolClient(Function0<? extends Ride3ProApiService> serviceProvider)`  L118
+    - 体内字面量："serviceProvider"
+- `Object load(String str, Continuation<? super Ride6SettingsSnapshot> continuation)`  L124
+- `Object update(Ride3ProSettingsItem ride3ProSettingsItem, String str, Continuation<? super Unit> continuation)`  L220
+- `Object loadParameterValues(Ride3ProApiService ride3ProApiService, List<Ride3ProMenuSection> list, Continuation<? super Map<String, ? extends Object>> continuation)`  L292
+- `Map<String, Object> toParameterMap(Object obj)`  L455
+- `Object findParameterValue(Object obj, String str)`  L473
+- `Object findParameterValue(Map<String, ? extends Object> map, String str)`  L492
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride6SettingsProtocolClient$C27261`
+L51 · [class] static final C27261 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride6SettingsProtocolClient.java`
+注解：
+
+字段/常量（5）：
+- `Object L$0`  L52
+- `Object L$1`  L53
+- `Object L$2`  L54
+- `int label`  L55
+- `Object result`  L56
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L63 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride6SettingsProtocolClient$C27271`
+L74 · [class] static final C27271 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride6SettingsProtocolClient.java`
+注解：
+
+字段/常量（8）：
+- `Object L$0`  L75
+- `Object L$1`  L76
+- `Object L$2`  L77
+- `Object L$3`  L78
+- `Object L$4`  L79
+- `Object L$5`  L80
+- `int label`  L81
+- `Object result`  L82
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L89 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride6SettingsProtocolClient$C27281`
+L100 · [class] static final C27281 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride6SettingsProtocolClient.java`
+注解：
+
+字段/常量（3）：
+- `Object L$0`  L101
+- `int label`  L102
+- `Object result`  L103
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L110 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride6SettingsProtocolClient$Companion`
+L512 · [class] public static final Companion · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride6SettingsProtocolClient.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L513
+- `private Companion()`  L517
+- `boolean isFormatSetting(Ride3ProSettingsItem item)`  L521
+    - 体内字面量："Format"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride6SettingsProtocolClientKt`
+L11 · [class] public final Ride6SettingsProtocolClientKt · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride6SettingsProtocolClientKt.java`
+注解：
+
+方法（2）：
+- `boolean parameterIdsEqual(String str, String right)`  L12
+    - 体内字面量："right"
+- `Long toFlexibleParameterId(String str)`  L20
+    - 体内字面量："0x" · "substring(...)"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.Ride6SettingsSnapshot`
+L11 · [class] public final Ride6SettingsSnapshot · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/Ride6SettingsSnapshot.java`
+注解：
+
+字段/常量（2）：
+- `List<Ride3ProSettingsSection> displaySections`  L12
+- `List<Ride3ProMenuSection> menuSections`  L13
+
+方法（10）：
+- `Ride6SettingsSnapshot copy$default(Ride6SettingsSnapshot ride6SettingsSnapshot, List list, List list2, int i, Object obj)`  L16
+- `List<Ride3ProMenuSection> component1()`  L26
+- `List<Ride3ProSettingsSection> component2()`  L30
+- `Ride6SettingsSnapshot copy(List<Ride3ProMenuSection> menuSections, List<Ride3ProSettingsSection> displaySections)`  L34
+    - 体内字面量："menuSections" · "displaySections"
+- `boolean equals(Object other)`  L40
+- `int hashCode()`  L51
+- `String toString()`  L55
+    - 体内字面量："Ride6SettingsSnapshot(menuSections=" · ", displaySections=" · ")"
+- `public Ride6SettingsSnapshot(List<Ride3ProMenuSection> menuSections, List<Ride3ProSettingsSection> displaySections)`  L59
+    - 体内字面量："menuSections" · "displaySections"
+- `List<Ride3ProMenuSection> getMenuSections()`  L66
+- `List<Ride3ProSettingsSection> getDisplaySections()`  L70
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.SettingsUiState`
+L13 · [class] public abstract SettingsUiState · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/SettingsUiState.java`
+注解：
+
+方法（2）：
+- ` SettingsUiState(DefaultConstructorMarker defaultConstructorMarker)`  L14
+- `private SettingsUiState()`  L18
+    - 体内字面量："Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/SettingsUiState$Loading;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/SettingsUiState;" · "()V" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/SettingsUiState$Success;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/SettingsUiState;" · "settings" · "Lcom/tuwinsmart/tuwin/data/source/remote/dto/m3/M3ParamItem;" · "(Ljava/util/List;)V" · "getSettings" · "()Ljava/util/List;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/SettingsUiState$Error;" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/settings/SettingsUiState;" · "message" · "(Ljava/lang/String;)V" · "getMessage" · "()Ljava/lang/String;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.SettingsUiState$Error`
+L82 · [class] public static final Error · extends `SettingsUiState` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/SettingsUiState.java`
+注解：
+
+字段/常量（1）：
+- `String message`  L83
+
+方法（8）：
+- `Error copy$default(Error error, String str, int i, Object obj)`  L85
+- `String getMessage()`  L93
+- `Error copy(String message)`  L97
+    - 体内字面量："message"
+- `boolean equals(Object other)`  L102
+- `int hashCode()`  L109
+- `String toString()`  L113
+    - 体内字面量："Error(message=" · ")"
+- `public Error(String message)`  L118
+    - 体内字面量："message"
+- `String getMessage()`  L124
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.SettingsUiState$Loading`
+L23 · [class] public static final Loading · extends `SettingsUiState` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/SettingsUiState.java`
+注解：
+
+方法（1）：
+- `private Loading()`  L26
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.settings.SettingsUiState$Success`
+L33 · [class] public static final Success · extends `SettingsUiState` · `com/tuwinsmart/tuwin/presentation/p010ui/device/settings/SettingsUiState.java`
+注解：
+
+字段/常量（1）：
+- `List<M3ParamItem> settings`  L34
+
+方法（8）：
+- `Success copy$default(Success success, List list, int i, Object obj)`  L37
+- `List<M3ParamItem> component1()`  L44
+- `Success copy(List<M3ParamItem> settings)`  L48
+    - 体内字面量："settings"
+- `boolean equals(Object other)`  L53
+- `int hashCode()`  L60
+- `String toString()`  L64
+    - 体内字面量："Success(settings=" · ")"
+- `public Success(List<M3ParamItem> settings)`  L69
+    - 体内字面量："settings"
+- `List<M3ParamItem> getSettings()`  L75

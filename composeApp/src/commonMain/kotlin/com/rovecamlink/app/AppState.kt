@@ -2386,7 +2386,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     /**
      * Why flashing is not allowed right now, or null when it is.
      *
-     * Guard R5 of `docs/04 §6.1`: the three official apps either check nothing or throw the
+     * Guard R5 of `docs/analysis/ota-and-gaps §6.1`: the three official apps either check nothing or throw the
      * answer away (XTU reads battery and card, then discards both), and the failure mode is
      * the one that cannot be undone — power lost mid-erase. Everything needed is already in
      * [deviceStatus], so the check is free; the point is to refuse *before* the transfer
@@ -2404,7 +2404,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 "请先充电或接上电源。"
         }
         return when (st.sdState) {
-            // The Hisilicon route stages the image on the card (`docs/04 §6.1` R7), so a
+            // The Hisilicon route stages the image on the card (`docs/analysis/ota-and-gaps §6.1` R7), so a
             // missing or unreadable card is a hard stop rather than a warning.
             SdCardState.MISSING -> "相机里没有存储卡。这条刷写通道把镜像暂存在卡上，没有卡无法开始。"
             SdCardState.ERROR -> "相机的存储卡状态异常。先处理存储卡（必要时格式化），再更新固件。"
@@ -2852,7 +2852,7 @@ private const val POLL_FAILURES_BEFORE_LOST = 3
  *
  * The vendor's own failure strings list a battery case (`gku_firmware_update_failed_battery`)
  * but no threshold, and neither they nor the other two check anything before starting
- * (`docs/04 §6.1` R5). 30% is chosen to leave room for a 50 MB transfer and the erase that
+ * (`docs/analysis/ota-and-gaps §6.1` R5). 30% is chosen to leave room for a 50 MB transfer and the erase that
  * follows it, and a camera that reports no battery at all is not blocked — an unknown value
  * is not a low one.
  */

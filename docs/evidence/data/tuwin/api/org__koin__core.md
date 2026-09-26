@@ -1,0 +1,181 @@
+# TUWIN — 类与成员明细：org.koin.core
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 5 个文件 / 6 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：UNKNOWN
+### `org.koin.core.Koin`
+L47 · [class] public final Koin · `org/koin/core/Koin.java`
+注解：
+
+字段/常量（8）：
+- `String value`  L211
+- `String value2`  L212
+- `Kind kind = Kind.Scoped`  L219
+- `SingleInstanceFactory singleInstanceFactory2 = singleInstanceFactory`  L239
+- `String value`  L262
+- `String value2`  L263
+- `Kind kind = Kind.Scoped`  L267
+- `SingleInstanceFactory singleInstanceFactory2 = singleInstanceFactory`  L287
+
+方法（48）：
+- `void getExtensionManager$annotations()`  L54
+- `void getInstanceRegistry$annotations()`  L57
+- `void getLogger$annotations()`  L60
+- `void getPropertyRegistry$annotations()`  L63
+- `void getScopeRegistry$annotations()`  L66
+- `ScopeRegistry getScopeRegistry()`  L69
+- `InstanceRegistry getInstanceRegistry()`  L73
+- `PropertyRegistry getPropertyRegistry()`  L77
+- `ExtensionManager getExtensionManager()`  L81
+- `Logger getLogger()`  L85
+- `void setupLogger(Logger logger)`  L89
+    - 体内字面量："logger"
+- `Lazy inject$default(Koin koin, Qualifier qualifier, LazyThreadSafetyMode mode, Function0 function0, int i, Object obj)`  L94
+    - 体内字面量："mode"
+- `Lazy<T> inject(Qualifier qualifier, LazyThreadSafetyMode mode, Function0<? extends ParametersHolder> parameters)`  L110
+    - 体内字面量："mode"
+- `Lazy injectOrNull$default(Koin koin, Qualifier qualifier, LazyThreadSafetyMode mode, Function0 function0, int i, Object obj)`  L117
+    - 体内字面量："mode"
+- `Lazy<T> injectOrNull(Qualifier qualifier, LazyThreadSafetyMode mode, Function0<? extends ParametersHolder> parameters)`  L133
+    - 体内字面量："mode"
+- `Object get$default(Koin koin, Qualifier qualifier, Function0 function0, int i, Object obj)`  L141
+- `T get(Qualifier qualifier, Function0<? extends ParametersHolder> parameters)`  L153
+- `Object getOrNull$default(Koin koin, Qualifier qualifier, Function0 function0, int i, Object obj)`  L160
+- `T getOrNull(Qualifier qualifier, Function0<? extends ParametersHolder> parameters)`  L172
+- `Object get$default(Koin koin, KClass kClass, Qualifier qualifier, Function0 function0, int i, Object obj)`  L179
+- `T get(KClass<?> clazz, Qualifier qualifier, Function0<? extends ParametersHolder> parameters)`  L189
+    - 体内字面量："clazz"
+- `Object getOrNull$default(Koin koin, KClass kClass, Qualifier qualifier, Function0 function0, int i, Object obj)`  L195
+- `T getOrNull(KClass<?> clazz, Qualifier qualifier, Function0<? extends ParametersHolder> parameters)`  L205
+    - 体内字面量："clazz"
+- `void declare$default(Koin koin, Object obj, Qualifier qualifier, List list, boolean z, int i, Object obj2)`  L210
+- `void declare(T instance, Qualifier qualifier, List<? extends KClass<?>> secondaryTypes, boolean allowOverride)`  L261
+- `List<T> getAll()`  L309
+- `Scope createScope$default(Koin koin, String str, Qualifier qualifier, Object obj, int i, Object obj2)`  L315
+- `Scope createScope(String scopeId, Qualifier qualifier, Object source)`  L322
+    - 体内字面量："scopeId" · "qualifier"
+- `Scope createScope$default(Koin koin, String scopeId, Object obj, int i, Object obj2)`  L328
+    - 体内字面量："scopeId"
+- `Scope createScope(String scopeId, Object source)`  L337
+    - 体内字面量："scopeId"
+- `Scope createScope$default(Koin koin, String scopeId, int i, Object obj)`  L343
+    - 体内字面量："scopeId"
+- `Scope createScope(String scopeId)`  L352
+    - 体内字面量："scopeId"
+- `Scope createScope(T t)`  L358
+    - 体内字面量："t"
+- `Scope getOrCreateScope$default(Koin koin, String str, Qualifier qualifier, Object obj, int i, Object obj2)`  L363
+- `Scope getOrCreateScope(String scopeId, Qualifier qualifier, Object source)`  L370
+    - 体内字面量："scopeId" · "qualifier"
+- `Scope getOrCreateScope(String scopeId)`  L377
+    - 体内字面量："scopeId"
+- `Scope getScope(String scopeId)`  L385
+    - 体内字面量："scopeId" · "No scope found for id '" · "\\'"
+- `Scope getScopeOrNull(String scopeId)`  L394
+    - 体内字面量："scopeId"
+- `void deleteScope(String scopeId)`  L399
+    - 体内字面量："scopeId"
+- `T getProperty(String key, T defaultValue)`  L404
+    - 体内字面量："key" · "defaultValue"
+- `T getProperty(String key)`  L411
+    - 体内字面量："key"
+- `void setProperty(String key, Object value)`  L416
+    - 体内字面量："key" · "value"
+- `void deleteProperty(String key)`  L422
+    - 体内字面量："key"
+- `void close()`  L427
+- `void loadModules$default(Koin koin, List list, boolean z, boolean z2, int i, Object obj)`  L434
+- `void loadModules(List<Module> modules, boolean allowOverride, boolean createEagerInstances)`  L444
+    - 体内字面量："modules"
+- `void unloadModules(List<Module> modules)`  L454
+    - 体内字面量："modules"
+- `void createEagerInstances()`  L459
+    - 体内字面量："Create eager instances ..." · "Created eager instances in " · " ms"
+### `org.koin.core.Koin$declare$$inlined$declareRootInstance$1`
+L13 · [class] public final Koin$declare$$inlined$declareRootInstance$1 · implements `Function2<Scope, ParametersHolder, T>` · `org/koin/core/Koin$declare$$inlined$declareRootInstance$1.java`
+注解：
+
+字段/常量（1）：
+- `Object $instance`  L14
+
+方法（2）：
+- `public Koin$declare$$inlined$declareRootInstance$1(Object obj)`  L16
+- `T invoke(Scope _createDefinition, ParametersHolder it)`  L21 @Override
+    - 体内字面量："$this$_createDefinition" · "it"
+### `org.koin.core.Koin$inject$$inlined$inject$1`
+L16 · [class] public final Koin$inject$$inlined$inject$1 · implements `Function0<T>` · `org/koin/core/Koin$inject$$inlined$inject$1.java`
+注解：
+
+字段/常量（6）：
+- `Function0 $parameters`  L17
+- `Qualifier $qualifier`  L18
+- `Scope this$0`  L19
+- `Scope scope = this.this$0`  L29
+- `Qualifier qualifier = this.$qualifier`  L30
+- `Function0<? extends ParametersHolder> function0 = this.$parameters`  L31
+
+方法（2）：
+- `public Koin$inject$$inlined$inject$1(Scope scope, Qualifier qualifier, Function0 function0)`  L21
+- `T invoke()`  L28 @Override
+### `org.koin.core.Koin$injectOrNull$$inlined$injectOrNull$1`
+L16 · [class] public final Koin$injectOrNull$$inlined$injectOrNull$1 · implements `Function0<T>` · `org/koin/core/Koin$injectOrNull$$inlined$injectOrNull$1.java`
+注解：
+
+字段/常量（6）：
+- `Function0 $parameters`  L17
+- `Qualifier $qualifier`  L18
+- `Scope this$0`  L19
+- `Scope scope = this.this$0`  L29
+- `Qualifier qualifier = this.$qualifier`  L30
+- `Function0<? extends ParametersHolder> function0 = this.$parameters`  L31
+
+方法（2）：
+- `public Koin$injectOrNull$$inlined$injectOrNull$1(Scope scope, Qualifier qualifier, Function0 function0)`  L21
+- `T invoke()`  L28 @Override
+### `org.koin.core.KoinApplication`
+L25 · [class] public final KoinApplication · `org/koin/core/KoinApplication.java`
+注解：@KoinApplicationDslMarker
+
+字段/常量（2）：
+- `boolean allowOverride`  L29
+- `Koin koin`  L30
+
+方法（16）：
+- ` KoinApplication(DefaultConstructorMarker defaultConstructorMarker)`  L32
+- `private KoinApplication()`  L36
+- `Koin getKoin()`  L41
+- `KoinApplication modules(Module modules)`  L45
+    - 体内字面量："modules"
+- `KoinApplication modules(Module... modules)`  L50
+    - 体内字面量："modules"
+- `KoinApplication modules(List<Module> modules)`  L55
+    - 体内字面量："modules" · "Started " · " definitions in " · " ms"
+- `void createEagerInstances()`  L67
+- `void allowOverride(boolean override)`  L71
+- `void loadModules(List<Module> modules)`  L75
+- `KoinApplication properties(Map<String, ? extends Object> values)`  L79
+    - 体内字面量："values"
+- `KoinApplication logger(Logger logger)`  L85
+    - 体内字面量："logger"
+- `KoinApplication printLogger$default(KoinApplication koinApplication, Level level, int i, Object obj)`  L91
+- `KoinApplication printLogger(Level level)`  L98
+    - 体内字面量："level"
+- `void close()`  L104
+- `void unloadModules$koin_core(List<Module> modules)`  L108
+    - 体内字面量："modules"
+- `void unloadModules$koin_core(Module module)`  L113
+    - 体内字面量："module" · "Lorg/koin/core/KoinApplication$Companion;" · "<init>" · "()V" · "init" · "Lorg/koin/core/KoinApplication;" · "koin-core"
+### `org.koin.core.KoinApplication$Companion`
+L120 · [class] public static final Companion · `org/koin/core/KoinApplication.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L121
+- `private Companion()`  L125
+- `KoinApplication init()`  L128

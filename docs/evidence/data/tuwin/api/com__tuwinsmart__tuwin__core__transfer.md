@@ -1,0 +1,1586 @@
+# TUWIN — 类与成员明细：com.tuwinsmart.tuwin.core.transfer
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 29 个文件 / 77 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.tuwinsmart.tuwin.core.transfer.AuthorizedDeviceResource`
+L14 · [class] public final AuthorizedDeviceResource · `com/tuwinsmart/tuwin/core/transfer/AuthorizedDeviceResource.java`
+注解：
+
+字段/常量（4）：
+- `String contentKey`  L15
+- `NetworkIntent.Device intent`  L16
+- `RouteSnapshot route`  L17
+- `AuthorizedTransferSource.Device source`  L18
+
+方法（16）：
+- `AuthorizedDeviceResource copy$default(AuthorizedDeviceResource authorizedDeviceResource, AuthorizedTransferSource.Device device, NetworkIntent.Device device2, RouteSnapshot routeSnapshot, String str, int i, Object obj)`  L20
+- `AuthorizedTransferSource.Device getSource()`  L37
+- `NetworkIntent.Device getIntent()`  L42
+- `RouteSnapshot getRoute()`  L47
+- `String getContentKey()`  L52
+- `AuthorizedDeviceResource copy(AuthorizedTransferSource.Device source, NetworkIntent.Device intent, RouteSnapshot route, String contentKey)`  L56
+    - 体内字面量："source" · "intent" · "route" · "contentKey"
+- `boolean equals(Object other)`  L64
+- `int hashCode()`  L75
+- `String toString()`  L79
+    - 体内字面量："AuthorizedDeviceResource(source=" · ", intent=" · ", route=" · ", contentKey=" · ")"
+- `public AuthorizedDeviceResource(AuthorizedTransferSource.Device source, NetworkIntent.Device intent, RouteSnapshot route, String contentKey)`  L83
+    - 体内字面量："source" · "intent" · "route" · "contentKey"
+- `AuthorizedTransferSource.Device getSource()`  L94
+- `NetworkIntent.Device getIntent()`  L98
+- `RouteSnapshot getRoute()`  L102
+- `String getContentKey()`  L106
+- `HttpUrl getUrl()`  L110
+- `EndpointGrant getGrant()`  L114
+### `com.tuwinsmart.tuwin.core.transfer.AuthorizedTransferSource`
+L29 · [interface] public AuthorizedTransferSource · `com/tuwinsmart/tuwin/core/transfer/AuthorizedTransferSource.java`
+注解：
+
+方法（2）：
+- `String getFingerprint()`  L30
+- `HttpUrl getUrl()`  L32
+    - 体内字面量："Lcom/tuwinsmart/tuwin/core/transfer/AuthorizedTransferSource$Internet;" · "Lcom/tuwinsmart/tuwin/core/transfer/AuthorizedTransferSource;" · "url" · "Lokhttp3/HttpUrl;" · "allowedHosts" · "(Lokhttp3/HttpUrl;Ljava/util/Set;)V" · "getAllowedHosts" · "()Ljava/util/Set;" · "fingerprint" · "getFingerprint" · "()Ljava/lang/String;" · "getUrl" · "()Lokhttp3/HttpUrl;" · "redirect" · "rawUrl" · "Companion" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/AuthorizedTransferSource$Device;" · "Lcom/tuwinsmart/tuwin/core/transfer/AuthorizedTransferSource;" · "url" · "Lokhttp3/HttpUrl;" · "grant" · "Lcom/tuwinsmart/tuwin/core/network/EndpointGrant;" · "purpose" · "Lcom/tuwinsmart/tuwin/core/network/EndpointPurpose;" · "(Lokhttp3/HttpUrl;Lcom/tuwinsmart/tuwin/core/network/EndpointGrant;Lcom/tuwinsmart/tuwin/core/network/EndpointPurpose;)V" · "fingerprint" · "getFingerprint" · "()Ljava/lang/String;" · "getGrant" · "()Lcom/tuwinsmart/tuwin/core/network/EndpointGrant;" · "getPurpose" · "()Lcom/tuwinsmart/tuwin/core/network/EndpointPurpose;" · "getUrl" · "()Lokhttp3/HttpUrl;" · "Companion" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.AuthorizedTransferSource$Device`
+L150 · [class] public static final Device · implements `AuthorizedTransferSource` · `com/tuwinsmart/tuwin/core/transfer/AuthorizedTransferSource.java`
+注解：
+
+字段/常量（4）：
+- `String fingerprint`  L154
+- `EndpointGrant grant`  L155
+- `EndpointPurpose purpose`  L156
+- `HttpUrl url`  L157
+
+方法（6）：
+- ` Device(HttpUrl httpUrl, EndpointGrant endpointGrant, EndpointPurpose endpointPurpose, DefaultConstructorMarker defaultConstructorMarker)`  L159
+- `private Device(HttpUrl httpUrl, EndpointGrant endpointGrant, EndpointPurpose endpointPurpose)`  L163
+    - 体内字面量："device:" · ":" · ":"
+- `HttpUrl getUrl()`  L171 @Override
+- `EndpointGrant getGrant()`  L175
+- `EndpointPurpose getPurpose()`  L179
+- `String getFingerprint()`  L184 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/core/transfer/AuthorizedTransferSource$Device$Companion;" · "()V" · "authorize" · "Lcom/tuwinsmart/tuwin/core/transfer/AuthorizedTransferSource$Device;" · "authority" · "Lcom/tuwinsmart/tuwin/core/network/DeviceEndpointAuthority;" · "grantId" · "sessionId" · "routeRevision" · "purpose" · "Lcom/tuwinsmart/tuwin/core/network/EndpointPurpose;" · "rawUrl" · "fingerprintOf" · "value" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.AuthorizedTransferSource$Device$Companion`
+L190 · [class] public static final Companion · `com/tuwinsmart/tuwin/core/transfer/AuthorizedTransferSource.java`
+注解：
+
+方法（6）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L191
+- `private Companion()`  L195
+- `Device authorize(DeviceEndpointAuthority authority, String grantId, String sessionId, long routeRevision, EndpointPurpose purpose, String rawUrl)`  L198
+    - 体内字面量："authority" · "grantId" · "sessionId" · "purpose" · "rawUrl"
+- `String fingerprintOf(String value)`  L208
+    - 体内字面量："SHA-256" · "getBytes(...)" · "digest(...)"
+- `CharSequence invoke(byte b)`  L215
+    - 体内字面量："%02x" · "format(...)"
+- `CharSequence invoke(Byte b)`  L222 @Override
+### `com.tuwinsmart.tuwin.core.transfer.AuthorizedTransferSource$Internet`
+L36 · [class] public static final Internet · implements `AuthorizedTransferSource` · `com/tuwinsmart/tuwin/core/transfer/AuthorizedTransferSource.java`
+注解：
+
+字段/常量（4）：
+- `Set<String> allowedHosts`  L40
+- `String fingerprint`  L41
+- `HttpUrl url`  L42
+- `Set<String> set = this.allowedHosts`  L74
+
+方法（6）：
+- ` Internet(HttpUrl httpUrl, Set set, DefaultConstructorMarker defaultConstructorMarker)`  L44
+- `private Internet(HttpUrl httpUrl, Set<String> set)`  L48
+    - 体内字面量："internet:"
+- `HttpUrl getUrl()`  L55 @Override
+- `Set<String> getAllowedHosts()`  L59
+- `String getFingerprint()`  L64 @Override
+- `Internet redirect(String rawUrl)`  L68
+    - 体内字面量："rawUrl"
+### `com.tuwinsmart.tuwin.core.transfer.AuthorizedTransferSource$Internet$Companion`
+L85 · [class] public static final Companion · `com/tuwinsmart/tuwin/core/transfer/AuthorizedTransferSource.java`
+注解：
+
+方法（7）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L86
+- `private Companion()`  L90
+- `Internet authorize$default(Companion companion, String str, Set set, int i, Object obj)`  L94
+- `Internet authorize(String rawUrl, Set<String> allowedHosts)`  L101
+    - 体内字面量："rawUrl" · "allowedHosts" · "Invalid internet transfer URL" · "http" · "https" · "Internet transfer URL must use http or https" · "Internet transfer URL must not contain credentials" · "toLowerCase(...)"
+- `String fingerprintOf(String value)`  L126
+    - 体内字面量："SHA-256" · "getBytes(...)" · "digest(...)"
+- `CharSequence invoke(byte b)`  L133
+    - 体内字面量："%02x" · "format(...)"
+- `CharSequence invoke(Byte b)`  L140 @Override
+### `com.tuwinsmart.tuwin.core.transfer.AuthorizedTransferTarget`
+L15 · [interface] public AuthorizedTransferTarget · `com/tuwinsmart/tuwin/core/transfer/AuthorizedTransferTarget.java`
+注解：
+
+方法（4）：
+- `EndpointGrant getGrant()`  L16
+- `TransferHttpMethod getMethod()`  L18
+- `EndpointPurpose getPurpose()`  L20
+- `HttpUrl getUrl()`  L22
+    - 体内字面量："Lcom/tuwinsmart/tuwin/core/transfer/AuthorizedTransferTarget$Device;" · "Lcom/tuwinsmart/tuwin/core/transfer/AuthorizedTransferTarget;" · "url" · "Lokhttp3/HttpUrl;" · "grant" · "Lcom/tuwinsmart/tuwin/core/network/EndpointGrant;" · "purpose" · "Lcom/tuwinsmart/tuwin/core/network/EndpointPurpose;" · "method" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferHttpMethod;" · "(Lokhttp3/HttpUrl;Lcom/tuwinsmart/tuwin/core/network/EndpointGrant;Lcom/tuwinsmart/tuwin/core/network/EndpointPurpose;Lcom/tuwinsmart/tuwin/core/transfer/TransferHttpMethod;)V" · "getGrant" · "()Lcom/tuwinsmart/tuwin/core/network/EndpointGrant;" · "getMethod" · "()Lcom/tuwinsmart/tuwin/core/transfer/TransferHttpMethod;" · "getPurpose" · "()Lcom/tuwinsmart/tuwin/core/network/EndpointPurpose;" · "getUrl" · "()Lokhttp3/HttpUrl;" · "Companion" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.AuthorizedTransferTarget$Device`
+L26 · [class] public static final Device · implements `AuthorizedTransferTarget` · `com/tuwinsmart/tuwin/core/transfer/AuthorizedTransferTarget.java`
+注解：
+
+字段/常量（4）：
+- `EndpointGrant grant`  L30
+- `TransferHttpMethod method`  L31
+- `EndpointPurpose purpose`  L32
+- `HttpUrl url`  L33
+
+方法（6）：
+- ` Device(HttpUrl httpUrl, EndpointGrant endpointGrant, EndpointPurpose endpointPurpose, TransferHttpMethod transferHttpMethod, DefaultConstructorMarker defaultConstructorMarker)`  L35
+- `private Device(HttpUrl httpUrl, EndpointGrant endpointGrant, EndpointPurpose endpointPurpose, TransferHttpMethod transferHttpMethod)`  L39
+- `HttpUrl getUrl()`  L47 @Override
+- `EndpointGrant getGrant()`  L52 @Override
+- `EndpointPurpose getPurpose()`  L57 @Override
+- `TransferHttpMethod getMethod()`  L62 @Override
+    - 体内字面量："Lcom/tuwinsmart/tuwin/core/transfer/AuthorizedTransferTarget$Device$Companion;" · "()V" · "authorize" · "Lcom/tuwinsmart/tuwin/core/transfer/AuthorizedTransferTarget$Device;" · "authority" · "Lcom/tuwinsmart/tuwin/core/network/DeviceEndpointAuthority;" · "grantId" · "sessionId" · "routeRevision" · "purpose" · "Lcom/tuwinsmart/tuwin/core/network/EndpointPurpose;" · "rawUrl" · "method" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferHttpMethod;" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.AuthorizedTransferTarget$Device$Companion`
+L68 · [class] public static final Companion · `com/tuwinsmart/tuwin/core/transfer/AuthorizedTransferTarget.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L69
+- `private Companion()`  L73
+- `Device authorize(DeviceEndpointAuthority authority, String grantId, String sessionId, long routeRevision, EndpointPurpose purpose, String rawUrl, TransferHttpMethod method)`  L76
+    - 体内字面量："authority" · "grantId" · "sessionId" · "purpose" · "rawUrl" · "method"
+### `com.tuwinsmart.tuwin.core.transfer.DeviceOtaUploadQueue`
+L25 · [class] public final DeviceOtaUploadQueue · extends `ScopedTransferQueue` · `com/tuwinsmart/tuwin/core/transfer/DeviceOtaUploadQueue.java`
+注解：
+
+方法（5）：
+- `public DeviceOtaUploadQueue(CoroutineScope scope, StreamingTransferEngine engine)`  L27
+    - 体内字面量："scope" · "engine" · "<anonymous>" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferResult;" · "com.tuwinsmart.tuwin.core.transfer.DeviceOtaUploadQueue$submit$1" · "TransferQueues.kt" · "invokeSuspend"
+- `Deferred<TransferResult> submit(TransferUploadRequest request)`  L122
+    - 体内字面量："request"
+- `StateFlow<TransferState> state(String sessionId, TransferId id)`  L128
+    - 体内字面量："sessionId" · "id"
+- `void cancel(String sessionId, TransferId id)`  L134
+    - 体内字面量："sessionId" · "id"
+- `String namespace(String sessionId)`  L140
+    - 体内字面量："ota:"
+### `com.tuwinsmart.tuwin.core.transfer.DeviceOtaUploadQueue$C20741`
+L37 · [class] static final C20741 · extends `SuspendLambda implements Function1<Continuation<? super TransferResult>, Object>` · implements `Function1<Continuation<? super TransferResult>, Object>` · `com/tuwinsmart/tuwin/core/transfer/DeviceOtaUploadQueue.java`
+注解：
+
+字段/常量（10）：
+- `String $namespace`  L38
+- `TransferUploadRequest $request`  L39
+- `int label`  L40
+- `TransferState.Cancelled cancelled`  L61
+- `int i = this.label`  L63
+- `TransferUploadRequest transferUploadRequest = this.$request`  L67
+- `DeviceOtaUploadQueue deviceOtaUploadQueue = DeviceOtaUploadQueue.this`  L68
+- `String str = this.$namespace`  L69
+- `DeviceOtaUploadQueue deviceOtaUploadQueue2 = DeviceOtaUploadQueue.this`  L100
+- `String str2 = this.$namespace`  L101
+
+方法（5）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L50 @Override
+- `Object invoke(Continuation<? super TransferResult> continuation)`  L55 @Override
+- `Object invokeSuspend(Object obj)`  L60 @Override
+- `Unit invoke(TransferId transferId, TransferState transferState)`  L78 @Override
+- `void invoke2(TransferId id, TransferState state)`  L84
+    - 体内字面量："id" · "state" · "call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.core.transfer.DeviceTransferQueue`
+L30 · [class] public final DeviceTransferQueue · extends `ScopedTransferQueue` · `com/tuwinsmart/tuwin/core/transfer/DeviceTransferQueue.java`
+注解：
+
+字段/常量（1）：
+- `Function1<String, Ride3ProRequestExecutor> ride3ProExecutorProvider`  L31
+
+方法（9）：
+- ` DeviceTransferQueue(CoroutineScope coroutineScope, StreamingTransferEngine streamingTransferEngine, C20751 c20751, int i, DefaultConstructorMarker defaultConstructorMarker)`  L33
+- `Void invoke(String it)`  L36 @Override
+    - 体内字面量："it"
+- `public DeviceTransferQueue(CoroutineScope scope, StreamingTransferEngine engine, Function1<? super String, ? extends Ride3ProRequestExecutor> ride3ProExecutorProvider)`  L45
+    - 体内字面量："scope" · "engine" · "ride3ProExecutorProvider"
+- `Deferred<TransferResult> submit(TransferRequest request)`  L53
+    - 体内字面量："request" · "Failed requirement." · "Failed requirement." · "<anonymous>" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferResult;" · "com.tuwinsmart.tuwin.core.transfer.DeviceTransferQueue$submit$1" · "TransferQueues.kt" · "invokeSuspend"
+- `StateFlow<TransferState> state(String sessionId, TransferId id)`  L138
+    - 体内字面量："sessionId" · "id"
+- `void cancel(String sessionId, TransferId id)`  L144
+    - 体内字面量："sessionId" · "id"
+- `void release(String sessionId, TransferId id)`  L150
+    - 体内字面量："sessionId" · "id"
+- `TransferState stateFor(TransferResult result)`  L157
+    - 体内字面量："."
+- `String namespace(String sessionId)`  L175
+    - 体内字面量："device:"
+### `com.tuwinsmart.tuwin.core.transfer.DeviceTransferQueue$C20761`
+L69 · [class] static final C20761 · extends `SuspendLambda implements Function1<Continuation<? super TransferResult>, Object>` · implements `Function1<Continuation<? super TransferResult>, Object>` · `com/tuwinsmart/tuwin/core/transfer/DeviceTransferQueue.java`
+注解：
+
+字段/常量（6）：
+- `String $namespace`  L70
+- `TransferRequest $request`  L71
+- `int label`  L72
+- `DeviceTransferQueue this$0`  L73
+- `TransferResult transferResult`  L95
+- `int i = this.label`  L97
+
+方法（3）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L84 @Override
+- `Object invoke(Continuation<? super TransferResult> continuation)`  L89 @Override
+- `Object invokeSuspend(Object obj)`  L94 @Override
+### `com.tuwinsmart.tuwin.core.transfer.DeviceTransferQueue$submit$1$download$1`
+L19 · [class] final DeviceTransferQueue$submit$1$download$1 · extends `SuspendLambda implements Function1<Continuation<? super TransferResult>, Object>` · implements `Function1<Continuation<? super TransferResult>, Object>` · `com/tuwinsmart/tuwin/core/transfer/DeviceTransferQueue$submit$1$download$1.java`
+注解：
+
+字段/常量（8）：
+- `String $namespace`  L20
+- `TransferRequest $request`  L21
+- `int label`  L22
+- `DeviceTransferQueue this$0`  L23
+- `int i = this.label`  L46
+- `TransferRequest transferRequest = this.$request`  L50
+- `DeviceTransferQueue deviceTransferQueue = this.this$0`  L51
+- `String str = this.$namespace`  L52
+
+方法（5）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L34 @Override
+- `Object invoke(Continuation<? super TransferResult> continuation)`  L39 @Override
+- `Object invokeSuspend(Object obj)`  L44 @Override
+- `Unit invoke(TransferId transferId, TransferState transferState)`  L61 @Override
+- `void invoke2(TransferId id, TransferState state)`  L67
+    - 体内字面量："id" · "state" · "call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.core.transfer.IntegrityMismatchException`
+L10 · [class] public final IntegrityMismatchException · extends `IllegalStateException` · `com/tuwinsmart/tuwin/core/transfer/IntegrityMismatchException.java`
+注解：
+
+方法（1）：
+- `public IntegrityMismatchException(String message)`  L12
+    - 体内字面量："message"
+### `com.tuwinsmart.tuwin.core.transfer.IntegrityPolicy`
+L11 · [interface] public IntegrityPolicy · `com/tuwinsmart/tuwin/core/transfer/IntegrityPolicy.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/core/transfer/IntegrityPolicy$None;" · "Lcom/tuwinsmart/tuwin/core/transfer/IntegrityPolicy;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/IntegrityPolicy$ExpectedSize;" · "Lcom/tuwinsmart/tuwin/core/transfer/IntegrityPolicy;" · "bytes" · "(J)V" · "getBytes" · "()J" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/IntegrityPolicy$Sha256;" · "Lcom/tuwinsmart/tuwin/core/transfer/IntegrityPolicy;" · "hex" · "(Ljava/lang/String;)V" · "getHex" · "()Ljava/lang/String;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/IntegrityPolicy$ExpectedSizeAndSha256;" · "Lcom/tuwinsmart/tuwin/core/transfer/IntegrityPolicy;" · "bytes" · "hex" · "(JLjava/lang/String;)V" · "getBytes" · "()J" · "getHex" · "()Ljava/lang/String;" · "component1" · "component2" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.IntegrityPolicy$ExpectedSize`
+L42 · [class] public static final ExpectedSize · implements `IntegrityPolicy` · `com/tuwinsmart/tuwin/core/transfer/IntegrityPolicy.java`
+注解：
+
+字段/常量（1）：
+- `long bytes`  L43
+
+方法（8）：
+- `ExpectedSize copy$default(ExpectedSize expectedSize, long j, int i, Object obj)`  L45
+- `long getBytes()`  L53
+- `ExpectedSize copy(long bytes)`  L57
+- `boolean equals(Object other)`  L61
+- `int hashCode()`  L68
+- `String toString()`  L72
+    - 体内字面量："ExpectedSize(bytes=" · ")"
+- `public ExpectedSize(long j)`  L76
+    - 体内字面量："Failed requirement."
+- `long getBytes()`  L83
+### `com.tuwinsmart.tuwin.core.transfer.IntegrityPolicy$ExpectedSizeAndSha256`
+L140 · [class] public static final ExpectedSizeAndSha256 · implements `IntegrityPolicy` · `com/tuwinsmart/tuwin/core/transfer/IntegrityPolicy.java`
+注解：
+
+字段/常量（2）：
+- `long bytes`  L141
+- `String hex`  L142
+
+方法（10）：
+- `ExpectedSizeAndSha256 copy$default(ExpectedSizeAndSha256 expectedSizeAndSha256, long j, String str, int i, Object obj)`  L144
+- `long getBytes()`  L155
+- `String getHex()`  L160
+- `ExpectedSizeAndSha256 copy(long bytes, String hex)`  L164
+    - 体内字面量："hex"
+- `boolean equals(Object other)`  L169
+- `int hashCode()`  L180
+- `String toString()`  L184
+    - 体内字面量："ExpectedSizeAndSha256(bytes=" · ", hex=" · ")"
+- `public ExpectedSizeAndSha256(long j, String hex)`  L188
+    - 体内字面量："hex" · "Failed requirement." · "[0-9a-fA-F]{64}" · "Failed requirement."
+- `long getBytes()`  L200
+- `String getHex()`  L204
+### `com.tuwinsmart.tuwin.core.transfer.IntegrityPolicy$None`
+L15 · [class] public static final None · implements `IntegrityPolicy` · `com/tuwinsmart/tuwin/core/transfer/IntegrityPolicy.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L18
+- `int hashCode()`  L28
+- `String toString()`  L32
+    - 体内字面量："None"
+- `private None()`  L36
+### `com.tuwinsmart.tuwin.core.transfer.IntegrityPolicy$Sha256`
+L90 · [class] public static final Sha256 · implements `IntegrityPolicy` · `com/tuwinsmart/tuwin/core/transfer/IntegrityPolicy.java`
+注解：
+
+字段/常量（1）：
+- `String hex`  L91
+
+方法（8）：
+- `Sha256 copy$default(Sha256 sha256, String str, int i, Object obj)`  L93
+- `String getHex()`  L101
+- `Sha256 copy(String hex)`  L105
+    - 体内字面量："hex"
+- `boolean equals(Object other)`  L110
+- `int hashCode()`  L117
+- `String toString()`  L121
+    - 体内字面量："Sha256(hex=" · ")"
+- `public Sha256(String hex)`  L125
+    - 体内字面量："hex" · "[0-9a-fA-F]{64}" · "Failed requirement."
+- `String getHex()`  L133
+### `com.tuwinsmart.tuwin.core.transfer.IntegrityVerifier`
+L21 · [class] public final IntegrityVerifier · `com/tuwinsmart/tuwin/core/transfer/IntegrityVerifier.java`
+注解：
+
+字段/常量（3）：
+- `FileInputStream fileInputStream2 = fileInputStream`  L60
+- `byte[] bArr = new byte[8192]`  L61
+- `Unit unit = Unit.INSTANCE`  L65
+
+方法（6）：
+- `private IntegrityVerifier()`  L24
+- `void verify(File file, IntegrityPolicy policy)`  L27
+    - 体内字面量："file" · "policy" · "Transfer SHA-256 does not match expected value" · "Transfer SHA-256 does not match expected value"
+- `void requireSize(File file, long expected)`  L50
+    - 体内字面量："Transfer size does not match expected value"
+- `String sha256(File file)`  L56
+    - 体内字面量："SHA-256"
+- `CharSequence invoke(byte b)`  L70
+    - 体内字面量："%02x" · "format(...)"
+- `CharSequence invoke(Byte b)`  L77 @Override
+### `com.tuwinsmart.tuwin.core.transfer.InternetTransferQueue`
+L27 · [class] public final InternetTransferQueue · extends `ScopedTransferQueue` · `com/tuwinsmart/tuwin/core/transfer/InternetTransferQueue.java`
+注解：
+
+字段/常量（1）：
+- `String INTERNET_NAMESPACE = "internet"`  L31 @Deprecated
+
+方法（4）：
+- `public InternetTransferQueue(CoroutineScope scope, StreamingTransferEngine engine)`  L34
+    - 体内字面量："scope" · "engine"
+- `Deferred<TransferResult> submit(TransferRequest request)`  L40
+    - 体内字面量："request" · "Failed requirement." · "Failed requirement." · "<anonymous>" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferResult;" · "com.tuwinsmart.tuwin.core.transfer.InternetTransferQueue$submit$1" · "TransferQueues.kt" · "invokeSuspend"
+- `StateFlow<TransferState> state(TransferId id)`  L118
+    - 体内字面量："id"
+- `TransferState stateFor(TransferResult result)`  L124
+    - 体内字面量："." · "Lcom/tuwinsmart/tuwin/core/transfer/InternetTransferQueue$Companion;" · "()V" · "INTERNET_NAMESPACE" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.InternetTransferQueue$C20791`
+L55 · [class] static final C20791 · extends `SuspendLambda implements Function1<Continuation<? super TransferResult>, Object>` · implements `Function1<Continuation<? super TransferResult>, Object>` · `com/tuwinsmart/tuwin/core/transfer/InternetTransferQueue.java`
+注解：
+
+字段/常量（5）：
+- `TransferRequest $request`  L56
+- `int label`  L57
+- `int i = this.label`  L78
+- `TransferRequest transferRequest = this.$request`  L82
+- `InternetTransferQueue internetTransferQueue = InternetTransferQueue.this`  L83
+
+方法（5）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L66 @Override
+- `Object invoke(Continuation<? super TransferResult> continuation)`  L71 @Override
+- `Object invokeSuspend(Object obj)`  L76 @Override
+- `Unit invoke(TransferId transferId, TransferState transferState)`  L91 @Override
+- `void invoke2(TransferId id, TransferState state)`  L97
+    - 体内字面量："id" · "state" · "call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.core.transfer.InternetTransferQueue$Companion`
+L144 · [class] private static final Companion · `com/tuwinsmart/tuwin/core/transfer/InternetTransferQueue.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L145
+- `private Companion()`  L149
+### `com.tuwinsmart.tuwin.core.transfer.ResumePolicy`
+L11 · [interface] public ResumePolicy · `com/tuwinsmart/tuwin/core/transfer/ResumePolicy.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/core/transfer/ResumePolicy$Disabled;" · "Lcom/tuwinsmart/tuwin/core/transfer/ResumePolicy;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/ResumePolicy$HttpRange;" · "Lcom/tuwinsmart/tuwin/core/transfer/ResumePolicy;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/ResumePolicy$DeviceOffset;" · "Lcom/tuwinsmart/tuwin/core/transfer/ResumePolicy;" · "headerName" · "(Ljava/lang/String;)V" · "getHeaderName" · "()Ljava/lang/String;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/ResumePolicy$DeviceQueryOffset;" · "Lcom/tuwinsmart/tuwin/core/transfer/ResumePolicy;" · "parameterName" · "(Ljava/lang/String;)V" · "getParameterName" · "()Ljava/lang/String;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.ResumePolicy$DeviceOffset`
+L69 · [class] public static final DeviceOffset · implements `ResumePolicy` · `com/tuwinsmart/tuwin/core/transfer/ResumePolicy.java`
+注解：
+
+字段/常量（1）：
+- `String headerName`  L70
+
+方法（8）：
+- `DeviceOffset copy$default(DeviceOffset deviceOffset, String str, int i, Object obj)`  L72
+- `String getHeaderName()`  L80
+- `DeviceOffset copy(String headerName)`  L84
+    - 体内字面量："headerName"
+- `boolean equals(Object other)`  L89
+- `int hashCode()`  L96
+- `String toString()`  L100
+    - 体内字面量："DeviceOffset(headerName=" · ")"
+- `public DeviceOffset(String headerName)`  L104
+    - 体内字面量："headerName" · "Failed requirement."
+- `String getHeaderName()`  L112
+### `com.tuwinsmart.tuwin.core.transfer.ResumePolicy$DeviceQueryOffset`
+L119 · [class] public static final DeviceQueryOffset · implements `ResumePolicy` · `com/tuwinsmart/tuwin/core/transfer/ResumePolicy.java`
+注解：
+
+字段/常量（1）：
+- `String parameterName`  L120
+
+方法（8）：
+- `DeviceQueryOffset copy$default(DeviceQueryOffset deviceQueryOffset, String str, int i, Object obj)`  L122
+- `String getParameterName()`  L130
+- `DeviceQueryOffset copy(String parameterName)`  L134
+    - 体内字面量："parameterName"
+- `boolean equals(Object other)`  L139
+- `int hashCode()`  L146
+- `String toString()`  L150
+    - 体内字面量："DeviceQueryOffset(parameterName=" · ")"
+- `public DeviceQueryOffset(String parameterName)`  L154
+    - 体内字面量："parameterName" · "Failed requirement."
+- `String getParameterName()`  L162
+### `com.tuwinsmart.tuwin.core.transfer.ResumePolicy$Disabled`
+L15 · [class] public static final Disabled · implements `ResumePolicy` · `com/tuwinsmart/tuwin/core/transfer/ResumePolicy.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L18
+- `int hashCode()`  L28
+- `String toString()`  L32
+    - 体内字面量："Disabled"
+- `private Disabled()`  L36
+### `com.tuwinsmart.tuwin.core.transfer.ResumePolicy$HttpRange`
+L42 · [class] public static final HttpRange · implements `ResumePolicy` · `com/tuwinsmart/tuwin/core/transfer/ResumePolicy.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L45
+- `int hashCode()`  L55
+- `String toString()`  L59
+    - 体内字面量："HttpRange"
+- `private HttpRange()`  L63
+### `com.tuwinsmart.tuwin.core.transfer.ResumePolicyRegistry`
+L15 · [class] public final ResumePolicyRegistry · `com/tuwinsmart/tuwin/core/transfer/ResumePolicyRegistry.java`
+注解：
+
+字段/常量（1）：
+- `String lastModified`  L17
+
+方法（1）：
+- `long resumeOffset(ResumePolicy policy, TransferCheckpoint checkpoint, File localPart, AuthorizedTransferSource source, RouteSnapshot route)`  L16
+### `com.tuwinsmart.tuwin.core.transfer.ScopedTransferQueue`
+L32 · [class] public abstract ScopedTransferQueue · `com/tuwinsmart/tuwin/core/transfer/ScopedTransferQueue.java`
+注解：
+
+字段/常量（10）：
+- `String DEFAULT_NAMESPACE = "default"`  L36 @Deprecated
+- `StreamingTransferEngine engine`  L37
+- `ConcurrentHashMap<QueueKey, Job> jobs`  L38
+- `ConcurrentHashMap<QueueKey, CompletableDeferred<TransferResult>> results`  L39
+- `CoroutineScope scope`  L40
+- `ConcurrentHashMap<QueueKey, MutableStateFlow<TransferState>> states`  L41
+- `MutableStateFlow<TransferState> mutableStateFlowPutIfAbsent`  L217
+- `ConcurrentHashMap<QueueKey, MutableStateFlow<TransferState>> concurrentHashMap = this.states`  L220
+- `MutableStateFlow<TransferState> mutableStateFlowPutIfAbsent`  L240
+- `ConcurrentHashMap<QueueKey, MutableStateFlow<TransferState>> concurrentHashMap = this.states`  L244
+
+方法（16）：
+- `public ScopedTransferQueue(CoroutineScope scope, StreamingTransferEngine engine)`  L43
+    - 体内字面量："scope" · "engine"
+- `StreamingTransferEngine getEngine()`  L53
+    - 体内字面量："Lcom/tuwinsmart/tuwin/core/transfer/ScopedTransferQueue$QueueKey;" · "namespace" · "id" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferId;" · "(Ljava/lang/String;Lcom/tuwinsmart/tuwin/core/transfer/TransferId;)V" · "getId" · "()Lcom/tuwinsmart/tuwin/core/transfer/TransferId;" · "getNamespace" · "()Ljava/lang/String;" · "component1" · "component2" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+- `void cancel(TransferId id)`  L124
+    - 体内字面量："id"
+- `void cancelAll$default(ScopedTransferQueue scopedTransferQueue, String str, int i, Object obj)`  L129
+    - 体内字面量："Super calls with default arguments not supported in this target, function: cancelAll" · "Queue closed"
+- `void cancelAll(String reason)`  L139
+    - 体内字面量："reason" · "<get-values>(...)"
+- `Deferred<TransferResult> submit(final String namespace, final TransferId id, Function1<? super Continuation<? super TransferResult>, ? extends Object> block)`  L150
+    - 体内字面量："namespace" · "id" · "block"
+- `Unit invoke(Throwable th)`  L173 @Override
+- `void invoke2(Throwable th)`  L179
+- `Unit invoke(Throwable th)`  L192 @Override
+- `void invoke2(Throwable th)`  L198
+    - 体内字面量："Cancelled" · "Cancelled"
+- `StateFlow<TransferState> stateForNamespace(String namespace, TransferId id)`  L216
+- `void cancelForNamespace(String namespace, TransferId id)`  L230
+    - 体内字面量："namespace" · "id" · "Cancelled by caller"
+- `void update(String namespace, TransferId id, TransferState state)`  L239
+- `void releaseForNamespace(String namespace, TransferId id)`  L253
+    - 体内字面量："namespace" · "id"
+- `Unit invoke(Throwable th)`  L266 @Override
+- `void invoke2(Throwable th)`  L272
+    - 体内字面量："Lcom/tuwinsmart/tuwin/core/transfer/ScopedTransferQueue$Companion;" · "()V" · "DEFAULT_NAMESPACE" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.ScopedTransferQueue$Companion`
+L285 · [class] private static final Companion · `com/tuwinsmart/tuwin/core/transfer/ScopedTransferQueue.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L286
+- `private Companion()`  L290
+### `com.tuwinsmart.tuwin.core.transfer.ScopedTransferQueue$QueueKey`
+L59 · [class] private static final QueueKey · `com/tuwinsmart/tuwin/core/transfer/ScopedTransferQueue.java`
+注解：
+
+字段/常量（2）：
+- `TransferId id`  L60
+- `String namespace`  L61
+
+方法（10）：
+- `QueueKey copy$default(QueueKey queueKey, String str, TransferId transferId, int i, Object obj)`  L63
+- `String getNamespace()`  L74
+- `TransferId getId()`  L79
+- `QueueKey copy(String namespace, TransferId id)`  L83
+    - 体内字面量："namespace" · "id"
+- `boolean equals(Object other)`  L89
+- `int hashCode()`  L100
+- `String toString()`  L104
+    - 体内字面量："QueueKey(namespace=" · ", id=" · ")"
+- `public QueueKey(String namespace, TransferId id)`  L108
+    - 体内字面量："namespace" · "id"
+- `String getNamespace()`  L115
+- `TransferId getId()`  L119
+### `com.tuwinsmart.tuwin.core.transfer.ScopedTransferQueue$submit$job$1`
+L21 · [class] final ScopedTransferQueue$submit$job$1 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/core/transfer/ScopedTransferQueue$submit$job$1.java`
+注解：
+
+字段/常量（8）：
+- `Function1<Continuation<? super TransferResult>, Object> $block`  L22
+- `CompletableDeferred<TransferResult> $deferred`  L23
+- `TransferId $id`  L24
+- `String $namespace`  L25
+- `int label`  L26
+- `ScopedTransferQueue this$0`  L27
+- `int i = this.label`  L53
+- `Function1<Continuation<? super TransferResult>, Object> function1 = this.$block`  L57
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L41 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L46 @Override
+- `Object invokeSuspend(Object obj)`  L51 @Override
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine`
+L73 · [class] public final StreamingTransferEngine · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine.java`
+注解：
+
+字段/常量（40）：
+- `int MAX_REDIRECTS = 3`  L76 @Deprecated
+- `String RIDE3PRO_RAWDATA_PATH = "/api/playback/rawdata"`  L79 @Deprecated
+- `String UNEXPECTED_END_OF_STREAM_PREFIX = "unexpected end of stream on "`  L82 @Deprecated
+- `RoutedOkHttpProvider okHttpProvider`  L83
+- `Function2<TransferId, TransferState, Unit> onStateChanged`  L84
+- `ResumePolicyRegistry resumePolicyRegistry`  L85
+- `RouteProvider routeProvider`  L86
+- `C20891 c20891`  L301
+- `DisposableHandle disposableHandle`  L302
+- `DisposableHandle disposableHandleDispose`  L303
+- `RouteLease routeLeaseAcquire`  L304
+- `DisposableHandle disposableHandleInvokeOnCompletion`  L305
+- `DisposableHandle disposableHandleInvokeOnCompletion2`  L306
+- `AtomicReference<Call> atomicReference`  L307
+- `String str`  L308
+- `TransferResult.Failed failed`  L309
+- `Call andSet`  L310
+- `Call andSet2`  L311
+- `Response response`  L312
+- `Response response2`  L313
+- `TransferUploadRequest transferUploadRequest2 = transferUploadRequest`  L314
+- `Function2<? super TransferId, ? super TransferState, Unit> function3 = function2`  L315
+- `Object objExecuteCall = c20891.result`  L326
+- `?? r7 = c20891.label`  L328
+- `String str2 = "RouteSuperseded"`  L329
+- `Unit unit = Unit.INSTANCE`  L431
+- `RouteUnavailableException routeUnavailableException = e2`  L494
+- `Unit unit2 = Unit.INSTANCE`  L521
+- `String strSubstringAfter`  L1017
+- `String strSubstringBefore$default`  L1018
+- `C20901 c20901`  L1033
+- `DisposableHandle disposableHandleInvokeOnCompletion`  L1034
+- `CompletableJob completableJob`  L1035
+- `Object obj = c20901.result`  L1046
+- `int i = c20901.label`  L1048
+- `CancellableContinuationImpl cancellableContinuationImpl2 = cancellableContinuationImpl`  L1272
+- `CancellableContinuation<Response> cancellableContinuation = cancellableContinuationImpl2`  L1298
+- `Result.Companion companion = Result.INSTANCE`  L1299
+- `CancellableContinuation<Response> cancellableContinuation = cancellableContinuationImpl2`  L1313
+- `Result.Companion companion = Result.INSTANCE`  L1314
+
+方法（33）：
+- `public StreamingTransferEngine(RouteProvider routeProvider, RoutedOkHttpProvider okHttpProvider, ResumePolicyRegistry resumePolicyRegistry, Function2<? super TransferId, ? super TransferState, Unit> onStateChanged)`  L219
+    - 体内字面量："routeProvider" · "okHttpProvider" · "resumePolicyRegistry" · "onStateChanged"
+- ` StreamingTransferEngine(RouteProvider routeProvider, RoutedOkHttpProvider routedOkHttpProvider, ResumePolicyRegistry resumePolicyRegistry, C20831 c20831, int i, DefaultConstructorMarker defaultConstructorMarker)`  L230
+- `void invoke2(TransferId transferId, TransferState transferState)`  L233
+    - 体内字面量："<anonymous parameter 0>" · "<anonymous parameter 1>"
+- `Unit invoke(TransferId transferId, TransferState transferState)`  L239 @Override
+- `java.lang.Object download(com.tuwinsmart.tuwin.core.transfer.TransferRequest r25, kotlin.jvm.functions.Function2<? super com.tuwinsmart.tuwin.core.transfer.TransferId, ? super com.tuwinsmart.tuwin.core.transfer.TransferState, kotlin.Unit> r26, kotlin.coroutines.Continuation<? super com.tuwinsmart.tuwin.core.transfer.TransferResult> r27)`  L257
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine.download(com.tuwinsmart.tuwin.core.transfer.TransferRequest, kotlin.jvm.functions.Function2, kotlin.coroutines.Continuation):java.lang.Object"
+- `Object download$default(StreamingTransferEngine streamingTransferEngine, TransferRequest transferRequest, Function2 function2, Continuation continuation, int i, Object obj)`  L266
+- `Object upload(TransferUploadRequest transferUploadRequest, Function2<? super TransferId, ? super TransferState, Unit> function2, Continuation<? super TransferResult> continuation)`  L300
+- `Unit invoke(Throwable th)`  L344 @Override
+- `void invoke2(Throwable th)`  L350
+- `Unit invoke(Throwable th)`  L364 @Override
+- `void invoke2(Throwable th)`  L370
+    - 体内字面量："Transfer source file does not exist" · "Upload EndpointGrant does not match route revision"
+- `Unit invoke(Long l)`  L394 @Override
+- `void invoke(long j)`  L399
+    - 体内字面量："POST" · "PUT" · "Transfer upload failed: HTTP "
+- `Object upload$default(StreamingTransferEngine streamingTransferEngine, TransferUploadRequest transferUploadRequest, Function2 function2, Continuation continuation, int i, Object obj)`  L657
+- `void validateDeviceLease(TransferRequest request, RouteLease lease)`  L665
+    - 体内字面量："Device intent requires a device transfer source" · "Failed requirement." · "Device transfer EndpointGrant does not match route revision" · "Failed requirement."
+- `OkHttpClient scopedClient(RouteLease lease, TransferRequest request)`  L688
+- `OkHttpClient scopedClient(RouteLease lease, String endpointGrantId)`  L694
+- `java.lang.Object executeDownload(okhttp3.OkHttpClient r24, com.tuwinsmart.tuwin.core.transfer.TransferRequest r25, long r26, java.util.concurrent.atomic.AtomicReference<okhttp3.Call> r28, kotlin.coroutines.Continuation<? super okhttp3.Response> r29)`  L757
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine.executeDownload(okhttp3.OkHttpClient, com.tuwinsmart.tuwin.core.transfer.TransferRequest, long, java.util.concurrent.atomic.AtomicReference, kotlin.coroutines.Continuation):java.lang.Object"
+- `boolean requiresIsolatedRide3ProConnection(TransferRequest request)`  L766
+- `boolean isResponseHeaderEof(IOException error)`  L780
+- `Throwable invoke(Throwable it2)`  L790 @Override
+    - 体内字面量："it"
+- `long acceptedResponseOffset(ResumePolicy policy, long requestedOffset, int responseCode)`  L804
+    - 体内字面量："<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$copyResponse$2" · "StreamingTransferEngine.kt" · "invokeSuspend"
+- `Object copyResponse(ResponseBody responseBody, File file, long j, Long l, long j2, TransferId transferId, Function2<? super TransferId, ? super TransferState, Unit> function2, Function1<? super TransferCheckpoint, Unit> function1, AuthorizedTransferSource authorizedTransferSource, String str, String str2, String str3, Continuation<? super Unit> continuation)`  L1010
+- `Long contentRangeTotal(Headers headers, long offset, Long contentLength)`  L1016
+- `Object withLeaseCancellation(RouteLease routeLease, final AtomicReference<Call> atomicReference, Function1<? super Continuation<? super T>, ? extends Object> function1, Continuation<? super T> continuation)`  L1032
+- `Unit invoke(Throwable th2)`  L1076 @Override
+- `void invoke2(Throwable th2)`  L1082
+    - 体内字面量："Transfer route lease was closed" · "<anonymous>" · "Lkotlinx/coroutines/CoroutineScope;" · "com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$withLeaseCancellation$2" · "StreamingTransferEngine.kt" · "invokeSuspend"
+- `void replaceTarget(File partFile, File destination)`  L1166
+    - 体内字面量："Unable to replace transfer destination" · "Unable to finalize transfer destination" · "Lcom/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine$ProgressRequestBody;" · "Lokhttp3/RequestBody;" · "file" · "Ljava/io/File;" · "onProgress" · "Lkotlin/Function1;" · "(Ljava/io/File;Lkotlin/jvm/functions/Function1;)V" · "contentLength" · "contentType" · "Lokhttp3/MediaType;" · "writeTo" · "sink" · "Lokio/BufferedSink;" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine$TransferHttpException;" · "Ljava/io/IOException;" · "statusCode" · "message" · "(ILjava/lang/String;)V" · "getStatusCode" · "()I" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine$Companion;" · "()V" · "MAX_REDIRECTS" · "REDIRECT_CODES" · "getREDIRECT_CODES" · "()Ljava/util/Set;" · "RIDE3PRO_RAWDATA_PATH" · "UNEXPECTED_END_OF_STREAM_PREFIX" · "app_release_64"
+- `Object executeCall(OkHttpClient okHttpClient, Request request, final AtomicReference<Call> atomicReference, Continuation<? super Response> continuation)`  L1269
+- `Unit invoke(Throwable th)`  L1281 @Override
+- `void invoke2(Throwable th)`  L1287
+- `void onFailure(Call call, IOException e)`  L1293 @Override
+    - 体内字面量："call" · "e"
+- `void onResponse(Call call, Response response)`  L1305 @Override
+    - 体内字面量："call" · "response"
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$C20842`
+L823 · [class] static final C20842 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine.java`
+注解：
+
+字段/常量（46）：
+- `ResponseBody $body`  L824
+- `File $destination`  L825
+- `String $endpointGrantId`  L826
+- `String $entityTag`  L827
+- `String $lastModified`  L828
+- `long $offset`  L829
+- `Function1<TransferCheckpoint, Unit> $onCheckpoint`  L830
+- `TransferId $requestId`  L831
+- `long $routeRevision`  L832
+- `AuthorizedTransferSource $source`  L833
+- `Function2<TransferId, TransferState, Unit> $stateListener`  L834
+- `Long $total`  L835
+- `int label`  L836
+- `RandomAccessFile randomAccessFile`  L868
+- `Throwable th`  L869
+- `InputStream inputStream`  L870
+- `Throwable th2`  L871
+- `RandomAccessFile randomAccessFile2`  L872
+- `long j = this.$offset`  L883
+- `ResponseBody responseBody = this.$body`  L884
+- `Function2<TransferId, TransferState, Unit> function2 = this.$stateListener`  L885
+- `TransferId transferId = this.$requestId`  L886
+- `Long l = this.$total`  L887
+- `long j2 = this.$routeRevision`  L888
+- `Function1<TransferCheckpoint, Unit> function1 = this.$onCheckpoint`  L889
+- `AuthorizedTransferSource authorizedTransferSource = this.$source`  L890
+- `String str = this.$entityTag`  L891
+- `String str2 = this.$lastModified`  L892
+- `String str3 = this.$endpointGrantId`  L893
+- `RandomAccessFile randomAccessFile4 = randomAccessFile3`  L895
+- `String str4 = str2`  L896
+- `AuthorizedTransferSource authorizedTransferSource2 = authorizedTransferSource`  L897
+- `InputStream inputStream2 = inputStreamByteStream`  L916
+- `byte[] bArr = new byte[8192]`  L917
+- `RandomAccessFile randomAccessFile5 = randomAccessFile3`  L922
+- `Unit unit = Unit.INSTANCE`  L925
+- `Unit unit2 = Unit.INSTANCE`  L928
+- `InputStream inputStream3 = inputStream2`  L945
+- `String str5 = str4`  L949
+- `byte[] bArr2 = bArr`  L950
+- `RandomAccessFile randomAccessFile6 = randomAccessFile4`  L951
+- `String str6 = str`  L953
+- `AuthorizedTransferSource authorizedTransferSource3 = authorizedTransferSource2`  L954
+- `Function1<TransferCheckpoint, Unit> function3 = function1`  L956
+- `long j3 = j2`  L957
+- `Long l2 = l`  L960
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L857 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L862 @Override
+- `Object invokeSuspend(Object obj)`  L867 @Override
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$C20851`
+L113 · [class] static final C20851 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine.java`
+注解：
+
+字段/常量（10）：
+- `Object L$0`  L114
+- `Object L$1`  L115
+- `Object L$2`  L116
+- `Object L$3`  L117
+- `Object L$4`  L118
+- `Object L$5`  L119
+- `Object L$6`  L120
+- `Object L$7`  L121
+- `int label`  L122
+- `Object result`  L123
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L130 @Override
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$C20871`
+L141 · [class] static final C20871 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine.java`
+注解：
+
+字段/常量（15）：
+- `int I$0`  L142
+- `int I$1`  L143
+- `int I$2`  L144
+- `Object L$0`  L145
+- `Object L$1`  L146
+- `Object L$2`  L147
+- `Object L$3`  L148
+- `Object L$4`  L149
+- `Object L$5`  L150
+- `Object L$6`  L151
+- `Object L$7`  L152
+- `Object L$8`  L153
+- `boolean Z$0`  L154
+- `int label`  L155
+- `Object result`  L156
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L163 @Override
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$C20891`
+L174 · [class] static final C20891 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine.java`
+注解：
+
+字段/常量（8）：
+- `Object L$0`  L175
+- `Object L$1`  L176
+- `Object L$2`  L177
+- `Object L$3`  L178
+- `Object L$4`  L179
+- `Object L$5`  L180
+- `int label`  L181
+- `Object result`  L182
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L189 @Override
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$C20901`
+L200 · [class] static final C20901 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L201
+- `Object L$1`  L202
+- `int label`  L203
+- `Object result`  L204
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L211 @Override
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$C20912`
+L1122 · [class] static final C20912 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super T>, Object>` · implements `Function2<CoroutineScope, Continuation<? super T>, Object>` · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine.java`
+注解：
+
+字段/常量（4）：
+- `Function1<Continuation<? super T>, Object> $block`  L1123
+- `int label`  L1124
+- `int i = this.label`  L1146
+- `Function1<Continuation<? super T>, Object> function1 = this.$block`  L1149
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L1134 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super T> continuation)`  L1139 @Override
+- `Object invokeSuspend(Object obj)`  L1144 @Override
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$Companion`
+L1255 · [class] private static final Companion · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L1256
+- `private Companion()`  L1260
+- `Set<Integer> getREDIRECT_CODES()`  L1263
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$download$result$1`
+L20 · [class] final StreamingTransferEngine$download$result$1 · extends `SuspendLambda implements Function1<Continuation<? super TransferResult.Downloaded>, Object>` · implements `Function1<Continuation<? super TransferResult.Downloaded>, Object>` · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine$download$result$1.java`
+注解：
+
+字段/常量（13）：
+- `AtomicReference<Call> $callRef`  L21
+- `File $destination`  L22
+- `RouteLease $lease`  L23
+- `File $partFile`  L24
+- `TransferRequest $request`  L25
+- `Function2<TransferId, TransferState, Unit> $stateListener`  L26
+- `int I$0`  L27
+- `long J$0`  L28
+- `Object L$0`  L29
+- `Object L$1`  L30
+- `Object L$2`  L31
+- `int label`  L32
+- `StreamingTransferEngine this$0`  L33
+
+方法（3）：
+- `Continuation<Unit> create(Continuation<?> continuation)`  L49 @Override
+- `Object invoke(Continuation<? super TransferResult.Downloaded> continuation)`  L54 @Override
+- `java.lang.Object invokeSuspend(java.lang.Object r32)`  L68 @Override
+    - 体内字面量："Method not decompiled: com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$download$result$1.invokeSuspend(java.lang.Object):java.lang.Object"
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$ProgressRequestBody`
+L1181 · [class] private static final ProgressRequestBody · extends `RequestBody` · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine.java`
+注解：
+
+字段/常量（6）：
+- `File file`  L1182
+- `Function1<Long, Unit> onProgress`  L1183
+- `FileInputStream fileInputStream2 = fileInputStream`  L1209
+- `byte[] bArr = new byte[8192]`  L1210
+- `long j = 0`  L1211
+- `Unit unit = Unit.INSTANCE`  L1215
+
+方法（4）：
+- `public ProgressRequestBody(File file, Function1<? super Long, Unit> onProgress)`  L1186
+    - 体内字面量："file" · "onProgress"
+- `MediaType getContentType()`  L1195 @Override
+- `long contentLength()`  L1200 @Override
+- `void writeTo(BufferedSink sink)`  L1205 @Override
+    - 体内字面量："sink"
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$TransferHttpException`
+L1238 · [class] public static final TransferHttpException · extends `IOException` · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine.java`
+注解：
+
+字段/常量（1）：
+- `int statusCode`  L1239
+
+方法（2）：
+- `public TransferHttpException(int i, String message)`  L1242
+    - 体内字面量："message"
+- `int getStatusCode()`  L1248
+### `com.tuwinsmart.tuwin.core.transfer.StreamingTransferEngine$WhenMappings`
+L92 · [class] public WhenMappings · `com/tuwinsmart/tuwin/core/transfer/StreamingTransferEngine.java`
+注解：
+
+字段/常量（1）：
+- `int[] $EnumSwitchMapping$0`  L93
+### `com.tuwinsmart.tuwin.core.transfer.TransferCheckpoint`
+L11 · [class] public final TransferCheckpoint · `com/tuwinsmart/tuwin/core/transfer/TransferCheckpoint.java`
+注解：
+
+字段/常量（11）：
+- `String endpointGrantId`  L12
+- `String entityTag`  L13
+- `String lastModified`  L14
+- `long offset`  L15
+- `long routeRevision`  L16
+- `String sourceFingerprint`  L17
+- `Long totalBytes`  L18
+- `Long l = this.totalBytes`  L73
+- `String str = this.entityTag`  L75
+- `String str2 = this.lastModified`  L77
+- `String str3 = this.endpointGrantId`  L79
+
+方法（20）：
+- `String getSourceFingerprint()`  L21
+- `long getOffset()`  L26
+- `Long getTotalBytes()`  L31
+- `String getEntityTag()`  L36
+- `String getLastModified()`  L41
+- `long getRouteRevision()`  L46
+- `String getEndpointGrantId()`  L51
+- `TransferCheckpoint copy(String sourceFingerprint, long offset, Long totalBytes, String entityTag, String lastModified, long routeRevision, String endpointGrantId)`  L55
+    - 体内字面量："sourceFingerprint"
+- `boolean equals(Object other)`  L60
+- `int hashCode()`  L71
+- `String toString()`  L83
+    - 体内字面量："TransferCheckpoint(sourceFingerprint=" · ", offset=" · ", totalBytes=" · ", entityTag=" · ", lastModified=" · ", routeRevision=" · ", endpointGrantId=" · ")"
+- `public TransferCheckpoint(String sourceFingerprint, long j, Long l, String str, String str2, long j2, String str3)`  L87
+    - 体内字面量："sourceFingerprint" · "Failed requirement." · "Failed requirement."
+- ` TransferCheckpoint(String str, long j, Long l, String str2, String str3, long j2, String str4, int i, DefaultConstructorMarker defaultConstructorMarker)`  L104
+- `String getSourceFingerprint()`  L108
+- `long getOffset()`  L112
+- `Long getTotalBytes()`  L116
+- `String getEntityTag()`  L120
+- `String getLastModified()`  L124
+- `long getRouteRevision()`  L128
+- `String getEndpointGrantId()`  L132
+### `com.tuwinsmart.tuwin.core.transfer.TransferDestination`
+L12 · [interface] public TransferDestination · `com/tuwinsmart/tuwin/core/transfer/TransferDestination.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/core/transfer/TransferDestination$File;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferDestination;" · "file" · "Ljava/io/File;" · "checkpoint" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferCheckpoint;" · "partialFile" · "(Ljava/io/File;Lcom/tuwinsmart/tuwin/core/transfer/TransferCheckpoint;Ljava/io/File;)V" · "getCheckpoint" · "()Lcom/tuwinsmart/tuwin/core/transfer/TransferCheckpoint;" · "getFile" · "()Ljava/io/File;" · "getPartialFile" · "component1" · "component2" · "component3" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.TransferDestination$File`
+L16 · [class] public static final File · implements `TransferDestination` · `com/tuwinsmart/tuwin/core/transfer/TransferDestination.java`
+注解：
+
+字段/常量（5）：
+- `TransferCheckpoint checkpoint`  L17
+- `java.io.File file`  L18
+- `java.io.File partialFile`  L19
+- `TransferCheckpoint transferCheckpoint = this.checkpoint`  L67
+- `java.io.File file = this.partialFile`  L69
+
+方法（13）：
+- `File copy$default(File file, java.io.File file2, TransferCheckpoint transferCheckpoint, java.io.File file3, int i, Object obj)`  L21
+- `java.io.File getFile()`  L35
+- `TransferCheckpoint getCheckpoint()`  L40
+- `java.io.File getPartialFile()`  L45
+- `File copy(java.io.File file, TransferCheckpoint checkpoint, java.io.File partialFile)`  L49
+    - 体内字面量："file"
+- `boolean equals(Object other)`  L54
+- `int hashCode()`  L65
+- `String toString()`  L73
+    - 体内字面量："File(file=" · ", checkpoint=" · ", partialFile=" · ")"
+- `public File(java.io.File file, TransferCheckpoint transferCheckpoint, java.io.File file2)`  L77
+    - 体内字面量："file" · "getPath(...)" · "Failed requirement." · "getPath(...)" · "Failed requirement." · "Transfer partial file must differ from destination"
+- ` File(java.io.File file, TransferCheckpoint transferCheckpoint, java.io.File file2, int i, DefaultConstructorMarker defaultConstructorMarker)`  L99
+- `java.io.File getFile()`  L103
+- `TransferCheckpoint getCheckpoint()`  L107
+- `java.io.File getPartialFile()`  L111
+### `com.tuwinsmart.tuwin.core.transfer.TransferHttpMethod`
+L11 · [enum] public TransferHttpMethod · `com/tuwinsmart/tuwin/core/transfer/TransferHttpMethod.java`
+注解：
+
+枚举常量（2）：
+- `POST()`  L12
+- `PUT()`  L13
+
+方法（1）：
+- `EnumEntries<TransferHttpMethod> getEntries()`  L17
+### `com.tuwinsmart.tuwin.core.transfer.TransferId`
+L14 · [class] public final TransferId · `com/tuwinsmart/tuwin/core/transfer/TransferId.java`
+注解：
+
+字段/常量（1）：
+- `String value`  L18
+
+方法（8）：
+- `TransferId copy$default(TransferId transferId, String str, int i, Object obj)`  L20
+- `String getValue()`  L28
+- `TransferId copy(String value)`  L32
+    - 体内字面量："value"
+- `boolean equals(Object other)`  L37
+- `int hashCode()`  L44
+- `String toString()`  L48
+    - 体内字面量："TransferId(value=" · ")"
+- `public TransferId(String value)`  L52
+    - 体内字面量："value" · "Failed requirement."
+- `String getValue()`  L60
+    - 体内字面量："Lcom/tuwinsmart/tuwin/core/transfer/TransferId$Companion;" · "()V" · "random" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferId;" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.TransferId$Companion`
+L66 · [class] public static final Companion · `com/tuwinsmart/tuwin/core/transfer/TransferId.java`
+注解：
+
+方法（4）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L67
+- `private Companion()`  L71
+- `TransferId random$default(Companion companion, String str, int i, Object obj)`  L74
+    - 体内字面量："transfer"
+- `TransferId random(String prefix)`  L81
+    - 体内字面量："prefix" · "-"
+### `com.tuwinsmart.tuwin.core.transfer.TransferProgress`
+L10 · [class] public final TransferProgress · `com/tuwinsmart/tuwin/core/transfer/TransferProgress.java`
+注解：
+
+字段/常量（6）：
+- `long routeRevision`  L11
+- `Long totalBytes`  L12
+- `long transferredBytes`  L13
+- `long j3 = j`  L19
+- `Long l2 = l`  L23
+- `Long l = this.totalBytes`  L62
+
+方法（12）：
+- `TransferProgress copy$default(TransferProgress transferProgress, long j, Long l, long j2, int i, Object obj)`  L15
+- `long getTransferredBytes()`  L31
+- `Long getTotalBytes()`  L36
+- `long getRouteRevision()`  L41
+- `TransferProgress copy(long transferredBytes, Long totalBytes, long routeRevision)`  L45
+- `boolean equals(Object other)`  L49
+- `int hashCode()`  L60
+- `String toString()`  L66
+    - 体内字面量："TransferProgress(transferredBytes=" · ", totalBytes=" · ", routeRevision=" · ")"
+- `public TransferProgress(long j, Long l, long j2)`  L70
+- `long getTransferredBytes()`  L76
+- `Long getTotalBytes()`  L80
+- `long getRouteRevision()`  L84
+### `com.tuwinsmart.tuwin.core.transfer.TransferRequest`
+L15 · [class] public final TransferRequest · `com/tuwinsmart/tuwin/core/transfer/TransferRequest.java`
+注解：
+
+字段/常量（10）：
+- `TransferDestination.File destination`  L16
+- `DiagnosticContext diagnostics`  L17
+- `TransferId id`  L18
+- `IntegrityPolicy integrityPolicy`  L19
+- `NetworkIntent intent`  L20
+- `Function1<TransferCheckpoint, Unit> onCheckpoint`  L21
+- `ResumePolicy resumePolicy`  L22
+- `TransferRetryPolicy retryPolicy`  L23
+- `AuthorizedTransferSource source`  L24
+- `boolean z`  L105
+
+方法（26）：
+- `TransferId getId()`  L27
+- `NetworkIntent getIntent()`  L32
+- `AuthorizedTransferSource getSource()`  L37
+- `TransferDestination.File getDestination()`  L42
+- `ResumePolicy getResumePolicy()`  L47
+- `TransferRetryPolicy getRetryPolicy()`  L52
+- `IntegrityPolicy getIntegrityPolicy()`  L57
+- `DiagnosticContext getDiagnostics()`  L62
+- `Function1<TransferCheckpoint, Unit> component9()`  L66
+- `TransferRequest copy(TransferId id, NetworkIntent intent, AuthorizedTransferSource source, TransferDestination.File destination, ResumePolicy resumePolicy, TransferRetryPolicy retryPolicy, IntegrityPolicy integrityPolicy, DiagnosticContext diagnostics, Function1<? super TransferCheckpoint, Unit> onCheckpoint)`  L70
+    - 体内字面量："id" · "intent" · "source" · "destination" · "resumePolicy" · "retryPolicy" · "integrityPolicy" · "diagnostics" · "onCheckpoint"
+- `boolean equals(Object other)`  L83
+- `int hashCode()`  L94
+- `String toString()`  L98
+    - 体内字面量："TransferRequest(id=" · ", intent=" · ", source=" · ", destination=" · ", resumePolicy=" · ", retryPolicy=" · ", integrityPolicy=" · ", diagnostics=" · ", onCheckpoint=" · ")"
+- `public TransferRequest(TransferId id, NetworkIntent intent, AuthorizedTransferSource source, TransferDestination.File destination, ResumePolicy resumePolicy, TransferRetryPolicy retryPolicy, IntegrityPolicy integrityPolicy, DiagnosticContext diagnostics, Function1<? super TransferCheckpoint, Unit> onCheckpoint)`  L104
+- `TransferId getId()`  L181
+- `NetworkIntent getIntent()`  L185
+- `AuthorizedTransferSource getSource()`  L189
+- `TransferDestination.File getDestination()`  L193
+- ` TransferRequest(TransferId transferId, NetworkIntent networkIntent, AuthorizedTransferSource authorizedTransferSource, TransferDestination.File file, ResumePolicy resumePolicy, TransferRetryPolicy transferRetryPolicy, IntegrityPolicy integrityPolicy, DiagnosticContext diagnosticContext, Function1 function1, int i, DefaultConstructorMarker defaultConstructorMarker)`  L197
+- `void invoke2(TransferCheckpoint it)`  L200
+    - 体内字面量："it"
+- `Unit invoke(TransferCheckpoint transferCheckpoint)`  L205 @Override
+- `ResumePolicy getResumePolicy()`  L212
+- `TransferRetryPolicy getRetryPolicy()`  L216
+- `IntegrityPolicy getIntegrityPolicy()`  L220
+- `DiagnosticContext getDiagnostics()`  L224
+- `Function1<TransferCheckpoint, Unit> getOnCheckpoint()`  L228
+### `com.tuwinsmart.tuwin.core.transfer.TransferResult`
+L11 · [interface] public TransferResult · `com/tuwinsmart/tuwin/core/transfer/TransferResult.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/core/transfer/TransferResult$Downloaded;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferResult;" · "file" · "Ljava/io/File;" · "bytes" · "routeRevision" · "(Ljava/io/File;JJ)V" · "getBytes" · "()J" · "getFile" · "()Ljava/io/File;" · "getRouteRevision" · "component1" · "component2" · "component3" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferResult$Uploaded;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferResult;" · "bytes" · "routeRevision" · "(JJ)V" · "getBytes" · "()J" · "getRouteRevision" · "component1" · "component2" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferResult$Failed;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferResult;" · "error" · "(Ljava/lang/Throwable;)V" · "getError" · "()Ljava/lang/Throwable;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferResult$Cancelled;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferResult;" · "reason" · "(Ljava/lang/String;)V" · "getReason" · "()Ljava/lang/String;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.TransferResult$Cancelled`
+L205 · [class] public static final Cancelled · implements `TransferResult` · `com/tuwinsmart/tuwin/core/transfer/TransferResult.java`
+注解：
+
+字段/常量（1）：
+- `String reason`  L206
+
+方法（8）：
+- `Cancelled copy$default(Cancelled cancelled, String str, int i, Object obj)`  L208
+- `String getReason()`  L216
+- `Cancelled copy(String reason)`  L220
+    - 体内字面量："reason"
+- `boolean equals(Object other)`  L225
+- `int hashCode()`  L232
+- `String toString()`  L236
+    - 体内字面量："Cancelled(reason=" · ")"
+- `public Cancelled(String reason)`  L240
+    - 体内字面量："reason"
+- `String getReason()`  L245
+### `com.tuwinsmart.tuwin.core.transfer.TransferResult$Downloaded`
+L15 · [class] public static final Downloaded · implements `TransferResult` · `com/tuwinsmart/tuwin/core/transfer/TransferResult.java`
+注解：
+
+字段/常量（4）：
+- `long bytes`  L16
+- `File file`  L17
+- `long routeRevision`  L18
+- `long j3 = j`  L27
+
+方法（12）：
+- `Downloaded copy$default(Downloaded downloaded, File file, long j, long j2, int i, Object obj)`  L20
+- `File getFile()`  L35
+- `long getBytes()`  L40
+- `long getRouteRevision()`  L45
+- `Downloaded copy(File file, long bytes, long routeRevision)`  L49
+    - 体内字面量："file"
+- `boolean equals(Object other)`  L54
+- `int hashCode()`  L65
+- `String toString()`  L69
+    - 体内字面量："Downloaded(file=" · ", bytes=" · ", routeRevision=" · ")"
+- `public Downloaded(File file, long j, long j2)`  L73
+    - 体内字面量："file"
+- `long getBytes()`  L80
+- `File getFile()`  L84
+- `long getRouteRevision()`  L88
+### `com.tuwinsmart.tuwin.core.transfer.TransferResult$Failed`
+L158 · [class] public static final Failed · implements `TransferResult` · `com/tuwinsmart/tuwin/core/transfer/TransferResult.java`
+注解：
+
+字段/常量（1）：
+- `Throwable error`  L159
+
+方法（8）：
+- `Failed copy$default(Failed failed, Throwable th, int i, Object obj)`  L161
+- `Throwable getError()`  L169
+- `Failed copy(Throwable error)`  L173
+    - 体内字面量："error"
+- `boolean equals(Object other)`  L178
+- `int hashCode()`  L185
+- `String toString()`  L189
+    - 体内字面量："Failed(error=" · ")"
+- `public Failed(Throwable error)`  L193
+    - 体内字面量："error"
+- `Throwable getError()`  L198
+### `com.tuwinsmart.tuwin.core.transfer.TransferResult$Uploaded`
+L95 · [class] public static final Uploaded · implements `TransferResult` · `com/tuwinsmart/tuwin/core/transfer/TransferResult.java`
+注解：
+
+字段/常量（2）：
+- `long bytes`  L96
+- `long routeRevision`  L97
+
+方法（10）：
+- `Uploaded copy$default(Uploaded uploaded, long j, long j2, int i, Object obj)`  L99
+- `long getBytes()`  L110
+- `long getRouteRevision()`  L115
+- `Uploaded copy(long bytes, long routeRevision)`  L119
+- `boolean equals(Object other)`  L123
+- `int hashCode()`  L134
+- `String toString()`  L138
+    - 体内字面量："Uploaded(bytes=" · ", routeRevision=" · ")"
+- `public Uploaded(long j, long j2)`  L142
+- `long getBytes()`  L147
+- `long getRouteRevision()`  L151
+### `com.tuwinsmart.tuwin.core.transfer.TransferRetryPolicy`
+L9 · [interface] public TransferRetryPolicy · `com/tuwinsmart/tuwin/core/transfer/TransferRetryPolicy.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/core/transfer/TransferRetryPolicy$Disabled;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferRetryPolicy;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferRetryPolicy$ResumeFromCheckpoint;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferRetryPolicy;" · "maxRetries" · "(I)V" · "getMaxRetries" · "()I" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.TransferRetryPolicy$Disabled`
+L13 · [class] public static final Disabled · implements `TransferRetryPolicy` · `com/tuwinsmart/tuwin/core/transfer/TransferRetryPolicy.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L16
+- `int hashCode()`  L26
+- `String toString()`  L30
+    - 体内字面量："Disabled"
+- `private Disabled()`  L34
+### `com.tuwinsmart.tuwin.core.transfer.TransferRetryPolicy$ResumeFromCheckpoint`
+L40 · [class] public static final ResumeFromCheckpoint · implements `TransferRetryPolicy` · `com/tuwinsmart/tuwin/core/transfer/TransferRetryPolicy.java`
+注解：
+
+字段/常量（1）：
+- `int maxRetries`  L41
+
+方法（8）：
+- `ResumeFromCheckpoint copy$default(ResumeFromCheckpoint resumeFromCheckpoint, int i, int i2, Object obj)`  L43
+- `int getMaxRetries()`  L51
+- `ResumeFromCheckpoint copy(int maxRetries)`  L55
+- `boolean equals(Object other)`  L59
+- `int hashCode()`  L66
+- `String toString()`  L70
+    - 体内字面量："ResumeFromCheckpoint(maxRetries=" · ")"
+- `public ResumeFromCheckpoint(int i)`  L74
+    - 体内字面量："Failed requirement."
+- `int getMaxRetries()`  L81
+### `com.tuwinsmart.tuwin.core.transfer.TransferState`
+L11 · [interface] public TransferState · `com/tuwinsmart/tuwin/core/transfer/TransferState.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/core/transfer/TransferState$Idle;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferState;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferState$Queued;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferState;" · "()V" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferState$Running;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferState;" · "progress" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferProgress;" · "(Lcom/tuwinsmart/tuwin/core/transfer/TransferProgress;)V" · "getProgress" · "()Lcom/tuwinsmart/tuwin/core/transfer/TransferProgress;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferState$Completed;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferState;" · "file" · "Ljava/io/File;" · "bytes" · "routeRevision" · "(Ljava/io/File;JJ)V" · "getBytes" · "()J" · "getFile" · "()Ljava/io/File;" · "getRouteRevision" · "component1" · "component2" · "component3" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferState$Failed;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferState;" · "error" · "(Ljava/lang/Throwable;)V" · "getError" · "()Ljava/lang/Throwable;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferState$Cancelled;" · "Lcom/tuwinsmart/tuwin/core/transfer/TransferState;" · "reason" · "(Ljava/lang/String;)V" · "getReason" · "()Ljava/lang/String;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.TransferState$Cancelled`
+L243 · [class] public static final Cancelled · implements `TransferState` · `com/tuwinsmart/tuwin/core/transfer/TransferState.java`
+注解：
+
+字段/常量（1）：
+- `String reason`  L244
+
+方法（8）：
+- `Cancelled copy$default(Cancelled cancelled, String str, int i, Object obj)`  L246
+- `String getReason()`  L254
+- `Cancelled copy(String reason)`  L258
+    - 体内字面量："reason"
+- `boolean equals(Object other)`  L263
+- `int hashCode()`  L270
+- `String toString()`  L274
+    - 体内字面量："Cancelled(reason=" · ")"
+- `public Cancelled(String reason)`  L278
+    - 体内字面量："reason"
+- `String getReason()`  L283
+### `com.tuwinsmart.tuwin.core.transfer.TransferState$Completed`
+L116 · [class] public static final Completed · implements `TransferState` · `com/tuwinsmart/tuwin/core/transfer/TransferState.java`
+注解：
+
+字段/常量（4）：
+- `long bytes`  L117
+- `File file`  L118
+- `long routeRevision`  L119
+- `long j3 = j`  L128
+
+方法（12）：
+- `Completed copy$default(Completed completed, File file, long j, long j2, int i, Object obj)`  L121
+- `File getFile()`  L136
+- `long getBytes()`  L141
+- `long getRouteRevision()`  L146
+- `Completed copy(File file, long bytes, long routeRevision)`  L150
+    - 体内字面量："file"
+- `boolean equals(Object other)`  L155
+- `int hashCode()`  L166
+- `String toString()`  L170
+    - 体内字面量："Completed(file=" · ", bytes=" · ", routeRevision=" · ")"
+- `public Completed(File file, long j, long j2)`  L174
+    - 体内字面量："file"
+- `long getBytes()`  L181
+- `File getFile()`  L185
+- `long getRouteRevision()`  L189
+### `com.tuwinsmart.tuwin.core.transfer.TransferState$Failed`
+L196 · [class] public static final Failed · implements `TransferState` · `com/tuwinsmart/tuwin/core/transfer/TransferState.java`
+注解：
+
+字段/常量（1）：
+- `Throwable error`  L197
+
+方法（8）：
+- `Failed copy$default(Failed failed, Throwable th, int i, Object obj)`  L199
+- `Throwable getError()`  L207
+- `Failed copy(Throwable error)`  L211
+    - 体内字面量："error"
+- `boolean equals(Object other)`  L216
+- `int hashCode()`  L223
+- `String toString()`  L227
+    - 体内字面量："Failed(error=" · ")"
+- `public Failed(Throwable error)`  L231
+    - 体内字面量："error"
+- `Throwable getError()`  L236
+### `com.tuwinsmart.tuwin.core.transfer.TransferState$Idle`
+L15 · [class] public static final Idle · implements `TransferState` · `com/tuwinsmart/tuwin/core/transfer/TransferState.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L18
+- `int hashCode()`  L28
+- `String toString()`  L32
+    - 体内字面量："Idle"
+- `private Idle()`  L36
+### `com.tuwinsmart.tuwin.core.transfer.TransferState$Queued`
+L42 · [class] public static final Queued · implements `TransferState` · `com/tuwinsmart/tuwin/core/transfer/TransferState.java`
+注解：
+
+方法（4）：
+- `boolean equals(Object other)`  L45
+- `int hashCode()`  L55
+- `String toString()`  L59
+    - 体内字面量："Queued"
+- `private Queued()`  L63
+### `com.tuwinsmart.tuwin.core.transfer.TransferState$Running`
+L69 · [class] public static final Running · implements `TransferState` · `com/tuwinsmart/tuwin/core/transfer/TransferState.java`
+注解：
+
+字段/常量（1）：
+- `TransferProgress progress`  L70
+
+方法（8）：
+- `Running copy$default(Running running, TransferProgress transferProgress, int i, Object obj)`  L72
+- `TransferProgress getProgress()`  L80
+- `Running copy(TransferProgress progress)`  L84
+    - 体内字面量："progress"
+- `boolean equals(Object other)`  L89
+- `int hashCode()`  L96
+- `String toString()`  L100
+    - 体内字面量："Running(progress=" · ")"
+- `public Running(TransferProgress progress)`  L104
+    - 体内字面量："progress"
+- `TransferProgress getProgress()`  L109
+### `com.tuwinsmart.tuwin.core.transfer.TransferUploadRequest`
+L15 · [class] public final TransferUploadRequest · `com/tuwinsmart/tuwin/core/transfer/TransferUploadRequest.java`
+注解：
+
+字段/常量（12）：
+- `DiagnosticContext diagnostics`  L16
+- `TransferId id`  L17
+- `IntegrityPolicy integrityPolicy`  L18
+- `NetworkIntent.Device intent`  L19
+- `ResumePolicy resumePolicy`  L20
+- `File sourceFile`  L21
+- `AuthorizedTransferTarget.Device target`  L22
+- `NetworkIntent.Device device3 = device`  L31
+- `File file2 = file`  L35
+- `AuthorizedTransferTarget.Device device4 = device2`  L39
+- `ResumePolicy resumePolicy2 = resumePolicy`  L43
+- `IntegrityPolicy integrityPolicy2 = integrityPolicy`  L47
+
+方法（21）：
+- `TransferUploadRequest copy$default(TransferUploadRequest transferUploadRequest, TransferId transferId, NetworkIntent.Device device, File file, AuthorizedTransferTarget.Device device2, ResumePolicy resumePolicy, IntegrityPolicy integrityPolicy, DiagnosticContext diagnosticContext, int i, Object obj)`  L24
+- `TransferId getId()`  L55
+- `NetworkIntent.Device getIntent()`  L60
+- `File getSourceFile()`  L65
+- `AuthorizedTransferTarget.Device getTarget()`  L70
+- `ResumePolicy getResumePolicy()`  L75
+- `IntegrityPolicy getIntegrityPolicy()`  L80
+- `DiagnosticContext getDiagnostics()`  L85
+- `TransferUploadRequest copy(TransferId id, NetworkIntent.Device intent, File sourceFile, AuthorizedTransferTarget.Device target, ResumePolicy resumePolicy, IntegrityPolicy integrityPolicy, DiagnosticContext diagnostics)`  L89
+    - 体内字面量："id" · "intent" · "sourceFile" · "target" · "resumePolicy" · "integrityPolicy" · "diagnostics"
+- `boolean equals(Object other)`  L100
+- `int hashCode()`  L111
+- `String toString()`  L115
+    - 体内字面量："TransferUploadRequest(id=" · ", intent=" · ", sourceFile=" · ", target=" · ", resumePolicy=" · ", integrityPolicy=" · ", diagnostics=" · ")"
+- `public TransferUploadRequest(TransferId id, NetworkIntent.Device intent, File sourceFile, AuthorizedTransferTarget.Device target, ResumePolicy resumePolicy, IntegrityPolicy integrityPolicy, DiagnosticContext diagnostics)`  L119
+    - 体内字面量："id" · "intent" · "sourceFile" · "target" · "resumePolicy" · "integrityPolicy" · "diagnostics" · "getPath(...)" · "Failed requirement." · "Failed requirement." · "OTA upload intent must carry the target EndpointGrant" · "Failed requirement." · "Failed requirement." · "Failed requirement." · "Failed requirement."
+- `TransferId getId()`  L163
+- `NetworkIntent.Device getIntent()`  L167
+- `File getSourceFile()`  L171
+- `AuthorizedTransferTarget.Device getTarget()`  L175
+- ` TransferUploadRequest(TransferId transferId, NetworkIntent.Device device, File file, AuthorizedTransferTarget.Device device2, ResumePolicy resumePolicy, IntegrityPolicy integrityPolicy, DiagnosticContext diagnosticContext, int i, DefaultConstructorMarker defaultConstructorMarker)`  L179
+- `ResumePolicy getResumePolicy()`  L183
+- `IntegrityPolicy getIntegrityPolicy()`  L187
+- `DiagnosticContext getDiagnostics()`  L191
+### `com.tuwinsmart.tuwin.core.transfer.VerifiedDeviceFileCatalog`
+L42 · [class] public final VerifiedDeviceFileCatalog · `com/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileCatalog.java`
+注解：
+
+字段/常量（43）：
+- `DeviceEndpointAuthority endpointAuthority`  L43
+- `ConcurrentHashMap<CatalogKey, Set<VerifiedDeviceFileLocator>> evidence`  L44
+- `ConcurrentHashMap<CatalogKey, Set<String>> issuedGrantIds`  L45
+- `ConcurrentHashMap<PreviewKey, AuthorizedDeviceResource> m3PreviewResources`  L46
+- `ConcurrentHashMap<PreviewKey, AuthorizedDeviceResource> m3ThumbnailResources`  L47
+- `ConcurrentHashMap<PreviewKey, AuthorizedDeviceResource> ride3ProThumbnailResources`  L48
+- `ConcurrentHashMap<PreviewKey, AuthorizedDeviceResource> ride5PreviewResources`  L49
+- `DeviceSessionManager sessions`  L50
+- `Collection<Integer> collection = indices`  L236
+- `LinkedHashSet linkedHashSet2 = linkedHashSet`  L247
+- `ConcurrentHashMap<CatalogKey, Set<VerifiedDeviceFileLocator>> concurrentHashMap = this.evidence`  L248
+- `String strRide5ThumbnailPath`  L318
+- `ConcurrentHashMap<PreviewKey, AuthorizedDeviceResource> concurrentHashMap = this.ride5PreviewResources`  L342
+- `VerifiedDeviceFileCatalog verifiedDeviceFileCatalog = VerifiedDeviceFileCatalog.this`  L353
+- `CatalogKey catalogKey = catalogKeyRequireReadyKey`  L354
+- `ConcurrentHashMap<PreviewKey, AuthorizedDeviceResource> concurrentHashMap = this.m3PreviewResources`  L398
+- `VerifiedDeviceFileCatalog verifiedDeviceFileCatalog = VerifiedDeviceFileCatalog.this`  L409
+- `CatalogKey catalogKey = catalogKeyRequireM3PathKey`  L410
+- `ConcurrentHashMap<PreviewKey, AuthorizedDeviceResource> concurrentHashMap = this.m3ThumbnailResources`  L442
+- `VerifiedDeviceFileCatalog verifiedDeviceFileCatalog = VerifiedDeviceFileCatalog.this`  L453
+- `ConcurrentHashMap<PreviewKey, AuthorizedDeviceResource> concurrentHashMap = this.ride3ProThumbnailResources`  L526
+- `VerifiedDeviceFileCatalog verifiedDeviceFileCatalog = VerifiedDeviceFileCatalog.this`  L537
+- `Collection<String> collection = paths`  L603
+- `LinkedHashSet linkedHashSet2 = linkedHashSet`  L614
+- `ConcurrentHashMap<CatalogKey, Set<VerifiedDeviceFileLocator>> concurrentHashMap = this.evidence`  L615
+- `Collection<String> collection = paths`  L655
+- `ArrayList arrayList2 = arrayList`  L661
+- `Collection<Integer> collection = indices`  L700
+- `ArrayList arrayList2 = arrayList`  L706
+- `DeviceOperationKind deviceOperationKind`  L724
+- `DeviceEndpointAuthority deviceEndpointAuthority = this.endpointAuthority`  L726
+- `DeviceEndpointProtocol deviceEndpointProtocol = DeviceEndpointProtocol.HTTP`  L729
+- `List<HttpUrl> list = urls`  L731
+- `LinkedHashSet linkedHashSet2 = linkedHashSet`  L743
+- `EndpointGrantSource endpointGrantSource = EndpointGrantSource.DEVICE_FILE_LIST`  L744
+- `LinkedHashSet linkedHashSet4 = linkedHashSet3`  L750
+- `ConcurrentHashMap<CatalogKey, Set<String>> concurrentHashMap = this.issuedGrantIds`  L760
+- `String serial`  L801
+- `String str = string`  L804
+- `String[] strArr = new String[6]`  L809
+- `String host`  L830
+- `DeviceEndpointAuthority deviceEndpointAuthority = this.endpointAuthority`  L973
+- `String str = strRemovePrefix`  L983
+
+方法（68）：
+- `public VerifiedDeviceFileCatalog(DeviceEndpointAuthority endpointAuthority, DeviceSessionManager sessions)`  L52
+    - 体内字面量："endpointAuthority" · "sessions" · "Lcom/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileCatalog$CatalogKey;" · "sessionId" · "routeRevision" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceType;" · "(Ljava/lang/String;JLcom/tuwinsmart/tuwin/domain/model/DeviceType;)V" · "getDeviceType" · "()Lcom/tuwinsmart/tuwin/domain/model/DeviceType;" · "getRouteRevision" · "()J" · "getSessionId" · "()Ljava/lang/String;" · "component1" · "component2" · "component3" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileCatalog$PreviewKey;" · "catalog" · "Lcom/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileCatalog$CatalogKey;" · "targetPath" · "(Lcom/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileCatalog$CatalogKey;Ljava/lang/String;)V" · "getCatalog" · "()Lcom/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileCatalog$CatalogKey;" · "getTargetPath" · "()Ljava/lang/String;" · "component1" · "component2" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+- `void recordRide5Paths(String sessionId, Collection<String> paths)`  L213
+    - 体内字面量："sessionId" · "paths"
+- `void recordM3Paths(String sessionId, Collection<String> paths)`  L219
+    - 体内字面量："sessionId" · "paths"
+- `void recordRide3ProIndices(String sessionId, Collection<Integer> indices)`  L225
+    - 体内字面量："sessionId" · "indices"
+- `void recordRide3ProIndices(String sessionId, Collection<Integer> indices, DeviceType deviceType)`  L231
+    - 体内字面量："sessionId" · "indices"
+- `Set<VerifiedDeviceFileLocator> invoke(CatalogKey catalogKey, Set<VerifiedDeviceFileLocator> set)`  L256 @Override
+    - 体内字面量："<anonymous parameter 0>"
+- `Object apply(Object obj, Object obj2)`  L267 @Override
+- `Set recordRide3ProIndices$lambda$1(Function2 tmp0, Object obj, Object obj2)`  L274
+    - 体内字面量："$tmp0"
+- `List<AuthorizedDeviceResource> authorizeRide5Downloads(String sessionId, Collection<String> paths)`  L279
+    - 体内字面量："sessionId" · "paths"
+- `String invoke(String it)`  L284 @Override
+    - 体内字面量："it"
+- `AuthorizedDeviceResource authorizeRide5Thumbnail(String sessionId, String videoPath)`  L291
+    - 体内字面量："sessionId" · "videoPath"
+- `String invoke(String it)`  L303 @Override
+    - 体内字面量："it"
+- `AuthorizedDeviceResource authorizeRide5Preview$default(VerifiedDeviceFileCatalog verifiedDeviceFileCatalog, String str, String str2, Long l, int i, Object obj)`  L310
+- `AuthorizedDeviceResource authorizeRide5Preview(String sessionId, String filePath, Long expectedRouteRevision)`  L317
+- `AuthorizedDeviceResource invoke(PreviewKey it)`  L351 @Override
+    - 体内字面量："it"
+- `Object apply(Object obj)`  L360 @Override
+    - 体内字面量："computeIfAbsent(...)"
+- `AuthorizedDeviceResource authorizeRide5Preview$lambda$4(Function1 tmp0, Object obj)`  L369
+    - 体内字面量："$tmp0"
+- `List<AuthorizedDeviceResource> authorizeM3Downloads(String sessionId, Collection<String> paths)`  L374
+    - 体内字面量："sessionId" · "paths"
+- `String invoke(String it)`  L379 @Override
+    - 体内字面量："it"
+- `AuthorizedDeviceResource authorizeM3Preview$default(VerifiedDeviceFileCatalog verifiedDeviceFileCatalog, String str, String str2, Long l, int i, Object obj)`  L386
+- `AuthorizedDeviceResource authorizeM3Preview(String sessionId, String filePath, Long expectedRouteRevision)`  L393
+    - 体内字面量："sessionId" · "filePath"
+- `AuthorizedDeviceResource invoke(PreviewKey it)`  L407 @Override
+    - 体内字面量："it"
+- `Object apply(Object obj)`  L416 @Override
+    - 体内字面量："computeIfAbsent(...)"
+- `AuthorizedDeviceResource authorizeM3Preview$lambda$5(Function1 tmp0, Object obj)`  L425
+    - 体内字面量："$tmp0"
+- `AuthorizedDeviceResource authorizeM3Thumbnail$default(VerifiedDeviceFileCatalog verifiedDeviceFileCatalog, String str, String str2, Long l, int i, Object obj)`  L430
+- `AuthorizedDeviceResource authorizeM3Thumbnail(String sessionId, String filePath, Long expectedRouteRevision)`  L437
+    - 体内字面量："sessionId" · "filePath"
+- `AuthorizedDeviceResource invoke(PreviewKey it)`  L451 @Override
+    - 体内字面量："it"
+- `Object apply(Object obj)`  L459 @Override
+    - 体内字面量："computeIfAbsent(...)"
+- `AuthorizedDeviceResource authorizeM3Thumbnail$lambda$6(Function1 tmp0, Object obj)`  L468
+    - 体内字面量："$tmp0"
+- `String requireM3Path(String sessionId, String filePath)`  L473
+    - 体内字面量："sessionId" · "filePath" · "M3 media path is not present in the verified session catalog"
+- `List<AuthorizedDeviceResource> authorizeRide3ProDownloads(String sessionId, Collection<Integer> indices)`  L488
+    - 体内字面量："sessionId" · "indices"
+- `List<AuthorizedDeviceResource> authorizeRide3ProDownloads(String sessionId, Collection<Integer> indices, DeviceType deviceType)`  L494
+    - 体内字面量："sessionId" · "indices"
+- `AuthorizedDeviceResource authorizeRide3ProThumbnail$default(VerifiedDeviceFileCatalog verifiedDeviceFileCatalog, String str, int i, Long l, int i2, Object obj)`  L500
+- `AuthorizedDeviceResource authorizeRide3ProThumbnail(String sessionId, int fileIndex, Long expectedRouteRevision)`  L507
+    - 体内字面量："sessionId"
+- `AuthorizedDeviceResource authorizeRide3ProThumbnail(String sessionId, int fileIndex, Long expectedRouteRevision, DeviceType deviceType)`  L512
+    - 体内字面量："sessionId" · "RIDE3PRO thumbnail task route revision is stale" · "Ride3Pro file_index is not present in the verified session catalog"
+- `AuthorizedDeviceResource invoke(PreviewKey it)`  L535 @Override
+    - 体内字面量："it"
+- `Object apply(Object obj)`  L543 @Override
+    - 体内字面量："computeIfAbsent(...)"
+- `AuthorizedDeviceResource authorizeRide3ProThumbnail$lambda$10(Function1 tmp0, Object obj)`  L552
+    - 体内字面量："$tmp0"
+- `void onRouteChanged(String sessionId, RouteSnapshot replacement)`  L557
+    - 体内字面量："sessionId" · "replacement" · "<get-keys>(...)"
+- `void clearSession(String sessionId)`  L575
+    - 体内字面量："sessionId" · "<get-keys>(...)"
+- `void clear()`  L591
+    - 体内字面量："<get-keys>(...)"
+- `void recordPaths(String sessionId, DeviceType deviceType, Collection<String> paths)`  L600
+- `Set<VerifiedDeviceFileLocator> invoke(CatalogKey catalogKey, Set<VerifiedDeviceFileLocator> set)`  L623 @Override
+    - 体内字面量："<anonymous parameter 0>"
+- `Object apply(Object obj, Object obj2)`  L634 @Override
+- `Set recordPaths$lambda$18(Function2 tmp0, Object obj, Object obj2)`  L641
+    - 体内字面量："$tmp0"
+- `List<AuthorizedDeviceResource> authorizePaths(String sessionId, DeviceType deviceType, Collection<String> paths, EndpointPurpose purpose, Function1<? super String, String> transform)`  L646
+    - 体内字面量："Device file authorization requires at least one path"
+- `CatalogKey requireM3PathKey(String sessionId, String canonicalPath, Long expectedRouteRevision)`  L676
+    - 体内字面量："M3 image task route revision is stale" · "M3 image path is not present in the verified session catalog"
+- `List<AuthorizedDeviceResource> authorizeRide3Pro(String sessionId, Collection<Integer> indices, EndpointPurpose purpose, String path, DeviceType deviceType)`  L691
+    - 体内字面量："Ride3Pro file authorization requires at least one index"
+- `List<AuthorizedDeviceResource> issueResources(CatalogKey key, List<HttpUrl> urls, EndpointPurpose purpose)`  L723
+- `Set<String> invoke(CatalogKey it5)`  L763 @Override
+    - 体内字面量："it"
+- `Object apply(Object obj)`  L770 @Override
+    - 体内字面量："Device file route disappeared during authorization"
+- `Set issueResources$lambda$35(Function1 tmp0, Object obj)`  L795
+    - 体内字面量："$tmp0"
+- `String identityScopeOf(CatalogKey key, DeviceSessionSnapshot snapshot)`  L800
+- `String contentKeyOf(CatalogKey key, String identityScope, HttpUrl url, EndpointPurpose purpose)`  L808
+- `HttpUrl buildDirectUrl(CatalogKey key, String path)`  L824
+- `HttpUrl baseUrl(EndpointGrant grant)`  L829
+- `EndpointGrant requireControlGrant(CatalogKey key)`  L848
+    - 体内字面量："Device session route is unavailable" · "Device file catalog route is stale" · "Device session control grant is unavailable"
+- `DeviceType resolveRideHttpDeviceType(String sessionId, DeviceType requested)`  L869
+    - 体内字面量："Ride3Pro file catalog does not support "
+- `CatalogKey requireReadyKey(String sessionId, DeviceType deviceType)`  L883
+    - 体内字面量："Device file operation requires sessionId" · "Device file session type mismatch" · "Device file session is not READY" · "Device file session has no route"
+- `void replaceOtherRevisions(CatalogKey current)`  L901
+    - 体内字面量："<get-keys>(...)"
+- `void removeKey(final CatalogKey key)`  L917
+    - 体内字面量："<get-keys>(...)"
+- `Boolean invoke(PreviewKey it)`  L927 @Override
+    - 体内字面量："it" · "<get-keys>(...)"
+- `Boolean invoke(PreviewKey it)`  L940 @Override
+    - 体内字面量："it" · "<get-keys>(...)"
+- `Boolean invoke(PreviewKey it)`  L953 @Override
+    - 体内字面量："it" · "<get-keys>(...)"
+- `Boolean invoke(PreviewKey it)`  L966 @Override
+    - 体内字面量："it"
+- `String canonicalPath(String raw)`  L981
+    - 体内字面量："/"
+- `String ride5ThumbnailPath(String videoPath)`  L1001
+    - 体内字面量："." · "MP4" · "TS" · "RIDE5 thumbnail derivation is only confirmed for MP4/TS files" · "THM"
+- `int requireRide3ProIndex(int value)`  L1009
+    - 体内字面量："Ride3Pro file_index is outside the confirmed range"
+### `com.tuwinsmart.tuwin.core.transfer.VerifiedDeviceFileCatalog$CatalogKey`
+L67 · [class] private static final CatalogKey · `com/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileCatalog.java`
+注解：
+
+字段/常量（3）：
+- `DeviceType deviceType`  L68
+- `long routeRevision`  L69
+- `String sessionId`  L70
+
+方法（12）：
+- `CatalogKey copy$default(CatalogKey catalogKey, String str, long j, DeviceType deviceType, int i, Object obj)`  L72
+- `String getSessionId()`  L86
+- `long getRouteRevision()`  L91
+- `DeviceType getDeviceType()`  L96
+- `CatalogKey copy(String sessionId, long routeRevision, DeviceType deviceType)`  L100
+    - 体内字面量："sessionId" · "deviceType"
+- `boolean equals(Object other)`  L106
+- `int hashCode()`  L117
+- `String toString()`  L121
+    - 体内字面量："CatalogKey(sessionId=" · ", routeRevision=" · ", deviceType=" · ")"
+- `public CatalogKey(String sessionId, long j, DeviceType deviceType)`  L125
+    - 体内字面量："sessionId" · "deviceType"
+- `String getSessionId()`  L133
+- `long getRouteRevision()`  L137
+- `DeviceType getDeviceType()`  L141
+### `com.tuwinsmart.tuwin.core.transfer.VerifiedDeviceFileCatalog$PreviewKey`
+L148 · [class] private static final PreviewKey · `com/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileCatalog.java`
+注解：
+
+字段/常量（2）：
+- `CatalogKey catalog`  L149
+- `String targetPath`  L150
+
+方法（10）：
+- `PreviewKey copy$default(PreviewKey previewKey, CatalogKey catalogKey, String str, int i, Object obj)`  L152
+- `CatalogKey getCatalog()`  L163
+- `String getTargetPath()`  L168
+- `PreviewKey copy(CatalogKey catalog, String targetPath)`  L172
+    - 体内字面量："catalog" · "targetPath"
+- `boolean equals(Object other)`  L178
+- `int hashCode()`  L189
+- `String toString()`  L193
+    - 体内字面量："PreviewKey(catalog=" · ", targetPath=" · ")"
+- `public PreviewKey(CatalogKey catalog, String targetPath)`  L197
+    - 体内字面量："catalog" · "targetPath"
+- `CatalogKey getCatalog()`  L204
+- `String getTargetPath()`  L208
+### `com.tuwinsmart.tuwin.core.transfer.VerifiedDeviceFileCatalogKt`
+L9 · [class] public final VerifiedDeviceFileCatalogKt · `com/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileCatalogKt.java`
+注解：
+
+字段/常量（2）：
+- `String CONTENT_KEY_NAMESPACE = "device-image"`  L10
+- `String CONTENT_KEY_SEPARATOR = "|"`  L11
+### `com.tuwinsmart.tuwin.core.transfer.VerifiedDeviceFileLocator`
+L10 · [interface] public VerifiedDeviceFileLocator · `com/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileLocator.java`
+注解：
+
+字面量："Lcom/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileLocator$Path;" · "Lcom/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileLocator;" · "value" · "(Ljava/lang/String;)V" · "getValue" · "()Ljava/lang/String;" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64" · "Lcom/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileLocator$Ride3ProIndex;" · "Lcom/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileLocator;" · "value" · "(I)V" · "getValue" · "()I" · "component1" · "copy" · "equals" · "other" · "hashCode" · "toString" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.transfer.VerifiedDeviceFileLocator$Path`
+L14 · [class] public static final Path · implements `VerifiedDeviceFileLocator` · `com/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileLocator.java`
+注解：
+
+字段/常量（1）：
+- `String value`  L15
+
+方法（8）：
+- `Path copy$default(Path path, String str, int i, Object obj)`  L17
+- `String getValue()`  L25
+- `Path copy(String value)`  L29
+    - 体内字面量："value"
+- `boolean equals(Object other)`  L34
+- `int hashCode()`  L41
+- `String toString()`  L45
+    - 体内字面量："Path(value=" · ")"
+- `public Path(String value)`  L49
+    - 体内字面量："value"
+- `String getValue()`  L54
+### `com.tuwinsmart.tuwin.core.transfer.VerifiedDeviceFileLocator$Ride3ProIndex`
+L61 · [class] public static final Ride3ProIndex · implements `VerifiedDeviceFileLocator` · `com/tuwinsmart/tuwin/core/transfer/VerifiedDeviceFileLocator.java`
+注解：
+
+字段/常量（1）：
+- `int value`  L62
+
+方法（8）：
+- `Ride3ProIndex copy$default(Ride3ProIndex ride3ProIndex, int i, int i2, Object obj)`  L64
+- `int getValue()`  L72
+- `Ride3ProIndex copy(int value)`  L76
+- `boolean equals(Object other)`  L80
+- `int hashCode()`  L87
+- `String toString()`  L91
+    - 体内字面量："Ride3ProIndex(value=" · ")"
+- `public Ride3ProIndex(int i)`  L95
+    - 体内字面量："Failed requirement."
+- `int getValue()`  L102

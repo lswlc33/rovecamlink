@@ -1,0 +1,190 @@
+# TUWIN — 类与成员明细：com.tuwinsmart.tuwin.presentation.p010ui.device.list
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 4 个文件 / 11 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.list.adapter.DeviceEntryNamePolicy`
+L13 · [class] public final DeviceEntryNamePolicy · `com/tuwinsmart/tuwin/presentation/p010ui/device/list/adapter/DeviceEntryNamePolicy.java`
+注解：
+
+方法（2）：
+- `private DeviceEntryNamePolicy()`  L16
+- `int nameResId(DeviceType deviceType)`  L19
+    - 体内字面量："deviceType"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.list.adapter.DeviceTypeAdapter`
+L24 · [class] public final DeviceTypeAdapter · extends `ListAdapter<DeviceListItem, RecyclerView.ViewHolder>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/list/adapter/DeviceTypeAdapter.java`
+注解：
+
+字段/常量（3）：
+- `int VIEW_TYPE_DEVICE = 1`  L25
+- `int VIEW_TYPE_HEADER = 0`  L26
+- `Function1<DeviceType, Unit> onDeviceClick`  L27
+
+方法（4）：
+- `public DeviceTypeAdapter(Function1<? super DeviceType, Unit> onDeviceClick)`  L31
+    - 体内字面量："onDeviceClick"
+- `int getItemViewType(int position)`  L38 @Override
+- `RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)`  L50 @Override
+    - 体内字面量："parent" · "inflate(...)" · "inflate(...)" · "Unknown view type: "
+- `void onBindViewHolder(RecyclerView.ViewHolder holder, int position)`  L66 @Override
+    - 体内字面量："holder" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/list/adapter/DeviceTypeAdapter$HeaderViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemDeviceHeaderBinding;" · "(Lcom/tuwinsmart/tuwin/databinding/ItemDeviceHeaderBinding;)V" · "bind" · "item" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceListItem$CategoryHeader;" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/list/adapter/DeviceTypeAdapter$DeviceViewHolder;" · "Landroidx/recyclerview/widget/RecyclerView$ViewHolder;" · "binding" · "Lcom/tuwinsmart/tuwin/databinding/ItemDeviceEntryBinding;" · "onDeviceClick" · "Lkotlin/Function1;" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceType;" · "(Lcom/tuwinsmart/tuwin/databinding/ItemDeviceEntryBinding;Lkotlin/jvm/functions/Function1;)V" · "bind" · "item" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceListItem$DeviceEntry;" · "app_release_64" · "Lcom/tuwinsmart/tuwin/presentation/ui/device/list/adapter/DeviceTypeAdapter$DiffCallback;" · "Landroidx/recyclerview/widget/DiffUtil$ItemCallback;" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceListItem;" · "()V" · "areContentsTheSame" · "oldItem" · "newItem" · "areItemsTheSame" · "app_release_64"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.list.adapter.DeviceTypeAdapter$DeviceViewHolder`
+L96 · [class] public static final DeviceViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/device/list/adapter/DeviceTypeAdapter.java`
+注解：
+
+字段/常量（2）：
+- `ItemDeviceEntryBinding binding`  L97
+- `Function1<DeviceType, Unit> onDeviceClick`  L98
+
+方法（4）：
+- `public DeviceViewHolder(ItemDeviceEntryBinding binding, Function1<? super DeviceType, Unit> onDeviceClick)`  L102
+    - 体内字面量："binding" · "onDeviceClick"
+- `void bind(DeviceListItem.DeviceEntry item)`  L110
+    - 体内字面量："item"
+- `void onClick(View view)`  L117 @Override
+- `void bind$lambda$0(DeviceViewHolder this$0, DeviceType deviceType, View view)`  L124
+    - 体内字面量："this$0" · "$deviceType"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.list.adapter.DeviceTypeAdapter$DiffCallback`
+L133 · [class] public static final DiffCallback · extends `DiffUtil.ItemCallback<DeviceListItem>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/list/adapter/DeviceTypeAdapter.java`
+注解：
+
+方法（2）：
+- `boolean areItemsTheSame(DeviceListItem oldItem, DeviceListItem newItem)`  L135 @Override
+    - 体内字面量："oldItem" · "newItem"
+- `boolean areContentsTheSame(DeviceListItem oldItem, DeviceListItem newItem)`  L149 @Override
+    - 体内字面量："oldItem" · "newItem"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.list.adapter.DeviceTypeAdapter$HeaderViewHolder`
+L78 · [class] public static final HeaderViewHolder · extends `RecyclerView.ViewHolder` · `com/tuwinsmart/tuwin/presentation/p010ui/device/list/adapter/DeviceTypeAdapter.java`
+注解：
+
+字段/常量（1）：
+- `ItemDeviceHeaderBinding binding`  L79
+
+方法（2）：
+- `public HeaderViewHolder(ItemDeviceHeaderBinding binding)`  L82
+    - 体内字面量："binding"
+- `void bind(DeviceListItem.CategoryHeader item)`  L88
+    - 体内字面量："item"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.list.DeviceListActivity`
+L49 · [class] public final DeviceListActivity · extends `ToolBarActivity` · `com/tuwinsmart/tuwin/presentation/p010ui/device/list/DeviceListActivity.java`
+注解：
+
+字段/常量（18）：
+- `DeviceTypeAdapter adapter`  L50
+- `ActivityDeviceListBinding binding`  L51
+- `Lazy viewModel`  L54
+- `DeviceListActivity deviceListActivity = this`  L58
+- `LazyThreadSafetyMode lazyThreadSafetyMode = LazyThreadSafetyMode.NONE`  L59
+- `Qualifier qualifier = null`  L60
+- `Object[] objArr = 0 == true ? 1 : 0`  L61
+- `Object[] objArr2 = 0 == true ? 1 : 0`  L62
+- `CreationExtras defaultViewModelCreationExtras`  L68
+- `ComponentActivity componentActivity = deviceListActivity`  L69
+- `Qualifier qualifier2 = qualifier`  L70
+- `Function0 function0 = objArr`  L71
+- `Function0 function1 = objArr2`  L72
+- `ActivityDeviceListBinding activityDeviceListBinding = this.binding`  L140
+- `DeviceTypeAdapter deviceTypeAdapter = null`  L141
+- `RecyclerView recyclerView = activityDeviceListBinding.rvDeviceList`  L146
+- `DeviceTypeAdapter deviceTypeAdapter2 = this.adapter`  L148
+- `DeviceListActivity deviceListActivity = this`  L244
+
+方法（13）：
+- `public DeviceListActivity()`  L57
+- `DeviceListViewModel invoke()`  L67 @Override
+- `DeviceListViewModel getViewModel()`  L83
+- `View getContentRoot()`  L88 @Override
+    - 体内字面量："inflate(...)" · "binding" · "getRoot(...)"
+- `void onCreate(Bundle savedInstanceState)`  L102 @Override
+- `void onClick(View view)`  L107 @Override
+- `void onCreate$lambda$0(DeviceListActivity this$0, View view)`  L116
+    - 体内字面量："this$0"
+- `void setupRecyclerView()`  L122
+- `Unit invoke(DeviceType deviceType)`  L129 @Override
+- `void invoke2(DeviceType deviceType)`  L135
+    - 体内字面量："deviceType"
+- `void observeViewModel()`  L243
+- `void onResume()`  L335 @Override
+- `void onBackPressed()`  L340 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.list.DeviceListActivity$C26941`
+L161 · [class] static final C26941 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/list/DeviceListActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L162
+- `int i = this.label`  L226
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L169 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L174 @Override
+    - 体内字面量："<anonymous>" · "items" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceListItem;" · "com.tuwinsmart.tuwin.presentation.ui.device.list.DeviceListActivity$observeViewModel$1$1" · "DeviceListActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L224 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.list.DeviceListActivity$C26941$AnonymousClass1`
+L182 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<List<? extends DeviceListItem>, Continuation<? super Unit>, Object>` · implements `Function2<List<? extends DeviceListItem>, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/list/DeviceListActivity.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L183
+- `int label`  L184
+- `DeviceListActivity this$0`  L185
+- `DeviceTypeAdapter deviceTypeAdapter = this.this$0.adapter`  L211
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L194 @Override
+- `Object invoke(List<? extends DeviceListItem> list, Continuation<? super Unit> continuation)`  L201 @Override
+- `Object invokeSuspend(Object obj)`  L206 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.list.DeviceListActivity$C26952`
+L253 · [class] static final C26952 · extends `SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object>` · implements `Function2<CoroutineScope, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/list/DeviceListActivity.java`
+注解：
+
+字段/常量（2）：
+- `int label`  L254
+- `int i = this.label`  L317
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L261 @Override
+- `Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation)`  L266 @Override
+    - 体内字面量："<anonymous>" · "Lcom/tuwinsmart/tuwin/domain/model/DeviceType;" · "com.tuwinsmart.tuwin.presentation.ui.device.list.DeviceListActivity$observeViewModel$2$1" · "DeviceListActivity.kt" · "invokeSuspend"
+- `Object invokeSuspend(Object obj)`  L315 @Override
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.list.DeviceListActivity$C26952$AnonymousClass1`
+L274 · [class] static final AnonymousClass1 · extends `SuspendLambda implements Function2<DeviceType, Continuation<? super Unit>, Object>` · implements `Function2<DeviceType, Continuation<? super Unit>, Object>` · `com/tuwinsmart/tuwin/presentation/p010ui/device/list/DeviceListActivity.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L275
+- `int label`  L276
+- `DeviceListActivity this$0`  L277
+- `DeviceListActivity deviceListActivity = this.this$0`  L306
+
+方法（3）：
+- `Continuation<Unit> create(Object obj, Continuation<?> continuation)`  L286 @Override
+- `Object invoke(DeviceType deviceType, Continuation<? super Unit> continuation)`  L293 @Override
+- `Object invokeSuspend(Object obj)`  L298 @Override
+    - 体内字面量："call to 'resume' before 'invoke' with coroutine"
+### `com.tuwinsmart.tuwin.presentation.p010ui.device.list.DeviceListViewModel`
+L23 · [class] public final DeviceListViewModel · extends `ViewModel` · `com/tuwinsmart/tuwin/presentation/p010ui/device/list/DeviceListViewModel.java`
+注解：
+
+字段/常量（5）：
+- `MutableStateFlow<List<DeviceListItem>> _deviceListItems`  L24
+- `MutableStateFlow<DeviceType> _navigateToConnectHelper`  L25
+- `StateFlow<List<DeviceListItem>> deviceListItems`  L26
+- `boolean isRide6AddDeviceEntryEnabled`  L27
+- `StateFlow<DeviceType> navigateToConnectHelper`  L28
+
+方法（8）：
+- `public DeviceListViewModel()`  L30
+- ` DeviceListViewModel(boolean z, int i, DefaultConstructorMarker defaultConstructorMarker)`  L34
+- `public DeviceListViewModel(boolean z)`  L38
+- `StateFlow<List<DeviceListItem>> getDeviceListItems()`  L49
+- `StateFlow<DeviceType> getNavigateToConnectHelper()`  L53
+- `void loadDeviceList()`  L57
+- `void onDeviceClicked(DeviceType deviceType)`  L70
+    - 体内字面量："deviceType"
+- `void onNavigationHandled()`  L75

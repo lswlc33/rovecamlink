@@ -1,0 +1,295 @@
+# idGoLive — 类与成员明细：com.icatchtek.bluetooth.customer
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 20 个文件 / 23 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.icatchtek.bluetooth.customer.client.ICatchBluetoothClient`
+L8 · [interface] public ICatchBluetoothClient · `com/icatchtek/bluetooth/customer/client/ICatchBluetoothClient.java`
+
+方法（6）：
+- `ICatchBluetoothHostControl getHostControl()`  L9
+- `ICatchBluetoothSystemControl getSystemControl()`  L11
+- `ICatchBluetoothTelecontroller getTelecontroller()`  L13
+- `String receiveReply(String str, long j)`  L15
+- `void release()`  L17
+- `void sendRequest(String str, String str2, long j)`  L19
+### `com.icatchtek.bluetooth.customer.client.ICatchBluetoothHostControl`
+L8 · [interface] public ICatchBluetoothHostControl · `com/icatchtek/bluetooth/customer/client/ICatchBluetoothHostControl.java`
+
+方法（1）：
+- `String hostCommand(String str, String str2)`  L9
+### `com.icatchtek.bluetooth.customer.client.ICatchBluetoothSystemControl`
+L10 · [interface] public ICatchBluetoothSystemControl · `com/icatchtek/bluetooth/customer/client/ICatchBluetoothSystemControl.java`
+
+方法（7）：
+- `boolean enableWifi()`  L11
+- `ICatchBtInfomation getBtInformation()`  L13
+- `ICatchWifiInformation getWifiInformation()`  L15
+- `boolean hibernation()`  L17
+- `boolean powerOff()`  L19
+- `boolean setBtInformation(ICatchBtInfomation iCatchBtInfomation)`  L21
+- `boolean setWifiInformation(ICatchWifiInformation iCatchWifiInformation)`  L23
+### `com.icatchtek.bluetooth.customer.client.ICatchBluetoothTelecontroller`
+L8 · [interface] public ICatchBluetoothTelecontroller · `com/icatchtek/bluetooth/customer/client/ICatchBluetoothTelecontroller.java`
+
+方法（12）：
+- `boolean btKeyDel()`  L10 @Deprecated
+- `boolean capture()`  L12
+- `boolean captureHalfPress()`  L14
+- `boolean changeMode()`  L16
+- `boolean execute()`  L18
+- `boolean moveDown()`  L20
+- `boolean moveLeft()`  L22
+- `boolean moveRight()`  L24
+- `boolean moveUp()`  L26
+- `boolean openMenu()`  L28
+- `boolean zoomIn()`  L30
+- `boolean zoomOut()`  L32
+### `com.icatchtek.bluetooth.customer.exception.IchBluetoothContextInvalidException`
+L4 · [class] public IchBluetoothContextInvalidException · extends `Exception` · `com/icatchtek/bluetooth/customer/exception/IchBluetoothContextInvalidException.java`
+
+字段/常量（1）：
+- `long serialVersionUID = 1`  L5
+
+方法（2）：
+- `public IchBluetoothContextInvalidException()`  L7
+- `public IchBluetoothContextInvalidException(String str)`  L10
+### `com.icatchtek.bluetooth.customer.exception.IchBluetoothDeviceBusyException`
+L4 · [class] public IchBluetoothDeviceBusyException · extends `Exception` · `com/icatchtek/bluetooth/customer/exception/IchBluetoothDeviceBusyException.java`
+
+字段/常量（1）：
+- `long serialVersionUID = 1`  L5
+
+方法（2）：
+- `public IchBluetoothDeviceBusyException()`  L7
+- `public IchBluetoothDeviceBusyException(String str)`  L10
+### `com.icatchtek.bluetooth.customer.exception.IchBluetoothDeviceDisabledException`
+L4 · [class] public IchBluetoothDeviceDisabledException · extends `Exception` · `com/icatchtek/bluetooth/customer/exception/IchBluetoothDeviceDisabledException.java`
+
+字段/常量（1）：
+- `long serialVersionUID = 1`  L5
+
+方法（2）：
+- `public IchBluetoothDeviceDisabledException()`  L7
+- `public IchBluetoothDeviceDisabledException(String str)`  L10
+### `com.icatchtek.bluetooth.customer.exception.IchBluetoothNotBondedException`
+L4 · [class] public IchBluetoothNotBondedException · extends `Exception` · `com/icatchtek/bluetooth/customer/exception/IchBluetoothNotBondedException.java`
+
+字段/常量（1）：
+- `long serialVersionUID = 1`  L5
+
+方法（2）：
+- `public IchBluetoothNotBondedException()`  L7
+- `public IchBluetoothNotBondedException(String str)`  L10
+### `com.icatchtek.bluetooth.customer.exception.IchBluetoothNotSupportedException`
+L4 · [class] public IchBluetoothNotSupportedException · extends `Exception` · `com/icatchtek/bluetooth/customer/exception/IchBluetoothNotSupportedException.java`
+
+字段/常量（1）：
+- `long serialVersionUID = 1`  L5
+
+方法（2）：
+- `public IchBluetoothNotSupportedException()`  L7
+- `public IchBluetoothNotSupportedException(String str)`  L10
+### `com.icatchtek.bluetooth.customer.exception.IchBluetoothTimeoutException`
+L4 · [class] public IchBluetoothTimeoutException · extends `Exception` · `com/icatchtek/bluetooth/customer/exception/IchBluetoothTimeoutException.java`
+
+字段/常量（1）：
+- `long serialVersionUID = 1`  L5
+
+方法（2）：
+- `public IchBluetoothTimeoutException()`  L7
+- `public IchBluetoothTimeoutException(String str)`  L10
+### `com.icatchtek.bluetooth.customer.ICatchBluetoothAdapter`
+L7 · [interface] public ICatchBluetoothAdapter · `com/icatchtek/bluetooth/customer/ICatchBluetoothAdapter.java`
+
+方法（2）：
+- `boolean startDiscovery(ICatchBTDeviceDetectedListener iCatchBTDeviceDetectedListener, boolean z)`  L8
+- `void stopDiscovery()`  L10
+### `com.icatchtek.bluetooth.customer.ICatchBluetoothAssist`
+L23 · [class] public ICatchBluetoothAssist · `com/icatchtek/bluetooth/customer/ICatchBluetoothAssist.java`
+
+字段/常量（11）：
+- `String icatch_bluetooth_tag = "ICatchBluetoothAssist"`  L25
+- `ICatchBluetoothDevice bluetoothDevice`  L26
+- `List<ICatchBluetoothDevice> bluetoothDevices`  L27
+- `ICatchBluetoothManager bluetoothManager`  L28
+- `String str = icatch_bluetooth_tag`  L106
+- `String str = icatch_bluetooth_tag`  L148
+- `List<ICatchBluetoothDevice> list = this.bluetoothDevices`  L155
+- `ICatchBluetoothManager iCatchBluetoothManager = this.bluetoothManager`  L161
+- `ICatchBluetoothManager iCatchBluetoothManager2 = this.bluetoothManager`  L177
+- `ICatchBluetoothManager iCatchBluetoothManager3 = this.bluetoothManager`  L183
+- `ICatchBluetoothManager iCatchBluetoothManager4 = this.bluetoothManager`  L189
+
+方法（7）：
+- `void onReceive(Intent intent)`  L32 @Override
+    - 体内字面量："ICatchBroadcastReceiver, action: " · "ICatchBroadcastReceiver, adapterState: " · "ICatchBroadcastReceiver, bondState: "
+- `private ICatchBluetoothAssist()`  L92
+- `ICatchBluetoothDevice chooseBluetoothDevice()`  L95
+- `void discoveryBluetoothDevices()`  L104
+- `ICatchBluetoothAssist getBluetoothAssist()`  L124
+- `boolean verifyBluetoothDevice(ICatchBluetoothDevice iCatchBluetoothDevice)`  L128
+    - 体内字面量："verify device: " · " with " · "iCatchBT"
+- `ICatchBluetoothClient getBluetoothClient(Context context, boolean z)`  L133
+    - 体内字面量："Bluetooth is not enabled."
+### `com.icatchtek.bluetooth.customer.ICatchBluetoothAssist$BTDeviceDetectedListener`
+L53 · [class] private BTDeviceDetectedListener · implements `ICatchBTDeviceDetectedListener` · `com/icatchtek/bluetooth/customer/ICatchBluetoothAssist.java`
+
+方法（2）：
+- `private BTDeviceDetectedListener()`  L54
+- `void deviceDetected(ICatchBluetoothDevice iCatchBluetoothDevice)`  L58 @Override
+    - 体内字面量："device [" · "|" · "] added."
+### `com.icatchtek.bluetooth.customer.ICatchBluetoothAssist$CreateBTBoundThread`
+L64 · [class] private CreateBTBoundThread · extends `Thread` · `com/icatchtek/bluetooth/customer/ICatchBluetoothAssist.java`
+
+方法（2）：
+- `private CreateBTBoundThread()`  L65
+- `void run()`  L69 @Override
+    - 体内字面量："CreateBTBound request send." · "CreateBTBound request send done."
+### `com.icatchtek.bluetooth.customer.ICatchBluetoothAssist$EnableBTAdapterThread`
+L78 · [class] private EnableBTAdapterThread · extends `Thread` · `com/icatchtek/bluetooth/customer/ICatchBluetoothAssist.java`
+
+方法（2）：
+- `private EnableBTAdapterThread()`  L79
+- `void run()`  L83 @Override
+    - 体内字面量："EnableBTAdapter request send." · "EnableBTAdapter request send done."
+### `com.icatchtek.bluetooth.customer.ICatchBluetoothManager`
+L24 · [class] public ICatchBluetoothManager · `com/icatchtek/bluetooth/customer/ICatchBluetoothManager.java`
+
+字段/常量（5）：
+- `ICatchBluetoothManager bluetoothManager = null`  L25
+- `String icatch_bluetooth_tag = "ICatchBluetoothManager"`  L27
+- `Context appContext`  L28
+- `BluetoothAdapter bluetoothAdapter`  L29
+- `BluetoothCoreEventManager bluetoothCoreEventManager`  L30
+
+方法（15）：
+- `private ICatchBluetoothManager(Context context)`  L32
+    - 体内字面量："android.hardware.bluetooth" · "Bluetooth is not supported." · "Bluetooth is not supported."
+- `ICatchBluetoothManager getBluetoothManager(Context context)`  L45
+- `BluetoothAdapter getDefaultBluetoothAdapter()`  L55
+    - 体内字面量："Bluetooth not supported." · "Bluetooth is not supported."
+- `void validateAppContext(Context context)`  L64
+    - 体内字面量："Must be an application context, Use getApplicationContext to get one."
+- `boolean createBond(String str)`  L70
+    - 体内字面量："createBond" · "createBond failed." · "createBond failed."
+- `boolean disableBluetooth()`  L88
+- `boolean enableBluetooth()`  L92
+- `void finalize()`  L96
+- `ICatchBluetoothAdapter getBluetoothAdapter()`  L100
+- `ICatchBluetoothClient getBluetoothClient(Context context, String str, boolean z)`  L104
+    - 体内字面量："invalid mac address." · "bt_type: "
+- `List<ICatchBluetoothDevice> getBondedDevices()`  L125
+- `boolean isBluetoothEnabled()`  L133
+- `void registerBroadcastReceiver(ICatchBroadcastReceiver iCatchBroadcastReceiver, List<String> list)`  L137
+- `boolean removeBond(String str)`  L141
+    - 体内字面量："removeBond" · "removeBond failed." · "removeBond failed."
+- `void unregisterBroadcastReceiver(ICatchBroadcastReceiver iCatchBroadcastReceiver)`  L159
+### `com.icatchtek.bluetooth.customer.listener.ICatchBroadcastReceiver`
+L6 · [interface] public ICatchBroadcastReceiver · `com/icatchtek/bluetooth/customer/listener/ICatchBroadcastReceiver.java`
+
+方法（1）：
+- `void onReceive(Intent intent)`  L7
+### `com.icatchtek.bluetooth.customer.listener.ICatchBroadcastReceiverID`
+L4 · [class] public ICatchBroadcastReceiverID · `com/icatchtek/bluetooth/customer/listener/ICatchBroadcastReceiverID.java`
+
+字段/常量（27）：
+- `String BT_ACTION_ADAPTER_STATE_CHANGED = "com.icatchtek.bluetooth.__icatch_bt_action_adapter_state_changed"`  L5
+- `String BT_ACTION_BOND_STATE_CHANGED = "com.icatchtek.bluetooth.__icatch_bt_action_bond_state_changed"`  L6
+- `String BT_ADAPTER_ADDRESS = "com.icatchtek.bluetooth.__icatch_bt_adapter_address"`  L7
+- `String BT_ADAPTER_STATE = "com.icatchtek.bluetooth.__icatch_bt_adapter_state"`  L8
+- `int BT_ADAPTER_STATE_OFF = 18`  L9
+- `int BT_ADAPTER_STATE_ON = 17`  L10
+- `int BT_ADAPTER_STATE_TURNING_OFF = 20`  L11
+- `int BT_ADAPTER_STATE_TURNING_ON = 19`  L12
+- `String BT_BOND_STATE = "com.icatchtek.bluetooth.__icatch_bt_bond_state"`  L13
+- `int BT_BOND_STATE_BONDED = 3`  L14
+- `int BT_BOND_STATE_BONDING = 2`  L15
+- `int BT_BOND_STATE_NONE = 1`  L16
+- `String BT_LE_GATT_ACTION_CONNECTION_STATE_CHANGED = "com.icatchtek.bluetooth.__icatch_bt_le_gatt_action_connection_changed"`  L17
+- `String BT_LE_GATT_ACTION_DATA_AVAILABLE = "com.icatchtek.bluetooth.__icatch_bt_le_gatt_action_data_avaliable"`  L18
+- `String BT_LE_GATT_ACTION_SERVICE_DISCOVERY_STATE_CHANGED = "com.icatchtek.bluetooth.__icatch_bt_le_gatt_action_service_discovered"`  L19
+- `int BT_LE_GATT_CONNECTED = 33`  L20
+- `String BT_LE_GATT_CONNECTION_STATE = "com.icatchtek.bluetooth.__icatch_bt_le_gatt_connection_state"`  L21
+- `String BT_LE_GATT_DATA = "com.icatchtek.bluetooth.__icatch_bt_le_gatt_data"`  L22
+- `int BT_LE_GATT_DATA_CHANGED_AVAILABLE = 39`  L23
+- `int BT_LE_GATT_DATA_READ_AVAILABLE = 37`  L24
+- `String BT_LE_GATT_DATA_TYPE = "com.icatchtek.bluetooth.__icatch_bt_le_gatt_data_type"`  L25
+- `int BT_LE_GATT_DATA_WRITE_AVAILABLE = 38`  L26
+- `int BT_LE_GATT_DISCONNECTED = 34`  L27
+- `int BT_LE_GATT_NO_SERVICES_DISCOVERED = 36`  L28
+- `int BT_LE_GATT_SERVICES_DISCOVERED = 35`  L29
+- `String BT_LE_GATT_SERVICE_DISCOVERY_STATE = "com.icatchtek.bluetooth.__icatch_bt_le_gatt_service_discovery_state"`  L30
+- `String BT_LE_GATT_STATUS = "com.icatchtek.bluetooth.__icatch_bt_le_gatt_status"`  L31
+### `com.icatchtek.bluetooth.customer.listener.ICatchBTDeviceDetectedListener`
+L6 · [interface] public ICatchBTDeviceDetectedListener · `com/icatchtek/bluetooth/customer/listener/ICatchBTDeviceDetectedListener.java`
+
+方法（1）：
+- `void deviceDetected(ICatchBluetoothDevice iCatchBluetoothDevice)`  L7
+### `com.icatchtek.bluetooth.customer.type.ICatchBluetoothDevice`
+L4 · [class] public ICatchBluetoothDevice · `com/icatchtek/bluetooth/customer/type/ICatchBluetoothDevice.java`
+
+字段/常量（10）：
+- `int DEVICE_TYPE_CLASSIC = 1`  L5
+- `int DEVICE_TYPE_DUAL = 3`  L6
+- `int DEVICE_TYPE_LE = 2`  L7
+- `int DEVICE_TYPE_UNKNOWN = 0`  L8
+- `String address`  L9
+- `boolean bonded`  L10
+- `String name`  L11
+- `int rssi`  L12
+- `byte[] scanRecord`  L13
+- `int type`  L14
+
+方法（12）：
+- `public ICatchBluetoothDevice(int i, String str, String str2, boolean z)`  L16
+- `String getAddress()`  L23
+- `String getName()`  L27
+- `int getRssi()`  L31
+- `byte[] getScanRecord()`  L35
+- `int getType()`  L39
+- `boolean isBonded()`  L43
+- `void setAddress(String str)`  L47
+- `void setBonded(boolean z)`  L51
+- `void setName(String str)`  L55
+- `void setRssi(int i)`  L59
+- `void setScanRecord(byte[] bArr)`  L63
+### `com.icatchtek.bluetooth.customer.type.ICatchBtInfomation`
+L4 · [class] public ICatchBtInfomation · `com/icatchtek/bluetooth/customer/type/ICatchBtInfomation.java`
+
+字段/常量（2）：
+- `String btPassword`  L5
+- `String btSSID`  L6
+
+方法（4）：
+- `String getBtPassword()`  L8
+- `String getBtSSID()`  L12
+- `void setBtSSID(String str)`  L16
+- `void setWifiPassword(String str)`  L20
+### `com.icatchtek.bluetooth.customer.type.ICatchWifiEncType`
+L4 · [enum] public ICatchWifiEncType · `com/icatchtek/bluetooth/customer/type/ICatchWifiEncType.java`
+
+枚举常量（2）：
+- `ICATCH_WIFI_AP_ENC_TYPE_NON()`  L5
+- `ICATCH_WIFI_AP_ENC_TYPE_WPA()`  L6
+### `com.icatchtek.bluetooth.customer.type.ICatchWifiInformation`
+L4 · [class] public ICatchWifiInformation · `com/icatchtek/bluetooth/customer/type/ICatchWifiInformation.java`
+
+字段/常量（3）：
+- `ICatchWifiEncType wifiEncType`  L5
+- `String wifiPassword`  L6
+- `String wifiSSID`  L7
+
+方法（6）：
+- `ICatchWifiEncType getWifiEncType()`  L9
+- `String getWifiPassword()`  L13
+- `String getWifiSSID()`  L17
+- `void setWifiEncType(ICatchWifiEncType iCatchWifiEncType)`  L21
+- `void setWifiPassword(String str)`  L25
+- `void setWifiSSID(String str)`  L29

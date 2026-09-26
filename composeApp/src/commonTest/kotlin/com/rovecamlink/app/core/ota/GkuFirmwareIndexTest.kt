@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
  * The JSON below is that response with the release-note prose shortened. Every key the
  * parser depends on is intact, including `size`, `create_time` and `is_scattered` — the
  * first two are the fields the official app's DTO does not even declare
- * (`docs/04 §5.2`), and the third is one of the unknowns `ignoreUnknownKeys` has to
+ * (`docs/analysis/ota-and-gaps §5.2`), and the third is one of the unknowns `ignoreUnknownKeys` has to
  * survive.
  */
 class GkuFirmwareIndexTest {

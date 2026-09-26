@@ -66,7 +66,7 @@ import com.rovecamlink.app.log_title
 import com.rovecamlink.app.menu_log_settings
 // Every generated top-level extension lives in `com.rovecamlink.app` and MUST be
 // imported by name — that, not any real resource-lookup bug, is what made earlier
-// attempts here fail to resolve. (docs/06 and the old note in Screens.kt blamed the
+// attempts here fail to resolve. (docs/impl/diagnostics-log and the old note in Screens.kt blamed the
 // resolver; ConnectScreen proves ~40 of these resolve fine once imported.)
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable

@@ -83,7 +83,7 @@ interface CameraProtocol {
      *
      * TUWIN is that family, and the archive says so outright: `/api/device/status` carries
      * battery, mode and card facts but **no** recording field, and the official app tracks
-     * recording as a *local* event instead (`docs/08 01-TUWIN-档案.md` §5.3, "不用
+     * recording as a *local* event instead (`docs/evidence/tuwin` §5.3, "不用
      * `recording_time` 字段"). So it declares `false` here, and the app keeps the state the
      * last record command established rather than overwriting it with a guess.
      *
@@ -180,7 +180,7 @@ interface CameraProtocol {
      *
      * The camera is the RTMP client here, not this app — the official client has no
      * streaming code either, it only passes the parameters on and then polls its own
-     * cloud for the room state (`docs/08-官方APK全量逆向档案/02-XTUGO-档案.md` §10.4-10.5).
+     * cloud for the room state (`docs/evidence/xtugo.md` §10.4-10.5).
      * Which channel carries them is the family's business: the Hi35xx socket takes the
      * whole payload on port 8080, and the Ambarella / newer models take it over
      * Bluetooth as `R006` (network) + `R007` (parameters).
@@ -229,7 +229,7 @@ interface CameraProtocol {
      * `reboot.cgi` / `restart.cgi` / `poweroff.cgi` / `shutdown.cgi` among the 22,620
      * own-string literals and 405 recovered URL literals, and the nearest commands are
      * *scheduled* power actions (`getautoshutdown.cgi`, `setscreenautosleep.cgi`) —
-     * see `docs/08-官方APK全量逆向档案/02-XTUGO-档案.md` §8.4 and §12, which reached the
+     * see `docs/evidence/xtugo.md` §8.4 and §12, which reached the
      * same dead end on the official `reset.cgi` naming.
      *
      * This exists so the UI asks the protocol rather than naming a brand: the danger

@@ -2,7 +2,7 @@ package com.rovecamlink.app.brand.icatch
 
 /**
  * The LyIC (Novatek) settings vocabulary — the `cmd=NNNN&par=K` value tables the
- * official app hardcodes, verbatim from the archive (03-idGoLive-档案.md §8) and
+ * official app hardcodes, verbatim from the archive (docs/evidence/idgolive §8) and
  * cross-checked against `_work/idgo_live_src/sources/com/icatch/golive/net/LyIC.java`
  * (`handleList3030`, LyIC.java:41-42) and `LdeviceSettingActivity.java:59-75`.
  *

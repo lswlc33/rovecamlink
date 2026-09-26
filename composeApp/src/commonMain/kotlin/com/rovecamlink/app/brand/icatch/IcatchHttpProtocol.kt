@@ -31,7 +31,7 @@ import okio.Path
  * iCatch-family HTTP profiles from the idGoLive app (package `com.id221.golive`,
  * Java namespace `com.icatch.golive`) — the dash-cam / white-label branch of the
  * iCatchTek lineup (优达尔 and the other ODM badges). Evidence:
- * `docs/08-官方APK全量逆向档案/03-idGoLive-档案.md` + its appendix B command tables.
+ * `docs/evidence/idgolive.md` + its appendix B command tables.
  *
  * The idGoLive app is really three transports. This plugin implements the two plain
  * HTTP ones and deliberately leaves the third alone:
@@ -52,8 +52,8 @@ import okio.Path
  * (archive §3.2 — identity is just "whatever SSID the phone is on"), and its two
  * families answer on *different* gateway IPs, so claiming a fixed host here would
  * misroute the other family. Discovery walks the candidate list and the probe below
- * claims the device; that is the "no model table, probe-routed" fallback docs/03 §12
- * asks for.
+ * claims the device; that is the "no model table, probe-routed" fallback
+ * `docs/analysis/protocol-matrix` §4 (items 1 and 15) asks for.
  *
  * Success criteria: QzIC write endpoints answer `{"result":0}` and are judged by
  * [QzJson.accepted] (same shape as the TUWIN envelope); LyIC write endpoints are

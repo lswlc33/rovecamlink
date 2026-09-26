@@ -1,0 +1,138 @@
+# XTU GO — 类与成员明细：com.gku.module_base_xtugo.sqlite
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 3 个文件 / 8 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.gku.module_base_xtugo.sqlite.bean.AmbaThumbTableBean`
+L14 · [class] public AmbaThumbTableBean · implements `TableBean` · `com/gku/module_base_xtugo/sqlite/bean/AmbaThumbTableBean.java`
+
+字段/常量（5）：
+- `String create_time`  L15
+- `int id`  L16
+- `String path`  L17
+- `int rotation`  L18
+- `long size`  L19
+
+方法（17）：
+- `ContentValues toContentValues()`  L22 @Override
+- `int getId()`  L26
+- `void setId(int i)`  L30
+- `void setSize(long j)`  L34
+- `void setPath(String str)`  L38
+- `void setRotation(int i)`  L42
+- `void setCreate_time(String str)`  L46
+- `String getTableName()`  L51 @Override
+    - 体内字面量："ambathumbtablebean"
+- `String getTableName__()`  L55
+    - 体内字面量："ambathumbtablebean"
+- `String getColumnSize__()`  L59
+    - 体内字面量："size"
+- `String getColumnPath__()`  L63
+- `String getColumnCreateTime__()`  L67
+    - 体内字面量："create_time"
+- `String getColumnRotation__()`  L71
+- `void onCreate(SQLiteDatabase sQLiteDatabase)`  L76 @Override
+    - 体内字面量："onCreate:" · "CREATE TABLE IF NOT EXISTS " · " (id INTEGER PRIMARY KEY AUTOINCREMENT," · " INTEGER," · " INTEGER," · " TEXT," · " TEXT)"
+- `void migrate(SQLiteDatabase sQLiteDatabase, int i, int i2)`  L82 @Override
+    - 体内字面量："migrate:" · "ALTER TABLE " · " ADD COLUMN " · " INTEGER DEFAULT 0"
+- `boolean hasColumn(SQLiteDatabase sQLiteDatabase, String str, String str2)`  L90
+    - 体内字面量："PRAGMA table_info(" · ")" · "name"
+- `void querySizeRotationSync(Context context, String str, String str2, SQLiteHolder.CallbackQuery2<Long, Integer> callbackQuery2)`  L106
+### `com.gku.module_base_xtugo.sqlite.SQLiteHolder`
+L19 · [class] public SQLiteHolder · extends `SQLiteOpenHelper` · `com/gku/module_base_xtugo/sqlite/SQLiteHolder.java`
+
+字段/常量（11）：
+- `int DB_VERSION`  L20
+- `SQLiteHolder instance`  L21
+- `ExecutorService executorServiceSingle`  L22
+- `SQLiteDatabase readableDatabase = null`  L77
+- `SQLiteDatabase writableDatabase = null`  L125
+- `TableBean tableBean = t`  L157
+- `TableBean tableBean = t`  L184
+- `int columnIndex`  L271
+- `Object value = null`  L284
+- `Object value`  L298
+- `Object obj = null`  L311
+
+方法（39）：
+- `private SQLiteHolder(Context context)`  L41
+- `SQLiteHolder getInstance(Context context)`  L50
+- `void onCreate(SQLiteDatabase sQLiteDatabase)`  L62 @Override
+- `void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2)`  L68 @Override
+- `void migrate(SQLiteDatabase sQLiteDatabase, int i, int i2)`  L72
+- `void readSyncInTransaction(TransactionRunnable transactionRunnable)`  L76
+- `void readAsyncInTransaction(final TransactionRunnable transactionRunnable)`  L103
+- `void onInterrupted()`  L106 @Override
+- `void run_UIThread(Object obj)`  L110 @Override
+- `Object runThread()`  L114 @Override
+- `void writeAsyncInTransaction(final TransactionRunnable transactionRunnable)`  L121
+- `void run()`  L124 @Override
+- `void insert(final T t)`  L153
+- `void run(SQLiteDatabase sQLiteDatabase)`  L156 @Override
+- `void insert(final List<T> list)`  L163
+- `void run(SQLiteDatabase sQLiteDatabase)`  L166 @Override
+- `void lambda$insert$1(List list, SQLiteDatabase sQLiteDatabase)`  L172
+- `void update(final T t, final String str, final String[] strArr)`  L180
+- `void run(SQLiteDatabase sQLiteDatabase)`  L183 @Override
+- `void update(final List<T> list, final String str)`  L190
+- `void run(SQLiteDatabase sQLiteDatabase)`  L193 @Override
+- `void lambda$update$3(List list, String str, SQLiteDatabase sQLiteDatabase)`  L199
+    - 体内字面量："=?"
+- `void delete(final T t, final String str)`  L208
+- `void run(SQLiteDatabase sQLiteDatabase)`  L211 @Override
+- `void lambda$delete$4(TableBean tableBean, String str, SQLiteDatabase sQLiteDatabase)`  L217
+    - 体内字面量："=?"
+- `void queryAll(final String str, final RowMapper<T> rowMapper, final CallbackQuery<List<T>> callbackQuery)`  L222
+- `void run(SQLiteDatabase sQLiteDatabase)`  L225 @Override
+- `void lambda$queryAll$5(String str, RowMapper rowMapper, CallbackQuery callbackQuery, SQLiteDatabase sQLiteDatabase)`  L231
+- `void query(final String str, final String str2, final String[] strArr, final RowMapper<T> rowMapper, final CallbackQuery<List<T>> callbackQuery)`  L241
+- `void run(SQLiteDatabase sQLiteDatabase)`  L244 @Override
+- `void lambda$query$6(String str, String str2, String[] strArr, RowMapper rowMapper, CallbackQuery callbackQuery, SQLiteDatabase sQLiteDatabase)`  L250
+- `void querySingleValueAsync(final String str, final String str2, final String[] strArr, final String[] strArr2, final Class<R> cls, final CallbackQuery<R> callbackQuery)`  L260
+- `void run(SQLiteDatabase sQLiteDatabase)`  L263 @Override
+- `void m2761x61edb297(String[] strArr, String[] strArr2, String str, String str2, Class cls, CallbackQuery callbackQuery, SQLiteDatabase sQLiteDatabase)`  L270
+- `void queryTwoValuesSync(final String str, final String str2, final Class<R1> cls, final String str3, final Class<R2> cls2, final String[] strArr, final String[] strArr2, final CallbackQuery2<R1, R2> callbackQuery2)`  L294
+- `void run(SQLiteDatabase sQLiteDatabase)`  L297 @Override
+- `void queryTwoValuesAsync(final String str, final String str2, final Class<R1> cls, final String str3, final Class<R2> cls2, final String[] strArr, final String[] strArr2, final CallbackQuery2<R1, R2> callbackQuery2)`  L331
+- `void run(SQLiteDatabase sQLiteDatabase)`  L334 @Override
+- `R getValue(Cursor cursor, int i, Class<R> cls)`  L341
+    - 体内字面量："ä¸æ¯æçè¿åç±»å: "
+### `com.gku.module_base_xtugo.sqlite.SQLiteHolder$CallbackQuery`
+L24 · [interface] public CallbackQuery · `com/gku/module_base_xtugo/sqlite/SQLiteHolder.java`
+
+方法（1）：
+- `void onComplete(T t)`  L25
+### `com.gku.module_base_xtugo.sqlite.SQLiteHolder$CallbackQuery2`
+L28 · [interface] public CallbackQuery2 · `com/gku/module_base_xtugo/sqlite/SQLiteHolder.java`
+
+方法（1）：
+- `void onComplete(R1 r1, R2 r2)`  L29
+### `com.gku.module_base_xtugo.sqlite.SQLiteHolder$RowMapper`
+L32 · [interface] public RowMapper · `com/gku/module_base_xtugo/sqlite/SQLiteHolder.java`
+
+方法（1）：
+- `T map(Cursor cursor)`  L33
+### `com.gku.module_base_xtugo.sqlite.SQLiteHolder$TransactionRunnable`
+L36 · [interface] public TransactionRunnable · `com/gku/module_base_xtugo/sqlite/SQLiteHolder.java`
+
+方法（1）：
+- `void run(SQLiteDatabase sQLiteDatabase)`  L37
+### `com.gku.module_base_xtugo.sqlite.TableBean`
+L9 · [interface] public TableBean · `com/gku/module_base_xtugo/sqlite/TableBean.java`
+
+方法（4）：
+- `String getTableName()`  L10
+- `void migrate(SQLiteDatabase sQLiteDatabase, int i, int i2)`  L12
+- `void onCreate(SQLiteDatabase sQLiteDatabase)`  L14
+- `ContentValues toContentValues()`  L16
+### `com.gku.module_base_xtugo.sqlite.TableBean$CC`
+L19 · [class] public final CC · `com/gku/module_base_xtugo/sqlite/TableBean.java`
+
+方法（1）：
+- `ContentValues $default$toContentValues(TableBean _this)`  L20

@@ -1,0 +1,501 @@
+# XTU GO — 类与成员明细：com.gku.mediacodec.exo2
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 6 个文件 / 6 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.gku.mediacodec.exo2.demo.EventLogger`
+L50 · [class] public final EventLogger · implements `Player.Listener, MetadataOutput, AudioRendererEventListener, VideoRendererEventListener, MediaSourceEventListener` · `com/gku/mediacodec/exo2/demo/EventLogger.java`
+
+字段/常量（4）：
+- `int MAX_TIMELINE_ITEM_LINES = 3`  L51
+- `String TAG = "EventLogger"`  L52
+- `NumberFormat TIME_FORMAT`  L53
+- `MappingTrackSelector trackSelector`  L54
+
+方法（75）：
+- `void onAudioAttributesChanged(AudioAttributes audioAttributes)`  L60 @Override
+- `void onAudioCodecError(Exception exc)`  L65 @Override
+- `void onAudioDecoderReleased(String str)`  L70 @Override
+- `void onAudioInputFormatChanged(Format format)`  L75 @Override
+- `void onAudioPositionAdvancing(long j)`  L80 @Override
+- `void onAudioSessionIdChanged(int i)`  L85 @Override
+- `void onAudioSinkError(Exception exc)`  L90 @Override
+- `void onAudioUnderrun(int i, long j, long j2)`  L95 @Override
+- `void onAvailableCommandsChanged(Player.Commands commands)`  L100 @Override
+- `void onCues(CueGroup cueGroup)`  L105 @Override
+- `void onCues(List<Cue> list)`  L110 @Override
+- `void onDeviceInfoChanged(DeviceInfo deviceInfo)`  L114 @Override
+- `void onDeviceVolumeChanged(int i, boolean z)`  L119 @Override
+- `void onDownstreamFormatChanged(int i, MediaSource.MediaPeriodId mediaPeriodId, MediaLoadData mediaLoadData)`  L124 @Override
+- `void onEvents(Player player, Player.Events events)`  L129 @Override
+- `void onIsPlayingChanged(boolean z)`  L134 @Override
+- `void onLoadCanceled(int i, MediaSource.MediaPeriodId mediaPeriodId, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData)`  L139 @Override
+- `void onLoadCompleted(int i, MediaSource.MediaPeriodId mediaPeriodId, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData)`  L144 @Override
+- `void onLoadError(int i, MediaSource.MediaPeriodId mediaPeriodId, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData, IOException iOException, boolean z)`  L149 @Override
+- `void onLoadStarted(int i, MediaSource.MediaPeriodId mediaPeriodId, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData)`  L154 @Override
+- `void onLoadingChanged(boolean z)`  L159 @Override
+- `void onMaxSeekToPreviousPositionChanged(long j)`  L164 @Override
+- `void onMediaItemTransition(MediaItem mediaItem, int i)`  L169 @Override
+- `void onMediaMetadataChanged(MediaMetadata mediaMetadata)`  L174 @Override
+- `void onPlaybackSuppressionReasonChanged(int i)`  L179 @Override
+- `void onPlayerErrorChanged(PlaybackException playbackException)`  L184 @Override
+- `void onPlayerStateChanged(boolean z, int i)`  L189 @Override
+- `void onPlaylistMetadataChanged(MediaMetadata mediaMetadata)`  L194 @Override
+- `void onPositionDiscontinuity(int i)`  L199 @Override
+- `void onRenderedFirstFrame()`  L204 @Override
+- `void onSeekBackIncrementChanged(long j)`  L209 @Override
+- `void onSeekForwardIncrementChanged(long j)`  L214 @Override
+- `void onSeekProcessed()`  L219 @Override
+- `void onSkipSilenceEnabledChanged(boolean z)`  L224 @Override
+- `void onSurfaceSizeChanged(int i, int i2)`  L228 @Override
+- `void onTimelineChanged(Timeline timeline, int i)`  L233 @Override
+- `void onTrackSelectionParametersChanged(TrackSelectionParameters trackSelectionParameters)`  L238 @Override
+- `void onTracksChanged(Tracks tracks)`  L243 @Override
+- `void onUpstreamDiscarded(int i, MediaSource.MediaPeriodId mediaPeriodId, MediaLoadData mediaLoadData)`  L247 @Override
+- `void onVideoCodecError(Exception exc)`  L252 @Override
+- `void onVideoDecoderReleased(String str)`  L257 @Override
+- `void onVideoFrameProcessingOffset(long j, int i)`  L262 @Override
+- `void onVideoInputFormatChanged(Format format)`  L267 @Override
+- `void onVolumeChanged(float f)`  L272 @Override
+- `public EventLogger(MappingTrackSelector mappingTrackSelector)`  L284
+- `void onIsLoadingChanged(boolean z)`  L289 @Override
+    - 体内字面量："loading [" · "]"
+- `void onPlaybackStateChanged(int i)`  L294 @Override
+    - 体内字面量："state [" · ", " · "]"
+- `void onPlayWhenReadyChanged(boolean z, int i)`  L299 @Override
+    - 体内字面量："state [" · ", " · ", " · "]"
+- `void onRepeatModeChanged(int i)`  L304 @Override
+    - 体内字面量："repeatMode [" · "]"
+- `void onShuffleModeEnabledChanged(boolean z)`  L309 @Override
+    - 体内字面量："shuffleModeEnabled [" · "]"
+- `void onPositionDiscontinuity(Player.PositionInfo positionInfo, Player.PositionInfo positionInfo2, int i)`  L314 @Override
+    - 体内字面量："positionDiscontinuity [" · "]"
+- `void onPlaybackParametersChanged(PlaybackParameters playbackParameters)`  L319 @Override
+    - 体内字面量："playbackParameters " · "[speed=%.2f, pitch=%.2f]"
+- `void onPlayerError(PlaybackException playbackException)`  L324 @Override
+    - 体内字面量："playerFailed [" · "]"
+- `void onMetadata(Metadata metadata)`  L329 @Override
+    - 体内字面量："onMetadata [" · "  " · "]"
+- `void onAudioEnabled(DecoderCounters decoderCounters)`  L336 @Override
+    - 体内字面量："audioEnabled [" · "]"
+- `void onAudioDecoderInitialized(String str, long j, long j2)`  L341 @Override
+    - 体内字面量："audioDecoderInitialized [" · ", " · "]"
+- `void onAudioInputFormatChanged(Format format, DecoderReuseEvaluation decoderReuseEvaluation)`  L346 @Override
+    - 体内字面量："audioFormatChanged [" · ", " · "]"
+- `void onAudioDisabled(DecoderCounters decoderCounters)`  L351 @Override
+    - 体内字面量："audioDisabled [" · "]"
+- `void onVideoEnabled(DecoderCounters decoderCounters)`  L356 @Override
+    - 体内字面量："videoEnabled [" · "]"
+- `void onVideoDecoderInitialized(String str, long j, long j2)`  L361 @Override
+    - 体内字面量："videoDecoderInitialized [" · ", " · "]"
+- `void onVideoInputFormatChanged(Format format, DecoderReuseEvaluation decoderReuseEvaluation)`  L366 @Override
+    - 体内字面量："videoFormatChanged [" · ", " · "]"
+- `void onVideoDisabled(DecoderCounters decoderCounters)`  L371 @Override
+    - 体内字面量："videoDisabled [" · "]"
+- `void onDroppedFrames(int i, long j)`  L376 @Override
+    - 体内字面量："droppedFrames [" · ", " · "]"
+- `void onVideoSizeChanged(VideoSize videoSize)`  L381 @Override
+    - 体内字面量："videoSizeChanged [" · ", " · "]"
+- `void onRenderedFirstFrame(Object obj, long j)`  L386 @Override
+    - 体内字面量："renderedFirstFrame [" · "]"
+- `void printMetadata(Metadata metadata, String str)`  L390
+    - 体内字面量："%s: value=%s" · "%s: url=%s" · "%s: owner=%s" · "%s: mimeType=%s, filename=%s, description=%s" · "%s: mimeType=%s, description=%s" · "%s: language=%s, description=%s" · "%s" · "EMSG: scheme=%s, id=%d, value=%s"
+- `String getSessionTimeString()`  L420
+- `String getTimeString(long j)`  L424
+- `String getStateString(int i)`  L428
+    - 体内字面量："I" · "B" · "R"
+- `String getFormatSupportString(int i)`  L444
+    - 体内字面量："NO" · "NO_UNSUPPORTED_TYPE" · "NO_UNSUPPORTED_DRM" · "NO_EXCEEDS_CAPABILITIES" · "YES"
+- `String getAdaptiveSupportString(int i, int i2)`  L463
+    - 体内字面量："N/A" · "NO" · "YES_NOT_SEAMLESS" · "YES"
+- `String getTrackStatusString(TrackSelection trackSelection, TrackGroup trackGroup, int i)`  L479
+- `String getTrackStatusString(boolean z)`  L483
+    - 体内字面量："[X]" · "[ ]"
+- `String getRepeatModeString(int i)`  L487
+    - 体内字面量："OFF" · "ONE"
+- `String getDiscontinuityReasonString(int i)`  L500
+    - 体内字面量："PERIOD_TRANSITION" · "SEEK" · "SEEK_ADJUSTMENT" · "INTERNAL"
+### `com.gku.mediacodec.exo2.Exo2PlayerManager`
+L18 · [class] public Exo2PlayerManager · extends `BasePlayerManager` · `com/gku/mediacodec/exo2/Exo2PlayerManager.java`
+
+字段/常量（27）：
+- `Context context`  L19
+- `PlaceholderSurface dummySurface`  L20
+- `IjkExo2MediaPlayer mediaPlayer`  L21
+- `Surface surface`  L22
+- `long lastTotalRxBytes = 0`  L23
+- `long lastTimeStamp = 0`  L24
+- `boolean z = false`  L46
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer2 = this.mediaPlayer`  L53
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L91
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L103
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L115
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L130
+- `PlaceholderSurface placeholderSurface = this.dummySurface`  L136
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L147
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L164
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L172
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L180
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L188
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L197
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L206
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L215
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L223
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L232
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L241
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L250
+- `IjkExo2MediaPlayer ijkExo2MediaPlayer = this.mediaPlayer`  L258
+- `long j = jCurrentTimeMillis - this.lastTimeStamp`  L270
+
+方法（25）：
+- `boolean isSurfaceSupportLockCanvas()`  L27 @Override
+- `void setSpeedPlaying(float f, boolean z)`  L32 @Override
+- `IMediaPlayer getMediaPlayer()`  L36 @Override
+- `void initVideoPlayer(Context context, Message message, List<VideoOptionModel> list, ICacheManager iCacheManager)`  L41 @Override
+- `void showDisplay(Message message)`  L76 @Override
+- `void setSpeed(float f, boolean z)`  L90 @Override
+- `void setNeedMute(boolean z)`  L102 @Override
+- `void setVolume(float f, float f2)`  L114 @Override
+- `void releaseSurface()`  L122 @Override
+- `void release()`  L129 @Override
+- `int getBufferedPercentage()`  L146 @Override
+- `long getNetSpeed()`  L155 @Override
+- `void start()`  L163 @Override
+- `void stop()`  L171 @Override
+- `void pause()`  L179 @Override
+- `int getVideoWidth()`  L187 @Override
+- `int getVideoHeight()`  L196 @Override
+- `boolean isPlaying()`  L205 @Override
+- `void seekTo(long j)`  L214 @Override
+- `long getCurrentPosition()`  L222 @Override
+- `long getDuration()`  L231 @Override
+- `int getVideoSarNum()`  L240 @Override
+- `int getVideoSarDen()`  L249 @Override
+- `void setSeekParameter(SeekParameters seekParameters)`  L257
+- `long getNetSpeed(Context context)`  L264
+### `com.gku.mediacodec.exo2.ExoMediaSourceInterceptListener`
+L10 · [interface] public ExoMediaSourceInterceptListener · `com/gku/mediacodec/exo2/ExoMediaSourceInterceptListener.java`
+
+方法（2）：
+- `DataSource.Factory getHttpDataSourceFactory(String str, TransferListener transferListener, int i, int i2, Map<String, String> map, boolean z)`  L11
+- `MediaSource getMediaSource(String str, boolean z, boolean z2, boolean z3, File file)`  L13
+### `com.gku.mediacodec.exo2.ExoPlayerCacheManager`
+L11 · [class] public ExoPlayerCacheManager · implements `ICacheManager` · `com/gku/mediacodec/exo2/ExoPlayerCacheManager.java`
+
+字段/常量（2）：
+- `ExoSourceManager mExoSourceManager`  L12
+- `ExoSourceManager exoSourceManager = this.mExoSourceManager`  L42
+
+方法（6）：
+- `void setCacheAvailableListener(ICacheManager.ICacheAvailableListener iCacheAvailableListener)`  L15 @Override
+- `void doCacheLogic(Context context, IMediaPlayer iMediaPlayer, String str, Map<String, String> map, File file)`  L19 @Override
+    - 体内字面量："ExoPlayerCacheManager only support IjkExo2MediaPlayer"
+- `void clearCache(Context context, File file, String str)`  L31 @Override
+- `void release()`  L36 @Override
+- `boolean hadCached()`  L41 @Override
+- `boolean cachePreview(Context context, File file, String str)`  L47 @Override
+### `com.gku.mediacodec.exo2.ExoSourceManager`
+L42 · [class] public ExoSourceManager · `com/gku/mediacodec/exo2/ExoSourceManager.java`
+
+字段/常量（32）：
+- `long DEFAULT_MAX_SIZE = 536870912`  L43
+- `String TAG = "ExoSourceManager"`  L44
+- `int TYPE_RTMP = 14`  L45
+- `boolean isForceRtspTcp = true`  L46
+- `Cache mCache = null`  L47
+- `DatabaseProvider sDatabaseProvider = null`  L48
+- `ExoMediaSourceInterceptListener sExoMediaSourceInterceptListener = null`  L49
+- `int sHttpConnectTimeout = -1`  L50
+- `int sHttpReadTimeout = -1`  L51
+- `boolean sSkipSSLChain = false`  L54 @Deprecated
+- `boolean isCached = false`  L55
+- `Context mAppContext`  L56
+- `String mDataSource`  L57
+- `Map<String, String> mMapHeadData`  L58
+- `ExoMediaSourceInterceptListener exoMediaSourceInterceptListener = sExoMediaSourceInterceptListener`  L70
+- `Map<String, String> map = this.mMapHeadData`  L79
+- `Context context = this.mAppContext`  L113
+- `Context context2 = this.mAppContext`  L118
+- `int i = sHttpConnectTimeout`  L134
+- `String str = absolutePath + File.separator + "exo"`  L172
+- `Cache cache = mCache`  L182
+- `Cache cacheSingleInstance`  L276
+- `DataSource.Factory httpDataSourceFactory`  L293
+- `String str2 = str`  L297
+- `int i = sHttpConnectTimeout`  L298
+- `int i2 = i > 0 ? i : 8000`  L299
+- `int i3 = sHttpReadTimeout`  L300
+- `int i4 = i3 > 0 ? i3 : 8000`  L301
+- `Map<String, String> map = this.mMapHeadData`  L302
+- `ExoMediaSourceInterceptListener exoMediaSourceInterceptListener = sExoMediaSourceInterceptListener`  L304
+- `Map<String, String> map2 = this.mMapHeadData`  L314
+- `long cachedLength = 0`  L332
+
+方法（31）：
+- `ExoSourceManager newInstance(Context context, Map<String, String> map)`  L60
+- `private ExoSourceManager(Context context, Map<String, String> map)`  L64
+- `MediaSource getMediaSource(String str, boolean z, boolean z2, boolean z3, File file, String str2)`  L69
+- `DataSource createDataSource()`  L91 @Override
+    - 体内字面量："assets"
+- `DataSource createDataSource()`  L106 @Override
+- `void setExoMediaSourceInterceptListener(ExoMediaSourceInterceptListener exoMediaSourceInterceptListener)`  L142
+- `void resetExoMediaSourceInterceptListener()`  L146
+- `ExoMediaSourceInterceptListener getExoMediaSourceInterceptListener()`  L150
+- `int inferContentType(String str, String str2)`  L154
+    - 体内字面量："rtmp:"
+- `int inferContentType(Uri uri, String str)`  L162
+- `Cache getCacheSingleInstance(Context context, File file)`  L166
+- `void release()`  L180
+- `void clearCache(Context context, File file, String str)`  L193
+- `void removeCache(Cache cache, String str)`  L211
+- `String buildCacheKey(String str)`  L221
+- `boolean cachePreView(Context context, File file, String str)`  L225
+- `boolean hadCached()`  L229
+- `boolean isSkipSSLChain()`  L234 @Deprecated
+- `void setSkipSSLChain(boolean z)`  L239 @Deprecated
+- `int getHttpReadTimeout()`  L243
+- `void setHttpReadTimeout(int i)`  L247
+- `int getHttpConnectTimeout()`  L251
+- `void setHttpConnectTimeout(int i)`  L255
+- `DatabaseProvider getDatabaseProvider()`  L259
+- `void setDatabaseProvider(DatabaseProvider databaseProvider)`  L263
+- `boolean isForceRtspTcp()`  L267
+- `void setForceRtspTcp(boolean z)`  L271
+- `DataSource.Factory getDataSourceFactoryCache(Context context, boolean z, boolean z2, File file, String str)`  L275
+- `DataSource.Factory getDataSourceFactory(Context context, boolean z, String str)`  L284
+- `DataSource.Factory getHttpDataSourceFactory(Context context, boolean z, String str)`  L292
+- `boolean resolveCacheState(Cache cache, String str)`  L321
+### `com.gku.mediacodec.exo2.IjkExo2MediaPlayer`
+L50 · [class] public IjkExo2MediaPlayer · extends `AbstractMediaPlayer implements Player.Listener, AnalyticsListener` · implements `Player.Listener, AnalyticsListener` · `com/gku/mediacodec/exo2/IjkExo2MediaPlayer.java`
+
+字段/常量（41）：
+- `int ON_POSITION_DISCOUNTINUITY = 2702`  L51
+- `String TAG = "IjkExo2MediaPlayer"`  L52
+- `boolean isLastReportedPlayWhenReady`  L53
+- `Context mAppContext`  L54
+- `File mCacheDir`  L55
+- `String mDataSource`  L56
+- `EventLogger mEventLogger`  L57
+- `ExoSourceManager mExoHelper`  L58
+- `ExoPlayer mInternalPlayer`  L59
+- `LoadControl mLoadControl`  L60
+- `MediaSource mMediaSource`  L61
+- `String mOverrideExtension`  L62
+- `DefaultRenderersFactory mRendererFactory`  L63
+- `PlaybackParameters mSpeedPlaybackParameters`  L64
+- `Surface mSurface`  L65
+- `MappingTrackSelector mTrackSelector`  L66
+- `int mVideoHeight`  L67
+- `int mVideoWidth`  L68
+- `boolean isPreparing = true`  L70
+- `boolean isBuffering = false`  L71
+- `boolean isLooping = false`  L72
+- `boolean isPreview = false`  L73
+- `boolean isCache = false`  L74
+- `int audioSessionId = 0`  L75
+- `int lastReportedPlaybackState = 1`  L76
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L679
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L687
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L755
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L764
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L773
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L792
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L805
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L814
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L823
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L832
+- `ExoSourceManager exoSourceManager = this.mExoHelper`  L837
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L859
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L867
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L972
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L983
+- `ExoPlayer exoPlayer = this.mInternalPlayer`  L1022
+
+方法（179）：
+- `MediaInfo getMediaInfo()`  L79 @Override
+- `IjkTrackInfo[] getTrackInfo()`  L84 @Override
+- `int getVideoSarDen()`  L89 @Override
+- `int getVideoSarNum()`  L94 @Override
+- `boolean isPlayable()`  L99 @Override
+- `void onAudioAttributesChanged(AnalyticsListener.EventTime eventTime, AudioAttributes audioAttributes)`  L104 @Override
+- `void onAudioAttributesChanged(AudioAttributes audioAttributes)`  L109 @Override
+- `void onAudioCodecError(AnalyticsListener.EventTime eventTime, Exception exc)`  L114 @Override
+- `void onAudioDecoderInitialized(AnalyticsListener.EventTime eventTime, String str, long j)`  L119 @Override
+- `void onAudioDecoderInitialized(AnalyticsListener.EventTime eventTime, String str, long j, long j2)`  L124 @Override
+- `void onAudioDecoderReleased(AnalyticsListener.EventTime eventTime, String str)`  L129 @Override
+- `void onAudioEnabled(AnalyticsListener.EventTime eventTime, DecoderCounters decoderCounters)`  L134 @Override
+- `void onAudioInputFormatChanged(AnalyticsListener.EventTime eventTime, Format format)`  L139 @Override
+- `void onAudioInputFormatChanged(AnalyticsListener.EventTime eventTime, Format format, DecoderReuseEvaluation decoderReuseEvaluation)`  L144 @Override
+- `void onAudioPositionAdvancing(AnalyticsListener.EventTime eventTime, long j)`  L149 @Override
+- `void onAudioSessionIdChanged(int i)`  L154 @Override
+- `void onAudioSessionIdChanged(AnalyticsListener.EventTime eventTime, int i)`  L159 @Override
+- `void onAudioSinkError(AnalyticsListener.EventTime eventTime, Exception exc)`  L164 @Override
+- `void onAudioUnderrun(AnalyticsListener.EventTime eventTime, int i, long j, long j2)`  L169 @Override
+- `void onAvailableCommandsChanged(Player.Commands commands)`  L173 @Override
+- `void onAvailableCommandsChanged(AnalyticsListener.EventTime eventTime, Player.Commands commands)`  L178 @Override
+- `void onBandwidthEstimate(AnalyticsListener.EventTime eventTime, int i, long j, long j2)`  L183 @Override
+- `void onCues(AnalyticsListener.EventTime eventTime, CueGroup cueGroup)`  L187 @Override
+- `void onCues(AnalyticsListener.EventTime eventTime, List list)`  L192 @Override
+- `void onCues(CueGroup cueGroup)`  L197 @Override
+- `void onCues(List<Cue> list)`  L202 @Override
+- `void onDecoderDisabled(AnalyticsListener.EventTime eventTime, int i, DecoderCounters decoderCounters)`  L206 @Override
+- `void onDecoderEnabled(AnalyticsListener.EventTime eventTime, int i, DecoderCounters decoderCounters)`  L211 @Override
+- `void onDecoderInitialized(AnalyticsListener.EventTime eventTime, int i, String str, long j)`  L216 @Override
+- `void onDecoderInputFormatChanged(AnalyticsListener.EventTime eventTime, int i, Format format)`  L221 @Override
+- `void onDeviceInfoChanged(DeviceInfo deviceInfo)`  L226 @Override
+- `void onDeviceInfoChanged(AnalyticsListener.EventTime eventTime, DeviceInfo deviceInfo)`  L231 @Override
+- `void onDeviceVolumeChanged(int i, boolean z)`  L236 @Override
+- `void onDeviceVolumeChanged(AnalyticsListener.EventTime eventTime, int i, boolean z)`  L241 @Override
+- `void onDownstreamFormatChanged(AnalyticsListener.EventTime eventTime, MediaLoadData mediaLoadData)`  L246 @Override
+- `void onDrmKeysLoaded(AnalyticsListener.EventTime eventTime)`  L251 @Override
+- `void onDrmKeysRemoved(AnalyticsListener.EventTime eventTime)`  L255 @Override
+- `void onDrmKeysRestored(AnalyticsListener.EventTime eventTime)`  L259 @Override
+- `void onDrmSessionAcquired(AnalyticsListener.EventTime eventTime)`  L263 @Override
+- `void onDrmSessionAcquired(AnalyticsListener.EventTime eventTime, int i)`  L268 @Override
+- `void onDrmSessionManagerError(AnalyticsListener.EventTime eventTime, Exception exc)`  L273 @Override
+- `void onDrmSessionReleased(AnalyticsListener.EventTime eventTime)`  L277 @Override
+- `void onDroppedVideoFrames(AnalyticsListener.EventTime eventTime, int i, long j)`  L282 @Override
+- `void onEvents(Player player, Player.Events events)`  L286 @Override
+- `void onEvents(Player player, AnalyticsListener.Events events)`  L291 @Override
+- `void onIsLoadingChanged(AnalyticsListener.EventTime eventTime, boolean z)`  L296 @Override
+- `void onIsLoadingChanged(boolean z)`  L300 @Override
+- `void onIsPlayingChanged(AnalyticsListener.EventTime eventTime, boolean z)`  L304 @Override
+- `void onIsPlayingChanged(boolean z)`  L309 @Override
+- `void onLoadCanceled(AnalyticsListener.EventTime eventTime, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData)`  L314 @Override
+- `void onLoadCompleted(AnalyticsListener.EventTime eventTime, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData)`  L319 @Override
+- `void onLoadError(AnalyticsListener.EventTime eventTime, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData, IOException iOException, boolean z)`  L324 @Override
+- `void onLoadStarted(AnalyticsListener.EventTime eventTime, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData)`  L329 @Override
+- `void onLoadingChanged(AnalyticsListener.EventTime eventTime, boolean z)`  L334 @Override
+- `void onLoadingChanged(boolean z)`  L339 @Override
+- `void onMaxSeekToPreviousPositionChanged(long j)`  L344 @Override
+- `void onMaxSeekToPreviousPositionChanged(AnalyticsListener.EventTime eventTime, long j)`  L349 @Override
+- `void onMediaItemTransition(MediaItem mediaItem, int i)`  L354 @Override
+- `void onMediaItemTransition(AnalyticsListener.EventTime eventTime, MediaItem mediaItem, int i)`  L359 @Override
+- `void onMediaMetadataChanged(MediaMetadata mediaMetadata)`  L364 @Override
+- `void onMediaMetadataChanged(AnalyticsListener.EventTime eventTime, MediaMetadata mediaMetadata)`  L369 @Override
+- `void onMetadata(AnalyticsListener.EventTime eventTime, Metadata metadata)`  L374 @Override
+- `void onMetadata(Metadata metadata)`  L378 @Override
+- `void onPlayWhenReadyChanged(AnalyticsListener.EventTime eventTime, boolean z, int i)`  L382 @Override
+- `void onPlaybackParametersChanged(PlaybackParameters playbackParameters)`  L386 @Override
+- `void onPlaybackParametersChanged(AnalyticsListener.EventTime eventTime, PlaybackParameters playbackParameters)`  L390 @Override
+- `void onPlaybackStateChanged(AnalyticsListener.EventTime eventTime, int i)`  L394 @Override
+- `void onPlaybackSuppressionReasonChanged(int i)`  L399 @Override
+- `void onPlaybackSuppressionReasonChanged(AnalyticsListener.EventTime eventTime, int i)`  L404 @Override
+- `void onPlayerError(AnalyticsListener.EventTime eventTime, PlaybackException playbackException)`  L409 @Override
+- `void onPlayerErrorChanged(PlaybackException playbackException)`  L414 @Override
+- `void onPlayerErrorChanged(AnalyticsListener.EventTime eventTime, PlaybackException playbackException)`  L419 @Override
+- `void onPlayerReleased(AnalyticsListener.EventTime eventTime)`  L424 @Override
+- `void onPlayerStateChanged(AnalyticsListener.EventTime eventTime, boolean z, int i)`  L429 @Override
+- `void onPlayerStateChanged(boolean z, int i)`  L434 @Override
+- `void onPlaylistMetadataChanged(MediaMetadata mediaMetadata)`  L439 @Override
+- `void onPlaylistMetadataChanged(AnalyticsListener.EventTime eventTime, MediaMetadata mediaMetadata)`  L444 @Override
+- `void onPositionDiscontinuity(int i)`  L449 @Override
+- `void onPositionDiscontinuity(AnalyticsListener.EventTime eventTime, int i)`  L454 @Override
+- `void onPositionDiscontinuity(AnalyticsListener.EventTime eventTime, Player.PositionInfo positionInfo, Player.PositionInfo positionInfo2, int i)`  L459 @Override
+- `void onRenderedFirstFrame()`  L464 @Override
+- `void onRenderedFirstFrame(AnalyticsListener.EventTime eventTime, Object obj, long j)`  L469 @Override
+- `void onRepeatModeChanged(int i)`  L473 @Override
+- `void onRepeatModeChanged(AnalyticsListener.EventTime eventTime, int i)`  L477 @Override
+- `void onSeekBackIncrementChanged(long j)`  L481 @Override
+- `void onSeekBackIncrementChanged(AnalyticsListener.EventTime eventTime, long j)`  L486 @Override
+- `void onSeekForwardIncrementChanged(long j)`  L491 @Override
+- `void onSeekForwardIncrementChanged(AnalyticsListener.EventTime eventTime, long j)`  L496 @Override
+- `void onSeekProcessed()`  L501 @Override
+- `void onSeekProcessed(AnalyticsListener.EventTime eventTime)`  L506 @Override
+- `void onSeekStarted(AnalyticsListener.EventTime eventTime)`  L511 @Override
+- `void onShuffleModeChanged(AnalyticsListener.EventTime eventTime, boolean z)`  L516 @Override
+- `void onShuffleModeEnabledChanged(boolean z)`  L520 @Override
+- `void onSkipSilenceEnabledChanged(AnalyticsListener.EventTime eventTime, boolean z)`  L524 @Override
+- `void onSkipSilenceEnabledChanged(boolean z)`  L529 @Override
+- `void onSurfaceSizeChanged(int i, int i2)`  L534 @Override
+- `void onSurfaceSizeChanged(AnalyticsListener.EventTime eventTime, int i, int i2)`  L539 @Override
+- `void onTimelineChanged(Timeline timeline, int i)`  L544 @Override
+- `void onTimelineChanged(AnalyticsListener.EventTime eventTime, int i)`  L549 @Override
+- `void onTrackSelectionParametersChanged(AnalyticsListener.EventTime eventTime, TrackSelectionParameters trackSelectionParameters)`  L553 @Override
+- `void onTrackSelectionParametersChanged(TrackSelectionParameters trackSelectionParameters)`  L558 @Override
+- `void onTracksChanged(Tracks tracks)`  L563 @Override
+- `void onTracksChanged(AnalyticsListener.EventTime eventTime, Tracks tracks)`  L568 @Override
+- `void onUpstreamDiscarded(AnalyticsListener.EventTime eventTime, MediaLoadData mediaLoadData)`  L573 @Override
+- `void onVideoCodecError(AnalyticsListener.EventTime eventTime, Exception exc)`  L578 @Override
+- `void onVideoDecoderInitialized(AnalyticsListener.EventTime eventTime, String str, long j)`  L583 @Override
+- `void onVideoDecoderInitialized(AnalyticsListener.EventTime eventTime, String str, long j, long j2)`  L588 @Override
+- `void onVideoDecoderReleased(AnalyticsListener.EventTime eventTime, String str)`  L593 @Override
+- `void onVideoDisabled(AnalyticsListener.EventTime eventTime, DecoderCounters decoderCounters)`  L598 @Override
+- `void onVideoEnabled(AnalyticsListener.EventTime eventTime, DecoderCounters decoderCounters)`  L603 @Override
+- `void onVideoFrameProcessingOffset(AnalyticsListener.EventTime eventTime, long j, int i)`  L608 @Override
+- `void onVideoInputFormatChanged(AnalyticsListener.EventTime eventTime, Format format)`  L613 @Override
+- `void onVideoInputFormatChanged(AnalyticsListener.EventTime eventTime, Format format, DecoderReuseEvaluation decoderReuseEvaluation)`  L618 @Override
+- `void onVideoSizeChanged(AnalyticsListener.EventTime eventTime, int i, int i2, int i3, float f)`  L623 @Override
+- `void onVideoSizeChanged(VideoSize videoSize)`  L628 @Override
+- `void onVolumeChanged(float f)`  L633 @Override
+- `void onVolumeChanged(AnalyticsListener.EventTime eventTime, float f)`  L638 @Override
+- `void setAudioStreamType(int i)`  L643 @Override
+- `void setKeepInBackground(boolean z)`  L647 @Override
+- `void setLogEnabled(boolean z)`  L651 @Override
+- `void setScreenOnWhilePlaying(boolean z)`  L655 @Override
+- `void setWakeMode(Context context, int i)`  L659 @Override
+- `public IjkExo2MediaPlayer(Context context)`  L662
+- `int getVideoRendererIndex()`  L667
+- `Format getVideoFormat()`  L678
+- `Renderer getVideoRenderer()`  L686
+- `void setDisplay(SurfaceHolder surfaceHolder)`  L695 @Override
+- `void setSurface(Surface surface)`  L704 @Override
+- `void setDataSource(Context context, Uri uri, Map<String, String> map)`  L715 @Override
+- `void setDataSource(String str)`  L724 @Override
+- `void setDataSource(Context context, Uri uri)`  L729 @Override
+- `void setDataSource(FileDescriptor fileDescriptor)`  L736 @Override
+    - 体内字面量："no support"
+- `String getDataSource()`  L741 @Override
+- `void prepareAsync()`  L746 @Override
+    - 体内字面量："can't prepare a prepared player"
+- `void start()`  L754 @Override
+- `void stop()`  L763 @Override
+- `void pause()`  L772 @Override
+- `int getVideoWidth()`  L781 @Override
+- `int getVideoHeight()`  L786 @Override
+- `boolean isPlaying()`  L791 @Override
+- `void seekTo(long j)`  L804 @Override
+- `long getCurrentPosition()`  L813 @Override
+- `long getDuration()`  L822 @Override
+- `void reset()`  L831 @Override
+- `void setLooping(boolean z)`  L848 @Override
+- `boolean isLooping()`  L853 @Override
+- `void setVolume(float f, float f2)`  L858 @Override
+- `int getAudioSessionId()`  L866 @Override
+- `void release()`  L875 @Override
+- `void prepareAsyncInternal()`  L882
+- `void run()`  L885 @Override
+- `String getOverrideExtension()`  L917
+- `void setOverrideExtension(String str)`  L921
+- `void stopPlayback()`  L925
+- `void setPreview(boolean z)`  L929
+- `boolean isPreview()`  L933
+- `boolean isCache()`  L937
+- `void setSeekParameter(SeekParameters seekParameters)`  L941
+- `void setCache(boolean z)`  L945
+- `File getCacheDir()`  L949
+- `void setCacheDir(File file)`  L953
+- `MediaSource getMediaSource()`  L957
+- `void setMediaSource(MediaSource mediaSource)`  L961
+- `ExoSourceManager getExoHelper()`  L965
+- `void setSpeed(float f, float f2)`  L969
+- `float getSpeed()`  L978
+- `int getBufferedPercentage()`  L982
+- `MappingTrackSelector getTrackSelector()`  L990
+- `void setTrackSelector(MappingTrackSelector mappingTrackSelector)`  L994
+- `LoadControl getLoadControl()`  L998
+- `void setLoadControl(LoadControl loadControl)`  L1002
+- `DefaultRenderersFactory getRendererFactory()`  L1006
+- `void setRendererFactory(DefaultRenderersFactory defaultRenderersFactory)`  L1010
+- `void onPlaybackStateChanged(int i)`  L1015 @Override
+- `void onPlayWhenReadyChanged(boolean z, int i)`  L1020 @Override
+- `void onPlayerError(PlaybackException playbackException)`  L1044 @Override
+- `void onPositionDiscontinuity(Player.PositionInfo positionInfo, Player.PositionInfo positionInfo2, int i)`  L1049 @Override
+- `void onAudioDisabled(AnalyticsListener.EventTime eventTime, DecoderCounters decoderCounters)`  L1057 @Override
+- `void onVideoSizeChanged(AnalyticsListener.EventTime eventTime, VideoSize videoSize)`  L1062 @Override

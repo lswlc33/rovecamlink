@@ -47,7 +47,7 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
     override val platform = DevicePlatform.TUWIN_REST
 
     /**
-     * Only the two REST-family names (docs/03 §1a: `^TUWIN_R3P_…`, `^TUWIN_R6_…`).
+     * Only the two REST-family names (docs/analysis/protocol-matrix §1a: `^TUWIN_R3P_…`, `^TUWIN_R6_…`).
      * `TUWIN_M3_*` and `TUWIN_R5*_*` are different transports on different default
      * IPs, and the catch-all `^TUWIN_[A-Za-z0-9]{6,}$` would claim those too, so
      * neither gets a fixed host here — they keep the candidate walk.
@@ -87,7 +87,7 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
             // Auth handshake. Its answer is a notification, not a credential: the official
             // client declares the payload as `Any?` and reads only
             // `isSuccess()`/`getResult()`, never `getInfo()` — see
-            // `docs/08-官方APK全量逆向档案/01-TUWIN-档案.md` §3.1 「响应字段怎么被用：只用
+            // `docs/evidence/tuwin.md` §3.1 「响应字段怎么被用：只用
             // `result`，`info` 完全丢弃」. So nothing is parsed out of the body here. The
             // `authToken = token ?: seed` this replaces was a field we wrote and never
             // sent: a claim about the session that no request backed up.
@@ -297,7 +297,7 @@ class TuwinRestProtocol(private val http: CameraHttp) : CameraProtocol {
      *
      * Every endpoint speaks the same envelope — `{"result": Int, "info": …}` with
      * `isSuccess() == (result == 0)`
-     * (`docs/08-官方APK全量逆向档案/01-TUWIN-档案.md` §3, `Ride3ProApiResponse.java:13-19`),
+     * (`docs/evidence/tuwin.md` §3, `Ride3ProApiResponse.java:13-19`),
      * so a bare "we got a body" test — which is what this file used — reported a refused
      * command as success. A reply that is not a JSON object carries no `result` and is
      * judged by the transport alone, which is how the XML/streaming endpoints work.

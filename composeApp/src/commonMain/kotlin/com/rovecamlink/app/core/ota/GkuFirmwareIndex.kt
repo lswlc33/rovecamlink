@@ -12,7 +12,7 @@ import kotlinx.serialization.json.Json
  * The vendor's public firmware index, and the decisions we make from it.
  *
  * Checked against the live endpoint on 2026-09-23 (one read-only GET, the method
- * boundary `docs/05 §0` allows): `GET https://server4.gkuvision.com/v1/push/api/getNewestVersion`
+ * boundary `docs/analysis/network-api §0` allows): `GET https://server4.gkuvision.com/v1/push/api/getNewestVersion`
  * answers **200 with no authentication and no custom headers at all** — this repo
  * previously recorded the official client's header set (`os: android`, `appVersionCode`,
  * a bare `Bearer`), and it turns out none of it is required; a plain GET returns the
@@ -22,7 +22,7 @@ import kotlinx.serialization.json.Json
  * The three query parameters are what the official device-management UI sends
  * (`_work/xtu_src/sources/com/gku/loginmodule/manage/DeviceVersionManager.java:150-211`),
  * where each is a comma-joined list because that screen checks every paired camera in
- * one call. One camera, one request is what `docs/05 §7` asks of us, so all three stay
+ * one call. One camera, one request is what `docs/analysis/network-api §7` asks of us, so all three stay
  * single-valued here.
  *
  * Only the model is read from the camera. `getdeviceattr.cgi` on the 2026-09-21/22
@@ -105,7 +105,7 @@ object GkuFirmwareIndex {
         val entries = reply.data?.list.orEmpty()
         if (entries.isEmpty()) {
             // Not an error. `XTUS7` and `XTUMAX3` are real models with no OTA at all
-            // (docs/04 §5.1), so an empty list is the honest answer for them.
+            // (docs/analysis/ota-and-gaps §5.1), so an empty list is the honest answer for them.
             Diag.info(LogTag.OTA, "firmware index: no entries for $wantModel")
             return emptyList()
         }
@@ -159,7 +159,7 @@ object GkuFirmwareIndex {
      *
      * The live answer for S7PRO is `http://vidvault-asia.oss-cn-hangzhou.aliyuncs.com/system/…zip`
      * — the vendor ships a cleartext download URL for a binary that is about to become
-     * the camera's operating system, which `docs/05` logs as defect C-2 on their side.
+     * the camera's operating system, which `docs/analysis/network-api` logs as defect C-2 on their side.
      * The same object is served over TLS (verified 2026-09-23: `HEAD https://…` returns
      * 200, `Content-Length: 54490165`, `Accept-Ranges: bytes`), so rewriting the scheme
      * costs nothing and removes the only step in the chain where the image could be
@@ -184,7 +184,7 @@ object GkuFirmwareIndex {
     /**
      * HTML fragment → the lines the user actually reads. `<p>` becomes a line break and
      * every other tag is dropped, because the settings rows have no rich text to put them
-     * in. Entities are left alone: `docs/08` shows the vendor's notes use plain prose,
+     * in. Entities are left alone: `docs/evidence/xtugo` shows the vendor's notes use plain prose,
      * and inventing an entity table is a guess at content we have not seen.
      */
     fun plainText(html: String): String = html
@@ -199,13 +199,13 @@ object GkuFirmwareIndex {
     /**
      * Decide what to tell the user.
      *
-     * Comparison is on the normalized `yyyyMMdd` stamp, which `docs/04 §4` established as
+     * Comparison is on the normalized `yyyyMMdd` stamp, which `docs/analysis/ota-and-gaps §4` established as
      * the version truth for all three supported brands (`20.8.6.1.20260910` and
      * `XTUS7PRO_20.8.6.1.20260910.G` both yield `20260910`). Lexicographic on the
      * 8-digit string is the same as date order, which is why [FirmwareVersion] can be
      * this small.
      *
-     * The vendor's own OTA path compares nothing (`docs/04 §0` conclusion 7: TUWIN will
+     * The vendor's own OTA path compares nothing (`docs/analysis/ota-and-gaps §0` conclusion 7: TUWIN will
      * happily install an equal or older build, and XTU leaves the decision to the cloud),
      * so both of those cases are decided explicitly here instead.
      */
@@ -324,7 +324,7 @@ sealed interface UpdatePlan {
 
 // ---- the wire shape, verbatim from the vendor's field names ----
 //
-// `docs/04 §1.1` records that XTU's three generations of firmware API have mutually
+// `docs/analysis/ota-and-gaps §1.1` records that XTU's three generations of firmware API have mutually
 // incompatible field names; this is the current generation
 // (`loginmodule/model/GetDeviceNewestVersionResponse.java:8-143`). The vendor's own DTO
 // declares eight fields and drops `size` and `create_time` even though they are in the

@@ -1,0 +1,223 @@
+# XTU GO — 类与成员明细：m.mifan.ui.widget
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 8 个文件 / 14 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `m.mifan.ui.widget.databinding.ViewSimpleToolbarBinding`
+L13 · [class] public final ViewSimpleToolbarBinding · implements `ViewBinding` · `m/mifan/ui/widget/databinding/ViewSimpleToolbarBinding.java`
+
+字段/常量（5）：
+- `View rootView`  L14
+- `PressImageView viewAction1`  L15
+- `PressImageView viewActionReturn`  L16
+- `TextView viewTextTitle`  L17
+- `int i = R.id.viewAction1`  L40
+
+方法（4）：
+- `private ViewSimpleToolbarBinding(View view, PressImageView pressImageView, PressImageView pressImageView2, TextView textView)`  L19
+- `View getRoot()`  L27 @Override
+- `ViewSimpleToolbarBinding inflate(LayoutInflater layoutInflater, ViewGroup viewGroup)`  L31
+    - 体内字面量："parent"
+- `ViewSimpleToolbarBinding bind(View view)`  L39
+### `m.mifan.ui.widget.PressImageView`
+L15 · [class] public PressImageView · extends `AppCompatImageView` · `m/mifan/ui/widget/PressImageView.java`
+注解：
+
+方法（6）：
+- `public PressImageView(Context context)`  L17
+    - 体内字面量："context"
+- `public PressImageView(Context context, AttributeSet attributeSet)`  L23
+    - 体内字面量："context"
+- ` PressImageView(Context context, AttributeSet attributeSet, int i, int i2, DefaultConstructorMarker defaultConstructorMarker)`  L28
+- `public PressImageView(Context context, AttributeSet attributeSet, int i)`  L33
+    - 体内字面量："context"
+- `boolean onTouch(View view, MotionEvent motionEvent)`  L39 @Override
+- `boolean _init_$lambda$0(View view, MotionEvent motionEvent)`  L46
+### `m.mifan.ui.widget.PressTextView`
+L15 · [class] public PressTextView · extends `AppCompatTextView` · `m/mifan/ui/widget/PressTextView.java`
+注解：
+
+方法（6）：
+- `public PressTextView(Context context)`  L17
+    - 体内字面量："context"
+- `public PressTextView(Context context, AttributeSet attributeSet)`  L23
+    - 体内字面量："context"
+- ` PressTextView(Context context, AttributeSet attributeSet, int i, int i2, DefaultConstructorMarker defaultConstructorMarker)`  L28
+- `public PressTextView(Context context, AttributeSet attributeSet, int i)`  L33
+    - 体内字面量："context"
+- `boolean onTouch(View view, MotionEvent motionEvent)`  L39 @Override
+- `boolean _init_$lambda$0(View view, MotionEvent motionEvent)`  L46
+### `m.mifan.ui.widget.PressView`
+L13 · [class] public PressView · extends `View` · `m/mifan/ui/widget/PressView.java`
+注解：
+
+方法（4）：
+- `public PressView(Context context)`  L15
+    - 体内字面量："context"
+- `public PressView(Context context, AttributeSet attributeSet)`  L21
+    - 体内字面量："context"
+- ` PressView(Context context, AttributeSet attributeSet, int i, int i2, DefaultConstructorMarker defaultConstructorMarker)`  L26
+- `public PressView(Context context, AttributeSet attributeSet, int i)`  L31
+    - 体内字面量："context"
+### `m.mifan.ui.widget.R`
+L4 · [class] public final R · `m/mifan/ui/widget/R.java`
+
+方法（1）：
+- `private R()`  L92
+### `m.mifan.ui.widget.R$attr`
+L6 · [class] public static final attr · `m/mifan/ui/widget/R.java`
+
+字段/常量（28）：
+- `int actionIcon = 0x7f040012`  L7
+- `int decorationColor = 0x7f040220`  L8
+- `int loadingDialogProgressDrawable = 0x7f0403b9`  L9
+- `int navIcon = 0x7f040453`  L10
+- `int negativeTextColor = 0x7f04045a`  L11
+- `int normalBackgroundColor = 0x7f04045e`  L12
+- `int positiveTextColor = 0x7f0404a1`  L13
+- `int prefDecorationColor = 0x7f0404a3`  L14
+- `int prefDecorationHeight = 0x7f0404a4`  L15
+- `int prefHeaderTextColor = 0x7f0404a5`  L16
+- `int prefHeaderTextSize = 0x7f0404a6`  L17
+- `int prefItemBackgroundColor = 0x7f0404a7`  L18
+- `int prefItemLRPadding = 0x7f0404a8`  L19
+- `int prefItemTBPadding = 0x7f0404a9`  L20
+- `int prefSummary2Color = 0x7f0404aa`  L21
+- `int prefSummaryColor = 0x7f0404ab`  L22
+- `int prefSummarySize = 0x7f0404ac`  L23
+- `int prefTitleColor = 0x7f0404ad`  L24
+- `int prefTitleSize = 0x7f0404ae`  L25
+- `int simpleToolbarStyle = 0x7f040579`  L26
+- `int solidActivePadding = 0x7f040583`  L27
+- `int solidColor = 0x7f040584`  L28
+- `int solidColorCapture = 0x7f040585`  L29
+- `int solidPadding = 0x7f040586`  L30
+- `int strokeColor = 0x7f0405ea`  L31
+- `int strokeWidth = 0x7f0405eb`  L32
+- `int title = 0x7f040685`  L33
+- `int titleTextColor = 0x7f040691`  L34
+
+方法（1）：
+- `private attr()`  L36
+### `m.mifan.ui.widget.R$color`
+L40 · [class] public static final color · `m/mifan/ui/widget/R.java`
+
+字段/常量（2）：
+- `int normalBackgroundColor = 0x7f060371`  L41
+- `int secondaryBackgroundColor = 0x7f0603cf`  L42
+
+方法（1）：
+- `private color()`  L44
+### `m.mifan.ui.widget.R$id`
+L48 · [class] public static final id · `m/mifan/ui/widget/R.java`
+
+字段/常量（3）：
+- `int viewAction1 = 0x7f0a07ed`  L49
+- `int viewActionReturn = 0x7f0a07f2`  L50
+- `int viewTextTitle = 0x7f0a0834`  L51
+
+方法（1）：
+- `private id()`  L53
+### `m.mifan.ui.widget.R$layout`
+L57 · [class] public static final layout · `m/mifan/ui/widget/R.java`
+
+字段/常量（1）：
+- `int view_simple_toolbar = 0x7f0d021b`  L58
+
+方法（1）：
+- `private layout()`  L60
+### `m.mifan.ui.widget.R$style`
+L64 · [class] public static final style · `m/mifan/ui/widget/R.java`
+
+字段/常量（4）：
+- `int AppTheme = 0x7f15000d`  L65
+- `int PrefListDialogStyle = 0x7f1501a0`  L66
+- `int PrefStyle = 0x7f1501a1`  L67
+- `int ThemeDialogAnim = 0x7f1502e3`  L68
+
+方法（1）：
+- `private style()`  L70
+### `m.mifan.ui.widget.R$styleable`
+L74 · [class] public static final styleable · `m/mifan/ui/widget/R.java`
+
+字段/常量（12）：
+- `int ShutterActionButton_solidActivePadding = 0x00000000`  L75
+- `int ShutterActionButton_solidColor = 0x00000001`  L76
+- `int ShutterActionButton_solidColorCapture = 0x00000002`  L77
+- `int ShutterActionButton_solidPadding = 0x00000003`  L78
+- `int ShutterActionButton_strokeColor = 0x00000004`  L79
+- `int ShutterActionButton_strokeWidth = 0x00000005`  L80
+- `int SimpleToolbar_actionIcon = 0x00000000`  L81
+- `int SimpleToolbar_navIcon = 0x00000001`  L82
+- `int SimpleToolbar_title = 0x00000002`  L83
+- `int SimpleToolbar_titleTextColor = 0x00000003`  L84
+- `int[] ShutterActionButton = {com.gku.xtugo.R.attr.solidActivePadding, com.gku.xtugo.R.attr.solidColor, com.gku.xtugo.R.attr.solidColorCapture, com.gku.xtugo.R.attr.solidPadding, com.gku.xtugo.R.attr.strokeColor, com.gku.xtugo.R.attr.strokeWidth}`  L85
+- `int[] SimpleToolbar = {com.gku.xtugo.R.attr.actionIcon, com.gku.xtugo.R.attr.navIcon, com.gku.xtugo.R.attr.title, com.gku.xtugo.R.attr.titleTextColor}`  L86
+
+方法（1）：
+- `private styleable()`  L88
+### `m.mifan.ui.widget.SimpleToolbar`
+L24 · [class] public final SimpleToolbar · extends `FrameLayout` · `m/mifan/ui/widget/SimpleToolbar.java`
+注解：
+
+字段/常量（2）：
+- `ViewSimpleToolbarBinding viewBinding`  L25
+- `ViewSimpleToolbarBinding viewSimpleToolbarBinding = this.viewBinding`  L64
+
+方法（13）：
+- `public SimpleToolbar(Context context)`  L28
+    - 体内字面量："context"
+- `public SimpleToolbar(Context context, AttributeSet attributeSet)`  L34
+    - 体内字面量："context"
+- ` SimpleToolbar(Context context, AttributeSet attributeSet, int i, int i2, DefaultConstructorMarker defaultConstructorMarker)`  L39
+- `public SimpleToolbar(Context context, AttributeSet attributeSet, int i)`  L44
+    - 体内字面量："context" · "obtainStyledAttributes(...)" · "viewAction1"
+- `ViewSimpleToolbarBinding getViewBinding()`  L63
+- `void setViewBinding(ViewSimpleToolbarBinding viewSimpleToolbarBinding)`  L72
+    - 体内字面量："<set-?>"
+- `void setNavigationOnClickListener(View.OnClickListener listener)`  L77
+    - 体内字面量："listener"
+- `void setAction1OnClickListener(final Function1<? super View, Unit> listener)`  L82
+    - 体内字面量："listener"
+- `void onClick(View view)`  L86 @Override
+- `void setNavigationOnClickListener(final Function1<? super View, Unit> listener)`  L92
+    - 体内字面量："listener"
+- `void onClick(View view)`  L96 @Override
+- `void setTitle(String title)`  L102
+    - 体内字面量："title"
+- `void setTitle(int title)`  L107
+### `m.mifan.ui.widget.SwitchImageView`
+L14 · [class] public final SwitchImageView · extends `AppCompatImageView implements Checkable` · implements `Checkable` · `m/mifan/ui/widget/SwitchImageView.java`
+注解：
+
+方法（7）：
+- `public SwitchImageView(Context context)`  L16
+    - 体内字面量："context"
+- `public SwitchImageView(Context context, AttributeSet attributeSet)`  L22
+    - 体内字面量："context"
+- ` SwitchImageView(Context context, AttributeSet attributeSet, int i, int i2, DefaultConstructorMarker defaultConstructorMarker)`  L27
+- `public SwitchImageView(Context context, AttributeSet attributeSet, int i)`  L32
+    - 体内字面量："context"
+- `boolean isChecked()`  L38 @Override
+- `void toggle()`  L43 @Override
+- `void setChecked(boolean checked)`  L48 @Override
+### `m.mifan.ui.widget.ViewPagerX`
+L13 · [class] public final ViewPagerX · extends `ViewPager` · `m/mifan/ui/widget/ViewPagerX.java`
+注解：
+
+字段/常量（1）：
+- `boolean isUserInputEnabled`  L14
+
+方法（5）：
+- `public ViewPagerX(Context context, AttributeSet attributeSet)`  L17
+    - 体内字面量："context"
+- `boolean getIsUserInputEnabled()`  L24
+- `void setUserInputEnabled(boolean z)`  L28
+- `boolean onTouchEvent(MotionEvent ev)`  L33 @Override
+- `boolean onInterceptTouchEvent(MotionEvent ev)`  L41 @Override

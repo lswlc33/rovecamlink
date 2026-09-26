@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>页面不存在 — RoveCamLink</title>
+<style>
+  :root{--ink:#0a0a0b;--paper:#f4f0e6;--muted:#8b877d;--amber:#ffb020;--line:rgba(244,240,230,.14)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--ink);color:var(--paper);min-height:100vh;display:flex;align-items:center;justify-content:center;
+       font-family:"Archivo","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;padding:24px}
+  .box{max-width:560px;width:100%}
+  .code{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;color:var(--amber);font-size:13px;letter-spacing:.12em}
+  h1{font-size:28px;margin:10px 0 12px;font-weight:800}
+  p{color:var(--muted);font-size:14px;line-height:1.7}
+  .from{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:12px;color:var(--paper);opacity:.75;
+        border:1px solid var(--line);border-radius:4px;padding:10px 12px;margin:16px 0;word-break:break-all}
+  .to{color:var(--ok,#7bd88f);font-size:13px;margin-bottom:16px}
+  .links{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+  a.btn{color:var(--ink);background:var(--amber);text-decoration:none;font-weight:700;font-size:13px;
+        padding:10px 16px;border-radius:3px}
+  a.ghost{color:var(--paper);border:1px solid var(--line);text-decoration:none;font-size:13px;padding:10px 16px;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="code">404</div>
+  <h1>这个页面搬家了</h1>
+  <p>2026-09-26 文档系统重整后，旧的 <code>docs/01…08</code> 编号路径已按层归档。能识别的旧地址会自动跳到新位置。</p>
+  <div class="from" id="from"></div>
+  <div class="to" id="to" hidden></div>
+  <div class="links">
+    <a class="btn" href="./">返回首页</a>
+    <a class="ghost" href="./README.md">文档系统总纲</a>
+    <a class="ghost" href="https://github.com/lswlc33/rovecamlink" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</div>
+<script>
+(function () {
+  var from = document.getElementById('from'), to = document.getElementById('to');
+  from.textContent = location.pathname + location.search;
+
+  // 旧→新对照（与 docs/README.md §6 的表一致；键为去掉扩展名的旧路径，目录键以 / 结尾）
+  var MAP = [
+    ['01-APK逆向分析报告', 'analysis/apk-overview'],
+    ['02-KMP架构与开发计划', 'design/roadmap'],
+    ['03-品牌型号与协议矩阵', 'analysis/protocol-matrix'],
+    ['04-固件更新与功能差距', 'analysis/ota-and-gaps'],
+    ['05-网络API清单与安全评估', 'analysis/network-api'],
+    ['06-诊断日志系统', 'impl/diagnostics-log'],
+    ['07-蓝牙发现与自动连网及VPN共存研究报告', 'analysis/ble-and-vpn'],
+    ['08-官方APK全量逆向档案/00-总览与方法', 'evidence/method'],
+    ['08-官方APK全量逆向档案/01-TUWIN-档案', 'evidence/tuwin'],
+    ['08-官方APK全量逆向档案/02-XTUGO-档案', 'evidence/xtugo'],
+    ['08-官方APK全量逆向档案/03-idGoLive-档案', 'evidence/idgolive'],
+    ['08-官方APK全量逆向档案/04-三家操作对照与复现清单', 'evidence/operations-matrix'],
+    ['08-官方APK全量逆向档案/05-我们已实现的命令面', 'impl/command-surface'],
+    ['08-官方APK全量逆向档案/data/', 'evidence/data/'],
+    ['superpowers/specs/2026-09-25-icatch-http-profiles-design', 'design/specs/2026-09-25-icatch-http-profiles'],
+  ];
+
+  // 项目页站点根是 /rovecamlink/；用户页或自定义域名则是 /
+  var base = location.pathname.indexOf('/rovecamlink/') === 0 ? '/rovecamlink/' : '/';
+  var p = decodeURIComponent(location.pathname).replace(base, '');
+  p = p.replace(/\.(html|htm|md)$/i, '');           // 旧链接可能是 .md / .html / 无后缀
+  p = p.replace(/\/+$/, '');
+
+  var hit = null;
+  for (var i = 0; i < MAP.length; i++) {
+    var k = MAP[i][0], v = MAP[i][1];
+    if (k.slice(-1) === '/') {                        // 目录键：保留其余路径
+      if (p.indexOf(k) === 0) { hit = v + p.slice(k.length); break; }
+    } else if (p === k || p.indexOf(k + '/') === 0) {
+      hit = v + (p === k ? '' : p.slice(k.length)); break;
+    }
+  }
+  if (hit) {
+    hit += '.md';
+    to.hidden = false;
+    to.textContent = '正在跳转到 ' + hit + ' …';
+    location.replace(base + hit);
+  }
+})();
+</script>
+</body>
+</html>

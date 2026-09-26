@@ -6,7 +6,7 @@ import com.rovecamlink.app.core.model.DevicePlatform
  * One camera model in the supported-devices list: what it is, what is inside it,
  * and what this app has to speak to drive it.
  *
- * Every field is a fact from `docs/03-品牌型号与协议矩阵.md` (the reverse-engineering
+ * Every field is a fact from `docs/analysis/protocol-matrix.md` (the reverse-engineering
  * archive), carried here verbatim rather than paraphrased — the strings are the ones a
  * user matches against the name printed on the box or the hotspot list.
  */
@@ -46,13 +46,14 @@ data class DeviceCatalogBrand(
  *
  * The facts come from the archive, not from a camera:
  *  - TUWIN's four models are the official app's own `DeviceType` enum
- *    (`docs/03 §1.1`), the only brand that maps model → protocol explicitly.
+ *    (`docs/analysis/protocol-matrix §1.1`), the only brand that maps model → protocol explicitly.
  *  - XTU's 18 models are the union of the official app's four device lists
- *    (`docs/03 §2.1`); the chip column marks only what the archive CONFIRMED —
+ *    (`docs/analysis/protocol-matrix §2.1`); the chip column marks only what the archive CONFIRMED —
  *    "CGI 家族" means "this family answers the Hi35xx CGI, SoC unconfirmed",
  *    because the official app dispatches on the camera's self-reported `type`,
  *    not on a model table.
- *  - idGoLive's iCatch platform is documented in `docs/08 附录 A §0.1` and **is** driven
+ *  - idGoLive's iCatch platform is documented in
+ *    `docs/impl/command-surface.md` §0.1 and **is** driven
  *    in this build (`IcatchHttpProtocol`), so XTU's Mini1 and the idGoLive rows read 已适配.
  *
  * What a brand can drive is not decided here: the page asks the registry, so a plugin

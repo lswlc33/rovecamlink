@@ -117,7 +117,7 @@ export const read = (file) => fs.readFileSync(file, 'utf8');
 export function ensureDir(file) { fs.mkdirSync(path.dirname(file), { recursive: true }); }
 
 export const OUT_WORK = '_work/re';
-export const OUT_DOCS = 'docs/08-官方APK全量逆向档案';
+export const OUT_DOCS = 'docs/evidence';
 
 /** Write a generated artefact to scratch, and optionally into the committed docs set. */
 export function writeOut(app, name, text, { docs = false } = {}) {

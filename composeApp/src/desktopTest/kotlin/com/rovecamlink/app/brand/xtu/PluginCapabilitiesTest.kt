@@ -38,7 +38,7 @@ class PluginCapabilitiesTest {
     @Test
     fun `the hi3510 family still declares the capabilities it lacks`() {
         // Both facts were established the hard way and each one gates a button: the archive
-        // found no reboot endpoint among 22,620 string literals (docs/08 02-XTUGO §8.4).
+        // found no reboot endpoint among 22,620 string literals (docs/evidence/xtugo §8.4).
         val proto = xtu()
         assertFalse(proto.supportsReboot, "存在重启按钮会让相机忽略它，用户以为已经重启")
     }
@@ -60,7 +60,7 @@ class PluginCapabilitiesTest {
     @Test
     fun `a family that cannot read the recording state says so`() {
         // The flag that keeps a poll from undoing the record button. TUWIN's status reply
-        // has no recording field at all (docs/08 01-TUWIN-档案.md §5.3), so every poll would
+        // has no recording field at all (docs/evidence docs/evidence/tuwin §5.3), so every poll would
         // answer `false` and flip the button back to 录像 a second after it was pressed.
         assertFalse(
             TuwinRestProtocol(CameraHttp()).reportsRecordingState,

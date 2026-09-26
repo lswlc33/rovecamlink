@@ -86,7 +86,7 @@ sealed interface OtaState {
  *
  * A path and a length rather than a `ByteArray`, because the smallest real package
  * measured in this project is 16 MB and the S7PRO's current build is 54,490,165 bytes
- * (`docs/04 §5`), against a phone whose Java heap the 2026-09-22 field log puts around
+ * (`docs/analysis/ota-and-gaps §5`), against a phone whose Java heap the 2026-09-22 field log puts around
  * 200 MB. A transport that receives bytes would have to hold the whole image in memory
  * while also building the multipart body around it — the exact shape of the thumbnail
  * OOM this app has already been bitten by once.
@@ -136,7 +136,7 @@ interface OtaTransport {
  * This exists because the two XTU channels have opposite evidence: port 8080 with the
  * 72-byte `RECV_FILE` frame is the one the official app actually ships for this camera
  * class, while `fileupload.cgi` + `upgrade.cgi` is real firmware-facing code whose host
- * screen was never wired into the vendor's own manifest (`docs/04 §1.2(b)`), so it has no
+ * screen was never wired into the vendor's own manifest (`docs/analysis/ota-and-gaps §1.2(b)`), so it has no
  * field evidence either way. Trying both costs nothing on the happy path and turns an
  * "unreachable" verdict into a usable update without asking anyone to know what a port
  * number is.
@@ -205,7 +205,7 @@ class OtaCoordinator(
     /**
      * Whether a package whose header cannot be read may still be sent.
      *
-     * True only for the hand-picked local-file route (`docs/04 §6.1` R9): a user choosing
+     * True only for the hand-picked local-file route (`docs/analysis/ota-and-gaps §6.1` R9): a user choosing
      * an arbitrary file off their own disk is the one case where "we do not recognise
      * this" is not the same as "this is wrong" — it may be a rescue image the vendor never
      * published. The index route has no such excuse: we know what that endpoint serves, so
@@ -248,7 +248,7 @@ class OtaCoordinator(
             }
         }
 
-        // R1/R2 of `docs/04 §6.1`, and the last moment they can be applied: the image is
+        // R1/R2 of `docs/analysis/ota-and-gaps §6.1`, and the last moment they can be applied: the image is
         // read here, on the phone, *before* the camera is told anything. Refusing a package
         // that is for another model or is short a few megabytes costs one 256-byte read;
         // discovering it afterwards is the bricking scenario the whole section is about.
@@ -296,7 +296,7 @@ class OtaCoordinator(
 
         // A hand-picked file with no date stamp in its name cannot be confirmed, and
         // "no confirmation available" must not become "the update failed" — the camera
-        // is already running whatever we sent it by this point. `docs/04 §0` conclusion 2
+        // is already running whatever we sent it by this point. `docs/analysis/ota-and-gaps §0` conclusion 2
         // is the other half of the reason this is a warning rather than a wall: none of
         // the three official apps reads the version back at all, so a package whose
         // version we cannot name is still further than they go.

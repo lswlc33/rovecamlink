@@ -1,0 +1,478 @@
+# idGoLive — 类与成员明细：com.icatchtek.bluetooth.core
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 22 个文件 / 27 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.icatchtek.bluetooth.core.base.BluetoothCondition`
+L10 · [class] public BluetoothCondition · `com/icatchtek/bluetooth/core/base/BluetoothCondition.java`
+
+字段/常量（5）：
+- `String icatch_bluetooth_tag = "BluetoothCondition"`  L11
+- `Condition condition`  L12
+- `Lock lock`  L13
+- `boolean zAwait = false`  L23
+- `String str = icatch_bluetooth_tag`  L26
+
+方法（3）：
+- `public BluetoothCondition()`  L15
+- `void await(int i)`  L21
+- `void signal()`  L40
+### `com.icatchtek.bluetooth.core.base.BluetoothContext`
+L14 · [class] public BluetoothContext · `com/icatchtek/bluetooth/core/base/BluetoothContext.java`
+
+字段/常量（3）：
+- `String icatch_bluetooth_tag = "BluetoothContext"`  L15
+- `String receiveData = "<binary/metadata>"`  L17
+- `String str = icatch_bluetooth_tag`  L94
+
+方法（10）：
+- `private BluetoothContext()`  L21
+- `void __call_gatt_broadcast_receivers(Intent intent)`  L24
+    - 体内字面量：" set by receiver: "
+- `Intent __generate_general_gatt_intent(int i)`  L35
+- `void __lock_map_status()`  L59
+- `void __unlock_map_status()`  L63
+- `BluetoothContext getInstance()`  L67
+- `void putBluetoothGattEvent(int i)`  L71
+    - 体内字面量："unrecognized gatt event id: "
+- `void putBluetoothGattEvent(int i, BluetoothGattCharacteristic bluetoothGattCharacteristic, int i2)`  L80
+    - 体内字面量："unrecognized gatt event id: " · "}"
+- `void registerReceiver(BluetoothBroadcastReceiver bluetoothBroadcastReceiver, IntentFilter intentFilter)`  L102
+- `void unregisterReceiver(BluetoothBroadcastReceiver bluetoothBroadcastReceiver)`  L112
+### `com.icatchtek.bluetooth.core.base.BluetoothLogger`
+L6 · [class] public BluetoothLogger · `com/icatchtek/bluetooth/core/base/BluetoothLogger.java`
+
+字段/常量（1）：
+- `boolean enableSystemLog = true`  L8
+
+方法（6）：
+- `private BluetoothLogger()`  L38
+- `BluetoothLogger getInstance()`  L41
+- `void logToSystem(AppLogLevel appLogLevel, String str, String str2)`  L45
+    - 体内字面量："app::" · "app::" · "app::"
+- `void logE(String str, String str2)`  L56
+- `void logI(String str, String str2)`  L62
+- `void logW(String str, String str2)`  L68
+### `com.icatchtek.bluetooth.core.base.BluetoothLogger$AnonymousClass1`
+L11 · [class] static AnonymousClass1 · `com/icatchtek/bluetooth/core/base/BluetoothLogger.java`
+
+字段/常量（1）：
+- `int[] $SwitchMap$com$icatchtek$bluetooth$core$base$BluetoothLogger$AppLogLevel`  L12
+### `com.icatchtek.bluetooth.core.base.BluetoothLogger$AppLogLevel`
+L32 · [enum] private AppLogLevel · `com/icatchtek/bluetooth/core/base/BluetoothLogger.java`
+
+枚举常量（2）：
+- `APP_LOG_INFO()`  L33
+- `APP_LOG_WARN()`  L34
+### `com.icatchtek.bluetooth.core.base.BluetoothMutex`
+L8 · [class] public BluetoothMutex · `com/icatchtek/bluetooth/core/base/BluetoothMutex.java`
+
+字段/常量（1）：
+- `String icatch_bluetooth_tag = "BluetoothMutex"`  L9
+
+方法（3）：
+- `void lock()`  L12
+    - 体内字面量："lock failed, maybe timeout."
+- `boolean lock_1()`  L20
+    - 体内字面量："lock failed, maybe timeout."
+- `void unlock()`  L30
+### `com.icatchtek.bluetooth.core.base.BluetoothUtils`
+L9 · [class] public BluetoothUtils · `com/icatchtek/bluetooth/core/base/BluetoothUtils.java`
+
+字段/常量（7）：
+- `HashMap<Integer, String> charPermissions`  L10
+- `HashMap<Integer, String> charProperties`  L11
+- `HashMap<Integer, String> descPermissions`  L12
+- `HashMap<Integer, String> serviceTypes`  L13
+- `int i3 = 1 << i2`  L92
+- `byte[] bArr = new byte[length]`  L123
+- `int i2 = i * 2`  L125
+
+方法（10）：
+- `String bytesToHexString(byte[] bArr)`  L54
+- `String bytesToString(byte[] bArr)`  L69
+- `byte charToByte(char c)`  L73
+    - 体内字面量："0123456789ABCDEF"
+- `String getCharPermission(int i)`  L77
+- `String getCharPropertie(int i)`  L81
+- `String getDescPermission(int i)`  L85
+- `List<Integer> getElement(int i)`  L89
+- `String getHashMapValue(HashMap<Integer, String> map, int i)`  L100
+    - 体内字面量："|"
+- `String getServiceType(int i)`  L112
+- `byte[] hexStringToBytes(String str)`  L116
+### `com.icatchtek.bluetooth.core.client.bt.ICatchCoreBluetoothClient`
+L19 · [class] public ICatchCoreBluetoothClient · implements `ICatchBluetoothClient` · `com/icatchtek/bluetooth/core/client/bt/ICatchCoreBluetoothClient.java`
+
+字段/常量（8）：
+- `String icatch_bluetooth_tag = "ICatchCoreBluetoothClient"`  L21
+- `BluetoothSocket bluetoothSocket`  L22
+- `ICatchCoreBluetoothTextTransfer textTransfer`  L23
+- `String str = icatch_bluetooth_tag`  L31
+- `ICatchCoreBluetoothTextTransfer iCatchCoreBluetoothTextTransfer = this.textTransfer`  L80
+- `ICatchCoreBluetoothTextTransfer iCatchCoreBluetoothTextTransfer = this.textTransfer`  L89
+- `BluetoothSocket bluetoothSocket = this.bluetoothSocket`  L93
+- `ICatchCoreBluetoothTextTransfer iCatchCoreBluetoothTextTransfer = this.textTransfer`  L101
+
+方法（8）：
+- `public ICatchCoreBluetoothClient(BluetoothDevice bluetoothDevice)`  L25
+- `void init(BluetoothDevice bluetoothDevice)`  L29
+- `ICatchBluetoothHostControl getHostControl()`  L55 @Override
+    - 体内字面量："textTransfer is null"
+- `ICatchBluetoothSystemControl getSystemControl()`  L63 @Override
+    - 体内字面量："textTransfer is null"
+- `ICatchBluetoothTelecontroller getTelecontroller()`  L71 @Override
+    - 体内字面量："textTransfer is null"
+- `String receiveReply(String str, long j)`  L79 @Override
+- `void release()`  L88 @Override
+- `void sendRequest(String str, String str2, long j)`  L100 @Override
+### `com.icatchtek.bluetooth.core.client.btle.ICatchCoreBluetoothLeClient`
+L30 · [class] public ICatchCoreBluetoothLeClient · implements `ICatchBluetoothClient` · `com/icatchtek/bluetooth/core/client/btle/ICatchCoreBluetoothLeClient.java`
+
+字段/常量（22）：
+- `String HM10_UUID_CHAR_READ = "0000ffe1-0000-1000-8000-00805f9b34fb"`  L31
+- `String HM10_UUID_CHAR_WRITE = "0000ffe1-0000-1000-8000-00805f9b34fb"`  L32
+- `String ICAT_UUID_CHAR_READ = "e44b82fb-f3a6-4c72-ab3f-bf94abfd9930"`  L33
+- `String ICAT_UUID_CHAR_WRITE = "e44b82fb-f3a6-4c72-ab3f-bf94abfd9930"`  L34
+- `int STATE_CONNECTED = 2`  L35
+- `int STATE_CONNECTING = 1`  L36
+- `int STATE_DISCONNECTED = 0`  L37
+- `String icatch_bluetooth_tag = "ICatchCoreBluetoothLeClient"`  L38
+- `BluetoothGatt bluetoothGatt`  L39
+- `int bluetoothState`  L40
+- `BluetoothGattCharacteristic characteristic_read`  L41
+- `BluetoothGattCharacteristic characteristic_write`  L42
+- `BluetoothCoreEventManager eventManager`  L43
+- `BluetoothGattCallback gattCallback`  L44
+- `BluetoothTextTransfer textTransfer`  L45
+- `String str = icatch_bluetooth_tag`  L110
+- `String str2 = icatch_bluetooth_tag`  L116
+- `String str3 = icatch_bluetooth_tag`  L148
+- `BluetoothTextTransfer bluetoothTextTransfer = this.textTransfer`  L217
+- `BluetoothTextTransfer bluetoothTextTransfer = this.textTransfer`  L226
+- `BluetoothGatt bluetoothGatt = this.bluetoothGatt`  L230
+- `BluetoothTextTransfer bluetoothTextTransfer = this.textTransfer`  L245
+
+方法（13）：
+- `public ICatchCoreBluetoothLeClient(Context context, BluetoothCoreEventManager bluetoothCoreEventManager, BluetoothDevice bluetoothDevice)`  L47
+- `void onCharacteristicChanged(BluetoothGatt bluetoothGatt, BluetoothGattCharacteristic bluetoothGattCharacteristic)`  L50 @Override
+    - 体内字面量："onCharacteristicChanged"
+- `void onCharacteristicRead(BluetoothGatt bluetoothGatt, BluetoothGattCharacteristic bluetoothGattCharacteristic, int i)`  L56 @Override
+    - 体内字面量："onCharacteristicRead, [" · "], "
+- `void onCharacteristicWrite(BluetoothGatt bluetoothGatt, BluetoothGattCharacteristic bluetoothGattCharacteristic, int i)`  L62 @Override
+    - 体内字面量："onCharacteristicWrite, [" · "], "
+- `void onConnectionStateChange(BluetoothGatt bluetoothGatt, int i, int i2)`  L68 @Override
+    - 体内字面量："Connected to GATT server." · "Attempting to start service discovery." · "Disconnected from GATT server."
+- `void onServicesDiscovered(BluetoothGatt bluetoothGatt, int i)`  L85 @Override
+    - 体内字面量："onServicesDiscovered received: " · "onServicesDiscovered, "
+- `void extractGattServices(List<BluetoothGattService> list)`  L104
+- `ICatchBluetoothHostControl getHostControl()`  L180 @Override
+    - 体内字面量："The connecting had not been done, please wait." · "textTransfer is null"
+- `ICatchBluetoothSystemControl getSystemControl()`  L191 @Override
+    - 体内字面量："The connecting had not been done, please wait." · "textTransfer is null"
+- `ICatchBluetoothTelecontroller getTelecontroller()`  L202 @Override
+    - 体内字面量："The connecting had not been done, please wait." · "textTransfer is null"
+- `String receiveReply(String str, long j)`  L213 @Override
+    - 体内字面量："The connecting had not been done, please wait."
+- `void release()`  L225 @Override
+- `void sendRequest(String str, String str2, long j)`  L241 @Override
+    - 体内字面量："The connecting had not been done, please wait."
+### `com.icatchtek.bluetooth.core.client.transfer.BluetoothTextTransfer`
+L7 · [interface] public BluetoothTextTransfer · `com/icatchtek/bluetooth/core/client/transfer/BluetoothTextTransfer.java`
+
+方法（3）：
+- `String receiveReply(String str, long j)`  L8
+- `void release()`  L10
+- `void sendRequest(String str, String str2, long j)`  L12
+### `com.icatchtek.bluetooth.core.client.transfer.bt.BluetoothBinaryTransfer`
+L11 · [class] BluetoothBinaryTransfer · `com/icatchtek/bluetooth/core/client/transfer/bt/BluetoothBinaryTransfer.java`
+
+字段/常量（4）：
+- `String icatch_bluetooth_tag = "BluetoothBinaryTransfer"`  L12
+- `DataInputStream bluetoothInputStream`  L13
+- `DataOutputStream bluetoothOutputStream`  L14
+- `String str = icatch_bluetooth_tag`  L32
+
+方法（4）：
+- `public BluetoothBinaryTransfer(BluetoothSocket bluetoothSocket)`  L16
+- `int readData(byte[] bArr, int i, int i2)`  L21
+    - 体内字面量："Read " · " bytes raw data now."
+- `void release()`  L27
+- `void writeData(byte[] bArr, int i)`  L30
+### `com.icatchtek.bluetooth.core.client.transfer.bt.ICatchCoreBluetoothTextTransfer`
+L14 · [class] public ICatchCoreBluetoothTextTransfer · implements `BluetoothTextTransfer, Runnable` · `com/icatchtek/bluetooth/core/client/transfer/bt/ICatchCoreBluetoothTextTransfer.java`
+
+字段/常量（15）：
+- `String icatch_bluetooth_tag = "ICatchCoreBluetoothTextTransfer"`  L15
+- `BluetoothBinaryTransfer binaryTransfer`  L16
+- `boolean recvRunning`  L17
+- `Thread recvThread`  L18
+- `int replyCount = 0`  L21
+- `JSONObject jSONObject`  L32
+- `JSONObject jSONObject2 = null`  L33
+- `String str3 = "<binary/metadata>"`  L50
+- `String str4 = icatch_bluetooth_tag`  L56
+- `String str = icatch_bluetooth_tag`  L75
+- `byte[] bArr = new byte[2048]`  L77
+- `String str2 = null`  L86
+- `Thread thread`  L114
+- `BluetoothBinaryTransfer bluetoothBinaryTransfer = this.binaryTransfer`  L124
+- `String next`  L132
+
+方法（7）：
+- `public ICatchCoreBluetoothTextTransfer(BluetoothSocket bluetoothSocket)`  L23
+- `boolean __do_request_reply_matched(String str, String str2, boolean z, boolean z2)`  L31
+- `String __read_line_from_peer(int i)`  L73
+- `String receiveReply(String str, long j)`  L84 @Override
+- `void release()`  L113 @Override
+- `void run()`  L131 @Override
+- `void sendRequest(String str, String str2, long j)`  L173 @Override
+    - 体内字面量："the request send to peer is: "
+### `com.icatchtek.bluetooth.core.client.transfer.btle.ICatchCoreBluetoothLeGattTransfer`
+L11 · [class] public ICatchCoreBluetoothLeGattTransfer · `com/icatchtek/bluetooth/core/client/transfer/btle/ICatchCoreBluetoothLeGattTransfer.java`
+
+字段/常量（1）：
+- `String TAG = "ICatchCoreBluetoothLeGattTransfer"`  L13
+
+方法（4）：
+- `List<BluetoothGattService> getSupportedGattServices(BluetoothGatt bluetoothGatt)`  L15
+- `void readCharacteristic(BluetoothGatt bluetoothGatt, BluetoothGattCharacteristic bluetoothGattCharacteristic)`  L22
+    - 体内字面量："BluetoothAdapter not initialized"
+- `void setCharacteristicNotification(BluetoothGatt bluetoothGatt, BluetoothGattCharacteristic bluetoothGattCharacteristic, boolean z)`  L30
+    - 体内字面量："BluetoothAdapter not initialized" · "Enable Notification" · "Disable Notification"
+- `void writeCharacteristic(BluetoothGatt bluetoothGatt, BluetoothGattCharacteristic bluetoothGattCharacteristic)`  L45
+    - 体内字面量："BluetoothAdapter not initialized"
+### `com.icatchtek.bluetooth.core.client.transfer.btle.ICatchCoreBluetoothLeTextTransfer`
+L19 · [class] public ICatchCoreBluetoothLeTextTransfer · implements `BluetoothTextTransfer` · `com/icatchtek/bluetooth/core/client/transfer/btle/ICatchCoreBluetoothLeTextTransfer.java`
+
+字段/常量（16）：
+- `String icatch_bluetooth_tag = "ICatchCoreBluetoothLeTextTransfer"`  L20
+- `BluetoothGatt bluetoothLeGatt`  L21
+- `BluetoothGattCharacteristic characteristic_read`  L22
+- `BluetoothGattCharacteristic characteristic_write`  L23
+- `BluetoothCoreEventManager eventManager`  L24
+- `LinkedList<String> recvQueue`  L25
+- `LinkedList<String> sendQueue`  L26
+- `boolean __write_done = false`  L27
+- `boolean __write_relt = false`  L28
+- `String str`  L46
+- `JSONObject jSONObject`  L99
+- `JSONObject jSONObject2 = null`  L100
+- `String str3 = "<binary/metadata>"`  L117
+- `String str4 = icatch_bluetooth_tag`  L123
+- `String str2 = null`  L147
+- `String str4 = icatch_bluetooth_tag`  L151
+
+方法（8）：
+- `void onReceive(Intent intent)`  L31 @Override
+    - 体内字面量："status" · "write failed with error: "
+- `void onReceive(Intent intent)`  L45 @Override
+- `public ICatchCoreBluetoothLeTextTransfer(BluetoothCoreEventManager bluetoothCoreEventManager, BluetoothGatt bluetoothGatt, BluetoothGattCharacteristic bluetoothGattCharacteristic, BluetoothGattCharacteristic bluetoothGattCharacteristic2)`  L84
+- `boolean __do_request_reply_matched(String str, String str2, boolean z, boolean z2)`  L98
+- `void __trigger_read_from_peer()`  L140
+- `String receiveReply(String str, long j)`  L145 @Override
+- `void release()`  L176 @Override
+- `void sendRequest(String str, String str2, long j)`  L182 @Override
+    - 体内字面量："the request send to peer is: " · "the request send to peer succeed"
+### `com.icatchtek.bluetooth.core.ctrl.ICatchCoreBluetoothCmdControl`
+L10 · [class] public ICatchCoreBluetoothCmdControl · implements `ICatchBluetoothHostControl` · `com/icatchtek/bluetooth/core/ctrl/ICatchCoreBluetoothCmdControl.java`
+
+字段/常量（1）：
+- `ICatchBluetoothClient bluetoothClient`  L11
+
+方法（2）：
+- `public ICatchCoreBluetoothCmdControl(ICatchBluetoothClient iCatchBluetoothClient)`  L13
+- `String hostCommand(String str, String str2)`  L18 @Override
+### `com.icatchtek.bluetooth.core.ctrl.ICatchCoreBluetoothSystemControl`
+L18 · [class] public ICatchCoreBluetoothSystemControl · implements `ICatchBluetoothSystemControl` · `com/icatchtek/bluetooth/core/ctrl/ICatchCoreBluetoothSystemControl.java`
+
+字段/常量（8）：
+- `ICatchBluetoothClient bluetoothClient`  L19
+- `JSONObject jSONObject`  L36
+- `int i`  L108
+- `ICatchBluetoothClient iCatchBluetoothClient = this.bluetoothClient`  L132
+- `JSONObject jSONObject2 = null`  L134
+- `int i`  L158
+- `ICatchBluetoothClient iCatchBluetoothClient = this.bluetoothClient`  L182
+- `JSONObject jSONObject2 = null`  L184
+
+方法（9）：
+- `public ICatchCoreBluetoothSystemControl(ICatchBluetoothClient iCatchBluetoothClient)`  L21
+- `boolean disableWifi()`  L25
+- `boolean enableWifi()`  L30 @Override
+- `ICatchBtInfomation getBtInformation()`  L35 @Override
+- `ICatchWifiInformation getWifiInformation()`  L65 @Override
+    - 体内字面量："new jar" · "new jar=================" · "getWifiInfo" · "get wifi info error, 111" · "getWifiInfo" · "wifi info string: " · "essid" · "pwd" · "getWifiInfo" · "get wifi info succeed, essid: " · "pwd: " · "JSONObject" · "JSONObject error"
+- `boolean hibernation()`  L97 @Override
+- `boolean powerOff()`  L102 @Override
+- `boolean setBtInformation(ICatchBtInfomation iCatchBtInfomation)`  L107 @Override
+- `boolean setWifiInformation(ICatchWifiInformation iCatchWifiInformation)`  L157 @Override
+### `com.icatchtek.bluetooth.core.ctrl.ICatchCoreBluetoothTelecontroller`
+L11 · [class] public ICatchCoreBluetoothTelecontroller · implements `ICatchBluetoothTelecontroller` · `com/icatchtek/bluetooth/core/ctrl/ICatchCoreBluetoothTelecontroller.java`
+
+字段/常量（1）：
+- `ICatchBluetoothClient bluetoothClient`  L12
+
+方法（13）：
+- `public ICatchCoreBluetoothTelecontroller(ICatchBluetoothClient iCatchBluetoothClient)`  L14
+- `boolean btKeyDel()`  L19 @Override
+- `boolean capture()`  L24 @Override
+- `boolean captureHalfPress()`  L29 @Override
+- `boolean changeMode()`  L34 @Override
+- `boolean execute()`  L39 @Override
+- `boolean moveDown()`  L44 @Override
+- `boolean moveLeft()`  L49 @Override
+- `boolean moveRight()`  L54 @Override
+- `boolean moveUp()`  L59 @Override
+- `boolean openMenu()`  L64 @Override
+- `boolean zoomIn()`  L69 @Override
+- `boolean zoomOut()`  L74 @Override
+### `com.icatchtek.bluetooth.core.event.BluetoothBroadcastHandler`
+L13 · [class] public BluetoothBroadcastHandler · `com/icatchtek/bluetooth/core/event/BluetoothBroadcastHandler.java`
+
+字段/常量（2）：
+- `String icatch_bluetooth_tag = "BluetoothBroadcastHandler"`  L14
+- `BluetoothCoreEventManager eventManager`  L30
+
+方法（3）：
+- `void onReceive(BluetoothContext bluetoothContext, Intent intent)`  L17 @Override
+    - 体内字面量："broadcastReceiver, received action: " · " set by receiver: "
+- `public BluetoothBroadcastHandler(BluetoothCoreEventManager bluetoothCoreEventManager)`  L32
+- `void release()`  L41
+### `com.icatchtek.bluetooth.core.event.BluetoothBroadcastReceiver`
+L7 · [interface] public BluetoothBroadcastReceiver · `com/icatchtek/bluetooth/core/event/BluetoothBroadcastReceiver.java`
+
+方法（1）：
+- `void onReceive(BluetoothContext bluetoothContext, Intent intent)`  L8
+### `com.icatchtek.bluetooth.core.event.BluetoothCoreEventManager`
+L11 · [class] public BluetoothCoreEventManager · `com/icatchtek/bluetooth/core/event/BluetoothCoreEventManager.java`
+
+字段/常量（1）：
+- `BluetoothSystemBroadcastHandler systemBroadcastHandler`  L12
+
+方法（8）：
+- `public BluetoothCoreEventManager(Context context)`  L17
+- `void lock_map_status()`  L21
+- `void unlock_map_status()`  L25
+- `Map<ICatchBroadcastReceiver, List<String>> __get_locked_broadcast_receivers_map()`  L29
+- `void __put_broadcast_receivers_map(Map<ICatchBroadcastReceiver, List<String>> map)`  L34
+- `void registerBroadcastReceiver(ICatchBroadcastReceiver iCatchBroadcastReceiver, List<String> list)`  L40
+- `void release()`  L46
+- `void unregisterBroadcastReceiver(ICatchBroadcastReceiver iCatchBroadcastReceiver)`  L51
+### `com.icatchtek.bluetooth.core.event.BluetoothSystemBroadcastHandler`
+L16 · [class] public BluetoothSystemBroadcastHandler · `com/icatchtek/bluetooth/core/event/BluetoothSystemBroadcastHandler.java`
+
+字段/常量（3）：
+- `String icatch_bluetooth_tag = "BluetoothSystemBroadcastHandler"`  L17
+- `Context context`  L18
+- `BluetoothCoreEventManager eventManager`  L19
+
+方法（5）：
+- `void onReceive(Context context, Intent intent)`  L22 @Override
+    - 体内字面量："android.bluetooth.device.extra.DEVICE" · "broadcastReceiver, received action: " · "android.bluetooth.device.action.BOND_STATE_CHANGED" · "android.bluetooth.adapter.action.STATE_CHANGED"
+- `void onReceive(Context context, Intent intent, BluetoothDevice bluetoothDevice)`  L36 @Override
+    - 体内字面量："ACTION_BOND_STATE_CHANGED with no EXTRA_DEVICE" · "android.bluetooth.device.extra.BOND_STATE" · "not defined bond state " · "Bond state1: " · "Bond state2: " · "com.icatchtek.bluetooth.__icatch_bt_action_bond_state_changed not set by receiver: "
+- `void onReceive(Context context, Intent intent, BluetoothDevice bluetoothDevice)`  L66 @Override
+    - 体内字面量："android.bluetooth.adapter.extra.STATE" · "not defined adapter state " · "Power state1: " · ", " · "com.icatchtek.bluetooth.__icatch_bt_action_adapter_state_changed not set by receiver: "
+- `public BluetoothSystemBroadcastHandler(Context context, BluetoothCoreEventManager bluetoothCoreEventManager)`  L93
+    - 体内字面量："android.bluetooth.device.action.BOND_STATE_CHANGED" · "android.bluetooth.adapter.action.STATE_CHANGED"
+- `void release()`  L102
+### `com.icatchtek.bluetooth.core.event.BluetoothSystemBroadcastHandler$BluetoothEventHandler`
+L89 · [interface] private BluetoothEventHandler · `com/icatchtek/bluetooth/core/event/BluetoothSystemBroadcastHandler.java`
+
+方法（1）：
+- `void onReceive(Context context, Intent intent, BluetoothDevice bluetoothDevice)`  L90
+### `com.icatchtek.bluetooth.core.ICatchCoreBluetoothAdapter`
+L23 · [class] public ICatchCoreBluetoothAdapter · implements `ICatchBluetoothAdapter` · `com/icatchtek/bluetooth/core/ICatchCoreBluetoothAdapter.java`
+
+字段/常量（13）：
+- `String icatch_bluetooth_tag = "ICatchCoreBluetoothAdapter"`  L24
+- `BluetoothAdapter bluetoothAdapter`  L25
+- `Context bluetoothContext`  L26
+- `BluetoothLeScanner bluetoothLeScanner`  L27
+- `List<ScanFilter> bluetoothScanFilters`  L28
+- `ScanSettings bluetoothScanSettings`  L29
+- `ScanCallbackA leScanCallbackA`  L30
+- `ScanCallbackB leScanCallbackB`  L31
+- `boolean discovering = false`  L32
+- `boolean discoveringBLE = false`  L33
+- `ICatchBTDeviceDetectedListener bluetoothListener = null`  L34
+- `BluetoothLeScanner bluetoothLeScanner = this.bluetoothLeScanner`  L100
+- `BluetoothLeScanner bluetoothLeScanner = this.bluetoothLeScanner`  L110
+
+方法（6）：
+- `void onReceive(Context context, Intent intent)`  L37 @Override
+    - 体内字面量："android.bluetooth.device.action.FOUND" · "android.bluetooth.device.extra.DEVICE" · "Bluetooth device founded, namme [" · "], address [" · "]."
+- `public ICatchCoreBluetoothAdapter(Context context)`  L80
+- `boolean startLeDiscovery()`  L99
+- `boolean stopLeDiscovery()`  L109
+- `boolean startDiscovery(ICatchBTDeviceDetectedListener iCatchBTDeviceDetectedListener, boolean z)`  L120 @Override
+    - 体内字面量："android.bluetooth.device.action.FOUND"
+- `void stopDiscovery()`  L139 @Override
+### `com.icatchtek.bluetooth.core.ICatchCoreBluetoothAdapter$ScanCallbackA`
+L48 · [class] private ScanCallbackA · extends `ScanCallback` · `com/icatchtek/bluetooth/core/ICatchCoreBluetoothAdapter.java`
+
+方法（2）：
+- `private ScanCallbackA()`  L49
+- `void onScanResult(int i, ScanResult scanResult)`  L53 @Override
+    - 体内字面量："Bluetooth device founded, namme [" · "], address [" · "]."
+### `com.icatchtek.bluetooth.core.ICatchCoreBluetoothAdapter$ScanCallbackB`
+L65 · [class] private ScanCallbackB · implements `BluetoothAdapter.LeScanCallback` · `com/icatchtek/bluetooth/core/ICatchCoreBluetoothAdapter.java`
+
+方法（2）：
+- `private ScanCallbackB()`  L66
+- `void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bArr)`  L70 @Override
+    - 体内字面量："Bluetooth device founded, namme [" · "], address [" · "]."
+### `com.icatchtek.bluetooth.core.ICatchCoreBluetoothAssist`
+L8 · [class] public ICatchCoreBluetoothAssist · `com/icatchtek/bluetooth/core/ICatchCoreBluetoothAssist.java`
+
+方法（6）：
+- `private ICatchCoreBluetoothAssist()`  L12
+- `ICatchCoreBluetoothAssist getInstance()`  L15
+- `int toICatchAdapterState(int i)`  L19
+- `int toICatchBondState(int i)`  L34
+- `BluetoothDevice getBluetoothDevice(String str)`  L47
+- `void putCachedBluetoothDevice(BluetoothDevice bluetoothDevice)`  L51
+### `com.icatchtek.bluetooth.core.ICatchCoreBluetoothCommand`
+L13 · [class] public ICatchCoreBluetoothCommand · `com/icatchtek/bluetooth/core/ICatchCoreBluetoothCommand.java`
+
+字段/常量（28）：
+- `String BT_CMD_BT_REQ_INFORM = "{\"mode\": \"bt\", \"action\": \"info\"}"`  L14
+- `String BT_CMD_BT_REQ_INFORM_NAME_PWD = "{\"mode\": \"bt\", \"action\": \"info\", \"name\": \"\", \"pwd\": \"\"}"`  L15
+- `String BT_CMD_BT_SET_INFORM = "{\"mode\": \"bt\", \"action\": \"set\"}"`  L16
+- `String BT_CMD_EVENT_KEY_CAPTURE = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"s2\"}"`  L17
+- `String BT_CMD_EVENT_KEY_CAPTURE_HALF_PRESS = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"s1\"}"`  L18
+- `String BT_CMD_EVENT_KEY_DEL = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"del\"}"`  L19
+- `String BT_CMD_EVENT_KEY_DOWN = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"down\"}"`  L20
+- `String BT_CMD_EVENT_KEY_LEFT = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"left\"}"`  L21
+- `String BT_CMD_EVENT_KEY_MENU = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"menu\"}"`  L22
+- `String BT_CMD_EVENT_KEY_MODE = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"mode\"}"`  L23
+- `String BT_CMD_EVENT_KEY_RIGHT = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"right\"}"`  L24
+- `String BT_CMD_EVENT_KEY_SET = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"set\"}"`  L25
+- `String BT_CMD_EVENT_KEY_TELE = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"tele\"}"`  L26
+- `String BT_CMD_EVENT_KEY_UP = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"up\"}"`  L27
+- `String BT_CMD_EVENT_KEY_WIDE = "{\"mode\": \"event\", \"action\": \"key\", \"type\": \"wide\"}"`  L28
+- `String BT_CMD_REPLY_ERR = "err=1"`  L29
+- `String BT_CMD_REPLY_NOERR = "err=0"`  L30
+- `String BT_CMD_SYSTEM_POWER_DOWN = "{\"mode\": \"system\", \"action\": \"power\", \"type\": \"down\"}"`  L31
+- `String BT_CMD_SYSTEM_POWER_HIBER = "{\"mode\": \"system\", \"action\": \"power\", \"type\": \"hiber\"}"`  L32
+- `char BT_CMD_TAIL = 0`  L33
+- `String BT_CMD_WIFI_REQ_DISABLE = "{\"mode\": \"wifi\", \"action\": \"disable\"}"`  L34
+- `String BT_CMD_WIFI_REQ_ENABLE = "{\"mode\": \"wifi\", \"action\": \"enable\", \"type\": \"ap\"}"`  L35
+- `String BT_CMD_WIFI_REQ_INFORM = "{\"mode\": \"wifi\", \"action\": \"info\"}"`  L36
+- `String BT_CMD_WIFI_REQ_INFORM_ESSID_PWD_IP = "{\"mode\": \"wifi\", \"action\": \"info\", \"essid\": \"\", \"pwd\": \"\", \"ipaddr\": \"\"}"`  L37
+- `String BT_CMD_WIFI_SET_INFORM = "{\"mode\": \"wifi\", \"action\": \"set\"}"`  L38
+- `String icatch_bluetooth_tag = "ICatchCoreBluetoothCommand"`  L39
+- `JSONObject jSONObject`  L50
+- `int i`  L51
+
+方法（3）：
+- `boolean executeRequest(ICatchBluetoothClient iCatchBluetoothClient, String str, String str2)`  L41
+- `String executeRequestWithResponseValue(ICatchBluetoothClient iCatchBluetoothClient, String str, String str2)`  L45
+- `String sendRequestToRemote(ICatchBluetoothClient iCatchBluetoothClient, String str, String str2)`  L49

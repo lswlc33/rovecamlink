@@ -1,0 +1,2316 @@
+# idGoLive — 类与成员明细：com.icatchtek.baseutil
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 16 个文件 / 37 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.icatchtek.baseutil.AudioFocusUtil`
+L9 · [class] public AudioFocusUtil · `com/icatchtek/baseutil/AudioFocusUtil.java`
+
+字段/常量（6）：
+- `String TAG = "AudioFocusUtil"`  L10
+- `AudioFocusUtil audioFocusUtil`  L11
+- `AudioManager.OnAudioFocusChangeListener mAudioFocusChangeListener`  L12
+- `AudioManager mAudioManager`  L13
+- `AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener`  L50
+- `AudioManager audioManager = this.mAudioManager`  L51
+
+方法（6）：
+- `private AudioFocusUtil()`  L15
+- `AudioFocusUtil getInstance()`  L18
+    - 体内字面量："getInstance: "
+- `int requestTheAudioFocus(Context context)`  L30
+    - 体内字面量："audio"
+- `void onAudioFocusChange(int i)`  L37 @Override
+    - 体内字面量："onAudioFocusChange: LOSS..." · "onAudioFocusChange: GAIN..."
+- `void releaseAudioFocus()`  L49
+- `void requestAudioFocus(Context context)`  L59
+    - 体内字面量："requestAudioFocus: AUDIOFOCUS_REQUEST_GRANTED" · "Please close other app playing audio"
+### `com.icatchtek.baseutil.Base64Utils`
+L6 · [class] public Base64Utils · `com/icatchtek/baseutil/Base64Utils.java`
+
+字段/常量（9）：
+- `boolean $assertionsDisabled = false`  L7
+- `int CRLF = 4`  L8
+- `int DEFAULT = 0`  L9
+- `int NO_CLOSE = 16`  L10
+- `int NO_PADDING = 1`  L11
+- `int NO_WRAP = 2`  L12
+- `int URL_SAFE = 8`  L13
+- `byte[] bArr2 = new byte[decoder.op]`  L241
+- `int i5 = i2 % 3`  L254
+
+方法（8）：
+- `private Base64Utils()`  L222
+- `byte[] decode(String str, int i)`  L225
+- `byte[] decode(byte[] bArr, int i)`  L229
+- `byte[] decode(byte[] bArr, int i, int i2, int i3)`  L233
+    - 体内字面量："bad base-64"
+- `byte[] encode(byte[] bArr, int i)`  L246
+- `byte[] encode(byte[] bArr, int i, int i2, int i3)`  L250
+- `String encodeToString(byte[] bArr, int i)`  L271
+    - 体内字面量："US-ASCII"
+- `String encodeToString(byte[] bArr, int i, int i2, int i3)`  L279
+    - 体内字面量："US-ASCII"
+### `com.icatchtek.baseutil.Base64Utils$Coder`
+L15 · [class] static abstract Coder · `com/icatchtek/baseutil/Base64Utils.java`
+
+字段/常量（2）：
+- `int op`  L16
+- `byte[] output`  L17
+
+方法（2）：
+- `int maxOutputSize(int i)`  L22
+- `boolean process(byte[] bArr, int i, int i2, boolean z)`  L24
+### `com.icatchtek.baseutil.Base64Utils$Decoder`
+L27 · [class] static Decoder · extends `Coder` · `com/icatchtek/baseutil/Base64Utils.java`
+
+字段/常量（20）：
+- `int[] DECODE = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -2, -1, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1, -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}`  L28
+- `int[] DECODE_WEBSAFE = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -2, -1, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, 63, -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}`  L29
+- `int EQUALS = -2`  L30
+- `int SKIP = -1`  L31
+- `int[] alphabet`  L32
+- `int state`  L33
+- `int value`  L34
+- `int i3 = this.state`  L51
+- `int i4 = i2 + i`  L55
+- `int i5 = this.value`  L56
+- `byte[] bArr2 = this.output`  L57
+- `int[] iArr = this.alphabet`  L58
+- `int i6 = 0`  L59
+- `int i7 = i5`  L60
+- `int i8 = i3`  L61
+- `int i9 = i`  L62
+- `int i10 = i9 + 4`  L66
+- `int i11 = i9 + 1`  L80
+- `int i12 = iArr[bArr[i9] & 255]`  L81
+- `int i14 = i6 + 1`  L157
+
+方法（3）：
+- `public Decoder(int i, byte[] bArr)`  L36
+- `int maxOutputSize(int i)`  L44 @Override
+- `boolean process(byte[] bArr, int i, int i2, boolean z)`  L50 @Override
+### `com.icatchtek.baseutil.Base64Utils$Encoder`
+L171 · [class] static Encoder · extends `Coder` · `com/icatchtek/baseutil/Base64Utils.java`
+
+字段/常量（11）：
+- `boolean $assertionsDisabled = false`  L172
+- `byte[] ENCODE = {65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 43, 47}`  L173
+- `byte[] ENCODE_WEBSAFE = {65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 45, 95}`  L174
+- `int LINE_GROUPS = 19`  L175
+- `byte[] alphabet`  L176
+- `int count`  L177
+- `boolean do_cr`  L178
+- `boolean do_newline`  L179
+- `boolean do_padding`  L180
+- `byte[] tail`  L181
+- `int tailLen`  L182
+
+方法（3）：
+- `public Encoder(int i, byte[] bArr)`  L184
+- `int maxOutputSize(int i)`  L197 @Override
+- `boolean process(byte[] r18, int r19, int r20, boolean r21)`  L213 @Override
+    - 体内字面量："Method not decompiled: com.icatchtek.baseutil.Base64Utils.Encoder.process(byte[], int, int, boolean):boolean"
+### `com.icatchtek.baseutil.BuildConfig`
+L6 · [class] public final BuildConfig · `com/icatchtek/baseutil/BuildConfig.java`
+
+字段/常量（5）：
+- `String APPLICATION_ID = "com.icatchtek.baseutil"`  L7
+- `String BUILD_TYPE = "debug"`  L8
+- `String FLAVOR = "<binary/metadata>"`  L10
+- `int VERSION_CODE = 1`  L11
+- `String VERSION_NAME = "V0.0.1"`  L12
+### `com.icatchtek.baseutil.FileUtil`
+L8 · [class] public FileUtil · `com/icatchtek/baseutil/FileUtil.java`
+
+字段/常量（1）：
+- `String TAG = "FileUtil"`  L9
+
+方法（7）：
+- `boolean createOrExistsDir(File file)`  L11
+- `boolean createOrExistsDir(String str)`  L15
+- `boolean createOrExistsFile(File file)`  L19
+- `File getFileByPath(String str)`  L37
+- `boolean isFileExists(File file)`  L44
+    - 体内字面量："isFileExists file:" · " exist:"
+- `boolean isSpace(String str)`  L50
+- `void recursionDeleteFile(File file)`  L63
+    - 体内字面量："recursionDeleteFile file:"
+### `com.icatchtek.baseutil.GlideUtils`
+L14 · [class] public GlideUtils · `com/icatchtek/baseutil/GlideUtils.java`
+
+方法（21）：
+- `void GuideClearDiskCache(Context context)`  L15
+- `void GuideClearMemory(Context context)`  L19
+- `void clear(ImageView imageView)`  L23
+- `void loadImageView(Context context, File file, int i, int i2, ImageView imageView, int i3)`  L26
+- `void loadImageView(Context context, File file, ImageView imageView, int i)`  L30
+- `void loadImageView(Context context, String str, ImageView imageView)`  L34
+- `void loadImageView(Context context, String str, ImageView imageView, int i)`  L38
+- `void loadImageViewAnim(Context context, String str, int i, ImageView imageView)`  L42
+- `void loadImageViewCache(Context context, String str, ImageView imageView)`  L46
+- `void loadImageViewContent(Context context, String str, SimpleTarget<GlideDrawable> simpleTarget)`  L50
+- `void loadImageViewCrop(Context context, String str, ImageView imageView)`  L54
+- `void loadImageViewDiskCache(Context context, String str, ImageView imageView)`  L58
+- `void loadImageViewDynamicGif(Context context, String str, ImageView imageView)`  L62
+- `void loadImageViewListener(Context context, String str, ImageView imageView, RequestListener<String, GlideDrawable> requestListener)`  L66
+- `void loadImageViewLoding(Context context, String str, ImageView imageView, int i, int i2)`  L70
+- `void loadImageViewLodingSize(Context context, String str, int i, int i2, ImageView imageView, int i3, int i4)`  L74
+- `void loadImageViewPriority(Context context, String str, ImageView imageView)`  L78
+- `void loadImageViewSize(Context context, String str, int i, int i2, ImageView imageView)`  L82
+- `void loadImageViewSkipCacheSize(Context context, String str, int i, int i2, ImageView imageView)`  L86
+- `void loadImageViewStaticGif(Context context, String str, ImageView imageView)`  L90
+- `void loadImageViewThumbnail(Context context, String str, ImageView imageView)`  L94
+### `com.icatchtek.baseutil.InnerRecevier`
+L9 · [class] public InnerRecevier · extends `BroadcastReceiver` · `com/icatchtek/baseutil/InnerRecevier.java`
+
+字段/常量（10）：
+- `OnEntityKeysClickListener listener`  L10
+- `String TAG = "InnerRecevier"`  L11
+- `String SYSTEM_DIALOG_REASON_KEY = "reason"`  L12
+- `String SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps"`  L13
+- `String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey"`  L14
+- `String SYSTEM_DIALOG_REASON_LOCK = "lock"`  L15
+- `String stringExtra`  L31
+- `OnEntityKeysClickListener onEntityKeysClickListener = this.listener`  L36
+- `OnEntityKeysClickListener onEntityKeysClickListener2 = this.listener`  L42
+- `OnEntityKeysClickListener onEntityKeysClickListener3 = this.listener`  L56
+
+方法（2）：
+- `public InnerRecevier(OnEntityKeysClickListener onEntityKeysClickListener)`  L25
+- `void onReceive(Context context, Intent intent)`  L30 @Override
+### `com.icatchtek.baseutil.InnerRecevier$OnEntityKeysClickListener`
+L17 · [interface] public OnEntityKeysClickListener · `com/icatchtek/baseutil/InnerRecevier.java`
+
+方法（3）：
+- `void onHomeKeyClick()`  L18
+- `void onRecentAppsKeyClick()`  L20
+- `void onScreenLockKeyClick()`  L22
+### `com.icatchtek.baseutil.JumpPermissionManagement`
+L17 · [class] public JumpPermissionManagement · `com/icatchtek/baseutil/JumpPermissionManagement.java`
+
+字段/常量（17）：
+- `String MANUFACTURER_HUAWEI = "Huawei"`  L18
+- `String MANUFACTURER_LENOVO = "LENOVO"`  L19
+- `String MANUFACTURER_LETV = "Letv"`  L20
+- `String MANUFACTURER_LG = "LG"`  L21
+- `String MANUFACTURER_MEIZU = "Meizu"`  L22
+- `String MANUFACTURER_OPPO = "OPPO"`  L23
+- `String MANUFACTURER_SAMSUNG = "samsung"`  L24
+- `String MANUFACTURER_SONY = "Sony"`  L25
+- `String MANUFACTURER_VIVO = "vivo"`  L26
+- `String MANUFACTURER_XIAOMI = "Xiaomi"`  L27
+- `String MANUFACTURER_YULONG = "YuLong"`  L28
+- `String MANUFACTURER_ZTE = "ZTE"`  L29
+- `String TAG = "JumpPermissionManagement"`  L30
+- `String str = Build.MANUFACTURER`  L41
+- `Intent intent`  L124
+- `BufferedReader bufferedReader`  L168
+- `Throwable th`  L169
+
+方法（14）：
+- `void ApplicationInfo(Activity activity)`  L32
+    - 体内字面量："android.settings.APPLICATION_DETAILS_SETTINGS" · "package"
+- `void GoToSetting(Activity activity)`  L40
+- `void Huawei(Activity activity)`  L72
+    - 体内字面量："packageName" · "com.huawei.systemmanager" · "com.huawei.permissionmanager.ui.MainActivity"
+- `void LG(Activity activity)`  L80
+    - 体内字面量："android.intent.action.MAIN" · "packageName" · "com.android.settings" · "com.android.settings.Settings$AccessLockSummaryActivity"
+- `void Letv(Activity activity)`  L88
+    - 体内字面量："packageName" · "com.letv.android.letvsafe" · "com.letv.android.letvsafe.PermissionAndApps"
+- `void Meizu(Activity activity)`  L96
+    - 体内字面量："com.meizu.safe.security.SHOW_APPSEC" · "android.intent.category.DEFAULT" · "packageName"
+- `void OPPO(Activity activity)`  L103
+    - 体内字面量："packageName" · "com.color.safecenter" · "com.color.safecenter.permission.PermissionManagerActivity"
+- `void Sony(Activity activity)`  L111
+    - 体内字面量："packageName" · "com.sonymobile.cta" · "com.sonymobile.cta.SomcCTAMainActivity"
+- `void SystemConfig(Activity activity)`  L119
+    - 体内字面量："android.settings.SETTINGS"
+- `void Xiaomi(Activity activity)`  L123
+- `void _360(Activity activity)`  L144
+    - 体内字面量："android.intent.action.MAIN" · "packageName" · "com.qihoo360.mobilesafe" · "com.qihoo360.mobilesafe.ui.index.AppEnterActivity"
+- `boolean canBackgroundStart(Context context)`  L152
+    - 体内字面量："appops" · "checkOpNoThrow" · "result:" · "not support"
+- `String getMiuiVersion()`  L167
+- `boolean isMiui()`  L206
+    - 体内字面量："Build.MANUFACTURER :"
+### `com.icatchtek.baseutil.MyOrientationEventListener`
+L7 · [class] public MyOrientationEventListener · extends `OrientationEventListener` · `com/icatchtek/baseutil/MyOrientationEventListener.java`
+
+字段/常量（8）：
+- `int SENSOR_ANGLE = 10`  L8
+- `String TAG = "MyOrientationEventListener"`  L9
+- `Context context`  L10
+- `OnOrientationChangedCallback onOrientationChangedCallback`  L11
+- `int prevOrientation`  L12
+- `OnOrientationChangedCallback onOrientationChangedCallback`  L27
+- `OnOrientationChangedCallback onOrientationChangedCallback2`  L28
+- `OnOrientationChangedCallback onOrientationChangedCallback3`  L29
+
+方法（2）：
+- `public MyOrientationEventListener(Context context, OnOrientationChangedCallback onOrientationChangedCallback)`  L18
+- `void onOrientationChanged(int i)`  L26 @Override
+### `com.icatchtek.baseutil.MyOrientationEventListener$OnOrientationChangedCallback`
+L14 · [interface] public OnOrientationChangedCallback · `com/icatchtek/baseutil/MyOrientationEventListener.java`
+
+方法（1）：
+- `void onOrientationChanged(int i)`  L15
+### `com.icatchtek.baseutil.PerformanceTest`
+L7 · [class] public PerformanceTest · `com/icatchtek/baseutil/PerformanceTest.java`
+
+字段/常量（7）：
+- `String TAG = "PerformanceTest"`  L8
+- `long debugLastTime = 0`  L9
+- `Observer elapseTimeObserver = null`  L10
+- `boolean isDebug = true`  L11
+- `long lastTime`  L12
+- `long startTime`  L13
+- `Observer observer = elapseTimeObserver`  L30
+
+方法（6）：
+- `void addElapseTimeObserver(Observer observer)`  L15
+- `void showCurrentTime(String str)`  L19
+    - 体内字面量：" time: " · " , total: " · " ms"
+- `void showDebugElapseTime(String str)`  L26
+    - 体内字面量：" elapse: " · " ms, total: " · " ms"
+- `void showElapseTime(String str)`  L39
+    - 体内字面量：" time: " · " , elapse: " · " ms, total: " · " ms"
+- `void startTest(String str)`  L47
+    - 体内字面量：" startTest time: "
+- `void stopTest(String str)`  L55
+    - 体内字面量：" stopTest time: " · " , elapse: " · " ms"
+### `com.icatchtek.baseutil.PermissionTools`
+L14 · [class] public PermissionTools · `com/icatchtek/baseutil/PermissionTools.java`
+
+字段/常量（12）：
+- `int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 108`  L15
+- `int ALL_REQUEST_CODE = 102`  L16
+- `int CAMERA_REQUEST_CODE = 104`  L17
+- `int LOCATION_REQUEST_CODE = 105`  L18
+- `int MICROPHONE_REQUEST_CODE = 106`  L19
+- `int PHONE_REQUEST_CODE = 107`  L20
+- `int STORAGE_REQUEST_CODE = 103`  L21
+- `String TAG = "PermissionTools"`  L22
+- `String str`  L33
+- `String[] strArr`  L97
+- `String str`  L98
+- `String str2`  L99
+
+方法（6）：
+- `boolean checkAllSelfPermission(Activity activity)`  L24
+    - 体内字面量："android.permission.WRITE_EXTERNAL_STORAGE" · "android.permission.CAMERA" · "android.permission.ACCESS_FINE_LOCATION" · "android.permission.RECORD_AUDIO" · "android.permission.READ_PHONE_STATE"
+- `boolean checkCanDrawOverlaysPermissions(Activity activity)`  L28
+- `boolean checkSelfPermission(Activity activity, int i)`  L32
+- `void requestAllPermissions(Activity activity)`  L54
+    - 体内字面量："Start request all necessary permissions" · "android.permission.WRITE_EXTERNAL_STORAGE" · "android.permission.WRITE_EXTERNAL_STORAGE" · "android.permission.READ_EXTERNAL_STORAGE" · "android.permission.CAMERA" · "android.permission.CAMERA" · "android.permission.ACCESS_FINE_LOCATION" · "android.permission.ACCESS_FINE_LOCATION" · "android.permission.ACCESS_COARSE_LOCATION" · "android.permission.RECORD_AUDIO" · "android.permission.RECORD_AUDIO" · "android.permission.READ_PHONE_STATE" · "android.permission.READ_PHONE_STATE" · "permission has granted!" · "End requestPermissions"
+- `void requestCanDrawOverlaysPermissions(Activity activity)`  L82
+    - 体内字面量："android.settings.action.MANAGE_OVERLAY_PERMISSION" · "package:" · "requestCanDrawOverlaysPermissions e = " · ", " · "android.settings.APPLICATION_DETAILS_SETTINGS" · "package:"
+- `void requestPermissions(Activity activity, int i)`  L96
+### `com.icatchtek.baseutil.R`
+L4 · [class] public final R · `com/icatchtek/baseutil/R.java`
+
+方法（1）：
+- `private R()`  L1861
+### `com.icatchtek.baseutil.R$anim`
+L6 · [class] public static final anim · `com/icatchtek/baseutil/R.java`
+
+字段/常量（16）：
+- `int abc_fade_in = 0x7f010000`  L7
+- `int abc_fade_out = 0x7f010001`  L8
+- `int abc_grow_fade_in_from_bottom = 0x7f010002`  L9
+- `int abc_popup_enter = 0x7f010003`  L10
+- `int abc_popup_exit = 0x7f010004`  L11
+- `int abc_shrink_fade_out_from_bottom = 0x7f010005`  L12
+- `int abc_slide_in_bottom = 0x7f010006`  L13
+- `int abc_slide_in_top = 0x7f010007`  L14
+- `int abc_slide_out_bottom = 0x7f010008`  L15
+- `int abc_slide_out_top = 0x7f010009`  L16
+- `int abc_tooltip_enter = 0x7f01000a`  L17
+- `int abc_tooltip_exit = 0x7f01000b`  L18
+- `int slide_in_from_bottom = 0x7f010038`  L19
+- `int slide_in_from_top = 0x7f010039`  L20
+- `int slide_out_to_bottom = 0x7f01003a`  L21
+- `int slide_out_to_top = 0x7f01003b`  L22
+
+方法（1）：
+- `private anim()`  L24
+### `com.icatchtek.baseutil.R$attr`
+L28 · [class] public static final attr · `com/icatchtek/baseutil/R.java`
+
+字段/常量（297）：
+- `int actionBarDivider = 0x7f040002`  L29
+- `int actionBarItemBackground = 0x7f040003`  L30
+- `int actionBarPopupTheme = 0x7f040004`  L31
+- `int actionBarSize = 0x7f040005`  L32
+- `int actionBarSplitStyle = 0x7f040006`  L33
+- `int actionBarStyle = 0x7f040007`  L34
+- `int actionBarTabBarStyle = 0x7f040008`  L35
+- `int actionBarTabStyle = 0x7f040009`  L36
+- `int actionBarTabTextStyle = 0x7f04000a`  L37
+- `int actionBarTheme = 0x7f04000b`  L38
+- `int actionBarWidgetTheme = 0x7f04000c`  L39
+- `int actionButtonStyle = 0x7f04000d`  L40
+- `int actionDropDownStyle = 0x7f04000e`  L41
+- `int actionLayout = 0x7f04000f`  L42
+- `int actionMenuTextAppearance = 0x7f040010`  L43
+- `int actionMenuTextColor = 0x7f040011`  L44
+- `int actionModeBackground = 0x7f040012`  L45
+- `int actionModeCloseButtonStyle = 0x7f040013`  L46
+- `int actionModeCloseDrawable = 0x7f040015`  L47
+- `int actionModeCopyDrawable = 0x7f040016`  L48
+- `int actionModeCutDrawable = 0x7f040017`  L49
+- `int actionModeFindDrawable = 0x7f040018`  L50
+- `int actionModePasteDrawable = 0x7f040019`  L51
+- `int actionModePopupWindowStyle = 0x7f04001a`  L52
+- `int actionModeSelectAllDrawable = 0x7f04001b`  L53
+- `int actionModeShareDrawable = 0x7f04001c`  L54
+- `int actionModeSplitBackground = 0x7f04001d`  L55
+- `int actionModeStyle = 0x7f04001e`  L56
+- `int actionModeWebSearchDrawable = 0x7f040020`  L57
+- `int actionOverflowButtonStyle = 0x7f040021`  L58
+- `int actionOverflowMenuStyle = 0x7f040022`  L59
+- `int actionProviderClass = 0x7f040023`  L60
+- `int actionViewClass = 0x7f040025`  L61
+- `int activityChooserViewStyle = 0x7f040027`  L62
+- `int alertDialogButtonGroupStyle = 0x7f04002b`  L63
+- `int alertDialogCenterButtons = 0x7f04002c`  L64
+- `int alertDialogStyle = 0x7f04002d`  L65
+- `int alertDialogTheme = 0x7f04002e`  L66
+- `int allowStacking = 0x7f04002f`  L67
+- `int alpha = 0x7f040030`  L68
+- `int alphabeticModifiers = 0x7f040031`  L69
+- `int arrowHeadLength = 0x7f04003d`  L70
+- `int arrowShaftLength = 0x7f04003e`  L71
+- `int autoCompleteTextViewStyle = 0x7f040043`  L72
+- `int autoSizeMaxTextSize = 0x7f040045`  L73
+- `int autoSizeMinTextSize = 0x7f040046`  L74
+- `int autoSizePresetSizes = 0x7f040047`  L75
+- `int autoSizeStepGranularity = 0x7f040048`  L76
+- `int autoSizeTextType = 0x7f040049`  L77
+- `int background = 0x7f04004e`  L78
+- `int backgroundSplit = 0x7f040055`  L79
+- `int backgroundStacked = 0x7f040056`  L80
+- `int backgroundTint = 0x7f040057`  L81
+- `int backgroundTintMode = 0x7f040058`  L82
+- `int barLength = 0x7f04006c`  L83
+- `int borderlessButtonStyle = 0x7f040085`  L84
+- `int buttonBarButtonStyle = 0x7f040099`  L85
+- `int buttonBarNegativeButtonStyle = 0x7f04009a`  L86
+- `int buttonBarNeutralButtonStyle = 0x7f04009b`  L87
+- `int buttonBarPositiveButtonStyle = 0x7f04009c`  L88
+- `int buttonBarStyle = 0x7f04009d`  L89
+- `int buttonGravity = 0x7f04009f`  L90
+- `int buttonIconDimen = 0x7f0400a1`  L91
+- `int buttonPanelSideLayout = 0x7f0400a4`  L92
+- `int buttonSize = 0x7f0400a5`  L93
+- `int buttonStyle = 0x7f0400a7`  L94
+- `int buttonStyleSmall = 0x7f0400a8`  L95
+- `int buttonTint = 0x7f0400a9`  L96
+- `int buttonTintMode = 0x7f0400aa`  L97
+- `int checkboxStyle = 0x7f0400c6`  L98
+- `int checkedTextViewStyle = 0x7f0400d1`  L99
+- `int circleCrop = 0x7f0400e8`  L100
+- `int closeIcon = 0x7f0400fc`  L101
+- `int closeItemLayout = 0x7f040103`  L102
+- `int collapseContentDescription = 0x7f040104`  L103
+- `int collapseIcon = 0x7f040105`  L104
+- `int color = 0x7f040113`  L105
+- `int colorAccent = 0x7f040114`  L106
+- `int colorBackgroundFloating = 0x7f040115`  L107
+- `int colorButtonNormal = 0x7f040116`  L108
+- `int colorControlActivated = 0x7f04011a`  L109
+- `int colorControlHighlight = 0x7f04011b`  L110
+- `int colorControlNormal = 0x7f04011c`  L111
+- `int colorError = 0x7f04011d`  L112
+- `int colorPrimary = 0x7f040137`  L113
+- `int colorPrimaryDark = 0x7f040139`  L114
+- `int colorScheme = 0x7f04013f`  L115
+- `int colorSwitchThumbNormal = 0x7f04014f`  L116
+- `int commitIcon = 0x7f040162`  L117
+- `int contentDescription = 0x7f04017d`  L118
+- `int contentInsetEnd = 0x7f04017e`  L119
+- `int contentInsetEndWithActions = 0x7f04017f`  L120
+- `int contentInsetLeft = 0x7f040180`  L121
+- `int contentInsetRight = 0x7f040181`  L122
+- `int contentInsetStart = 0x7f040182`  L123
+- `int contentInsetStartWithNavigation = 0x7f040183`  L124
+- `int controlBackground = 0x7f040190`  L125
+- `int coordinatorLayoutStyle = 0x7f040193`  L126
+- `int customNavigationLayout = 0x7f0401b1`  L127
+- `int defaultQueryHint = 0x7f0401bd`  L128
+- `int dialogCornerRadius = 0x7f0401c9`  L129
+- `int dialogPreferredPadding = 0x7f0401ca`  L130
+- `int dialogTheme = 0x7f0401cb`  L131
+- `int displayOptions = 0x7f0401cc`  L132
+- `int divider = 0x7f0401cd`  L133
+- `int dividerHorizontal = 0x7f0401cf`  L134
+- `int dividerPadding = 0x7f0401d2`  L135
+- `int dividerVertical = 0x7f0401d4`  L136
+- `int drawableSize = 0x7f0401e8`  L137
+- `int drawerArrowStyle = 0x7f0401ed`  L138
+- `int dropDownListViewStyle = 0x7f0401f1`  L139
+- `int dropdownListPreferredItemHeight = 0x7f0401f2`  L140
+- `int editTextBackground = 0x7f0401f5`  L141
+- `int editTextColor = 0x7f0401f6`  L142
+- `int editTextStyle = 0x7f0401f7`  L143
+- `int elevation = 0x7f0401fe`  L144
+- `int expandActivityOverflowButtonDrawable = 0x7f04021d`  L145
+- `int firstBaselineToTopHeight = 0x7f04024f`  L146
+- `int font = 0x7f040275`  L147
+- `int fontFamily = 0x7f040276`  L148
+- `int fontProviderAuthority = 0x7f040277`  L149
+- `int fontProviderCerts = 0x7f040278`  L150
+- `int fontProviderFetchStrategy = 0x7f040279`  L151
+- `int fontProviderFetchTimeout = 0x7f04027a`  L152
+- `int fontProviderPackage = 0x7f04027b`  L153
+- `int fontProviderQuery = 0x7f04027c`  L154
+- `int fontStyle = 0x7f04027e`  L155
+- `int fontVariationSettings = 0x7f04027f`  L156
+- `int fontWeight = 0x7f040280`  L157
+- `int gapBetweenBars = 0x7f040286`  L158
+- `int goIcon = 0x7f040288`  L159
+- `int height = 0x7f04029a`  L160
+- `int hideOnContentScroll = 0x7f0402a2`  L161
+- `int homeAsUpIndicator = 0x7f0402ab`  L162
+- `int homeLayout = 0x7f0402ac`  L163
+- `int icon = 0x7f0402b3`  L164
+- `int iconTint = 0x7f0402ba`  L165
+- `int iconTintMode = 0x7f0402bb`  L166
+- `int iconifiedByDefault = 0x7f0402be`  L167
+- `int imageAspectRatio = 0x7f0402c1`  L168
+- `int imageAspectRatioAdjust = 0x7f0402c2`  L169
+- `int imageButtonStyle = 0x7f0402c3`  L170
+- `int indeterminateProgressStyle = 0x7f0402cc`  L171
+- `int initialActivityCount = 0x7f0402d4`  L172
+- `int isLightTheme = 0x7f0402d7`  L173
+- `int itemPadding = 0x7f0402e7`  L174
+- `int keylines = 0x7f040304`  L175
+- `int lastBaselineToBottomHeight = 0x7f04030d`  L176
+- `int layout = 0x7f04030f`  L177
+- `int layout_anchor = 0x7f040313`  L178
+- `int layout_anchorGravity = 0x7f040314`  L179
+- `int layout_behavior = 0x7f040315`  L180
+- `int layout_dodgeInsetEdges = 0x7f040346`  L181
+- `int layout_insetEdge = 0x7f040350`  L182
+- `int layout_keyline = 0x7f040351`  L183
+- `int lineHeight = 0x7f04035d`  L184
+- `int listChoiceBackgroundIndicator = 0x7f040360`  L185
+- `int listDividerAlertDialog = 0x7f040363`  L186
+- `int listItemLayout = 0x7f040364`  L187
+- `int listLayout = 0x7f040365`  L188
+- `int listMenuViewStyle = 0x7f040366`  L189
+- `int listPopupWindowStyle = 0x7f040367`  L190
+- `int listPreferredItemHeight = 0x7f040368`  L191
+- `int listPreferredItemHeightLarge = 0x7f040369`  L192
+- `int listPreferredItemHeightSmall = 0x7f04036a`  L193
+- `int listPreferredItemPaddingLeft = 0x7f04036c`  L194
+- `int listPreferredItemPaddingRight = 0x7f04036d`  L195
+- `int logo = 0x7f040370`  L196
+- `int logoDescription = 0x7f040372`  L197
+- `int maxButtonHeight = 0x7f0403b3`  L198
+- `int measureWithLargestChild = 0x7f0403bc`  L199
+- `int multiChoiceItemLayout = 0x7f040403`  L200
+- `int navigationContentDescription = 0x7f040404`  L201
+- `int navigationIcon = 0x7f040405`  L202
+- `int navigationMode = 0x7f040407`  L203
+- `int numericModifiers = 0x7f04040f`  L204
+- `int overlapAnchor = 0x7f040419`  L205
+- `int paddingBottomNoButtons = 0x7f04041b`  L206
+- `int paddingEnd = 0x7f04041d`  L207
+- `int paddingStart = 0x7f040420`  L208
+- `int paddingTopNoTitle = 0x7f040422`  L209
+- `int panelBackground = 0x7f040424`  L210
+- `int panelMenuListTheme = 0x7f040425`  L211
+- `int panelMenuListWidth = 0x7f040426`  L212
+- `int popupMenuStyle = 0x7f040443`  L213
+- `int popupTheme = 0x7f040444`  L214
+- `int popupWindowStyle = 0x7f040445`  L215
+- `int preserveIconSpacing = 0x7f040449`  L216
+- `int progressBarPadding = 0x7f04045c`  L217
+- `int progressBarStyle = 0x7f04045d`  L218
+- `int ptrAdapterViewBackground = 0x7f040468`  L219
+- `int ptrAnimationStyle = 0x7f040469`  L220
+- `int ptrDrawable = 0x7f04046a`  L221
+- `int ptrDrawableBottom = 0x7f04046b`  L222
+- `int ptrDrawableEnd = 0x7f04046c`  L223
+- `int ptrDrawableStart = 0x7f04046d`  L224
+- `int ptrDrawableTop = 0x7f04046e`  L225
+- `int ptrHeaderBackground = 0x7f04046f`  L226
+- `int ptrHeaderSubTextColor = 0x7f040470`  L227
+- `int ptrHeaderTextAppearance = 0x7f040471`  L228
+- `int ptrHeaderTextColor = 0x7f040472`  L229
+- `int ptrListViewExtrasEnabled = 0x7f040473`  L230
+- `int ptrMode = 0x7f040474`  L231
+- `int ptrOverScroll = 0x7f040475`  L232
+- `int ptrRefreshableViewBackground = 0x7f040476`  L233
+- `int ptrRotateDrawableWhilePulling = 0x7f040477`  L234
+- `int ptrScrollingWhileRefreshingEnabled = 0x7f040478`  L235
+- `int ptrShowIndicator = 0x7f040479`  L236
+- `int ptrSubHeaderTextAppearance = 0x7f04047a`  L237
+- `int queryBackground = 0x7f04047f`  L238
+- `int queryHint = 0x7f040480`  L239
+- `int radioButtonStyle = 0x7f040482`  L240
+- `int ratingBarStyle = 0x7f040484`  L241
+- `int ratingBarStyleIndicator = 0x7f040485`  L242
+- `int ratingBarStyleSmall = 0x7f040486`  L243
+- `int scopeUris = 0x7f0404aa`  L244
+- `int searchHintIcon = 0x7f0404b4`  L245
+- `int searchIcon = 0x7f0404b5`  L246
+- `int searchViewStyle = 0x7f0404b7`  L247
+- `int seekBarStyle = 0x7f0404b8`  L248
+- `int selectableItemBackground = 0x7f0404b9`  L249
+- `int selectableItemBackgroundBorderless = 0x7f0404ba`  L250
+- `int showAsAction = 0x7f0404d9`  L251
+- `int showDividers = 0x7f0404db`  L252
+- `int showText = 0x7f0404df`  L253
+- `int showTitle = 0x7f0404e0`  L254
+- `int singleChoiceItemLayout = 0x7f0404f9`  L255
+- `int spinBars = 0x7f040502`  L256
+- `int spinnerDropDownItemStyle = 0x7f040504`  L257
+- `int spinnerStyle = 0x7f040505`  L258
+- `int splitTrack = 0x7f040506`  L259
+- `int srcCompat = 0x7f04050c`  L260
+- `int state_above_anchor = 0x7f040518`  L261
+- `int statusBarBackground = 0x7f040521`  L262
+- `int subMenuArrow = 0x7f040527`  L263
+- `int submitBackground = 0x7f04052d`  L264
+- `int subtitle = 0x7f04052e`  L265
+- `int subtitleTextAppearance = 0x7f040531`  L266
+- `int subtitleTextColor = 0x7f040532`  L267
+- `int subtitleTextStyle = 0x7f040533`  L268
+- `int suggestionRowLayout = 0x7f040537`  L269
+- `int switchMinWidth = 0x7f040539`  L270
+- `int switchPadding = 0x7f04053a`  L271
+- `int switchStyle = 0x7f04053b`  L272
+- `int switchTextAppearance = 0x7f04053c`  L273
+- `int textAllCaps = 0x7f04055f`  L274
+- `int textAppearanceLargePopupMenu = 0x7f040582`  L275
+- `int textAppearanceListItem = 0x7f040584`  L276
+- `int textAppearanceListItemSecondary = 0x7f040585`  L277
+- `int textAppearanceListItemSmall = 0x7f040586`  L278
+- `int textAppearancePopupMenuHeader = 0x7f040588`  L279
+- `int textAppearanceSearchResultSubtitle = 0x7f040589`  L280
+- `int textAppearanceSearchResultTitle = 0x7f04058a`  L281
+- `int textAppearanceSmallPopupMenu = 0x7f04058b`  L282
+- `int textColorAlertDialogListItem = 0x7f04059b`  L283
+- `int textColorSearchUrl = 0x7f04059c`  L284
+- `int theme = 0x7f0405b3`  L285
+- `int thickness = 0x7f0405b4`  L286
+- `int thumbTextPadding = 0x7f0405bf`  L287
+- `int thumbTint = 0x7f0405c0`  L288
+- `int thumbTintMode = 0x7f0405c1`  L289
+- `int tickMark = 0x7f0405c7`  L290
+- `int tickMarkTint = 0x7f0405c8`  L291
+- `int tickMarkTintMode = 0x7f0405c9`  L292
+- `int tint = 0x7f0405cf`  L293
+- `int tintMode = 0x7f0405d0`  L294
+- `int title = 0x7f0405d2`  L295
+- `int titleMargin = 0x7f0405d6`  L296
+- `int titleMarginBottom = 0x7f0405d7`  L297
+- `int titleMarginEnd = 0x7f0405d8`  L298
+- `int titleMarginStart = 0x7f0405d9`  L299
+- `int titleMarginTop = 0x7f0405da`  L300
+- `int titleMargins = 0x7f0405db`  L301
+- `int titleTextAppearance = 0x7f0405de`  L302
+- `int titleTextColor = 0x7f0405df`  L303
+- `int titleTextStyle = 0x7f0405e1`  L304
+- `int toolbarNavigationButtonStyle = 0x7f0405e6`  L305
+- `int toolbarStyle = 0x7f0405e7`  L306
+- `int tooltipForegroundColor = 0x7f0405e9`  L307
+- `int tooltipFrameBackground = 0x7f0405ea`  L308
+- `int tooltipText = 0x7f0405ec`  L309
+- `int track = 0x7f0405f2`  L310
+- `int trackTint = 0x7f040608`  L311
+- `int trackTintMode = 0x7f040609`  L312
+- `int ttcIndex = 0x7f040615`  L313
+- `int viewInflaterClass = 0x7f04063c`  L314
+- `int voiceIcon = 0x7f040642`  L315
+- `int windowActionBar = 0x7f040657`  L316
+- `int windowActionBarOverlay = 0x7f040658`  L317
+- `int windowActionModeOverlay = 0x7f040659`  L318
+- `int windowFixedHeightMajor = 0x7f04065a`  L319
+- `int windowFixedHeightMinor = 0x7f04065b`  L320
+- `int windowFixedWidthMajor = 0x7f04065c`  L321
+- `int windowFixedWidthMinor = 0x7f04065d`  L322
+- `int windowMinWidthMajor = 0x7f04065e`  L323
+- `int windowMinWidthMinor = 0x7f04065f`  L324
+- `int windowNoTitle = 0x7f040660`  L325
+
+方法（1）：
+- `private attr()`  L327
+### `com.icatchtek.baseutil.R$bool`
+L331 · [class] public static final bool · `com/icatchtek/baseutil/R.java`
+
+字段/常量（2）：
+- `int abc_action_bar_embed_tabs = 0x7f050000`  L332
+- `int abc_config_actionMenuItemAllCaps = 0x7f050001`  L333
+
+方法（1）：
+- `private bool()`  L335
+### `com.icatchtek.baseutil.R$color`
+L339 · [class] public static final color · `com/icatchtek/baseutil/R.java`
+
+字段/常量（96）：
+- `int abc_background_cache_hint_selector_material_dark = 0x7f060000`  L340
+- `int abc_background_cache_hint_selector_material_light = 0x7f060001`  L341
+- `int abc_btn_colored_borderless_text_material = 0x7f060002`  L342
+- `int abc_btn_colored_text_material = 0x7f060003`  L343
+- `int abc_color_highlight_material = 0x7f060004`  L344
+- `int abc_hint_foreground_material_dark = 0x7f060007`  L345
+- `int abc_hint_foreground_material_light = 0x7f060008`  L346
+- `int abc_primary_text_disable_only_material_dark = 0x7f060009`  L347
+- `int abc_primary_text_disable_only_material_light = 0x7f06000a`  L348
+- `int abc_primary_text_material_dark = 0x7f06000b`  L349
+- `int abc_primary_text_material_light = 0x7f06000c`  L350
+- `int abc_search_url_text = 0x7f06000d`  L351
+- `int abc_search_url_text_normal = 0x7f06000e`  L352
+- `int abc_search_url_text_pressed = 0x7f06000f`  L353
+- `int abc_search_url_text_selected = 0x7f060010`  L354
+- `int abc_secondary_text_material_dark = 0x7f060011`  L355
+- `int abc_secondary_text_material_light = 0x7f060012`  L356
+- `int abc_tint_btn_checkable = 0x7f060013`  L357
+- `int abc_tint_default = 0x7f060014`  L358
+- `int abc_tint_edittext = 0x7f060015`  L359
+- `int abc_tint_seek_thumb = 0x7f060016`  L360
+- `int abc_tint_spinner = 0x7f060017`  L361
+- `int abc_tint_switch_track = 0x7f060018`  L362
+- `int accent_material_dark = 0x7f06001a`  L363
+- `int accent_material_light = 0x7f06001b`  L364
+- `int background_floating_material_dark = 0x7f06002e`  L365
+- `int background_floating_material_light = 0x7f06002f`  L366
+- `int background_material_dark = 0x7f060030`  L367
+- `int background_material_light = 0x7f060031`  L368
+- `int bright_foreground_disabled_material_dark = 0x7f06003f`  L369
+- `int bright_foreground_disabled_material_light = 0x7f060040`  L370
+- `int bright_foreground_inverse_material_dark = 0x7f060041`  L371
+- `int bright_foreground_inverse_material_light = 0x7f060042`  L372
+- `int bright_foreground_material_dark = 0x7f060046`  L373
+- `int bright_foreground_material_light = 0x7f060047`  L374
+- `int button_material_dark = 0x7f06004e`  L375
+- `int button_material_light = 0x7f06004f`  L376
+- `int common_google_signin_btn_text_dark = 0x7f060070`  L377
+- `int common_google_signin_btn_text_dark_default = 0x7f060071`  L378
+- `int common_google_signin_btn_text_dark_disabled = 0x7f060072`  L379
+- `int common_google_signin_btn_text_dark_focused = 0x7f060073`  L380
+- `int common_google_signin_btn_text_dark_pressed = 0x7f060074`  L381
+- `int common_google_signin_btn_text_light = 0x7f060075`  L382
+- `int common_google_signin_btn_text_light_default = 0x7f060076`  L383
+- `int common_google_signin_btn_text_light_disabled = 0x7f060077`  L384
+- `int common_google_signin_btn_text_light_focused = 0x7f060078`  L385
+- `int common_google_signin_btn_text_light_pressed = 0x7f060079`  L386
+- `int common_google_signin_btn_tint = 0x7f06007a`  L387
+- `int dim_foreground_disabled_material_dark = 0x7f0600a3`  L388
+- `int dim_foreground_disabled_material_light = 0x7f0600a4`  L389
+- `int dim_foreground_material_dark = 0x7f0600a9`  L390
+- `int dim_foreground_material_light = 0x7f0600aa`  L391
+- `int error_color_material_dark = 0x7f0600af`  L392
+- `int error_color_material_light = 0x7f0600b0`  L393
+- `int foreground_material_dark = 0x7f0600ba`  L394
+- `int foreground_material_light = 0x7f0600bb`  L395
+- `int highlighted_text_material_dark = 0x7f0600cc`  L396
+- `int highlighted_text_material_light = 0x7f0600cd`  L397
+- `int material_blue_grey_800 = 0x7f06033a`  L398
+- `int material_blue_grey_900 = 0x7f06033b`  L399
+- `int material_blue_grey_950 = 0x7f06033c`  L400
+- `int material_deep_teal_200 = 0x7f06033e`  L401
+- `int material_deep_teal_500 = 0x7f06033f`  L402
+- `int material_grey_100 = 0x7f06038a`  L403
+- `int material_grey_300 = 0x7f06038b`  L404
+- `int material_grey_50 = 0x7f06038c`  L405
+- `int material_grey_600 = 0x7f06038d`  L406
+- `int material_grey_800 = 0x7f06038e`  L407
+- `int material_grey_850 = 0x7f06038f`  L408
+- `int material_grey_900 = 0x7f060390`  L409
+- `int notification_action_color_filter = 0x7f06041e`  L410
+- `int notification_icon_bg_color = 0x7f06041f`  L411
+- `int notification_material_background_media_default_color = 0x7f060420`  L412
+- `int primary_dark_material_dark = 0x7f060431`  L413
+- `int primary_dark_material_light = 0x7f060432`  L414
+- `int primary_material_dark = 0x7f060435`  L415
+- `int primary_material_light = 0x7f060436`  L416
+- `int primary_text_default_material_dark = 0x7f060438`  L417
+- `int primary_text_default_material_light = 0x7f060439`  L418
+- `int primary_text_disabled_material_dark = 0x7f06043a`  L419
+- `int primary_text_disabled_material_light = 0x7f06043b`  L420
+- `int ripple_material_dark = 0x7f06043f`  L421
+- `int ripple_material_light = 0x7f060440`  L422
+- `int secondary_text_default_material_dark = 0x7f060442`  L423
+- `int secondary_text_default_material_light = 0x7f060443`  L424
+- `int secondary_text_disabled_material_dark = 0x7f060444`  L425
+- `int secondary_text_disabled_material_light = 0x7f060445`  L426
+- `int switch_thumb_disabled_material_dark = 0x7f06044a`  L427
+- `int switch_thumb_disabled_material_light = 0x7f06044b`  L428
+- `int switch_thumb_material_dark = 0x7f06044c`  L429
+- `int switch_thumb_material_light = 0x7f06044d`  L430
+- `int switch_thumb_normal_material_dark = 0x7f06044e`  L431
+- `int switch_thumb_normal_material_light = 0x7f06044f`  L432
+- `int tooltip_background_dark = 0x7f060454`  L433
+- `int tooltip_background_light = 0x7f060455`  L434
+- `int transparent = 0x7f060456`  L435
+
+方法（1）：
+- `private color()`  L437
+### `com.icatchtek.baseutil.R$dimen`
+L441 · [class] public static final dimen · `com/icatchtek/baseutil/R.java`
+
+字段/常量（119）：
+- `int abc_action_bar_content_inset_material = 0x7f070000`  L442
+- `int abc_action_bar_content_inset_with_nav = 0x7f070001`  L443
+- `int abc_action_bar_default_height_material = 0x7f070002`  L444
+- `int abc_action_bar_default_padding_end_material = 0x7f070003`  L445
+- `int abc_action_bar_default_padding_start_material = 0x7f070004`  L446
+- `int abc_action_bar_elevation_material = 0x7f070005`  L447
+- `int abc_action_bar_icon_vertical_padding_material = 0x7f070006`  L448
+- `int abc_action_bar_overflow_padding_end_material = 0x7f070007`  L449
+- `int abc_action_bar_overflow_padding_start_material = 0x7f070008`  L450
+- `int abc_action_bar_stacked_max_height = 0x7f070009`  L451
+- `int abc_action_bar_stacked_tab_max_width = 0x7f07000a`  L452
+- `int abc_action_bar_subtitle_bottom_margin_material = 0x7f07000b`  L453
+- `int abc_action_bar_subtitle_top_margin_material = 0x7f07000c`  L454
+- `int abc_action_button_min_height_material = 0x7f07000d`  L455
+- `int abc_action_button_min_width_material = 0x7f07000e`  L456
+- `int abc_action_button_min_width_overflow_material = 0x7f07000f`  L457
+- `int abc_alert_dialog_button_bar_height = 0x7f070010`  L458
+- `int abc_alert_dialog_button_dimen = 0x7f070011`  L459
+- `int abc_button_inset_horizontal_material = 0x7f070012`  L460
+- `int abc_button_inset_vertical_material = 0x7f070013`  L461
+- `int abc_button_padding_horizontal_material = 0x7f070014`  L462
+- `int abc_button_padding_vertical_material = 0x7f070015`  L463
+- `int abc_cascading_menus_min_smallest_width = 0x7f070016`  L464
+- `int abc_config_prefDialogWidth = 0x7f070017`  L465
+- `int abc_control_corner_material = 0x7f070018`  L466
+- `int abc_control_inset_material = 0x7f070019`  L467
+- `int abc_control_padding_material = 0x7f07001a`  L468
+- `int abc_dialog_corner_radius_material = 0x7f07001b`  L469
+- `int abc_dialog_fixed_height_major = 0x7f07001c`  L470
+- `int abc_dialog_fixed_height_minor = 0x7f07001d`  L471
+- `int abc_dialog_fixed_width_major = 0x7f07001e`  L472
+- `int abc_dialog_fixed_width_minor = 0x7f07001f`  L473
+- `int abc_dialog_list_padding_bottom_no_buttons = 0x7f070020`  L474
+- `int abc_dialog_list_padding_top_no_title = 0x7f070021`  L475
+- `int abc_dialog_min_width_major = 0x7f070022`  L476
+- `int abc_dialog_min_width_minor = 0x7f070023`  L477
+- `int abc_dialog_padding_material = 0x7f070024`  L478
+- `int abc_dialog_padding_top_material = 0x7f070025`  L479
+- `int abc_dialog_title_divider_material = 0x7f070026`  L480
+- `int abc_disabled_alpha_material_dark = 0x7f070027`  L481
+- `int abc_disabled_alpha_material_light = 0x7f070028`  L482
+- `int abc_dropdownitem_icon_width = 0x7f070029`  L483
+- `int abc_dropdownitem_text_padding_left = 0x7f07002a`  L484
+- `int abc_dropdownitem_text_padding_right = 0x7f07002b`  L485
+- `int abc_edit_text_inset_bottom_material = 0x7f07002c`  L486
+- `int abc_edit_text_inset_horizontal_material = 0x7f07002d`  L487
+- `int abc_edit_text_inset_top_material = 0x7f07002e`  L488
+- `int abc_floating_window_z = 0x7f07002f`  L489
+- `int abc_list_item_padding_horizontal_material = 0x7f070033`  L490
+- `int abc_panel_menu_list_width = 0x7f070034`  L491
+- `int abc_progress_bar_height_material = 0x7f070035`  L492
+- `int abc_search_view_preferred_height = 0x7f070036`  L493
+- `int abc_search_view_preferred_width = 0x7f070037`  L494
+- `int abc_seekbar_track_background_height_material = 0x7f070038`  L495
+- `int abc_seekbar_track_progress_height_material = 0x7f070039`  L496
+- `int abc_select_dialog_padding_start_material = 0x7f07003a`  L497
+- `int abc_switch_padding = 0x7f07003e`  L498
+- `int abc_text_size_body_1_material = 0x7f07003f`  L499
+- `int abc_text_size_body_2_material = 0x7f070040`  L500
+- `int abc_text_size_button_material = 0x7f070041`  L501
+- `int abc_text_size_caption_material = 0x7f070042`  L502
+- `int abc_text_size_display_1_material = 0x7f070043`  L503
+- `int abc_text_size_display_2_material = 0x7f070044`  L504
+- `int abc_text_size_display_3_material = 0x7f070045`  L505
+- `int abc_text_size_display_4_material = 0x7f070046`  L506
+- `int abc_text_size_headline_material = 0x7f070047`  L507
+- `int abc_text_size_large_material = 0x7f070048`  L508
+- `int abc_text_size_medium_material = 0x7f070049`  L509
+- `int abc_text_size_menu_header_material = 0x7f07004a`  L510
+- `int abc_text_size_menu_material = 0x7f07004b`  L511
+- `int abc_text_size_small_material = 0x7f07004c`  L512
+- `int abc_text_size_subhead_material = 0x7f07004d`  L513
+- `int abc_text_size_subtitle_material_toolbar = 0x7f07004e`  L514
+- `int abc_text_size_title_material = 0x7f07004f`  L515
+- `int abc_text_size_title_material_toolbar = 0x7f070050`  L516
+- `int compat_button_inset_horizontal_material = 0x7f070080`  L517
+- `int compat_button_inset_vertical_material = 0x7f070081`  L518
+- `int compat_button_padding_horizontal_material = 0x7f070082`  L519
+- `int compat_button_padding_vertical_material = 0x7f070083`  L520
+- `int compat_control_corner_material = 0x7f070084`  L521
+- `int compat_notification_large_icon_max_height = 0x7f070085`  L522
+- `int compat_notification_large_icon_max_width = 0x7f070086`  L523
+- `int disabled_alpha_material_dark = 0x7f0700ba`  L524
+- `int disabled_alpha_material_light = 0x7f0700bb`  L525
+- `int header_footer_left_right_padding = 0x7f0700e8`  L526
+- `int header_footer_top_bottom_padding = 0x7f0700e9`  L527
+- `int highlight_alpha_material_colored = 0x7f0700ea`  L528
+- `int highlight_alpha_material_dark = 0x7f0700eb`  L529
+- `int highlight_alpha_material_light = 0x7f0700ec`  L530
+- `int hint_alpha_material_dark = 0x7f0700ed`  L531
+- `int hint_alpha_material_light = 0x7f0700ee`  L532
+- `int hint_pressed_alpha_material_dark = 0x7f0700ef`  L533
+- `int hint_pressed_alpha_material_light = 0x7f0700f0`  L534
+- `int indicator_corner_radius = 0x7f0700f1`  L535
+- `int indicator_internal_padding = 0x7f0700f2`  L536
+- `int indicator_right_padding = 0x7f0700f3`  L537
+- `int notification_action_icon_size = 0x7f070451`  L538
+- `int notification_action_text_size = 0x7f070452`  L539
+- `int notification_big_circle_margin = 0x7f070453`  L540
+- `int notification_content_margin_start = 0x7f070454`  L541
+- `int notification_large_icon_height = 0x7f070455`  L542
+- `int notification_large_icon_width = 0x7f070456`  L543
+- `int notification_main_column_padding_top = 0x7f070457`  L544
+- `int notification_media_narrow_margin = 0x7f070458`  L545
+- `int notification_right_icon_size = 0x7f070459`  L546
+- `int notification_right_side_padding_top = 0x7f07045a`  L547
+- `int notification_small_icon_background_padding = 0x7f07045b`  L548
+- `int notification_small_icon_size_as_large = 0x7f07045c`  L549
+- `int notification_subtext_size = 0x7f07045d`  L550
+- `int notification_top_pad = 0x7f07045e`  L551
+- `int notification_top_pad_large_text = 0x7f07045f`  L552
+- `int tooltip_corner_radius = 0x7f0704a1`  L553
+- `int tooltip_horizontal_padding = 0x7f0704a2`  L554
+- `int tooltip_margin = 0x7f0704a3`  L555
+- `int tooltip_precise_anchor_extra_offset = 0x7f0704a4`  L556
+- `int tooltip_precise_anchor_threshold = 0x7f0704a5`  L557
+- `int tooltip_vertical_padding = 0x7f0704a6`  L558
+- `int tooltip_y_offset_non_touch = 0x7f0704a7`  L559
+- `int tooltip_y_offset_touch = 0x7f0704a8`  L560
+
+方法（1）：
+- `private dimen()`  L562
+### `com.icatchtek.baseutil.R$drawable`
+L566 · [class] public static final drawable · `com/icatchtek/baseutil/R.java`
+
+字段/常量（112）：
+- `int abc_ab_share_pack_mtrl_alpha = 0x7f080028`  L567
+- `int abc_action_bar_item_background_material = 0x7f080029`  L568
+- `int abc_btn_borderless_material = 0x7f08002a`  L569
+- `int abc_btn_check_material = 0x7f08002b`  L570
+- `int abc_btn_check_to_on_mtrl_000 = 0x7f08002d`  L571
+- `int abc_btn_check_to_on_mtrl_015 = 0x7f08002e`  L572
+- `int abc_btn_colored_material = 0x7f08002f`  L573
+- `int abc_btn_default_mtrl_shape = 0x7f080030`  L574
+- `int abc_btn_radio_material = 0x7f080031`  L575
+- `int abc_btn_radio_to_on_mtrl_000 = 0x7f080033`  L576
+- `int abc_btn_radio_to_on_mtrl_015 = 0x7f080034`  L577
+- `int abc_btn_switch_to_on_mtrl_00001 = 0x7f080035`  L578
+- `int abc_btn_switch_to_on_mtrl_00012 = 0x7f080036`  L579
+- `int abc_cab_background_internal_bg = 0x7f080037`  L580
+- `int abc_cab_background_top_material = 0x7f080038`  L581
+- `int abc_cab_background_top_mtrl_alpha = 0x7f080039`  L582
+- `int abc_control_background_material = 0x7f08003a`  L583
+- `int abc_dialog_material_background = 0x7f08003b`  L584
+- `int abc_edit_text_material = 0x7f08003c`  L585
+- `int abc_ic_ab_back_material = 0x7f08003d`  L586
+- `int abc_ic_arrow_drop_right_black_24dp = 0x7f08003e`  L587
+- `int abc_ic_clear_material = 0x7f08003f`  L588
+- `int abc_ic_commit_search_api_mtrl_alpha = 0x7f080040`  L589
+- `int abc_ic_go_search_api_material = 0x7f080041`  L590
+- `int abc_ic_menu_copy_mtrl_am_alpha = 0x7f080042`  L591
+- `int abc_ic_menu_cut_mtrl_alpha = 0x7f080043`  L592
+- `int abc_ic_menu_overflow_material = 0x7f080044`  L593
+- `int abc_ic_menu_paste_mtrl_am_alpha = 0x7f080045`  L594
+- `int abc_ic_menu_selectall_mtrl_alpha = 0x7f080046`  L595
+- `int abc_ic_menu_share_mtrl_alpha = 0x7f080047`  L596
+- `int abc_ic_search_api_material = 0x7f080048`  L597
+- `int abc_ic_voice_search_api_material = 0x7f080049`  L598
+- `int abc_item_background_holo_dark = 0x7f08004a`  L599
+- `int abc_item_background_holo_light = 0x7f08004b`  L600
+- `int abc_list_divider_material = 0x7f08004c`  L601
+- `int abc_list_divider_mtrl_alpha = 0x7f08004d`  L602
+- `int abc_list_focused_holo = 0x7f08004e`  L603
+- `int abc_list_longpressed_holo = 0x7f08004f`  L604
+- `int abc_list_pressed_holo_dark = 0x7f080050`  L605
+- `int abc_list_pressed_holo_light = 0x7f080051`  L606
+- `int abc_list_selector_background_transition_holo_dark = 0x7f080052`  L607
+- `int abc_list_selector_background_transition_holo_light = 0x7f080053`  L608
+- `int abc_list_selector_disabled_holo_dark = 0x7f080054`  L609
+- `int abc_list_selector_disabled_holo_light = 0x7f080055`  L610
+- `int abc_list_selector_holo_dark = 0x7f080056`  L611
+- `int abc_list_selector_holo_light = 0x7f080057`  L612
+- `int abc_menu_hardkey_panel_mtrl_mult = 0x7f080058`  L613
+- `int abc_popup_background_mtrl_mult = 0x7f080059`  L614
+- `int abc_ratingbar_indicator_material = 0x7f08005a`  L615
+- `int abc_ratingbar_material = 0x7f08005b`  L616
+- `int abc_ratingbar_small_material = 0x7f08005c`  L617
+- `int abc_scrubber_control_off_mtrl_alpha = 0x7f08005d`  L618
+- `int abc_scrubber_control_to_pressed_mtrl_000 = 0x7f08005e`  L619
+- `int abc_scrubber_control_to_pressed_mtrl_005 = 0x7f08005f`  L620
+- `int abc_scrubber_primary_mtrl_alpha = 0x7f080060`  L621
+- `int abc_scrubber_track_mtrl_alpha = 0x7f080061`  L622
+- `int abc_seekbar_thumb_material = 0x7f080062`  L623
+- `int abc_seekbar_tick_mark_material = 0x7f080063`  L624
+- `int abc_seekbar_track_material = 0x7f080064`  L625
+- `int abc_spinner_mtrl_am_alpha = 0x7f080065`  L626
+- `int abc_spinner_textfield_background_material = 0x7f080066`  L627
+- `int abc_switch_thumb_material = 0x7f080069`  L628
+- `int abc_switch_track_mtrl_alpha = 0x7f08006a`  L629
+- `int abc_tab_indicator_material = 0x7f08006b`  L630
+- `int abc_tab_indicator_mtrl_alpha = 0x7f08006c`  L631
+- `int abc_text_cursor_material = 0x7f08006d`  L632
+- `int abc_textfield_activated_mtrl_alpha = 0x7f080071`  L633
+- `int abc_textfield_default_mtrl_alpha = 0x7f080072`  L634
+- `int abc_textfield_search_activated_mtrl_alpha = 0x7f080073`  L635
+- `int abc_textfield_search_default_mtrl_alpha = 0x7f080074`  L636
+- `int abc_textfield_search_material = 0x7f080075`  L637
+- `int abc_vector_test = 0x7f080076`  L638
+- `int common_full_open_on_phone = 0x7f0800dd`  L639
+- `int common_google_signin_btn_icon_dark = 0x7f0800de`  L640
+- `int common_google_signin_btn_icon_dark_focused = 0x7f0800df`  L641
+- `int common_google_signin_btn_icon_dark_normal = 0x7f0800e0`  L642
+- `int common_google_signin_btn_icon_dark_normal_background = 0x7f0800e1`  L643
+- `int common_google_signin_btn_icon_disabled = 0x7f0800e2`  L644
+- `int common_google_signin_btn_icon_light = 0x7f0800e3`  L645
+- `int common_google_signin_btn_icon_light_focused = 0x7f0800e4`  L646
+- `int common_google_signin_btn_icon_light_normal = 0x7f0800e5`  L647
+- `int common_google_signin_btn_icon_light_normal_background = 0x7f0800e6`  L648
+- `int common_google_signin_btn_text_dark = 0x7f0800e7`  L649
+- `int common_google_signin_btn_text_dark_focused = 0x7f0800e8`  L650
+- `int common_google_signin_btn_text_dark_normal = 0x7f0800e9`  L651
+- `int common_google_signin_btn_text_dark_normal_background = 0x7f0800ea`  L652
+- `int common_google_signin_btn_text_disabled = 0x7f0800eb`  L653
+- `int common_google_signin_btn_text_light = 0x7f0800ec`  L654
+- `int common_google_signin_btn_text_light_focused = 0x7f0800ed`  L655
+- `int common_google_signin_btn_text_light_normal = 0x7f0800ee`  L656
+- `int common_google_signin_btn_text_light_normal_background = 0x7f0800ef`  L657
+- `int default_ptr_flip = 0x7f0800fc`  L658
+- `int default_ptr_rotate = 0x7f0800fd`  L659
+- `int googleg_disabled_color_18 = 0x7f080176`  L660
+- `int googleg_standard_color_18 = 0x7f080177`  L661
+- `int indicator_arrow = 0x7f0801f1`  L662
+- `int indicator_bg_bottom = 0x7f0801f2`  L663
+- `int indicator_bg_top = 0x7f0801f3`  L664
+- `int notification_action_background = 0x7f0802bc`  L665
+- `int notification_bg = 0x7f0802bd`  L666
+- `int notification_bg_low = 0x7f0802be`  L667
+- `int notification_bg_low_normal = 0x7f0802bf`  L668
+- `int notification_bg_low_pressed = 0x7f0802c0`  L669
+- `int notification_bg_normal = 0x7f0802c1`  L670
+- `int notification_bg_normal_pressed = 0x7f0802c2`  L671
+- `int notification_icon_background = 0x7f0802c3`  L672
+- `int notification_template_icon_bg = 0x7f0802c5`  L673
+- `int notification_template_icon_low_bg = 0x7f0802c6`  L674
+- `int notification_tile_bg = 0x7f0802c7`  L675
+- `int notify_panel_notification_icon_bg = 0x7f0802c8`  L676
+- `int tooltip_frame_dark = 0x7f08032b`  L677
+- `int tooltip_frame_light = 0x7f08032c`  L678
+
+方法（1）：
+- `private drawable()`  L680
+### `com.icatchtek.baseutil.R$id`
+L684 · [class] public static final id · `com/icatchtek/baseutil/R.java`
+
+字段/常量（156）：
+- `int action0 = 0x7f0a003f`  L685
+- `int action_bar = 0x7f0a0044`  L686
+- `int action_bar_activity_content = 0x7f0a0045`  L687
+- `int action_bar_container = 0x7f0a0046`  L688
+- `int action_bar_root = 0x7f0a0047`  L689
+- `int action_bar_spinner = 0x7f0a0048`  L690
+- `int action_bar_subtitle = 0x7f0a0049`  L691
+- `int action_bar_title = 0x7f0a004a`  L692
+- `int action_container = 0x7f0a004b`  L693
+- `int action_context_bar = 0x7f0a004c`  L694
+- `int action_divider = 0x7f0a004f`  L695
+- `int action_image = 0x7f0a0053`  L696
+- `int action_menu_divider = 0x7f0a0056`  L697
+- `int action_menu_presenter = 0x7f0a0057`  L698
+- `int action_mode_bar = 0x7f0a0058`  L699
+- `int action_mode_bar_stub = 0x7f0a0059`  L700
+- `int action_mode_close_button = 0x7f0a005a`  L701
+- `int action_text = 0x7f0a0060`  L702
+- `int actions = 0x7f0a0061`  L703
+- `int activity_chooser_view_content = 0x7f0a0062`  L704
+- `int add = 0x7f0a0066`  L705
+- `int adjust_height = 0x7f0a0067`  L706
+- `int adjust_width = 0x7f0a0068`  L707
+- `int alertTitle = 0x7f0a006f`  L708
+- `int all = 0x7f0a0071`  L709
+- `int always = 0x7f0a0073`  L710
+- `int async = 0x7f0a007f`  L711
+- `int auto = 0x7f0a0081`  L712
+- `int beginning = 0x7f0a0094`  L713
+- `int blocking = 0x7f0a0097`  L714
+- `int both = 0x7f0a009b`  L715
+- `int bottom = 0x7f0a009c`  L716
+- `int button = 0x7f0a00c2`  L717
+- `int buttonPanel = 0x7f0a00c3`  L718
+- `int cancel_action = 0x7f0a00cf`  L719
+- `int center = 0x7f0a00dd`  L720
+- `int checkbox = 0x7f0a00e6`  L721
+- `int chronometer = 0x7f0a00e9`  L722
+- `int collapseActionView = 0x7f0a00f2`  L723
+- `int content = 0x7f0a0104`  L724
+- `int contentPanel = 0x7f0a0105`  L725
+- `int custom = 0x7f0a0111`  L726
+- `int customPanel = 0x7f0a0112`  L727
+- `int dark = 0x7f0a0115`  L728
+- `int decor_content_parent = 0x7f0a011a`  L729
+- `int default_activity_button = 0x7f0a011b`  L730
+- `int disableHome = 0x7f0a0133`  L731
+- `int disabled = 0x7f0a0137`  L732
+- `int edit_query = 0x7f0a0159`  L733
+- `int end = 0x7f0a0160`  L734
+- `int end_padder = 0x7f0a0162`  L735
+- `int expand_activities_button = 0x7f0a01a4`  L736
+- `int expanded_menu = 0x7f0a01a5`  L737
+- `int fl_inner = 0x7f0a01be`  L738
+- `int flip = 0x7f0a01bf`  L739
+- `int forever = 0x7f0a01c1`  L740
+- `int gridview = 0x7f0a01d1`  L741
+- `int group_divider = 0x7f0a01d2`  L742
+- `int home = 0x7f0a01da`  L743
+- `int homeAsUp = 0x7f0a01db`  L744
+- `int icon = 0x7f0a01eb`  L745
+- `int icon_group = 0x7f0a01ec`  L746
+- `int icon_only = 0x7f0a01ed`  L747
+- `int ifRoom = 0x7f0a01ee`  L748
+- `int image = 0x7f0a01f1`  L749
+- `int info = 0x7f0a01fb`  L750
+- `int italic = 0x7f0a0205`  L751
+- `int left = 0x7f0a022b`  L752
+- `int light = 0x7f0a022f`  L753
+- `int line1 = 0x7f0a0230`  L754
+- `int line3 = 0x7f0a0231`  L755
+- `int listMode = 0x7f0a0234`  L756
+- `int list_item = 0x7f0a0235`  L757
+- `int manualOnly = 0x7f0a027e`  L758
+- `int match_parent = 0x7f0a0282`  L759
+- `int media_actions = 0x7f0a0299`  L760
+- `int message = 0x7f0a02ba`  L761
+- `int middle = 0x7f0a02c0`  L762
+- `int multiply = 0x7f0a02eb`  L763
+- `int never = 0x7f0a02f8`  L764
+- `int none = 0x7f0a0301`  L765
+- `int normal = 0x7f0a0302`  L766
+- `int notification_background = 0x7f0a0305`  L767
+- `int notification_main_column = 0x7f0a0306`  L768
+- `int notification_main_column_container = 0x7f0a0307`  L769
+- `int parentPanel = 0x7f0a032d`  L770
+- `int preview_view = 0x7f0a0356`  L771
+- `int progressBar = 0x7f0a0358`  L772
+- `int progress_circular = 0x7f0a035c`  L773
+- `int progress_horizontal = 0x7f0a035d`  L774
+- `int pullDownFromTop = 0x7f0a035f`  L775
+- `int pullFromEnd = 0x7f0a0360`  L776
+- `int pullFromStart = 0x7f0a0361`  L777
+- `int pullUpFromBottom = 0x7f0a0362`  L778
+- `int pull_to_refresh_image = 0x7f0a0363`  L779
+- `int pull_to_refresh_progress = 0x7f0a0364`  L780
+- `int pull_to_refresh_sub_text = 0x7f0a0365`  L781
+- `int pull_to_refresh_text = 0x7f0a0366`  L782
+- `int radio = 0x7f0a036b`  L783
+- `int right = 0x7f0a0381`  L784
+- `int right_icon = 0x7f0a0383`  L785
+- `int right_side = 0x7f0a0385`  L786
+- `int rotate = 0x7f0a038b`  L787
+- `int screen = 0x7f0a0398`  L788
+- `int scrollIndicatorDown = 0x7f0a039a`  L789
+- `int scrollIndicatorUp = 0x7f0a039b`  L790
+- `int scrollView = 0x7f0a039c`  L791
+- `int scrollview = 0x7f0a039e`  L792
+- `int search_badge = 0x7f0a039f`  L793
+- `int search_bar = 0x7f0a03a0`  L794
+- `int search_button = 0x7f0a03a1`  L795
+- `int search_close_btn = 0x7f0a03a2`  L796
+- `int search_edit_frame = 0x7f0a03a3`  L797
+- `int search_go_btn = 0x7f0a03a4`  L798
+- `int search_mag_icon = 0x7f0a03a5`  L799
+- `int search_plate = 0x7f0a03a6`  L800
+- `int search_src_text = 0x7f0a03a7`  L801
+- `int search_voice_btn = 0x7f0a03a8`  L802
+- `int select_dialog_listview = 0x7f0a03aa`  L803
+- `int shortcut = 0x7f0a03bb`  L804
+- `int showCustom = 0x7f0a03bc`  L805
+- `int showHome = 0x7f0a03bd`  L806
+- `int showTitle = 0x7f0a03be`  L807
+- `int slide = 0x7f0a03c6`  L808
+- `int spacer = 0x7f0a03d7`  L809
+- `int split_action_bar = 0x7f0a03db`  L810
+- `int src_atop = 0x7f0a03e0`  L811
+- `int src_in = 0x7f0a03e1`  L812
+- `int src_over = 0x7f0a03e2`  L813
+- `int standard = 0x7f0a03e3`  L814
+- `int start = 0x7f0a03e4`  L815
+- `int status_bar_latest_event_content = 0x7f0a03f1`  L816
+- `int submenuarrow = 0x7f0a03f5`  L817
+- `int submit_area = 0x7f0a03f6`  L818
+- `int tabMode = 0x7f0a03fe`  L819
+- `int tag_transition_group = 0x7f0a0409`  L820
+- `int tag_unhandled_key_event_manager = 0x7f0a040a`  L821
+- `int tag_unhandled_key_listeners = 0x7f0a040b`  L822
+- `int text = 0x7f0a040d`  L823
+- `int text2 = 0x7f0a040e`  L824
+- `int textSpacerNoButtons = 0x7f0a0410`  L825
+- `int textSpacerNoTitle = 0x7f0a0411`  L826
+- `int time = 0x7f0a0422`  L827
+- `int title = 0x7f0a0429`  L828
+- `int titleDividerNoCustom = 0x7f0a042a`  L829
+- `int title_template = 0x7f0a042c`  L830
+- `int toolbar = 0x7f0a0431`  L831
+- `int top = 0x7f0a0433`  L832
+- `int topPanel = 0x7f0a0434`  L833
+- `int uniform = 0x7f0a0475`  L834
+- `int up = 0x7f0a0478`  L835
+- `int useLogo = 0x7f0a047a`  L836
+- `int webview = 0x7f0a04a2`  L837
+- `int wide = 0x7f0a04a5`  L838
+- `int withText = 0x7f0a04af`  L839
+- `int wrap_content = 0x7f0a04b3`  L840
+
+方法（1）：
+- `private id()`  L842
+### `com.icatchtek.baseutil.R$integer`
+L846 · [class] public static final integer · `com/icatchtek/baseutil/R.java`
+
+字段/常量（6）：
+- `int abc_config_activityDefaultDur = 0x7f0b0000`  L847
+- `int abc_config_activityShortDur = 0x7f0b0001`  L848
+- `int cancel_button_image_alpha = 0x7f0b0005`  L849
+- `int config_tooltipAnimTime = 0x7f0b0006`  L850
+- `int google_play_services_version = 0x7f0b000b`  L851
+- `int status_bar_notification_info_maxnum = 0x7f0b004a`  L852
+
+方法（1）：
+- `private integer()`  L854
+### `com.icatchtek.baseutil.R$layout`
+L858 · [class] public static final layout · `com/icatchtek/baseutil/R.java`
+
+字段/常量（49）：
+- `int abc_action_bar_title_item = 0x7f0d0000`  L859
+- `int abc_action_bar_up_container = 0x7f0d0001`  L860
+- `int abc_action_menu_item_layout = 0x7f0d0002`  L861
+- `int abc_action_menu_layout = 0x7f0d0003`  L862
+- `int abc_action_mode_bar = 0x7f0d0004`  L863
+- `int abc_action_mode_close_item_material = 0x7f0d0005`  L864
+- `int abc_activity_chooser_view = 0x7f0d0006`  L865
+- `int abc_activity_chooser_view_list_item = 0x7f0d0007`  L866
+- `int abc_alert_dialog_button_bar_material = 0x7f0d0008`  L867
+- `int abc_alert_dialog_material = 0x7f0d0009`  L868
+- `int abc_alert_dialog_title_material = 0x7f0d000a`  L869
+- `int abc_cascading_menu_item_layout = 0x7f0d000b`  L870
+- `int abc_dialog_title_material = 0x7f0d000c`  L871
+- `int abc_expanded_menu_layout = 0x7f0d000d`  L872
+- `int abc_list_menu_item_checkbox = 0x7f0d000e`  L873
+- `int abc_list_menu_item_icon = 0x7f0d000f`  L874
+- `int abc_list_menu_item_layout = 0x7f0d0010`  L875
+- `int abc_list_menu_item_radio = 0x7f0d0011`  L876
+- `int abc_popup_menu_header_item_layout = 0x7f0d0012`  L877
+- `int abc_popup_menu_item_layout = 0x7f0d0013`  L878
+- `int abc_screen_content_include = 0x7f0d0014`  L879
+- `int abc_screen_simple = 0x7f0d0015`  L880
+- `int abc_screen_simple_overlay_action_mode = 0x7f0d0016`  L881
+- `int abc_screen_toolbar = 0x7f0d0017`  L882
+- `int abc_search_dropdown_item_icons_2line = 0x7f0d0018`  L883
+- `int abc_search_view = 0x7f0d0019`  L884
+- `int abc_select_dialog_material = 0x7f0d001a`  L885
+- `int abc_tooltip = 0x7f0d001b`  L886
+- `int notification_action = 0x7f0d010f`  L887
+- `int notification_action_tombstone = 0x7f0d0110`  L888
+- `int notification_media_action = 0x7f0d0111`  L889
+- `int notification_media_cancel_action = 0x7f0d0112`  L890
+- `int notification_template_big_media = 0x7f0d0113`  L891
+- `int notification_template_big_media_custom = 0x7f0d0114`  L892
+- `int notification_template_big_media_narrow = 0x7f0d0115`  L893
+- `int notification_template_big_media_narrow_custom = 0x7f0d0116`  L894
+- `int notification_template_custom_big = 0x7f0d0117`  L895
+- `int notification_template_icon_group = 0x7f0d0118`  L896
+- `int notification_template_lines_media = 0x7f0d0119`  L897
+- `int notification_template_media = 0x7f0d011a`  L898
+- `int notification_template_media_custom = 0x7f0d011b`  L899
+- `int notification_template_part_chronometer = 0x7f0d011c`  L900
+- `int notification_template_part_time = 0x7f0d011d`  L901
+- `int pull_to_refresh_header_horizontal = 0x7f0d0125`  L902
+- `int pull_to_refresh_header_vertical = 0x7f0d0126`  L903
+- `int select_dialog_item_material = 0x7f0d0129`  L904
+- `int select_dialog_multichoice_material = 0x7f0d012a`  L905
+- `int select_dialog_singlechoice_material = 0x7f0d012b`  L906
+- `int support_simple_spinner_dropdown_item = 0x7f0d0132`  L907
+
+方法（1）：
+- `private layout()`  L909
+### `com.icatchtek.baseutil.R$string`
+L913 · [class] public static final string · `com/icatchtek/baseutil/R.java`
+
+字段/常量（54）：
+- `int abc_action_bar_home_description = 0x7f130000`  L914
+- `int abc_action_bar_up_description = 0x7f130001`  L915
+- `int abc_action_menu_overflow_description = 0x7f130002`  L916
+- `int abc_action_mode_done = 0x7f130003`  L917
+- `int abc_activity_chooser_view_see_all = 0x7f130004`  L918
+- `int abc_activitychooserview_choose_application = 0x7f130005`  L919
+- `int abc_capital_off = 0x7f130006`  L920
+- `int abc_capital_on = 0x7f130007`  L921
+- `int abc_menu_alt_shortcut_label = 0x7f130008`  L922
+- `int abc_menu_ctrl_shortcut_label = 0x7f130009`  L923
+- `int abc_menu_delete_shortcut_label = 0x7f13000a`  L924
+- `int abc_menu_enter_shortcut_label = 0x7f13000b`  L925
+- `int abc_menu_function_shortcut_label = 0x7f13000c`  L926
+- `int abc_menu_meta_shortcut_label = 0x7f13000d`  L927
+- `int abc_menu_shift_shortcut_label = 0x7f13000e`  L928
+- `int abc_menu_space_shortcut_label = 0x7f13000f`  L929
+- `int abc_menu_sym_shortcut_label = 0x7f130010`  L930
+- `int abc_prepend_shortcut_label = 0x7f130011`  L931
+- `int abc_search_hint = 0x7f130012`  L932
+- `int abc_searchview_description_clear = 0x7f130013`  L933
+- `int abc_searchview_description_query = 0x7f130014`  L934
+- `int abc_searchview_description_search = 0x7f130015`  L935
+- `int abc_searchview_description_submit = 0x7f130016`  L936
+- `int abc_searchview_description_voice = 0x7f130017`  L937
+- `int abc_shareactionprovider_share_with = 0x7f130018`  L938
+- `int abc_shareactionprovider_share_with_application = 0x7f130019`  L939
+- `int abc_toolbar_collapse_description = 0x7f13001a`  L940
+- `int action_settings = 0x7f130025`  L941
+- `int app_name = 0x7f13004e`  L942
+- `int common_google_play_services_enable_button = 0x7f13009d`  L943
+- `int common_google_play_services_enable_text = 0x7f13009e`  L944
+- `int common_google_play_services_enable_title = 0x7f13009f`  L945
+- `int common_google_play_services_install_button = 0x7f1300a0`  L946
+- `int common_google_play_services_install_text = 0x7f1300a1`  L947
+- `int common_google_play_services_install_title = 0x7f1300a2`  L948
+- `int common_google_play_services_notification_ticker = 0x7f1300a4`  L949
+- `int common_google_play_services_unknown_issue = 0x7f1300a5`  L950
+- `int common_google_play_services_unsupported_text = 0x7f1300a6`  L951
+- `int common_google_play_services_update_button = 0x7f1300a7`  L952
+- `int common_google_play_services_update_text = 0x7f1300a8`  L953
+- `int common_google_play_services_update_title = 0x7f1300a9`  L954
+- `int common_google_play_services_updating_text = 0x7f1300aa`  L955
+- `int common_google_play_services_wear_update_text = 0x7f1300ab`  L956
+- `int common_open_on_phone = 0x7f1300ac`  L957
+- `int common_signin_button_text = 0x7f1300ad`  L958
+- `int common_signin_button_text_long = 0x7f1300ae`  L959
+- `int pull_to_refresh_from_bottom_pull_label = 0x7f13027f`  L960
+- `int pull_to_refresh_from_bottom_refreshing_label = 0x7f130280`  L961
+- `int pull_to_refresh_from_bottom_release_label = 0x7f130281`  L962
+- `int pull_to_refresh_pull_label = 0x7f130282`  L963
+- `int pull_to_refresh_refreshing_label = 0x7f130283`  L964
+- `int pull_to_refresh_release_label = 0x7f130284`  L965
+- `int search_menu_title = 0x7f130294`  L966
+- `int status_bar_notification_info_overflow = 0x7f130306`  L967
+
+方法（1）：
+- `private string()`  L969
+### `com.icatchtek.baseutil.R$style`
+L973 · [class] public static final style · `com/icatchtek/baseutil/R.java`
+
+字段/常量（352）：
+- `int AlertDialog_AppCompat = 0x7f140023`  L974
+- `int AlertDialog_AppCompat_Light = 0x7f140024`  L975
+- `int Animation_AppCompat_Dialog = 0x7f140025`  L976
+- `int Animation_AppCompat_DropDownUp = 0x7f140026`  L977
+- `int Animation_AppCompat_Tooltip = 0x7f140027`  L978
+- `int AppTheme = 0x7f14002e`  L979
+- `int Base_AlertDialog_AppCompat = 0x7f140032`  L980
+- `int Base_AlertDialog_AppCompat_Light = 0x7f140033`  L981
+- `int Base_Animation_AppCompat_Dialog = 0x7f140034`  L982
+- `int Base_Animation_AppCompat_DropDownUp = 0x7f140035`  L983
+- `int Base_Animation_AppCompat_Tooltip = 0x7f140036`  L984
+- `int Base_DialogWindowTitleBackground_AppCompat = 0x7f140039`  L985
+- `int Base_DialogWindowTitle_AppCompat = 0x7f140038`  L986
+- `int Base_TextAppearance_AppCompat = 0x7f14003d`  L987
+- `int Base_TextAppearance_AppCompat_Body1 = 0x7f14003e`  L988
+- `int Base_TextAppearance_AppCompat_Body2 = 0x7f14003f`  L989
+- `int Base_TextAppearance_AppCompat_Button = 0x7f140040`  L990
+- `int Base_TextAppearance_AppCompat_Caption = 0x7f140041`  L991
+- `int Base_TextAppearance_AppCompat_Display1 = 0x7f140042`  L992
+- `int Base_TextAppearance_AppCompat_Display2 = 0x7f140043`  L993
+- `int Base_TextAppearance_AppCompat_Display3 = 0x7f140044`  L994
+- `int Base_TextAppearance_AppCompat_Display4 = 0x7f140045`  L995
+- `int Base_TextAppearance_AppCompat_Headline = 0x7f140046`  L996
+- `int Base_TextAppearance_AppCompat_Inverse = 0x7f140047`  L997
+- `int Base_TextAppearance_AppCompat_Large = 0x7f140048`  L998
+- `int Base_TextAppearance_AppCompat_Large_Inverse = 0x7f140049`  L999
+- `int Base_TextAppearance_AppCompat_Light_Widget_PopupMenu_Large = 0x7f14004a`  L1000
+- `int Base_TextAppearance_AppCompat_Light_Widget_PopupMenu_Small = 0x7f14004b`  L1001
+- `int Base_TextAppearance_AppCompat_Medium = 0x7f14004c`  L1002
+- `int Base_TextAppearance_AppCompat_Medium_Inverse = 0x7f14004d`  L1003
+- `int Base_TextAppearance_AppCompat_Menu = 0x7f14004e`  L1004
+- `int Base_TextAppearance_AppCompat_SearchResult = 0x7f14004f`  L1005
+- `int Base_TextAppearance_AppCompat_SearchResult_Subtitle = 0x7f140050`  L1006
+- `int Base_TextAppearance_AppCompat_SearchResult_Title = 0x7f140051`  L1007
+- `int Base_TextAppearance_AppCompat_Small = 0x7f140052`  L1008
+- `int Base_TextAppearance_AppCompat_Small_Inverse = 0x7f140053`  L1009
+- `int Base_TextAppearance_AppCompat_Subhead = 0x7f140054`  L1010
+- `int Base_TextAppearance_AppCompat_Subhead_Inverse = 0x7f140055`  L1011
+- `int Base_TextAppearance_AppCompat_Title = 0x7f140056`  L1012
+- `int Base_TextAppearance_AppCompat_Title_Inverse = 0x7f140057`  L1013
+- `int Base_TextAppearance_AppCompat_Tooltip = 0x7f140058`  L1014
+- `int Base_TextAppearance_AppCompat_Widget_ActionBar_Menu = 0x7f140059`  L1015
+- `int Base_TextAppearance_AppCompat_Widget_ActionBar_Subtitle = 0x7f14005a`  L1016
+- `int Base_TextAppearance_AppCompat_Widget_ActionBar_Subtitle_Inverse = 0x7f14005b`  L1017
+- `int Base_TextAppearance_AppCompat_Widget_ActionBar_Title = 0x7f14005c`  L1018
+- `int Base_TextAppearance_AppCompat_Widget_ActionBar_Title_Inverse = 0x7f14005d`  L1019
+- `int Base_TextAppearance_AppCompat_Widget_ActionMode_Subtitle = 0x7f14005e`  L1020
+- `int Base_TextAppearance_AppCompat_Widget_ActionMode_Title = 0x7f14005f`  L1021
+- `int Base_TextAppearance_AppCompat_Widget_Button = 0x7f140060`  L1022
+- `int Base_TextAppearance_AppCompat_Widget_Button_Borderless_Colored = 0x7f140061`  L1023
+- `int Base_TextAppearance_AppCompat_Widget_Button_Colored = 0x7f140062`  L1024
+- `int Base_TextAppearance_AppCompat_Widget_Button_Inverse = 0x7f140063`  L1025
+- `int Base_TextAppearance_AppCompat_Widget_DropDownItem = 0x7f140064`  L1026
+- `int Base_TextAppearance_AppCompat_Widget_PopupMenu_Header = 0x7f140065`  L1027
+- `int Base_TextAppearance_AppCompat_Widget_PopupMenu_Large = 0x7f140066`  L1028
+- `int Base_TextAppearance_AppCompat_Widget_PopupMenu_Small = 0x7f140067`  L1029
+- `int Base_TextAppearance_AppCompat_Widget_Switch = 0x7f140068`  L1030
+- `int Base_TextAppearance_AppCompat_Widget_TextView_SpinnerItem = 0x7f140069`  L1031
+- `int Base_TextAppearance_Widget_AppCompat_ExpandedMenu_Item = 0x7f14006e`  L1032
+- `int Base_TextAppearance_Widget_AppCompat_Toolbar_Subtitle = 0x7f14006f`  L1033
+- `int Base_TextAppearance_Widget_AppCompat_Toolbar_Title = 0x7f140070`  L1034
+- `int Base_ThemeOverlay_AppCompat = 0x7f14009e`  L1035
+- `int Base_ThemeOverlay_AppCompat_ActionBar = 0x7f14009f`  L1036
+- `int Base_ThemeOverlay_AppCompat_Dark = 0x7f1400a0`  L1037
+- `int Base_ThemeOverlay_AppCompat_Dark_ActionBar = 0x7f1400a1`  L1038
+- `int Base_ThemeOverlay_AppCompat_Dialog = 0x7f1400a2`  L1039
+- `int Base_ThemeOverlay_AppCompat_Dialog_Alert = 0x7f1400a3`  L1040
+- `int Base_ThemeOverlay_AppCompat_Light = 0x7f1400a4`  L1041
+- `int Base_Theme_AppCompat = 0x7f140071`  L1042
+- `int Base_Theme_AppCompat_CompactMenu = 0x7f140072`  L1043
+- `int Base_Theme_AppCompat_Dialog = 0x7f140073`  L1044
+- `int Base_Theme_AppCompat_DialogWhenLarge = 0x7f140077`  L1045
+- `int Base_Theme_AppCompat_Dialog_Alert = 0x7f140074`  L1046
+- `int Base_Theme_AppCompat_Dialog_FixedSize = 0x7f140075`  L1047
+- `int Base_Theme_AppCompat_Dialog_MinWidth = 0x7f140076`  L1048
+- `int Base_Theme_AppCompat_Light = 0x7f140078`  L1049
+- `int Base_Theme_AppCompat_Light_DarkActionBar = 0x7f140079`  L1050
+- `int Base_Theme_AppCompat_Light_Dialog = 0x7f14007a`  L1051
+- `int Base_Theme_AppCompat_Light_DialogWhenLarge = 0x7f14007e`  L1052
+- `int Base_Theme_AppCompat_Light_Dialog_Alert = 0x7f14007b`  L1053
+- `int Base_Theme_AppCompat_Light_Dialog_FixedSize = 0x7f14007c`  L1054
+- `int Base_Theme_AppCompat_Light_Dialog_MinWidth = 0x7f14007d`  L1055
+- `int Base_V21_ThemeOverlay_AppCompat_Dialog = 0x7f1400ce`  L1056
+- `int Base_V21_Theme_AppCompat = 0x7f1400c6`  L1057
+- `int Base_V21_Theme_AppCompat_Dialog = 0x7f1400c7`  L1058
+- `int Base_V21_Theme_AppCompat_Light = 0x7f1400c8`  L1059
+- `int Base_V21_Theme_AppCompat_Light_Dialog = 0x7f1400c9`  L1060
+- `int Base_V22_Theme_AppCompat = 0x7f1400d1`  L1061
+- `int Base_V22_Theme_AppCompat_Light = 0x7f1400d2`  L1062
+- `int Base_V23_Theme_AppCompat = 0x7f1400d3`  L1063
+- `int Base_V23_Theme_AppCompat_Light = 0x7f1400d4`  L1064
+- `int Base_V26_Theme_AppCompat = 0x7f1400d9`  L1065
+- `int Base_V26_Theme_AppCompat_Light = 0x7f1400da`  L1066
+- `int Base_V26_Widget_AppCompat_Toolbar = 0x7f1400db`  L1067
+- `int Base_V28_Theme_AppCompat = 0x7f1400dc`  L1068
+- `int Base_V28_Theme_AppCompat_Light = 0x7f1400dd`  L1069
+- `int Base_V7_ThemeOverlay_AppCompat_Dialog = 0x7f1400e2`  L1070
+- `int Base_V7_Theme_AppCompat = 0x7f1400de`  L1071
+- `int Base_V7_Theme_AppCompat_Dialog = 0x7f1400df`  L1072
+- `int Base_V7_Theme_AppCompat_Light = 0x7f1400e0`  L1073
+- `int Base_V7_Theme_AppCompat_Light_Dialog = 0x7f1400e1`  L1074
+- `int Base_V7_Widget_AppCompat_AutoCompleteTextView = 0x7f1400e3`  L1075
+- `int Base_V7_Widget_AppCompat_EditText = 0x7f1400e4`  L1076
+- `int Base_V7_Widget_AppCompat_Toolbar = 0x7f1400e5`  L1077
+- `int Base_Widget_AppCompat_ActionBar = 0x7f1400e6`  L1078
+- `int Base_Widget_AppCompat_ActionBar_Solid = 0x7f1400e7`  L1079
+- `int Base_Widget_AppCompat_ActionBar_TabBar = 0x7f1400e8`  L1080
+- `int Base_Widget_AppCompat_ActionBar_TabText = 0x7f1400e9`  L1081
+- `int Base_Widget_AppCompat_ActionBar_TabView = 0x7f1400ea`  L1082
+- `int Base_Widget_AppCompat_ActionButton = 0x7f1400eb`  L1083
+- `int Base_Widget_AppCompat_ActionButton_CloseMode = 0x7f1400ec`  L1084
+- `int Base_Widget_AppCompat_ActionButton_Overflow = 0x7f1400ed`  L1085
+- `int Base_Widget_AppCompat_ActionMode = 0x7f1400ee`  L1086
+- `int Base_Widget_AppCompat_ActivityChooserView = 0x7f1400ef`  L1087
+- `int Base_Widget_AppCompat_AutoCompleteTextView = 0x7f1400f0`  L1088
+- `int Base_Widget_AppCompat_Button = 0x7f1400f1`  L1089
+- `int Base_Widget_AppCompat_ButtonBar = 0x7f1400f7`  L1090
+- `int Base_Widget_AppCompat_ButtonBar_AlertDialog = 0x7f1400f8`  L1091
+- `int Base_Widget_AppCompat_Button_Borderless = 0x7f1400f2`  L1092
+- `int Base_Widget_AppCompat_Button_Borderless_Colored = 0x7f1400f3`  L1093
+- `int Base_Widget_AppCompat_Button_ButtonBar_AlertDialog = 0x7f1400f4`  L1094
+- `int Base_Widget_AppCompat_Button_Colored = 0x7f1400f5`  L1095
+- `int Base_Widget_AppCompat_Button_Small = 0x7f1400f6`  L1096
+- `int Base_Widget_AppCompat_CompoundButton_CheckBox = 0x7f1400f9`  L1097
+- `int Base_Widget_AppCompat_CompoundButton_RadioButton = 0x7f1400fa`  L1098
+- `int Base_Widget_AppCompat_CompoundButton_Switch = 0x7f1400fb`  L1099
+- `int Base_Widget_AppCompat_DrawerArrowToggle = 0x7f1400fc`  L1100
+- `int Base_Widget_AppCompat_DrawerArrowToggle_Common = 0x7f1400fd`  L1101
+- `int Base_Widget_AppCompat_DropDownItem_Spinner = 0x7f1400fe`  L1102
+- `int Base_Widget_AppCompat_EditText = 0x7f1400ff`  L1103
+- `int Base_Widget_AppCompat_ImageButton = 0x7f140100`  L1104
+- `int Base_Widget_AppCompat_Light_ActionBar = 0x7f140101`  L1105
+- `int Base_Widget_AppCompat_Light_ActionBar_Solid = 0x7f140102`  L1106
+- `int Base_Widget_AppCompat_Light_ActionBar_TabBar = 0x7f140103`  L1107
+- `int Base_Widget_AppCompat_Light_ActionBar_TabText = 0x7f140104`  L1108
+- `int Base_Widget_AppCompat_Light_ActionBar_TabText_Inverse = 0x7f140105`  L1109
+- `int Base_Widget_AppCompat_Light_ActionBar_TabView = 0x7f140106`  L1110
+- `int Base_Widget_AppCompat_Light_PopupMenu = 0x7f140107`  L1111
+- `int Base_Widget_AppCompat_Light_PopupMenu_Overflow = 0x7f140108`  L1112
+- `int Base_Widget_AppCompat_ListMenuView = 0x7f140109`  L1113
+- `int Base_Widget_AppCompat_ListPopupWindow = 0x7f14010a`  L1114
+- `int Base_Widget_AppCompat_ListView = 0x7f14010b`  L1115
+- `int Base_Widget_AppCompat_ListView_DropDown = 0x7f14010c`  L1116
+- `int Base_Widget_AppCompat_ListView_Menu = 0x7f14010d`  L1117
+- `int Base_Widget_AppCompat_PopupMenu = 0x7f14010e`  L1118
+- `int Base_Widget_AppCompat_PopupMenu_Overflow = 0x7f14010f`  L1119
+- `int Base_Widget_AppCompat_PopupWindow = 0x7f140110`  L1120
+- `int Base_Widget_AppCompat_ProgressBar = 0x7f140111`  L1121
+- `int Base_Widget_AppCompat_ProgressBar_Horizontal = 0x7f140112`  L1122
+- `int Base_Widget_AppCompat_RatingBar = 0x7f140113`  L1123
+- `int Base_Widget_AppCompat_RatingBar_Indicator = 0x7f140114`  L1124
+- `int Base_Widget_AppCompat_RatingBar_Small = 0x7f140115`  L1125
+- `int Base_Widget_AppCompat_SearchView = 0x7f140116`  L1126
+- `int Base_Widget_AppCompat_SearchView_ActionBar = 0x7f140117`  L1127
+- `int Base_Widget_AppCompat_SeekBar = 0x7f140118`  L1128
+- `int Base_Widget_AppCompat_SeekBar_Discrete = 0x7f140119`  L1129
+- `int Base_Widget_AppCompat_Spinner = 0x7f14011a`  L1130
+- `int Base_Widget_AppCompat_Spinner_Underlined = 0x7f14011b`  L1131
+- `int Base_Widget_AppCompat_TextView_SpinnerItem = 0x7f14011d`  L1132
+- `int Base_Widget_AppCompat_Toolbar = 0x7f14011e`  L1133
+- `int Base_Widget_AppCompat_Toolbar_Button_Navigation = 0x7f14011f`  L1134
+- `int Platform_AppCompat = 0x7f1401a4`  L1135
+- `int Platform_AppCompat_Light = 0x7f1401a5`  L1136
+- `int Platform_ThemeOverlay_AppCompat = 0x7f1401aa`  L1137
+- `int Platform_ThemeOverlay_AppCompat_Dark = 0x7f1401ab`  L1138
+- `int Platform_ThemeOverlay_AppCompat_Light = 0x7f1401ac`  L1139
+- `int Platform_V21_AppCompat = 0x7f1401ad`  L1140
+- `int Platform_V21_AppCompat_Light = 0x7f1401ae`  L1141
+- `int Platform_V25_AppCompat = 0x7f1401af`  L1142
+- `int Platform_V25_AppCompat_Light = 0x7f1401b0`  L1143
+- `int Platform_Widget_AppCompat_Spinner = 0x7f1401b1`  L1144
+- `int RtlOverlay_DialogWindowTitle_AppCompat = 0x7f1401b3`  L1145
+- `int RtlOverlay_Widget_AppCompat_ActionBar_TitleItem = 0x7f1401b4`  L1146
+- `int RtlOverlay_Widget_AppCompat_DialogTitle_Icon = 0x7f1401b5`  L1147
+- `int RtlOverlay_Widget_AppCompat_PopupMenuItem = 0x7f1401b6`  L1148
+- `int RtlOverlay_Widget_AppCompat_PopupMenuItem_InternalGroup = 0x7f1401b7`  L1149
+- `int RtlOverlay_Widget_AppCompat_PopupMenuItem_Shortcut = 0x7f1401b8`  L1150
+- `int RtlOverlay_Widget_AppCompat_PopupMenuItem_SubmenuArrow = 0x7f1401b9`  L1151
+- `int RtlOverlay_Widget_AppCompat_PopupMenuItem_Text = 0x7f1401ba`  L1152
+- `int RtlOverlay_Widget_AppCompat_PopupMenuItem_Title = 0x7f1401bb`  L1153
+- `int RtlOverlay_Widget_AppCompat_SearchView_MagIcon = 0x7f1401c1`  L1154
+- `int RtlOverlay_Widget_AppCompat_Search_DropDown = 0x7f1401bc`  L1155
+- `int RtlOverlay_Widget_AppCompat_Search_DropDown_Icon1 = 0x7f1401bd`  L1156
+- `int RtlOverlay_Widget_AppCompat_Search_DropDown_Icon2 = 0x7f1401be`  L1157
+- `int RtlOverlay_Widget_AppCompat_Search_DropDown_Query = 0x7f1401bf`  L1158
+- `int RtlOverlay_Widget_AppCompat_Search_DropDown_Text = 0x7f1401c0`  L1159
+- `int RtlUnderlay_Widget_AppCompat_ActionButton = 0x7f1401c2`  L1160
+- `int RtlUnderlay_Widget_AppCompat_ActionButton_Overflow = 0x7f1401c3`  L1161
+- `int TextAppearance_AppCompat = 0x7f14021f`  L1162
+- `int TextAppearance_AppCompat_Body1 = 0x7f140220`  L1163
+- `int TextAppearance_AppCompat_Body2 = 0x7f140221`  L1164
+- `int TextAppearance_AppCompat_Button = 0x7f140222`  L1165
+- `int TextAppearance_AppCompat_Caption = 0x7f140223`  L1166
+- `int TextAppearance_AppCompat_Display1 = 0x7f140224`  L1167
+- `int TextAppearance_AppCompat_Display2 = 0x7f140225`  L1168
+- `int TextAppearance_AppCompat_Display3 = 0x7f140226`  L1169
+- `int TextAppearance_AppCompat_Display4 = 0x7f140227`  L1170
+- `int TextAppearance_AppCompat_Headline = 0x7f140228`  L1171
+- `int TextAppearance_AppCompat_Inverse = 0x7f140229`  L1172
+- `int TextAppearance_AppCompat_Large = 0x7f14022a`  L1173
+- `int TextAppearance_AppCompat_Large_Inverse = 0x7f14022b`  L1174
+- `int TextAppearance_AppCompat_Light_SearchResult_Subtitle = 0x7f14022c`  L1175
+- `int TextAppearance_AppCompat_Light_SearchResult_Title = 0x7f14022d`  L1176
+- `int TextAppearance_AppCompat_Light_Widget_PopupMenu_Large = 0x7f14022e`  L1177
+- `int TextAppearance_AppCompat_Light_Widget_PopupMenu_Small = 0x7f14022f`  L1178
+- `int TextAppearance_AppCompat_Medium = 0x7f140230`  L1179
+- `int TextAppearance_AppCompat_Medium_Inverse = 0x7f140231`  L1180
+- `int TextAppearance_AppCompat_Menu = 0x7f140232`  L1181
+- `int TextAppearance_AppCompat_SearchResult_Subtitle = 0x7f140233`  L1182
+- `int TextAppearance_AppCompat_SearchResult_Title = 0x7f140234`  L1183
+- `int TextAppearance_AppCompat_Small = 0x7f140235`  L1184
+- `int TextAppearance_AppCompat_Small_Inverse = 0x7f140236`  L1185
+- `int TextAppearance_AppCompat_Subhead = 0x7f140237`  L1186
+- `int TextAppearance_AppCompat_Subhead_Inverse = 0x7f140238`  L1187
+- `int TextAppearance_AppCompat_Title = 0x7f140239`  L1188
+- `int TextAppearance_AppCompat_Title_Inverse = 0x7f14023a`  L1189
+- `int TextAppearance_AppCompat_Tooltip = 0x7f14023b`  L1190
+- `int TextAppearance_AppCompat_Widget_ActionBar_Menu = 0x7f14023c`  L1191
+- `int TextAppearance_AppCompat_Widget_ActionBar_Subtitle = 0x7f14023d`  L1192
+- `int TextAppearance_AppCompat_Widget_ActionBar_Subtitle_Inverse = 0x7f14023e`  L1193
+- `int TextAppearance_AppCompat_Widget_ActionBar_Title = 0x7f14023f`  L1194
+- `int TextAppearance_AppCompat_Widget_ActionBar_Title_Inverse = 0x7f140240`  L1195
+- `int TextAppearance_AppCompat_Widget_ActionMode_Subtitle = 0x7f140241`  L1196
+- `int TextAppearance_AppCompat_Widget_ActionMode_Subtitle_Inverse = 0x7f140242`  L1197
+- `int TextAppearance_AppCompat_Widget_ActionMode_Title = 0x7f140243`  L1198
+- `int TextAppearance_AppCompat_Widget_ActionMode_Title_Inverse = 0x7f140244`  L1199
+- `int TextAppearance_AppCompat_Widget_Button = 0x7f140245`  L1200
+- `int TextAppearance_AppCompat_Widget_Button_Borderless_Colored = 0x7f140246`  L1201
+- `int TextAppearance_AppCompat_Widget_Button_Colored = 0x7f140247`  L1202
+- `int TextAppearance_AppCompat_Widget_Button_Inverse = 0x7f140248`  L1203
+- `int TextAppearance_AppCompat_Widget_DropDownItem = 0x7f140249`  L1204
+- `int TextAppearance_AppCompat_Widget_PopupMenu_Header = 0x7f14024a`  L1205
+- `int TextAppearance_AppCompat_Widget_PopupMenu_Large = 0x7f14024b`  L1206
+- `int TextAppearance_AppCompat_Widget_PopupMenu_Small = 0x7f14024c`  L1207
+- `int TextAppearance_AppCompat_Widget_Switch = 0x7f14024d`  L1208
+- `int TextAppearance_AppCompat_Widget_TextView_SpinnerItem = 0x7f14024e`  L1209
+- `int TextAppearance_Compat_Notification = 0x7f14024f`  L1210
+- `int TextAppearance_Compat_Notification_Info = 0x7f140250`  L1211
+- `int TextAppearance_Compat_Notification_Info_Media = 0x7f140251`  L1212
+- `int TextAppearance_Compat_Notification_Line2 = 0x7f140252`  L1213
+- `int TextAppearance_Compat_Notification_Line2_Media = 0x7f140253`  L1214
+- `int TextAppearance_Compat_Notification_Media = 0x7f140254`  L1215
+- `int TextAppearance_Compat_Notification_Time = 0x7f140255`  L1216
+- `int TextAppearance_Compat_Notification_Time_Media = 0x7f140256`  L1217
+- `int TextAppearance_Compat_Notification_Title = 0x7f140257`  L1218
+- `int TextAppearance_Compat_Notification_Title_Media = 0x7f140258`  L1219
+- `int TextAppearance_Widget_AppCompat_ExpandedMenu_Item = 0x7f1402b7`  L1220
+- `int TextAppearance_Widget_AppCompat_Toolbar_Subtitle = 0x7f1402b8`  L1221
+- `int TextAppearance_Widget_AppCompat_Toolbar_Title = 0x7f1402b9`  L1222
+- `int ThemeOverlay_AppCompat = 0x7f140323`  L1223
+- `int ThemeOverlay_AppCompat_ActionBar = 0x7f140324`  L1224
+- `int ThemeOverlay_AppCompat_Dark = 0x7f140325`  L1225
+- `int ThemeOverlay_AppCompat_Dark_ActionBar = 0x7f140326`  L1226
+- `int ThemeOverlay_AppCompat_Dialog = 0x7f140329`  L1227
+- `int ThemeOverlay_AppCompat_Dialog_Alert = 0x7f14032a`  L1228
+- `int ThemeOverlay_AppCompat_Light = 0x7f14032b`  L1229
+- `int Theme_AppCompat = 0x7f1402ba`  L1230
+- `int Theme_AppCompat_CompactMenu = 0x7f1402bb`  L1231
+- `int Theme_AppCompat_DayNight = 0x7f1402bc`  L1232
+- `int Theme_AppCompat_DayNight_DarkActionBar = 0x7f1402bd`  L1233
+- `int Theme_AppCompat_DayNight_Dialog = 0x7f1402be`  L1234
+- `int Theme_AppCompat_DayNight_DialogWhenLarge = 0x7f1402c1`  L1235
+- `int Theme_AppCompat_DayNight_Dialog_Alert = 0x7f1402bf`  L1236
+- `int Theme_AppCompat_DayNight_Dialog_MinWidth = 0x7f1402c0`  L1237
+- `int Theme_AppCompat_DayNight_NoActionBar = 0x7f1402c2`  L1238
+- `int Theme_AppCompat_Dialog = 0x7f1402c3`  L1239
+- `int Theme_AppCompat_DialogWhenLarge = 0x7f1402c6`  L1240
+- `int Theme_AppCompat_Dialog_Alert = 0x7f1402c4`  L1241
+- `int Theme_AppCompat_Dialog_MinWidth = 0x7f1402c5`  L1242
+- `int Theme_AppCompat_Light = 0x7f1402c8`  L1243
+- `int Theme_AppCompat_Light_DarkActionBar = 0x7f1402c9`  L1244
+- `int Theme_AppCompat_Light_Dialog = 0x7f1402ca`  L1245
+- `int Theme_AppCompat_Light_DialogWhenLarge = 0x7f1402cd`  L1246
+- `int Theme_AppCompat_Light_Dialog_Alert = 0x7f1402cb`  L1247
+- `int Theme_AppCompat_Light_Dialog_MinWidth = 0x7f1402cc`  L1248
+- `int Theme_AppCompat_Light_NoActionBar = 0x7f1402ce`  L1249
+- `int Theme_AppCompat_NoActionBar = 0x7f1402cf`  L1250
+- `int Widget_AppCompat_ActionBar = 0x7f14039c`  L1251
+- `int Widget_AppCompat_ActionBar_Solid = 0x7f14039d`  L1252
+- `int Widget_AppCompat_ActionBar_TabBar = 0x7f14039e`  L1253
+- `int Widget_AppCompat_ActionBar_TabText = 0x7f14039f`  L1254
+- `int Widget_AppCompat_ActionBar_TabView = 0x7f1403a0`  L1255
+- `int Widget_AppCompat_ActionButton = 0x7f1403a1`  L1256
+- `int Widget_AppCompat_ActionButton_CloseMode = 0x7f1403a2`  L1257
+- `int Widget_AppCompat_ActionButton_Overflow = 0x7f1403a3`  L1258
+- `int Widget_AppCompat_ActionMode = 0x7f1403a4`  L1259
+- `int Widget_AppCompat_ActivityChooserView = 0x7f1403a5`  L1260
+- `int Widget_AppCompat_AutoCompleteTextView = 0x7f1403a6`  L1261
+- `int Widget_AppCompat_Button = 0x7f1403a7`  L1262
+- `int Widget_AppCompat_ButtonBar = 0x7f1403ad`  L1263
+- `int Widget_AppCompat_ButtonBar_AlertDialog = 0x7f1403ae`  L1264
+- `int Widget_AppCompat_Button_Borderless = 0x7f1403a8`  L1265
+- `int Widget_AppCompat_Button_Borderless_Colored = 0x7f1403a9`  L1266
+- `int Widget_AppCompat_Button_ButtonBar_AlertDialog = 0x7f1403aa`  L1267
+- `int Widget_AppCompat_Button_Colored = 0x7f1403ab`  L1268
+- `int Widget_AppCompat_Button_Small = 0x7f1403ac`  L1269
+- `int Widget_AppCompat_CompoundButton_CheckBox = 0x7f1403af`  L1270
+- `int Widget_AppCompat_CompoundButton_RadioButton = 0x7f1403b0`  L1271
+- `int Widget_AppCompat_CompoundButton_Switch = 0x7f1403b1`  L1272
+- `int Widget_AppCompat_DrawerArrowToggle = 0x7f1403b2`  L1273
+- `int Widget_AppCompat_DropDownItem_Spinner = 0x7f1403b3`  L1274
+- `int Widget_AppCompat_EditText = 0x7f1403b4`  L1275
+- `int Widget_AppCompat_ImageButton = 0x7f1403b5`  L1276
+- `int Widget_AppCompat_Light_ActionBar = 0x7f1403b6`  L1277
+- `int Widget_AppCompat_Light_ActionBar_Solid = 0x7f1403b7`  L1278
+- `int Widget_AppCompat_Light_ActionBar_Solid_Inverse = 0x7f1403b8`  L1279
+- `int Widget_AppCompat_Light_ActionBar_TabBar = 0x7f1403b9`  L1280
+- `int Widget_AppCompat_Light_ActionBar_TabBar_Inverse = 0x7f1403ba`  L1281
+- `int Widget_AppCompat_Light_ActionBar_TabText = 0x7f1403bb`  L1282
+- `int Widget_AppCompat_Light_ActionBar_TabText_Inverse = 0x7f1403bc`  L1283
+- `int Widget_AppCompat_Light_ActionBar_TabView = 0x7f1403bd`  L1284
+- `int Widget_AppCompat_Light_ActionBar_TabView_Inverse = 0x7f1403be`  L1285
+- `int Widget_AppCompat_Light_ActionButton = 0x7f1403bf`  L1286
+- `int Widget_AppCompat_Light_ActionButton_CloseMode = 0x7f1403c0`  L1287
+- `int Widget_AppCompat_Light_ActionButton_Overflow = 0x7f1403c1`  L1288
+- `int Widget_AppCompat_Light_ActionMode_Inverse = 0x7f1403c2`  L1289
+- `int Widget_AppCompat_Light_ActivityChooserView = 0x7f1403c3`  L1290
+- `int Widget_AppCompat_Light_AutoCompleteTextView = 0x7f1403c4`  L1291
+- `int Widget_AppCompat_Light_DropDownItem_Spinner = 0x7f1403c5`  L1292
+- `int Widget_AppCompat_Light_ListPopupWindow = 0x7f1403c6`  L1293
+- `int Widget_AppCompat_Light_ListView_DropDown = 0x7f1403c7`  L1294
+- `int Widget_AppCompat_Light_PopupMenu = 0x7f1403c8`  L1295
+- `int Widget_AppCompat_Light_PopupMenu_Overflow = 0x7f1403c9`  L1296
+- `int Widget_AppCompat_Light_SearchView = 0x7f1403ca`  L1297
+- `int Widget_AppCompat_Light_Spinner_DropDown_ActionBar = 0x7f1403cb`  L1298
+- `int Widget_AppCompat_ListMenuView = 0x7f1403cc`  L1299
+- `int Widget_AppCompat_ListPopupWindow = 0x7f1403cd`  L1300
+- `int Widget_AppCompat_ListView = 0x7f1403ce`  L1301
+- `int Widget_AppCompat_ListView_DropDown = 0x7f1403cf`  L1302
+- `int Widget_AppCompat_ListView_Menu = 0x7f1403d0`  L1303
+- `int Widget_AppCompat_PopupMenu = 0x7f1403d1`  L1304
+- `int Widget_AppCompat_PopupMenu_Overflow = 0x7f1403d2`  L1305
+- `int Widget_AppCompat_PopupWindow = 0x7f1403d3`  L1306
+- `int Widget_AppCompat_ProgressBar = 0x7f1403d4`  L1307
+- `int Widget_AppCompat_ProgressBar_Horizontal = 0x7f1403d5`  L1308
+- `int Widget_AppCompat_RatingBar = 0x7f1403d6`  L1309
+- `int Widget_AppCompat_RatingBar_Indicator = 0x7f1403d7`  L1310
+- `int Widget_AppCompat_RatingBar_Small = 0x7f1403d8`  L1311
+- `int Widget_AppCompat_SearchView = 0x7f1403d9`  L1312
+- `int Widget_AppCompat_SearchView_ActionBar = 0x7f1403da`  L1313
+- `int Widget_AppCompat_SeekBar = 0x7f1403db`  L1314
+- `int Widget_AppCompat_SeekBar_Discrete = 0x7f1403dc`  L1315
+- `int Widget_AppCompat_Spinner = 0x7f1403dd`  L1316
+- `int Widget_AppCompat_Spinner_DropDown = 0x7f1403de`  L1317
+- `int Widget_AppCompat_Spinner_DropDown_ActionBar = 0x7f1403df`  L1318
+- `int Widget_AppCompat_Spinner_Underlined = 0x7f1403e0`  L1319
+- `int Widget_AppCompat_TextView_SpinnerItem = 0x7f1403e2`  L1320
+- `int Widget_AppCompat_Toolbar = 0x7f1403e3`  L1321
+- `int Widget_AppCompat_Toolbar_Button_Navigation = 0x7f1403e4`  L1322
+- `int Widget_Compat_NotificationActionContainer = 0x7f1403e5`  L1323
+- `int Widget_Compat_NotificationActionText = 0x7f1403e6`  L1324
+- `int Widget_Support_CoordinatorLayout = 0x7f140538`  L1325
+
+方法（1）：
+- `private style()`  L1327
+### `com.icatchtek.baseutil.R$styleable`
+L1331 · [class] public static final styleable · `com/icatchtek/baseutil/R.java`
+
+字段/常量（524）：
+- `int ActionBarLayout_android_layout_gravity = 0x00000000`  L1332
+- `int ActionBar_background = 0x00000000`  L1333
+- `int ActionBar_backgroundSplit = 0x00000001`  L1334
+- `int ActionBar_backgroundStacked = 0x00000002`  L1335
+- `int ActionBar_contentInsetEnd = 0x00000003`  L1336
+- `int ActionBar_contentInsetEndWithActions = 0x00000004`  L1337
+- `int ActionBar_contentInsetLeft = 0x00000005`  L1338
+- `int ActionBar_contentInsetRight = 0x00000006`  L1339
+- `int ActionBar_contentInsetStart = 0x00000007`  L1340
+- `int ActionBar_contentInsetStartWithNavigation = 0x00000008`  L1341
+- `int ActionBar_customNavigationLayout = 0x00000009`  L1342
+- `int ActionBar_displayOptions = 0x0000000a`  L1343
+- `int ActionBar_divider = 0x0000000b`  L1344
+- `int ActionBar_elevation = 0x0000000c`  L1345
+- `int ActionBar_height = 0x0000000d`  L1346
+- `int ActionBar_hideOnContentScroll = 0x0000000e`  L1347
+- `int ActionBar_homeAsUpIndicator = 0x0000000f`  L1348
+- `int ActionBar_homeLayout = 0x00000010`  L1349
+- `int ActionBar_icon = 0x00000011`  L1350
+- `int ActionBar_indeterminateProgressStyle = 0x00000012`  L1351
+- `int ActionBar_itemPadding = 0x00000013`  L1352
+- `int ActionBar_logo = 0x00000014`  L1353
+- `int ActionBar_navigationMode = 0x00000015`  L1354
+- `int ActionBar_popupTheme = 0x00000016`  L1355
+- `int ActionBar_progressBarPadding = 0x00000017`  L1356
+- `int ActionBar_progressBarStyle = 0x00000018`  L1357
+- `int ActionBar_subtitle = 0x00000019`  L1358
+- `int ActionBar_subtitleTextStyle = 0x0000001a`  L1359
+- `int ActionBar_title = 0x0000001b`  L1360
+- `int ActionBar_titleTextStyle = 0x0000001c`  L1361
+- `int ActionMenuItemView_android_minWidth = 0x00000000`  L1362
+- `int ActionMode_background = 0x00000000`  L1363
+- `int ActionMode_backgroundSplit = 0x00000001`  L1364
+- `int ActionMode_closeItemLayout = 0x00000002`  L1365
+- `int ActionMode_height = 0x00000003`  L1366
+- `int ActionMode_subtitleTextStyle = 0x00000004`  L1367
+- `int ActionMode_titleTextStyle = 0x00000005`  L1368
+- `int ActivityChooserView_expandActivityOverflowButtonDrawable = 0x00000000`  L1369
+- `int ActivityChooserView_initialActivityCount = 0x00000001`  L1370
+- `int AlertDialog_android_layout = 0x00000000`  L1371
+- `int AlertDialog_buttonIconDimen = 0x00000001`  L1372
+- `int AlertDialog_buttonPanelSideLayout = 0x00000002`  L1373
+- `int AlertDialog_listItemLayout = 0x00000003`  L1374
+- `int AlertDialog_listLayout = 0x00000004`  L1375
+- `int AlertDialog_multiChoiceItemLayout = 0x00000005`  L1376
+- `int AlertDialog_showTitle = 0x00000006`  L1377
+- `int AlertDialog_singleChoiceItemLayout = 0x00000007`  L1378
+- `int AnimatedStateListDrawableCompat_android_constantSize = 0x00000003`  L1379
+- `int AnimatedStateListDrawableCompat_android_dither = 0x00000000`  L1380
+- `int AnimatedStateListDrawableCompat_android_enterFadeDuration = 0x00000004`  L1381
+- `int AnimatedStateListDrawableCompat_android_exitFadeDuration = 0x00000005`  L1382
+- `int AnimatedStateListDrawableCompat_android_variablePadding = 0x00000002`  L1383
+- `int AnimatedStateListDrawableCompat_android_visible = 0x00000001`  L1384
+- `int AnimatedStateListDrawableItem_android_drawable = 0x00000001`  L1385
+- `int AnimatedStateListDrawableItem_android_id = 0x00000000`  L1386
+- `int AnimatedStateListDrawableTransition_android_drawable = 0x00000000`  L1387
+- `int AnimatedStateListDrawableTransition_android_fromId = 0x00000002`  L1388
+- `int AnimatedStateListDrawableTransition_android_reversible = 0x00000003`  L1389
+- `int AnimatedStateListDrawableTransition_android_toId = 0x00000001`  L1390
+- `int AppCompatImageView_android_src = 0x00000000`  L1391
+- `int AppCompatImageView_srcCompat = 0x00000001`  L1392
+- `int AppCompatImageView_tint = 0x00000002`  L1393
+- `int AppCompatImageView_tintMode = 0x00000003`  L1394
+- `int AppCompatSeekBar_android_thumb = 0x00000000`  L1395
+- `int AppCompatSeekBar_tickMark = 0x00000001`  L1396
+- `int AppCompatSeekBar_tickMarkTint = 0x00000002`  L1397
+- `int AppCompatSeekBar_tickMarkTintMode = 0x00000003`  L1398
+- `int AppCompatTextHelper_android_drawableBottom = 0x00000002`  L1399
+- `int AppCompatTextHelper_android_drawableEnd = 0x00000006`  L1400
+- `int AppCompatTextHelper_android_drawableLeft = 0x00000003`  L1401
+- `int AppCompatTextHelper_android_drawableRight = 0x00000004`  L1402
+- `int AppCompatTextHelper_android_drawableStart = 0x00000005`  L1403
+- `int AppCompatTextHelper_android_drawableTop = 0x00000001`  L1404
+- `int AppCompatTextHelper_android_textAppearance = 0x00000000`  L1405
+- `int AppCompatTextView_android_textAppearance = 0x00000000`  L1406
+- `int AppCompatTextView_autoSizeMaxTextSize = 0x00000001`  L1407
+- `int AppCompatTextView_autoSizeMinTextSize = 0x00000002`  L1408
+- `int AppCompatTextView_autoSizePresetSizes = 0x00000003`  L1409
+- `int AppCompatTextView_autoSizeStepGranularity = 0x00000004`  L1410
+- `int AppCompatTextView_autoSizeTextType = 0x00000005`  L1411
+- `int AppCompatTextView_drawableBottomCompat = 0x00000006`  L1412
+- `int AppCompatTextView_drawableEndCompat = 0x00000007`  L1413
+- `int AppCompatTextView_drawableLeftCompat = 0x00000008`  L1414
+- `int AppCompatTextView_drawableRightCompat = 0x00000009`  L1415
+- `int AppCompatTextView_drawableStartCompat = 0x0000000a`  L1416
+- `int AppCompatTextView_drawableTint = 0x0000000b`  L1417
+- `int AppCompatTextView_drawableTintMode = 0x0000000c`  L1418
+- `int AppCompatTextView_drawableTopCompat = 0x0000000d`  L1419
+- `int AppCompatTextView_emojiCompatEnabled = 0x0000000e`  L1420
+- `int AppCompatTextView_firstBaselineToTopHeight = 0x0000000f`  L1421
+- `int AppCompatTextView_fontFamily = 0x00000010`  L1422
+- `int AppCompatTextView_fontVariationSettings = 0x00000011`  L1423
+- `int AppCompatTextView_lastBaselineToBottomHeight = 0x00000012`  L1424
+- `int AppCompatTextView_lineHeight = 0x00000013`  L1425
+- `int AppCompatTextView_textAllCaps = 0x00000014`  L1426
+- `int AppCompatTextView_textLocale = 0x00000015`  L1427
+- `int AppCompatTheme_actionBarDivider = 0x00000002`  L1428
+- `int AppCompatTheme_actionBarItemBackground = 0x00000003`  L1429
+- `int AppCompatTheme_actionBarPopupTheme = 0x00000004`  L1430
+- `int AppCompatTheme_actionBarSize = 0x00000005`  L1431
+- `int AppCompatTheme_actionBarSplitStyle = 0x00000006`  L1432
+- `int AppCompatTheme_actionBarStyle = 0x00000007`  L1433
+- `int AppCompatTheme_actionBarTabBarStyle = 0x00000008`  L1434
+- `int AppCompatTheme_actionBarTabStyle = 0x00000009`  L1435
+- `int AppCompatTheme_actionBarTabTextStyle = 0x0000000a`  L1436
+- `int AppCompatTheme_actionBarTheme = 0x0000000b`  L1437
+- `int AppCompatTheme_actionBarWidgetTheme = 0x0000000c`  L1438
+- `int AppCompatTheme_actionButtonStyle = 0x0000000d`  L1439
+- `int AppCompatTheme_actionDropDownStyle = 0x0000000e`  L1440
+- `int AppCompatTheme_actionMenuTextAppearance = 0x0000000f`  L1441
+- `int AppCompatTheme_actionMenuTextColor = 0x00000010`  L1442
+- `int AppCompatTheme_actionModeBackground = 0x00000011`  L1443
+- `int AppCompatTheme_actionModeCloseButtonStyle = 0x00000012`  L1444
+- `int AppCompatTheme_actionModeCloseContentDescription = 0x00000013`  L1445
+- `int AppCompatTheme_actionModeCloseDrawable = 0x00000014`  L1446
+- `int AppCompatTheme_actionModeCopyDrawable = 0x00000015`  L1447
+- `int AppCompatTheme_actionModeCutDrawable = 0x00000016`  L1448
+- `int AppCompatTheme_actionModeFindDrawable = 0x00000017`  L1449
+- `int AppCompatTheme_actionModePasteDrawable = 0x00000018`  L1450
+- `int AppCompatTheme_actionModePopupWindowStyle = 0x00000019`  L1451
+- `int AppCompatTheme_actionModeSelectAllDrawable = 0x0000001a`  L1452
+- `int AppCompatTheme_actionModeShareDrawable = 0x0000001b`  L1453
+- `int AppCompatTheme_actionModeSplitBackground = 0x0000001c`  L1454
+- `int AppCompatTheme_actionModeStyle = 0x0000001d`  L1455
+- `int AppCompatTheme_actionModeTheme = 0x0000001e`  L1456
+- `int AppCompatTheme_actionModeWebSearchDrawable = 0x0000001f`  L1457
+- `int AppCompatTheme_actionOverflowButtonStyle = 0x00000020`  L1458
+- `int AppCompatTheme_actionOverflowMenuStyle = 0x00000021`  L1459
+- `int AppCompatTheme_activityChooserViewStyle = 0x00000022`  L1460
+- `int AppCompatTheme_alertDialogButtonGroupStyle = 0x00000023`  L1461
+- `int AppCompatTheme_alertDialogCenterButtons = 0x00000024`  L1462
+- `int AppCompatTheme_alertDialogStyle = 0x00000025`  L1463
+- `int AppCompatTheme_alertDialogTheme = 0x00000026`  L1464
+- `int AppCompatTheme_android_windowAnimationStyle = 0x00000001`  L1465
+- `int AppCompatTheme_android_windowIsFloating = 0x00000000`  L1466
+- `int AppCompatTheme_autoCompleteTextViewStyle = 0x00000027`  L1467
+- `int AppCompatTheme_borderlessButtonStyle = 0x00000028`  L1468
+- `int AppCompatTheme_buttonBarButtonStyle = 0x00000029`  L1469
+- `int AppCompatTheme_buttonBarNegativeButtonStyle = 0x0000002a`  L1470
+- `int AppCompatTheme_buttonBarNeutralButtonStyle = 0x0000002b`  L1471
+- `int AppCompatTheme_buttonBarPositiveButtonStyle = 0x0000002c`  L1472
+- `int AppCompatTheme_buttonBarStyle = 0x0000002d`  L1473
+- `int AppCompatTheme_buttonStyle = 0x0000002e`  L1474
+- `int AppCompatTheme_buttonStyleSmall = 0x0000002f`  L1475
+- `int AppCompatTheme_checkboxStyle = 0x00000030`  L1476
+- `int AppCompatTheme_checkedTextViewStyle = 0x00000031`  L1477
+- `int AppCompatTheme_colorAccent = 0x00000032`  L1478
+- `int AppCompatTheme_colorBackgroundFloating = 0x00000033`  L1479
+- `int AppCompatTheme_colorButtonNormal = 0x00000034`  L1480
+- `int AppCompatTheme_colorControlActivated = 0x00000035`  L1481
+- `int AppCompatTheme_colorControlHighlight = 0x00000036`  L1482
+- `int AppCompatTheme_colorControlNormal = 0x00000037`  L1483
+- `int AppCompatTheme_colorError = 0x00000038`  L1484
+- `int AppCompatTheme_colorPrimary = 0x00000039`  L1485
+- `int AppCompatTheme_colorPrimaryDark = 0x0000003a`  L1486
+- `int AppCompatTheme_colorSwitchThumbNormal = 0x0000003b`  L1487
+- `int AppCompatTheme_controlBackground = 0x0000003c`  L1488
+- `int AppCompatTheme_dialogCornerRadius = 0x0000003d`  L1489
+- `int AppCompatTheme_dialogPreferredPadding = 0x0000003e`  L1490
+- `int AppCompatTheme_dialogTheme = 0x0000003f`  L1491
+- `int AppCompatTheme_dividerHorizontal = 0x00000040`  L1492
+- `int AppCompatTheme_dividerVertical = 0x00000041`  L1493
+- `int AppCompatTheme_dropDownListViewStyle = 0x00000042`  L1494
+- `int AppCompatTheme_dropdownListPreferredItemHeight = 0x00000043`  L1495
+- `int AppCompatTheme_editTextBackground = 0x00000044`  L1496
+- `int AppCompatTheme_editTextColor = 0x00000045`  L1497
+- `int AppCompatTheme_editTextStyle = 0x00000046`  L1498
+- `int AppCompatTheme_homeAsUpIndicator = 0x00000047`  L1499
+- `int AppCompatTheme_imageButtonStyle = 0x00000048`  L1500
+- `int AppCompatTheme_listChoiceBackgroundIndicator = 0x00000049`  L1501
+- `int AppCompatTheme_listChoiceIndicatorMultipleAnimated = 0x0000004a`  L1502
+- `int AppCompatTheme_listChoiceIndicatorSingleAnimated = 0x0000004b`  L1503
+- `int AppCompatTheme_listDividerAlertDialog = 0x0000004c`  L1504
+- `int AppCompatTheme_listMenuViewStyle = 0x0000004d`  L1505
+- `int AppCompatTheme_listPopupWindowStyle = 0x0000004e`  L1506
+- `int AppCompatTheme_listPreferredItemHeight = 0x0000004f`  L1507
+- `int AppCompatTheme_listPreferredItemHeightLarge = 0x00000050`  L1508
+- `int AppCompatTheme_listPreferredItemHeightSmall = 0x00000051`  L1509
+- `int AppCompatTheme_listPreferredItemPaddingEnd = 0x00000052`  L1510
+- `int AppCompatTheme_listPreferredItemPaddingLeft = 0x00000053`  L1511
+- `int AppCompatTheme_listPreferredItemPaddingRight = 0x00000054`  L1512
+- `int AppCompatTheme_listPreferredItemPaddingStart = 0x00000055`  L1513
+- `int AppCompatTheme_panelBackground = 0x00000056`  L1514
+- `int AppCompatTheme_panelMenuListTheme = 0x00000057`  L1515
+- `int AppCompatTheme_panelMenuListWidth = 0x00000058`  L1516
+- `int AppCompatTheme_popupMenuStyle = 0x00000059`  L1517
+- `int AppCompatTheme_popupWindowStyle = 0x0000005a`  L1518
+- `int AppCompatTheme_radioButtonStyle = 0x0000005b`  L1519
+- `int AppCompatTheme_ratingBarStyle = 0x0000005c`  L1520
+- `int AppCompatTheme_ratingBarStyleIndicator = 0x0000005d`  L1521
+- `int AppCompatTheme_ratingBarStyleSmall = 0x0000005e`  L1522
+- `int AppCompatTheme_searchViewStyle = 0x0000005f`  L1523
+- `int AppCompatTheme_seekBarStyle = 0x00000060`  L1524
+- `int AppCompatTheme_selectableItemBackground = 0x00000061`  L1525
+- `int AppCompatTheme_selectableItemBackgroundBorderless = 0x00000062`  L1526
+- `int AppCompatTheme_spinnerDropDownItemStyle = 0x00000063`  L1527
+- `int AppCompatTheme_spinnerStyle = 0x00000064`  L1528
+- `int AppCompatTheme_switchStyle = 0x00000065`  L1529
+- `int AppCompatTheme_textAppearanceLargePopupMenu = 0x00000066`  L1530
+- `int AppCompatTheme_textAppearanceListItem = 0x00000067`  L1531
+- `int AppCompatTheme_textAppearanceListItemSecondary = 0x00000068`  L1532
+- `int AppCompatTheme_textAppearanceListItemSmall = 0x00000069`  L1533
+- `int AppCompatTheme_textAppearancePopupMenuHeader = 0x0000006a`  L1534
+- `int AppCompatTheme_textAppearanceSearchResultSubtitle = 0x0000006b`  L1535
+- `int AppCompatTheme_textAppearanceSearchResultTitle = 0x0000006c`  L1536
+- `int AppCompatTheme_textAppearanceSmallPopupMenu = 0x0000006d`  L1537
+- `int AppCompatTheme_textColorAlertDialogListItem = 0x0000006e`  L1538
+- `int AppCompatTheme_textColorSearchUrl = 0x0000006f`  L1539
+- `int AppCompatTheme_toolbarNavigationButtonStyle = 0x00000070`  L1540
+- `int AppCompatTheme_toolbarStyle = 0x00000071`  L1541
+- `int AppCompatTheme_tooltipForegroundColor = 0x00000072`  L1542
+- `int AppCompatTheme_tooltipFrameBackground = 0x00000073`  L1543
+- `int AppCompatTheme_viewInflaterClass = 0x00000074`  L1544
+- `int AppCompatTheme_windowActionBar = 0x00000075`  L1545
+- `int AppCompatTheme_windowActionBarOverlay = 0x00000076`  L1546
+- `int AppCompatTheme_windowActionModeOverlay = 0x00000077`  L1547
+- `int AppCompatTheme_windowFixedHeightMajor = 0x00000078`  L1548
+- `int AppCompatTheme_windowFixedHeightMinor = 0x00000079`  L1549
+- `int AppCompatTheme_windowFixedWidthMajor = 0x0000007a`  L1550
+- `int AppCompatTheme_windowFixedWidthMinor = 0x0000007b`  L1551
+- `int AppCompatTheme_windowMinWidthMajor = 0x0000007c`  L1552
+- `int AppCompatTheme_windowMinWidthMinor = 0x0000007d`  L1553
+- `int AppCompatTheme_windowNoTitle = 0x0000007e`  L1554
+- `int ButtonBarLayout_allowStacking = 0x00000000`  L1555
+- `int ColorStateListItem_alpha = 0x00000003`  L1556
+- `int ColorStateListItem_android_alpha = 0x00000001`  L1557
+- `int ColorStateListItem_android_color = 0x00000000`  L1558
+- `int ColorStateListItem_android_lStar = 0x00000002`  L1559
+- `int ColorStateListItem_lStar = 0x00000004`  L1560
+- `int CompoundButton_android_button = 0x00000000`  L1561
+- `int CompoundButton_buttonCompat = 0x00000001`  L1562
+- `int CompoundButton_buttonTint = 0x00000002`  L1563
+- `int CompoundButton_buttonTintMode = 0x00000003`  L1564
+- `int CoordinatorLayout_Layout_android_layout_gravity = 0x00000000`  L1565
+- `int CoordinatorLayout_Layout_layout_anchor = 0x00000001`  L1566
+- `int CoordinatorLayout_Layout_layout_anchorGravity = 0x00000002`  L1567
+- `int CoordinatorLayout_Layout_layout_behavior = 0x00000003`  L1568
+- `int CoordinatorLayout_Layout_layout_dodgeInsetEdges = 0x00000004`  L1569
+- `int CoordinatorLayout_Layout_layout_insetEdge = 0x00000005`  L1570
+- `int CoordinatorLayout_Layout_layout_keyline = 0x00000006`  L1571
+- `int CoordinatorLayout_keylines = 0x00000000`  L1572
+- `int CoordinatorLayout_statusBarBackground = 0x00000001`  L1573
+- `int DrawerArrowToggle_arrowHeadLength = 0x00000000`  L1574
+- `int DrawerArrowToggle_arrowShaftLength = 0x00000001`  L1575
+- `int DrawerArrowToggle_barLength = 0x00000002`  L1576
+- `int DrawerArrowToggle_color = 0x00000003`  L1577
+- `int DrawerArrowToggle_drawableSize = 0x00000004`  L1578
+- `int DrawerArrowToggle_gapBetweenBars = 0x00000005`  L1579
+- `int DrawerArrowToggle_spinBars = 0x00000006`  L1580
+- `int DrawerArrowToggle_thickness = 0x00000007`  L1581
+- `int FontFamilyFont_android_font = 0x00000000`  L1582
+- `int FontFamilyFont_android_fontStyle = 0x00000002`  L1583
+- `int FontFamilyFont_android_fontVariationSettings = 0x00000004`  L1584
+- `int FontFamilyFont_android_fontWeight = 0x00000001`  L1585
+- `int FontFamilyFont_android_ttcIndex = 0x00000003`  L1586
+- `int FontFamilyFont_font = 0x00000005`  L1587
+- `int FontFamilyFont_fontStyle = 0x00000006`  L1588
+- `int FontFamilyFont_fontVariationSettings = 0x00000007`  L1589
+- `int FontFamilyFont_fontWeight = 0x00000008`  L1590
+- `int FontFamilyFont_ttcIndex = 0x00000009`  L1591
+- `int FontFamily_fontProviderAuthority = 0x00000000`  L1592
+- `int FontFamily_fontProviderCerts = 0x00000001`  L1593
+- `int FontFamily_fontProviderFetchStrategy = 0x00000002`  L1594
+- `int FontFamily_fontProviderFetchTimeout = 0x00000003`  L1595
+- `int FontFamily_fontProviderPackage = 0x00000004`  L1596
+- `int FontFamily_fontProviderQuery = 0x00000005`  L1597
+- `int FontFamily_fontProviderSystemFontFamily = 0x00000006`  L1598
+- `int GradientColorItem_android_color = 0x00000000`  L1599
+- `int GradientColorItem_android_offset = 0x00000001`  L1600
+- `int GradientColor_android_centerColor = 0x00000007`  L1601
+- `int GradientColor_android_centerX = 0x00000003`  L1602
+- `int GradientColor_android_centerY = 0x00000004`  L1603
+- `int GradientColor_android_endColor = 0x00000001`  L1604
+- `int GradientColor_android_endX = 0x0000000a`  L1605
+- `int GradientColor_android_endY = 0x0000000b`  L1606
+- `int GradientColor_android_gradientRadius = 0x00000005`  L1607
+- `int GradientColor_android_startColor = 0x00000000`  L1608
+- `int GradientColor_android_startX = 0x00000008`  L1609
+- `int GradientColor_android_startY = 0x00000009`  L1610
+- `int GradientColor_android_tileMode = 0x00000006`  L1611
+- `int GradientColor_android_type = 0x00000002`  L1612
+- `int LinearLayoutCompat_Layout_android_layout_gravity = 0x00000000`  L1613
+- `int LinearLayoutCompat_Layout_android_layout_height = 0x00000002`  L1614
+- `int LinearLayoutCompat_Layout_android_layout_weight = 0x00000003`  L1615
+- `int LinearLayoutCompat_Layout_android_layout_width = 0x00000001`  L1616
+- `int LinearLayoutCompat_android_baselineAligned = 0x00000002`  L1617
+- `int LinearLayoutCompat_android_baselineAlignedChildIndex = 0x00000003`  L1618
+- `int LinearLayoutCompat_android_gravity = 0x00000000`  L1619
+- `int LinearLayoutCompat_android_orientation = 0x00000001`  L1620
+- `int LinearLayoutCompat_android_weightSum = 0x00000004`  L1621
+- `int LinearLayoutCompat_divider = 0x00000005`  L1622
+- `int LinearLayoutCompat_dividerPadding = 0x00000006`  L1623
+- `int LinearLayoutCompat_measureWithLargestChild = 0x00000007`  L1624
+- `int LinearLayoutCompat_showDividers = 0x00000008`  L1625
+- `int ListPopupWindow_android_dropDownHorizontalOffset = 0x00000000`  L1626
+- `int ListPopupWindow_android_dropDownVerticalOffset = 0x00000001`  L1627
+- `int LoadingImageView_circleCrop = 0x00000000`  L1628
+- `int LoadingImageView_imageAspectRatio = 0x00000001`  L1629
+- `int LoadingImageView_imageAspectRatioAdjust = 0x00000002`  L1630
+- `int MenuGroup_android_checkableBehavior = 0x00000005`  L1631
+- `int MenuGroup_android_enabled = 0x00000000`  L1632
+- `int MenuGroup_android_id = 0x00000001`  L1633
+- `int MenuGroup_android_menuCategory = 0x00000003`  L1634
+- `int MenuGroup_android_orderInCategory = 0x00000004`  L1635
+- `int MenuGroup_android_visible = 0x00000002`  L1636
+- `int MenuItem_actionLayout = 0x0000000d`  L1637
+- `int MenuItem_actionProviderClass = 0x0000000e`  L1638
+- `int MenuItem_actionViewClass = 0x0000000f`  L1639
+- `int MenuItem_alphabeticModifiers = 0x00000010`  L1640
+- `int MenuItem_android_alphabeticShortcut = 0x00000009`  L1641
+- `int MenuItem_android_checkable = 0x0000000b`  L1642
+- `int MenuItem_android_checked = 0x00000003`  L1643
+- `int MenuItem_android_enabled = 0x00000001`  L1644
+- `int MenuItem_android_icon = 0x00000000`  L1645
+- `int MenuItem_android_id = 0x00000002`  L1646
+- `int MenuItem_android_menuCategory = 0x00000005`  L1647
+- `int MenuItem_android_numericShortcut = 0x0000000a`  L1648
+- `int MenuItem_android_onClick = 0x0000000c`  L1649
+- `int MenuItem_android_orderInCategory = 0x00000006`  L1650
+- `int MenuItem_android_title = 0x00000007`  L1651
+- `int MenuItem_android_titleCondensed = 0x00000008`  L1652
+- `int MenuItem_android_visible = 0x00000004`  L1653
+- `int MenuItem_contentDescription = 0x00000011`  L1654
+- `int MenuItem_iconTint = 0x00000012`  L1655
+- `int MenuItem_iconTintMode = 0x00000013`  L1656
+- `int MenuItem_numericModifiers = 0x00000014`  L1657
+- `int MenuItem_showAsAction = 0x00000015`  L1658
+- `int MenuItem_tooltipText = 0x00000016`  L1659
+- `int MenuView_android_headerBackground = 0x00000004`  L1660
+- `int MenuView_android_horizontalDivider = 0x00000002`  L1661
+- `int MenuView_android_itemBackground = 0x00000005`  L1662
+- `int MenuView_android_itemIconDisabledAlpha = 0x00000006`  L1663
+- `int MenuView_android_itemTextAppearance = 0x00000001`  L1664
+- `int MenuView_android_verticalDivider = 0x00000003`  L1665
+- `int MenuView_android_windowAnimationStyle = 0x00000000`  L1666
+- `int MenuView_preserveIconSpacing = 0x00000007`  L1667
+- `int MenuView_subMenuArrow = 0x00000008`  L1668
+- `int PopupWindowBackgroundState_state_above_anchor = 0x00000000`  L1669
+- `int PopupWindow_android_popupAnimationStyle = 0x00000001`  L1670
+- `int PopupWindow_android_popupBackground = 0x00000000`  L1671
+- `int PopupWindow_overlapAnchor = 0x00000002`  L1672
+- `int PullToRefresh_ptrAdapterViewBackground = 0x00000000`  L1673
+- `int PullToRefresh_ptrAnimationStyle = 0x00000001`  L1674
+- `int PullToRefresh_ptrDrawable = 0x00000002`  L1675
+- `int PullToRefresh_ptrDrawableBottom = 0x00000003`  L1676
+- `int PullToRefresh_ptrDrawableEnd = 0x00000004`  L1677
+- `int PullToRefresh_ptrDrawableStart = 0x00000005`  L1678
+- `int PullToRefresh_ptrDrawableTop = 0x00000006`  L1679
+- `int PullToRefresh_ptrHeaderBackground = 0x00000007`  L1680
+- `int PullToRefresh_ptrHeaderSubTextColor = 0x00000008`  L1681
+- `int PullToRefresh_ptrHeaderTextAppearance = 0x00000009`  L1682
+- `int PullToRefresh_ptrHeaderTextColor = 0x0000000a`  L1683
+- `int PullToRefresh_ptrListViewExtrasEnabled = 0x0000000b`  L1684
+- `int PullToRefresh_ptrMode = 0x0000000c`  L1685
+- `int PullToRefresh_ptrOverScroll = 0x0000000d`  L1686
+- `int PullToRefresh_ptrRefreshableViewBackground = 0x0000000e`  L1687
+- `int PullToRefresh_ptrRotateDrawableWhilePulling = 0x0000000f`  L1688
+- `int PullToRefresh_ptrScrollingWhileRefreshingEnabled = 0x00000010`  L1689
+- `int PullToRefresh_ptrShowIndicator = 0x00000011`  L1690
+- `int PullToRefresh_ptrSubHeaderTextAppearance = 0x00000012`  L1691
+- `int RecycleListView_paddingBottomNoButtons = 0x00000000`  L1692
+- `int RecycleListView_paddingTopNoTitle = 0x00000001`  L1693
+- `int SearchView_android_focusable = 0x00000001`  L1694
+- `int SearchView_android_hint = 0x00000004`  L1695
+- `int SearchView_android_imeOptions = 0x00000006`  L1696
+- `int SearchView_android_inputType = 0x00000005`  L1697
+- `int SearchView_android_maxWidth = 0x00000002`  L1698
+- `int SearchView_android_text = 0x00000003`  L1699
+- `int SearchView_android_textAppearance = 0x00000000`  L1700
+- `int SearchView_animateMenuItems = 0x00000007`  L1701
+- `int SearchView_animateNavigationIcon = 0x00000008`  L1702
+- `int SearchView_autoShowKeyboard = 0x00000009`  L1703
+- `int SearchView_backHandlingEnabled = 0x0000000a`  L1704
+- `int SearchView_backgroundTint = 0x0000000b`  L1705
+- `int SearchView_closeIcon = 0x0000000c`  L1706
+- `int SearchView_commitIcon = 0x0000000d`  L1707
+- `int SearchView_defaultQueryHint = 0x0000000e`  L1708
+- `int SearchView_goIcon = 0x0000000f`  L1709
+- `int SearchView_headerLayout = 0x00000010`  L1710
+- `int SearchView_hideNavigationIcon = 0x00000011`  L1711
+- `int SearchView_iconifiedByDefault = 0x00000012`  L1712
+- `int SearchView_layout = 0x00000013`  L1713
+- `int SearchView_queryBackground = 0x00000014`  L1714
+- `int SearchView_queryHint = 0x00000015`  L1715
+- `int SearchView_searchHintIcon = 0x00000016`  L1716
+- `int SearchView_searchIcon = 0x00000017`  L1717
+- `int SearchView_searchPrefixText = 0x00000018`  L1718
+- `int SearchView_submitBackground = 0x00000019`  L1719
+- `int SearchView_suggestionRowLayout = 0x0000001a`  L1720
+- `int SearchView_useDrawerArrowDrawable = 0x0000001b`  L1721
+- `int SearchView_voiceIcon = 0x0000001c`  L1722
+- `int SignInButton_buttonSize = 0x00000000`  L1723
+- `int SignInButton_colorScheme = 0x00000001`  L1724
+- `int SignInButton_scopeUris = 0x00000002`  L1725
+- `int Spinner_android_dropDownWidth = 0x00000003`  L1726
+- `int Spinner_android_entries = 0x00000000`  L1727
+- `int Spinner_android_popupBackground = 0x00000001`  L1728
+- `int Spinner_android_prompt = 0x00000002`  L1729
+- `int Spinner_popupTheme = 0x00000004`  L1730
+- `int StateListDrawableItem_android_drawable = 0x00000000`  L1731
+- `int StateListDrawable_android_constantSize = 0x00000003`  L1732
+- `int StateListDrawable_android_dither = 0x00000000`  L1733
+- `int StateListDrawable_android_enterFadeDuration = 0x00000004`  L1734
+- `int StateListDrawable_android_exitFadeDuration = 0x00000005`  L1735
+- `int StateListDrawable_android_variablePadding = 0x00000002`  L1736
+- `int StateListDrawable_android_visible = 0x00000001`  L1737
+- `int SwitchCompat_android_textOff = 0x00000001`  L1738
+- `int SwitchCompat_android_textOn = 0x00000000`  L1739
+- `int SwitchCompat_android_thumb = 0x00000002`  L1740
+- `int SwitchCompat_showText = 0x00000003`  L1741
+- `int SwitchCompat_splitTrack = 0x00000004`  L1742
+- `int SwitchCompat_switchMinWidth = 0x00000005`  L1743
+- `int SwitchCompat_switchPadding = 0x00000006`  L1744
+- `int SwitchCompat_switchTextAppearance = 0x00000007`  L1745
+- `int SwitchCompat_thumbTextPadding = 0x00000008`  L1746
+- `int SwitchCompat_thumbTint = 0x00000009`  L1747
+- `int SwitchCompat_thumbTintMode = 0x0000000a`  L1748
+- `int SwitchCompat_track = 0x0000000b`  L1749
+- `int SwitchCompat_trackTint = 0x0000000c`  L1750
+- `int SwitchCompat_trackTintMode = 0x0000000d`  L1751
+- `int TextAppearance_android_fontFamily = 0x0000000a`  L1752
+- `int TextAppearance_android_shadowColor = 0x00000006`  L1753
+- `int TextAppearance_android_shadowDx = 0x00000007`  L1754
+- `int TextAppearance_android_shadowDy = 0x00000008`  L1755
+- `int TextAppearance_android_shadowRadius = 0x00000009`  L1756
+- `int TextAppearance_android_textColor = 0x00000003`  L1757
+- `int TextAppearance_android_textColorHint = 0x00000004`  L1758
+- `int TextAppearance_android_textColorLink = 0x00000005`  L1759
+- `int TextAppearance_android_textFontWeight = 0x0000000b`  L1760
+- `int TextAppearance_android_textSize = 0x00000000`  L1761
+- `int TextAppearance_android_textStyle = 0x00000002`  L1762
+- `int TextAppearance_android_typeface = 0x00000001`  L1763
+- `int TextAppearance_fontFamily = 0x0000000c`  L1764
+- `int TextAppearance_fontVariationSettings = 0x0000000d`  L1765
+- `int TextAppearance_textAllCaps = 0x0000000e`  L1766
+- `int TextAppearance_textLocale = 0x0000000f`  L1767
+- `int Toolbar_android_gravity = 0x00000000`  L1768
+- `int Toolbar_android_minHeight = 0x00000001`  L1769
+- `int Toolbar_buttonGravity = 0x00000002`  L1770
+- `int Toolbar_collapseContentDescription = 0x00000003`  L1771
+- `int Toolbar_collapseIcon = 0x00000004`  L1772
+- `int Toolbar_contentInsetEnd = 0x00000005`  L1773
+- `int Toolbar_contentInsetEndWithActions = 0x00000006`  L1774
+- `int Toolbar_contentInsetLeft = 0x00000007`  L1775
+- `int Toolbar_contentInsetRight = 0x00000008`  L1776
+- `int Toolbar_contentInsetStart = 0x00000009`  L1777
+- `int Toolbar_contentInsetStartWithNavigation = 0x0000000a`  L1778
+- `int Toolbar_logo = 0x0000000b`  L1779
+- `int Toolbar_logoDescription = 0x0000000c`  L1780
+- `int Toolbar_maxButtonHeight = 0x0000000d`  L1781
+- `int Toolbar_menu = 0x0000000e`  L1782
+- `int Toolbar_navigationContentDescription = 0x0000000f`  L1783
+- `int Toolbar_navigationIcon = 0x00000010`  L1784
+- `int Toolbar_popupTheme = 0x00000011`  L1785
+- `int Toolbar_subtitle = 0x00000012`  L1786
+- `int Toolbar_subtitleTextAppearance = 0x00000013`  L1787
+- `int Toolbar_subtitleTextColor = 0x00000014`  L1788
+- `int Toolbar_title = 0x00000015`  L1789
+- `int Toolbar_titleMargin = 0x00000016`  L1790
+- `int Toolbar_titleMarginBottom = 0x00000017`  L1791
+- `int Toolbar_titleMarginEnd = 0x00000018`  L1792
+- `int Toolbar_titleMarginStart = 0x00000019`  L1793
+- `int Toolbar_titleMarginTop = 0x0000001a`  L1794
+- `int Toolbar_titleMargins = 0x0000001b`  L1795
+- `int Toolbar_titleTextAppearance = 0x0000001c`  L1796
+- `int Toolbar_titleTextColor = 0x0000001d`  L1797
+- `int ViewBackgroundHelper_android_background = 0x00000000`  L1798
+- `int ViewBackgroundHelper_backgroundTint = 0x00000001`  L1799
+- `int ViewBackgroundHelper_backgroundTintMode = 0x00000002`  L1800
+- `int ViewStubCompat_android_id = 0x00000000`  L1801
+- `int ViewStubCompat_android_inflatedId = 0x00000002`  L1802
+- `int ViewStubCompat_android_layout = 0x00000001`  L1803
+- `int View_android_focusable = 0x00000001`  L1804
+- `int View_android_theme = 0x00000000`  L1805
+- `int View_paddingEnd = 0x00000002`  L1806
+- `int View_paddingStart = 0x00000003`  L1807
+- `int View_theme = 0x00000004`  L1808
+- `int[] ActionBar = {com.id221.golive.R.attr.background, com.id221.golive.R.attr.backgroundSplit, com.id221.golive.R.attr.backgroundStacked, com.id221.golive.R.attr.contentInsetEnd, com.id221.golive.R.attr.contentInsetEndWithActions, com.id221.golive.R.attr.contentInsetLeft, com.id221.golive.R.attr.contentInsetRight, com.id221.golive.R.attr.contentInsetStart, com.id221.golive.R.attr.contentInsetStartWithNavigation, com.id221.golive.R.attr.customNavigationLayout, com.id221.golive.R.attr.displayOptions, com.id221.golive.R.attr.divider, com.id221.golive.R.attr.elevation, com.id221.golive.R.attr.height, com.id221.golive.R.attr.hideOnContentScroll, com.id221.golive.R.attr.homeAsUpIndicator, com.id221.golive.R.attr.homeLayout, com.id221.golive.R.attr.icon, com.id221.golive.R.attr.indeterminateProgressStyle, com.id221.golive.R.attr.itemPadding, com.id221.golive.R.attr.logo, com.id221.golive.R.attr.navigationMode, com.id221.golive.R.attr.popupTheme, com.id221.golive.R.attr.progressBarPadding, com.id221.golive.R.attr.progressBarStyle, com.id221.golive.R.attr.subtitle, com.id221.golive.R.attr.subtitleTextStyle, com.id221.golive.R.attr.title, com.id221.golive.R.attr.titleTextStyle}`  L1809
+- `int[] ActionBarLayout = {android.R.attr.layout_gravity}`  L1810
+- `int[] ActionMenuItemView = {android.R.attr.minWidth}`  L1811
+- `int[] ActionMenuView = new int[0]`  L1812
+- `int[] ActionMode = {com.id221.golive.R.attr.background, com.id221.golive.R.attr.backgroundSplit, com.id221.golive.R.attr.closeItemLayout, com.id221.golive.R.attr.height, com.id221.golive.R.attr.subtitleTextStyle, com.id221.golive.R.attr.titleTextStyle}`  L1813
+- `int[] ActivityChooserView = {com.id221.golive.R.attr.expandActivityOverflowButtonDrawable, com.id221.golive.R.attr.initialActivityCount}`  L1814
+- `int[] AlertDialog = {android.R.attr.layout, com.id221.golive.R.attr.buttonIconDimen, com.id221.golive.R.attr.buttonPanelSideLayout, com.id221.golive.R.attr.listItemLayout, com.id221.golive.R.attr.listLayout, com.id221.golive.R.attr.multiChoiceItemLayout, com.id221.golive.R.attr.showTitle, com.id221.golive.R.attr.singleChoiceItemLayout}`  L1815
+- `int[] AnimatedStateListDrawableCompat = {android.R.attr.dither, android.R.attr.visible, android.R.attr.variablePadding, android.R.attr.constantSize, android.R.attr.enterFadeDuration, android.R.attr.exitFadeDuration}`  L1816
+- `int[] AnimatedStateListDrawableItem = {android.R.attr.id, android.R.attr.drawable}`  L1817
+- `int[] AnimatedStateListDrawableTransition = {android.R.attr.drawable, android.R.attr.toId, android.R.attr.fromId, android.R.attr.reversible}`  L1818
+- `int[] AppCompatImageView = {android.R.attr.src, com.id221.golive.R.attr.srcCompat, com.id221.golive.R.attr.tint, com.id221.golive.R.attr.tintMode}`  L1819
+- `int[] AppCompatSeekBar = {android.R.attr.thumb, com.id221.golive.R.attr.tickMark, com.id221.golive.R.attr.tickMarkTint, com.id221.golive.R.attr.tickMarkTintMode}`  L1820
+- `int[] AppCompatTextHelper = {android.R.attr.textAppearance, android.R.attr.drawableTop, android.R.attr.drawableBottom, android.R.attr.drawableLeft, android.R.attr.drawableRight, android.R.attr.drawableStart, android.R.attr.drawableEnd}`  L1821
+- `int[] AppCompatTextView = {android.R.attr.textAppearance, com.id221.golive.R.attr.autoSizeMaxTextSize, com.id221.golive.R.attr.autoSizeMinTextSize, com.id221.golive.R.attr.autoSizePresetSizes, com.id221.golive.R.attr.autoSizeStepGranularity, com.id221.golive.R.attr.autoSizeTextType, com.id221.golive.R.attr.drawableBottomCompat, com.id221.golive.R.attr.drawableEndCompat, com.id221.golive.R.attr.drawableLeftCompat, com.id221.golive.R.attr.drawableRightCompat, com.id221.golive.R.attr.drawableStartCompat, com.id221.golive.R.attr.drawableTint, com.id221.golive.R.attr.drawableTintMode, com.id221.golive.R.attr.drawableTopCompat, com.id221.golive.R.attr.emojiCompatEnabled, com.id221.golive.R.attr.firstBaselineToTopHeight, com.id221.golive.R.attr.fontFamily, com.id221.golive.R.attr.fontVariationSettings, com.id221.golive.R.attr.lastBaselineToBottomHeight, com.id221.golive.R.attr.lineHeight, com.id221.golive.R.attr.textAllCaps, com.id221.golive.R.attr.textLocale}`  L1822
+- `int[] AppCompatTheme = {android.R.attr.windowIsFloating, android.R.attr.windowAnimationStyle, com.id221.golive.R.attr.actionBarDivider, com.id221.golive.R.attr.actionBarItemBackground, com.id221.golive.R.attr.actionBarPopupTheme, com.id221.golive.R.attr.actionBarSize, com.id221.golive.R.attr.actionBarSplitStyle, com.id221.golive.R.attr.actionBarStyle, com.id221.golive.R.attr.actionBarTabBarStyle, com.id221.golive.R.attr.actionBarTabStyle, com.id221.golive.R.attr.actionBarTabTextStyle, com.id221.golive.R.attr.actionBarTheme, com.id221.golive.R.attr.actionBarWidgetTheme, com.id221.golive.R.attr.actionButtonStyle, com.id221.golive.R.attr.actionDropDownStyle, com.id221.golive.R.attr.actionMenuTextAppearance, com.id221.golive.R.attr.actionMenuTextColor, com.id221.golive.R.attr.actionModeBackground, com.id221.golive.R.attr.actionModeCloseButtonStyle, com.id221.golive.R.attr.actionModeCloseContentDescription, com.id221.golive.R.attr.actionModeCloseDrawable, com.id221.golive.R.attr.actionModeCopyDrawable, com.id221.golive.R.attr.actionModeCutDrawable, com.id221.golive.R.attr.actionModeFindDrawable, com.id221.golive.R.attr.actionModePasteDrawable, com.id221.golive.R.attr.actionModePopupWindowStyle, com.id221.golive.R.attr.actionModeSelectAllDrawable, com.id221.golive.R.attr.actionModeShareDrawable, com.id221.golive.R.attr.actionModeSplitBackground, com.id221.golive.R.attr.actionModeStyle, com.id221.golive.R.attr.actionModeTheme, com.id221.golive.R.attr.actionModeWebSearchDrawable, com.id221.golive.R.attr.actionOverflowButtonStyle, com.id221.golive.R.attr.actionOverflowMenuStyle, com.id221.golive.R.attr.activityChooserViewStyle, com.id221.golive.R.attr.alertDialogButtonGroupStyle, com.id221.golive.R.attr.alertDialogCenterButtons, com.id221.golive.R.attr.alertDialogStyle, com.id221.golive.R.attr.alertDialogTheme, com.id221.golive.R.attr.autoCompleteTextViewStyle, com.id221.golive.R.attr.borderlessButtonStyle, com.id221.golive.R.attr.buttonBarButtonStyle, com.id221.golive.R.attr.buttonBarNegativeButtonStyle, com.id221.golive.R.attr.buttonBarNeutralButtonStyle, com.id221.golive.R.attr.buttonBarPositiveButtonStyle, com.id221.golive.R.attr.buttonBarStyle, com.id221.golive.R.attr.buttonStyle, com.id221.golive.R.attr.buttonStyleSmall, com.id221.golive.R.attr.checkboxStyle, com.id221.golive.R.attr.checkedTextViewStyle, com.id221.golive.R.attr.colorAccent, com.id221.golive.R.attr.colorBackgroundFloating, com.id221.golive.R.attr.colorButtonNormal, com.id221.golive.R.attr.colorControlActivated, com.id221.golive.R.attr.colorControlHighlight, com.id221.golive.R.attr.colorControlNormal, com.id221.golive.R.attr.colorError, com.id221.golive.R.attr.colorPrimary, com.id221.golive.R.attr.colorPrimaryDark, com.id221.golive.R.attr.colorSwitchThumbNormal, com.id221.golive.R.attr.controlBackground, com.id221.golive.R.attr.dialogCornerRadius, com.id221.golive.R.attr.dialogPreferredPadding, com.id221.golive.R.attr.dialogTheme, com.id221.golive.R.attr.dividerHorizontal, com.id221.golive.R.attr.dividerVertical, com.id221.golive.R.attr.dropDownListViewStyle, com.id221.golive.R.attr.dropdownListPreferredItemHeight, com.id221.golive.R.attr.editTextBackground, com.id221.golive.R.attr.editTextColor, com.id221.golive.R.attr.editTextStyle, com.id221.golive.R.attr.homeAsUpIndicator, com.id221.golive.R.attr.imageButtonStyle, com.id221.golive.R.attr.listChoiceBackgroundIndicator, com.id221.golive.R.attr.listChoiceIndicatorMultipleAnimated, com.id221.golive.R.attr.listChoiceIndicatorSingleAnimated, com.id221.golive.R.attr.listDividerAlertDialog, com.id221.golive.R.attr.listMenuViewStyle, com.id221.golive.R.attr.listPopupWindowStyle, com.id221.golive.R.attr.listPreferredItemHeight, com.id221.golive.R.attr.listPreferredItemHeightLarge, com.id221.golive.R.attr.listPreferredItemHeightSmall, com.id221.golive.R.attr.listPreferredItemPaddingEnd, com.id221.golive.R.attr.listPreferredItemPaddingLeft, com.id221.golive.R.attr.listPreferredItemPaddingRight, com.id221.golive.R.attr.listPreferredItemPaddingStart, com.id221.golive.R.attr.panelBackground, com.id221.golive.R.attr.panelMenuListTheme, com.id221.golive.R.attr.panelMenuListWidth, com.id221.golive.R.attr.popupMenuStyle, com.id221.golive.R.attr.popupWindowStyle, com.id221.golive.R.attr.radioButtonStyle, com.id221.golive.R.attr.ratingBarStyle, com.id221.golive.R.attr.ratingBarStyleIndicator, com.id221.golive.R.attr.ratingBarStyleSmall, com.id221.golive.R.attr.searchViewStyle, com.id221.golive.R.attr.seekBarStyle, com.id221.golive.R.attr.selectableItemBackground, com.id221.golive.R.attr.selectableItemBackgroundBorderless, com.id221.golive.R.attr.spinnerDropDownItemStyle, com.id221.golive.R.attr.spinnerStyle, com.id221.golive.R.attr.switchStyle, com.id221.golive.R.attr.textAppearanceLargePopupMenu, com.id221.golive.R.attr.textAppearanceListItem, com.id221.golive.R.attr.textAppearanceListItemSecondary, com.id221.golive.R.attr.textAppearanceListItemSmall, com.id221.golive.R.attr.textAppearancePopupMenuHeader, com.id221.golive.R.attr.textAppearanceSearchResultSubtitle, com.id221.golive.R.attr.textAppearanceSearchResultTitle, com.id221.golive.R.attr.textAppearanceSmallPopupMenu, com.id221.golive.R.attr.textColorAlertDialogListItem, com.id221.golive.R.attr.textColorSearchUrl, com.id221.golive.R.attr.toolbarNavigationButtonStyle, com.id221.golive.R.attr.toolbarStyle, com.id221.golive.R.attr.tooltipForegroundColor, com.id221.golive.R.attr.tooltipFrameBackground, com.id221.golive.R.attr.viewInflaterClass, com.id221.golive.R.attr.windowActionBar, com.id221.golive.R.attr.windowActionBarOverlay, com.id221.golive.R.attr.windowActionModeOverlay, com.id221.golive.R.attr.windowFixedHeightMajor, com.id221.golive.R.attr.windowFixedHeightMinor, com.id221.golive.R.attr.windowFixedWidthMajor, com.id221.golive.R.attr.windowFixedWidthMinor, com.id221.golive.R.attr.windowMinWidthMajor, com.id221.golive.R.attr.windowMinWidthMinor, com.id221.golive.R.attr.windowNoTitle}`  L1823
+- `int[] ButtonBarLayout = {com.id221.golive.R.attr.allowStacking}`  L1824
+- `int[] ColorStateListItem = {android.R.attr.color, android.R.attr.alpha, android.R.attr.lStar, com.id221.golive.R.attr.alpha, com.id221.golive.R.attr.lStar}`  L1825
+- `int[] CompoundButton = {android.R.attr.button, com.id221.golive.R.attr.buttonCompat, com.id221.golive.R.attr.buttonTint, com.id221.golive.R.attr.buttonTintMode}`  L1826
+- `int[] CoordinatorLayout = {com.id221.golive.R.attr.keylines, com.id221.golive.R.attr.statusBarBackground}`  L1827
+- `int[] CoordinatorLayout_Layout = {android.R.attr.layout_gravity, com.id221.golive.R.attr.layout_anchor, com.id221.golive.R.attr.layout_anchorGravity, com.id221.golive.R.attr.layout_behavior, com.id221.golive.R.attr.layout_dodgeInsetEdges, com.id221.golive.R.attr.layout_insetEdge, com.id221.golive.R.attr.layout_keyline}`  L1828
+- `int[] DrawerArrowToggle = {com.id221.golive.R.attr.arrowHeadLength, com.id221.golive.R.attr.arrowShaftLength, com.id221.golive.R.attr.barLength, com.id221.golive.R.attr.color, com.id221.golive.R.attr.drawableSize, com.id221.golive.R.attr.gapBetweenBars, com.id221.golive.R.attr.spinBars, com.id221.golive.R.attr.thickness}`  L1829
+- `int[] FontFamily = {com.id221.golive.R.attr.fontProviderAuthority, com.id221.golive.R.attr.fontProviderCerts, com.id221.golive.R.attr.fontProviderFetchStrategy, com.id221.golive.R.attr.fontProviderFetchTimeout, com.id221.golive.R.attr.fontProviderPackage, com.id221.golive.R.attr.fontProviderQuery, com.id221.golive.R.attr.fontProviderSystemFontFamily}`  L1830
+- `int[] FontFamilyFont = {android.R.attr.font, android.R.attr.fontWeight, android.R.attr.fontStyle, android.R.attr.ttcIndex, android.R.attr.fontVariationSettings, com.id221.golive.R.attr.font, com.id221.golive.R.attr.fontStyle, com.id221.golive.R.attr.fontVariationSettings, com.id221.golive.R.attr.fontWeight, com.id221.golive.R.attr.ttcIndex}`  L1831
+- `int[] GradientColor = {android.R.attr.startColor, android.R.attr.endColor, android.R.attr.type, android.R.attr.centerX, android.R.attr.centerY, android.R.attr.gradientRadius, android.R.attr.tileMode, android.R.attr.centerColor, android.R.attr.startX, android.R.attr.startY, android.R.attr.endX, android.R.attr.endY}`  L1832
+- `int[] GradientColorItem = {android.R.attr.color, android.R.attr.offset}`  L1833
+- `int[] LinearLayoutCompat = {android.R.attr.gravity, android.R.attr.orientation, android.R.attr.baselineAligned, android.R.attr.baselineAlignedChildIndex, android.R.attr.weightSum, com.id221.golive.R.attr.divider, com.id221.golive.R.attr.dividerPadding, com.id221.golive.R.attr.measureWithLargestChild, com.id221.golive.R.attr.showDividers}`  L1834
+- `int[] LinearLayoutCompat_Layout = {android.R.attr.layout_gravity, android.R.attr.layout_width, android.R.attr.layout_height, android.R.attr.layout_weight}`  L1835
+- `int[] ListPopupWindow = {android.R.attr.dropDownHorizontalOffset, android.R.attr.dropDownVerticalOffset}`  L1836
+- `int[] LoadingImageView = {com.id221.golive.R.attr.circleCrop, com.id221.golive.R.attr.imageAspectRatio, com.id221.golive.R.attr.imageAspectRatioAdjust}`  L1837
+- `int[] MenuGroup = {android.R.attr.enabled, android.R.attr.id, android.R.attr.visible, android.R.attr.menuCategory, android.R.attr.orderInCategory, android.R.attr.checkableBehavior}`  L1838
+- `int[] MenuItem = {android.R.attr.icon, android.R.attr.enabled, android.R.attr.id, android.R.attr.checked, android.R.attr.visible, android.R.attr.menuCategory, android.R.attr.orderInCategory, android.R.attr.title, android.R.attr.titleCondensed, android.R.attr.alphabeticShortcut, android.R.attr.numericShortcut, android.R.attr.checkable, android.R.attr.onClick, com.id221.golive.R.attr.actionLayout, com.id221.golive.R.attr.actionProviderClass, com.id221.golive.R.attr.actionViewClass, com.id221.golive.R.attr.alphabeticModifiers, com.id221.golive.R.attr.contentDescription, com.id221.golive.R.attr.iconTint, com.id221.golive.R.attr.iconTintMode, com.id221.golive.R.attr.numericModifiers, com.id221.golive.R.attr.showAsAction, com.id221.golive.R.attr.tooltipText}`  L1839
+- `int[] MenuView = {android.R.attr.windowAnimationStyle, android.R.attr.itemTextAppearance, android.R.attr.horizontalDivider, android.R.attr.verticalDivider, android.R.attr.headerBackground, android.R.attr.itemBackground, android.R.attr.itemIconDisabledAlpha, com.id221.golive.R.attr.preserveIconSpacing, com.id221.golive.R.attr.subMenuArrow}`  L1840
+- `int[] PopupWindow = {android.R.attr.popupBackground, android.R.attr.popupAnimationStyle, com.id221.golive.R.attr.overlapAnchor}`  L1841
+- `int[] PopupWindowBackgroundState = {com.id221.golive.R.attr.state_above_anchor}`  L1842
+- `int[] PullToRefresh = {com.id221.golive.R.attr.ptrAdapterViewBackground, com.id221.golive.R.attr.ptrAnimationStyle, com.id221.golive.R.attr.ptrDrawable, com.id221.golive.R.attr.ptrDrawableBottom, com.id221.golive.R.attr.ptrDrawableEnd, com.id221.golive.R.attr.ptrDrawableStart, com.id221.golive.R.attr.ptrDrawableTop, com.id221.golive.R.attr.ptrHeaderBackground, com.id221.golive.R.attr.ptrHeaderSubTextColor, com.id221.golive.R.attr.ptrHeaderTextAppearance, com.id221.golive.R.attr.ptrHeaderTextColor, com.id221.golive.R.attr.ptrListViewExtrasEnabled, com.id221.golive.R.attr.ptrMode, com.id221.golive.R.attr.ptrOverScroll, com.id221.golive.R.attr.ptrRefreshableViewBackground, com.id221.golive.R.attr.ptrRotateDrawableWhilePulling, com.id221.golive.R.attr.ptrScrollingWhileRefreshingEnabled, com.id221.golive.R.attr.ptrShowIndicator, com.id221.golive.R.attr.ptrSubHeaderTextAppearance}`  L1843
+- `int[] RecycleListView = {com.id221.golive.R.attr.paddingBottomNoButtons, com.id221.golive.R.attr.paddingTopNoTitle}`  L1844
+- `int[] SearchView = {android.R.attr.textAppearance, android.R.attr.focusable, android.R.attr.maxWidth, android.R.attr.text, android.R.attr.hint, android.R.attr.inputType, android.R.attr.imeOptions, com.id221.golive.R.attr.animateMenuItems, com.id221.golive.R.attr.animateNavigationIcon, com.id221.golive.R.attr.autoShowKeyboard, com.id221.golive.R.attr.backHandlingEnabled, com.id221.golive.R.attr.backgroundTint, com.id221.golive.R.attr.closeIcon, com.id221.golive.R.attr.commitIcon, com.id221.golive.R.attr.defaultQueryHint, com.id221.golive.R.attr.goIcon, com.id221.golive.R.attr.headerLayout, com.id221.golive.R.attr.hideNavigationIcon, com.id221.golive.R.attr.iconifiedByDefault, com.id221.golive.R.attr.layout, com.id221.golive.R.attr.queryBackground, com.id221.golive.R.attr.queryHint, com.id221.golive.R.attr.searchHintIcon, com.id221.golive.R.attr.searchIcon, com.id221.golive.R.attr.searchPrefixText, com.id221.golive.R.attr.submitBackground, com.id221.golive.R.attr.suggestionRowLayout, com.id221.golive.R.attr.useDrawerArrowDrawable, com.id221.golive.R.attr.voiceIcon}`  L1845
+- `int[] SignInButton = {com.id221.golive.R.attr.buttonSize, com.id221.golive.R.attr.colorScheme, com.id221.golive.R.attr.scopeUris}`  L1846
+- `int[] Spinner = {android.R.attr.entries, android.R.attr.popupBackground, android.R.attr.prompt, android.R.attr.dropDownWidth, com.id221.golive.R.attr.popupTheme}`  L1847
+- `int[] StateListDrawable = {android.R.attr.dither, android.R.attr.visible, android.R.attr.variablePadding, android.R.attr.constantSize, android.R.attr.enterFadeDuration, android.R.attr.exitFadeDuration}`  L1848
+- `int[] StateListDrawableItem = {android.R.attr.drawable}`  L1849
+- `int[] SwitchCompat = {android.R.attr.textOn, android.R.attr.textOff, android.R.attr.thumb, com.id221.golive.R.attr.showText, com.id221.golive.R.attr.splitTrack, com.id221.golive.R.attr.switchMinWidth, com.id221.golive.R.attr.switchPadding, com.id221.golive.R.attr.switchTextAppearance, com.id221.golive.R.attr.thumbTextPadding, com.id221.golive.R.attr.thumbTint, com.id221.golive.R.attr.thumbTintMode, com.id221.golive.R.attr.track, com.id221.golive.R.attr.trackTint, com.id221.golive.R.attr.trackTintMode}`  L1850
+- `int[] TextAppearance = {android.R.attr.textSize, android.R.attr.typeface, android.R.attr.textStyle, android.R.attr.textColor, android.R.attr.textColorHint, android.R.attr.textColorLink, android.R.attr.shadowColor, android.R.attr.shadowDx, android.R.attr.shadowDy, android.R.attr.shadowRadius, android.R.attr.fontFamily, android.R.attr.textFontWeight, com.id221.golive.R.attr.fontFamily, com.id221.golive.R.attr.fontVariationSettings, com.id221.golive.R.attr.textAllCaps, com.id221.golive.R.attr.textLocale}`  L1851
+- `int[] Toolbar = {android.R.attr.gravity, android.R.attr.minHeight, com.id221.golive.R.attr.buttonGravity, com.id221.golive.R.attr.collapseContentDescription, com.id221.golive.R.attr.collapseIcon, com.id221.golive.R.attr.contentInsetEnd, com.id221.golive.R.attr.contentInsetEndWithActions, com.id221.golive.R.attr.contentInsetLeft, com.id221.golive.R.attr.contentInsetRight, com.id221.golive.R.attr.contentInsetStart, com.id221.golive.R.attr.contentInsetStartWithNavigation, com.id221.golive.R.attr.logo, com.id221.golive.R.attr.logoDescription, com.id221.golive.R.attr.maxButtonHeight, com.id221.golive.R.attr.menu, com.id221.golive.R.attr.navigationContentDescription, com.id221.golive.R.attr.navigationIcon, com.id221.golive.R.attr.popupTheme, com.id221.golive.R.attr.subtitle, com.id221.golive.R.attr.subtitleTextAppearance, com.id221.golive.R.attr.subtitleTextColor, com.id221.golive.R.attr.title, com.id221.golive.R.attr.titleMargin, com.id221.golive.R.attr.titleMarginBottom, com.id221.golive.R.attr.titleMarginEnd, com.id221.golive.R.attr.titleMarginStart, com.id221.golive.R.attr.titleMarginTop, com.id221.golive.R.attr.titleMargins, com.id221.golive.R.attr.titleTextAppearance, com.id221.golive.R.attr.titleTextColor}`  L1852
+- `int[] View = {android.R.attr.theme, android.R.attr.focusable, com.id221.golive.R.attr.paddingEnd, com.id221.golive.R.attr.paddingStart, com.id221.golive.R.attr.theme}`  L1853
+- `int[] ViewBackgroundHelper = {android.R.attr.background, com.id221.golive.R.attr.backgroundTint, com.id221.golive.R.attr.backgroundTintMode}`  L1854
+- `int[] ViewStubCompat = {android.R.attr.id, android.R.attr.layout, android.R.attr.inflatedId}`  L1855
+
+方法（1）：
+- `private styleable()`  L1857
+### `com.icatchtek.baseutil.SaveWiFiInfoUtil`
+L17 · [class] public SaveWiFiInfoUtil · `com/icatchtek/baseutil/SaveWiFiInfoUtil.java`
+
+字段/常量（1）：
+- `String TAG = "SaveWiFiInfoUtil"`  L18
+
+方法（4）：
+- `LinkedHashMap<String, String> deSerializationMap(String str)`  L20
+    - 体内字面量："ISO-8859-1"
+- `String getPassword(Context context, String str)`  L35
+    - 体内字面量："appLocalInfo" · "setup_wifi_list" · "get " · " password: "
+- `void saveWifiInfo(Context context, String str, String str2)`  L46
+    - 体内字面量："appLocalInfo" · "setup_wifi_list" · "before save wifi info: " · "remove wifi info: " · "appLocalInfo" · "setup_wifi_list" · "after save wifi info: "
+- `String serialize(LinkedHashMap<String, String> linkedHashMap)`  L72
+    - 体内字面量："ISO-8859-1"
+### `com.icatchtek.baseutil.ScreenUtils`
+L9 · [class] public ScreenUtils · `com/icatchtek/baseutil/ScreenUtils.java`
+
+字段/常量（1）：
+- `int i`  L15
+
+方法（6）：
+- `void cancelFullScreen(Activity activity)`  L10
+- `boolean isScreenAutoRotate(Context context)`  L14
+- `void setFullScreen(Activity activity)`  L25
+- `void setLandscape(Activity activity)`  L29
+- `void setLandscape(Activity activity, int i)`  L33
+- `void setPortrait(Activity activity)`  L37
+### `com.icatchtek.baseutil.SharedPreferencesUtil`
+L15 · [class] public SharedPreferencesUtil · `com/icatchtek/baseutil/SharedPreferencesUtil.java`
+
+字段/常量（5）：
+- `String CONFIG_FILE = "appLocalInfo"`  L16
+- `String SETUP_WIFI_LIST = "setup_wifi_list"`  L18
+- `String TAG = "SharedPreferencesUtil"`  L19
+- `boolean isDebug = true`  L20
+- `String str2 = FILE_PATH`  L90
+
+方法（7）：
+- `void clear(Context context, String str)`  L49
+- `boolean contains(Context context, String str, String str2)`  L55
+- `Object get(Context context, String str, String str2, Object obj)`  L59
+- `Map<String, ?> getAll(Context context, String str)`  L79
+- `SharedPreferences getSharedPreferences(Context context, String str)`  L83
+    - 体内字面量："mBase" · "mPreferencesDir"
+- `void put(Context context, String str, String str2, Object obj)`  L107
+- `void remove(Context context, String str, String str2)`  L125
+### `com.icatchtek.baseutil.SharedPreferencesUtil$SharedPreferencesCompat`
+L22 · [class] private static SharedPreferencesCompat · `com/icatchtek/baseutil/SharedPreferencesUtil.java`
+
+字段/常量（1）：
+- `Method method = sApplyMethod`  L30
+
+方法（3）：
+- `private SharedPreferencesCompat()`  L25
+- `void apply(SharedPreferences.Editor editor)`  L28
+- `Method findApplyMethod()`  L40
+    - 体内字面量："apply"
+### `com.icatchtek.baseutil.ThreadPoolUtils`
+L14 · [class] public ThreadPoolUtils · `com/icatchtek/baseutil/ThreadPoolUtils.java`
+
+字段/常量（6）：
+- `String TAG = "ThreadPoolUtils"`  L15
+- `ThreadPoolUtils instance`  L16
+- `int netThreadCount = 10`  L17
+- `int dbThreadCount = 3`  L18
+- `int otherThreadCount = 10`  L19
+- `int delayThreadCount = 3`  L20
+
+方法（11）：
+- `private ThreadPoolUtils()`  L81
+- `ThreadPoolUtils getInstance()`  L84
+- `void executorDBThread(Runnable runnable, int i)`  L91
+    - 体内字面量："dbThreadPool.isShutdown() = true" · "executorDBThread e = " · ", "
+- `void executorNetThread(Runnable runnable, int i)`  L104
+    - 体内字面量："netThreadPool.isShutdown() = true" · "executorNetThread e = " · ", "
+- `void executorOtherThread(Runnable runnable, int i)`  L117
+    - 体内字面量："otherThreadPool.isShutdown() = true" · "executorOtherThread e = " · ", "
+- `ThreadPoolExecutor getNetThreadPool()`  L130
+- `ScheduledFuture<?> schedule(Runnable runnable, long j, TimeUnit timeUnit)`  L134
+- `ScheduledFuture<V> schedule(Callable<V> callable, long j, TimeUnit timeUnit)`  L138
+- `ScheduledFuture<?> scheduleWithFixedDelay(Runnable runnable, long j, long j2, TimeUnit timeUnit)`  L142
+- `ScheduledFuture<?> scheduleWithFixedRate(Runnable runnable, long j, long j2, TimeUnit timeUnit)`  L146
+- `void shutDownAll()`  L150
+### `com.icatchtek.baseutil.ThreadPoolUtils$PrioriTask`
+L31 · [class] public PrioriTask · implements `Runnable` · `com/icatchtek/baseutil/ThreadPoolUtils.java`
+
+字段/常量（3）：
+- `int priori`  L32
+- `Runnable task`  L33
+- `Runnable runnable = this.task`  L50
+
+方法（6）：
+- `public PrioriTask(int i, Runnable runnable)`  L35
+- `int getPriori()`  L40
+- `Runnable getTask()`  L44
+- `void run()`  L49 @Override
+- `void setPriori(int i)`  L56
+- `void setTask(Runnable runnable)`  L60
+### `com.icatchtek.baseutil.ThreadPoolUtils$TaskCompare`
+L65 · [class] public TaskCompare · implements `Comparator<PrioriTask>` · `com/icatchtek/baseutil/ThreadPoolUtils.java`
+
+方法（2）：
+- `public TaskCompare()`  L66
+- `int compare(PrioriTask prioriTask, PrioriTask prioriTask2)`  L70 @Override
+### `com.icatchtek.baseutil.ThreadPoolUtils$ThreadPeriod`
+L75 · [class] public static ThreadPeriod · `com/icatchtek/baseutil/ThreadPoolUtils.java`
+
+字段/常量（3）：
+- `int PERIOD_HIGHT = 10`  L76
+- `int PERIOD_LOW = 1`  L77
+- `int PERIOD_MIDDLE = 5`  L78
+### `com.icatchtek.baseutil.ZipUtil`
+L16 · [class] public ZipUtil · `com/icatchtek/baseutil/ZipUtil.java`
+
+字段/常量（6）：
+- `String TAG = "ZipUtil"`  L17
+- `String str3 = TAG`  L55
+- `byte[] bArr = new byte[1024]`  L64
+- `String str4 = TAG`  L90
+- `byte[] bArr = new byte[1024]`  L99
+- `byte[] bArr = new byte[4096]`  L137
+
+方法（6）：
+- `List<File> GetFileList(String str, boolean z, boolean z2)`  L19
+- `void UnZipFolder(String str, String str2)`  L43
+- `void UnZipFolder(String str, String str2, String str3)`  L78
+- `InputStream UpZip(String str, String str2)`  L113
+- `void ZipFiles(String str, String str2, ZipOutputStream zipOutputStream)`  L118
+- `void ZipFolder(String str, String str2)`  L148

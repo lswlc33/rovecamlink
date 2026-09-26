@@ -1,0 +1,234 @@
+# XTU GO — 类与成员明细：com.gku.actioncam.remote_live
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 12 个文件 / 13 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.gku.actioncam.remote_live.custom.CustomLiveActivity`
+L23 · [class] public CustomLiveActivity · extends `BaseActivity` · `com/gku/actioncam/remote_live/custom/CustomLiveActivity.java`
+
+字段/常量（12）：
+- `EditText custom_live_rtmp_edit`  L24
+- `Toolbar custom_live_toolbar`  L25
+- `TextView custom_live_wifi_name`  L26
+- `ConstraintLayout custom_live_wifi_scan`  L27
+- `String pwd`  L28
+- `ImageView rl_start_live_image`  L29
+- `TextView rl_start_live_text`  L30
+- `String ssid`  L31
+- `LinearLayout start_live_button`  L32
+- `String url`  L33
+- `CustomLiveActivity customLiveActivity = CustomLiveActivity.this`  L83
+- `String str = this.url`  L109
+
+方法（12）：
+- `void onCreate(Bundle savedInstanceState)`  L36 @Override
+- `void initView()`  L42
+- `void onClick(View view)`  L55 @Override
+- `void onClick(View view)`  L65 @Override
+- `void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2)`  L73 @Override
+- `void onTextChanged(CharSequence charSequence, int i, int i1, int i2)`  L77 @Override
+- `void afterTextChanged(Editable editable)`  L81 @Override
+- `void lambda$initView$0(View view)`  L92
+- `void lambda$initView$1(View view)`  L97
+    - 体内字面量："ssid" · "pwd" · "url"
+- `boolean isLivePrepared()`  L108
+- `void onActivityResult(int requestCode, int resultCode, Intent data)`  L124 @Override
+    - 体内字面量："ssid" · "ssid" · "password"
+- `boolean onOptionsItemSelected(MenuItem item)`  L137 @Override
+### `com.gku.actioncam.remote_live.custom.CustomLiveModel`
+L4 · [class] public CustomLiveModel · `com/gku/actioncam/remote_live/custom/CustomLiveModel.java`
+### `com.gku.actioncam.remote_live.custom.CustomLivePresenter`
+L4 · [class] public CustomLivePresenter · `com/gku/actioncam/remote_live/custom/CustomLivePresenter.java`
+### `com.gku.actioncam.remote_live.DisplayUtil`
+L6 · [class] public DisplayUtil · `com/gku/actioncam/remote_live/DisplayUtil.java`
+
+方法（4）：
+- `int px2dip(Context context, float pxValue)`  L7
+- `int dip2px(Context context, float dipValue)`  L11
+- `int px2sp(Context context, float pxValue)`  L15
+- `int sp2px(Context context, float spValue)`  L19
+### `com.gku.actioncam.remote_live.GlideCircleTransform`
+L14 · [class] public GlideCircleTransform · extends `BitmapTransformation` · `com/gku/actioncam/remote_live/GlideCircleTransform.java`
+
+字段/常量（1）：
+- `float f = iMin / 2.0f`  L41
+
+方法（4）：
+- `void updateDiskCacheKey(MessageDigest messageDigest)`  L16 @Override
+- `public GlideCircleTransform(Context context)`  L19
+- `Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight)`  L23 @Override
+- `Bitmap circleCrop(BitmapPool pool, Bitmap source)`  L27
+### `com.gku.actioncam.remote_live.QRCodeUtil`
+L14 · [class] public QRCodeUtil · `com/gku/actioncam/remote_live/QRCodeUtil.java`
+
+字段/常量（3）：
+- `QRCodeUtil qrCodeUtil`  L15
+- `int[] iArr = new int[width2 * height2]`  L46
+- `int i2 = i * width2`  L48
+
+方法（3）：
+- `private QRCodeUtil()`  L17
+- `QRCodeUtil getInstance()`  L20
+- `Bitmap zxingQRBitmap(int width, int height, String content)`  L31
+    - 体内字面量："content can not be null or \"\"." · "width should be the same with height." · "UTF-8"
+### `com.gku.actioncam.remote_live.QRContentBean`
+L6 · [class] public QRContentBean · `com/gku/actioncam/remote_live/QRContentBean.java`
+
+字段/常量（3）：
+- `String pwd`  L7
+- `String ssid`  L8
+- `String url`  L9
+
+方法（2）：
+- `public QRContentBean(String ssid, String pwd, String url)`  L11
+- `String toString()`  L17
+    - 体内字面量："[SSID:" · ",PWD:" · ",URL:"
+### `com.gku.actioncam.remote_live.QRShowActivity`
+L14 · [class] public QRShowActivity · extends `BaseActivity` · `com/gku/actioncam/remote_live/QRShowActivity.java`
+
+字段/常量（2）：
+- `String TAG = "QRShowActivity"`  L15
+- `ImageView qr_show_image`  L16
+
+方法（3）：
+- `void onCreate(Bundle savedInstanceState)`  L19 @Override
+    - 体内字面量："ssid" · "pwd" · "url" · "onCreate: "
+- `void initView()`  L41
+- `boolean onOptionsItemSelected(MenuItem item)`  L52 @Override
+### `com.gku.actioncam.remote_live.ScanWifiActivity`
+L43 · [class] public ScanWifiActivity · extends `BaseActivity implements TextWatcher` · implements `TextWatcher` · `com/gku/actioncam/remote_live/ScanWifiActivity.java`
+
+字段/常量（22）：
+- `int SCAN_WIFI_DIALOG_TYPE_ONLY_PWD = 0`  L44
+- `int SCAN_WIFI_DIALOG_TYPE_SSID_PWD = 1`  L45
+- `AlertDialog alertDialog`  L46
+- `WifiManager manager`  L47
+- `ScanWifiReceiver scanWifiReceiver`  L48
+- `TextView scan_wifi_dialog_positive`  L49
+- `EditText scan_wifi_dialog_pwd_edit`  L50
+- `EditText scan_wifi_dialog_ssid_edit`  L51
+- `TextView scan_wifi_dialog_ssid_text`  L52
+- `LinearLayout scan_wifi_hot_point`  L53
+- `ListView scan_wifi_list`  L54
+- `Toolbar scan_wifi_toolbar`  L55
+- `SimpleAdapter simpleAdapter`  L56
+- `int type = 1`  L58
+- `ScanWifiActivity scanWifiActivity = ScanWifiActivity.this`  L101
+- `int i = this.type`  L119
+- `EditText editText = this.scan_wifi_dialog_ssid_edit`  L121
+- `EditText editText2 = this.scan_wifi_dialog_pwd_edit`  L124
+- `TextView textView = this.scan_wifi_dialog_ssid_text`  L136
+- `EditText editText3 = this.scan_wifi_dialog_pwd_edit`  L139
+- `int i = this.type`  L196
+- `ScanWifiReceiver scanWifiReceiver = this.scanWifiReceiver`  L297
+
+方法（23）：
+- `void beforeTextChanged(CharSequence s, int start, int count, int after)`  L61 @Override
+- `void onTextChanged(CharSequence s, int start, int before, int count)`  L65 @Override
+- `void onCreate(Bundle savedInstanceState)`  L69 @Override
+    - 体内字面量："android.permission.ACCESS_COARSE_LOCATION" · "wifi" · "wifi"
+- `boolean onCreateOptionsMenu(Menu menu)`  L81 @Override
+- `void initView()`  L86
+    - 体内字面量："scan_wifi_list_item_name" · "scan_wifi_list_item_strength"
+- `void onItemClick(AdapterView<?> adapterView, View view, int i, long l)`  L99 @Override
+- `void onClick(View view)`  L109 @Override
+- `void onPositiveClick(View view)`  L116
+- `void inputInfoDialog(String ssid)`  L153
+- `CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)`  L164 @Override
+    - 体内字面量："[一-龥]+"
+- `void beforeTextChanged(CharSequence s, int start, int count, int after)`  L175 @Override
+- `void onTextChanged(CharSequence s, int start, int before, int count)`  L179 @Override
+- `void afterTextChanged(Editable editable)`  L183 @Override
+- `void onClick(View view)`  L208 @Override
+- `void onClick(View view)`  L217 @Override
+- `void lambda$inputInfoDialog$0(ImageView imageView, View view)`  L224
+- `void positive_listener_pwd(int type, Editable editable)`  L234
+- `void setPositiveClickable(boolean clickable)`  L256
+- `boolean onOptionsItemSelected(MenuItem item)`  L267 @Override
+- `void onStart()`  L281 @Override
+    - 体内字面量："android.net.wifi.SCAN_RESULTS"
+- `void onStop()`  L295 @Override
+- `void afterTextChanged(Editable editable)`  L304 @Override
+- `boolean isOpenGPSLocation()`  L339
+    - 体内字面量："location" · "gps" · "network"
+### `com.gku.actioncam.remote_live.ScanWifiActivity$ScanWifiReceiver`
+L308 · [class] private ScanWifiReceiver · extends `BroadcastReceiver` · `com/gku/actioncam/remote_live/ScanWifiActivity.java`
+
+方法（2）：
+- `private ScanWifiReceiver()`  L309
+- `void onReceive(Context context, Intent intent)`  L313 @Override
+    - 体内字面量："android.net.wifi.SCAN_RESULTS" · "scan_wifi_list_item_name" · "scan_wifi_list_item_strength" · "scan_wifi_list_item_strength" · "scan_wifi_list_item_strength" · "scan_wifi_list_item_strength"
+### `com.gku.actioncam.remote_live.SelectLiveActivity`
+L20 · [class] public SelectLiveActivity · extends `BaseActivity` · `com/gku/actioncam/remote_live/SelectLiveActivity.java`
+
+字段/常量（5）：
+- `int[] IMAGE_ID = {R.drawable.ic_bilibili, R.drawable.ic_huya, R.drawable.ic_cn_others}`  L21
+- `GridView select_live_grid`  L22
+- `Toolbar select_tool_bar`  L23
+- `int i = 0`  L38
+- `int[] iArr = IMAGE_ID`  L42
+
+方法（5）：
+- `void onCreate(Bundle savedInstanceState)`  L26 @Override
+- `void initView()`  L32
+- `void onItemClick(AdapterView adapterView, View view, int i2, long j)`  L54 @Override
+- `void lambda$initView$0(AdapterView adapterView, View view, int i, long j)`  L64
+- `boolean onOptionsItemSelected(MenuItem item)`  L69 @Override
+### `com.gku.actioncam.remote_live.widget.ExpandSelectView`
+L18 · [class] public ExpandSelectView · extends `LinearLayout` · `com/gku/actioncam/remote_live/widget/ExpandSelectView.java`
+
+字段/常量（7）：
+- `Context context`  L19
+- `TextView curr_item_text`  L20
+- `TextView head_title_text`  L21
+- `boolean isQualityExpand`  L22
+- `ImageView item_image`  L23
+- `String str = items[i]`  L45
+- `TextView textView = this.curr_item_text`  L127
+
+方法（13）：
+- `public ExpandSelectView(Context context, AttributeSet attrs)`  L25
+- `void initView()`  L32
+- `void addItem(String[] items)`  L39
+- `void onClick(View view)`  L68 @Override
+- `void onClick(View view)`  L80 @Override
+- `void lambda$addItem$0(List list, View view)`  L92
+- `void lambda$addItem$1(TextView textView, List list, View view)`  L101
+- `void expand(List<TextView> textViewList)`  L106
+- `void unExpand(List<TextView> textViewList)`  L116
+- `String getCurrQuality()`  L126
+- `void selectText(TextView textView2)`  L134
+- `void initHead()`  L140
+- `void setTitle(String title)`  L157
+### `com.gku.actioncam.remote_live.widget.UserInfoView`
+L13 · [class] public UserInfoView · extends `ConstraintLayout` · `com/gku/actioncam/remote_live/widget/UserInfoView.java`
+
+字段/常量（12）：
+- `int ATTENTION_NUMBER_TEXT_ID = 72915`  L14
+- `int ATTENTION_TEXT_TEXT = 72916`  L15
+- `int FANS_NUMBER_TEXT_ID = 72913`  L16
+- `int FANS_TEXT_TEXT_ID = 72914`  L17
+- `int QR_IMAGE_TEXT = 72917`  L18
+- `int USER_INFO_AVATAR_ID = 72911`  L19
+- `int USER_NAME_TEXT_ID = 72912`  L20
+- `ImageView avatar_image`  L21
+- `Context context`  L22
+- `ImageView qr_image`  L23
+- `TextView user_email`  L24
+- `TextView user_name`  L25
+
+方法（8）：
+- `public UserInfoView(Context context, AttributeSet attrs)`  L27
+- `void initView()`  L33
+- `void initAvatarImage()`  L38
+- `void initText()`  L52
+- `ImageView getAvatar_image()`  L99
+- `TextView getUser_name()`  L103
+- `TextView getUser_email()`  L107
+- `ImageView getQr_image()`  L111

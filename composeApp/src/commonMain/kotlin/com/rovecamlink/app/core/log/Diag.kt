@@ -682,7 +682,7 @@ object Diag {
             "grammar=seq wall(local ISO-8601) +elapsed level tag op=<id>:<name> message. " +
                 "A line starting with \"${LogFormat.CONT.trim()}\" belongs to the entry above it. " +
                 "run=N since=.. avg=..ms max=..ms means N identical exchanges were sampled into this one. " +
-                "Full guide: docs/06-诊断日志系统.md\n",
+                "Full guide: docs/impl/diagnostics-log.md\n",
         )
         append("legend=levels V=trace D=decision I=lifecycle W=degraded E=failure; " +
             "tags ${LogTag.entries.joinToString(",") { it.id }}; " +

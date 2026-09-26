@@ -1,0 +1,506 @@
+# TUWIN — 类与成员明细：com.tuwinsmart.tuwin.core.internet
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 16 个文件 / 22 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.tuwinsmart.tuwin.core.internet.ExternalResourceAllowlist`
+L17 · [class] public final ExternalResourceAllowlist · `com/tuwinsmart/tuwin/core/internet/ExternalResourceAllowlist.java`
+注解：
+
+字段/常量（16）：
+- `String ANDROID_DOWNLOAD_HOST = "2005.sunwingroup.com.cn"`  L18
+- `String ANDROID_DOWNLOAD_PATH = "/pcn_manager/download_static_file"`  L19
+- `int ANDROID_DOWNLOAD_PORT = 1371`  L20
+- `String ANDROID_DOWNLOAD_SCHEME = "https"`  L21
+- `String ASSET_CDN_HOST = "cdn.dcloud.net.cn"`  L22
+- `int ASSET_CDN_PORT = 443`  L23
+- `String ASSET_CDN_SCHEME = "https"`  L24
+- `String MEDIA_HOST = "111.179.38.202"`  L25
+- `String MEDIA_PATH = "/pcn_manager/download_static_file"`  L26
+- `int MEDIA_PORT = 1369`  L27
+- `String MEDIA_SCHEME = "http"`  L28
+- `Object objM3074constructorimpl`  L54
+- `ExternalResourceAllowlist externalResourceAllowlist = INSTANCE`  L58
+- `Result.Companion companion = Result.INSTANCE`  L60
+- `Result.Companion companion2 = Result.INSTANCE`  L63
+- `String strQueryParameter`  L103
+
+方法（10）：
+- `private ExternalResourceAllowlist()`  L32
+- `HttpUrl authorizeBannerImage(String rawUrl)`  L35
+    - 体内字面量："rawUrl" · "Banner image URL is not allowlisted"
+- `HttpUrl authorizeCrossOriginWebResource(String rawUrl)`  L44
+    - 体内字面量："rawUrl" · "External web resource is not allowlisted"
+- `boolean isAllowedBannerImage(String rawUrl)`  L53
+- `HttpUrl parse(String rawUrl)`  L69
+    - 体内字面量："Invalid external resource URL" · "External resource must not contain credentials"
+- `boolean isMediaResource(HttpUrl url)`  L80
+    - 体内字面量："http" · "111.179.38.202" · "/pcn_manager/download_static_file"
+- `boolean isBannerImageResource(HttpUrl url)`  L84
+    - 体内字面量："file_path" · "toLowerCase(...)" · ".png"
+- `boolean isAndroidDownload(HttpUrl url)`  L94
+    - 体内字面量："https" · "/pcn_manager/download_static_file"
+- `boolean isCdnAsset(HttpUrl url)`  L98
+    - 体内字面量："https"
+- `boolean hasFilePathQuery(HttpUrl url)`  L102
+### `com.tuwinsmart.tuwin.core.internet.ExternalUrlPolicy`
+L19 · [class] public final ExternalUrlPolicy · `com/tuwinsmart/tuwin/core/internet/ExternalUrlPolicy.java`
+注解：
+
+字段/常量（3）：
+- `Set<String> hosts`  L24
+- `Set<String> set = allowedHosts`  L28
+- `Set<String> set = this.hosts`  L55
+
+方法（2）：
+- `public ExternalUrlPolicy(Set<String> allowedHosts)`  L26
+    - 体内字面量："allowedHosts"
+- `HttpUrl authorize(String rawUrl)`  L43
+    - 体内字面量："rawUrl" · "Invalid external URL" · "http" · "https" · "External URL must use http or https" · "External URL must not contain credentials"
+### `com.tuwinsmart.tuwin.core.internet.ExternalUrlPolicy$Companion`
+L66 · [class] public static final Companion · `com/tuwinsmart/tuwin/core/internet/ExternalUrlPolicy.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L67
+- `private Companion()`  L71
+- `Set<String> getDEFAULT_ALLOWED_HOSTS()`  L74
+### `com.tuwinsmart.tuwin.core.internet.ExternalWebCommand`
+L11 · [enum] public ExternalWebCommand · `com/tuwinsmart/tuwin/core/internet/ExternalWebCommand.java`
+注解：
+
+枚举常量（2）：
+- `BACK()`  L12
+- `FEEDBACK()`  L13
+
+方法（1）：
+- `EnumEntries<ExternalWebCommand> getEntries()`  L17
+### `com.tuwinsmart.tuwin.core.internet.ExternalWebCompatibilityPolicy`
+L22 · [class] public final ExternalWebCompatibilityPolicy · `com/tuwinsmart/tuwin/core/internet/ExternalWebCompatibilityPolicy.java`
+注解：
+
+字段/常量（34）：
+- `String EXTERNAL_TARGET_ANDROID_DOWNLOAD_HOST = "2005.sunwingroup.com.cn"`  L23
+- `String EXTERNAL_TARGET_APP_STORE_HOST = "apps.apple.com"`  L24
+- `String EXTERNAL_TARGET_APP_STORE_PATH = "/app/id6740312738"`  L25
+- `String EXTERNAL_TARGET_ASSISTANT_HOST = "intelligentassistant.tuwinsmart.com"`  L26
+- `String EXTERNAL_TARGET_DOUYIN_HOST = "v.douyin.com"`  L27
+- `String EXTERNAL_TARGET_DOUYIN_PATH = "/twoBbgH2l4Y"`  L28
+- `String EXTERNAL_TARGET_WECHAT_HOST = "mp.weixin.qq.com"`  L29
+- `String EXTERNAL_TARGET_XIAOHONGSHU_HOST = "xhslink.com"`  L30
+- `String EXTERNAL_TARGET_XIAOHONGSHU_PATH = "/m/8acYvvtd8S4"`  L31
+- `String INTERNAL_COMMAND_BACK = "back"`  L32
+- `String INTERNAL_COMMAND_FEEDBACK = "feedback"`  L33
+- `String INTERNAL_COMMAND_SCHEME = "tuwin-help"`  L34
+- `Set<String> assistantHosts`  L35
+- `Set<String> bannerHosts`  L36
+- `Set<String> externalAppSchemes`  L37
+- `Set<String> helpHosts`  L38
+- `Set<String> normalizedAssistantHosts`  L39
+- `Set<String> normalizedBannerHosts`  L40
+- `Set<String> normalizedExternalAppSchemes`  L41
+- `Set<String> normalizedHelpHosts`  L42
+- `Set<String> set = helpHosts`  L65
+- `Set<String> set2 = this.assistantHosts`  L74
+- `Set<String> set3 = this.externalAppSchemes`  L83
+- `Set<String> set4 = this.bannerHosts`  L92
+- `URI uriOrNull`  L117
+- `String lowerCase`  L118
+- `String lowerCase`  L140
+- `String scheme`  L141
+- `Set<String> set = this.normalizedAssistantHosts`  L161
+- `HttpUrl httpUrl`  L171
+- `String strHost`  L172
+- `Object objM3074constructorimpl`  L182
+- `Result.Companion companion = Result.INSTANCE`  L184
+- `Result.Companion companion2 = Result.INSTANCE`  L187
+
+方法（10）：
+- `public ExternalWebCompatibilityPolicy()`  L52
+- `public ExternalWebCompatibilityPolicy(Set<String> helpHosts, Set<String> assistantHosts, Set<String> externalAppSchemes, Set<String> bannerHosts)`  L56
+    - 体内字面量："helpHosts" · "assistantHosts" · "externalAppSchemes" · "bannerHosts"
+- ` ExternalWebCompatibilityPolicy(Set set, Set set2, Set set3, Set set4, int i, DefaultConstructorMarker defaultConstructorMarker)`  L103
+- `boolean supportsHelpCompatibility(String rawUrl)`  L107
+- `boolean supportsExternalResourceCompatibility(String rawUrl)`  L111
+- `ExternalWebCommand commandFor(String sourceUrl, String targetUrl)`  L116
+- `boolean shouldLaunchExternalApp(String sourceUrl, String targetUrl)`  L139
+- `String httpHostOrNull(String str)`  L170
+- `URI toUriOrNull(String str)`  L181
+- `boolean isAllowlistedExternalTarget(HttpUrl httpUrl)`  L196
+    - 体内字面量："toLowerCase(...)" · "https" · "2005.sunwingroup.com.cn" · "https" · "/pcn_manager/download_static_file" · "https" · "https" · "https" · "http" · "/" · "Lcom/tuwinsmart/tuwin/core/internet/ExternalWebCompatibilityPolicy$Companion;" · "()V" · "DEFAULT_ASSISTANT_HOSTS" · "getDEFAULT_ASSISTANT_HOSTS" · "()Ljava/util/Set;" · "DEFAULT_BANNER_HOSTS" · "getDEFAULT_BANNER_HOSTS" · "DEFAULT_EXTERNAL_APP_SCHEMES" · "getDEFAULT_EXTERNAL_APP_SCHEMES" · "DEFAULT_HELP_HOSTS" · "getDEFAULT_HELP_HOSTS" · "EXTERNAL_TARGET_ANDROID_DOWNLOAD_HOST" · "EXTERNAL_TARGET_APP_STORE_HOST" · "EXTERNAL_TARGET_APP_STORE_PATH" · "EXTERNAL_TARGET_ASSISTANT_HOST" · "EXTERNAL_TARGET_DOUYIN_HOST" · "EXTERNAL_TARGET_DOUYIN_PATH" · "EXTERNAL_TARGET_WECHAT_HOST" · "EXTERNAL_TARGET_WECHAT_PATHS" · "EXTERNAL_TARGET_XIAOHONGSHU_HOST" · "EXTERNAL_TARGET_XIAOHONGSHU_PATH" · "INTERNAL_COMMAND_BACK" · "INTERNAL_COMMAND_FEEDBACK" · "INTERNAL_COMMAND_SCHEME" · "app_release_64"
+### `com.tuwinsmart.tuwin.core.internet.ExternalWebCompatibilityPolicy$Companion`
+L219 · [class] public static final Companion · `com/tuwinsmart/tuwin/core/internet/ExternalWebCompatibilityPolicy.java`
+注解：
+
+方法（6）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L220
+- `private Companion()`  L224
+- `Set<String> getDEFAULT_HELP_HOSTS()`  L227
+- `Set<String> getDEFAULT_BANNER_HOSTS()`  L231
+- `Set<String> getDEFAULT_ASSISTANT_HOSTS()`  L235
+- `Set<String> getDEFAULT_EXTERNAL_APP_SCHEMES()`  L239
+### `com.tuwinsmart.tuwin.core.internet.ExternalWebCoordinator`
+L16 · [class] public final ExternalWebCoordinator · `com/tuwinsmart/tuwin/core/internet/ExternalWebCoordinator.java`
+注解：
+
+字段/常量（26）：
+- `InternetProcessReady ready`  L17
+- `InternetProcessInitializer routeInitializer`  L18
+- `ExternalWebSurface surface`  L19
+- `ExternalWebSurfaceFactory surfaceFactory`  L20
+- `ExternalUrlPolicy urlPolicy`  L21
+- `Object objM3074constructorimpl`  L43
+- `Object objM3074constructorimpl2`  L44
+- `Result.Companion companion = Result.INSTANCE`  L48
+- `Result.Companion companion2 = Result.INSTANCE`  L52
+- `ExternalWebCoordinator externalWebCoordinator = this`  L53
+- `Result.Companion companion3 = Result.INSTANCE`  L56
+- `Result.Companion companion4 = Result.INSTANCE`  L61
+- `Result.Companion companion5 = Result.INSTANCE`  L68
+- `Result.Companion companion6 = Result.INSTANCE`  L73
+- `ExternalWebCoordinator externalWebCoordinator2 = this`  L74
+- `Result.Companion companion7 = Result.INSTANCE`  L82
+- `Result.Companion companion8 = Result.INSTANCE`  L89
+- `InternetProcessRouteGrant grant`  L96
+- `InternetProcessReady internetProcessReady = this.ready`  L97
+- `ProcessBindingLease bindingLease`  L104
+- `Unit unit`  L105
+- `Result.Companion companion = Result.INSTANCE`  L107
+- `ExternalWebCoordinator externalWebCoordinator = this`  L108
+- `ExternalWebSurface externalWebSurface = this.surface`  L109
+- `Result.Companion companion2 = Result.INSTANCE`  L118
+- `InternetProcessReady internetProcessReady = this.ready`  L122
+
+方法（6）：
+- `public ExternalWebCoordinator(ExternalUrlPolicy urlPolicy, InternetProcessInitializer routeInitializer, ExternalWebSurfaceFactory surfaceFactory)`  L23
+    - 体内字面量："urlPolicy" · "routeInitializer" · "surfaceFactory"
+- `boolean isOpen()`  L32
+- `HttpUrl authorize(String rawUrl)`  L36
+    - 体内字面量："rawUrl"
+- `Object m2729opengIAlus(String rawUrl, InternetProcessRouteGrant grant)`  L42
+- `void invalidateRoute(long currentRevision)`  L95
+- `void close()`  L103
+### `com.tuwinsmart.tuwin.core.internet.ExternalWebResourcePolicy`
+L13 · [class] public final ExternalWebResourcePolicy · `com/tuwinsmart/tuwin/core/internet/ExternalWebResourcePolicy.java`
+注解：
+
+字段/常量（10）：
+- `String HELP_MEDIA_HOST = "111.179.38.202"`  L14
+- `String HELP_MEDIA_PATH = "/pcn_manager/download_static_file"`  L15
+- `int HELP_MEDIA_PORT = 1369`  L16
+- `String HELP_MEDIA_SCHEME = "http"`  L17
+- `boolean allowExternalResources`  L18
+- `ExternalUrlPolicy pagePolicy`  L19
+- `Object objM3074constructorimpl`  L28
+- `Result.Companion companion = Result.INSTANCE`  L31
+- `ExternalWebResourcePolicy externalWebResourcePolicy = this`  L32
+- `Result.Companion companion2 = Result.INSTANCE`  L35
+
+方法（2）：
+- `public ExternalWebResourcePolicy(ExternalUrlPolicy pagePolicy, boolean z)`  L21
+    - 体内字面量："pagePolicy"
+- `HttpUrl authorize(String rawUrl)`  L27
+### `com.tuwinsmart.tuwin.core.internet.ExternalWebSurface`
+L9 · [interface] public ExternalWebSurface · `com/tuwinsmart/tuwin/core/internet/ExternalWebSurface.java`
+注解：
+
+方法（2）：
+- `void destroy()`  L10
+- `void loadUrl(String url)`  L12
+### `com.tuwinsmart.tuwin.core.internet.ExternalWebSurfaceFactory`
+L9 · [interface] public ExternalWebSurfaceFactory · `com/tuwinsmart/tuwin/core/internet/ExternalWebSurfaceFactory.java`
+注解：
+
+方法（1）：
+- `ExternalWebSurface create()`  L10
+### `com.tuwinsmart.tuwin.core.internet.InternetProcessInitializer`
+L25 · [class] public final InternetProcessInitializer · `com/tuwinsmart/tuwin/core/internet/InternetProcessInitializer.java`
+注解：
+
+字段/常量（21）：
+- `Function0<Long> clockMillis`  L26
+- `ConnectivityManager connectivityManager`  L27
+- `ProcessBindingController processBindingController`  L28
+- `InternetRouteRevisionStore revisionStore`  L29
+- `Object objM3074constructorimpl`  L55
+- `Object objM3074constructorimpl2`  L56
+- `Result.Companion companion = Result.INSTANCE`  L59
+- `Result.Companion companion2 = Result.INSTANCE`  L63
+- `Result.Companion companion3 = Result.INSTANCE`  L67
+- `Result.Companion companion4 = Result.INSTANCE`  L71
+- `InternetProcessInitializer internetProcessInitializer = this`  L72
+- `Result.Companion companion5 = Result.INSTANCE`  L75
+- `Result.Companion companion6 = Result.INSTANCE`  L79
+- `Result.Companion companion7 = Result.INSTANCE`  L85
+- `Result.Companion companion8 = Result.INSTANCE`  L89
+- `Result.Companion companion9 = Result.INSTANCE`  L93
+- `InternetProcessInitializer internetProcessInitializer2 = this`  L94
+- `ProcessBindingController processBindingController = this.processBindingController`  L95
+- `Result.Companion companion10 = Result.INSTANCE`  L100
+- `Result.Companion companion11 = Result.INSTANCE`  L104
+- `Result.Companion companion12 = Result.INSTANCE`  L107
+
+方法（4）：
+- `public InternetProcessInitializer(Context context, ProcessBindingController processBindingController, Function0<Long> clockMillis)`  L31
+    - 体内字面量："context" · "processBindingController" · "clockMillis" · "connectivity" · "null cannot be cast to non-null type android.net.ConnectivityManager"
+- ` InternetProcessInitializer(Context context, ProcessBindingController processBindingController, C20391 c20391, int i, DefaultConstructorMarker defaultConstructorMarker)`  L43
+- `Long invoke()`  L47 @Override
+- `Object m2730initializeIoAF18A(InternetProcessRouteGrant grant)`  L54
+### `com.tuwinsmart.tuwin.core.internet.InternetProcessReady`
+L12 · [class] public final InternetProcessReady · `com/tuwinsmart/tuwin/core/internet/InternetProcessReady.java`
+注解：
+
+字段/常量（3）：
+- `ProcessBindingLease bindingLease`  L13
+- `InternetProcessRouteGrant grant`  L14
+- `Network network`  L15
+
+方法（12）：
+- `InternetProcessReady copy$default(InternetProcessReady internetProcessReady, InternetProcessRouteGrant internetProcessRouteGrant, Network network, ProcessBindingLease processBindingLease, int i, Object obj)`  L17
+- `InternetProcessRouteGrant getGrant()`  L31
+- `Network getNetwork()`  L36
+- `ProcessBindingLease getBindingLease()`  L41
+- `InternetProcessReady copy(InternetProcessRouteGrant grant, Network network, ProcessBindingLease bindingLease)`  L45
+    - 体内字面量："grant" · "network" · "bindingLease"
+- `boolean equals(Object other)`  L52
+- `int hashCode()`  L63
+- `String toString()`  L67
+    - 体内字面量："InternetProcessReady(grant=" · ", network=" · ", bindingLease=" · ")"
+- `public InternetProcessReady(InternetProcessRouteGrant grant, Network network, ProcessBindingLease bindingLease)`  L71
+    - 体内字面量："grant" · "network" · "bindingLease"
+- `InternetProcessRouteGrant getGrant()`  L80
+- `Network getNetwork()`  L84
+- `ProcessBindingLease getBindingLease()`  L88
+### `com.tuwinsmart.tuwin.core.internet.InternetProcessRouteBroker`
+L27 · [class] public final InternetProcessRouteBroker · `com/tuwinsmart/tuwin/core/internet/InternetProcessRouteBroker.java`
+注解：
+
+字段/常量（13）：
+- `Function0<Long> clockMillis`  L28
+- `ConcurrentHashMap<String, Long> expiry`  L29
+- `long leaseDurationMillis`  L30
+- `InternetRouteRevisionStore revisionStore`  L31
+- `RouteProvider routeProvider`  L32
+- `Object objM3074constructorimpl`  L57
+- `Result.Companion companion = Result.INSTANCE`  L60
+- `InternetProcessRouteBroker internetProcessRouteBroker = this`  L61
+- `Result.Companion companion2 = Result.INSTANCE`  L64
+- `Result.Companion companion3 = Result.INSTANCE`  L69
+- `Result.Companion companion4 = Result.INSTANCE`  L77
+- `Result.Companion companion5 = Result.INSTANCE`  L81
+- `ConcurrentHashMap<String, Long> concurrentHashMap = this.expiry`  L99
+
+方法（7）：
+- `public InternetProcessRouteBroker(RouteProvider routeProvider, Context context, Function0<Long> clockMillis, long j)`  L34
+    - 体内字面量："routeProvider" · "context" · "clockMillis"
+- ` InternetProcessRouteBroker(RouteProvider routeProvider, Context context, C20401 c20401, long j, int i, DefaultConstructorMarker defaultConstructorMarker)`  L45
+- `Long invoke()`  L49 @Override
+- `Object m2731issued1pmJ48()`  L56
+- `void release(String token)`  L87
+    - 体内字面量："token"
+- `int activeGrantCount()`  L92
+- `void pruneExpired()`  L97
+### `com.tuwinsmart.tuwin.core.internet.InternetProcessRouteGrant`
+L10 · [class] public final InternetProcessRouteGrant · `com/tuwinsmart/tuwin/core/internet/InternetProcessRouteGrant.java`
+注解：
+
+字段/常量（6）：
+- `long expiresAtMillis`  L11
+- `long networkHandle`  L12
+- `long routeRevision`  L13
+- `String token`  L14
+- `long j4 = j`  L23
+- `long j5 = j2`  L27
+
+方法（14）：
+- `InternetProcessRouteGrant copy$default(InternetProcessRouteGrant internetProcessRouteGrant, String str, long j, long j2, long j3, int i, Object obj)`  L16
+- `String getToken()`  L35
+- `long getNetworkHandle()`  L40
+- `long getRouteRevision()`  L45
+- `long getExpiresAtMillis()`  L50
+- `InternetProcessRouteGrant copy(String token, long networkHandle, long routeRevision, long expiresAtMillis)`  L54
+    - 体内字面量："token"
+- `boolean equals(Object other)`  L59
+- `int hashCode()`  L70
+- `String toString()`  L74
+    - 体内字面量："InternetProcessRouteGrant(token=" · ", networkHandle=" · ", routeRevision=" · ", expiresAtMillis=" · ")"
+- `public InternetProcessRouteGrant(String token, long j, long j2, long j3)`  L78
+    - 体内字面量："token"
+- `String getToken()`  L86
+- `long getNetworkHandle()`  L90
+- `long getRouteRevision()`  L94
+- `long getExpiresAtMillis()`  L98
+### `com.tuwinsmart.tuwin.core.internet.InternetProcessRuntime`
+L27 · [class] public final InternetProcessRuntime · `com/tuwinsmart/tuwin/core/internet/InternetProcessRuntime.java`
+注解：
+
+字段/常量（15）：
+- `long REVISION_CHECK_INTERVAL_MS = 1000`  L31 @Deprecated
+- `Context appContext`  L32
+- `ConnectivityManager connectivityManager`  L33
+- `InternetProcessInitializer initializer`  L34
+- `InternetRouteRevisionStore revisionStore`  L35
+- `Object objM3074constructorimpl`  L72
+- `Object objM3074constructorimpl2`  L73
+- `Result.Companion companion = Result.INSTANCE`  L86
+- `InternetProcessRuntime internetProcessRuntime = this`  L87
+- `Result.Companion companion2 = Result.INSTANCE`  L90
+- `Result.Companion companion3 = Result.INSTANCE`  L140
+- `InternetProcessRuntime internetProcessRuntime2 = this`  L141
+- `Result.Companion companion4 = Result.INSTANCE`  L145
+- `Result.Companion companion = Result.INSTANCE`  L186
+- `Result.Companion companion2 = Result.INSTANCE`  L190
+
+方法（15）：
+- `void monitor$lambda$0()`  L38
+- `void monitor$lambda$3$lambda$2()`  L42
+- `void monitor$lambda$5()`  L46
+- `public InternetProcessRuntime(Context context)`  L49
+    - 体内字面量："context" · "connectivity" · "null cannot be cast to non-null type android.net.ConnectivityManager" · "appContext" · "appContext"
+- `ExternalWebCoordinator createCoordinator(ExternalUrlPolicy policy, ExternalWebSurfaceFactory surfaceFactory)`  L63
+    - 体内字面量："policy" · "surfaceFactory"
+- `AutoCloseable monitor(final InternetProcessRouteGrant grant, final Function0<Unit> onInvalidated)`  L71
+- `void close()`  L80 @Override
+- `void close()`  L97 @Override
+- `void onLost(Network network2)`  L107 @Override
+    - 体内字面量："network"
+- `void onCapabilitiesChanged(Network network2, NetworkCapabilities capabilities)`  L115 @Override
+    - 体内字面量："network" · "capabilities"
+- `void run()`  L128 @Override
+- `void close()`  L152 @Override
+- `void close()`  L160 @Override
+- `void monitor$invalidate(AtomicBoolean atomicBoolean, Function0<Unit> function0)`  L167
+- `void monitor$lambda$7(AtomicBoolean closed, Handler handler, InternetProcessRuntime$monitor$revisionCheck$1 revisionCheck, InternetProcessRuntime this$0, InternetProcessRuntime$monitor$callback$1 callback)`  L174
+    - 体内字面量："$closed" · "$handler" · "$revisionCheck" · "this$0" · "$callback"
+### `com.tuwinsmart.tuwin.core.internet.InternetProcessRuntime$Companion`
+L197 · [class] private static final Companion · `com/tuwinsmart/tuwin/core/internet/InternetProcessRuntime.java`
+注解：
+
+方法（2）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L198
+- `private Companion()`  L202
+### `com.tuwinsmart.tuwin.core.internet.InternetRouteRevisionProvider`
+L21 · [class] public final InternetRouteRevisionProvider · extends `ContentProvider` · `com/tuwinsmart/tuwin/core/internet/InternetRouteRevisionProvider.java`
+注解：
+
+字段/常量（7）：
+- `String KEY_MATCHES = "matches"`  L22
+- `String KEY_NETWORK_HANDLE = "network_handle"`  L23
+- `String KEY_REVISION = "revision"`  L24
+- `String KEY_STATE = "state"`  L25
+- `String METHOD_MATCHES = "matches"`  L26
+- `String METHOD_PUBLISH = "publish"`  L27
+- `AtomicReference<RouteIdentity> atomicReference = current`  L75
+
+方法（7）：
+- `int delete(Uri uri, String selection, String[] selectionArgs)`  L34 @Override
+    - 体内字面量："uri"
+- `String getType(Uri uri)`  L40 @Override
+    - 体内字面量："uri"
+- `Uri insert(Uri uri, ContentValues values)`  L46 @Override
+    - 体内字面量："uri"
+- `boolean onCreate()`  L52 @Override
+- `Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)`  L57 @Override
+    - 体内字面量："uri"
+- `int update(Uri uri, ContentValues values, String selection, String[] selectionArgs)`  L63 @Override
+    - 体内字面量："uri"
+- `Bundle call(String method, String arg, Bundle extras)`  L69 @Override
+    - 体内字面量："method" · "Internet route publication is missing"
+### `com.tuwinsmart.tuwin.core.internet.InternetRouteRevisionProvider$Companion`
+L182 · [class] public static final Companion · `com/tuwinsmart/tuwin/core/internet/InternetRouteRevisionProvider.java`
+注解：
+
+方法（3）：
+- ` Companion(DefaultConstructorMarker defaultConstructorMarker)`  L183
+- `private Companion()`  L187
+- `Uri uri(Context context)`  L190
+    - 体内字面量："context" · "content://" · ".internetRouteRevision" · "parse(...)"
+### `com.tuwinsmart.tuwin.core.internet.InternetRouteRevisionProvider$RouteIdentity`
+L101 · [class] private static final RouteIdentity · `com/tuwinsmart/tuwin/core/internet/InternetRouteRevisionProvider.java`
+注解：
+
+字段/常量（5）：
+- `long networkHandle`  L102
+- `long revision`  L103
+- `String state`  L104
+- `long j3 = j`  L110
+- `long j4 = j2`  L114
+
+方法（12）：
+- `RouteIdentity copy$default(RouteIdentity routeIdentity, long j, long j2, String str, int i, Object obj)`  L106
+- `long getNetworkHandle()`  L122
+- `long getRevision()`  L127
+- `String getState()`  L132
+- `RouteIdentity copy(long networkHandle, long revision, String state)`  L136
+    - 体内字面量："state"
+- `boolean equals(Object other)`  L141
+- `int hashCode()`  L152
+- `String toString()`  L156
+    - 体内字面量："RouteIdentity(networkHandle=" · ", revision=" · ", state=" · ")"
+- `public RouteIdentity(long j, long j2, String state)`  L160
+    - 体内字面量："state"
+- `long getNetworkHandle()`  L167
+- `long getRevision()`  L171
+- `String getState()`  L175
+### `com.tuwinsmart.tuwin.core.internet.InternetRouteRevisionStore`
+L18 · [class] public final InternetRouteRevisionStore · `com/tuwinsmart/tuwin/core/internet/InternetRouteRevisionStore.java`
+注解：
+
+字段/常量（8）：
+- `Uri providerUri`  L19
+- `ContentResolver resolver`  L20
+- `InternetRouteRevisionProvider.Companion companion = InternetRouteRevisionProvider.INSTANCE`  L25
+- `Object objM3074constructorimpl`  L42
+- `boolean z`  L43
+- `Result.Companion companion = Result.INSTANCE`  L48
+- `InternetRouteRevisionStore internetRouteRevisionStore = this`  L49
+- `Result.Companion companion2 = Result.INSTANCE`  L61
+
+方法（3）：
+- `public InternetRouteRevisionStore(Context context)`  L22
+    - 体内字面量："context"
+- `void publish(RouteSnapshot route)`  L31
+    - 体内字面量："route"
+- `boolean matches(long networkHandle, long routeRevision)`  L41
+### `com.tuwinsmart.tuwin.core.internet.RoutedInternetTextFetcher`
+L35 · [class] public final RoutedInternetTextFetcher · `com/tuwinsmart/tuwin/core/internet/RoutedInternetTextFetcher.java`
+注解：
+
+字段/常量（12）：
+- `RoutedOkHttpProvider okHttpProvider`  L36
+- `RouteProvider routeProvider`  L37
+- `C20411 c20411`  L70
+- `RouteLease routeLease`  L71
+- `String strString`  L72
+- `Object result = c20411.result`  L83
+- `int i = c20411.label`  L85
+- `CancellableContinuationImpl cancellableContinuationImpl2 = cancellableContinuationImpl`  L98
+- `Response response = responseExecute`  L118
+- `Result.Companion companion = Result.INSTANCE`  L127
+- `Unit unit = Unit.INSTANCE`  L130
+- `Result.Companion companion2 = Result.INSTANCE`  L152
+
+方法（4）：
+- `public RoutedInternetTextFetcher(RouteProvider routeProvider, RoutedOkHttpProvider okHttpProvider)`  L61
+    - 体内字面量："routeProvider" · "okHttpProvider"
+- `Object fetch(String str, Set<String> set, Continuation<? super String> continuation)`  L69
+- `Unit invoke(Throwable th)`  L105 @Override
+- `void invoke2(Throwable th)`  L111
+### `com.tuwinsmart.tuwin.core.internet.RoutedInternetTextFetcher$C20411`
+L43 · [class] static final C20411 · extends `ContinuationImpl` · `com/tuwinsmart/tuwin/core/internet/RoutedInternetTextFetcher.java`
+注解：
+
+字段/常量（4）：
+- `Object L$0`  L44
+- `Object L$1`  L45
+- `int label`  L46
+- `Object result`  L47
+
+方法（1）：
+- `Object invokeSuspend(Object obj)`  L54 @Override

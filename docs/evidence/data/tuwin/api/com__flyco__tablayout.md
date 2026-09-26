@@ -1,0 +1,563 @@
+# TUWIN — 类与成员明细：com.flyco.tablayout
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 3 个文件 / 8 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：UNKNOWN
+### `com.flyco.tablayout.CommonTabLayout`
+L34 · [class] public CommonTabLayout · extends `FrameLayout implements ValueAnimator.AnimatorUpdateListener` · implements `ValueAnimator.AnimatorUpdateListener` · `com/flyco/tablayout/CommonTabLayout.java`
+
+字段/常量（93）：
+- `int STYLE_BLOCK = 2`  L35
+- `int STYLE_NORMAL = 0`  L36
+- `int STYLE_TRIANGLE = 1`  L37
+- `int TEXT_BOLD_BOTH = 2`  L38
+- `int TEXT_BOLD_NONE = 0`  L39
+- `int TEXT_BOLD_WHEN_SELECT = 1`  L40
+- `Context mContext`  L41
+- `IndicatorPoint mCurrentP`  L42
+- `int mCurrentTab`  L43
+- `int mDividerColor`  L44
+- `float mDividerPadding`  L45
+- `Paint mDividerPaint`  L46
+- `float mDividerWidth`  L47
+- `FragmentChangeManager mFragmentChangeManager`  L48
+- `int mHeight`  L49
+- `int mIconGravity`  L50
+- `float mIconHeight`  L51
+- `float mIconMargin`  L52
+- `boolean mIconVisible`  L53
+- `float mIconWidth`  L54
+- `long mIndicatorAnimDuration`  L55
+- `boolean mIndicatorAnimEnable`  L56
+- `boolean mIndicatorBounceEnable`  L57
+- `int mIndicatorColor`  L58
+- `float mIndicatorCornerRadius`  L59
+- `GradientDrawable mIndicatorDrawable`  L60
+- `int mIndicatorGravity`  L61
+- `float mIndicatorHeight`  L62
+- `float mIndicatorMarginBottom`  L63
+- `float mIndicatorMarginLeft`  L64
+- `float mIndicatorMarginRight`  L65
+- `float mIndicatorMarginTop`  L66
+- `Rect mIndicatorRect`  L67
+- `int mIndicatorStyle`  L68
+- `float mIndicatorWidth`  L69
+- `SparseArray<Boolean> mInitSetMap`  L70
+- `OvershootInterpolator mInterpolator`  L71
+- `boolean mIsFirstDraw`  L72
+- `IndicatorPoint mLastP`  L73
+- `int mLastTab`  L74
+- `OnTabSelectListener mListener`  L75
+- `Paint mRectPaint`  L76
+- `int mTabCount`  L77
+- `ArrayList<CustomTabEntity> mTabEntitys`  L78
+- `float mTabPadding`  L79
+- `boolean mTabSpaceEqual`  L80
+- `float mTabWidth`  L81
+- `LinearLayout mTabsContainer`  L82
+- `boolean mTextAllCaps`  L83
+- `int mTextBold`  L84
+- `Paint mTextPaint`  L85
+- `int mTextSelectColor`  L86
+- `int mTextUnselectColor`  L87
+- `float mTextsize`  L88
+- `Paint mTrianglePaint`  L89
+- `Path mTrianglePath`  L90
+- `int mUnderlineColor`  L91
+- `int mUnderlineGravity`  L92
+- `float mUnderlineHeight`  L93
+- `ValueAnimator mValueAnimator`  L94
+- `float f`  L140
+- `int i = C1296R.styleable.CommonTabLayout_tl_indicator_height`  L144
+- `int i2 = this.mIndicatorStyle`  L145
+- `View viewInflate`  L199
+- `int i2 = this.mIconGravity`  L203
+- `int i = 0`  L246
+- `float f = this.mTabPadding`  L249
+- `int i2 = this.mTextBold`  L257
+- `float f2 = this.mIconWidth`  L268
+- `float f3 = this.mIconHeight`  L270
+- `int i4 = this.mIconGravity`  L272
+- `int i = 0`  L291
+- `boolean z = i == position`  L294
+- `Rect rect = this.mIndicatorRect`  L339
+- `Rect rect = this.mIndicatorRect`  L351
+- `float f = this.mDividerWidth`  L365
+- `float f2 = height`  L377
+- `int i2 = this.mIndicatorStyle`  L391
+- `float f3 = height`  L396
+- `float f4 = this.mIndicatorHeight`  L423
+- `float f5 = this.mIndicatorCornerRadius`  L425
+- `FragmentChangeManager fragmentChangeManager = this.mFragmentChangeManager`  L440
+- `int i = this.mTabCount`  L733
+- `int i2 = this.mIconGravity`  L744
+- `int i = this.mTabCount`  L753
+- `int i = this.mTabCount`  L761
+- `int i = this.mTabCount`  L772
+- `float intrinsicHeight = this.mIconHeight`  L784
+- `float f = 0.0f`  L785
+- `int i2 = this.mIconGravity`  L792
+- `int i3 = this.mHeight`  L795
+- `int i4 = this.mHeight`  L799
+- `int i = this.mTabCount`  L807
+
+方法（89）：
+- `public CommonTabLayout(Context context)`  L96
+- `public CommonTabLayout(Context context, AttributeSet attrs)`  L100
+- `public CommonTabLayout(Context context, AttributeSet attrs, int defStyleAttr)`  L104
+    - 体内字面量："http://schemas.android.com/apk/res/android" · "layout_height" · "-1" · "-2"
+- `void obtainAttributes(Context context, AttributeSet attrs)`  L139
+- `void setTabData(ArrayList<CustomTabEntity> tabEntitys)`  L184
+    - 体内字面量："TabEntitys can not be NULL or EMPTY !"
+- `void setTabData(ArrayList<CustomTabEntity> tabEntitys, FragmentActivity fa, int containerViewId, ArrayList<Fragment> fragments)`  L193
+- `void notifyDataSetChanged()`  L198
+- `void addTab(final int position, View tabView)`  L219
+- `void onClick(View v)`  L224 @Override
+- `void updateTabStyles()`  L245
+- `void updateTabSelection(int position)`  L290
+- `void calcOffset()`  L307
+- `void calcIndicatorRect()`  L329
+- `void onAnimationUpdate(ValueAnimator animation)`  L344 @Override
+- `void onDraw(Canvas canvas)`  L358 @Override
+- `void setCurrentTab(int currentTab)`  L436
+- `void setIndicatorStyle(int indicatorStyle)`  L451
+- `void setTabPadding(float tabPadding)`  L456
+- `void setTabSpaceEqual(boolean tabSpaceEqual)`  L461
+- `void setTabWidth(float tabWidth)`  L466
+- `void setIndicatorColor(int indicatorColor)`  L471
+- `void setIndicatorHeight(float indicatorHeight)`  L476
+- `void setIndicatorWidth(float indicatorWidth)`  L481
+- `void setIndicatorCornerRadius(float indicatorCornerRadius)`  L486
+- `void setIndicatorGravity(int indicatorGravity)`  L491
+- `void setIndicatorMargin(float indicatorMarginLeft, float indicatorMarginTop, float indicatorMarginRight, float indicatorMarginBottom)`  L496
+- `void setIndicatorAnimDuration(long indicatorAnimDuration)`  L504
+- `void setIndicatorAnimEnable(boolean indicatorAnimEnable)`  L508
+- `void setIndicatorBounceEnable(boolean indicatorBounceEnable)`  L512
+- `void setUnderlineColor(int underlineColor)`  L516
+- `void setUnderlineHeight(float underlineHeight)`  L521
+- `void setUnderlineGravity(int underlineGravity)`  L526
+- `void setDividerColor(int dividerColor)`  L531
+- `void setDividerWidth(float dividerWidth)`  L536
+- `void setDividerPadding(float dividerPadding)`  L541
+- `void setTextsize(float textsize)`  L546
+- `void setTextSelectColor(int textSelectColor)`  L551
+- `void setTextUnselectColor(int textUnselectColor)`  L556
+- `void setTextBold(int textBold)`  L561
+- `void setIconVisible(boolean iconVisible)`  L566
+- `void setIconGravity(int iconGravity)`  L571
+- `void setIconWidth(float iconWidth)`  L576
+- `void setIconHeight(float iconHeight)`  L581
+- `void setIconMargin(float iconMargin)`  L586
+- `void setTextAllCaps(boolean textAllCaps)`  L591
+- `int getTabCount()`  L596
+- `int getCurrentTab()`  L600
+- `int getIndicatorStyle()`  L604
+- `float getTabPadding()`  L608
+- `boolean isTabSpaceEqual()`  L612
+- `float getTabWidth()`  L616
+- `int getIndicatorColor()`  L620
+- `float getIndicatorHeight()`  L624
+- `float getIndicatorWidth()`  L628
+- `float getIndicatorCornerRadius()`  L632
+- `float getIndicatorMarginLeft()`  L636
+- `float getIndicatorMarginTop()`  L640
+- `float getIndicatorMarginRight()`  L644
+- `float getIndicatorMarginBottom()`  L648
+- `long getIndicatorAnimDuration()`  L652
+- `boolean isIndicatorAnimEnable()`  L656
+- `boolean isIndicatorBounceEnable()`  L660
+- `int getUnderlineColor()`  L664
+- `float getUnderlineHeight()`  L668
+- `int getDividerColor()`  L672
+- `float getDividerWidth()`  L676
+- `float getDividerPadding()`  L680
+- `float getTextsize()`  L684
+- `int getTextSelectColor()`  L688
+- `int getTextUnselectColor()`  L692
+- `int getTextBold()`  L696
+- `boolean isTextAllCaps()`  L700
+- `int getIconGravity()`  L704
+- `float getIconWidth()`  L708
+- `float getIconHeight()`  L712
+- `float getIconMargin()`  L716
+- `boolean isIconVisible()`  L720
+- `ImageView getIconView(int tab)`  L724
+- `TextView getTitleView(int tab)`  L728
+- `void showMsg(int position, int num)`  L732
+- `void showDot(int position)`  L752
+- `void hideMsg(int position)`  L760
+- `void setMsgMargin(int position, float leftPadding, float bottomPadding)`  L771
+- `MsgView getMsgView(int position)`  L806
+- `void setOnTabSelectListener(OnTabSelectListener listener)`  L814
+- `Parcelable onSaveInstanceState()`  L819 @Override
+    - 体内字面量："instanceState" · "mCurrentTab"
+- `void onRestoreInstanceState(Parcelable state)`  L827 @Override
+    - 体内字面量："mCurrentTab" · "instanceState"
+- `int dp2px(float dp)`  L862
+- `int sp2px(float sp)`  L866
+### `com.flyco.tablayout.CommonTabLayout$IndicatorPoint`
+L839 · [class] IndicatorPoint · `com/flyco/tablayout/CommonTabLayout.java`
+
+字段/常量（2）：
+- `float left`  L840
+- `float right`  L841
+### `com.flyco.tablayout.CommonTabLayout$PointEvaluator`
+L847 · [class] PointEvaluator · implements `TypeEvaluator<IndicatorPoint>` · `com/flyco/tablayout/CommonTabLayout.java`
+
+方法（1）：
+- `IndicatorPoint evaluate(float fraction, IndicatorPoint startValue, IndicatorPoint endValue)`  L852 @Override
+### `com.flyco.tablayout.SegmentTabLayout`
+L31 · [class] public SegmentTabLayout · extends `FrameLayout implements ValueAnimator.AnimatorUpdateListener` · implements `ValueAnimator.AnimatorUpdateListener` · `com/flyco/tablayout/SegmentTabLayout.java`
+
+字段/常量（70）：
+- `int TEXT_BOLD_BOTH = 2`  L32
+- `int TEXT_BOLD_NONE = 0`  L33
+- `int TEXT_BOLD_WHEN_SELECT = 1`  L34
+- `int mBarColor`  L35
+- `int mBarStrokeColor`  L36
+- `float mBarStrokeWidth`  L37
+- `Context mContext`  L38
+- `IndicatorPoint mCurrentP`  L39
+- `int mCurrentTab`  L40
+- `int mDividerColor`  L41
+- `float mDividerPadding`  L42
+- `Paint mDividerPaint`  L43
+- `float mDividerWidth`  L44
+- `FragmentChangeManager mFragmentChangeManager`  L45
+- `int mHeight`  L46
+- `long mIndicatorAnimDuration`  L47
+- `boolean mIndicatorAnimEnable`  L48
+- `boolean mIndicatorBounceEnable`  L49
+- `int mIndicatorColor`  L50
+- `float mIndicatorCornerRadius`  L51
+- `GradientDrawable mIndicatorDrawable`  L52
+- `float mIndicatorHeight`  L53
+- `float mIndicatorMarginBottom`  L54
+- `float mIndicatorMarginLeft`  L55
+- `float mIndicatorMarginRight`  L56
+- `float mIndicatorMarginTop`  L57
+- `Rect mIndicatorRect`  L58
+- `SparseArray<Boolean> mInitSetMap`  L59
+- `OvershootInterpolator mInterpolator`  L60
+- `boolean mIsFirstDraw`  L61
+- `IndicatorPoint mLastP`  L62
+- `int mLastTab`  L63
+- `OnTabSelectListener mListener`  L64
+- `float[] mRadiusArr`  L65
+- `GradientDrawable mRectDrawable`  L66
+- `int mTabCount`  L67
+- `float mTabPadding`  L68
+- `boolean mTabSpaceEqual`  L69
+- `float mTabWidth`  L70
+- `LinearLayout mTabsContainer`  L71
+- `boolean mTextAllCaps`  L72
+- `int mTextBold`  L73
+- `Paint mTextPaint`  L74
+- `int mTextSelectColor`  L75
+- `int mTextUnselectColor`  L76
+- `float mTextsize`  L77
+- `String[] mTitles`  L78
+- `ValueAnimator mValueAnimator`  L79
+- `int i = 0`  L200
+- `float f = this.mTabPadding`  L203
+- `int i2 = this.mTextBold`  L211
+- `int i = 0`  L222
+- `boolean z = i == position`  L225
+- `int i = this.mCurrentTab`  L264
+- `float[] fArr = this.mRadiusArr`  L266
+- `float f = this.mIndicatorCornerRadius`  L267
+- `float[] fArr2 = this.mRadiusArr`  L279
+- `float f2 = this.mIndicatorCornerRadius`  L282
+- `float[] fArr3 = this.mRadiusArr`  L291
+- `float[] fArr4 = this.mRadiusArr`  L302
+- `float f3 = this.mIndicatorCornerRadius`  L303
+- `float f = this.mIndicatorCornerRadius`  L333
+- `float f2 = this.mDividerWidth`  L343
+- `FragmentChangeManager fragmentChangeManager = this.mFragmentChangeManager`  L371
+- `int i = this.mTabCount`  L569
+- `int i = this.mTabCount`  L584
+- `int i = this.mTabCount`  L592
+- `int i = this.mTabCount`  L603
+- `int i2 = this.mHeight`  L616
+- `int i = this.mTabCount`  L623
+
+方法（68）：
+- `public SegmentTabLayout(Context context)`  L81
+- `public SegmentTabLayout(Context context, AttributeSet attrs)`  L85
+- `public SegmentTabLayout(Context context, AttributeSet attrs, int defStyleAttr)`  L89
+    - 体内字面量："http://schemas.android.com/apk/res/android" · "layout_height" · "-1" · "-2"
+- `void obtainAttributes(Context context, AttributeSet attrs)`  L121
+    - 体内字面量："#222831" · "#ffffff"
+- `void setTabData(String[] titles)`  L150
+    - 体内字面量："Titles can not be NULL or EMPTY !"
+- `void setTabData(String[] titles, FragmentActivity fa, int containerViewId, ArrayList<Fragment> fragments)`  L158
+- `void notifyDataSetChanged()`  L163
+- `void addTab(final int position, View tabView)`  L174
+- `void onClick(View v)`  L178 @Override
+- `void updateTabStyles()`  L199
+- `void updateTabSelection(int position)`  L221
+- `void calcOffset()`  L235
+- `void calcIndicatorRect()`  L257
+- `void onAnimationUpdate(ValueAnimator animation)`  L315 @Override
+- `void onDraw(Canvas canvas)`  L323 @Override
+- `void setCurrentTab(int currentTab)`  L367
+- `void setTabPadding(float tabPadding)`  L382
+- `void setTabSpaceEqual(boolean tabSpaceEqual)`  L387
+- `void setTabWidth(float tabWidth)`  L392
+- `void setIndicatorColor(int indicatorColor)`  L397
+- `void setIndicatorHeight(float indicatorHeight)`  L402
+- `void setIndicatorCornerRadius(float indicatorCornerRadius)`  L407
+- `void setIndicatorMargin(float indicatorMarginLeft, float indicatorMarginTop, float indicatorMarginRight, float indicatorMarginBottom)`  L412
+- `void setIndicatorAnimDuration(long indicatorAnimDuration)`  L420
+- `void setIndicatorAnimEnable(boolean indicatorAnimEnable)`  L424
+- `void setIndicatorBounceEnable(boolean indicatorBounceEnable)`  L428
+- `void setDividerColor(int dividerColor)`  L432
+- `void setDividerWidth(float dividerWidth)`  L437
+- `void setDividerPadding(float dividerPadding)`  L442
+- `void setTextsize(float textsize)`  L447
+- `void setTextSelectColor(int textSelectColor)`  L452
+- `void setTextUnselectColor(int textUnselectColor)`  L457
+- `void setTextBold(int textBold)`  L462
+- `void setTextAllCaps(boolean textAllCaps)`  L467
+- `int getTabCount()`  L472
+- `int getCurrentTab()`  L476
+- `float getTabPadding()`  L480
+- `boolean isTabSpaceEqual()`  L484
+- `float getTabWidth()`  L488
+- `int getIndicatorColor()`  L492
+- `float getIndicatorHeight()`  L496
+- `float getIndicatorCornerRadius()`  L500
+- `float getIndicatorMarginLeft()`  L504
+- `float getIndicatorMarginTop()`  L508
+- `float getIndicatorMarginRight()`  L512
+- `float getIndicatorMarginBottom()`  L516
+- `long getIndicatorAnimDuration()`  L520
+- `boolean isIndicatorAnimEnable()`  L524
+- `boolean isIndicatorBounceEnable()`  L528
+- `int getDividerColor()`  L532
+- `float getDividerWidth()`  L536
+- `float getDividerPadding()`  L540
+- `float getTextsize()`  L544
+- `int getTextSelectColor()`  L548
+- `int getTextUnselectColor()`  L552
+- `int getTextBold()`  L556
+- `boolean isTextAllCaps()`  L560
+- `TextView getTitleView(int tab)`  L564
+- `void showMsg(int position, int num)`  L568
+- `void showDot(int position)`  L583
+- `void hideMsg(int position)`  L591
+- `void setMsgMargin(int position, float leftPadding, float bottomPadding)`  L602
+- `MsgView getMsgView(int position)`  L622
+- `void setOnTabSelectListener(OnTabSelectListener listener)`  L630
+- `Parcelable onSaveInstanceState()`  L635 @Override
+    - 体内字面量："instanceState" · "mCurrentTab"
+- `void onRestoreInstanceState(Parcelable state)`  L643 @Override
+    - 体内字面量："mCurrentTab" · "instanceState"
+- `int dp2px(float dp)`  L678
+- `int sp2px(float sp)`  L682
+### `com.flyco.tablayout.SegmentTabLayout$IndicatorPoint`
+L655 · [class] IndicatorPoint · `com/flyco/tablayout/SegmentTabLayout.java`
+
+字段/常量（2）：
+- `float left`  L656
+- `float right`  L657
+### `com.flyco.tablayout.SegmentTabLayout$PointEvaluator`
+L663 · [class] PointEvaluator · implements `TypeEvaluator<IndicatorPoint>` · `com/flyco/tablayout/SegmentTabLayout.java`
+
+方法（1）：
+- `IndicatorPoint evaluate(float fraction, IndicatorPoint startValue, IndicatorPoint endValue)`  L668 @Override
+### `com.flyco.tablayout.SlidingTabLayout`
+L32 · [class] public SlidingTabLayout · extends `HorizontalScrollView implements ViewPager.OnPageChangeListener` · implements `ViewPager.OnPageChangeListener` · `com/flyco/tablayout/SlidingTabLayout.java`
+
+字段/常量（84）：
+- `int STYLE_BLOCK = 2`  L33
+- `int STYLE_NORMAL = 0`  L34
+- `int STYLE_TRIANGLE = 1`  L35
+- `int TEXT_BOLD_BOTH = 2`  L36
+- `int TEXT_BOLD_NONE = 0`  L37
+- `int TEXT_BOLD_WHEN_SELECT = 1`  L38
+- `Context mContext`  L39
+- `float mCurrentPositionOffset`  L40
+- `int mCurrentTab`  L41
+- `int mDividerColor`  L42
+- `float mDividerPadding`  L43
+- `Paint mDividerPaint`  L44
+- `float mDividerWidth`  L45
+- `int mHeight`  L46
+- `int mIndicatorColor`  L47
+- `float mIndicatorCornerRadius`  L48
+- `GradientDrawable mIndicatorDrawable`  L49
+- `int mIndicatorGravity`  L50
+- `float mIndicatorHeight`  L51
+- `float mIndicatorMarginBottom`  L52
+- `float mIndicatorMarginLeft`  L53
+- `float mIndicatorMarginRight`  L54
+- `float mIndicatorMarginTop`  L55
+- `Rect mIndicatorRect`  L56
+- `int mIndicatorStyle`  L57
+- `float mIndicatorWidth`  L58
+- `boolean mIndicatorWidthEqualTitle`  L59
+- `SparseArray<Boolean> mInitSetMap`  L60
+- `int mLastScrollX`  L61
+- `OnTabSelectListener mListener`  L62
+- `Paint mRectPaint`  L63
+- `boolean mSnapOnTabClick`  L64
+- `int mTabCount`  L65
+- `float mTabPadding`  L66
+- `Rect mTabRect`  L67
+- `boolean mTabSpaceEqual`  L68
+- `float mTabWidth`  L69
+- `LinearLayout mTabsContainer`  L70
+- `boolean mTextAllCaps`  L71
+- `int mTextBold`  L72
+- `Paint mTextPaint`  L73
+- `int mTextSelectColor`  L74
+- `int mTextUnselectColor`  L75
+- `float mTextsize`  L76
+- `ArrayList<String> mTitles`  L77
+- `Paint mTrianglePaint`  L78
+- `Path mTrianglePath`  L79
+- `int mUnderlineColor`  L80
+- `int mUnderlineGravity`  L81
+- `float mUnderlineHeight`  L82
+- `ViewPager mViewPager`  L83
+- `float margin`  L84
+- `float f`  L129
+- `int i = C1296R.styleable.SlidingTabLayout_tl_indicator_height`  L133
+- `int i2 = this.mIndicatorStyle`  L134
+- `ArrayList<String> arrayList = this.mTitles`  L211
+- `ArrayList<String> arrayList2 = this.mTitles`  L215
+- `ArrayList<String> arrayList = this.mTitles`  L223
+- `ArrayList<String> arrayList2 = this.mTitles`  L227
+- `ArrayList<String> arrayList3 = this.mTitles`  L229
+- `int i = 0`  L270
+- `float f = this.mTabPadding`  L276
+- `int i2 = this.mTextBold`  L281
+- `int i = 0`  L323
+- `boolean z = i == position`  L326
+- `int i = this.mCurrentTab`  L347
+- `float f = this.mCurrentPositionOffset`  L352
+- `float f2 = this.margin`  L359
+- `int i4 = this.mCurrentTab`  L377
+- `Rect rect = this.mIndicatorRect`  L382
+- `float f = this.mDividerWidth`  L394
+- `float f2 = height`  L406
+- `int i2 = this.mIndicatorStyle`  L413
+- `float f3 = height`  L418
+- `float f4 = this.mIndicatorHeight`  L445
+- `float f5 = this.mIndicatorCornerRadius`  L447
+- `int i = this.mTabCount`  L686
+- `int i = this.mTabCount`  L701
+- `int i = this.mTabCount`  L709
+- `float f`  L720
+- `int i = this.mTabCount`  L721
+- `float f2 = this.mTabWidth`  L733
+- `int i2 = this.mHeight`  L741
+- `int i = this.mTabCount`  L748
+
+方法（79）：
+- `void onPageScrollStateChanged(int state)`  L87 @Override
+- `public SlidingTabLayout(Context context)`  L90
+- `public SlidingTabLayout(Context context, AttributeSet attrs)`  L94
+- `public SlidingTabLayout(Context context, AttributeSet attrs, int defStyleAttr)`  L98
+    - 体内字面量："http://schemas.android.com/apk/res/android" · "layout_height" · "-1" · "-2"
+- `void obtainAttributes(Context context, AttributeSet attrs)`  L128
+- `void setViewPager(ViewPager vp)`  L166
+    - 体内字面量："ViewPager or ViewPager adapter can not be NULL !"
+- `void setViewPager(ViewPager vp, String[] titles)`  L176
+    - 体内字面量："ViewPager or ViewPager adapter can not be NULL !" · "Titles can not be EMPTY !" · "Titles length must be the same as the page count !"
+- `void setViewPager(ViewPager vp, String[] titles, FragmentActivity fa, ArrayList<Fragment> fragments)`  L195
+    - 体内字面量："ViewPager can not be NULL !" · "Titles can not be EMPTY !"
+- `void notifyDataSetChanged()`  L209
+- `void addNewTab(String title)`  L221
+- `void addTab(final int position, String title, View tabView)`  L234
+- `void onClick(View v)`  L241 @Override
+- `void updateTabStyles()`  L269
+- `void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)`  L293 @Override
+- `void onPageSelected(int position)`  L301 @Override
+- `void scrollToCurrentTab()`  L305
+- `void updateTabSelection(int position)`  L322
+- `void calcIndicatorRect()`  L338
+- `void onDraw(Canvas canvas)`  L387 @Override
+- `void setCurrentTab(int currentTab)`  L458
+- `void setCurrentTab(int currentTab, boolean smoothScroll)`  L463
+- `void setIndicatorStyle(int indicatorStyle)`  L468
+- `void setTabPadding(float tabPadding)`  L473
+- `void setTabSpaceEqual(boolean tabSpaceEqual)`  L478
+- `void setTabWidth(float tabWidth)`  L483
+- `void setIndicatorColor(int indicatorColor)`  L488
+- `void setIndicatorHeight(float indicatorHeight)`  L493
+- `void setIndicatorWidth(float indicatorWidth)`  L498
+- `void setIndicatorCornerRadius(float indicatorCornerRadius)`  L503
+- `void setIndicatorGravity(int indicatorGravity)`  L508
+- `void setIndicatorMargin(float indicatorMarginLeft, float indicatorMarginTop, float indicatorMarginRight, float indicatorMarginBottom)`  L513
+- `void setIndicatorWidthEqualTitle(boolean indicatorWidthEqualTitle)`  L521
+- `void setUnderlineColor(int underlineColor)`  L526
+- `void setUnderlineHeight(float underlineHeight)`  L531
+- `void setUnderlineGravity(int underlineGravity)`  L536
+- `void setDividerColor(int dividerColor)`  L541
+- `void setDividerWidth(float dividerWidth)`  L546
+- `void setDividerPadding(float dividerPadding)`  L551
+- `void setTextsize(float textsize)`  L556
+- `void setTextSelectColor(int textSelectColor)`  L561
+- `void setTextUnselectColor(int textUnselectColor)`  L566
+- `void setTextBold(int textBold)`  L571
+- `void setTextAllCaps(boolean textAllCaps)`  L576
+- `void setSnapOnTabClick(boolean snapOnTabClick)`  L581
+- `int getTabCount()`  L585
+- `int getCurrentTab()`  L589
+- `int getIndicatorStyle()`  L593
+- `float getTabPadding()`  L597
+- `boolean isTabSpaceEqual()`  L601
+- `float getTabWidth()`  L605
+- `int getIndicatorColor()`  L609
+- `float getIndicatorHeight()`  L613
+- `float getIndicatorWidth()`  L617
+- `float getIndicatorCornerRadius()`  L621
+- `float getIndicatorMarginLeft()`  L625
+- `float getIndicatorMarginTop()`  L629
+- `float getIndicatorMarginRight()`  L633
+- `float getIndicatorMarginBottom()`  L637
+- `int getUnderlineColor()`  L641
+- `float getUnderlineHeight()`  L645
+- `int getDividerColor()`  L649
+- `float getDividerWidth()`  L653
+- `float getDividerPadding()`  L657
+- `float getTextsize()`  L661
+- `int getTextSelectColor()`  L665
+- `int getTextUnselectColor()`  L669
+- `int getTextBold()`  L673
+- `boolean isTextAllCaps()`  L677
+- `TextView getTitleView(int tab)`  L681
+- `void showMsg(int position, int num)`  L685
+- `void showDot(int position)`  L700
+- `void hideMsg(int position)`  L708
+- `void setMsgMargin(int position, float leftPadding, float bottomPadding)`  L719
+- `MsgView getMsgView(int position)`  L747
+- `void setOnTabSelectListener(OnTabSelectListener listener)`  L755
+- `Parcelable onSaveInstanceState()`  L796 @Override
+    - 体内字面量："instanceState" · "mCurrentTab"
+- `void onRestoreInstanceState(Parcelable state)`  L804 @Override
+    - 体内字面量："mCurrentTab" · "instanceState"
+- `int dp2px(float dp)`  L817
+- `int sp2px(float sp)`  L821
+### `com.flyco.tablayout.SlidingTabLayout$InnerPagerAdapter`
+L759 · [class] InnerPagerAdapter · extends `FragmentPagerAdapter` · `com/flyco/tablayout/SlidingTabLayout.java`
+
+字段/常量（2）：
+- `ArrayList<Fragment> fragments`  L760
+- `String[] titles`  L761
+
+方法（6）：
+- `void destroyItem(ViewGroup container, int position, Object object)`  L764 @Override
+- `int getItemPosition(Object object)`  L768 @Override
+- `public InnerPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments, String[] titles)`  L772
+- `int getCount()`  L780 @Override
+- `CharSequence getPageTitle(int position)`  L785 @Override
+- `Fragment getItem(int position)`  L790 @Override

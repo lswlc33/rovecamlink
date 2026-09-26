@@ -285,7 +285,7 @@ internal fun humanBytes(b: Long): String = when {
  * Firmware OTA state → the one-line status the settings page shows.
  *
  * Raw strings on purpose, and Chinese ones: this is a developer-visible status, and the
- * `docs/06` rule that the exported log has to be readable by the person in the field
+ * `docs/impl/diagnostics-log` rule that the exported log has to be readable by the person in the field
  * applies to the screen that mirrors it. States that carry real content — an offer with a
  * version and a size, a download with byte counts — render as their own rows instead, and
  * return "" here rather than repeating themselves.
@@ -1673,7 +1673,7 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
 
                         is OtaState.ReadyToInstall -> {
                             valueItem(statusLbl, readyText)
-                            // R5 (`docs/04 §6.1`): the precondition is checked before the
+                            // R5 (`docs/analysis/ota-and-gaps §6.1`): the precondition is checked before the
                             // entry, and the reason is shown *on* the greyed row — a greyed
                             // control that does not say why is what this app's own UI rule
                             // forbids, and the summary slot is where an entry says it.

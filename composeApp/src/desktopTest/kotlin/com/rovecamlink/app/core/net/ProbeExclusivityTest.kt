@@ -31,7 +31,7 @@ import kotlin.test.assertEquals
  *
  * Bodies are transcriptions, not inventions — the XTU one from the hi3510 simulator, the
  * iCatch pair from `IcatchSimulator` (which itself mirrors what the official apps parse),
- * and TUWIN's from `docs/08 01-TUWIN-档案.md` §2.1 row 4.
+ * and TUWIN's from `docs/evidence/tuwin` §2.1 row 4.
  */
 class ProbeExclusivityTest {
 

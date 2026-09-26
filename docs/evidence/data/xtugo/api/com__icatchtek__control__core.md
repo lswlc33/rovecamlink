@@ -1,0 +1,993 @@
+# XTU GO — 类与成员明细：com.icatchtek.control.core
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 32 个文件 / 33 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.icatchtek.control.core.CoreContainer`
+L6 · [class] public CoreContainer · `com/icatchtek/control/core/CoreContainer.java`
+
+字段/常量（1）：
+- `Context applicationContext`  L8
+
+方法（5）：
+- `private CoreContainer()`  L10
+- `CoreContainer getInstance()`  L13
+- `boolean prepareComponents(Context context)`  L17
+- `boolean destroyComponents()`  L22
+    - 体内字面量："sdk container" · "destroyComponents done"
+- `Context getApplicationContext()`  L27
+### `com.icatchtek.control.core.CoreLogger`
+L7 · [class] public CoreLogger · `com/icatchtek/control/core/CoreLogger.java`
+
+方法（3）：
+- `void logW(String str, String str2)`  L8
+    - 体内字面量："tag = " · "null" · "control app" · "tag = " · "null" · "control app"
+- `void logI(String str, String str2)`  L27
+    - 体内字面量："tag = " · "null" · "control app" · "tag = " · "null" · "control app"
+- `void logE(String str, String str2)`  L46
+    - 体内字面量："tag = " · "null" · "control app" · "tag = " · "null" · "control app"
+### `com.icatchtek.control.core.CoreMulticast`
+L14 · [class] public CoreMulticast · `com/icatchtek/control/core/CoreMulticast.java`
+
+字段/常量（6）：
+- `String MULTI_CAST_ADDR = "234.168.168.168"`  L15
+- `int MULTI_CAST_PORT = 5002`  L16
+- `WifiManager.MulticastLock multicastLock`  L17
+- `MulticastSocket multicastSocket`  L18
+- `MulticastSocket multicastSocket = this.multicastSocket`  L54
+- `WifiManager.MulticastLock multicastLock = this.multicastLock`  L59
+
+方法（3）：
+- `boolean prepare(Context context)`  L20
+    - 体内字面量："wifi" · "multicast.test"
+- `void release()`  L53
+- `String receive()`  L66
+    - 体内字面量："__multi_cast_recv__" · "address: " · "__multi_cast_recv__" · "content: "
+### `com.icatchtek.control.core.feature.ICatchCameraAssistImpl`
+L29 · [class] public ICatchCameraAssistImpl · extends `ICatchCameraAssist` · `com/icatchtek/control/core/feature/ICatchCameraAssistImpl.java`
+
+字段/常量（20）：
+- `int TRANSPORT_TYPE_MSDC_SCSI = 4`  L30
+- `int TRANSPORT_TYPE_NET_COMMON = 1`  L31
+- `int TRANSPORT_TYPE_UVC_BULK = 3`  L32
+- `int TRANSPORT_TYPE_UVC_ISO = 2`  L33
+- `int fileDescriptor`  L34
+- `String ipAddr`  L35
+- `int productID`  L36
+- `int transportType`  L37
+- `int vendorID`  L38
+- `byte[] __default_key = {33, 126, Ascii.SUB, Ascii.SYN, 40, -34, -46, -89, -85, -25, -123, -120, 9, -54, 64, 60}`  L39
+- `boolean tcpReceiverRun = false`  L40
+- `boolean receiverCanceled = true`  L41
+- `MulticastReceiver multicastReceiver = null`  L42
+- `boolean multicastReceiverRun = false`  L43
+- `FileInputStream fileInputStream`  L83
+- `FileOutputStream fileOutputStream = null`  L84
+- `byte[] bArr = new byte[2048]`  L96
+- `MulticastReceiver multicastReceiver`  L200
+- `int i2`  L201
+- `String strSimpleConfigGet_Jni = null`  L214
+
+方法（13）：
+- `public ICatchCameraAssistImpl(ICatchITransport iCatchITransport)`  L45
+- `boolean loadLibrary(Context context, String str, String str2)`  L66 @Override
+    - 体内字面量："libs" · "libs_dir" · "absolute path: " · "/" · "/"
+- `boolean copyLibrary(String str, String str2)`  L82
+- `boolean updateFw(ICatchCameraSession iCatchCameraSession, String str)`  L173 @Override
+- `void notifyUpdateFw()`  L178 @Override
+- `String simpleConfig(Context context, String str, String str2, String str3, String str4)`  L183 @Override
+- `String simpleConfig(Context context, String str, String str2, String str3, String str4, int i)`  L188 @Override
+- `String simpleConfig(Context context, String str, String str2, byte[] bArr, String str3, String str4, int i)`  L199 @Override
+- `boolean simpleConfigCancel()`  L285 @Override
+- `boolean startDeviceScan()`  L335 @Override
+- `boolean stopDeviceScan()`  L340 @Override
+- `boolean deviceInit(String str)`  L345 @Override
+- `boolean wakeUpCamera(String str)`  L350 @Override
+### `com.icatchtek.control.core.feature.ICatchCameraAssistImpl$MulticastReceiver`
+L297 · [class] private MulticastReceiver · extends `Thread` · `com/icatchtek/control/core/feature/ICatchCameraAssistImpl.java`
+
+字段/常量（3）：
+- `String content`  L298
+- `Context context`  L299
+- `int timeout`  L301
+
+方法（3）：
+- `public MulticastReceiver(Context context, int i)`  L303
+- `String getContent()`  L308
+- `void run()`  L313 @Override
+    - 体内字面量："multicast.receive" · "received content: "
+### `com.icatchtek.control.core.feature.ICatchCameraConfigImpl`
+L12 · [class] public ICatchCameraConfigImpl · implements `ICatchCameraConfig` · `com/icatchtek/control/core/feature/ICatchCameraConfigImpl.java`
+
+字段/常量（9）：
+- `int TRANSPORT_TYPE_MSDC_SCSI = 4`  L13
+- `int TRANSPORT_TYPE_NET_COMMON = 1`  L14
+- `int TRANSPORT_TYPE_UVC_BULK = 3`  L15
+- `int TRANSPORT_TYPE_UVC_ISO = 2`  L16
+- `int fileDescriptor`  L17
+- `String ipAddr`  L18
+- `int productID`  L19
+- `int transportType`  L20
+- `int vendorID`  L21
+
+方法（10）：
+- `public ICatchCameraConfigImpl(ICatchITransport iCatchITransport)`  L23
+- `boolean setConnectionCheckParam(int i)`  L44 @Override
+- `boolean setConnectionCheckParam(int i, double d, int i2)`  L49 @Override
+- `int getPtpTimeoutCheckCount()`  L54 @Override
+- `double getPtpTimeoutCheckIntervalInSecs()`  L59 @Override
+- `boolean enablePTPIP()`  L64 @Override
+- `boolean disablePTPIP()`  L69 @Override
+- `boolean enableSocketIO()`  L74 @Override
+- `boolean disableSocketIO()`  L79 @Override
+- `boolean enablePTPReconnection(boolean z)`  L84 @Override
+### `com.icatchtek.control.core.feature.ICatchCameraControlImpl`
+L31 · [class] public ICatchCameraControlImpl · implements `ICatchCameraControl` · `com/icatchtek/control/core/feature/ICatchCameraControlImpl.java`
+
+字段/常量（6）：
+- `int sessionID`  L32
+- `ICatchITransport transport`  L33
+- `ICatchITransport iCatchITransport = this.transport`  L211
+- `String str2`  L227
+- `BufferedReader bufferedReader = null`  L228
+- `String line = null`  L229
+
+方法（40）：
+- `public ICatchCameraControlImpl(int i, ICatchITransport iCatchITransport)`  L35
+- `List<Integer> getSupportedModes()`  L41 @Override
+- `int getCurrentCameraMode()`  L46 @Override
+- `boolean changePreviewMode(int i)`  L51 @Override
+- `boolean startTimeLapse()`  L56 @Override
+- `boolean stopTimeLapse()`  L61 @Override
+- `int getCurrentBatteryLevel()`  L66 @Override
+- `boolean isSDCardExist()`  L71 @Override
+- `int getFreeSpaceInImages()`  L76 @Override
+- `int getRemainRecordingTime()`  L81 @Override
+- `boolean supportVideoPlayback()`  L86 @Override
+- `int startMovieRecord()`  L91 @Override
+- `int stopMovieRecord()`  L96 @Override
+- `int stopMovieRecord(int i)`  L101 @Override
+- `boolean capturePhoto()`  L106 @Override
+- `boolean capturePhoto(int i)`  L111 @Override
+- `boolean triggerCapturePhoto()`  L116 @Override
+- `int formatStorage()`  L121 @Override
+- `int formatStorage(int i)`  L126 @Override
+- `boolean setAudioMute()`  L131 @Override
+- `boolean setAudioUnMute()`  L136 @Override
+- `boolean setEventTrigger()`  L141 @Override
+- `ICatchCamVideoRecordStatus getVideoRecordStatus()`  L146 @Override
+- `boolean zoomIn()`  L155 @Override
+- `boolean zoomOut()`  L160 @Override
+- `boolean pan(int i, int i2)`  L165 @Override
+- `boolean panReset()`  L170 @Override
+- `boolean toStandbyMode()`  L175 @Override
+- `boolean setFileProtection(ICatchFile iCatchFile, int i)`  L180 @Override
+- `boolean setExtensionUnitID(int i)`  L185 @Override
+- `int extensionUnitGetLength(int i)`  L190 @Override
+- `boolean extensionUnitSet(int i, byte[] bArr, int i2)`  L195 @Override
+- `int extensionUnitGet(int i, byte[] bArr)`  L200 @Override
+- `boolean setVideoStreamInterface(int i)`  L205 @Override
+- `String getMacAddress()`  L210 @Override
+- `String getMatchedLineFromArpCache(String str)`  L226
+- `boolean addEventListener(int i, ICatchCameraListener iCatchCameraListener)`  L283 @Override
+- `boolean delEventListener(int i, ICatchCameraListener iCatchCameraListener)`  L288 @Override
+- `boolean addCustomEventListener(int i, ICatchCameraListener iCatchCameraListener)`  L293 @Override
+- `boolean delCustomEventListener(int i, ICatchCameraListener iCatchCameraListener)`  L298 @Override
+### `com.icatchtek.control.core.feature.ICatchCameraInfoImpl`
+L8 · [class] public ICatchCameraInfoImpl · implements `ICatchCameraInfo` · `com/icatchtek/control/core/feature/ICatchCameraInfoImpl.java`
+
+字段/常量（1）：
+- `int sessionID`  L9
+
+方法（4）：
+- `public ICatchCameraInfoImpl(int i)`  L11
+- `String getSDKVersion()`  L16 @Override
+- `String getCameraProductName()`  L21 @Override
+- `String getCameraFWVersion()`  L26 @Override
+### `com.icatchtek.control.core.feature.ICatchCameraPlaybackImpl`
+L19 · [class] public ICatchCameraPlaybackImpl · implements `ICatchCameraPlayback` · `com/icatchtek/control/core/feature/ICatchCameraPlaybackImpl.java`
+
+字段/常量（2）：
+- `int sessionID`  L20
+- `int i = 9980928`  L73
+
+方法（19）：
+- `public ICatchCameraPlaybackImpl(int i)`  L22
+- `boolean setFileListAttribute(int i, int i2)`  L27 @Override
+- `boolean setFileListAttribute(int i, int i2, int i3)`  L32 @Override
+- `int getFileCount()`  L37 @Override
+- `List<ICatchFile> listFiles(int i)`  L42 @Override
+- `List<ICatchFile> listFiles(int i, int i2)`  L47 @Override
+- `List<ICatchFile> listFiles(int i, int i2, int i3, int i4)`  L52 @Override
+- `boolean openFileTransChannel()`  L57 @Override
+- `boolean downloadFileQuick(ICatchFile iCatchFile, String str)`  L62 @Override
+- `boolean closeFileTransChannel()`  L67 @Override
+- `ICatchFrameBuffer downloadFile(ICatchFile iCatchFile)`  L72 @Override
+- `boolean uploadFile(String str, String str2)`  L88 @Override
+- `boolean uploadFileQuick(String str, String str2)`  L93 @Override
+- `boolean cancelFileDownload()`  L98 @Override
+- `boolean downloadFile(ICatchFile iCatchFile, String str)`  L103 @Override
+- `boolean downloadFile(String str, String str2)`  L108 @Override
+- `boolean deleteFile(ICatchFile iCatchFile)`  L113 @Override
+- `ICatchFrameBuffer getThumbnail(ICatchFile iCatchFile)`  L118 @Override
+- `ICatchFrameBuffer getQuickview(ICatchFile iCatchFile)`  L125 @Override
+### `com.icatchtek.control.core.feature.ICatchCameraPropertyImpl`
+L17 · [class] public ICatchCameraPropertyImpl · implements `ICatchCameraProperty` · `com/icatchtek/control/core/feature/ICatchCameraPropertyImpl.java`
+
+字段/常量（2）：
+- `int sessionID`  L18
+- `byte[] bArr = new byte[1024]`  L101
+
+方法（60）：
+- `public ICatchCameraPropertyImpl(int i)`  L20
+- `boolean setPropertyValue(int i, int i2)`  L25 @Override
+- `boolean setPropertyValue(int i, int i2, int i3)`  L30 @Override
+- `int getCurrentPropertyValue(int i)`  L35 @Override
+- `int getCurrentPropertyValue(int i, int i2)`  L40 @Override
+- `boolean setProperty(int i, byte[] bArr, int i2)`  L45 @Override
+- `int getProperty(int i, byte[] bArr)`  L50 @Override
+- `List<Integer> getSupportedPropertyValues(int i)`  L55 @Override
+- `List<Integer> getSupportedPropertyValues(int i, int i2)`  L60 @Override
+- `boolean setStringPropertyValue(int i, String str)`  L65 @Override
+- `boolean setStringPropertyValue(int i, String str, int i2)`  L70 @Override
+- `String getCurrentStringPropertyValue(int i)`  L75 @Override
+- `String getCurrentStringPropertyValue(int i, int i2)`  L80 @Override
+- `List<String> getSupportedStringPropertyValues(int i)`  L85 @Override
+- `List<String> getSupportedStringPropertyValues(int i, int i2)`  L90 @Override
+- `boolean setByteArrayPropertyValue(int i, ICatchCamByteArray iCatchCamByteArray, int i2)`  L95 @Override
+- `ICatchCamByteArray getCurrentByteArrayPropertyValue(int i, int i2)`  L100 @Override
+- `boolean setLightFrequency(int i)`  L110 @Override
+- `List<Integer> getSupportedLightFrequencies()`  L115 @Override
+- `int getCurrentLightFrequency()`  L120 @Override
+- `boolean setWhiteBalance(int i)`  L125 @Override
+- `List<Integer> getSupportedWhiteBalances()`  L130 @Override
+- `int getCurrentWhiteBalance()`  L135 @Override
+- `boolean setCaptureDelay(int i)`  L140 @Override
+- `List<Integer> getSupportedCaptureDelays()`  L145 @Override
+- `int getCurrentCaptureDelay()`  L150 @Override
+- `boolean setImageSize(String str)`  L155 @Override
+- `List<String> getSupportedImageSizes()`  L160 @Override
+- `String getCurrentImageSize()`  L165 @Override
+- `boolean setVideoSize(String str)`  L170 @Override
+- `List<String> getSupportedVideoSizes()`  L175 @Override
+- `String getCurrentVideoSize()`  L180 @Override
+- `boolean setBurstNumber(int i)`  L185 @Override
+- `List<Integer> getSupportedBurstNumbers()`  L190 @Override
+- `int getCurrentBurstNumber()`  L195 @Override
+- `boolean setDateStamp(int i)`  L200 @Override
+- `List<Integer> getSupportedDateStamps()`  L205 @Override
+- `int getCurrentDateStamp()`  L210 @Override
+- `List<Integer> getSupportedTimeLapseIntervals()`  L215 @Override
+- `boolean setTimeLapseInterval(int i)`  L220 @Override
+- `int getCurrentTimeLapseInterval()`  L225 @Override
+- `List<Integer> getSupportedTimeLapseDurations()`  L230 @Override
+- `boolean setTimeLapseDuration(int i)`  L235 @Override
+- `int getCurrentTimeLapseDuration()`  L240 @Override
+- `int getCurrentUpsideDown()`  L245 @Override
+- `boolean setUpsideDown(int i)`  L250 @Override
+- `int getCurrentSlowMotion()`  L255 @Override
+- `boolean setSlowMotion(int i)`  L260 @Override
+- `int getMaxZoomRatio()`  L265 @Override
+- `int getCurrentZoomRatio()`  L270 @Override
+- `List<Integer> getSupportedProperties()`  L275 @Override
+- `boolean setSeamless(int i)`  L280 @Override
+- `List<Integer> getSupportedSeamlesses()`  L285 @Override
+- `int getCurrentSeamless()`  L290 @Override
+- `List<ICatchVideoFormat> getSupportedStreamingInfos()`  L295 @Override
+- `ICatchVideoFormat getCurrentStreamingInfo()`  L300 @Override
+- `boolean setStreamingInfo(ICatchVideoFormat iCatchVideoFormat)`  L305 @Override
+- `int getPreviewCacheTime()`  L313 @Override
+- `int getNumberOfSensors()`  L318 @Override
+- `boolean checkCameraCapabilities(int i)`  L323 @Override
+### `com.icatchtek.control.core.feature.ICatchCameraStateImpl`
+L9 · [class] public ICatchCameraStateImpl · implements `ICatchCameraState` · `com/icatchtek/control/core/feature/ICatchCameraStateImpl.java`
+
+字段/常量（1）：
+- `int sessionID`  L10
+
+方法（8）：
+- `public ICatchCameraStateImpl(int i)`  L12
+- `boolean isStreaming()`  L18 @Override @Deprecated
+- `boolean isMovieRecording()`  L23 @Override
+- `boolean isMoviePlaying()`  L28 @Override
+- `boolean isTimeLapseStillOn()`  L33 @Override
+- `boolean isTimeLapseVideoOn()`  L38 @Override
+- `boolean supportImageAutoDownload()`  L43 @Override
+- `boolean isCameraBusy()`  L48 @Override
+### `com.icatchtek.control.core.feature.ICatchSingletonFactory`
+L13 · [class] public ICatchSingletonFactory · `com/icatchtek/control/core/feature/ICatchSingletonFactory.java`
+
+字段/常量（4）：
+- `ICatchCameraAssist cameraAssistNet`  L15
+- `ICatchCameraAssist cameraAssistUsb`  L16
+- `ICatchCameraConfig cameraConfigNet`  L17
+- `ICatchCameraConfig cameraConfigUsb`  L18
+
+方法（4）：
+- `ICatchSingletonFactory getInstance()`  L20
+- `ICatchCameraConfig getCameraConfig(ICatchITransport iCatchITransport)`  L24
+    - 体内字面量："Transport should not be null." · "Transport Not supported."
+- `ICatchCameraAssist getCameraAssist(ICatchITransport iCatchITransport)`  L47
+    - 体内字面量："Transport should not be null." · "Transport Not supported."
+- `private ICatchSingletonFactory()`  L70
+### `com.icatchtek.control.core.jni.extractor.NativeValueExtractor`
+L41 · [class] public NativeValueExtractor · `com/icatchtek/control/core/jni/extractor/NativeValueExtractor.java`
+
+方法（6）：
+- `String extractNativeStringValue(String str)`  L42
+    - 体内字面量："RET_ERR" · "RET_STRING" · "NativeValueExtractor" · "Fatal error, invalid data from jni layer."
+- `int extractNativeIntValue(String str)`  L53
+    - 体内字面量："RET_ERR" · "RET_INT" · "NativeValueExtractor" · "Fatal error, invalid data from jni layer."
+- `long extractNativeLongValue(String str)`  L64
+    - 体内字面量："RET_ERR" · "RET_LONG" · "NativeValueExtractor" · "Fatal error, invalid data from jni layer."
+- `boolean extractNativeBoolValue(String str)`  L75
+    - 体内字面量："RET_ERR" · "RET_BOOL" · "NativeValueExtractor" · "Fatal error, invalid data from jni layer."
+- `double extractNativeDoubleValue(String str)`  L86
+    - 体内字面量："RET_ERR" · "RET_DOUBLE" · "NativeValueExtractor" · "Fatal error, invalid data from jni layer. "
+- `void errorToException(int i)`  L97
+    - 体内字面量："error Exception mapping" · "unknown errorID: "
+### `com.icatchtek.control.core.jni.extractor.NativeValueTag`
+L4 · [class] public NativeValueTag · `com/icatchtek/control/core/jni/extractor/NativeValueTag.java`
+
+字段/常量（7）：
+- `String RETURN_BOOL_TAG = "RET_BOOL"`  L5
+- `String RETURN_DOUBLE_TAG = "RET_DOUBLE"`  L6
+- `String RETURN_ERR_TAG = "RET_ERR"`  L7
+- `String RETURN_INT_TAG = "RET_INT"`  L8
+- `String RETURN_LONG_TAG = "RET_LONG"`  L9
+- `String RETURN_STRING_TAG = "RET_STRING"`  L10
+- `String SEPARATOR_TAG = "::"`  L11
+### `com.icatchtek.control.core.jni.extractor.NativeValueUtil`
+L6 · [class] public NativeValueUtil · `com/icatchtek/control/core/jni/extractor/NativeValueUtil.java`
+
+方法（6）：
+- `int getIntValue(String str)`  L7
+    - 体内字面量："::" · "RET_INT"
+- `long getLongValue(String str)`  L15
+    - 体内字面量："::" · "RET_LONG"
+- `int getErrValue(String str)`  L23
+    - 体内字面量："::" · "RET_ERR"
+- `boolean getBoolValue(String str)`  L31
+    - 体内字面量："::" · "RET_BOOL"
+- `double getDoubleValue(String str)`  L36
+    - 体内字面量："::" · "RET_DOUBLE"
+- `String getStringValue(String str)`  L44
+    - 体内字面量："::" · "RET_STRING"
+### `com.icatchtek.control.core.jni.JCameraAssist`
+L18 · [class] public JCameraAssist · `com/icatchtek/control/core/jni/JCameraAssist.java`
+
+方法（24）：
+- `String addEventListener(int i, CoreEventListener coreEventListener, int i2, boolean z)`  L19
+- `String deviceInit(int i, String str, int i2, int i3, int i4, String str2)`  L21
+- `String notifyUpdateFw(int i, String str, int i2, int i3, int i4)`  L23
+- `String removeEventListener(int i, int i2, boolean z)`  L25
+- `String simpleConfig(int i, String str, int i2, int i3, int i4, String str2, String str3, byte[] bArr, String str4, String str5, int i5)`  L27
+- `String simpleConfigCancel(int i, String str, int i2, int i3, int i4)`  L29
+- `String simpleConfigGet(int i, String str, int i2, int i3, int i4)`  L31
+- `String startDeviceScan(int i, String str, int i2, int i3, int i4)`  L33
+- `String stopDeviceScan(int i, String str, int i2, int i3, int i4)`  L35
+- `String supportLocalPlay(int i, String str, int i2, int i3, int i4, String str2)`  L37
+- `String updateFw(int i, String str, int i2, int i3, int i4, int i5, String str2)`  L39
+- `String wakeUpCamera(int i, String str, int i2, int i3, int i4, String str2)`  L41
+- `boolean supportLocalPlay_Jni(int i, String str, int i2, int i3, int i4, String str2)`  L47
+- `boolean updateFw_Jni(int i, String str, int i2, int i3, int i4, int i5, String str2)`  L56
+- `void notifyUpdateFw_Jni(int i, String str, int i2, int i3, int i4)`  L79
+- `boolean simpleConfig_Jni(int i, String str, int i2, int i3, int i4, String str2, String str3, byte[] bArr, String str4, String str5, int i5)`  L83
+- `String simpleConfigGet_Jni(int i, String str, int i2, int i3, int i4)`  L94
+- `boolean simpleConfigCancel_Jni(int i, String str, int i2, int i3, int i4)`  L105
+- `boolean startDeviceScan_Jni(int i, String str, int i2, int i3, int i4)`  L114
+- `boolean stopDeviceScan_Jni(int i, String str, int i2, int i3, int i4)`  L123
+- `boolean deviceInit_Jni(int i, String str, int i2, int i3, int i4, String str2)`  L132
+- `boolean wakeUpCamera_Jni(int i, String str, int i2, int i3, int i4, String str2)`  L141
+    - 体内字面量："mac address should not be null."
+- `boolean addEventListener_Jni(int i, CoreEventListener coreEventListener, int i2, boolean z)`  L155
+- `boolean removeEventListener_Jni(int i, int i2, boolean z)`  L166
+### `com.icatchtek.control.core.jni.JCameraConfig`
+L7 · [class] public JCameraConfig · `com/icatchtek/control/core/jni/JCameraConfig.java`
+
+方法（18）：
+- `String disablePTPIP(int i, String str, int i2, int i3, int i4)`  L8
+- `String disableSocketIO(int i, String str, int i2, int i3, int i4)`  L10
+- `String enablePTPIP(int i, String str, int i2, int i3, int i4)`  L12
+- `String enablePtpReconnection(int i, String str, int i2, int i3, int i4, boolean z)`  L14
+- `String enableSocketIO(int i, String str, int i2, int i3, int i4)`  L16
+- `String getPtpTimeoutCheckCount(int i, String str, int i2, int i3, int i4)`  L18
+- `String getPtpTimeoutCheckIntervalInSecs(int i, String str, int i2, int i3, int i4)`  L20
+- `String setConnectionCheckParam(int i, String str, int i2, int i3, int i4, int i5, int i6)`  L22
+- `String setConnectionCheckParamA(int i, String str, int i2, int i3, int i4, int i5, double d, int i6)`  L24
+- `boolean setConnectionCheckParam_Jni(int i, String str, int i2, int i3, int i4, int i5, int i6)`  L30
+- `boolean setConnectionCheckParam_Jni(int i, String str, int i2, int i3, int i4, int i5, double d, int i6)`  L39
+- `int getPtpTimeoutCheckCount_Jni(int i, String str, int i2, int i3, int i4)`  L48
+- `double getPtpTimeoutCheckIntervalInSecs_Jni(int i, String str, int i2, int i3, int i4)`  L57
+- `boolean enablePTPIP_Jni(int i, String str, int i2, int i3, int i4)`  L66
+- `boolean disablePTPIP_Jni(int i, String str, int i2, int i3, int i4)`  L75
+- `boolean enableSocketIO_Jni(int i, String str, int i2, int i3, int i4)`  L84
+- `boolean disableSocketIO_Jni(int i, String str, int i2, int i3, int i4)`  L93
+- `boolean enablePtpReconnect_Jni(int i, String str, int i2, int i3, int i4, boolean z)`  L102
+### `com.icatchtek.control.core.jni.JCameraControl`
+L22 · [class] public JCameraControl · `com/icatchtek/control/core/jni/JCameraControl.java`
+
+方法（74）：
+- `String addCustomEventListener(int i, int i2, CoreEventListener coreEventListener, int i3)`  L23
+- `String addEventListener(int i, int i2, CoreEventListener coreEventListener, int i3)`  L25
+- `String capturePhotoA(int i)`  L27
+- `String capturePhotoB(int i, int i2)`  L29
+- `String changePreviewMode(int i, int i2)`  L31
+- `String extensionUnitGet(int i, int i2, byte[] bArr)`  L33
+- `String extensionUnitGetLength(int i, int i2)`  L35
+- `String extensionUnitSet(int i, int i2, byte[] bArr, int i3)`  L37
+- `String formatStorage1(int i)`  L39
+- `String formatStorage2(int i, int i2)`  L41
+- `String getCurrentBatteryLevel(int i)`  L43
+- `String getCurrentCameraMode(int i)`  L45
+- `String getFreeSpaceInImages(int i)`  L47
+- `String getRemainRecordingTime(int i)`  L49
+- `String getSupportedModes(int i)`  L51
+- `String getVideoRecordStatus(int i)`  L53
+- `String isSDCardExist(int i)`  L55
+- `String pan(int i, int i2, int i3)`  L57
+- `String panReset(int i)`  L59
+- `String removeCustomEventListener(int i, int i2, int i3)`  L61
+- `String removeEventListener(int i, int i2, int i3)`  L63
+- `String setAudioMute(int i)`  L65
+- `String setAudioUnMute(int i)`  L67
+- `String setEventTrigger(int i)`  L69
+- `String setExtensionUnitID(int i, int i2)`  L71
+- `String setFileProtection(int i, String str, int i2)`  L73
+- `String setVideoStreamInterface(int i, int i2)`  L75
+- `String startMovieRecord(int i)`  L77
+- `String startTimeLapse(int i)`  L79
+- `String stopMovieRecord1(int i)`  L81
+- `String stopMovieRecord2(int i, int i2)`  L83
+- `String stopTimeLapse(int i)`  L85
+- `String supportedVideoPlayback(int i)`  L87
+- `String toStandbyMode(int i)`  L89
+- `String triggerCapturePhoto(int i)`  L91
+- `String zoomIn(int i)`  L93
+- `String zoomOut(int i)`  L95
+- `String getSupportedModes_Jni(int i)`  L101
+- `int getCurrentCameraMode_Jni(int i)`  L116
+- `boolean changePreviewMode_Jni(int i, int i2)`  L125
+- `boolean startTimeLapse_Jni(int i)`  L136
+- `boolean stopTimeLapse_Jni(int i)`  L151
+- `int getCurrentBatteryLevel_Jni(int i)`  L166
+- `int startMovieRecord_Jni(int i)`  L183
+- `int stopMovieRecord_Jni(int i)`  L200
+- `int stopMovieRecord_Jni(int i, int i2)`  L217
+- `boolean capturePhoto_Jni(int i)`  L234
+- `boolean capturePhoto_Jni(int i, int i2)`  L253
+- `boolean triggerCapturePhoto_Jni(int i)`  L270
+- `int formatStorage_Jni(int i)`  L287
+- `int formatStorage_Jni(int i, int i2)`  L306
+- `boolean setAudioMute_Jni(int i)`  L325
+- `boolean setAudioUnMute_Jni(int i)`  L342
+- `boolean setEventTrigger_Jni(int i)`  L359
+- `String getVideoRecordStatus_Jni(int i)`  L376
+- `boolean zoomIn_Jni(int i)`  L393
+- `boolean zoomOut_Jni(int i)`  L410
+- `boolean pan_Jni(int i, int i2, int i3)`  L427
+- `boolean panReset_Jni(int i)`  L436
+- `boolean toStandbyMode_Jni(int i)`  L445
+- `boolean setFileProtection_Jni(int i, ICatchFile iCatchFile, int i2)`  L460
+- `boolean isSDCardExist_Jni(int i)`  L475
+- `int getFreeSpaceInImages_Jni(int i)`  L492
+- `int getRemainRecordingTime_Jni(int i)`  L511
+- `boolean supportedVideoPlayback_Jni(int i)`  L530
+- `boolean setExtensionUnitID_Jni(int i, int i2)`  L549
+- `int extensionUnitGetLength_Jni(int i, int i2)`  L566
+- `boolean extensionUnitSet_Jni(int i, int i2, byte[] bArr, int i3)`  L583
+- `int extensionUnitGet_Jni(int i, int i2, byte[] bArr)`  L600
+- `boolean setVideoStreamInterface_Jni(int i, int i2)`  L616
+- `boolean addEventListener_Jni(int i, int i2, CoreEventListener coreEventListener, int i3)`  L633
+- `boolean removeEventListener_Jni(int i, int i2, int i3)`  L646
+- `boolean addCustomEventListener_Jni(int i, int i2, CoreEventListener coreEventListener, int i3)`  L659
+- `boolean removeCustomEventListener_Jni(int i, int i2, int i3)`  L672
+### `com.icatchtek.control.core.jni.JCameraInfo`
+L9 · [class] public JCameraInfo · `com/icatchtek/control/core/jni/JCameraInfo.java`
+
+方法（6）：
+- `String getCameraFWVersion(int i)`  L10
+- `String getCameraProductName(int i)`  L12
+- `String getSDKVersion(int i)`  L14
+- `String getSDKVersion_Jni(int i)`  L20
+- `String getCameraFWVersion_Jni(int i)`  L31
+- `String getCameraProductName_Jni(int i)`  L42
+    - 体内字面量："xxx" · "getCameraProductName_Jni: "
+### `com.icatchtek.control.core.jni.JCameraLog`
+L6 · [class] public JCameraLog · `com/icatchtek/control/core/jni/JCameraLog.java`
+
+字段/常量（4）：
+- `int LOG_LEVEL_CONNECT = 0`  L7
+- `int LOG_LEVEL_ERROR = 3`  L8
+- `int LOG_LEVEL_INFO = 1`  L9
+- `int LOG_LEVEL_WARN = 2`  L10
+
+方法（7）：
+- `void setDebugMode(boolean z)`  L12
+- `void setFileLogOutput(boolean z)`  L14
+- `void setFileLogPath(String str)`  L16
+- `void setLog(int i, boolean z)`  L18
+- `void setLogLevel(int i, int i2)`  L20
+- `void setSystemLogOutput(boolean z)`  L22
+- `void writeLog(int i, String str, String str2)`  L24
+### `com.icatchtek.control.core.jni.JCameraPlayback`
+L15 · [class] public JCameraPlayback · `com/icatchtek/control/core/jni/JCameraPlayback.java`
+
+方法（34）：
+- `String cancelFileDownload(int i)`  L16
+- `String closeFileTransChannel(int i)`  L18
+- `String deleteFile(int i, String str)`  L20
+- `String downloadFile(int i, String str, String str2)`  L22
+- `String downloadFile1(int i, String str, String str2)`  L24
+- `String downloadFileQuick(int i, String str, String str2)`  L26
+- `String downloadImage(int i, String str, byte[] bArr)`  L28
+- `String getFileCount(int i)`  L30
+- `String getQuickView(int i, String str, byte[] bArr)`  L32
+- `String getThumbnail(int i, String str, byte[] bArr)`  L34
+- `String listFiles1(int i, int i2)`  L36
+- `String listFiles2(int i, int i2, int i3)`  L38
+- `String listFiles3(int i, int i2, int i3, int i4, int i5)`  L40
+- `String openFileTransChannel(int i)`  L42
+- `String setFileListAttribute(int i, int i2, int i3, int i4)`  L44
+- `String uploadFile(int i, String str, String str2)`  L46
+- `String uploadFileQuick(int i, String str, String str2)`  L48
+- `boolean setFileListAttribute_Jni(int i, int i2, int i3, int i4)`  L54
+- `int getFileCount_Jni(int i)`  L69
+- `String listFiles_Jni(int i, int i2)`  L84
+- `String listFiles_Jni(int i, int i2, int i3)`  L101
+- `String listFiles_Jni(int i, int i2, int i3, int i4, int i5)`  L118
+- `boolean openFileTransChannel_Jni(int i)`  L137
+- `boolean downloadFileQuick_Jni(int i, String str, String str2)`  L150
+- `boolean closeFileTransChannel_Jni(int i)`  L169
+- `int downloadImage_Jni(int i, String str, byte[] bArr)`  L182
+- `boolean downloadFile_Jni(int i, String str, String str2)`  L203
+- `boolean downloadFile1_Jni(int i, String str, String str2)`  L222
+- `boolean uploadFile_Jni(int i, String str, String str2)`  L241
+- `boolean uploadFileQuick_Jni(int i, String str, String str2)`  L258
+- `boolean cancelFileDownload_Jni(int i)`  L275
+- `boolean deleteFile_Jni(int i, String str)`  L292
+- `int getThumbnail_Jni(int i, String str, byte[] bArr)`  L311
+- `int getQuickView_Jni(int i, String str, byte[] bArr)`  L332
+### `com.icatchtek.control.core.jni.JCameraProperty`
+L14 · [class] public JCameraProperty · `com/icatchtek/control/core/jni/JCameraProperty.java`
+
+方法（118）：
+- `String checkCameraCapabilities(int i, int i2)`  L15
+- `String getCurrentBurstNumber(int i)`  L17
+- `String getCurrentCaptureDelay(int i)`  L19
+- `String getCurrentDateStamp(int i)`  L21
+- `String getCurrentImageSize(int i)`  L23
+- `String getCurrentLightFrequency(int i)`  L25
+- `String getCurrentPropertyValueByteArray(int i, int i2, byte[] bArr, int i3)`  L27
+- `String getCurrentPropertyValueNumeric1(int i, int i2)`  L29
+- `String getCurrentPropertyValueNumeric2(int i, int i2, int i3)`  L31
+- `String getCurrentPropertyValueString1(int i, int i2)`  L33
+- `String getCurrentPropertyValueString2(int i, int i2, int i3)`  L35
+- `String getCurrentSeamless(int i)`  L37
+- `String getCurrentSlowMotion(int i)`  L39
+- `String getCurrentStreamingInfo(int i)`  L41
+- `String getCurrentTimeLapseDuration(int i)`  L43
+- `String getCurrentTimeLapseInterval(int i)`  L45
+- `String getCurrentUpsideDown(int i)`  L47
+- `String getCurrentVideoSize(int i)`  L49
+- `String getCurrentWhiteBalance(int i)`  L51
+- `String getCurrentZoomRatio(int i)`  L53
+- `String getMaxZoomRatio(int i)`  L55
+- `String getNumberOfSensors(int i)`  L57
+- `String getPreviewCacheTime(int i)`  L59
+- `String getProperty(int i, int i2, byte[] bArr)`  L61
+- `String getSupportedBurstNumbers(int i)`  L63
+- `String getSupportedCaptureDelays(int i)`  L65
+- `String getSupportedDateStamps(int i)`  L67
+- `String getSupportedImageSizes(int i)`  L69
+- `String getSupportedLightFrequencies(int i)`  L71
+- `String getSupportedProperties(int i)`  L73
+- `String getSupportedPropertyValuesNumeric1(int i, int i2)`  L75
+- `String getSupportedPropertyValuesNumeric2(int i, int i2, int i3)`  L77
+- `String getSupportedPropertyValuesString1(int i, int i2)`  L79
+- `String getSupportedPropertyValuesString2(int i, int i2, int i3)`  L81
+- `String getSupportedSeamlesses(int i)`  L83
+- `String getSupportedStreamingInfos(int i)`  L85
+- `String getSupportedTimeLapseDurations(int i)`  L87
+- `String getSupportedTimeLapseIntervals(int i)`  L89
+- `String getSupportedVideoSizes(int i)`  L91
+- `String getSupportedWhiteBalances(int i)`  L93
+- `String setBurstNumber(int i, int i2)`  L95
+- `String setCaptureDelay(int i, int i2)`  L97
+- `String setDateStamp(int i, int i2)`  L99
+- `String setImageSize(int i, String str)`  L101
+- `String setLightFrequency(int i, int i2)`  L103
+- `String setProperty(int i, int i2, byte[] bArr, int i3)`  L105
+- `String setPropertyValueByteArray(int i, int i2, byte[] bArr, int i3, int i4)`  L107
+- `String setPropertyValueNumeric1(int i, int i2, int i3)`  L109
+- `String setPropertyValueNumeric2(int i, int i2, int i3, int i4)`  L111
+- `String setPropertyValueString1(int i, int i2, String str)`  L113
+- `String setPropertyValueString2(int i, int i2, String str, int i3)`  L115
+- `String setSeamless(int i, int i2)`  L117
+- `String setSlowMotion(int i, int i2)`  L119
+- `String setStreamingInfo(int i, String str)`  L121
+- `String setTimeLapseDuration(int i, int i2)`  L123
+- `String setTimeLapseInterval(int i, int i2)`  L125
+- `String setUpsideDown(int i, int i2)`  L127
+- `String setVideoSize(int i, String str)`  L129
+- `String setWhiteBalance(int i, int i2)`  L131
+- `int getCurrentNumericPropertyValue_Jni(int i, int i2)`  L137
+- `int getCurrentNumericPropertyValue_Jni(int i, int i2, int i3)`  L156
+- `boolean setProperty_Jni(int i, int i2, byte[] bArr, int i3)`  L173
+- `int getProperty_Jni(int i, int i2, byte[] bArr)`  L189
+- `boolean setNumericPropertyValue_Jni(int i, int i2, int i3)`  L205
+- `boolean setNumericPropertyValue_Jni(int i, int i2, int i3, int i4)`  L222
+- `String getSupportedNumericPropertyValues_Jni(int i, int i2)`  L239
+- `String getSupportedNumericPropertyValues_Jni(int i, int i2, int i3)`  L256
+- `boolean setStringPropertyValue_Jni(int i, int i2, String str)`  L273
+- `boolean setStringPropertyValue_Jni(int i, int i2, String str, int i3)`  L290
+- `String getCurrentStringPropertyValue_Jni(int i, int i2)`  L307
+- `String getCurrentStringPropertyValue_Jni(int i, int i2, int i3)`  L324
+- `String getSupportedStringPropertyValues_Jni(int i, int i2)`  L341
+- `String getSupportedStringPropertyValues_Jni(int i, int i2, int i3)`  L358
+- `boolean setByteArrayPropertyValue_Jni(int i, int i2, ICatchCamByteArray iCatchCamByteArray, int i3)`  L375
+- `int getCurrentByteArrayPropertyValue_Jni(int i, int i2, byte[] bArr, int i3)`  L392
+- `boolean setLightFrequency_Jni(int i, int i2)`  L409
+- `String getSupportedLightFrequencies_Jni(int i)`  L426
+- `int getCurrentLightFrequency_Jni(int i)`  L443
+- `boolean setWhiteBalance_Jni(int i, int i2)`  L460
+- `String getSupportedWhiteBalances_Jni(int i)`  L477
+- `int getCurrentWhiteBalance_Jni(int i)`  L494
+- `boolean setCaptureDelay_Jni(int i, int i2)`  L511
+- `String getSupportedCaptureDelays_Jni(int i)`  L528
+- `int getCurrentCaptureDelay_Jni(int i)`  L545
+- `boolean setImageSize_Jni(int i, String str)`  L562
+- `String getSupportedImageSizes_Jni(int i)`  L579
+- `String getCurrentImageSize_Jni(int i)`  L596
+- `boolean setVideoSize_Jni(int i, String str)`  L613
+- `String getSupportedVideoSizes_Jni(int i)`  L630
+- `String getCurrentVideoSize_Jni(int i)`  L647
+- `boolean setBurstNumber_Jni(int i, int i2)`  L664
+- `String getSupportedBurstNumbers_Jni(int i)`  L681
+- `int getCurrentBurstNumber_Jni(int i)`  L698
+- `boolean setDateStamp_Jni(int i, int i2)`  L715
+- `String getSupportedDateStamps_Jni(int i)`  L732
+- `int getCurrentDateStamp_Jni(int i)`  L749
+- `String getSupportedTimeLapseIntervals_Jni(int i)`  L766
+- `boolean setTimeLapseInterval_Jni(int i, int i2)`  L783
+- `int getCurrentTimeLapseInterval_Jni(int i)`  L800
+- `String getSupportedTimeLapseDurations_Jni(int i)`  L817
+- `boolean setTimeLapseDuration_Jni(int i, int i2)`  L834
+- `int getCurrentTimeLapseDuration_Jni(int i)`  L851
+- `int getCurrentUpsideDown_Jni(int i)`  L868
+- `boolean setUpsideDown_Jni(int i, int i2)`  L885
+- `int getCurrentSlowMotion_Jni(int i)`  L902
+- `boolean setSlowMotion_Jni(int i, int i2)`  L919
+- `int getMaxZoomRatio_Jni(int i)`  L936
+- `int getCurrentZoomRatio_Jni(int i)`  L953
+- `String getSupportedCapabilities_Jni(int i)`  L970
+- `boolean setSeamless_Jni(int i, int i2)`  L987
+- `String getSupportedSeamlesses_Jni(int i)`  L1004
+- `int getCurrentSeamless_Jni(int i)`  L1021
+- `String getSupportedStreamingInfos_Jni(int i)`  L1038
+- `String getCurrentStreamingInfo_Jni(int i)`  L1055
+- `boolean setStreamingInfo_Jni(int i, String str)`  L1072
+- `int getPreviewCacheTime_Jni(int i)`  L1089
+- `int getNumberOfSensors_Jni(int i)`  L1106
+- `boolean checkCameraCapabilities_Jni(int i, int i2)`  L1123
+### `com.icatchtek.control.core.jni.JCameraSession`
+L9 · [class] public JCameraSession · `com/icatchtek/control/core/jni/JCameraSession.java`
+
+方法（12）：
+- `String checkConnection(int i)`  L10
+- `String createJniSession()`  L12
+- `String deleteJniSession(int i)`  L14
+- `String destroySession(int i)`  L16
+- `String prepareSessionNET(int i, String str, String str2, String str3)`  L18
+- `String prepareSessionUVC(int i, boolean z, int i2, int i3, int i4)`  L20
+- `int createJniSession_Jni()`  L26
+- `boolean deleteJniSession_Jni(int i)`  L35
+- `int prepareSession_Jni(int i, String str, String str2, String str3)`  L44
+- `int prepareSession_Jni(int i, boolean z, int i2, int i3, int i4)`  L55
+- `boolean destroySession_Jni(int i)`  L66
+- `boolean checkConnection_Jni(int i)`  L77
+### `com.icatchtek.control.core.jni.JCameraState`
+L9 · [class] public JCameraState · `com/icatchtek/control/core/jni/JCameraState.java`
+
+方法（14）：
+- `String isCameraBusy(int i)`  L10
+- `String isMoviePlaying(int i)`  L12
+- `String isMovieRecording(int i)`  L14
+- `String isStreaming(int i)`  L16
+- `String isTimeLapseStillOn(int i)`  L18
+- `String isTimeLapseVideoOn(int i)`  L20
+- `String supportImageAutoDownload(int i)`  L22
+- `boolean isStreaming_Jni(int i)`  L28
+- `boolean isCameraBusy_Jni(int i)`  L41
+- `boolean isMovieRecording_Jni(int i)`  L52
+- `boolean isMoviePlaying_Jni(int i)`  L63
+- `boolean isTimeLapseStillOn_Jni(int i)`  L74
+- `boolean isTimeLapseVideoOn_Jni(int i)`  L85
+- `boolean supportImageAutoDownload_Jni(int i)`  L96
+### `com.icatchtek.control.core.jni.JCameraUtil`
+L8 · [class] public JCameraUtil · `com/icatchtek/control/core/jni/JCameraUtil.java`
+
+方法（4）：
+- `String convertImageSize(String str)`  L9
+- `String convertVideoSize(String str)`  L11
+- `int convertImageSize_Jni(String str)`  L17
+- `int convertVideoSize_Jni(String str)`  L28
+### `com.icatchtek.control.core.jni.util.DataTypeUtil`
+L14 · [class] public DataTypeUtil · `com/icatchtek/control/core/jni/util/DataTypeUtil.java`
+
+方法（8）：
+- `ICatchCamPhotoExif toPhotoExif(String str)`  L15
+- `List<Integer> splitStringToIntList(String str)`  L19
+    - 体内字面量：";"
+- `List<ICatchVideoFormat> splitStringToVideoFormatList(String str)`  L31
+    - 体内字面量：";"
+- `List<String> splitStringToStringList(String str)`  L45
+    - 体内字面量：";"
+- `PartialFrameInfo toPartialFrameInfo(String str)`  L57
+    - 体内字面量："codec" · "frameSize" · "presentationTime"
+- `ICatchVideoFormat toVideoFormat(String str)`  L77
+    - 体内字面量："DtaTypeUtil" · "value: " · "codecName" · "codec" · "videoW" · "videoH" · "durationUs" · "maxInputSize" · "frameRate" · "DtaTypeUtil" · "mineType: " · "DtaTypeUtil" · "codec: " · "DtaTypeUtil" · "videoW: " · "DtaTypeUtil" · "videoH: " · "DtaTypeUtil" · "bitrate: " · "DtaTypeUtil" · "durationUs: " · "DtaTypeUtil" · "maxInputSize: " · "DtaTypeUtil" · "fps: "
+- `String toVideoFormat(ICatchVideoFormat iCatchVideoFormat)`  L116
+    - 体内字面量："mineType" · "none/none" · "codec" · "videoW" · "videoH" · "durationUs" · "maxInputSize" · "frameRate"
+- `ICatchAudioFormat toAudioFormat(String str)`  L134
+    - 体内字面量："DtaTypeUtil" · "value: " · "codec" · "frequency" · "nChannels" · "sampleBits" · "DtaTypeUtil" · "codec: " · "DtaTypeUtil" · "frequency: " · "DtaTypeUtil" · "nChannels: " · "DtaTypeUtil" · "sampleBits: "
+### `com.icatchtek.control.core.jni.util.ExceptionErr`
+L4 · [class] public ExceptionErr · `com/icatchtek/control/core/jni/util/ExceptionErr.java`
+
+字段/常量（113）：
+- `int ICH_ALREADY_INIT = -221`  L5
+- `int ICH_AUDIO_STREAM_CLOSED = -91`  L6
+- `int ICH_BUF_TOO_SMALL = -7`  L7
+- `int ICH_CALLBACK_EXISTS = -40`  L8
+- `int ICH_CAM_BATTERY_LEVEL_NOT_SUPPORTED = -300`  L9
+- `int ICH_CAM_BURST_NUMBER_GET_FAILED = -322`  L10
+- `int ICH_CAM_BURST_NUMBER_NOT_SUPPORTED = -321`  L11
+- `int ICH_CAM_BURST_NUMBER_SET_FAILED = -323`  L12
+- `int ICH_CAM_CAPTURE_ERROR = -324`  L13
+- `int ICH_CAM_CAP_DELAY_GET_FAILED = -310`  L14
+- `int ICH_CAM_CAP_DELAY_NOT_SUPPORTED = -309`  L15
+- `int ICH_CAM_CAP_DELAY_SET_FAILED = -311`  L16
+- `int ICH_CAM_FREE_SPACE_IN_IMAGE_NOT_SUPPORTED = -329`  L17
+- `int ICH_CAM_IMAGE_SIZE_FORMAT_ERROR = -326`  L18
+- `int ICH_CAM_IMAGE_SIZE_GET_FAILED = -313`  L19
+- `int ICH_CAM_IMAGE_SIZE_NOT_SUPPORTED = -312`  L20
+- `int ICH_CAM_IMAGE_SIZE_SET_FAILED = -314`  L21
+- `int ICH_CAM_LIGHT_FREQ_GET_FAILED = -319`  L22
+- `int ICH_CAM_LIGHT_FREQ_NOT_SUPPORTED = -318`  L23
+- `int ICH_CAM_LIGHT_FREQ_SET_FAILED = -320`  L24
+- `int ICH_CAM_MODE_CAMERA_BUSY = -303`  L25
+- `int ICH_CAM_MODE_CHANGE_FAILED = -305`  L26
+- `int ICH_CAM_MODE_NOT_SUPPORT = -301`  L27
+- `int ICH_CAM_MODE_PTP_CLIENT_INVALID = -304`  L28
+- `int ICH_CAM_MODE_SET_ILLEGAL = -302`  L29
+- `int ICH_CAM_MTP_GET_OBJECTS_ERROR = -331`  L30
+- `int ICH_CAM_PROP_NOT_EXIST = -332`  L31
+- `int ICH_CAM_PROP_PARSE_ERROR = -335`  L32
+- `int ICH_CAM_PROP_TYPE_ERROR = -333`  L33
+- `int ICH_CAM_PROP_VALUE_ERROR = -334`  L34
+- `int ICH_CAM_PTP_INIT_FAILED = -337`  L35
+- `int ICH_CAM_REMAIN_RECORD_TIME_NOT_SUPPORTED = -330`  L36
+- `int ICH_CAM_SD_CARD_NOT_EXIST = -328`  L37
+- `int ICH_CAM_SESSION_PASSWORD_ERR = -336`  L38
+- `int ICH_CAM_STORAGE_FORMAT_ERROR = -325`  L39
+- `int ICH_CAM_TUTK_INIT_FAILED = -338`  L40
+- `int ICH_CAM_VIDEO_SIZE_FORMAT_ERROR = -327`  L41
+- `int ICH_CAM_VIDEO_SIZE_GET_FAILED = -316`  L42
+- `int ICH_CAM_VIDEO_SIZE_NOT_SUPPORTED = -315`  L43
+- `int ICH_CAM_VIDEO_SIZE_SET_FAILED = -317`  L44
+- `int ICH_CAM_WAIT_TIME_OUT = -339`  L45
+- `int ICH_CAM_WB_GET_FAILED = -307`  L46
+- `int ICH_CAM_WB_NOT_SUPPORTED = -306`  L47
+- `int ICH_CAM_WB_SET_FAILED = -308`  L48
+- `int ICH_DEVICE_BUSY = -1`  L49
+- `int ICH_DEVICE_ERROR = -2`  L50
+- `int ICH_ERROR_ACCESS = -22`  L51
+- `int ICH_ERROR_BUSY = -25`  L52
+- `int ICH_ERROR_INTERRUPTED = -29`  L53
+- `int ICH_ERROR_INVALID_DEVICE = -30`  L54
+- `int ICH_ERROR_INVALID_MODE = -31`  L55
+- `int ICH_ERROR_IO = -21`  L56
+- `int ICH_ERROR_NOT_FOUND = -24`  L57
+- `int ICH_ERROR_NO_DEVICE = -23`  L58
+- `int ICH_ERROR_OVERFLOW = -27`  L59
+- `int ICH_ERROR_PIPE = -28`  L60
+- `int ICH_ERROR_TIMEOUT = -26`  L61
+- `int ICH_FILE_NOT_FOUND = -9`  L62
+- `int ICH_FORMAT_NOT_SPECIFIED = -217`  L63
+- `int ICH_FORMAT_NOT_SUPPORTED = -216`  L64
+- `int ICH_INVALID_ARGUMENT = -12`  L65
+- `int ICH_INVALID_SESSION = -11`  L66
+- `int ICH_JNI_EXP = -41`  L67
+- `int ICH_LISTENER_EXISTS = -60`  L68
+- `int ICH_LISTENER_NOT_EXISTS = -61`  L69
+- `int ICH_MUXER_ALREADY_STARTED = -110`  L70
+- `int ICH_MUXER_NOT_STARTED = -112`  L71
+- `int ICH_MUXER_START_FAILED = -111`  L72
+- `int ICH_MUXER_WAITING_KEY_FRAME = -113`  L73
+- `int ICH_NOT_IMPLEMENTED = -4`  L74
+- `int ICH_NOT_INIT = -220`  L75
+- `int ICH_NOT_SUPPORTED = -3`  L76
+- `int ICH_NO_USB_ENDPOINT = -43`  L77
+- `int ICH_NO_USB_FRAME_INFO = -44`  L78
+- `int ICH_NO_USB_INTERFACE = -42`  L79
+- `int ICH_NO_USB_STREAM = -45`  L80
+- `int ICH_OPEN_FAIL = -120`  L81
+- `int ICH_OUT_OF_MEMORY = -8`  L82
+- `int ICH_PATH_NOT_FOUND = -10`  L83
+- `int ICH_PAUSE_FAILED = -72`  L84
+- `int ICH_PB_CACHING = -82`  L85
+- `int ICH_PB_MEM_FULL = -81`  L86
+- `int ICH_PB_PLAY_END = -83`  L87
+- `int ICH_PB_STREAM_PAUSED = -84`  L88
+- `int ICH_PERMISSION_DENIED = -5`  L89
+- `int ICH_PICTURE_NOT_SPECIFIED = -218`  L90
+- `int ICH_PTP_INIT_FAILED = -101`  L91
+- `int ICH_PUBLISH_ALREADY_START = -103`  L92
+- `int ICH_PUBLISH_ALREADY_STOP = -104`  L93
+- `int ICH_RENDER_ALREADY_INIT = -211`  L94
+- `int ICH_RENDER_ALREADY_STARTED = -213`  L95
+- `int ICH_RENDER_NOT_INIT = -210`  L96
+- `int ICH_RENDER_NOT_STARTED = -212`  L97
+- `int ICH_RESOURCE_NOT_READY = -202`  L98
+- `int ICH_RESUME_FAILED = -73`  L99
+- `int ICH_SEEK_FAILED = -71`  L100
+- `int ICH_SESSION_EXISTS = -203`  L101
+- `int ICH_SESSION_NOT_EXISTS = -204`  L102
+- `int ICH_SESSION_PASSWORD_ERR = -100`  L103
+- `int ICH_SOCKET_ERROR = -13`  L104
+- `int ICH_SPHERE_TYPE_NOT_SUPPORTED = -219`  L105
+- `int ICH_STREAM_ALREADY_STARTED = -206`  L106
+- `int ICH_STREAM_NOT_RUNNING = -92`  L107
+- `int ICH_STREAM_NOT_SUPPORT = -93`  L108
+- `int ICH_STREAM_PLAYING_ENDED = -205`  L109
+- `int ICH_SURFACE_ALREADY_SET = -215`  L110
+- `int ICH_SURFACE_NOT_SET = -214`  L111
+- `int ICH_TRANSPORT_ERROR = -207`  L112
+- `int ICH_TRY_AGAIN = -6`  L113
+- `int ICH_UNKNOWN_ERROR = -255`  L114
+- `int ICH_VIDEO_STREAM_CLOSED = -90`  L115
+- `int ICH_WAIT_TIME_OUT = -102`  L116
+- `int ICH_WIFI_DISCONNECTED = -14`  L117
+### `com.icatchtek.control.core.jni.util.ExceptionMsg`
+L4 · [class] public ExceptionMsg · `com/icatchtek/control/core/jni/util/ExceptionMsg.java`
+
+字段/常量（73）：
+- `String ICH_ALREADY_INIT_MSG = "already init"`  L5
+- `String ICH_AUDIO_STREAM_CLOSED_MSG = "audio stream closed"`  L6
+- `String ICH_BUF_TOO_SMALL_MSG = "buffer too small"`  L7
+- `String ICH_CALLBACK_EXISTS_MSG = "call back exception"`  L8
+- `String ICH_DEVICE_BUSY_MSG = "device busy"`  L9
+- `String ICH_DEVICE_ERROR_MSG = "device error"`  L10
+- `String ICH_ERROR_ACCESS_MSG = "access denied"`  L11
+- `String ICH_ERROR_BUSY_MSG = "device or resource busy"`  L12
+- `String ICH_ERROR_INTERRUPTED_MSG = "operation interrupted"`  L13
+- `String ICH_ERROR_INVALID_DEVICE_MSG = "invalid device"`  L14
+- `String ICH_ERROR_INVALID_MODE_MSG = "invalid mode"`  L15
+- `String ICH_ERROR_IO_MSG = "io failed"`  L16
+- `String ICH_ERROR_NOT_FOUND_MSG = "device not found"`  L17
+- `String ICH_ERROR_NO_DEVICE_MSG = "no such device"`  L18
+- `String ICH_ERROR_OVERFLOW_MSG = "memory or resource overflow"`  L19
+- `String ICH_ERROR_PIPE_MSG = "pipe error"`  L20
+- `String ICH_ERROR_TIMEOUT_MSG = "operation timeout"`  L21
+- `String ICH_FILE_NOT_FOUND_MSG = "file not found"`  L22
+- `String ICH_FORMAT_NOT_SPECIFIED_MSG = "format not specified"`  L23
+- `String ICH_FORMAT_NOT_SUPPORTED_MSG = "format not supported"`  L24
+- `String ICH_INVALID_ARGUMENT_MSG = "invalid argument"`  L25
+- `String ICH_INVALID_SESSION_MSG = "invalid session"`  L26
+- `String ICH_JNI_EXP_MSG = "native (java) operation failed"`  L27
+- `String ICH_LISTENER_EXISTS_MSG = "listener exists"`  L28
+- `String ICH_LISTENER_NOT_EXISTS_MSG = "listener not exists"`  L29
+- `String ICH_MUXER_ALREADY_STARTED_MSG = "muxer already started"`  L30
+- `String ICH_MUXER_NOT_STARTED_MSG = "muxer not started"`  L31
+- `String ICH_MUXER_START_FAILED_MSG = "muxer start failed"`  L32
+- `String ICH_MUXER_WAITING_KEY_FRAME_MSG = "muxer waiting key frame"`  L33
+- `String ICH_NOT_IMPLEMENTED_MSG = "not implemented"`  L34
+- `String ICH_NOT_INIT_MSG = "not init"`  L35
+- `String ICH_NOT_SUPPORTED_MSG = "not supported"`  L36
+- `String ICH_NO_USB_ENDPOINT_MSG = "no such usb endpoint"`  L37
+- `String ICH_NO_USB_FRAME_INFO_MSG = "usb frame info error"`  L38
+- `String ICH_NO_USB_INTERFACE_MSG = "no such usb interface"`  L39
+- `String ICH_NO_USB_STREAM_MSG = "usb stream error"`  L40
+- `String ICH_OPEN_FAIL_MSG = "open failed"`  L41
+- `String ICH_OUT_OF_MEMORY_MSG = "out of memory"`  L42
+- `String ICH_PATH_NOT_FOUND_MSG = "path not found"`  L43
+- `String ICH_PAUSE_FAILED_MSG = "pause failed"`  L44
+- `String ICH_PB_CACHING_MSG = "playback caching"`  L45
+- `String ICH_PB_MEM_FULL_MSG = "playback memory full"`  L46
+- `String ICH_PB_PLAY_END_MSG = "playback ended"`  L47
+- `String ICH_PB_STREAM_PAUSED_MSG = "playback stream paused"`  L48
+- `String ICH_PERMISSION_DENIED_MSG = "permission denied"`  L49
+- `String ICH_PICTURE_NOT_SPECIFIED_MSG = "picture not specified"`  L50
+- `String ICH_PTP_INIT_FAILED_MSG = "setup ptp connection failed"`  L51
+- `String ICH_PUBLISH_ALREADY_START_MSG = "publish already started"`  L52
+- `String ICH_PUBLISH_ALREADY_STOP_MSG = "publish already stopped"`  L53
+- `String ICH_RENDER_ALREADY_INIT_MSG = "render already init"`  L54
+- `String ICH_RENDER_ALREADY_STARTED_MSG = "render already started"`  L55
+- `String ICH_RENDER_NOT_INIT_MSG = "render not init"`  L56
+- `String ICH_RENDER_NOT_STARTED_MSG = "render not started"`  L57
+- `String ICH_RESOURCE_NOT_READY_MSG = "resource not ready"`  L58
+- `String ICH_RESUME_FAILED_MSG = "resume failed"`  L59
+- `String ICH_SEEK_FAILED_MSG = "seek failed"`  L60
+- `String ICH_SESSION_EXISTS_MSG_MSG = "session exists"`  L61
+- `String ICH_SESSION_NOT_EXISTS_MSG = "session not exists"`  L62
+- `String ICH_SESSION_PASSWORD_ERR_MSG = "session's password not correct"`  L63
+- `String ICH_SOCKET_ERROR_MSG = "socket error"`  L64
+- `String ICH_SPHERE_TYPE_NOT_SUPPORTED_MSG = "sphere type not supported"`  L65
+- `String ICH_STREAM_ALREADY_STARTED_MSG = "stream already started"`  L66
+- `String ICH_STREAM_NOT_RUNNING_MSG = "stream not running"`  L67
+- `String ICH_STREAM_NOT_SUPPORT_MSG = "stream not supported"`  L68
+- `String ICH_STREAM_PLAYING_ENDED_MSG = "stream playing ended"`  L69
+- `String ICH_SURFACE_ALREADY_SET_MSG = "surface already set"`  L70
+- `String ICH_SURFACE_NOT_SET_MSG = "surface not set"`  L71
+- `String ICH_TRANSPORT_ERROR_MSG = "transport error"`  L72
+- `String ICH_TRY_AGAIN_MSG = "try again"`  L73
+- `String ICH_UNKNOWN_ERROR_MSG = "unknown error"`  L74
+- `String ICH_VIDEO_STREAM_CLOSED_MSG = "video stream closed"`  L75
+- `String ICH_WAIT_TIME_OUT_MSG = "wait timeout"`  L76
+- `String ICH_WIFI_DISCONNECTED_MSG = "connection disconnected(wifi)"`  L77
+### `com.icatchtek.control.core.jni.util.ExceptionUtil`
+L7 · [class] public ExceptionUtil · `com/icatchtek/control/core/jni/util/ExceptionUtil.java`
+
+字段/常量（2）：
+- `Map<Integer, String> innerMsgMapping`  L8
+- `Map<Integer, String> map = innerMsgMapping`  L14
+
+方法（2）：
+- `String getErrorMessage(int i)`  L10
+- `void initMsgMapping()`  L25
+    - 体内字面量："device busy" · "device error" · "not supported" · "not implemented" · "permission denied" · "try again" · "buffer too small" · "out of memory" · "file not found" · "path not found" · "invalid session" · "invalid argument" · "socket error" · "connection disconnected(wifi)" · "io failed" · "access denied" · "no such device" · "device not found" · "device or resource busy" · "operation timeout" · "memory or resource overflow" · "pipe error" · "operation interrupted" · "invalid device" · "invalid mode" · "call back exception" · "native (java) operation failed" · "no such usb interface" · "no such usb endpoint" · "usb frame info error" · "usb stream error" · "listener exists" · "listener not exists" · "seek failed" · "pause failed" · "resume failed" · "playback memory full" · "playback caching" · "playback ended" · "playback stream paused" · "video stream closed" · "audio stream closed" · "stream not running" · "stream not supported" · "session's password not correct" · "setup ptp connection failed" · "wait timeout" · "publish already started" · "publish already stopped" · "muxer already started" · "muxer start failed" · "muxer not started" · "muxer waiting key frame" · "open failed" · "resource not ready" · "session exists" · "session not exists" · "stream playing ended" · "stream already started" · "transport error" · "render not init" · "render already init" · "render not started" · "render already started" · "surface not set" · "surface already set" · "format not supported" · "format not specified" · "picture not specified" · "sphere type not supported" · "not init" · "already init" · "unknown error"
+### `com.icatchtek.control.core.jni.util.NativeLibraryLoader`
+L6 · [class] public NativeLibraryLoader · `com/icatchtek/control/core/jni/util/NativeLibraryLoader.java`
+
+字段/常量（3）：
+- `boolean bLoaded = false`  L7
+- `String intelArch = "x86"`  L8
+- `String[] neonArmArchArray = {"armv7a", "armeabi-v7a"}`  L9
+
+方法（3）：
+- `boolean doSupportNeonArmArch(String str)`  L11
+- `void loadLibrary()`  L20
+- `void loadLibrary_1()`  L28
+    - 体内字面量："c++_shared" · "usb_transport" · "depth_net_transport" · "reliant"
+### `com.icatchtek.control.core.jni.util.PartialFrameInfo`
+L4 · [class] public PartialFrameInfo · `com/icatchtek/control/core/jni/util/PartialFrameInfo.java`
+
+字段/常量（3）：
+- `int codec`  L5
+- `int frameSize`  L6
+- `double presentationTime`  L7
+
+方法（6）：
+- `int getCodec()`  L9
+- `void setCodec(int i)`  L13
+- `int getFrameSize()`  L17
+- `void setFrameSize(int i)`  L21
+- `double getPresentationTime()`  L25
+- `void setPresentationTime(double d)`  L29
+### `com.icatchtek.control.core.util.event.CoreEventListener`
+L9 · [class] public CoreEventListener · `com/icatchtek/control/core/util/event/CoreEventListener.java`
+
+字段/常量（1）：
+- `ICatchCameraListener originalListener`  L10
+
+方法（3）：
+- `public CoreEventListener(ICatchCameraListener iCatchCameraListener)`  L12
+- `int getOriginalHashCode()`  L16
+- `void notify(int i, int i2, long j, long j2, long j3, double d, double d2, double d3, String str, String str2, String str3, String str4)`  L20
+    - 体内字面量："__event__" · "fileVal from native: " · "undefined" · "__event__" · "fileVal to the app: "
+### `com.icatchtek.control.core.util.type.NativeFile`
+L11 · [class] public NativeFile · `com/icatchtek/control/core/util/type/NativeFile.java`
+
+方法（3）：
+- `List<ICatchFile> toIcatchFiles(String str)`  L12
+    - 体内字面量：";"
+- `ICatchFile toICatchFile(String str)`  L22
+    - 体内字面量："fileHandle" · "filePath" · "fileName" · "fileDate" · "fileSize" · "frameRate" · "fileWidth" · "fileHeight" · "fileType" · "fileProtection" · "fileDuration" · "String2IcatchFile" · "fileHandle: "
+- `String toICatchFile(ICatchFile iCatchFile)`  L47
+    - 体内字面量："File2String" · "fileHandle: " · "fileHandle" · "filePath" · "fileName" · "fileDate" · "fileType" · "fileSize" · "fileWidth" · "fileHeight" · "frameRate" · "fileProtection" · "fileDuration"

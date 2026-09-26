@@ -8,7 +8,7 @@
 
 > 官方 App 臃肿卡顿。RoveCamLink 的目标是精简、快速、可扩展。
 
-[官网](https://lswlc33.github.io/rovecamlink/) · [逆向分析报告](docs/01-APK逆向分析报告.md) · [架构与开发计划](docs/02-KMP架构与开发计划.md) · [品牌型号与协议矩阵](docs/03-品牌型号与协议矩阵.md) · [固件更新与功能差距](docs/04-固件更新与功能差距.md) · [网络 API 与安全评估](docs/05-网络API清单与安全评估.md) · [诊断日志系统](docs/06-诊断日志系统.md) · [蓝牙配网与 VPN 共存](docs/07-蓝牙发现与自动连网及VPN共存研究报告.md) · [官方 APK 全量逆向档案](docs/08-官方APK全量逆向档案/00-总览与方法.md)
+[官网](https://lswlc33.github.io/rovecamlink/) · [文档系统](docs/README.md) · [逆向分析报告](docs/analysis/apk-overview.md) · [架构与开发计划](docs/design/roadmap.md) · [品牌型号与协议矩阵](docs/analysis/protocol-matrix.md) · [官方 APK 全量逆向档案](docs/evidence/method.md) · 其余（固件与 OTA、网络 API 与安全评估、诊断日志系统、蓝牙配网与 VPN）见[文档系统](docs/README.md)
 
 ## 软件特色
 
@@ -34,7 +34,7 @@
 
 ## 出问题先看这里
 
-顶部栏的 **终端图标**（任何页面都在）打开 **Diagnostics**：实时预览本进程记录的全部相机通讯，`Share TXT` / `Save TXT` 导出一份自描述的诊断文件。每一次 HTTP 交换（URL、状态码、耗时、响应头、响应体原文、异常因果链）、每一次阶段迁移与协议判断都在里面；重复轮询自动折叠成带统计的一行，口令类参数默认脱敏。格式语法与排障读法见 [诊断日志系统](docs/06-诊断日志系统.md)。
+顶部栏的 **终端图标**（任何页面都在）打开 **Diagnostics**：实时预览本进程记录的全部相机通讯，`Share TXT` / `Save TXT` 导出一份自描述的诊断文件。每一次 HTTP 交换（URL、状态码、耗时、响应头、响应体原文、异常因果链）、每一次阶段迁移与协议判断都在里面；重复轮询自动折叠成带统计的一行，口令类参数默认脱敏。格式语法与排障读法见 [诊断日志系统](docs/impl/diagnostics-log.md)。
 
 ## 每日构建包
 
@@ -44,7 +44,7 @@ CI 只有两条工作流：`Nightly`（日常构建，装测试就认它）和 `
 
 ## 首个支持的设备
 
-**XTU X7 Pro** —— 海思 Hi35xx（`hi3510`）HTTP CGI 协议。运行时自动探测注册的每个协议来识别设备，不写死型号表（同品牌不同机型的协议/端口/路径各不相同，详见[逆向分析报告](docs/01-APK逆向分析报告.md)）。
+**XTU X7 Pro** —— 海思 Hi35xx（`hi3510`）HTTP CGI 协议。运行时自动探测注册的每个协议来识别设备，不写死型号表（同品牌不同机型的协议/端口/路径各不相同，详见[逆向分析报告](docs/analysis/apk-overview.md)）。
 
 ## 架构
 
@@ -118,8 +118,8 @@ cd iosApp && xcodegen generate && open RoveCamLink.xcodeproj
 - [x] 桌面相机模拟器
 - [x] 可安装的调试 APK
 - [x] 详细诊断日志（应用内实时预览 + TXT 导出/分享，默认脱敏）
-- [ ] 直播推流（RTMP 上行）——尚无对应协议接口，规划中
-- [ ] 更多品牌、机型与品类（Ambarella / SigmaStar / TUWIN M3 / iCatch PTP，含行车记录仪等）
+- [x] 直播推流（RTMP 上行，XTU 海思：TCP 8080 下发参数 + 本地 RTSP 预览；这条通道没有停止命令）
+- [ ] 更多品牌、机型与品类（iCatch 系 HTTP 双 profile 已落；Ambarella / SigmaStar / TUWIN M3、iCatch 的 PTP 与原生 TCP 通道待做）
 - [ ] iOS 功能验证（仅壳工程）
 
 ## 许可
@@ -129,4 +129,4 @@ cd iosApp && xcodegen generate && open RoveCamLink.xcodeproj
 两点边界说明：
 
 - 本许可证只覆盖 RoveCamLink 自己的源码。各相机厂商的 App、固件、协议实现与商标均归其权利人所有，不在授权范围内。
-- `docs/01-APK逆向分析报告.md`、`docs/04`、`docs/05`，以及 `docs/08-官方APK全量逆向档案/`（含 `data/` 下由 `tools/re/` 从官方 APK 机器提取的全量清单、字符串表、常量表、类与符号表）都是为与这些设备互操作而做的分析记录，随仓库提供不代表你获得了对应厂商的任何权利。其中 `docs/05` 记录的厂商安全缺陷**只用于指导我们自己的实现不重犯**，不构成对任何人设备或服务的授权。
+- `docs/analysis/apk-overview`、`docs/analysis/protocol-matrix`、`docs/analysis/ota-and-gaps`、`docs/analysis/network-api`、`docs/analysis/ble-and-vpn`，以及 `docs/evidence/`（含 `data/` 下由 `tools/re/` 从官方 APK 机器提取的全量清单、字符串表、常量表、类与符号表）都是为与这些设备互操作而做的分析记录，随仓库提供不代表你获得了对应厂商的任何权利。其中 `docs/analysis/network-api` 记录的厂商安全缺陷**只用于指导我们自己的实现不重犯**，不构成对任何人设备或服务的授权。

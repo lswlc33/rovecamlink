@@ -1,0 +1,135 @@
+# TUWIN — 类与成员明细：es.dmoral.toasty
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 2 个文件 / 3 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：UNKNOWN
+### `es.dmoral.toasty.Toasty`
+L16 · [class] public Toasty · `es/dmoral/toasty/Toasty.java`
+
+字段/常量（18）：
+- `int LENGTH_LONG = 1`  L17
+- `int LENGTH_SHORT = 0`  L18
+- `Typeface LOADED_TOAST_TYPEFACE`  L19
+- `boolean allowQueue`  L20
+- `Typeface currentTypeface`  L21
+- `boolean isRTL`  L22
+- `Toast lastToast`  L23
+- `boolean supportDarkTheme`  L24
+- `int textSize`  L25
+- `boolean tintIcon`  L26
+- `int toastGravity`  L27
+- `int xOffset`  L28
+- `int yOffset`  L29
+- `Drawable drawable2`  L210
+- `Toast toast = lastToast`  L242
+- `int gravity = toastGravity`  L248
+- `int xOffset2 = xOffset`  L252
+- `int yOffset2 = yOffset`  L256
+
+方法（45）：
+- `private Toasty()`  L46
+- `Toast normal(Context context, int i)`  L49
+- `Toast normal(Context context, CharSequence charSequence)`  L53
+- `Toast normal(Context context, int i, Drawable drawable)`  L57
+- `Toast normal(Context context, CharSequence charSequence, Drawable drawable)`  L61
+- `Toast normal(Context context, int i, int i2)`  L65
+- `Toast normal(Context context, CharSequence charSequence, int i)`  L69
+- `Toast normal(Context context, int i, int i2, Drawable drawable)`  L73
+- `Toast normal(Context context, CharSequence charSequence, int i, Drawable drawable)`  L77
+- `Toast normal(Context context, int i, int i2, Drawable drawable, boolean z)`  L81
+- `Toast normal(Context context, CharSequence charSequence, int i, Drawable drawable, boolean z)`  L85
+- `Toast warning(Context context, int i)`  L89
+- `Toast warning(Context context, CharSequence charSequence)`  L93
+- `Toast warning(Context context, int i, int i2)`  L97
+- `Toast warning(Context context, CharSequence charSequence, int i)`  L101
+- `Toast warning(Context context, int i, int i2, boolean z)`  L105
+- `Toast warning(Context context, CharSequence charSequence, int i, boolean z)`  L109
+- `Toast info(Context context, int i)`  L113
+- `Toast info(Context context, CharSequence charSequence)`  L117
+- `Toast info(Context context, int i, int i2)`  L121
+- `Toast info(Context context, CharSequence charSequence, int i)`  L125
+- `Toast info(Context context, int i, int i2, boolean z)`  L129
+- `Toast info(Context context, CharSequence charSequence, int i, boolean z)`  L133
+- `Toast success(Context context, int i)`  L137
+- `Toast success(Context context, CharSequence charSequence)`  L141
+- `Toast success(Context context, int i, int i2)`  L145
+- `Toast success(Context context, CharSequence charSequence, int i)`  L149
+- `Toast success(Context context, int i, int i2, boolean z)`  L153
+- `Toast success(Context context, CharSequence charSequence, int i, boolean z)`  L157
+- `Toast error(Context context, int i)`  L161
+- `Toast error(Context context, CharSequence charSequence)`  L165
+- `Toast error(Context context, int i, int i2)`  L169
+- `Toast error(Context context, CharSequence charSequence, int i)`  L173
+- `Toast error(Context context, int i, int i2, boolean z)`  L177
+- `Toast error(Context context, CharSequence charSequence, int i, boolean z)`  L181
+- `Toast custom(Context context, int i, Drawable drawable, int i2, boolean z)`  L185
+- `Toast custom(Context context, CharSequence charSequence, Drawable drawable, int i, boolean z)`  L189
+- `Toast custom(Context context, int i, int i2, int i3, int i4, boolean z, boolean z2)`  L193
+- `Toast custom(Context context, CharSequence charSequence, int i, int i2, int i3, boolean z, boolean z2)`  L197
+- `Toast custom(Context context, int i, Drawable drawable, int i2, int i3, boolean z, boolean z2)`  L201
+- `Toast custom(Context context, int i, Drawable drawable, int i2, int i3, int i4, boolean z, boolean z2)`  L205
+- `Toast custom(Context context, CharSequence charSequence, Drawable drawable, int i, int i2, int i3, boolean z, boolean z2)`  L209
+- `Toast normalWithDarkThemeSupport(Context context, CharSequence charSequence, Drawable drawable, int i, boolean z)`  L264
+- `Toast withLightTheme(Context context, CharSequence charSequence, Drawable drawable, int i, boolean z)`  L277
+- `Toast withDarkTheme(Context context, CharSequence charSequence, Drawable drawable, int i, boolean z)`  L281
+### `es.dmoral.toasty.Toasty$Config`
+L285 · [class] public static Config · `es/dmoral/toasty/Toasty.java`
+
+字段/常量（27）：
+- `Typeface typeface = Toasty.currentTypeface`  L286
+- `int textSize = Toasty.textSize`  L287
+- `boolean tintIcon = Toasty.tintIcon`  L288
+- `boolean allowQueue = true`  L289
+- `int toastGravity = Toasty.toastGravity`  L290
+- `int xOffset = Toasty.xOffset`  L291
+- `int yOffset = Toasty.yOffset`  L292
+- `boolean supportDarkTheme = true`  L293
+- `boolean isRTL = false`  L294
+- `Typeface unused = Toasty.currentTypeface = Toasty.LOADED_TOAST_TYPEFACE`  L304
+- `int unused2 = Toasty.textSize = 16`  L305
+- `boolean unused3 = Toasty.tintIcon = true`  L306
+- `boolean unused4 = Toasty.allowQueue = true`  L307
+- `int unused5 = Toasty.toastGravity = -1`  L308
+- `int unused6 = Toasty.xOffset = -1`  L309
+- `int unused7 = Toasty.yOffset = -1`  L310
+- `boolean unused8 = Toasty.supportDarkTheme = true`  L311
+- `boolean unused9 = Toasty.isRTL = false`  L312
+- `Typeface unused = Toasty.currentTypeface = this.typeface`  L358
+- `int unused2 = Toasty.textSize = this.textSize`  L359
+- `boolean unused3 = Toasty.tintIcon = this.tintIcon`  L360
+- `boolean unused4 = Toasty.allowQueue = this.allowQueue`  L361
+- `int unused5 = Toasty.toastGravity = this.toastGravity`  L362
+- `int unused6 = Toasty.xOffset = this.xOffset`  L363
+- `int unused7 = Toasty.yOffset = this.yOffset`  L364
+- `boolean unused8 = Toasty.supportDarkTheme = this.supportDarkTheme`  L365
+- `boolean unused9 = Toasty.isRTL = this.isRTL`  L366
+
+方法（12）：
+- `private Config()`  L296
+- `Config getInstance()`  L299
+- `void reset()`  L303
+- `Config setToastTypeface(Typeface typeface)`  L315
+- `Config setTextSize(int i)`  L320
+- `Config tintIcon(boolean z)`  L325
+- `Config allowQueue(boolean z)`  L330
+- `Config setGravity(int i, int i2, int i3)`  L335
+- `Config setGravity(int i)`  L342
+- `Config supportDarkTheme(boolean z)`  L347
+- `Config setRTL(boolean z)`  L352
+- `void apply()`  L357
+### `es.dmoral.toasty.ToastyUtils`
+L12 · [class] final ToastyUtils · `es/dmoral/toasty/ToastyUtils.java`
+
+方法（6）：
+- `private ToastyUtils()`  L13
+- `Drawable tintIcon(Drawable drawable, int i)`  L16
+- `Drawable tint9PatchDrawableFrame(Context context, int i)`  L21
+- `void setBackground(View view, Drawable drawable)`  L25
+- `Drawable getDrawable(Context context, int i)`  L29
+- `int getColor(Context context, int i)`  L33

@@ -7,9 +7,9 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * The image-header guard (`docs/04 §6.1` R1/R2).
+ * The image-header guard (`docs/analysis/ota-and-gaps §6.1` R1/R2).
  *
- * The bytes are built here from the offsets in `docs/04 §5.4` rather than read from a real
+ * The bytes are built here from the offsets in `docs/analysis/ota-and-gaps §5.4` rather than read from a real
  * image: a 54 MB fixture is not something a unit test should carry, and the thing under test
  * is the parser and the judgement, not the file I/O. The magic is written out literally so
  * that a change to it has to be a deliberate change to this test too.

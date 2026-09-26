@@ -1,0 +1,1635 @@
+# XTU GO — 类与成员明细：com.gku.base
+
+> 本文件由 `tools/re/` 自动生成，请勿手工编辑；重跑方式见 `tools/re/README.md`。
+> 输出不带时间戳：同版本工具重跑应逐字节一致，git diff 里出现的差异都是真实取证差异。
+> 14 个文件 / 34 个类型（含内部类）
+> 每类给出：声明与父类型、有效注解、字段（含字面值）、枚举实参、方法签名，以及该方法体内出现的全部字符串字面量
+> `L<n>` 为 jadx 输出文件内行号，配合源码目录可定位
+
+---
+
+归属：OWN
+### `com.gku.base.BaseApplication`
+L6 · [class] public BaseApplication · `com/gku/base/BaseApplication.java`
+
+字段/常量（1）：
+- `Application application`  L7
+### `com.gku.base.BaseFileProvider`
+L9 · [class] public BaseFileProvider · extends `FileProvider` · `com/gku/base/BaseFileProvider.java`
+
+方法（2）：
+- `Uri getUriForFileSimple(Context context, File file)`  L10
+- `String getFileProviderAuthority(Context context)`  L18
+    - 体内字面量：".FileProvider"
+### `com.gku.base.BaseFragment`
+L18 · [class] public BaseFragment · extends `Fragment` · `com/gku/base/BaseFragment.java`
+
+字段/常量（6）：
+- `String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN"`  L19
+- `ComponentActivity activity`  L20
+- `DialogAsk dialogAsk`  L21
+- `DialogLoading dialogLoading`  L22
+- `DialogNotify dialogNotify`  L23
+- `DialogRetry dialogRetry`  L24
+
+方法（14）：
+- `void onCreate(Bundle bundle)`  L27 @Override
+- `void back2Activity(Class<?> cls)`  L41
+- `DialogAsk getDialogAsk()`  L47
+- `DialogRetry getDialogRetry()`  L54
+- `DialogNotify getDialogNotify()`  L61
+- `DialogLoading getDialogLoading()`  L68
+- `void onSaveInstanceState(Bundle bundle)`  L76 @Override
+- `void onAttach(Context context)`  L81 @Override
+- `SharedPreferences getSharedPreferences()`  L86
+- `SharedPreferences.Editor getEditor()`  L90
+- `void startActivity(Class<?> cls)`  L94
+- `Intent createIntent(Class<?> cls)`  L98
+- `void showToast(String str)`  L102
+- `void showToast(int i)`  L106
+### `com.gku.base.BR`
+L4 · [class] public BR · `com/gku/base/BR.java`
+
+字段/常量（40）：
+- `int LoginFragmentViewModel = 1`  L5
+- `int _all = 0`  L6
+- `int activeTime = 2`  L7
+- `int announcementLatestViewModel = 3`  L8
+- `int content = 4`  L9
+- `int createBy = 5`  L10
+- `int createTime = 6`  L11
+- `int email = 7`  L12
+- `int forgetPwdViewModel = 8`  L13
+- `int fragmentDeleteAccountViewModel = 9`  L14
+- `int habits = 10`  L15
+- `int iconUrl = 11`  L16
+- `int id = 12`  L17
+- `int lanCode = 13`  L18
+- `int linkUrl = 14`  L19
+- `int loginTimes = 15`  L20
+- `int loginViewModel = 16`  L21
+- `int mobile = 17`  L22
+- `int modifyPwdViewModel = 18`  L23
+- `int operationFail = 19`  L24
+- `int operationSuccess = 20`  L25
+- `int phoneNumberFragmentViewModel = 21`  L26
+- `int productModel = 22`  L27
+- `int registTime = 23`  L28
+- `int register = 24`  L29
+- `int remark = 25`  L30
+- `int reportFeedbackViewModel = 26`  L31
+- `int roomId = 27`  L32
+- `int searchValue = 28`  L33
+- `int title = 29`  L34
+- `int uid = 30`  L35
+- `int updateBy = 31`  L36
+- `int updateTime = 32`  L37
+- `int userCenterNewFragmentViewModel = 33`  L38
+- `int userInfoFragmentViewModel = 34`  L39
+- `int userInfoViewModel = 35`  L40
+- `int userPwd = 36`  L41
+- `int userdata1 = 37`  L42
+- `int userdata2 = 38`  L43
+- `int userdata3 = 39`  L44
+### `com.gku.base.BuildConfig`
+L4 · [class] public final BuildConfig · `com/gku/base/BuildConfig.java`
+
+字段/常量（3）：
+- `String BUILD_TYPE = "release"`  L5
+- `boolean DEBUG = false`  L6
+- `String LIBRARY_PACKAGE_NAME = "com.gku.base"`  L7
+### `com.gku.base.ConstantsBase`
+L4 · [class] public ConstantsBase · `com/gku/base/ConstantsBase.java`
+
+字段/常量（6）：
+- `int SD_RECORD_TYPE_ALL = 0`  L5
+- `int SD_RECORD_TYPE_COLLISION_LOCK = 4`  L6
+- `int SD_RECORD_TYPE_CRASH_WAKE_UP = 5`  L7
+- `int SD_RECORD_TYPE_MANUAL_LOCKING = 3`  L8
+- `int SD_RECORD_TYPE_NORMAL = 1`  L9
+- `int SD_RECORD_TYPE_PIR = 2`  L10
+### `com.gku.base.CrashHandler`
+L21 · [class] public CrashHandler · `com/gku/base/CrashHandler.java`
+
+字段/常量（3）：
+- `boolean haveCalled`  L22
+- `Thread.UncaughtExceptionHandler uncaughtExceptionHandler`  L23
+- `String string = "<binary/metadata>"`  L89
+
+方法（6）：
+- `private CrashHandler()`  L25
+- `CrashHandler getInstance()`  L37
+- `void catchException(Context context, final String str, final Runnable runnable)`  L41
+- `void uncaughtException(Thread thread, Throwable th)`  L49 @Override
+- `void run()`  L52 @Override
+- `void saveCrashLog(Context context, String str, Throwable th)`  L76
+    - 体内字面量："\n" · ":" · "\n" · "\n"
+### `com.gku.base.CrashHandler$CrashHandlerHolder`
+L30 · [class] private static CrashHandlerHolder · `com/gku/base/CrashHandler.java`
+
+方法（1）：
+- `private CrashHandlerHolder()`  L33
+### `com.gku.base.DataBinderMapperImpl`
+L14 · [class] public DataBinderMapperImpl · extends `DataBinderMapper` · `com/gku/base/DataBinderMapperImpl.java`
+
+字段/常量（1）：
+- `Integer num`  L35
+
+方法（5）：
+- `ViewDataBinding getDataBinder(DataBindingComponent dataBindingComponent, View view, int i)`  L18 @Override
+    - 体内字面量："view must have a tag"
+- `ViewDataBinding getDataBinder(DataBindingComponent dataBindingComponent, View[] viewArr, int i)`  L26 @Override
+    - 体内字面量："view must have a tag"
+- `int getLayoutId(String str)`  L34 @Override
+- `String convertBrIdToString(int i)`  L43 @Override
+- `List<DataBinderMapper> collectDependencies()`  L48 @Override
+### `com.gku.base.DataBinderMapperImpl$InnerBrLookup`
+L55 · [class] private static InnerBrLookup · `com/gku/base/DataBinderMapperImpl.java`
+
+字段/常量（1）：
+- `SparseArray<String> sKeys`  L56
+
+方法（1）：
+- `private InnerBrLookup()`  L58
+    - 体内字面量："_all"
+### `com.gku.base.DataBinderMapperImpl$InnerLayoutIdLookup`
+L68 · [class] private static InnerLayoutIdLookup · `com/gku/base/DataBinderMapperImpl.java`
+
+方法（1）：
+- `private InnerLayoutIdLookup()`  L71
+### `com.gku.base.Keyboarder`
+L16 · [class] public Keyboarder · `com/gku/base/Keyboarder.java`
+
+字段/常量（2）：
+- `int[] iArr = new int[2]`  L24
+- `int i = iArr[1]`  L26
+
+方法（5）：
+- `void listen(final ComponentActivity componentActivity, final EditText editText)`  L17
+- `void onGlobalLayout()`  L21 @Override
+- `void onFocusChange(View view, boolean z)`  L47 @Override
+- `void onStateChanged(LifecycleOwner lifecycleOwner, Lifecycle.Event event)`  L57 @Override
+- `void listen(ComponentActivity componentActivity, List<EditText> list)`  L65
+### `com.gku.base.OnDoubleClickListener`
+L6 · [class] public abstract OnDoubleClickListener · `com/gku/base/OnDoubleClickListener.java`
+
+字段/常量（2）：
+- `long lastClickTime`  L7
+- `int MIN_CLICK_DELAY_TIME = 300`  L8
+
+方法（4）：
+- `void onClick(View view)`  L11 @Override
+- `void onClick(View view)`  L23
+- `void onDoubleClick(View view)`  L25
+- `View.OnClickListener getOnClickListener()`  L27
+### `com.gku.base.R`
+L4 · [class] public final R · `com/gku/base/R.java`
+
+方法（1）：
+- `private R()`  L1267
+### `com.gku.base.R$anim`
+L6 · [class] public static final anim · `com/gku/base/R.java`
+
+字段/常量（2）：
+- `int window_fade_close_enter = 0x7f010081`  L7
+- `int window_fade_close_exit = 0x7f010082`  L8
+
+方法（1）：
+- `private anim()`  L10
+### `com.gku.base.R$attr`
+L14 · [class] public static final attr · `com/gku/base/R.java`
+
+字段/常量（7）：
+- `int cy_shimmer_angle = 0x7f0401f9`  L15
+- `int cy_shimmer_animation_duration = 0x7f0401fa`  L16
+- `int cy_shimmer_auto_start = 0x7f0401fb`  L17
+- `int cy_shimmer_color = 0x7f0401fc`  L18
+- `int cy_shimmer_gradient_center_color_width = 0x7f0401fd`  L19
+- `int cy_shimmer_mask_width = 0x7f0401fe`  L20
+- `int cy_shimmer_reverse_animation = 0x7f0401ff`  L21
+
+方法（1）：
+- `private attr()`  L23
+### `com.gku.base.R$color`
+L27 · [class] public static final color · `com/gku/base/R.java`
+
+字段/常量（116）：
+- `int action_bar_title_color = 0x7f06001c`  L28
+- `int alertButtonTextColor = 0x7f06001d`  L29
+- `int ball1_color = 0x7f060027`  L30
+- `int ball2_color = 0x7f060028`  L31
+- `int ball3_color = 0x7f060029`  L32
+- `int ball4_color = 0x7f06002a`  L33
+- `int black = 0x7f06002b`  L34
+- `int black_010101 = 0x7f06002c`  L35
+- `int black_181818 = 0x7f06002d`  L36
+- `int black_2b2b2b = 0x7f06002e`  L37
+- `int black_313131 = 0x7f06002f`  L38
+- `int black_333333 = 0x7f060030`  L39
+- `int black_414141 = 0x7f060031`  L40
+- `int black_515151 = 0x7f060032`  L41
+- `int black_616161 = 0x7f060033`  L42
+- `int black_transparency_50 = 0x7f060034`  L43
+- `int blue = 0x7f060035`  L44
+- `int blue_0090FF = 0x7f060036`  L45
+- `int btn_start_color = 0x7f060040`  L46
+- `int clearColor = 0x7f060052`  L47
+- `int colorAccent = 0x7f060053`  L48
+- `int colorPrimary = 0x7f060056`  L49
+- `int colorPrimaryDark = 0x7f060057`  L50
+- `int colorRed = 0x7f060058`  L51
+- `int colorTheme = 0x7f06005a`  L52
+- `int colorTheme_selected = 0x7f06005b`  L53
+- `int colorTheme_selected_2 = 0x7f06005c`  L54
+- `int colorTheme_switch = 0x7f06005d`  L55
+- `int colorWhite = 0x7f060060`  L56
+- `int colorWhite_3f = 0x7f060061`  L57
+- `int confirm_button_text_color = 0x7f06006e`  L58
+- `int cyan = 0x7f06006f`  L59
+- `int danger_color = 0x7f060070`  L60
+- `int desc = 0x7f060077`  L61
+- `int dev_add_text_color = 0x7f06009e`  L62
+- `int dev_liveview_btn_bg = 0x7f06009f`  L63
+- `int dev_switch_page_bg = 0x7f0600a0`  L64
+- `int dialog_bg = 0x7f0600a2`  L65
+- `int disableStateColor = 0x7f0600ac`  L66
+- `int drawerSplitColor = 0x7f0600af`  L67
+- `int edit_bg_color = 0x7f0600b1`  L68
+- `int edit_line = 0x7f0600b2`  L69
+- `int font_black = 0x7f0600bd`  L70
+- `int generalCellBackgroundColor = 0x7f0600c1`  L71
+- `int generalDetailTextColor = 0x7f0600c2`  L72
+- `int generalEditHintColor = 0x7f0600c3`  L73
+- `int generalLineBgColor = 0x7f0600c4`  L74
+- `int generalLineColor = 0x7f0600c5`  L75
+- `int generalSplitColor = 0x7f0600c6`  L76
+- `int generalTextBlackColor = 0x7f0600c7`  L77
+- `int generalTextBlueColor = 0x7f0600c8`  L78
+- `int generalTextColor = 0x7f0600c9`  L79
+- `int generalTextRedColor = 0x7f0600ca`  L80
+- `int generalTipTextColor = 0x7f0600cb`  L81
+- `int generalTitleColor = 0x7f0600cc`  L82
+- `int general_background_color = 0x7f0600cd`  L83
+- `int general_highlight_color = 0x7f0600ce`  L84
+- `int gray = 0x7f0600cf`  L85
+- `int gray_252525 = 0x7f0600d0`  L86
+- `int gray_58575d = 0x7f0600d1`  L87
+- `int gray_656565 = 0x7f0600d2`  L88
+- `int gray_8E8D93 = 0x7f0600d3`  L89
+- `int gray_959595 = 0x7f0600d4`  L90
+- `int gray_999999 = 0x7f0600d5`  L91
+- `int gray_B1B1B1 = 0x7f0600d6`  L92
+- `int gray_line = 0x7f0600d8`  L93
+- `int gray_line_another = 0x7f0600d9`  L94
+- `int green = 0x7f0600de`  L95
+- `int green_4EB107 = 0x7f0600df`  L96
+- `int green_A5DF29 = 0x7f0600e0`  L97
+- `int green_B0F916 = 0x7f0600e1`  L98
+- `int green_google_play = 0x7f0600e2`  L99
+- `int guide_color_bg = 0x7f0600e4`  L100
+- `int line = 0x7f0600f0`  L101
+- `int liveview_display_color = 0x7f0600f5`  L102
+- `int liveview_display_manager_color = 0x7f0600f6`  L103
+- `int liveview_setting_mode_text = 0x7f0600f7`  L104
+- `int login_code_text_color = 0x7f0600f9`  L105
+- `int login_logo_bg = 0x7f0600fa`  L106
+- `int login_phone_left_bg_color = 0x7f0600fb`  L107
+- `int magenta = 0x7f060299`  L108
+- `int main_tab_color = 0x7f06029a`  L109
+- `int pet_liveview_guide_bg = 0x7f060375`  L110
+- `int placeholdColor = 0x7f06037f`  L111
+- `int play_item_bg_color = 0x7f060380`  L112
+- `int popup_text_color = 0x7f060381`  L113
+- `int possible_result_points = 0x7f060382`  L114
+- `int public_bg = 0x7f0603bc`  L115
+- `int public_press_bg = 0x7f0603bd`  L116
+- `int red = 0x7f0603c0`  L117
+- `int reset_step_bg = 0x7f0603c2`  L118
+- `int result_view = 0x7f0603c3`  L119
+- `int seekbar_background = 0x7f0603d5`  L120
+- `int status_bar = 0x7f0603df`  L121
+- `int text_tint = 0x7f0603f7`  L122
+- `int theamColor = 0x7f0603fa`  L123
+- `int theamColor_3f = 0x7f0603fb`  L124
+- `int theamHighlightColor = 0x7f0603fc`  L125
+- `int theamHighlightColor_h = 0x7f0603fd`  L126
+- `int theme_green = 0x7f0603fe`  L127
+- `int theme_library_album = 0x7f0603ff`  L128
+- `int theme_selected_red = 0x7f060400`  L129
+- `int transparent = 0x7f060403`  L130
+- `int transparent_half = 0x7f060404`  L131
+- `int transparent_half1 = 0x7f060405`  L132
+- `int transparent_half2 = 0x7f060406`  L133
+- `int viewfinder_mask = 0x7f060428`  L134
+- `int white = 0x7f060430`  L135
+- `int white_b1b1b1 = 0x7f060431`  L136
+- `int white_d9d9d9 = 0x7f060432`  L137
+- `int white_dedede = 0x7f060433`  L138
+- `int white_eeeeee = 0x7f060434`  L139
+- `int yellow = 0x7f060437`  L140
+- `int yellow_F59A23 = 0x7f060438`  L141
+- `int yinse_EFF0F4 = 0x7f060439`  L142
+- `int zise_323150 = 0x7f06043c`  L143
+
+方法（1）：
+- `private color()`  L145
+### `com.gku.base.R$drawable`
+L149 · [class] public static final drawable · `com/gku/base/R.java`
+
+字段/常量（313）：
+- `int add_circle_gray_999999 = 0x7f080080`  L150
+- `int add_gray_999999 = 0x7f080081`  L151
+- `int add_white = 0x7f080082`  L152
+- `int album = 0x7f080083`  L153
+- `int album_cb = 0x7f080084`  L154
+- `int album_cb_select = 0x7f080085`  L155
+- `int album_default = 0x7f080086`  L156
+- `int album_default_bg = 0x7f080087`  L157
+- `int album_selected = 0x7f080088`  L158
+- `int announcement = 0x7f08008d`  L159
+- `int arrow_down = 0x7f080091`  L160
+- `int arrow_left = 0x7f080092`  L161
+- `int audio_white = 0x7f080095`  L162
+- `int back = 0x7f08009d`  L163
+- `int back_black = 0x7f08009e`  L164
+- `int back_black_2b2b2b = 0x7f08009f`  L165
+- `int back_gray_b1b1b1 = 0x7f0800a0`  L166
+- `int back_white = 0x7f0800a1`  L167
+- `int back_white2 = 0x7f0800a2`  L168
+- `int calendar_playback = 0x7f0800f8`  L169
+- `int camera = 0x7f0800f9`  L170
+- `int camera_view_behind = 0x7f08010a`  L171
+- `int camera_view_front = 0x7f08010b`  L172
+- `int cancel_white = 0x7f08010f`  L173
+- `int cb_blue_4099ff = 0x7f080114`  L174
+- `int cb_checked_theme = 0x7f080116`  L175
+- `int cb_gray = 0x7f080117`  L176
+- `int cb_gray_4099ff = 0x7f080118`  L177
+- `int cb_gray_959595 = 0x7f080119`  L178
+- `int cb_selected_green = 0x7f08011c`  L179
+- `int cb_selected_rect_blue = 0x7f08011d`  L180
+- `int cb_unchecked_white = 0x7f08011e`  L181
+- `int cb_unselected_rect_white = 0x7f08011f`  L182
+- `int cb_unselected_rect_yinse = 0x7f080120`  L183
+- `int cb_zise = 0x7f080121`  L184
+- `int changzhen = 0x7f080123`  L185
+- `int check_white = 0x7f080124`  L186
+- `int close = 0x7f080128`  L187
+- `int close_ad = 0x7f080129`  L188
+- `int close_black = 0x7f08012a`  L189
+- `int close_blue = 0x7f08012b`  L190
+- `int close_gray_959595 = 0x7f08012c`  L191
+- `int close_mini_white = 0x7f08012d`  L192
+- `int close_white = 0x7f08012f`  L193
+- `int close_yellow = 0x7f080130`  L194
+- `int cloud_checked = 0x7f080131`  L195
+- `int cloud_expand = 0x7f080132`  L196
+- `int cloud_hide = 0x7f080133`  L197
+- `int cloud_unchecked = 0x7f080134`  L198
+- `int color_list_select = 0x7f080136`  L199
+- `int cuo_right = 0x7f080159`  L200
+- `int cut_circle = 0x7f08015d`  L201
+- `int cut_rectangle = 0x7f08015e`  L202
+- `int default_pic = 0x7f080163`  L203
+- `int delete_circle_white = 0x7f080165`  L204
+- `int delete_photo_preview = 0x7f080166`  L205
+- `int delete_playback = 0x7f080167`  L206
+- `int delete_white = 0x7f080168`  L207
+- `int detail_photo_pre = 0x7f08016e`  L208
+- `int detail_white = 0x7f08016f`  L209
+- `int device_success = 0x7f080171`  L210
+- `int dialog_loading = 0x7f080175`  L211
+- `int dialog_loading_img = 0x7f080176`  L212
+- `int download_playback = 0x7f080182`  L213
+- `int dui_black_2b2b2b = 0x7f080183`  L214
+- `int dui_blue_0090ff = 0x7f080184`  L215
+- `int dui_gray_b1b1b1 = 0x7f080185`  L216
+- `int duigou_blue = 0x7f080186`  L217
+- `int edit = 0x7f080187`  L218
+- `int edit_photo_preview = 0x7f080189`  L219
+- `int edit_selected = 0x7f08018a`  L220
+- `int edit_white = 0x7f08018b`  L221
+- `int empty_gray = 0x7f08018e`  L222
+- `int file = 0x7f0801e0`  L223
+- `int file_illegal = 0x7f0801e1`  L224
+- `int file_selected = 0x7f0801e2`  L225
+- `int flashlight_off = 0x7f0801e3`  L226
+- `int flashlight_on = 0x7f0801e4`  L227
+- `int flashlight_selector = 0x7f0801e5`  L228
+- `int fullscreen_white = 0x7f0801e9`  L229
+- `int gku_about = 0x7f0801ea`  L230
+- `int gku_access = 0x7f0801eb`  L231
+- `int gku_account = 0x7f0801ec`  L232
+- `int gku_add = 0x7f0801ed`  L233
+- `int gku_add_guide = 0x7f0801ee`  L234
+- `int gku_add_guide_reset = 0x7f0801ef`  L235
+- `int gku_add_left = 0x7f0801f0`  L236
+- `int gku_add_right = 0x7f0801f1`  L237
+- `int gku_album_image = 0x7f0801f2`  L238
+- `int gku_album_normal = 0x7f0801f3`  L239
+- `int gku_album_selected = 0x7f0801f4`  L240
+- `int gku_album_video = 0x7f0801f5`  L241
+- `int gku_back = 0x7f0801f6`  L242
+- `int gku_back_main = 0x7f0801f7`  L243
+- `int gku_back_white = 0x7f0801f8`  L244
+- `int gku_bat_1 = 0x7f0801f9`  L245
+- `int gku_bat_2 = 0x7f0801fa`  L246
+- `int gku_bat_3 = 0x7f0801fb`  L247
+- `int gku_bat_4 = 0x7f0801fc`  L248
+- `int gku_bat_charge = 0x7f0801fd`  L249
+- `int gku_capture = 0x7f0801fe`  L250
+- `int gku_checked = 0x7f0801ff`  L251
+- `int gku_close = 0x7f080200`  L252
+- `int gku_close_eye = 0x7f080201`  L253
+- `int gku_cloud = 0x7f080202`  L254
+- `int gku_cloud_bg = 0x7f080203`  L255
+- `int gku_cloud_guide = 0x7f080204`  L256
+- `int gku_cloud_guide_check = 0x7f080205`  L257
+- `int gku_cloud_logo = 0x7f080206`  L258
+- `int gku_cloud_s = 0x7f080207`  L259
+- `int gku_cur_location = 0x7f080208`  L260
+- `int gku_dev_type_default = 0x7f080209`  L261
+- `int gku_device = 0x7f08020a`  L262
+- `int gku_device_empty = 0x7f08020b`  L263
+- `int gku_device_s = 0x7f08020c`  L264
+- `int gku_feedback_add = 0x7f08020d`  L265
+- `int gku_file_preview = 0x7f08020e`  L266
+- `int gku_land_back = 0x7f08020f`  L267
+- `int gku_land_listen = 0x7f080210`  L268
+- `int gku_land_listen_s = 0x7f080211`  L269
+- `int gku_land_res_bg = 0x7f080212`  L270
+- `int gku_land_speak = 0x7f080213`  L271
+- `int gku_launch_bg = 0x7f080214`  L272
+- `int gku_launch_bottom = 0x7f080215`  L273
+- `int gku_listen = 0x7f080216`  L274
+- `int gku_listen_land = 0x7f080217`  L275
+- `int gku_listen_land_s = 0x7f080218`  L276
+- `int gku_listen_s = 0x7f080219`  L277
+- `int gku_live_setting = 0x7f08021a`  L278
+- `int gku_local = 0x7f08021b`  L279
+- `int gku_local_s = 0x7f08021c`  L280
+- `int gku_location = 0x7f08021d`  L281
+- `int gku_location_highlight = 0x7f08021e`  L282
+- `int gku_login_bg = 0x7f08021f`  L283
+- `int gku_login_top = 0x7f080220`  L284
+- `int gku_logo = 0x7f080221`  L285
+- `int gku_logo_bg = 0x7f080222`  L286
+- `int gku_main_cloud = 0x7f080223`  L287
+- `int gku_main_h_flip = 0x7f080224`  L288
+- `int gku_main_location = 0x7f080225`  L289
+- `int gku_main_ptz = 0x7f080226`  L290
+- `int gku_main_rec = 0x7f080227`  L291
+- `int gku_main_sd = 0x7f080228`  L292
+- `int gku_main_v_flip = 0x7f080229`  L293
+- `int gku_mine = 0x7f08022a`  L294
+- `int gku_mine_s = 0x7f08022b`  L295
+- `int gku_msg = 0x7f08022c`  L296
+- `int gku_msg_expand = 0x7f08022d`  L297
+- `int gku_msg_share = 0x7f08022e`  L298
+- `int gku_msg_valid = 0x7f08022f`  L299
+- `int gku_open_eye = 0x7f080230`  L300
+- `int gku_operate = 0x7f080231`  L301
+- `int gku_playback_hint = 0x7f080232`  L302
+- `int gku_power = 0x7f080233`  L303
+- `int gku_preview = 0x7f080234`  L304
+- `int gku_preview_c600 = 0x7f080235`  L305
+- `int gku_ptz_center = 0x7f080236`  L306
+- `int gku_ptz_down = 0x7f080237`  L307
+- `int gku_ptz_down_s = 0x7f080238`  L308
+- `int gku_ptz_left = 0x7f080239`  L309
+- `int gku_ptz_left_s = 0x7f08023a`  L310
+- `int gku_ptz_right = 0x7f08023b`  L311
+- `int gku_ptz_right_s = 0x7f08023c`  L312
+- `int gku_ptz_up = 0x7f08023d`  L313
+- `int gku_ptz_up_s = 0x7f08023e`  L314
+- `int gku_pwd = 0x7f08023f`  L315
+- `int gku_rec_flag = 0x7f080240`  L316
+- `int gku_record = 0x7f080241`  L317
+- `int gku_record_s = 0x7f080242`  L318
+- `int gku_refresh = 0x7f080243`  L319
+- `int gku_scan_bl = 0x7f080244`  L320
+- `int gku_scan_br = 0x7f080245`  L321
+- `int gku_scan_line = 0x7f080246`  L322
+- `int gku_scan_tl = 0x7f080247`  L323
+- `int gku_scan_tr = 0x7f080248`  L324
+- `int gku_screen = 0x7f080249`  L325
+- `int gku_sd_checked = 0x7f08024a`  L326
+- `int gku_sd_date = 0x7f08024b`  L327
+- `int gku_sd_delete = 0x7f08024c`  L328
+- `int gku_sd_download = 0x7f08024d`  L329
+- `int gku_sd_full = 0x7f08024e`  L330
+- `int gku_sd_next = 0x7f08024f`  L331
+- `int gku_sd_no_data = 0x7f080250`  L332
+- `int gku_sd_normal = 0x7f080251`  L333
+- `int gku_sd_pause = 0x7f080252`  L334
+- `int gku_sd_play = 0x7f080253`  L335
+- `int gku_sd_snap = 0x7f080254`  L336
+- `int gku_sd_thumb = 0x7f080255`  L337
+- `int gku_set_alarm = 0x7f080256`  L338
+- `int gku_set_alias = 0x7f080257`  L339
+- `int gku_set_image = 0x7f080258`  L340
+- `int gku_set_more = 0x7f080259`  L341
+- `int gku_set_push = 0x7f08025a`  L342
+- `int gku_set_share = 0x7f08025b`  L343
+- `int gku_share_add = 0x7f08025c`  L344
+- `int gku_share_scan = 0x7f08025d`  L345
+- `int gku_signal_0 = 0x7f08025e`  L346
+- `int gku_signal_1 = 0x7f08025f`  L347
+- `int gku_signal_2 = 0x7f080260`  L348
+- `int gku_signal_3 = 0x7f080261`  L349
+- `int gku_signal_4 = 0x7f080262`  L350
+- `int gku_speak = 0x7f080263`  L351
+- `int gku_speak_land = 0x7f080264`  L352
+- `int gku_speak_land_s = 0x7f080265`  L353
+- `int gku_speak_s = 0x7f080266`  L354
+- `int gku_step = 0x7f080267`  L355
+- `int gku_step_s = 0x7f080268`  L356
+- `int gku_stream = 0x7f080269`  L357
+- `int gku_stream_land = 0x7f08026a`  L358
+- `int gku_switch_off = 0x7f08026b`  L359
+- `int gku_switch_on = 0x7f08026c`  L360
+- `int gku_uncheck = 0x7f08026d`  L361
+- `int gku_update_failed = 0x7f08026e`  L362
+- `int gku_update_succeed = 0x7f08026f`  L363
+- `int gku_user_header = 0x7f080270`  L364
+- `int gku_user_qrcode = 0x7f080271`  L365
+- `int gku_view_count = 0x7f080272`  L366
+- `int gku_vip = 0x7f080273`  L367
+- `int grid_camera = 0x7f080276`  L368
+- `int guangpan = 0x7f080278`  L369
+- `int ic_connect_device_hint1 = 0x7f0802b4`  L370
+- `int ic_connect_device_hint2 = 0x7f0802b5`  L371
+- `int icon_1024 = 0x7f080352`  L372
+- `int icon_paypal = 0x7f08036e`  L373
+- `int icon_wei = 0x7f0803a5`  L374
+- `int icon_zhi = 0x7f0803a9`  L375
+- `int intercom_0001 = 0x7f0803b0`  L376
+- `int intercom_0002 = 0x7f0803b1`  L377
+- `int intercom_0003 = 0x7f0803b2`  L378
+- `int intercom_0004 = 0x7f0803b3`  L379
+- `int intercom_blue = 0x7f0803b4`  L380
+- `int intercom_gray = 0x7f0803b5`  L381
+- `int jiantou_right_gray = 0x7f0803bb`  L382
+- `int jinatou_right_gray = 0x7f0803bc`  L383
+- `int live_speak_state_1 = 0x7f0803d5`  L384
+- `int live_speak_state_2 = 0x7f0803d6`  L385
+- `int live_speak_state_3 = 0x7f0803d7`  L386
+- `int live_speak_state_4 = 0x7f0803d8`  L387
+- `int map_mask = 0x7f0803fc`  L388
+- `int menu_black = 0x7f080410`  L389
+- `int menu_playback = 0x7f08041d`  L390
+- `int my = 0x7f08044a`  L391
+- `int my_selected = 0x7f08044b`  L392
+- `int pause_white = 0x7f08045f`  L393
+- `int pic_alpha = 0x7f080465`  L394
+- `int pic_alpha_100 = 0x7f080466`  L395
+- `int pic_default_img = 0x7f08046a`  L396
+- `int pic_edit_beauty = 0x7f08046d`  L397
+- `int pic_edit_color = 0x7f08046e`  L398
+- `int pic_edit_layer = 0x7f08046f`  L399
+- `int pic_edit_mosaic = 0x7f080470`  L400
+- `int pic_edit_painting = 0x7f080471`  L401
+- `int pic_edit_photo_frame = 0x7f080472`  L402
+- `int pic_edit_portrait = 0x7f080473`  L403
+- `int pic_edit_rotate = 0x7f080474`  L404
+- `int pic_edit_text = 0x7f080475`  L405
+- `int pic_edit_watermark = 0x7f080476`  L406
+- `int pic_fail_img = 0x7f080477`  L407
+- `int play_white = 0x7f080494`  L408
+- `int play_white_album_folder = 0x7f080495`  L409
+- `int preview_white = 0x7f0804aa`  L410
+- `int rb_checked_theme = 0x7f0804ef`  L411
+- `int record_gray = 0x7f0804f0`  L412
+- `int record_preview = 0x7f0804f1`  L413
+- `int record_puse_gray = 0x7f0804f2`  L414
+- `int record_red = 0x7f0804f3`  L415
+- `int record_stop = 0x7f0804f4`  L416
+- `int right_gray = 0x7f0804f7`  L417
+- `int rmvb = 0x7f0804fa`  L418
+- `int screenshot_playback = 0x7f08051a`  L419
+- `int setting_4g_added = 0x7f080555`  L420
+- `int setting_add_device_scan = 0x7f080556`  L421
+- `int setting_arrow = 0x7f080557`  L422
+- `int setting_arrow_item = 0x7f080558`  L423
+- `int setting_assistant = 0x7f080559`  L424
+- `int setting_assistant_control = 0x7f08055a`  L425
+- `int setting_black = 0x7f08055b`  L426
+- `int setting_cloud = 0x7f08055c`  L427
+- `int setting_copy = 0x7f08055d`  L428
+- `int setting_edit = 0x7f08055e`  L429
+- `int setting_electronic_fence_top = 0x7f08055f`  L430
+- `int setting_factory_restore = 0x7f080560`  L431
+- `int setting_format_storage = 0x7f080561`  L432
+- `int setting_menu = 0x7f080562`  L433
+- `int setting_notice = 0x7f080563`  L434
+- `int setting_parking = 0x7f080564`  L435
+- `int setting_photo_preview = 0x7f080565`  L436
+- `int setting_pwd_close_eyes = 0x7f080566`  L437
+- `int setting_pwd_open_eyes = 0x7f080567`  L438
+- `int setting_radio_checked = 0x7f080568`  L439
+- `int setting_radio_uncheck = 0x7f080569`  L440
+- `int setting_scan_close = 0x7f08056a`  L441
+- `int setting_scan_close_black = 0x7f08056b`  L442
+- `int setting_share = 0x7f08056c`  L443
+- `int setting_system = 0x7f08056d`  L444
+- `int setting_video = 0x7f08056e`  L445
+- `int setting_voice = 0x7f08056f`  L446
+- `int setting_voice_add = 0x7f080570`  L447
+- `int setting_voice_sub = 0x7f080571`  L448
+- `int setting_white = 0x7f080572`  L449
+- `int setting_wifi = 0x7f080573`  L450
+- `int shadow = 0x7f080576`  L451
+- `int share_photo_previe = 0x7f080599`  L452
+- `int share_white = 0x7f08059a`  L453
+- `int stop_record_gray = 0x7f0805a3`  L454
+- `int text_indicator = 0x7f0805ac`  L455
+- `int text_indicator_black = 0x7f0805ad`  L456
+- `int top_icon_wifi_0 = 0x7f0805c4`  L457
+- `int top_icon_wifi_1 = 0x7f0805c5`  L458
+- `int top_icon_wifi_2 = 0x7f0805c6`  L459
+- `int top_icon_wifi_3 = 0x7f0805c7`  L460
+- `int top_icon_wifi_4 = 0x7f0805c8`  L461
+- `int wmv = 0x7f080654`  L462
+
+方法（1）：
+- `private drawable()`  L464
+### `com.gku.base.R$id`
+L468 · [class] public static final id · `com/gku/base/R.java`
+
+字段/常量（14）：
+- `int FourCircleLoadingView = 0x7f0a000f`  L469
+- `int WebView = 0x7f0a002f`  L470
+- `int iv_back = 0x7f0a0331`  L471
+- `int iv_close = 0x7f0a0339`  L472
+- `int layout_title = 0x7f0a03b5`  L473
+- `int progressBar = 0x7f0a0512`  L474
+- `int f96tv = 0x7f0a0718`  L477
+- `int tv_cancel = 0x7f0a073d`  L478
+- `int tv_confirm = 0x7f0a0745`  L479
+- `int tv_content = 0x7f0a0747`  L480
+- `int tv_hint = 0x7f0a0767`  L481
+- `int tv_retry = 0x7f0a078b`  L482
+- `int tv_sure = 0x7f0a079b`  L483
+- `int tv_title = 0x7f0a079f`  L484
+
+方法（1）：
+- `private id()`  L486
+### `com.gku.base.R$layout`
+L490 · [class] public static final layout · `com/gku/base/R.java`
+
+字段/常量（8）：
+- `int activity_permission = 0x7f0d0049`  L491
+- `int activity_web_view = 0x7f0d0075`  L492
+- `int base_dialog_loading = 0x7f0d007d`  L493
+- `int dialog_ask = 0x7f0d00ad`  L494
+- `int dialog_common_confirm = 0x7f0d00b0`  L495
+- `int dialog_common_hint = 0x7f0d00b1`  L496
+- `int dialog_notify = 0x7f0d00c4`  L497
+- `int dialog_retry = 0x7f0d00c7`  L498
+
+方法（1）：
+- `private layout()`  L500
+### `com.gku.base.R$string`
+L504 · [class] public static final string · `com/gku/base/R.java`
+
+字段/常量（726）：
+- `int about_us = 0x7f14002e`  L505
+- `int accept_failed = 0x7f14002f`  L506
+- `int account_area = 0x7f140030`  L507
+- `int add_device = 0x7f140043`  L508
+- `int agree = 0x7f140045`  L509
+- `int agree_before = 0x7f140046`  L510
+- `int all = 0x7f140049`  L511
+- `int all_audio = 0x7f14004a`  L512
+- `int all_file = 0x7f14004b`  L513
+- `int all_length_exceed = 0x7f14004c`  L514
+- `int all_pic_folder_name = 0x7f14004d`  L515
+- `int all_readed = 0x7f14004e`  L516
+- `int all_video_folder_name = 0x7f14004f`  L517
+- `int already_the_latest_version = 0x7f140052`  L518
+- `int and = 0x7f140057`  L519
+- `int announcement = 0x7f140059`  L520
+- `int app_beian_biaohao = 0x7f14005c`  L521
+- `int arabic = 0x7f140060`  L522
+- `int area = 0x7f140061`  L523
+- `int area_choose_hint = 0x7f140062`  L524
+- `int audio = 0x7f140063`  L525
+- `int cache_has_been_emptied = 0x7f1400a4`  L526
+- `int camera_permission_ask = 0x7f1400e7`  L527
+- `int camera_record_audio_storage_permission_ask = 0x7f1400ea`  L528
+- `int camera_view_get_fail = 0x7f1400f5`  L529
+- `int camera_view_only_one = 0x7f1400f6`  L530
+- `int cancel = 0x7f1400ff`  L531
+- `int cancel_fail = 0x7f140100`  L532
+- `int cancel_success = 0x7f140102`  L533
+- `int card_storage = 0x7f140105`  L534
+- `int chat_on_whatsapp = 0x7f140114`  L535
+- `int check_net = 0x7f140116`  L536
+- `int check_net_device_click_retry = 0x7f140117`  L537
+- `int check_version = 0x7f14011d`  L538
+- `int checked_update = 0x7f14011e`  L539
+- `int chinese_simplified = 0x7f14011f`  L540
+- `int chinese_traditional = 0x7f140120`  L541
+- `int chinese_traditional_hk = 0x7f140121`  L542
+- `int chinese_traditional_tw = 0x7f140122`  L543
+- `int choose_area_first = 0x7f140126`  L544
+- `int choose_content = 0x7f140127`  L545
+- `int choose_device = 0x7f140128`  L546
+- `int choose_device_type = 0x7f140129`  L547
+- `int choose_email_app = 0x7f14012a`  L548
+- `int choose_problem_type = 0x7f14012f`  L549
+- `int choose_type_first = 0x7f140130`  L550
+- `int clear_cache = 0x7f140133`  L551
+- `int click_add_pic = 0x7f140136`  L552
+- `int colon = 0x7f140141`  L553
+- `int complete = 0x7f140159`  L554
+- `int confirm = 0x7f14015c`  L555
+- `int confirm_0_0 = 0x7f14015d`  L556
+- `int confirm_clear_cache = 0x7f14015e`  L557
+- `int connect_device_wifi = 0x7f140167`  L558
+- `int connect_failed = 0x7f140169`  L559
+- `int connect_start = 0x7f14016c`  L560
+- `int connect_wifi = 0x7f14016f`  L561
+- `int connected_not_camera = 0x7f140173`  L562
+- `int copyed_email = 0x7f140181`  L563
+- `int current_day_no_record = 0x7f140184`  L564
+- `int delete_fail = 0x7f140197`  L565
+- `int delete_success = 0x7f14019d`  L566
+- `int desc_20 = 0x7f1401a6`  L567
+- `int device_connected = 0x7f1401ad`  L568
+- `int device_permission = 0x7f1401b3`  L569
+- `int device_shared = 0x7f1401b7`  L570
+- `int disagree = 0x7f1401dc`  L571
+- `int downloading = 0x7f1401fd`  L572
+- `int edit_failed = 0x7f1401ff`  L573
+- `int electronic_fence_crossing_inner = 0x7f140209`  L574
+- `int electronic_fence_crossing_outer = 0x7f14020a`  L575
+- `int emergency_video = 0x7f14020d`  L576
+- `int english = 0x7f14020f`  L577
+- `int enter_exchange_code = 0x7f140212`  L578
+- `int event = 0x7f14022c`  L579
+- `int exchange = 0x7f140242`  L580
+- `int exchange_code_no_empty = 0x7f140243`  L581
+- `int exchange_fail = 0x7f140244`  L582
+- `int exchange_success = 0x7f140245`  L583
+- `int fire_off = 0x7f1402a3`  L584
+- `int fire_on = 0x7f1402a4`  L585
+- `int follow_system = 0x7f1402aa`  L586
+- `int forbid_ask = 0x7f1402ab`  L587
+- `int french = 0x7f1402b7`  L588
+- `int german = 0x7f1402c4`  L589
+- `int get_code_fail = 0x7f1402c5`  L590
+- `int gku_4g_card_state_activated = 0x7f1402c8`  L591
+- `int gku_4g_card_state_activated_base = 0x7f1402c9`  L592
+- `int gku_4g_card_state_can_active = 0x7f1402ca`  L593
+- `int gku_4g_card_state_deactivated = 0x7f1402cb`  L594
+- `int gku_4g_card_state_retired = 0x7f1402cc`  L595
+- `int gku_4g_card_state_title = 0x7f1402cd`  L596
+- `int gku_4g_card_state_wait_active = 0x7f1402ce`  L597
+- `int gku_4g_charge_service_title = 0x7f1402cf`  L598
+- `int gku_4g_charge_tip = 0x7f1402d0`  L599
+- `int gku_4g_charge_title = 0x7f1402d1`  L600
+- `int gku_4g_click_copy = 0x7f1402d2`  L601
+- `int gku_4g_device_iccid = 0x7f1402d3`  L602
+- `int gku_4g_expire_time = 0x7f1402d4`  L603
+- `int gku_4g_service_detail = 0x7f1402d5`  L604
+- `int gku_4g_service_title = 0x7f1402d6`  L605
+- `int gku_4g_total_flow = 0x7f1402d7`  L606
+- `int gku_4g_used_flow = 0x7f1402d8`  L607
+- `int gku_accept = 0x7f1402d9`  L608
+- `int gku_account_did_exist = 0x7f1402da`  L609
+- `int gku_account_placehold = 0x7f1402db`  L610
+- `int gku_add_device = 0x7f1402dc`  L611
+- `int gku_add_tip = 0x7f1402dd`  L612
+- `int gku_album = 0x7f1402de`  L613
+- `int gku_album_all_files = 0x7f1402df`  L614
+- `int gku_album_delete_confirm = 0x7f1402e0`  L615
+- `int gku_album_delete_single_confirm = 0x7f1402e1`  L616
+- `int gku_album_delete_succeed = 0x7f1402e2`  L617
+- `int gku_album_photo = 0x7f1402e3`  L618
+- `int gku_album_tip = 0x7f1402e4`  L619
+- `int gku_album_title = 0x7f1402e5`  L620
+- `int gku_album_video = 0x7f1402e6`  L621
+- `int gku_all = 0x7f1402e7`  L622
+- `int gku_app_cache = 0x7f1402e8`  L623
+- `int gku_app_cache_analysis = 0x7f1402e9`  L624
+- `int gku_app_cache_cleared = 0x7f1402ea`  L625
+- `int gku_app_cache_confirm = 0x7f1402eb`  L626
+- `int gku_app_cache_failed = 0x7f1402ec`  L627
+- `int gku_app_log = 0x7f1402ed`  L628
+- `int gku_app_log_tip = 0x7f1402ee`  L629
+- `int gku_app_name = 0x7f1402ef`  L630
+- `int gku_app_version = 0x7f1402f0`  L631
+- `int gku_app_version_check = 0x7f1402f1`  L632
+- `int gku_app_version_has_new = 0x7f1402f2`  L633
+- `int gku_app_version_no_new = 0x7f1402f3`  L634
+- `int gku_back_main = 0x7f1402f4`  L635
+- `int gku_battery = 0x7f1402f5`  L636
+- `int gku_battery_charging = 0x7f1402f6`  L637
+- `int gku_cancel = 0x7f1402f7`  L638
+- `int gku_cancel_download = 0x7f1402f8`  L639
+- `int gku_cancel_share = 0x7f1402f9`  L640
+- `int gku_cancel_share_confirm = 0x7f1402fa`  L641
+- `int gku_capture_failed = 0x7f1402fb`  L642
+- `int gku_capture_ok = 0x7f1402fc`  L643
+- `int gku_capture_permission_denied_hint = 0x7f1402fd`  L644
+- `int gku_chinese_space_1 = 0x7f1402fe`  L645
+- `int gku_chinese_space_2 = 0x7f1402ff`  L646
+- `int gku_cloud = 0x7f140300`  L647
+- `int gku_cloud_30_day_event_detail = 0x7f140301`  L648
+- `int gku_cloud_30_day_event_title = 0x7f140302`  L649
+- `int gku_cloud_30_day_event_with_4g_detail = 0x7f140303`  L650
+- `int gku_cloud_30_day_event_with_4g_title = 0x7f140304`  L651
+- `int gku_cloud_7_day_event_detail = 0x7f140305`  L652
+- `int gku_cloud_7_day_event_title = 0x7f140306`  L653
+- `int gku_cloud_abnormal_order_finished = 0x7f140307`  L654
+- `int gku_cloud_apple_not_support = 0x7f140308`  L655
+- `int gku_cloud_buy_failed = 0x7f140309`  L656
+- `int gku_cloud_buy_succeed = 0x7f14030a`  L657
+- `int gku_cloud_cancel_download_confirm = 0x7f14030b`  L658
+- `int gku_cloud_cancel_download_ok = 0x7f14030c`  L659
+- `int gku_cloud_confirm_buy = 0x7f14030d`  L660
+- `int gku_cloud_continue = 0x7f14030e`  L661
+- `int gku_cloud_did_cancel_order = 0x7f14030f`  L662
+- `int gku_cloud_did_download = 0x7f140310`  L663
+- `int gku_cloud_download_detail = 0x7f140311`  L664
+- `int gku_cloud_download_ok = 0x7f140312`  L665
+- `int gku_cloud_download_title = 0x7f140313`  L666
+- `int gku_cloud_free_active = 0x7f140314`  L667
+- `int gku_cloud_free_active_confirm = 0x7f140315`  L668
+- `int gku_cloud_free_active_succeed = 0x7f140316`  L669
+- `int gku_cloud_free_detail = 0x7f140317`  L670
+- `int gku_cloud_free_title = 0x7f140318`  L671
+- `int gku_cloud_guide_help = 0x7f140319`  L672
+- `int gku_cloud_guide_tip = 0x7f14031a`  L673
+- `int gku_cloud_guide_tip_1 = 0x7f14031b`  L674
+- `int gku_cloud_guide_tip_2 = 0x7f14031c`  L675
+- `int gku_cloud_guide_tip_3 = 0x7f14031d`  L676
+- `int gku_cloud_invalid = 0x7f14031e`  L677
+- `int gku_cloud_no_buy = 0x7f14031f`  L678
+- `int gku_cloud_no_subscrib = 0x7f140320`  L679
+- `int gku_cloud_not_finished_order = 0x7f140321`  L680
+- `int gku_cloud_order_abnormal = 0x7f140322`  L681
+- `int gku_cloud_order_id = 0x7f140323`  L682
+- `int gku_cloud_order_state = 0x7f140324`  L683
+- `int gku_cloud_order_state_effect = 0x7f140325`  L684
+- `int gku_cloud_order_state_expired = 0x7f140326`  L685
+- `int gku_cloud_order_state_wait = 0x7f140327`  L686
+- `int gku_cloud_order_title = 0x7f140328`  L687
+- `int gku_cloud_pay_price = 0x7f140329`  L688
+- `int gku_cloud_pay_service_type = 0x7f14032a`  L689
+- `int gku_cloud_pay_time = 0x7f14032b`  L690
+- `int gku_cloud_review = 0x7f14032c`  L691
+- `int gku_cloud_service_title = 0x7f14032d`  L692
+- `int gku_cloud_shop_tip = 0x7f14032e`  L693
+- `int gku_cloud_show_order = 0x7f14032f`  L694
+- `int gku_cloud_subscrib = 0x7f140330`  L695
+- `int gku_cloud_tip = 0x7f140331`  L696
+- `int gku_cloud_title = 0x7f140332`  L697
+- `int gku_cloud_valid_day = 0x7f140333`  L698
+- `int gku_config_path_loading = 0x7f140334`  L699
+- `int gku_config_path_not_exist = 0x7f140335`  L700
+- `int gku_confirm = 0x7f140336`  L701
+- `int gku_connect_dev_manule_scan = 0x7f140337`  L702
+- `int gku_connect_dev_manule_scan_key = 0x7f140338`  L703
+- `int gku_connect_dev_reset_tip = 0x7f140339`  L704
+- `int gku_connect_dev_scan_manule = 0x7f14033a`  L705
+- `int gku_connect_dev_scan_manule_key = 0x7f14033b`  L706
+- `int gku_connect_dev_scan_share_tip = 0x7f14033d`  L707
+- `int gku_connect_dev_scan_tip = 0x7f14033e`  L708
+- `int gku_connect_dev_start = 0x7f14033f`  L709
+- `int gku_connect_dev_title = 0x7f140340`  L710
+- `int gku_connect_doing = 0x7f140341`  L711
+- `int gku_connect_exit_confirm = 0x7f140342`  L712
+- `int gku_connect_ok = 0x7f140343`  L713
+- `int gku_connect_unkown_error = 0x7f140344`  L714
+- `int gku_connecting = 0x7f140345`  L715
+- `int gku_contact_us = 0x7f140346`  L716
+- `int gku_continue = 0x7f140347`  L717
+- `int gku_crash_tip = 0x7f140348`  L718
+- `int gku_day = 0x7f140349`  L719
+- `int gku_delete = 0x7f14034a`  L720
+- `int gku_delete_account = 0x7f14034b`  L721
+- `int gku_delete_account_id = 0x7f14034c`  L722
+- `int gku_delete_account_succeed = 0x7f14034d`  L723
+- `int gku_delete_account_warning = 0x7f14034e`  L724
+- `int gku_device_added_by_other = 0x7f14034f`  L725
+- `int gku_device_exist = 0x7f140350`  L726
+- `int gku_device_id = 0x7f140351`  L727
+- `int gku_device_id_empty = 0x7f140352`  L728
+- `int gku_device_location = 0x7f140353`  L729
+- `int gku_device_location_descript = 0x7f140354`  L730
+- `int gku_device_location_descript_empty = 0x7f140355`  L731
+- `int gku_device_more = 0x7f140356`  L732
+- `int gku_device_name = 0x7f140357`  L733
+- `int gku_device_offline = 0x7f140358`  L734
+- `int gku_device_pwd = 0x7f140359`  L735
+- `int gku_device_sleeped = 0x7f14035a`  L736
+- `int gku_device_title = 0x7f14035b`  L737
+- `int gku_done = 0x7f14035c`  L738
+- `int gku_download = 0x7f14035d`  L739
+- `int gku_download_did_download = 0x7f14035e`  L740
+- `int gku_download_doing = 0x7f14035f`  L741
+- `int gku_download_failed = 0x7f140360`  L742
+- `int gku_download_no_more_date = 0x7f140361`  L743
+- `int gku_download_state_failed = 0x7f140362`  L744
+- `int gku_download_succeed = 0x7f140363`  L745
+- `int gku_downloaded = 0x7f140364`  L746
+- `int gku_edit = 0x7f140365`  L747
+- `int gku_enter_live = 0x7f140366`  L748
+- `int gku_eventtype_normal = 0x7f140367`  L749
+- `int gku_eventtype_pir = 0x7f140368`  L750
+- `int gku_exit_confirm = 0x7f140369`  L751
+- `int gku_feedback_commit = 0x7f14036a`  L752
+- `int gku_feedback_empty = 0x7f14036b`  L753
+- `int gku_feedback_info = 0x7f14036c`  L754
+- `int gku_feedback_info_placehold = 0x7f14036d`  L755
+- `int gku_feedback_ok = 0x7f14036e`  L756
+- `int gku_file_all_event = 0x7f14036f`  L757
+- `int gku_file_edit = 0x7f140370`  L758
+- `int gku_file_edit_empty = 0x7f140371`  L759
+- `int gku_filetype_photo = 0x7f140372`  L760
+- `int gku_filetype_video = 0x7f140373`  L761
+- `int gku_firmware_update_check_failed = 0x7f140374`  L762
+- `int gku_firmware_update_checking = 0x7f140375`  L763
+- `int gku_firmware_update_compare_ok = 0x7f140376`  L764
+- `int gku_firmware_update_compare_tip = 0x7f140377`  L765
+- `int gku_firmware_update_compare_title = 0x7f140378`  L766
+- `int gku_firmware_update_confirm = 0x7f140379`  L767
+- `int gku_firmware_update_cur_ver = 0x7f14037a`  L768
+- `int gku_firmware_update_doing = 0x7f14037b`  L769
+- `int gku_firmware_update_doing_tip = 0x7f14037c`  L770
+- `int gku_firmware_update_downloading = 0x7f14037d`  L771
+- `int gku_firmware_update_failed = 0x7f14037e`  L772
+- `int gku_firmware_update_failed_battery = 0x7f14037f`  L773
+- `int gku_firmware_update_failed_download = 0x7f140380`  L774
+- `int gku_firmware_update_failed_general = 0x7f140381`  L775
+- `int gku_firmware_update_failed_nocard = 0x7f140382`  L776
+- `int gku_firmware_update_failed_offline = 0x7f140383`  L777
+- `int gku_firmware_update_failed_timeout = 0x7f140384`  L778
+- `int gku_firmware_update_failed_verify = 0x7f140385`  L779
+- `int gku_firmware_update_failed_waitonline = 0x7f140386`  L780
+- `int gku_firmware_update_new_ver = 0x7f140387`  L781
+- `int gku_firmware_update_no_new = 0x7f140388`  L782
+- `int gku_firmware_update_prepare = 0x7f140389`  L783
+- `int gku_firmware_update_start = 0x7f14038a`  L784
+- `int gku_firmware_update_succeed = 0x7f14038b`  L785
+- `int gku_firmware_update_succeed_title = 0x7f14038c`  L786
+- `int gku_firmware_update_title = 0x7f14038d`  L787
+- `int gku_firmware_update_try_again = 0x7f14038e`  L788
+- `int gku_firmware_update_wait = 0x7f14038f`  L789
+- `int gku_forgot_pwd = 0x7f140390`  L790
+- `int gku_get_code = 0x7f140391`  L791
+- `int gku_get_code_again = 0x7f140392`  L792
+- `int gku_get_code_placehold = 0x7f140393`  L793
+- `int gku_get_identify_ok = 0x7f140394`  L794
+- `int gku_goto_open = 0x7f140395`  L795
+- `int gku_goto_setting = 0x7f140396`  L796
+- `int gku_hour_simple = 0x7f140397`  L797
+- `int gku_iccid_empty = 0x7f140398`  L798
+- `int gku_identify_code_error = 0x7f140399`  L799
+- `int gku_identify_code_timeout = 0x7f14039a`  L800
+- `int gku_ignore = 0x7f14039b`  L801
+- `int gku_image_not_support_snap = 0x7f14039c`  L802
+- `int gku_input_placehold = 0x7f14039d`  L803
+- `int gku_invalid_devid = 0x7f14039e`  L804
+- `int gku_invalid_email = 0x7f14039f`  L805
+- `int gku_invalid_pwd = 0x7f1403a0`  L806
+- `int gku_item_comm_24hour = 0x7f1403a1`  L807
+- `int gku_item_comm_led = 0x7f1403a2`  L808
+- `int gku_item_comm_reconnet = 0x7f1403a3`  L809
+- `int gku_item_comm_speaker = 0x7f1403a4`  L810
+- `int gku_item_comm_summer = 0x7f1403a5`  L811
+- `int gku_item_comm_tipstone = 0x7f1403a6`  L812
+- `int gku_item_comm_workmode = 0x7f1403a7`  L813
+- `int gku_item_image_filp = 0x7f1403a8`  L814
+- `int gku_item_image_mode = 0x7f1403a9`  L815
+- `int gku_item_motion_detection = 0x7f1403aa`  L816
+- `int gku_item_osd = 0x7f1403ab`  L817
+- `int gku_item_pdt_4gver = 0x7f1403ac`  L818
+- `int gku_item_pdt_company = 0x7f1403ad`  L819
+- `int gku_item_pdt_iccid = 0x7f1403ae`  L820
+- `int gku_item_pdt_iccid_copyed = 0x7f1403af`  L821
+- `int gku_item_pdt_imei = 0x7f1403b0`  L822
+- `int gku_item_pdt_swver = 0x7f1403b1`  L823
+- `int gku_item_pdt_type = 0x7f1403b2`  L824
+- `int gku_item_photo_number = 0x7f1403b3`  L825
+- `int gku_item_pir_envmode = 0x7f1403b4`  L826
+- `int gku_item_pir_interval = 0x7f1403b5`  L827
+- `int gku_item_pir_range = 0x7f1403b6`  L828
+- `int gku_item_pir_sens = 0x7f1403b7`  L829
+- `int gku_item_power_freq = 0x7f1403b8`  L830
+- `int gku_item_rec_sound = 0x7f1403b9`  L831
+- `int gku_item_rec_time = 0x7f1403ba`  L832
+- `int gku_item_storage = 0x7f1403bb`  L833
+- `int gku_item_sync_time = 0x7f1403bc`  L834
+- `int gku_item_tempture_unit = 0x7f1403bd`  L835
+- `int gku_language_chinese = 0x7f1403be`  L836
+- `int gku_language_english = 0x7f1403bf`  L837
+- `int gku_live_exit = 0x7f1403c0`  L838
+- `int gku_loading = 0x7f1403c1`  L839
+- `int gku_location_permission_denied_hint = 0x7f1403c2`  L840
+- `int gku_login_invalid_pwd = 0x7f1403c3`  L841
+- `int gku_login_pwd_error = 0x7f1403c4`  L842
+- `int gku_login_regist_succeed = 0x7f1403c5`  L843
+- `int gku_login_succeed = 0x7f1403c6`  L844
+- `int gku_login_title = 0x7f1403c7`  L845
+- `int gku_logout = 0x7f1403c8`  L846
+- `int gku_logout_confirm = 0x7f1403c9`  L847
+- `int gku_main_cloud = 0x7f1403ca`  L848
+- `int gku_main_h_flip = 0x7f1403cb`  L849
+- `int gku_main_location = 0x7f1403cc`  L850
+- `int gku_main_location_describ = 0x7f1403cd`  L851
+- `int gku_main_ptz = 0x7f1403ce`  L852
+- `int gku_main_rec = 0x7f1403cf`  L853
+- `int gku_main_sd = 0x7f1403d0`  L854
+- `int gku_main_v_flip = 0x7f1403d1`  L855
+- `int gku_mine_about = 0x7f1403d2`  L856
+- `int gku_mine_app_setting = 0x7f1403d3`  L857
+- `int gku_mine_feedback = 0x7f1403d4`  L858
+- `int gku_mine_net_check = 0x7f1403d5`  L859
+- `int gku_mine_online_feedback = 0x7f1403d6`  L860
+- `int gku_mine_service = 0x7f1403d7`  L861
+- `int gku_mine_share = 0x7f1403d8`  L862
+- `int gku_mine_title = 0x7f1403d9`  L863
+- `int gku_minute_simple = 0x7f1403da`  L864
+- `int gku_month_1 = 0x7f1403db`  L865
+- `int gku_month_10 = 0x7f1403dc`  L866
+- `int gku_month_11 = 0x7f1403dd`  L867
+- `int gku_month_12 = 0x7f1403de`  L868
+- `int gku_month_2 = 0x7f1403df`  L869
+- `int gku_month_3 = 0x7f1403e0`  L870
+- `int gku_month_4 = 0x7f1403e1`  L871
+- `int gku_month_5 = 0x7f1403e2`  L872
+- `int gku_month_6 = 0x7f1403e3`  L873
+- `int gku_month_7 = 0x7f1403e4`  L874
+- `int gku_month_8 = 0x7f1403e5`  L875
+- `int gku_month_9 = 0x7f1403e6`  L876
+- `int gku_msg_all_event = 0x7f1403e7`  L877
+- `int gku_msg_bad_gps = 0x7f1403e8`  L878
+- `int gku_msg_bad_signal = 0x7f1403e9`  L879
+- `int gku_msg_card_full = 0x7f1403ea`  L880
+- `int gku_msg_charge_end = 0x7f1403eb`  L881
+- `int gku_msg_electronic_fence_entry = 0x7f1403ec`  L882
+- `int gku_msg_little_capacity = 0x7f1403ed`  L883
+- `int gku_msg_loss_gps = 0x7f1403ee`  L884
+- `int gku_msg_low_battery = 0x7f1403ef`  L885
+- `int gku_msg_need_format = 0x7f1403f0`  L886
+- `int gku_msg_nocard = 0x7f1403f1`  L887
+- `int gku_msg_pir_wakeup = 0x7f1403f2`  L888
+- `int gku_msg_power_on = 0x7f1403f3`  L889
+- `int gku_msg_title = 0x7f1403f4`  L890
+- `int gku_msg_wakeup = 0x7f1403f5`  L891
+- `int gku_need_add_device = 0x7f1403f6`  L892
+- `int gku_need_camera_permission = 0x7f1403f7`  L893
+- `int gku_need_location_permission = 0x7f1403f8`  L894
+- `int gku_need_login = 0x7f1403f9`  L895
+- `int gku_need_read_storage_permission = 0x7f1403fa`  L896
+- `int gku_need_record_audio_permission = 0x7f1403fb`  L897
+- `int gku_net_error = 0x7f1403fc`  L898
+- `int gku_new_firmware_tip = 0x7f1403fd`  L899
+- `int gku_new_msg_tip = 0x7f1403fe`  L900
+- `int gku_new_update_now = 0x7f1403ff`  L901
+- `int gku_next = 0x7f140400`  L902
+- `int gku_nickname_too_long = 0x7f140401`  L903
+- `int gku_no_auth = 0x7f140402`  L904
+- `int gku_no_device = 0x7f140403`  L905
+- `int gku_no_location_permission = 0x7f140404`  L906
+- `int gku_no_message = 0x7f140405`  L907
+- `int gku_no_network = 0x7f140406`  L908
+- `int gku_no_order = 0x7f140407`  L909
+- `int gku_no_share_event = 0x7f140408`  L910
+- `int gku_none = 0x7f140409`  L911
+- `int gku_not_download = 0x7f14040a`  L912
+- `int gku_not_online = 0x7f14040b`  L913
+- `int gku_not_set = 0x7f14040c`  L914
+- `int gku_notsupport = 0x7f14040d`  L915
+- `int gku_offline = 0x7f14040e`  L916
+- `int gku_online = 0x7f14040f`  L917
+- `int gku_operation_failed = 0x7f140410`  L918
+- `int gku_operation_succeed = 0x7f140411`  L919
+- `int gku_photo_album_permission_denied_hint = 0x7f140412`  L920
+- `int gku_pir_range_selected = 0x7f140413`  L921
+- `int gku_privacy_dialog_detail = 0x7f140414`  L922
+- `int gku_privacy_dialog_title = 0x7f140415`  L923
+- `int gku_privacy_key_privacy = 0x7f140416`  L924
+- `int gku_privacy_key_service = 0x7f140417`  L925
+- `int gku_privacy_title = 0x7f140418`  L926
+- `int gku_privacy_title_viewer = 0x7f140419`  L927
+- `int gku_problem_type = 0x7f14041a`  L928
+- `int gku_product_model = 0x7f14041b`  L929
+- `int gku_product_type = 0x7f14041c`  L930
+- `int gku_pwd_placehold = 0x7f14041d`  L931
+- `int gku_quit = 0x7f14041e`  L932
+- `int gku_recommend = 0x7f14041f`  L933
+- `int gku_record_failed = 0x7f140420`  L934
+- `int gku_record_ok = 0x7f140421`  L935
+- `int gku_record_start = 0x7f140422`  L936
+- `int gku_recover_pwd_succeed = 0x7f140423`  L937
+- `int gku_recover_pwd_title = 0x7f140424`  L938
+- `int gku_refresh_loading = 0x7f140425`  L939
+- `int gku_refresh_pull_up = 0x7f140426`  L940
+- `int gku_refresh_pulldown_to_refresh = 0x7f140427`  L941
+- `int gku_refresh_release_to_refresh = 0x7f140428`  L942
+- `int gku_regist_part1 = 0x7f140429`  L943
+- `int gku_regist_part2 = 0x7f14042a`  L944
+- `int gku_regist_title = 0x7f14042b`  L945
+- `int gku_reject = 0x7f14042c`  L946
+- `int gku_remove_device_confirm = 0x7f14042d`  L947
+- `int gku_remove_device_ok = 0x7f14042e`  L948
+- `int gku_request_camera_permission_failed = 0x7f14042f`  L949
+- `int gku_request_location_permission_failed = 0x7f140430`  L950
+- `int gku_request_read_storage_permission_failed = 0x7f140431`  L951
+- `int gku_request_record_audio_permission_failed = 0x7f140432`  L952
+- `int gku_reset = 0x7f140433`  L953
+- `int gku_reset_confirm = 0x7f140434`  L954
+- `int gku_reset_default_doing = 0x7f140435`  L955
+- `int gku_reset_succeed = 0x7f140436`  L956
+- `int gku_save = 0x7f140437`  L957
+- `int gku_save_failed = 0x7f140438`  L958
+- `int gku_save_succeed = 0x7f140439`  L959
+- `int gku_sd_mode_event = 0x7f14043a`  L960
+- `int gku_sd_mode_list = 0x7f14043b`  L961
+- `int gku_sd_plaing = 0x7f14043c`  L962
+- `int gku_sd_state_need_format = 0x7f14043d`  L963
+- `int gku_sd_state_no_card = 0x7f14043e`  L964
+- `int gku_sd_today_no_data = 0x7f14043f`  L965
+- `int gku_second = 0x7f140440`  L966
+- `int gku_select_dev_type = 0x7f140441`  L967
+- `int gku_select_pay_type = 0x7f140442`  L968
+- `int gku_select_placehold = 0x7f140443`  L969
+- `int gku_setting_alarm = 0x7f140444`  L970
+- `int gku_setting_close_push_confirm = 0x7f140445`  L971
+- `int gku_setting_close_push_ok = 0x7f140446`  L972
+- `int gku_setting_devinfo = 0x7f140447`  L973
+- `int gku_setting_open_push_ok = 0x7f140448`  L974
+- `int gku_setting_picture = 0x7f140449`  L975
+- `int gku_setting_push = 0x7f14044a`  L976
+- `int gku_setting_remove_device = 0x7f14044b`  L977
+- `int gku_setting_share = 0x7f14044c`  L978
+- `int gku_setting_title = 0x7f14044d`  L979
+- `int gku_share = 0x7f14044e`  L980
+- `int gku_share_accept = 0x7f14044f`  L981
+- `int gku_share_accepted_ok = 0x7f140450`  L982
+- `int gku_share_account_tip = 0x7f140451`  L983
+- `int gku_share_add = 0x7f140452`  L984
+- `int gku_share_auth = 0x7f140453`  L985
+- `int gku_share_auth_audio = 0x7f140454`  L986
+- `int gku_share_auth_msg = 0x7f140455`  L987
+- `int gku_share_auth_playback = 0x7f140456`  L988
+- `int gku_share_auth_setting = 0x7f140457`  L989
+- `int gku_share_count = 0x7f140458`  L990
+- `int gku_share_device_did_remove = 0x7f140459`  L991
+- `int gku_share_did_accept = 0x7f14045a`  L992
+- `int gku_share_did_reject = 0x7f14045b`  L993
+- `int gku_share_edit = 0x7f14045c`  L994
+- `int gku_share_event = 0x7f14045d`  L995
+- `int gku_share_has_msg = 0x7f14045e`  L996
+- `int gku_share_is_from = 0x7f14045f`  L997
+- `int gku_share_is_mine = 0x7f140460`  L998
+- `int gku_share_is_to = 0x7f140461`  L999
+- `int gku_share_list = 0x7f140462`  L1000
+- `int gku_share_master = 0x7f140463`  L1001
+- `int gku_share_no_msg = 0x7f140464`  L1002
+- `int gku_share_reject = 0x7f140465`  L1003
+- `int gku_share_succeed = 0x7f140466`  L1004
+- `int gku_share_tip = 0x7f140467`  L1005
+- `int gku_share_user_detail = 0x7f140468`  L1006
+- `int gku_share_user_title = 0x7f140469`  L1007
+- `int gku_share_userid = 0x7f14046a`  L1008
+- `int gku_share_wait_accept = 0x7f14046b`  L1009
+- `int gku_shared_count = 0x7f14046c`  L1010
+- `int gku_shop_not_exist = 0x7f14046d`  L1011
+- `int gku_signal = 0x7f14046e`  L1012
+- `int gku_state_flow_expired = 0x7f14046f`  L1013
+- `int gku_storage_cloud_upload = 0x7f140470`  L1014
+- `int gku_storage_format = 0x7f140471`  L1015
+- `int gku_storage_format_confirm = 0x7f140472`  L1016
+- `int gku_storage_format_doing = 0x7f140473`  L1017
+- `int gku_storage_format_failed = 0x7f140474`  L1018
+- `int gku_storage_format_succeed = 0x7f140475`  L1019
+- `int gku_storage_format_timeout = 0x7f140476`  L1020
+- `int gku_storage_status = 0x7f140477`  L1021
+- `int gku_stream_hd = 0x7f140478`  L1022
+- `int gku_stream_hd_changed = 0x7f140479`  L1023
+- `int gku_stream_sd = 0x7f14047a`  L1024
+- `int gku_stream_sd_changed = 0x7f14047b`  L1025
+- `int gku_sync_param = 0x7f14047c`  L1026
+- `int gku_sync_param_ok = 0x7f14047d`  L1027
+- `int gku_synctime_doing = 0x7f14047e`  L1028
+- `int gku_synctime_succeed = 0x7f14047f`  L1029
+- `int gku_timezone = 0x7f140480`  L1030
+- `int gku_tip = 0x7f140481`  L1031
+- `int gku_try_again = 0x7f140482`  L1032
+- `int gku_user_not_exist = 0x7f140483`  L1033
+- `int gku_userinfo = 0x7f140484`  L1034
+- `int gku_userinfo_confirm_pwd = 0x7f140485`  L1035
+- `int gku_userinfo_header = 0x7f140486`  L1036
+- `int gku_userinfo_header_album = 0x7f140487`  L1037
+- `int gku_userinfo_header_camera = 0x7f140488`  L1038
+- `int gku_userinfo_id = 0x7f140489`  L1039
+- `int gku_userinfo_modify_pwd = 0x7f14048a`  L1040
+- `int gku_userinfo_new_pwd = 0x7f14048b`  L1041
+- `int gku_userinfo_new_pwd_not_match = 0x7f14048c`  L1042
+- `int gku_userinfo_nickname = 0x7f14048d`  L1043
+- `int gku_userinfo_nickname_empty = 0x7f14048e`  L1044
+- `int gku_userinfo_old_pwd = 0x7f14048f`  L1045
+- `int gku_userinfo_old_pwd_invalid = 0x7f140490`  L1046
+- `int gku_userinfo_tip = 0x7f140491`  L1047
+- `int gku_value_1 = 0x7f140492`  L1048
+- `int gku_value_10sec = 0x7f140493`  L1049
+- `int gku_value_1hour = 0x7f140494`  L1050
+- `int gku_value_1min = 0x7f140495`  L1051
+- `int gku_value_2 = 0x7f140496`  L1052
+- `int gku_value_20sec = 0x7f140497`  L1053
+- `int gku_value_2hour = 0x7f140498`  L1054
+- `int gku_value_3 = 0x7f140499`  L1055
+- `int gku_value_30sec = 0x7f14049a`  L1056
+- `int gku_value_3hour = 0x7f14049b`  L1057
+- `int gku_value_3min = 0x7f14049c`  L1058
+- `int gku_value_4hour = 0x7f14049d`  L1059
+- `int gku_value_5 = 0x7f14049e`  L1060
+- `int gku_value_50hz = 0x7f14049f`  L1061
+- `int gku_value_5hour = 0x7f1404a0`  L1062
+- `int gku_value_5min = 0x7f1404a1`  L1063
+- `int gku_value_5sec = 0x7f1404a2`  L1064
+- `int gku_value_60hz = 0x7f1404a3`  L1065
+- `int gku_value_celsius = 0x7f1404a4`  L1066
+- `int gku_value_common = 0x7f1404a5`  L1067
+- `int gku_value_fahrenheit_degree = 0x7f1404a6`  L1068
+- `int gku_value_hflip = 0x7f1404a7`  L1069
+- `int gku_value_high = 0x7f1404a8`  L1070
+- `int gku_value_hvflip = 0x7f1404a9`  L1071
+- `int gku_value_immediately = 0x7f1404aa`  L1072
+- `int gku_value_low = 0x7f1404ab`  L1073
+- `int gku_value_mid = 0x7f1404ac`  L1074
+- `int gku_value_night = 0x7f1404ad`  L1075
+- `int gku_value_normal = 0x7f1404ae`  L1076
+- `int gku_value_off = 0x7f1404af`  L1077
+- `int gku_value_on = 0x7f1404b0`  L1078
+- `int gku_value_one_way = 0x7f1404b1`  L1079
+- `int gku_value_photo = 0x7f1404b2`  L1080
+- `int gku_value_two_way = 0x7f1404b3`  L1081
+- `int gku_value_vflip = 0x7f1404b4`  L1082
+- `int gku_value_video = 0x7f1404b5`  L1083
+- `int gku_wait_download = 0x7f1404b6`  L1084
+- `int gku_wakeup_do = 0x7f1404b7`  L1085
+- `int gku_wakeup_failed = 0x7f1404b8`  L1086
+- `int gku_waking = 0x7f1404b9`  L1087
+- `int gku_week_1 = 0x7f1404ba`  L1088
+- `int gku_week_2 = 0x7f1404bb`  L1089
+- `int gku_week_3 = 0x7f1404bc`  L1090
+- `int gku_week_4 = 0x7f1404bd`  L1091
+- `int gku_week_5 = 0x7f1404be`  L1092
+- `int gku_week_friday = 0x7f1404bf`  L1093
+- `int gku_week_monday = 0x7f1404c0`  L1094
+- `int gku_week_saturday = 0x7f1404c1`  L1095
+- `int gku_week_sunday = 0x7f1404c2`  L1096
+- `int gku_week_thursday = 0x7f1404c3`  L1097
+- `int gku_week_tuesday = 0x7f1404c4`  L1098
+- `int gku_week_wednesday = 0x7f1404c5`  L1099
+- `int i_known = 0x7f1404d8`  L1100
+- `int input_new_pwd = 0x7f1404ea`  L1101
+- `int input_old_pwd = 0x7f1404eb`  L1102
+- `int input_pwd_again = 0x7f1404ee`  L1103
+- `int install_what_app = 0x7f1404f0`  L1104
+- `int intercom = 0x7f1404f1`  L1105
+- `int italian = 0x7f1404f4`  L1106
+- `int japanese = 0x7f1404f6`  L1107
+- `int jinri = 0x7f1404f9`  L1108
+- `int json_parse_error = 0x7f1404fa`  L1109
+- `int jump_over = 0x7f1404fc`  L1110
+- `int korean = 0x7f140500`  L1111
+- `int liji_shengji = 0x7f140503`  L1112
+- `int limit_length_max = 0x7f140504`  L1113
+- `int loading = 0x7f14051b`  L1114
+- `int loding = 0x7f14051e`  L1115
+- `int loding_fail_lick_try = 0x7f14051f`  L1116
+- `int logout_fail = 0x7f140524`  L1117
+- `int low_power_shutdown = 0x7f140529`  L1118
+- `int machine_goes_into_sleep_mode = 0x7f14053a`  L1119
+- `int manually_lock_video = 0x7f140540`  L1120
+- `int memory_card_ready = 0x7f140560`  L1121
+- `int message = 0x7f140565`  L1122
+- `int modify_fail = 0x7f140577`  L1123
+- `int modify_success = 0x7f140578`  L1124
+- `int month = 0x7f14057b`  L1125
+- `int my_feedback = 0x7f1405bf`  L1126
+- `int newest_announcement = 0x7f1405c3`  L1127
+- `int no_storage_permmision = 0x7f1405d9`  L1128
+- `int not_found_email_app = 0x7f1405e1`  L1129
+- `int not_selected_any_media = 0x7f1405e4`  L1130
+- `int not_selected_any_pictures = 0x7f1405e5`  L1131
+- `int open_device_wifi = 0x7f1405eb`  L1132
+- `int open_file_failed = 0x7f1405ec`  L1133
+- `int open_what_app_fail = 0x7f1405ee`  L1134
+- `int package_exchange = 0x7f1405fc`  L1135
+- `int park_alrm = 0x7f1405fe`  L1136
+- `int pathroot = 0x7f140607`  L1137
+- `int permission_ask = 0x7f14060a`  L1138
+- `int permission_modify_fail = 0x7f14060e`  L1139
+- `int permission_modify_success = 0x7f14060f`  L1140
+- `int perspective = 0x7f140614`  L1141
+- `int pic_less_than_10 = 0x7f14061f`  L1142
+- `int pic_video = 0x7f140621`  L1143
+- `int playback_4g_low_px_hint = 0x7f14062a`  L1144
+- `int portuguese = 0x7f140639`  L1145
+- `int ppcs_connect_success = 0x7f14063b`  L1146
+- `int ppcs_device_not_online = 0x7f14063c`  L1147
+- `int ppcs_invalid_dsk = 0x7f14063d`  L1148
+- `int ppcs_invalid_id = 0x7f14063e`  L1149
+- `int ppcs_invalid_parameter = 0x7f14063f`  L1150
+- `int ppcs_invalid_prefix = 0x7f140640`  L1151
+- `int ppcs_invalid_session = 0x7f140641`  L1152
+- `int ppcs_max_session = 0x7f140642`  L1153
+- `int ppcs_no_relay_server = 0x7f140643`  L1154
+- `int ppcs_not_initialized = 0x7f140644`  L1155
+- `int ppcs_remote_buffer_full = 0x7f140645`  L1156
+- `int ppcs_session_closed_called = 0x7f140646`  L1157
+- `int ppcs_session_closed_remote = 0x7f140647`  L1158
+- `int ppcs_session_closed_timeout = 0x7f140648`  L1159
+- `int ppcs_tcp_relay_failed = 0x7f140649`  L1160
+- `int ppcs_time_out = 0x7f14064a`  L1161
+- `int ppcs_udp_bind_failed = 0x7f14064b`  L1162
+- `int ppcs_user_connect_break = 0x7f14064c`  L1163
+- `int ppcs_write_success = 0x7f14064d`  L1164
+- `int preview = 0x7f1406b8`  L1165
+- `int privacy_policy = 0x7f1406be`  L1166
+- `int privacy_policy_ = 0x7f1406bf`  L1167
+- `int problem_desc = 0x7f1406c3`  L1168
+- `int problem_type = 0x7f1406c5`  L1169
+- `int product_model = 0x7f1406c6`  L1170
+- `int product_type = 0x7f1406c7`  L1171
+- `int push_time = 0x7f140715`  L1172
+- `int query_media_info_fail = 0x7f140717`  L1173
+- `int record_audio_permission_ask = 0x7f140726`  L1174
+- `int reject_failed = 0x7f14072d`  L1175
+- `int rejected = 0x7f14072e`  L1176
+- `int retry = 0x7f14073d`  L1177
+- `int ri = 0x7f14073f`  L1178
+- `int router_no_net = 0x7f14074e`  L1179
+- `int router_non_wifi = 0x7f14074f`  L1180
+- `int russian = 0x7f140754`  L1181
+- `int saved_failed = 0x7f140759`  L1182
+- `int saved_successfully = 0x7f14075a`  L1183
+- `int screenshot = 0x7f14076b`  L1184
+- `int sd_pull_out = 0x7f140771`  L1185
+- `int select = 0x7f140778`  L1186
+- `int send_cmd_error = 0x7f14078a`  L1187
+- `int server_error = 0x7f14078f`  L1188
+- `int server_timeout = 0x7f140790`  L1189
+- `int setting = 0x7f140794`  L1190
+- `int setting_fail = 0x7f14079e`  L1191
+- `int setting_success = 0x7f1407b2`  L1192
+- `int share_failed = 0x7f1407cf`  L1193
+- `int shared_a_device = 0x7f1407d3`  L1194
+- `int shared_a_device_to = 0x7f1407d4`  L1195
+- `int shared_device_to_others = 0x7f1407d5`  L1196
+- `int shipin_geshi_xianzhi = 0x7f1407d6`  L1197
+- `int shot_save_album_fail = 0x7f1407d7`  L1198
+- `int shot_saved_album = 0x7f1407d8`  L1199
+- `int spanish = 0x7f1407ea`  L1200
+- `int speeding = 0x7f1407f2`  L1201
+- `int start_record_fail = 0x7f140845`  L1202
+- `int stop_intercom = 0x7f140849`  L1203
+- `int stop_record_fail = 0x7f14084a`  L1204
+- `int storage_permission_ask = 0x7f14084e`  L1205
+- `int storage_permmision_directions = 0x7f140850`  L1206
+- `int submit_fail = 0x7f14085b`  L1207
+- `int switch_camera_view_fail = 0x7f140860`  L1208
+- `int switch_language = 0x7f140862`  L1209
+- `int time_lapse_end = 0x7f1408c8`  L1210
+- `int time_lapse_start = 0x7f1408c9`  L1211
+- `int to_authorize = 0x7f1408e2`  L1212
+- `int toast_max_pic_select = 0x7f1408e3`  L1213
+- `int unknown_error = 0x7f1408fc`  L1214
+- `int upload_avatar_fail = 0x7f140906`  L1215
+- `int upload_fail = 0x7f140907`  L1216
+- `int user_lecense = 0x7f140912`  L1217
+- `int user_license_ = 0x7f140913`  L1218
+- `int user_shared = 0x7f140914`  L1219
+- `int vehicle_collision = 0x7f140915`  L1220
+- `int wakeup_failed = 0x7f14092a`  L1221
+- `int wakeup_start = 0x7f14092b`  L1222
+- `int wakeup_success = 0x7f14092c`  L1223
+- `int wifi_disconnected = 0x7f140949`  L1224
+- `int year = 0x7f140979`  L1225
+- `int yihouzaishuo = 0x7f14097b`  L1226
+- `int yikaitong = 0x7f14097c`  L1227
+- `int yishi_zuixin_banben = 0x7f14097d`  L1228
+- `int yu = 0x7f14097f`  L1229
+- `int yue = 0x7f140980`  L1230
+
+方法（1）：
+- `private string()`  L1232
+### `com.gku.base.R$style`
+L1236 · [class] public static final style · `com/gku/base/R.java`
+
+字段/常量（3）：
+- `int PermissionNiubility_TranslucentTheme = 0x7f150184`  L1237
+- `int ThemeNoActionBar = 0x7f1502e4`  L1238
+- `int customDialogStyle = 0x7f1504d9`  L1239
+
+方法（1）：
+- `private style()`  L1241
+### `com.gku.base.R$styleable`
+L1245 · [class] public static final styleable · `com/gku/base/R.java`
+
+字段/常量（8）：
+- `int[] ShimmerFrameLayout = {com.gku.xtugo.R.attr.cy_shimmer_angle, com.gku.xtugo.R.attr.cy_shimmer_animation_duration, com.gku.xtugo.R.attr.cy_shimmer_auto_start, com.gku.xtugo.R.attr.cy_shimmer_color, com.gku.xtugo.R.attr.cy_shimmer_gradient_center_color_width, com.gku.xtugo.R.attr.cy_shimmer_mask_width, com.gku.xtugo.R.attr.cy_shimmer_reverse_animation}`  L1246
+- `int ShimmerFrameLayout_cy_shimmer_angle = 0x00000000`  L1247
+- `int ShimmerFrameLayout_cy_shimmer_animation_duration = 0x00000001`  L1248
+- `int ShimmerFrameLayout_cy_shimmer_auto_start = 0x00000002`  L1249
+- `int ShimmerFrameLayout_cy_shimmer_color = 0x00000003`  L1250
+- `int ShimmerFrameLayout_cy_shimmer_gradient_center_color_width = 0x00000004`  L1251
+- `int ShimmerFrameLayout_cy_shimmer_mask_width = 0x00000005`  L1252
+- `int ShimmerFrameLayout_cy_shimmer_reverse_animation = 0x00000006`  L1253
+
+方法（1）：
+- `private styleable()`  L1255
+### `com.gku.base.R$xml`
+L1259 · [class] public static final xml · `com/gku/base/R.java`
+
+字段/常量（2）：
+- `int network_config_base = 0x7f170001`  L1260
+- `int paths_base = 0x7f170003`  L1261
+
+方法（1）：
+- `private xml()`  L1263
+### `com.gku.base.SingleInstanceRouter`
+L13 · [class] public SingleInstanceRouter · `com/gku/base/SingleInstanceRouter.java`
+
+字段/常量（3）：
+- `Map<LifecycleOwner, Map<String, List<Callback>>> mapCallback`  L14
+- `Map<LifecycleOwner, Map<String, List<Object>>> mapObj`  L15
+- `List<T> list = null`  L62
+
+方法（8）：
+- `private SingleInstanceRouter()`  L21
+- `SingleInstanceRouter getInstance()`  L33
+- `void addObj(final LifecycleOwner lifecycleOwner, String str, Object obj)`  L37
+- `void onStateChanged(LifecycleOwner lifecycleOwner2, Lifecycle.Event event)`  L40 @Override
+- `List<T> getObj(String str)`  L60
+- `void addCallback(final LifecycleOwner lifecycleOwner, String str, Callback<T> callback)`  L75
+- `void onStateChanged(LifecycleOwner lifecycleOwner2, Lifecycle.Event event)`  L78 @Override
+- `void callback(String str, T t)`  L98
+### `com.gku.base.SingleInstanceRouter$Callback`
+L17 · [interface] public Callback · `com/gku/base/SingleInstanceRouter.java`
+
+方法（1）：
+- `void callback(T t)`  L18
+### `com.gku.base.SingleInstanceRouter$SingleInstanceHoder__`
+L26 · [class] private static SingleInstanceHoder__ · `com/gku/base/SingleInstanceRouter.java`
+
+方法（1）：
+- `private SingleInstanceHoder__()`  L29
+### `com.gku.base.SocketErrorCode`
+L10 · [class] public SocketErrorCode · `com/gku/base/SocketErrorCode.java`
+
+字段/常量（12）：
+- `int BROKEN_PIPE = -10004`  L11
+- `int CONNECTION_ABORT = -10007`  L12
+- `int CONNECTION_REFUSED = -10008`  L13
+- `int CONNECTION_RESET = -10003`  L14
+- `int EOF = -10005`  L15
+- `int FAILED_TO_CONNECT = -10009`  L16
+- `int IO_ERROR = -10006`  L17
+- `int SOCKET_CLOSED = -10002`  L18
+- `int SOCKET_EXCEPTION = -100011`  L19
+- `int TIMEOUT = -10001`  L20
+- `int UNKNOWN = -100099`  L21
+- `int UNREACHABLE = -100010`  L22
+
+方法（2）：
+- `int mapExceptionToCode(Exception exc)`  L24
+    - 体内字面量："socketclosed" · "connectionreset" · "brokenpipe" · "connectionabort" · "connectionrefused" · "failedtoconnect" · "networkunreachable" · "hostunreachable"
+- `String normalize(String str)`  L56
+    - 体内字面量："A" · "Z" · "a" · "z"
+### `com.gku.base.XUtils`
+L26 · [class] public XUtils · `com/gku/base/XUtils.java`
+
+字段/常量（7）：
+- `int CODE_ERROR_CANCELED = -100001`  L27
+- `int CODE_ERROR_CANCELED_OR_FAILED = -100002`  L28
+- `Map<String, Callback.Cancelable> mapCancelable`  L29
+- `SparseArray<String> sparseArray3 = sparseArray`  L132
+- `int i = 0`  L140
+- `Network activeNetwork`  L415
+- `NetworkCapabilities networkCapabilities`  L416
+
+方法（33）：
+- `private XUtils()`  L71
+- `XUtils getInstance()`  L82
+- `boolean isFileDownloaded(Context context, String str)`  L86
+- `boolean isFileDownloaded(Context context, String str, String str2)`  L91
+- `String getTag(T t, String str)`  L96
+- `void cancel(T t, String str)`  L100
+- `void cancel(T t, List<String> list)`  L110
+- `void cancel(T t, SparseArray<String> sparseArray)`  L117
+- `List<Callback.Cancelable> downloadFiles(Context context, T t, SparseArray<String> sparseArray, boolean z, CallbackFiles callbackFiles)`  L123
+    - 体内字面量："/"
+- `List<Callback.Cancelable> downloadFiles(Context context, T t, SparseArray<String> sparseArray, SparseArray<String> sparseArray2, boolean z, final CallbackFiles callbackFiles)`  L131
+- `int connectTimeout()`  L145 @Override
+- `int readTimeout()`  L150 @Override
+- `void onStarted__()`  L155 @Override
+- `void onLoading__(int i2, float f, long j, long j2, boolean z2)`  L160 @Override
+- `void onSuccess__(File file)`  L165 @Override
+- `void onFail(int i2, String str)`  L174 @Override
+- `void onCreate(LifecycleOwner lifecycleOwner)`  L183 @Override
+    - 体内字面量："owner"
+- `void onPause(LifecycleOwner lifecycleOwner)`  L188 @Override
+    - 体内字面量："owner"
+- `void onResume(LifecycleOwner lifecycleOwner)`  L193 @Override
+    - 体内字面量："owner"
+- `void onStart(LifecycleOwner lifecycleOwner)`  L198 @Override
+    - 体内字面量："owner"
+- `void onStop(LifecycleOwner lifecycleOwner)`  L203 @Override
+    - 体内字面量："owner"
+- `void onDestroy(LifecycleOwner lifecycleOwner)`  L208 @Override
+    - 体内字面量："owner"
+- `Callback.Cancelable downloadFile(Context context, T t, String str, boolean z, CallbackDownload callbackDownload)`  L219
+    - 体内字面量："/"
+- `Callback.Cancelable downloadFile(Context context, final T t, final String str, String str2, boolean z, CallbackDownload callbackDownload)`  L223
+- `void cancel()`  L229 @Override
+- `boolean isCancelled()`  L233 @Override
+- `void onCreate(LifecycleOwner lifecycleOwner)`  L253 @Override
+    - 体内字面量："owner"
+- `void onPause(LifecycleOwner lifecycleOwner)`  L258 @Override
+    - 体内字面量："owner"
+- `void onResume(LifecycleOwner lifecycleOwner)`  L263 @Override
+    - 体内字面量："owner"
+- `void onStart(LifecycleOwner lifecycleOwner)`  L268 @Override
+    - 体内字面量："owner"
+- `void onStop(LifecycleOwner lifecycleOwner)`  L273 @Override
+    - 体内字面量："owner"
+- `void onDestroy(LifecycleOwner lifecycleOwner)`  L278 @Override
+    - 体内字面量："owner"
+- `boolean isNetworkConnected(Context context)`  L414
+### `com.gku.base.XUtils$CallbackDownload`
+L286 · [class] public static abstract CallbackDownload · implements `Callback.ProgressCallback<File>` · `com/gku/base/XUtils.java`
+
+字段/常量（10）：
+- `Context context`  L287
+- `String url`  L288
+- `int lastPercent = -1`  L289
+- `boolean success_called = false`  L290
+- `boolean fail_called = false`  L291
+- `CallbackDownload callbackDownload = CallbackDownload.this`  L346
+- `int i2 = i`  L347
+- `long j3 = j2`  L348
+- `long j4 = j`  L349
+- `int i`  L374
+
+方法（22）：
+- `int connectTimeout()`  L293
+- `void onFail(int i, String str)`  L297
+- `void onLoading__(int i, float f, long j, long j2, boolean z)`  L299
+- `void onStarted__()`  L301
+- `void onSuccess__(File file)`  L303
+- `void onWaiting()`  L306 @Override
+- `int poolSize()`  L309
+- `int readTimeout()`  L313
+- `void setContext(Context context)`  L317
+- `void setUrl(String str)`  L321
+- `void onStarted()`  L326 @Override
+- `void run()`  L329 @Override
+- `void onLoading(final long j, final long j2, final boolean z)`  L336 @Override
+- `void run()`  L345 @Override
+- `void onSuccess(final File file)`  L357 @Override
+- `void run()`  L362 @Override
+- `void onError(final Throwable th, boolean z)`  L369 @Override
+- `void run()`  L373 @Override
+- `void onCancelled(Callback.CancelledException cancelledException)`  L388 @Override
+- `void run()`  L391 @Override
+    - 体内字面量："canceled"
+- `void onFinished()`  L401 @Override
+- `void run()`  L404 @Override
+    - 体内字面量："canceled or failed"
+### `com.gku.base.XUtils$CallbackDownloadSimple`
+L31 · [class] public static abstract CallbackDownloadSimple · extends `CallbackDownload` · `com/gku/base/XUtils.java`
+
+方法（2）：
+- `void onLoading__(int i, float f, long j, long j2, boolean z)`  L33 @Override
+- `void onStarted__()`  L37 @Override
+### `com.gku.base.XUtils$CallbackFiles`
+L41 · [class] public static abstract CallbackFiles · `com/gku/base/XUtils.java`
+
+方法（7）：
+- `int connectTimeout()`  L42
+- `void onFailOne(int i, int i2, String str)`  L46
+- `void onLoading__(int i, int i2, float f, long j, long j2, boolean z)`  L48
+- `void onStarted__()`  L50
+- `void onSuccessAll(SparseArray<File> sparseArray)`  L52
+- `void onSuccessOne(File file, int i, int i2)`  L54
+- `int readTimeout()`  L56
+### `com.gku.base.XUtils$CallbackFilesSimple`
+L61 · [class] public static abstract CallbackFilesSimple · extends `CallbackFiles` · `com/gku/base/XUtils.java`
+
+方法（2）：
+- `void onLoading__(int i, int i2, float f, long j, long j2, boolean z)`  L63 @Override
+- `void onStarted__()`  L67 @Override
+### `com.gku.base.XUtils$XUtilsHolder`
+L75 · [class] private static XUtilsHolder · `com/gku/base/XUtils.java`
+
+方法（1）：
+- `private XUtilsHolder()`  L78
