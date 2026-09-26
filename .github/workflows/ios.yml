@@ -1,0 +1,101 @@
+name: iOS
+
+# iOS 开发测试入口。Windows 端没有 Xcode，iOS 的「能不能构建、能不能启动」全靠这条
+# 工作流在 macOS runner 上验证（nightly.yml 的 ios job 只守 Kotlin 目标可编译，
+# 不碰壳工程；这条线补上壳工程，一直管到「App 在模拟器里活着」）。
+#
+# 三步：
+#   1. XcodeGen 由 iosApp/project.yml 生成 iosApp.xcodeproj（xcodeproj 是生成物，不入库）
+#   2. xcodebuild 构建模拟器 App——壳工程的 preBuild 脚本会调
+#      :composeApp:embedAndSignAppleFrameworkForXcode，把 KMP 静态框架编出来供链接
+#   3. 起一台模拟器装上并拉起 App，20 秒后确认进程还活着（防启动即崩），截图存产物
+#
+# 配置用 Debug：这是开发测试线，不是发布线。签名整个关掉
+# （CODE_SIGNING_ALLOWED=NO）——模拟器构建不需要签名，真机/上架是另一回事。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  simulator:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # K/N 首次要拉 ~1GB 编译器，与 nightly.yml 共用同一把 ~/.konan 缓存。
+      - uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            konan-${{ runner.os }}-
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: 生成 Xcode 工程
+        run: |
+          set -eu
+          brew install xcodegen
+          cd iosApp
+          xcodegen generate
+
+      - name: 构建模拟器 App（含 KMP 框架编译）
+        run: |
+          set -eu
+          cd iosApp
+          # -target 而不是 -scheme：XcodeGen 没配 schemes 时也稳，不依赖隐式 scheme。
+          # JAVA_HOME 由 setup-java 导出，preBuild 里的 ./gradlew 能直接找到 JDK。
+          xcodebuild \
+            -project iosApp.xcodeproj \
+            -target iosApp \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -derivedDataPath build/DerivedData \
+            build \
+            CODE_SIGNING_ALLOWED=NO \
+            -quiet
+
+      - name: 模拟器装机并拉起 App
+        run: |
+          set -eu
+          app=iosApp/build/DerivedData/Build/Products/Debug-iphonesimulator/iosApp.app
+          test -d "$app"
+          # 不硬编码机型：取第一台可用的 iPhone，runner 镜像换机型也不受影响。
+          udid=$(xcrun simctl list devices available | grep -m1 'iPhone' | sed -E 's/.*\(([A-F0-9-]{36})\).*/\1/')
+          echo "模拟器 UDID: $udid"
+          xcrun simctl boot "$udid"
+          xcrun simctl bootstatus "$udid" -b
+          xcrun simctl install "$udid" "$app"
+          xcrun simctl launch "$udid" com.rovecamlink.app
+          # Compose 首启 + K/N 初始化要几秒；20 秒后进程还在，才算「没有启动即崩」。
+          sleep 20
+          xcrun simctl spawn "$udid" launchctl list | grep -q "UIKitApplication:com.rovecamlink.app"
+          echo "App 在模拟器里存活 20s，冒烟通过"
+
+      - name: 截图存证
+        if: always()
+        run: |
+          udid=$(xcrun simctl list devices | grep -m1 'Booted' | sed -E 's/.*\(([A-F0-9-]{36})\).*/\1/') || true
+          if [ -n "${udid:-}" ]; then
+            xcrun simctl io "$udid" screenshot simulator.png || true
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: simulator-screenshot
+          path: simulator.png
+          if-no-files-found: ignore
