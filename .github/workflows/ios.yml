@@ -56,11 +56,13 @@ jobs:
         run: |
           set -eu
           cd iosApp
+          # 工程名取自 project.yml 的 name 字段 → RoveCamLink.xcodeproj（不是 target 名）。
+          test -d RoveCamLink.xcodeproj
           # generic destination：不点名任何机型，SDK 仍是 iphonesimulator。
           # -derivedDataPath 必须配 -scheme（-target 不行），scheme 在 project.yml 里显式声明。
           # JAVA_HOME 由 setup-java 导出，preBuild 里的 ./gradlew 能直接找到 JDK。
           xcodebuild \
-            -project iosApp.xcodeproj \
+            -project RoveCamLink.xcodeproj \
             -scheme iosApp \
             -configuration Debug \
             -destination 'generic/platform=iOS Simulator' \
