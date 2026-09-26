@@ -56,13 +56,14 @@ jobs:
         run: |
           set -eu
           cd iosApp
-          # -target 而不是 -scheme：XcodeGen 没配 schemes 时也稳，不依赖隐式 scheme。
+          # generic destination：不点名任何机型，SDK 仍是 iphonesimulator。
+          # -derivedDataPath 必须配 -scheme（-target 不行），scheme 在 project.yml 里显式声明。
           # JAVA_HOME 由 setup-java 导出，preBuild 里的 ./gradlew 能直接找到 JDK。
           xcodebuild \
             -project iosApp.xcodeproj \
-            -target iosApp \
+            -scheme iosApp \
             -configuration Debug \
-            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build/DerivedData \
             build \
             CODE_SIGNING_ALLOWED=NO \
