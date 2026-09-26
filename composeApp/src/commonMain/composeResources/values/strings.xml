@@ -116,7 +116,7 @@
     <string name="note_release_notes_unavailable">The vendor supplied no release notes</string>
     <string name="action_download_update">Download the package</string>
     <string name="status_downloading">Downloading…%1$s (%2$s / %3$s)</string>
-    <string name="note_download_needs_internet">Checking and downloading use the phone\'s own internet connection, so camera traffic is paused while they run and resumes right after.</string>
+    <string name="note_download_needs_internet">Checking and downloading use the phone’s own internet connection, so camera traffic is paused while they run and resumes right after.</string>
     <string name="action_install_now">Start installing</string>
     <string name="status_package_ready">Package downloaded and verified: %1$s (%2$s)</string>
     <string name="action_recheck_update">Check again</string>
@@ -132,7 +132,7 @@
     <string name="sd_error">Error</string>
     <string name="sd_unknown">Unknown</string>
     <string name="action_format_sd">Format SD card</string>
-    <string name="note_wifi_restarts">The camera will restart its Wi-Fi — you\'ll need to reconnect to the new network.</string>
+    <string name="note_wifi_restarts">The camera will restart its Wi-Fi — you’ll need to reconnect to the new network.</string>
     <string name="label_wifi_password">Wi-Fi password</string>
     <string name="action_read_camera_wifi">Read</string>
     <string name="status_wifi_not_read">Not read yet</string>
@@ -162,7 +162,7 @@
     <string name="workmode_playback">Playback</string>
 
     <!-- QR scan (Android) -->
-    <string name="qr_hint_point">Point at the camera\'s Wi-Fi QR code</string>
+    <string name="qr_hint_point">Point at the camera’s Wi-Fi QR code</string>
     <string name="qr_hint_camera_permission">Camera permission is needed to scan</string>
     <string name="qr_hint_no_wifi">QR code has no Wi-Fi info (%1$s)</string>
     <string name="qr_camera_failed">Could not open the camera. Check the camera permission, or make sure the device/emulator exposes one.</string>
@@ -182,7 +182,7 @@
     <string name="status_connected_platform">Connected · %1$s</string>
 
     <!-- AppState error messages -->
-    <string name="err_permission_ask_failed">Couldn\'t ask for the location permission: %1$s</string>
+    <string name="err_permission_ask_failed">Couldn’t ask for the location permission: %1$s</string>
     <string name="err_scan_needs_location">Scanning needs the location permission — grant it and retry.</string>
     <string name="err_scan_failed">Scan failed: %1$s</string>
     <string name="err_wifi_permissions_denied">WiFi permissions denied</string>
@@ -213,7 +213,7 @@
     <string name="status_waking_camera">Asking the camera to open its hotspot… (the first time, confirm the code on the camera)</string>
     <string name="err_bluetooth_off">Bluetooth is off on this phone — turn it on to wake the camera.</string>
     <string name="err_bluetooth_denied">Bluetooth permission was denied — allow it to use one-tap connect.</string>
-    <string name="err_bluetooth_unsupported">This device has no Bluetooth — join the camera\'s Wi-Fi and use the list below.</string>
+    <string name="err_bluetooth_unsupported">This device has no Bluetooth — join the camera’s Wi-Fi and use the list below.</string>
     <string name="err_bluetooth_no_profile">No Bluetooth profile for %1$s</string>
     <!-- The only VPN wording in the app: the dialog a connect attempt raises when it
          starts while a proxy owns the default route. Nothing else mentions it. -->
@@ -339,8 +339,8 @@
     <string name="notice_camera_sleeping">The camera is going into standby; it will drop off the hotspot list.</string>
     <string name="action_wake_camera">Wake a sleeping camera</string>
     <string name="notice_wake_sent">Wake packet sent to %1$s. Nothing answers one — refresh the hotspot list in a few seconds to see if the camera is back.</string>
-    <string name="err_wake_not_on_camera_network">The phone is not on a camera hotspot, so a wake packet has nowhere to go. Join the camera's Wi-Fi first.</string>
-    <string name="hint_wake_needs_bssid">The hotspot's own MAC address could not be read, so the wake packet cannot be addressed.</string>
+    <string name="err_wake_not_on_camera_network">The phone is not on a camera hotspot, so a wake packet has nowhere to go. Join the camera’s Wi-Fi first.</string>
+    <string name="hint_wake_needs_bssid">The hotspot’s own MAC address could not be read, so the wake packet cannot be addressed.</string>
 
     <!-- Top-bar overflow menu + the pages it reaches. -->
     <string name="action_more">More</string>
@@ -389,7 +389,7 @@
     <string name="device_catalog_not_adapted">Not adapted</string>
     <string name="device_catalog_chip_unknown">Chip unconfirmed</string>
     <string name="about_feedback">Report a problem</string>
-    <string name="about_feedback_body">The file that opens carries everything a report needs and nothing you have to type: this phone\'s model, Android version and ABI, the app version, the camera\'s model, firmware, hardware, serial and the clock this app last set, the live session, and every log run stored on the device. Attach it to an issue at github.com/lswlc33/rovecamlink/issues.</string>
+    <string name="about_feedback_body">The file that opens carries everything a report needs and nothing you have to type: this phone’s model, Android version and ABI, the app version, the camera’s model, firmware, hardware, serial and the clock this app last set, the live session, and every log run stored on the device. Attach it to an issue at github.com/lswlc33/rovecamlink/issues.</string>
     <string name="about_feedback_action">Attach diagnostics and share</string>
     <string name="about_licenses">Open-source licenses</string>
     <string name="about_license_body">This app is built on Compose Multiplatform and the miuix UI library (Apache-2.0), plus Ktor, Okio and kotlinx.coroutines. Each retains its own license.</string>
@@ -436,7 +436,7 @@
     <!-- Live settings page. -->
     <string name="live_title_settings">Live settings</string>
     <string name="section_live_wifi">Wi-Fi for the stream</string>
-    <string name="hint_live_wifi">The network the camera joins to push. Not the phone\'s own hotspot.</string>
+    <string name="hint_live_wifi">The network the camera joins to push. Not the phone’s own hotspot.</string>
     <string name="label_live_ssid">Wi-Fi name</string>
     <string name="label_live_password">Wi-Fi password</string>
     <string name="section_live_url">Stream URL</string>
@@ -469,5 +469,5 @@
     <string name="value_live_stream_url">Stream</string>
     <string name="action_live_play">Play</string>
     <string name="action_live_stop">Stop</string>
-    <string name="hint_live_preview_stopped">Nothing is playing. Play reads the camera\'s own preview stream.</string>
+    <string name="hint_live_preview_stopped">Nothing is playing. Play reads the camera’s own preview stream.</string>
 </resources>
