@@ -16,7 +16,13 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.rovecamlink.simulator.MainKt")
+    /**
+     * `-PsimMain=` picks which fake `run` boots; the default is the hi3510 one, unchanged.
+     * The per-fake doc comments referenced this switch before it existed — this makes
+     * `gradlew :simulator:run -PsimMain=IcatchSimulatorKt` (or `SjcamSimulatorKt`) work.
+     */
+    val simMain = providers.gradleProperty("simMain").orElse("MainKt")
+    mainClass.set(simMain.map { "com.rovecamlink.simulator.$it" })
 }
 
 kotlin {
