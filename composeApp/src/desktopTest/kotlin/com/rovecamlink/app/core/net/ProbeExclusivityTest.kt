@@ -1,6 +1,7 @@
 package com.rovecamlink.app.core.net
 
 import com.rovecamlink.app.brand.icatch.IcatchHttpProtocol
+import com.rovecamlink.app.brand.sjcam.SjcamProtocol
 import com.rovecamlink.app.brand.tuwin.TuwinRestProtocol
 import com.rovecamlink.app.brand.xtu.HisiliconProtocol
 import com.rovecamlink.app.core.model.DevicePlatform
@@ -11,8 +12,12 @@ import com.rovecamlink.app.core.transport.createCameraTcp
 import com.sun.net.httpserver.HttpServer
 import kotlinx.coroutines.runBlocking
 import java.net.InetSocketAddress
+import java.net.ServerSocket
+import kotlin.concurrent.thread
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Which plugin claims which camera — the invariant that keeps a new family from taking
@@ -67,12 +72,37 @@ class ProbeExclusivityTest {
         platform = DevicePlatform.ICATCH,
     )
 
-    private val families = listOf(xtu, tuwin, icatchLy, icatchQz)
+    /**
+     * SJCAM's LY channel answers the **same** `?custom=1&cmd=` vocabulary as iCatch's Ly
+     * profile — the claim rests on the model string (`docs/evidence/sjcam` §2.1(b)), which is
+     * exactly what this pair of families checks: the SJCAM model is claimed by SJCAM, and
+     * iCatch's `<SSID>`-only reply is not.
+     */
+    private val sjcamLy = Family(
+        name = "SJCAM Ly",
+        body = "<Function><Cmd>3012</Cmd><Status>0</Status><Value>660-SJ10X</Value></Function>",
+        platform = DevicePlatform.SJCAM,
+    )
+
+    private val sjcamHisnet = Family(
+        name = "SJCAM hisnet (SJ10 MAX)",
+        body = "var model = \"Hi3559V200-DV-IMX458\";\r\nvar softversion = \"V1.0.9\";\r\n",
+        platform = DevicePlatform.SJCAM,
+    )
+
+    private val sjcamAllwinner = Family(
+        name = "SJCAM Allwinner (V536)",
+        body = """{"device_name":"V536-CDR","software":"V1.1.2"}""",
+        platform = DevicePlatform.SJCAM,
+    )
+
+    private val families = listOf(xtu, tuwin, icatchLy, icatchQz, sjcamLy, sjcamHisnet, sjcamAllwinner)
 
     private fun plugins(http: CameraHttp): List<CameraProtocol> = listOf(
         HisiliconProtocol(http, createCameraTcp()),
         TuwinRestProtocol(http),
         IcatchHttpProtocol(http),
+        SjcamProtocol(http, createCameraTcp()),
     )
 
     /** A server that answers every path with [body], whatever path is asked. */
@@ -88,17 +118,44 @@ class ProbeExclusivityTest {
         return server
     }
 
+    /**
+     * The one overlap the hostile matrix allows, named so it cannot grow.
+     *
+     * The matrix answers *every* path with the same body — including `/cgi-bin/hi3510/…`,
+     * which a real SJ10 MAX does not serve at all (it 404s; the hisnet family's paths are
+     * under `/cgi-bin/hisnet/`). XTU's hi3510 probe accepts any body containing `var `
+     * (`HisiliconProtocol.probe`), and SJCAM's hisnet reply is exactly that shape. So the
+     * matrix's "foreign body on every path" premise reaches a case the field cannot: the two
+     * CGI dialects are told apart by their path, which the test deliberately flattens.
+     *
+     * Everything else is held to strict exclusivity, and this set is asserted to be the
+     * *complete* list of exceptions — a new accidental claim still fails the test.
+     */
+    private val knownMatrixOverlaps = setOf(
+        "SJCAM hisnet (SJ10 MAX)" to DevicePlatform.HISILICON,
+    )
+
     @Test
     fun `a foreign body is never claimed by the wrong plugin`() {
         val http = CameraHttp()
-        families.forEach { family ->
+        for (family in families) {
             val server = serverServing(family.body)
             try {
                 val host = server.address.address.hostAddress
                 val port = server.address.port
-                plugins(http).forEach { plugin ->
+                for (plugin in plugins(http)) {
                     val claimed = runBlocking { plugin.probe(host, port) }
                     val expected = plugin.platform == family.platform
+                    if (!expected && (family.name to plugin.platform) in knownMatrixOverlaps) {
+                        // The documented exception must still actually overlap — if a probe is
+                        // tightened later, the entry has to go rather than linger as a licence.
+                        assertTrue(
+                            claimed,
+                            "${family.name} no longer overlaps ${plugin.platform.displayName}: " +
+                                "remove it from knownMatrixOverlaps",
+                        )
+                        continue
+                    }
                     // iCatch owns two profiles (Ly + Qz) that share one platform, so
                     // "expected" is per-platform: both of its replies belong to it.
                     assertEquals(
@@ -149,6 +206,76 @@ class ProbeExclusivityTest {
             assertEquals(null, platform)
         } finally {
             server.stop(0)
+        }
+    }
+
+    /**
+     * The Ambarella channel is the one SJCAM transport that is not HTTP: session + device info
+     * over raw TCP 7878 (`docs/evidence/sjcam` §4.3). It is tested apart from the matrix above
+     * because its port is fixed and its probe is a two-message handshake, not a body shape —
+     * and what the claim rests on there is again the model string: the same 7878 JSON belongs
+     * to every Ambarella product, only `SJCAM…` is this brand's.
+     */
+    @Test
+    fun `the ambarella channel claims its own model over TCP and nothing else`() {
+        assertFalse(
+            ambaClaimsWith("XTUS6Pro"),
+            "an Ambarella camera that is not SJCAM must not be claimed",
+        )
+        assertTrue(
+            ambaClaimsWith("SJCAMSJ8PRO"),
+            "an SJ8 Pro (Ambarella) must be claimed by its own plugin",
+        )
+    }
+
+    /** Serve one 7878 session whose device info reports [model]; return whether SJCAM claimed it. */
+    private fun ambaClaimsWith(model: String): Boolean {
+        val server = ServerSocket(7878)
+        thread(isDaemon = true, name = "amba-fake-$model") {
+            try {
+                while (!server.isClosed) {
+                    val socket = server.accept()
+                    thread(isDaemon = true) {
+                        socket.use { s ->
+                            s.soTimeout = 3_000
+                            val input = s.getInputStream()
+                            val out = s.getOutputStream()
+                            val buf = ByteArray(4096)
+                            val accumulated = StringBuilder()
+                            while (true) {
+                                val n = try {
+                                    input.read(buf)
+                                } catch (t: java.io.IOException) {
+                                    break
+                                }
+                                if (n <= 0) break
+                                accumulated.append(String(buf, 0, n))
+                                // The client writes one JSON object per message and waits for a
+                                // reply before the next, so a complete object is a complete read.
+                                if (!accumulated.endsWith("}")) continue
+                                val request = accumulated.toString()
+                                accumulated.setLength(0)
+                                val reply = when {
+                                    request.contains("\"msg_id\":257") ->
+                                        """{"msg_id":257,"rval":0,"token":123}"""
+                                    request.contains("\"msg_id\":11") ->
+                                        """{"msg_id":11,"rval":0,"param":{"model":"$model","sw_version":"1.2.9"}}"""
+                                    else -> """{"msg_id":0,"rval":-1}"""
+                                }
+                                out.write(reply.toByteArray())
+                                out.flush()
+                            }
+                        }
+                    }
+                }
+            } catch (t: java.io.IOException) {
+                // Server closed by the test.
+            }
+        }
+        return try {
+            runBlocking { SjcamProtocol(CameraHttp(), createCameraTcp()).probe("127.0.0.1", 7878) }
+        } finally {
+            server.close()
         }
     }
 

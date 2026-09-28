@@ -49,11 +49,35 @@ class DeviceCatalogTest {
         assertTrue("XTU S7PRO" in all)
         assertTrue("XTU S7PRO MAX" in all)
         assertTrue("TUWIN Ride3 Pro" in all)
+        // SJCAM's own spellings (docs/evidence/sjcam §2.2) — what is printed on the box
+        // and on the model picker of the official app.
+        assertTrue("SJ8 PRO" in all)
+        assertTrue("SJ9 STRIKE" in all)
+        assertTrue("SJ10 MAX" in all)
     }
 
     @Test
-    fun `the catalogue covers both brands the archive documents`() {
-        assertEquals(listOf("XTU", "TUWIN"), DeviceCatalog.brands.map { it.name })
+    fun `the catalogue covers every brand the archive documents`() {
+        // The archive's brand count is the contract: TUWIN, XTU and idGoLive were the
+        // first three; SJCAM joined on 2026-09-28 (`docs/evidence/sjcam`). A brand
+        // missing here is a camera whose owner finds nothing to match in the list.
+        assertEquals(listOf("XTU", "TUWIN", "SJCAM（山狗）"), DeviceCatalog.brands.map { it.name })
+    }
+
+    @Test
+    fun `every SJCAM row is driven by the one plugin this build ships`() {
+        // The brand's four transports live behind a single `DevicePlatform.SJCAM`
+        // (one plugin, four channels — docs/analysis/protocol-matrix §7.4), so every row
+        // must name that platform; a row asking for a platform nobody registered would
+        // read 未适配 next to a camera the app can actually drive.
+        val sjcam = DeviceCatalog.brands.single { it.name == "SJCAM（山狗）" }
+        assertTrue(
+            sjcam.models.size >= 20,
+            "the row list mirrors the official app's own model list; ${sjcam.models.size} entries is suspiciously short",
+        )
+        sjcam.models.forEach { m ->
+            assertEquals(DevicePlatform.SJCAM, m.platform, "${m.model} names the wrong platform")
+        }
     }
 
     @Test

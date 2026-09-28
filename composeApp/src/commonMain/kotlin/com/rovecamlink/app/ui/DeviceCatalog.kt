@@ -100,6 +100,42 @@ object DeviceCatalog {
             ),
             platforms = setOf(DevicePlatform.TUWIN_REST, DevicePlatform.HISILICON, DevicePlatform.TUWIN_M3),
         ),
+        // SJCAM row facts come from `docs/evidence/sjcam` §2 (the official app's own model
+        // strings and its 26-item help list). The 「型号前缀」 is the vendor's own platform
+        // code inside the model string (`660-…`, `580-…`), not a chip part number — the
+        // archive never states the SoC behind those prefixes, so neither does this column.
+        DeviceCatalogBrand(
+            name = "SJCAM（山狗）",
+            models = listOf(
+                DeviceCatalogEntry("SJ8 PRO", null, DevicePlatform.SJCAM, "运动相机 · Ambarella 通道（JSON-over-TCP 7878）"),
+                DeviceCatalogEntry("SJ8 PRO DUAL SCREEN", null, DevicePlatform.SJCAM, "运动相机 · Ambarella 通道"),
+                DeviceCatalogEntry("SJ9 STRIKE", "型号串 SJCAMSJ9PRO", DevicePlatform.SJCAM, "运动相机 · Ambarella 通道"),
+                DeviceCatalogEntry("SJ10 PRO", null, DevicePlatform.SJCAM, "运动相机 · Ambarella 通道"),
+                DeviceCatalogEntry("SJ10 PRO DUAL SCREEN", null, DevicePlatform.SJCAM, "运动相机 · Ambarella 通道"),
+                DeviceCatalogEntry("SJ8 PLUS", "型号前缀 683", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("SJ9 MAX", "型号前缀 683", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("SJ8 AIR", "型号前缀 658", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("SJ10X", "型号前缀 660", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("SJ11 ACTIVE", "型号前缀 580", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("SJ20 Dual Lens", "型号前缀 580", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("SJ6 PRO", "型号前缀 660/580", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("SJ6 Legend", "型号前缀 660", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("SJ4000 WiFi", "型号前缀 655", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("SJ5000X ELITE", "型号前缀 660", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("C100 / C100+", "型号前缀 672/675", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("C110 / C110+", "型号前缀 675/580", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("C200", "型号前缀 660", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("C200 PRO", "型号前缀 580", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("C300", "型号前缀 580", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("C400", "型号前缀 568", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("A10", "型号前缀 658", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("A20", "型号前缀 660", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("A50", "型号前缀 670", DevicePlatform.SJCAM, "运动相机 · Novatek Ly 通道"),
+                DeviceCatalogEntry("SJ10 MAX", "Hi3559V200-DV-IMX458（海思）", DevicePlatform.SJCAM, "运动相机 · hisnet CGI 通道"),
+                DeviceCatalogEntry("SJ10 ACTIVE（SJ10_A）", "V536-CDR（全志）", DevicePlatform.SJCAM, "运动相机 · 全志通道（:8082 JSON）"),
+            ),
+            platforms = setOf(DevicePlatform.SJCAM),
+        ),
     )
 
     /**

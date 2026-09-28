@@ -35,6 +35,14 @@ enum class DevicePlatform(val displayName: String) {
     /** iCatch PTP-over-IP + HTTP `/app/...` records (idGoLive / XTU Mini1). Property-table + object-table model. */
     ICATCH("iCatch PTP"),
 
+    /**
+     * SJCAM (山狗) — one brand over four transports: Novatek `?custom=1&cmd=` (Ly),
+     * Hisilicon hisnet CGI, Allwinner `:8082` JSON and Ambarella JSON-over-TCP 7878.
+     * Which one a camera speaks is decided by probe, not by model name; see
+     * `docs/evidence/sjcam` §4.
+     */
+    SJCAM("SJCAM"),
+
     UNKNOWN("Unknown"),
 }
 
@@ -42,6 +50,7 @@ enum class Brand(val displayName: String) {
     XTU("XTU"),
     TUWIN("TUWIN"),
     ICATCH("iCatch"),
+    SJCAM("SJCAM"),
     GENERIC("Generic"),
 }
 
