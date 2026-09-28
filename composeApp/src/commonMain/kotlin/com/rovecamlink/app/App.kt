@@ -45,6 +45,7 @@ import com.rovecamlink.app.ui.PermissionsScreen
 import com.rovecamlink.app.ui.PlatformBackHandler
 import com.rovecamlink.app.ui.PlatformPredictiveBackHandler
 import com.rovecamlink.app.ui.SettingsScreen
+import com.rovecamlink.app.ui.ManualConnectScreen
 import com.rovecamlink.app.ui.SupportedDevicesScreen
 import com.rovecamlink.app.ui.blockPointerInput
 import com.rovecamlink.app.ui.glass.IosLiquidGlassNavigationBar
@@ -390,6 +391,7 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                             Page.About -> AboutScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             Page.Permissions -> PermissionsScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             Page.SupportedDevices -> SupportedDevicesScreen(state, outerPadding = outer, onClose = { state.popPage() })
+                            Page.ManualConnect -> ManualConnectScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             Page.LiveSettings -> LiveSettingsScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             Page.LivePreview -> LivePreviewScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             null -> HorizontalPager(

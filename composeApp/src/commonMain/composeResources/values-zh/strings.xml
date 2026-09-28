@@ -48,6 +48,10 @@
     <string name="label_password">密码</string>
     <string name="action_join_connect">加入并连接</string>
     <string name="action_connect_to_ip">连接到 IP</string>
+    <string name="manual_connect_title">手动连接</string>
+    <string name="action_manual_connect">手动连接</string>
+    <string name="hint_manual_connect">相机地址（host 或 host:端口）</string>
+    <string name="hint_manual_connect_example">例如 192.168.1.254 或 127.0.0.1:8080</string>
     <string name="action_open_wifi_settings">连接 WiFi</string>
     <string name="err_open_wifi_settings">无法打开系统 WiFi 设置，请手动前往系统设置连接相机热点。</string>
     <string name="title_connected_camera">已连接的相机</string>

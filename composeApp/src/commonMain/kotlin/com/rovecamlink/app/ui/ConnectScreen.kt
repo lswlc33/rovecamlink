@@ -70,6 +70,8 @@ import com.rovecamlink.app.save
 import com.rovecamlink.app.label_nearby_none
 import com.rovecamlink.app.label_no_bluetooth_cameras
 import com.rovecamlink.app.label_no_wifi_cameras
+import com.rovecamlink.app.action_manual_connect
+import com.rovecamlink.app.hint_manual_connect_example
 import com.rovecamlink.app.label_other_ways
 import com.rovecamlink.app.label_password
 import com.rovecamlink.app.label_saved
@@ -206,6 +208,8 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
     val qrLbl = stringResource(Res.string.action_scan_qr)
     val wifiSettingsLbl = stringResource(Res.string.action_open_wifi_settings)
     val wifiSettingsErrorMessage = stringResource(Res.string.err_open_wifi_settings)
+    val manualConnectLbl = stringResource(Res.string.action_manual_connect)
+    val manualConnectHint = stringResource(Res.string.hint_manual_connect_example)
     val connectedCameraTitle = stringResource(Res.string.title_connected_camera)
     val forgetMessage = stringResource(Res.string.message_forget_camera)
     val passwordLbl = stringResource(Res.string.label_password)
@@ -419,6 +423,13 @@ fun ConnectScreen(state: AppState, outerPadding: PaddingValues) {
             ArrowPreference(
                 title = wifiSettingsLbl,
                 onClick = { wifiSettingsError = !state.openWifiSettings() },
+            )
+            // 手动连接：给「相机不通过热点扫描出现」的场景留的入口 —— 桌面模拟器、
+            // 端口转发、以及任何 host:port 已知但不在候选网段里的相机。
+            ArrowPreference(
+                title = manualConnectLbl,
+                summary = manualConnectHint,
+                onClick = { state.pushPage(com.rovecamlink.app.Page.ManualConnect) },
             )
         }
 

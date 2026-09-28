@@ -48,6 +48,10 @@
     <string name="label_password">Password</string>
     <string name="action_join_connect">Join &amp; connect</string>
     <string name="action_connect_to_ip">Connect to IP</string>
+    <string name="manual_connect_title">Manual connect</string>
+    <string name="action_manual_connect">Manual connect</string>
+    <string name="hint_manual_connect">Camera address (host or host:port)</string>
+    <string name="hint_manual_connect_example">For example 192.168.1.254 or 127.0.0.1:8080</string>
     <string name="action_open_wifi_settings">Connect WiFi</string>
     <string name="err_open_wifi_settings">Could not open system WiFi settings. Open Settings and join the camera hotspot manually.</string>
     <string name="title_connected_camera">Connected camera</string>

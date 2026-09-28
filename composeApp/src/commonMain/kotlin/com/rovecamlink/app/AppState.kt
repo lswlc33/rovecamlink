@@ -44,6 +44,7 @@ import com.rovecamlink.app.core.log.LogTag
 import com.rovecamlink.app.core.log.OpContext
 import com.rovecamlink.app.core.media.decodeScaledImage
 import com.rovecamlink.app.core.net.WakeOnLan
+import com.rovecamlink.app.core.net.parseManualAddress
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.provision.ProvisioningController
 import com.rovecamlink.app.core.storage.sanitizeFileName
@@ -120,7 +121,7 @@ data class DownloadItem(
  * These are not tabs: nobody looks for the log or the about page on the way to a
  * shooting setting, but both have to be reachable from wherever a failure happened.
  */
-enum class Page { Log, LogSettings, About, Permissions, SupportedDevices, LiveSettings, LivePreview }
+enum class Page { Log, LogSettings, About, Permissions, SupportedDevices, ManualConnect, LiveSettings, LivePreview }
 
 /**
  * How the files page draws its media.
@@ -1070,13 +1071,14 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     WifiResult.Cancelled -> Unit
                 }
             }
-            var host = manualHost
-            var port = 80
-            if (host != null && host.contains(":")) {
-                val parts = host.split(":")
-                host = parts[0]
-                port = parts[1].toIntOrNull() ?: 80
-                Diag.d { "manual host parsed into host=$host port=$port" }
+            // `host` or `host:port`, one shape for a typed address and a port-forwarded
+            // setup alike (see [parseManualAddress]); the parse is shared with the
+            // manual-connect page so the two can never disagree about what was typed.
+            val manual = parseManualAddress(manualHost)
+            var host = manual?.first
+            var port = manual?.second ?: 80
+            if (manual != null && manualHost != null) {
+                Diag.d { "manual host parsed into host=$host port=$port (typed ${manualHost.length} chars)" }
             }
             // Which brand this hotspot belongs to, when we recognise the name: gives
             // discovery a first address to try instead of walking nine candidates.
