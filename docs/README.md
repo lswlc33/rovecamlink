@@ -57,7 +57,7 @@ docs/
 | `impl/command-surface` | 实现 | 协议接口每个方法、每条实际请求、设置项 id、UI 入口映射 | 与代码冲突以代码为准 |
 | `evidence` | 证据 | 本层索引：有哪些档案、按什么顺序读 | 索引 |
 | `evidence/method` | 证据 | 档案怎么建的、覆盖了多少、怎么复跑、按问题翻哪张表 | 本层入口，先读它 |
-| `evidence/tuwin` `evidence/xtugo` `evidence/idgolive` | 证据 | 某家 App 每条命令、每个取值、每个类的证据 | **权威**，可推翻结论层 |
+| `evidence/tuwin` `evidence/xtugo` `evidence/idgolive` `evidence/sjcam` | 证据 | 某家 App 每条命令、每个取值、每个类的证据 | **权威**，可推翻结论层 |
 | `evidence/operations-matrix` | 证据 | 同一操作三家各发了什么、我们做到哪一步 | 我们侧状态的唯一台账 |
 | `evidence/data` | 生成物 | 机器提取表怎么读、怎么重跑 | 生成物，改提取器不改表 |
 

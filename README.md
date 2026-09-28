@@ -46,6 +46,8 @@ CI 只有两条工作流：`Nightly`（日常构建，装测试就认它）和 `
 
 **XTU X7 Pro** —— 海思 Hi35xx（`hi3510`）HTTP CGI 协议。运行时自动探测注册的每个协议来识别设备，不写死型号表（同品牌不同机型的协议/端口/路径各不相同，详见[逆向分析报告](docs/analysis/apk-overview.md)）。
 
+**SJCAM（山狗）全系** —— 一个品牌五套通道，全按网关 IP + 相机自报型号串分派：Novatek `?custom=1&cmd=`（SJ6/SJ9 Max/SJ10X/SJ11/SJ20/C 系列/A 系列等）、海思 `hisnet` CGI（SJ10 MAX）、全志 `:8082` JSON（SJ10_A）、Ambarella JSON-over-TCP 7878（SJ8 Pro / SJ9 Strike / SJ10 Pro 等）；iCatch PTP 那一路与 idGoLive 同因不做。逐条证据见 [SJCAM 档案](docs/evidence/sjcam.md)。
+
 ## 架构
 
 ```
@@ -60,10 +62,11 @@ composeApp/
     core/media      实时预览视图（expect/actual）
     brand/xtu       海思 hi3510 CGI 插件
     brand/tuwin     TUWIN REST 插件
+    brand/sjcam     SJCAM（山狗）插件：一个插件四个通道（Novatek Ly / 海思 hisnet / 全志 / Ambarella）
   androidMain/  Wi-Fi 直连、Media3 RTSP 预览、MediaStore 保存
   desktopMain/  桌面端入口（可手动连接模拟器）
   iosMain/      iOS 壳工程（可编译，未做功能验证）
-simulator/      Ktor 桌面服务器，模拟海思 CGI 协议
+simulator/      Ktor 桌面服务器 + 裸 TCP 假相机（海思 CGI / iCatch / SJCAM 四通道）
 ```
 
 **接入新相机：** 实现 `CameraProtocol` 并在 `AppGraph` 中注册即可。发现流程会逐个探测已注册的协议，新设备无需改动 UI。
@@ -97,6 +100,7 @@ cd iosApp && xcodegen generate && open RoveCamLink.xcodeproj
 启动模拟器后，在 App 中使用「手动连接」输入模拟器的 `host:port` 即可。模拟器实现了完整的 `hi3510` CGI 面（设备属性、状态、电量、SD 卡、工作模式、拍照/录像、文件列表、缩略图、文件下载），从连接 → 实时状态 → 文件列表 → 下载全流程可端到端工作。
 
 - `SIM_PORT` 环境变量可换端口（默认 8080），旧实例占用端口时更方便（例如 `SIM_PORT=8081`）。
+- `SIM_PROFILE` + `-PsimMain` 选假相机：`gradlew :simulator:run -PsimMain=SjcamSimulatorKt`（SJCAM 四通道，`SIM_PROFILE=sjcam-ly|sjcam-hisnet|sjcam-allwinner|sjcam-amba`；amba 默认 7878）、`-PsimMain=IcatchSimulatorKt`（`ly`/`qz`）。
 - 缩略图为真实的 JPEG（按文件名着色），App 的解码路径得到真实演练，陈旧缩略图也容易发现。
 
 注意：真机必须授予**位置权限**才能扫描 Wi-Fi——Android 在 API 33+ 声明了 `NEARBY_WIFI_DEVICES` 时仍拒绝无定位权限的 `startScan`。App 会在首次扫描时请求该权限，并提示原因而不是静默显示「未发现相机」。
@@ -119,7 +123,8 @@ cd iosApp && xcodegen generate && open RoveCamLink.xcodeproj
 - [x] 可安装的调试 APK
 - [x] 详细诊断日志（应用内实时预览 + TXT 导出/分享，默认脱敏）
 - [x] 直播推流（RTMP 上行，XTU 海思：TCP 8080 下发参数 + 本地 RTSP 预览；这条通道没有停止命令）
-- [ ] 更多品牌、机型与品类（iCatch 系 HTTP 双 profile 已落；Ambarella / SigmaStar / TUWIN M3、iCatch 的 PTP 与原生 TCP 通道待做）
+- [x] SJCAM（山狗）四通道适配（Novatek Ly / 海思 hisnet / 全志 / Ambarella；iCatch PTP 未做，理由同 idGoLive）
+- [ ] 更多品牌、机型与品类（iCatch 系 HTTP 双 profile 已落；SigmaStar / TUWIN M3、iCatch 的 PTP 与原生 TCP 通道待做）
 - [ ] iOS 功能验证（仅壳工程）
 
 ## 许可

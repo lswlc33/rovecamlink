@@ -12,21 +12,21 @@
 
 ## 0. 总览对比
 
-| 项目 | TUWIN | XTU GO |
-|---|---|---|
-| 包名 | `com.tuwinsmart.tuwin` | `com.gku.xtugo` |
-| 版本 | 1.6.4 (250) | 8.4.3 (243) |
-| 体积 | 23.8 MB | 153 MB |
-| minSdk / targetSdk | 24 / **36** (Android 16) | 23 / 35 (Android 15) |
-| ABI | 仅 arm64-v8a | arm64-v8a + armeabi-v7a |
-| 语言/架构 | Kotlin + **Clean Architecture** | Java/Kotlin 混合 + **厂商 SDK (gku.actioncam)** |
-| 设备维度 | 按**机型**分（M3 / Ride3Pro / Ride5 / Ride6） | 按**芯片平台**分（Ambarella / Hisilicon / SigmaStar） |
-| 连接方式 | WiFi 直连（WifiNetworkSpecifier） | WiFi 直连 + **二维码配网** + **蓝牙** |
-| 实时图传 | **RTSP** + 自研 FFmpeg/GSY(ijkplayer) 渲染 | **RTSP** + ijkplayer |
-| 控制协议 | HTTP REST + 原生 TCP Socket + CGI | JSON-over-Socket + HTTP CGI + Socket |
-| 特色 | 路由级网络绑定、断点续传、菜单 XML | 抖音直播、互联网远程观看、全景 VR、高德 GPS、滤镜 |
-| 统计/崩溃 | 友盟 Umeng + ucrash | Bugly（在用）+ APM Insight + 火山 zeus；**全树无友盟 SDK**，只剩一处读自己清单里 `UMENG_CHANNEL` 渠道号的残留 |
-| 代码混淆 | 几乎不混淆（类名完整） | App 层重度混淆，SDK 层 (`com.gku.*`) 不混淆 |
+| 项目 | TUWIN | XTU GO | SJCAM Zone |
+|---|---|---|---|
+| 包名 | `com.tuwinsmart.tuwin` | `com.gku.xtugo` | `org.jght.sjcam.zone` |
+| 版本 | 1.6.4 (250) | 8.4.3 (243) | 6.7.3.15 (10061) |
+| 体积 | 23.8 MB | 153 MB | 208.7 MB（含各家 SoC 的 native 媒体库） |
+| minSdk / targetSdk | 24 / **36** (Android 16) | 23 / 35 (Android 15) | 24 / 35 (Android 15) |
+| ABI | 仅 arm64-v8a | arm64-v8a + armeabi-v7a | arm64-v8a / armeabi-v7a |
+| 语言/架构 | Kotlin + **Clean Architecture** | Java/Kotlin 混合 + **厂商 SDK (gku.actioncam)** | Java/Kotlin 混合，**一个 App 五套相机通道**（Ambarella / Novatek / 海思 / 全志 / iCatch） |
+| 设备维度 | 按**机型**分（M3 / Ride3Pro / Ride5 / Ride6） | 按**芯片平台**分（Ambarella / Hisilicon / SigmaStar） | 按**网关 IP + model 串**分派，三套不兼容的词表（档案 §2.1） |
+| 连接方式 | WiFi 直连（WifiNetworkSpecifier） | WiFi 直连 + **二维码配网** + **蓝牙** | WiFi 直连（`isSjWifi` 前缀表）+ 扫码 |
+| 实时图传 | **RTSP** + 自研 FFmpeg/GSY(ijkplayer) 渲染 | **RTSP** + ijkplayer | 四套 RTSP/HTTP 地址，随家族而变 |
+| 控制协议 | HTTP REST + 原生 TCP Socket + CGI | JSON-over-Socket + HTTP CGI + Socket | HTTP `?custom=1&cmd=` · HTTP `/cgi-bin/hisnet/` · `:8082/api/` JSON · **JSON-over-TCP 7878** · PTP |
+| 特色 | 路由级网络绑定、断点续传、菜单 XML | 抖音直播、互联网远程观看、全景 VR、高德 GPS、滤镜 | 电商/社区/直播聚合（JPush、ShareSDK、抖音/快手/YouTube 直播）、VR 与全景 |
+| 统计/崩溃 | 友盟 Umeng + ucrash | Bugly（在用）+ APM Insight + 火山 zeus；**全树无友盟 SDK**，只剩一处读自己清单里 `UMENG_CHANNEL` 渠道号的残留 | 友盟 Umeng + JPush + Mob + Facebook SDK |
+| 代码混淆 | 几乎不混淆（类名完整） | App 层重度混淆，SDK 层 (`com.gku.*`) 不混淆 | 应用层不混淆（`org.jght.sjcam.zone.**` 类名完整） |
 
 **核心结论**：两个 App 都印证了同一行业现实——**运动相机没有统一协议**。同一品牌内不同机型/芯片用的协议、端口、路径都不同。因此自研 App 的第一性设计目标必须是**协议可插拔**，而不是写死某一种相机。
 
@@ -276,6 +276,18 @@ uses-feature：camera(+autofocus)、bluetooth、location、microphone、landscap
 > 建议方式：静态逆向（jadx 已就绪）+ 真机抓包（Wireshark/mitmproxy 对相机 AP）+ 对照官方 App 行为。所有结论用于**互操作（interoperability）目的下的干净室重实现**，不复制其代码。
 
 ---
+
+---
+
+## 5. SJCAM（山狗，`org.jght.sjcam.zone` 6.7.3.15）
+
+**这一个 App 推翻了一个常见假设**：「一个品牌一套协议」。SJCAM 把五套互不兼容的相机通道并排放在同一个应用里，靠**网关 IP + 相机自报的 model 串**分派。
+
+- **取证**：APKPure 分发的 XAPK 对本 App 就是一个 APK 外壳——外层 zip 的第一个条目是零字节目录项，其后直接是 APK 条目流，所以按 `PK` 顺序解析 local header、逐条 CRC32 校验后即可从**部分下载**（95 MB / 208.7 MB）里重建出可反编译的包：5 个 `classes*.dex`、`resources.arsc`、`res/`、`assets/` 全在 `lib/` 之前。方法与边界见 [SJCAM 档案](../evidence/sjcam.md) §1。
+- **工具坑（值得写下来）**：`java -jar jadx-1.5.6-all.jar` 会走 GUI 入口（`Main-Class: jadx.gui.JadxGUI`），在 `Resetting disk code cache` 处停死；官方启动脚本用的是 `-cp <jar> jadx.cli.JadxCLI`，照抄这一条即可。
+- **对自研的启示**：① 型号词表可以有**三套写法**，探测不能只按一张表；② 同一个 `?custom=1&cmd=` 方言被两家品牌共用（SJCAM 的 Ly 与 iCatch 的行车记录仪），**认领必须靠型号串而不是报文形状**；③ 相机名/型号串是兼容性策略的键（官方自己也用它切控制页与录像 URL）。
+
+协议面与机型词表的完整表在[品牌型号与协议矩阵](protocol-matrix.md) §7。
 
 ## 变更记录（2026-09-22 全量复现档案回写）
 

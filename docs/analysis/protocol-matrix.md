@@ -10,26 +10,26 @@
 
 ---
 
-## 0. 三品牌总览
+## 0. 四品牌总览
 
-| | TUWIN 1.6.4 | XTU GO 8.4.3 | idGoLive 1.3.6 |
-|---|---|---|---|
-| 包名 | `com.tuwinsmart.tuwin` | `com.gku.xtugo` | `com.id221.golive`（Java 命名空间 `com.icatch.golive`） |
-| 方案商 | 自研（Clean Architecture） | gku（按 SoC 分包） | iCatchTek（`com.icatchtek.*`），**白标公版 App** |
-| 型号维度 | 按**机型**枚举（4 个） | 按**芯片**分派（3 套），机型 18 个 | 按**探测结果**分派，四层：PTP 会话成败 → ICMP 应答者 → `getSSID` 成败 → 相机名黑名单。**无「机型→能力」注册表，但有「机型名→跳过写时区」黑名单** |
-| 型号数 | 4 | 17 运动相机 + 1 行车记录仪 | 无正式表；SSID 图标表反推 ≈ 14 个自有型号，另有 `CameraProperties.java:1476` 的 **33 项产品名黑名单**（含 5 个贴牌名）；清单侧唯一「机型表」是 `device_filter.xml` 的 2 条 USB VID/PID |
-| 控制通道 | HTTP REST / HTTP CGI / TCP 推送 | HTTP CGI / JSON-over-TCP / 72B 二进制帧 | **PTP over IP（原生）** + HTTP `?custom=1&cmd=` + `/app/` JSON + XML-over-TCP:3333 + BLE JSON + UDP 组播配网 + PTP-over-USB 三种传输（共 **11 条**，见 §3.4） |
-| 图传 | RTSP（8080 / 554 / 动态） | RTSP `:554/livestream/12`（老海思另有 `/11` 与 HTTP 变体） | **PTP 原生拉流**（参数串 `H264?W=&H=&FPS=&BR=` **由固件返回**）；副机 RTSP；直播上行 RTMP |
-| 配网入口 | 仅 WiFi 直连 | WiFi 直连 + 扫码 + 蓝牙 | WiFi 直连 + 蓝牙 + USB + 组播 AES `simpleConfig` + 手机开热点（**无 QR 扫码配网、无 Wi-Fi Direct**） |
-| 设置项来源 | 设备下发（菜单 XML / param 枚举） | 设备下发（capability 协商；**仅老海思方言在 APK 里有一张 PreferenceScreen 静态表**） | **PTP 设备属性表（`0x50xx` / `0xD6xx` / `0xD7xx` / `0xD8xx` + 高位能力码，57 个码点）** + `getparamitems` + `cmd=3031` 菜单树（App 只认 4 个 `Cmd`） |
-| 默认网关 IP | `192.168.25.1` / `192.168.169.1` / `192.168.0.1` | `192.168.0.1` | `192.168.1.1` / `192.168.1.254` / `192.168.169.1` |
-| 默认 WiFi 密码 | `12345678` | `12345678` | `1234567890`（10 位，另有一处 `boi_2020` 开发残留） |
-| minSdk / targetSdk | 24 / 36 | 23 / 35 | 28 / 35 |
-| 通道鉴权 | `seed` 随机数握手（仅预览） | 无（激活码 `setactivate` 另说） | **HTTP 完全无鉴权**；PTP 凭据槽传空串 |
-| 下载续传 | `?offset=`，禁 `Range`，受固件版本门限 | 仅 Ambarella 支持 offset；CGI 家族的 8080 分支是 append 追加 | 标准 HTTP `Range: bytes=N-`（PTP 侧另有 native `ptp_getpartialobject`） |
+| | TUWIN 1.6.4 | XTU GO 8.4.3 | idGoLive 1.3.6 | SJCAM Zone 6.7.3.15 |
+|---|---|---|---|---|
+| 包名 | `com.tuwinsmart.tuwin` | `com.gku.xtugo` | `com.id221.golive`（Java 命名空间 `com.icatch.golive`） | `org.jght.sjcam.zone` |
+| 方案商 | 自研（Clean Architecture） | gku（按 SoC 分包） | iCatchTek（`com.icatchtek.*`），**白标公版 App** | 方案商自有（`org.jght.*`），**一个 App 五套 SoC 通道** |
+| 型号维度 | 按**机型**枚举（4 个） | 按**芯片**分派（3 套），机型 18 个 | 按**探测结果**分派，四层：PTP 会话成败 → ICMP 应答者 → `getSSID` 成败 → 相机名黑名单。**无「机型→能力」注册表，但有「机型名→跳过写时区」黑名单** | 按**网关 IP + 相机自报 model 串**分派五通道；三套互相不兼容的型号词表（`SJCAM*` / `<芯片>-<型号>` / 裸串） |
+| 型号数 | 4 | 17 运动相机 + 1 行车记录仪 | 无正式表；SSID 图标表反推 ≈ 14 个自有型号，另有 `CameraProperties.java:1476` 的 **33 项产品名黑名单**（含 5 个贴牌名）；清单侧唯一「机型表」是 `device_filter.xml` 的 2 条 USB VID/PID | 约 40 个型号串（§7.1），官方选择列表 26 项 |
+| 控制通道 | HTTP REST / HTTP CGI / TCP 推送 | HTTP CGI / JSON-over-TCP / 72B 二进制帧 | **PTP over IP（原生）** + HTTP `?custom=1&cmd=` + `/app/` JSON + XML-over-TCP:3333 + BLE JSON + UDP 组播配网 + PTP-over-USB 三种传输（共 **11 条**，见 §3.4） | HTTP `?custom=1&cmd=`（Novatek）· HTTP `/cgi-bin/hisnet/*.cgi`（海思）· HTTP `:8082/api/` JSON（全志）· **JSON-over-TCP 7878**（Ambarella）· PTP（iCatch，不实现） |
+| 图传 | RTSP（8080 / 554 / 动态） | RTSP `:554/livestream/12`（老海思另有 `/11` 与 HTTP 变体） | **PTP 原生拉流**（参数串 `H264?W=&H=&FPS=&BR=` **由固件返回**）；副机 RTSP；直播上行 RTMP | RTSP `:554/xxx.mp4`（Novatek，拍照模式退化为 `:8192` HTTP）· RTSP `:554/livestream/12`（海思）· RTSP `:8554/ch01`（全志）· RTSP `/live`（Ambarella） |
+| 配网入口 | 仅 WiFi 直连 | WiFi 直连 + 扫码 + 蓝牙 | WiFi 直连 + 蓝牙 + USB + 组播 AES `simpleConfig` + 手机开热点（**无 QR 扫码配网、无 Wi-Fi Direct**） | WiFi 直连（`isSjWifi` 前缀表）· 扫码 |
+| 设置项来源 | 设备下发（菜单 XML / param 枚举） | 设备下发（capability 协商；**仅老海思方言在 APK 里有一张 PreferenceScreen 静态表**） | **PTP 设备属性表（`0x50xx` / `0xD6xx` / `0xD7xx` / `0xD8xx` + 高位能力码，57 个码点）** + `getparamitems` + `cmd=3031` 菜单树（App 只认 4 个 `Cmd`） | 设备下发：Novatek `cmd=3014` 的 `<Cmd>/<Status>` 字典 · 海思 `getmedia/getsetting` 的 `var item/value` 平行数组 · 全志 `cmd=3031` 的 `Menu[].MenuList` · Ambarella `msg_id=3/9` |
+| 默认网关 IP | `192.168.25.1` / `192.168.169.1` / `192.168.0.1` | `192.168.0.1` | `192.168.1.1` / `192.168.1.254` / `192.168.169.1` | `192.168.1.254`（Ly）· `192.168.0.1`（hisnet）· `192.168.10.1`/`192.168.100.1`（全志）· `192.168.42.1`（Amba） |
+| 默认 WiFi 密码 | `12345678` | `12345678` | `1234567890`（10 位，另有一处 `boi_2020` 开发残留） | 全志 `12345`；其余未在 APK 中发现写死口令 |
+| minSdk / targetSdk | 24 / 36 | 23 / 35 | 28 / 35 | 24 / 35（versionCode 10061） |
+| 通道鉴权 | `seed` 随机数握手（仅预览） | 无（激活码 `setactivate` 另说） | **HTTP 完全无鉴权**；PTP 凭据槽传空串 | HTTP 无鉴权；Amba 会话 `msg_id=257` 换 token（明文） |
+| 下载续传 | `?offset=`，禁 `Range`，受固件版本门限 | 仅 Ambarella 支持 offset；CGI 家族的 8080 分支是 append 追加 | 标准 HTTP `Range: bytes=N-`（PTP 侧另有 native `ptp_getpartialobject`） | 标准 HTTP（Amba 侧另有 8787 数据 socket 的分块通道，我们未实现） |
 
 
-**一句话结论**：三家都把「设置项」做成了**设备自描述、运行时协商**，APK 里根本没有完整的参数表；而「型号 → 协议」的映射，只有 TUWIN 是显式枚举的，XTU 完全靠相机自报的 `type` 字段分派，idGoLive 更是把主协议整条塞进 native `libcontrol.so` 的 PTP 栈里。这直接决定了我们的插件必须**以探测结果路由，而不是以型号名路由**。
+**一句话结论**：四家都把「设置项」做成了**设备自描述、运行时协商**，APK 里根本没有完整的参数表；而「型号 → 协议」的映射，只有 TUWIN 是显式枚举的，XTU 完全靠相机自报的 `type` 字段分派，idGoLive 更是把主协议整条塞进 native `libcontrol.so` 的 PTP 栈里。这直接决定了我们的插件必须**以探测结果路由，而不是以型号名路由**。
 
 
 ---
@@ -910,6 +910,59 @@ Action Cam - 317, Action Cam - 386, Action Cam - 458, Action Camera, V40
 12. XTU `SSConstant.SS_IP` **非 final**（`SSConstant.java:13`）→ 是否存在运行期改写路径；若不存在，换 IP 的机型在 8080/RTSP/缩略图三处必然失效。
 
 ---
+
+---
+
+## 7. SJCAM（山狗，`org.jght.sjcam.zone` 6.7.3.15）
+
+SJCAM 是**多 SoC 品牌**：一个 App 里并排五套相机通道，按**网关 IP + 相机自报 model 串**分派（`factory/JFCamera.java:205-224`）。全部证据与逐条行号在 [SJCAM 档案](../evidence/sjcam.md)。
+
+### 7.1 型号词表（三套写法并存，不能混用）
+
+| 家族 | 词表形态 | 例 |
+|---|---|---|
+| Ambarella | `SJCAM<型号>` | `SJCAMSJ8PRO`、`SJCAMSJ9PRO`（SJ9 Strike）、`SJCAMSJ10PRO`、`SJCAMSJ10ProDualSCR`、`SJCAMSJ8KPRO`、`SJCAMSJ7STAR` |
+| Novatek（Ly） | `<芯片号>-<型号>` | `660-SJ10X`、`683-SJ9`（SJ9 Max）、`683-SJ8+`（SJ8 Plus）、`658-SJ8AIR`、`580-SJ20_580`、`580-SJ6Pro_580`、`580-C300`、`580-C200Pro`、`580-C110+`、`675-C100+`、`672-C100`、`660-C200`、`660-SJ4000X`、`655-SJ4000WIFI`、`660-SJ5000X`、`660-M20`、`658-M20Air`、`670-A50`、`a10`（小写裸串） |
+| 海思 / 全志 / iCatch | 裸串 | `Hi3559V200-DV-IMX458`（SJ10 MAX）· `V536-CDR`（SJ10_A）· `"ICatch"` |
+
+⚠️ 同名两代机分属不同家族：**SJ9 有 `683-SJ9`（Novatek）与 `SJCAMSJ9PRO`（Ambarella）两个串**，SJ8 Pro 与 SJ8 Plus 亦然。
+
+### 7.2 识别与分派
+
+| 判据 | 值 | 证据 |
+|---|---|---|
+| SSID 前缀 | `SJ` / `C100` / `C200` / `A10` / `A20` / `A30` / `M20`（大写后 `startsWith`） | `view/WifiBottomPopup.java:252-254` |
+| 网关 IP | `192.168.42.1`→Amba · `192.168.1.254`→Ly · `192.168.100.1`→全志（老） · 其它→非相机 | `factory/JFCamera.java:205-224`、`utils/NetUtils.java:209-215` |
+| 特例 | 网关 `192.168.1.1`/`192.168.101.1` **且** SSID 含 `SJ6`/`C200` → 按 Ly | `factory/JFCamera.java:199-203` |
+| 全志出厂密码 | `12345` | `camera/allwinner/AllwinnerCamera.java:52` |
+
+**官方没有「型号 → 协议」注册表**；控制页按 model 串 + 固件版本进（`ConnectCameraFragment.java:1096-1113`），所以我们的插件同样以**探测结果**路由，model 串只用于「认领资格」。
+
+### 7.3 四套控制通道（第 5 套 iCatch PTP 我们不实现）
+
+| 通道 | 基址 / 端口 | 命令 | 响应 |
+|---|---|---|---|
+| Ly（Novatek） | `http://192.168.1.254/?custom=1` | `&cmd=<id>[&par=][&str=]`，`cmd`→`par`→`str` 顺序；id 全表见档案 §4.1 | `<Function><Cmd>/<Status>/<Value>/<Total>/<Free>` 伪 XML |
+| hisnet（海思 SJ10 MAX） | `http://192.168.0.1/cgi-bin/hisnet/` | `getdeviceattr/getworkmode/setworkmode/getworkstate/getbatterystate/getsdstatus/getfilelist/getfileinfo/deletefile/deleteallfiles/sdcommand/getsetting/setsetting/getmedia/setmedia/getitem/getallmode/getlang/setlang/getsystime/setsystime/client/sendclickkey/reset/poweroff` | `var key = "value";` 文本 |
+| 全志（SJ10_A） | `http://192.168.10.1:8082/api/` | 读 `getdeviceinfo`、写 `setdeviceinfo`；`cmd`：`RECORD=1100` `CAPTURE=1101` `MODE_CHANGE=1110` `GET_VERSION=2001` `RECORD_STATE=2005` `GET_MODEL=3030` `GET_MODEL_LIST=3031` | JSON（含固件自带拼写 `RecodStatus`） |
+| Ambarella | TCP `192.168.42.1:7878` | `{"msg_id":N,"token":T,…}`：`257` 开会话 · `1/2/3/9` 设置 · `4` 格式化 · `11` 设备信息 · `12` 关机 · `13` 电量 · `513/514` 录像 · `515` 录像时长 · `769` 拍照 · `1281` 删文件 · `483/485` 文件表 | JSON，单值在 `param` |
+
+事件通道（**我们一律用轮询代替**，与官方也混用轮询一致）：Ly TCP 3333（`<Cmd>3020/2020` 推送，`</Function>` 聚包）· hisnet **相机回连手机 TCP 9000**（需先 `client.cgi?&-operation=register&-ip=<手机IP>`）· Amba `msg_id=7` 通知。
+
+### 7.4 我们侧的实现（`composeApp/.../brand/sjcam`）
+
+一个插件四个通道，注册顺序 `ly → hisnet → allwinner → amba`，每个 probe 只认领自己家的报文（Ly 认 SJCAM 型号串，hisnet 认 SJ10 MAX 型号串，全志认 `device_name`+`software`，Amba 认会话成功且 model 含 `SJCAM`）。
+
+| 能力 | Ly | hisnet | 全志 | Amba |
+|---|---|---|---|---|
+| 状态 / 电量 / 卡 | ✅（`3019/3017/3016/2016`） | ✅（含 `recording`，`var running`） | ⚠️ 仅录像状态（无电量命令） | ✅ 电量 + 录像时长 |
+| 设置读写 | ✅（`3014` 字典，id 即 `cmd` 号） | ✅（媒体页 / 设备页分开） | ✅（`Menu` 已解析成选项） | ✅（`msg_id=3/2`） |
+| 快门 / 录像 | ✅（`1001` / `2001&par=`） | ⚠️ 仅 `KEY_MENU` 点击，**录像命令 APK 里不存在** | ✅（`1101` / `1100`） | ✅（`769` / `513`·`514`） |
+| 文件浏览 | ✅（抓 `/DCIM/<类型>/` 的 HTML 目录） | ✅（`getfilelist` 平行数组） | ❌ 官方走 sqlite 索引 `sunxi.db`，未实现 | ✅（`485`/`483`，下载走 HTTP 镜像 `/tmp/SD0`→`/SD`） |
+| 缩略图 | ✅ 照片用原图 | ❌ | ❌ | ❌（8787 数据 socket 未实现） |
+| 图传 | RTSP `:554/xxx.mp4`，拍照模式 `:8192` | RTSP `:554/livestream/12` | RTSP `:8554/ch01` | RTSP `/live` |
+
+未实现且**有意不做**的：iCatch PTP 通道（native 栈，与 `brand/icatch` 同一取舍）、三条推送通道、Amba 8787 数据 socket、全志的 sqlite 文件浏览、OTA（三家通道都有升级端点，但包格式未知）。
 
 ## 变更记录（2026-09-22 全量复现档案回写）
 

@@ -13,6 +13,7 @@
 | `docs/evidence/tuwin` | TUWIN 1.6.4 全量事实（含内嵌附录一／二／三：协议面、设置与操作、传输·OTA·联网） | 权威 |
 | `docs/evidence/xtugo` | XTU GO 8.4.3 全量事实（含内嵌附录 A-E：海思 CGI、Ambarella 报文、SigmaStar 与播放层、操作复现表、权限·组件·域名） | 权威 |
 | `docs/evidence/idgolive` | idGoLive 1.3.6 全量事实（含内嵌附录 A-D：PTP 属性表、HTTP 与 TCP 命令、原生层与 PTP-IP、UI 与端点判定） | 权威 |
+| `docs/evidence/sjcam` | SJCAM（山狗）Zone 6.7.3.15 全量事实（多 SoC 品牌：Ambarella / Novatek Ly / 海思 hisnet / 全志 / iCatch 五通道，含部分包取证方法与边界） | 权威 |
 | `docs/evidence/operations-matrix` | 三家操作对照与我们的复现清单（我们侧状态台账，done 的判据是真机跑通） | 唯一台账 |
 | `docs/evidence/data` | 机器提取表（生成物，勿手改；目录树在 `method` §4，契约在 `data/README.md`） | 生成物 |
 
