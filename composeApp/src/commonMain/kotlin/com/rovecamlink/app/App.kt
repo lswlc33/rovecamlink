@@ -169,11 +169,12 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
     val popTarget = NavKey(state.pageBelowTop, state.pageDepth - 1)
 
     // --- Going back --------------------------------------------------------------------------
-    // Three things can be left by a back gesture, and they are declared in the order they must be
-    // offered: the media viewer covers everything, the full-screen picture covers the live page,
-    // and a pushed page covers a tab. Android's dispatcher asks the last one that is enabled, and
-    // each of the three gets both halves of a back — the fingers-on-screen preview and the plain
-    // press (`PredictiveBackHandler` ends in one commit on versions with no progress to report).
+    // Four things can be left by back, and they are declared in the order they must be offered:
+    // the media viewer covers everything, the full-screen picture covers the live page, a pushed
+    // page covers a tab, and the scanner covers the devices tab. The three with a motion of their
+    // own get both halves of a back — the fingers-on-screen preview and the plain press
+    // (`PredictiveBackHandler` ends in one commit on versions with no progress to report); the
+    // scanner has no motion, so it takes the press alone.
     val viewerShown = state.viewer != null
     val viewerReveal = remember { Animatable(1f) }
     // Opened afresh starts whole; only a gesture leaves it part way.
@@ -229,11 +230,23 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
         onCancel = { nav.cancelGesture() },
     )
 
+    // The scanner is the devices tab's own full-screen mode, and it answers back with exactly what
+    // its 取消 button does. It has to be declared at all: while it is up nothing else here is
+    // enabled — the tab handler below is off on page 0 by design — so the press fell through to
+    // Android's default and closed the app instead of the scanner (2026-09-29 report
+    // 「扫码页面进行返回会直接退出程序」).
+    val scannerShown = state.qrScanOpen
+    PlatformBackHandler(enabled = scannerShown) { state.qrScanOpen = false }
+
     // With nothing pushed, back walks the pager home instead of closing the app — the demo's own
     // behaviour, and the Android convention for a bottom bar: 设置 → 返回 lands on 设备, a second
     // 返回 leaves. There is no overlay to preview here, so this one stays a plain press.
+    // `!scannerShown` is belt-and-braces rather than a live case — a scanner only exists on page 0,
+    // which is the one page this handler is off for — but it keeps the two from ever disagreeing
+    // about who owns the press.
     PlatformBackHandler(
-        enabled = !pageStackShown && !previewShown && !viewerShown && pager.selectedPage != 0,
+        enabled = !pageStackShown && !previewShown && !viewerShown && !scannerShown &&
+            pager.selectedPage != 0,
     ) {
         pager.animateToPage(0)
     }
