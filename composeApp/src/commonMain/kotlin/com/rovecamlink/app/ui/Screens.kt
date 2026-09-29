@@ -169,6 +169,8 @@ import com.rovecamlink.app.appearance_dark
 import com.rovecamlink.app.appearance_light
 import com.rovecamlink.app.action_view_log
 import com.rovecamlink.app.action_log_settings
+import com.rovecamlink.app.action_check_app_update
+import com.rovecamlink.app.hint_check_app_update
 import com.rovecamlink.app.action_about
 import com.rovecamlink.app.action_ui_test_mode
 import com.rovecamlink.app.hint_ui_test_mode
@@ -1488,6 +1490,8 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
     val appearanceLightLbl = stringResource(Res.string.appearance_light)
     val viewLogLbl = stringResource(Res.string.action_view_log)
     val logSettingsRowLbl = stringResource(Res.string.action_log_settings)
+    val checkUpdateLbl = stringResource(Res.string.action_check_app_update)
+    val checkUpdateHint = stringResource(Res.string.hint_check_app_update)
     val aboutRowLbl = stringResource(Res.string.action_about)
     val permissionsRowLbl = stringResource(Res.string.permission_title)
     val uiTestLbl = stringResource(Res.string.action_ui_test_mode)
@@ -1882,6 +1886,13 @@ fun SettingsScreen(state: AppState, outerPadding: PaddingValues) {
                     ArrowPreference(
                         title = logSettingsRowLbl,
                         onClick = { state.pushPage(com.rovecamlink.app.Page.LogSettings) },
+                    )
+                    // 检查更新：入口行而不是把整页内容内联在这里 —— 频道、检查结果、发布页
+                    // 跳转是一组完整的东西，且只有它一个入口用得上 alpha/stable 的词汇。
+                    ArrowPreference(
+                        title = checkUpdateLbl,
+                        summary = checkUpdateHint,
+                        onClick = { state.pushPage(com.rovecamlink.app.Page.Update) },
                     )
                     ArrowPreference(
                         title = aboutRowLbl,

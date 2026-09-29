@@ -48,8 +48,14 @@ import com.rovecamlink.app.core.net.parseManualAddress
 import com.rovecamlink.app.core.protocol.CameraProtocol
 import com.rovecamlink.app.core.provision.ProvisioningController
 import com.rovecamlink.app.core.storage.sanitizeFileName
+import com.rovecamlink.app.core.update.AppRelease
+import com.rovecamlink.app.core.update.AppUpdateIndex
+import com.rovecamlink.app.core.update.AppVersion
+import com.rovecamlink.app.core.update.UpdateChannel
+import com.rovecamlink.app.core.update.createUpdateChannelStore
 import com.rovecamlink.app.core.wifi.CameraNetwork
 import com.rovecamlink.app.core.wifi.WifiResult
+import com.rovecamlink.app.ui.AppInfo
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -121,7 +127,7 @@ data class DownloadItem(
  * These are not tabs: nobody looks for the log or the about page on the way to a
  * shooting setting, but both have to be reachable from wherever a failure happened.
  */
-enum class Page { Log, LogSettings, About, Permissions, SupportedDevices, ManualConnect, LiveSettings, LivePreview }
+enum class Page { Log, LogSettings, About, Permissions, SupportedDevices, ManualConnect, LiveSettings, LivePreview, Update }
 
 /**
  * How the files page draws its media.
@@ -479,6 +485,132 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * with the scanner up cannot leave the bar hidden on another page).
      */
     var qrScanOpen by mutableStateOf(false)
+
+    // ---------- app self-update (alpha / stable channels) ----------
+
+    /**
+     * Which channel the update page looks at, persisted through
+     * [com.rovecamlink.app.core.update.UpdateChannelStore].
+     *
+     * The setter lives on [AppState] rather than being a bare `var` so the change is
+     * logged with the rest of the app's decisions, and so a channel switch invalidates
+     * the previous check's answer — an "up to date" verdict against the other channel
+     * would be a wrong answer left on screen.
+     */
+    var updateChannel: UpdateChannel
+        get() = updateChannelStore.channel()
+        set(value) {
+            val old = updateChannelStore.channel()
+            if (old == value) return
+            updateChannelStore.setChannel(value)
+            updateResult = null
+            Diag.info(LogTag.UPDATE, "channel ${old.id} -> ${value.id}")
+        }
+
+    private val updateChannelStore by lazy { createUpdateChannelStore() }
+
+    private val updateUrlOpener by lazy { com.rovecamlink.app.core.update.createUrlOpener() }
+
+    /** The newest release the current channel offers, or why the check said nothing. */
+    var updateResult by mutableStateOf<UpdateResult?>(null)
+        private set
+
+    /** True from the tap until the GitHub answer (or the failure) lands. */
+    var updateChecking by mutableStateOf(false)
+        private set
+
+    /** Whether a check has ever run this session — first visit and failure must read differently. */
+    var everCheckedUpdate by mutableStateOf(false)
+        private set
+
+    /** A channel check can only ever be running one at a time. */
+    private var updateJob: Job? = null
+
+    /**
+     * One completed check, shaped for the page that shows it.
+     *
+     * The UI never derives "up to date" itself: what that means differs by channel
+     * (stable compares versions, alpha's builds are timestamped and untraceable back to
+     * an installed package), so the verdict is decided here, once, beside the data it
+     * was decided from.
+     */
+    sealed interface UpdateResult {
+        /** Stable only: the tagged release is not newer than the running version. */
+        data class UpToDate(val release: AppRelease) : UpdateResult
+
+        /** A build worth opening the release page for. */
+        data class Available(val release: AppRelease) : UpdateResult
+    }
+
+    /**
+     * Ask GitHub what the chosen channel's newest build is.
+     *
+     * Runs on the app-wide [scope], not [sessionScope]: the updater has nothing to do
+     * with a camera session, and an update check that dies because the camera
+     * disconnected would be backwards. On Android the request rides
+     * [com.rovecamlink.app.core.wifi.WifiController.withInternetRoute] — the process is
+     * bound to the camera's internet-less hotspot whenever a session is up, and without
+     * stepping aside the check would fail with a network error that has nothing to do
+     * with GitHub. On the desktop/iOS actuals `withInternetRoute` just runs the block.
+     */
+    fun checkAppUpdate() {
+        if (updateChecking) return
+        val channel = updateChannel
+        updateJob?.cancel()
+        updateChecking = true
+        Diag.info(LogTag.UPDATE, "check begin channel=${channel.id} installed=${AppInfo.version}")
+        updateJob = scope.launch {
+            val result = runCatching {
+                when (channel) {
+                    UpdateChannel.Stable -> checkStableRelease()
+                    UpdateChannel.Alpha -> checkAlphaRelease()
+                }
+            }.getOrElse {
+                Diag.at(LogLevel.WARN, LogTag.UPDATE, "check failed ${Diag.causeChain(it)}")
+                null
+            }
+            updateResult = result
+            updateChecking = false
+            everCheckedUpdate = true
+            Diag.i(LogTag.UPDATE) { "check done -> ${result?.let { it::class.simpleName } ?: "no answer"}" }
+        }
+    }
+
+    /** Open the found release in the browser — the fetch/install is the OS's job, not this app's. */
+    fun openUpdatePage(release: AppRelease): Boolean {
+        val opened = updateUrlOpener.open(release.openUrl)
+        Diag.info(LogTag.UPDATE, "open ${release.tagName} -> $opened")
+        return opened
+    }
+
+    private suspend fun checkStableRelease(): UpdateResult? {
+        val body = graph.wifi.withInternetRoute("update-check stable") {
+            graph.http.getText(AppUpdateIndex.LATEST_ENDPOINT)
+        }
+        // A body that did not parse is not "up to date": those two feel identical on the
+        // screen and are not, so the null falls through to the page's "could not check".
+        val release = AppUpdateIndex.parseStable(body) ?: return null
+        val installed = AppVersion.parse(AppInfo.version)
+        val newest = AppVersion.parse(release.tagName.removePrefix("v"))
+        return when {
+            // An unreadable version is never silently "up to date" — the user gets the
+            // release and its number, and decides.
+            installed == null || newest == null -> UpdateResult.Available(release)
+            newest > installed -> UpdateResult.Available(release)
+            else -> UpdateResult.UpToDate(release)
+        }
+    }
+
+    private suspend fun checkAlphaRelease(): UpdateResult? {
+        val body = graph.wifi.withInternetRoute("update-check alpha") {
+            graph.http.getText(AppUpdateIndex.LIST_ENDPOINT)
+        }
+        // Alpha builds are timestamped, not versioned — an installed alpha cannot name
+        // the commit it came from, so there is no comparison to make and none is faked.
+        // The page shows what main produced most recently; the user decides from the
+        // tag's date whether that is worth a trip.
+        return AppUpdateIndex.parseAlpha(body)?.let { UpdateResult.Available(it) }
+    }
 
     /**
      * Files the viewer staged for a look. A preview is not a download: these bytes stay in

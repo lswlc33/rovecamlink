@@ -74,6 +74,9 @@ enum class LogTag(val id: String) {
 
     /** The logging subsystem itself (export, file sink, drops, config). */
     LOG("LOG"),
+
+    /** The app's own update channel (GitHub Releases check, channel choice). */
+    UPDATE("UPDATE"),
     ;
 }
 

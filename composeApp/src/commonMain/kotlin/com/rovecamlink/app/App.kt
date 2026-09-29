@@ -47,6 +47,7 @@ import com.rovecamlink.app.ui.PlatformPredictiveBackHandler
 import com.rovecamlink.app.ui.SettingsScreen
 import com.rovecamlink.app.ui.ManualConnectScreen
 import com.rovecamlink.app.ui.SupportedDevicesScreen
+import com.rovecamlink.app.ui.UpdateScreen
 import com.rovecamlink.app.ui.blockPointerInput
 import com.rovecamlink.app.ui.glass.IosLiquidGlassNavigationBar
 import com.rovecamlink.app.ui.rememberBarBackdrop
@@ -407,6 +408,7 @@ fun App(graph: AppGraph = remember { AppGraph() }) {
                             Page.ManualConnect -> ManualConnectScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             Page.LiveSettings -> LiveSettingsScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             Page.LivePreview -> LivePreviewScreen(state, outerPadding = outer, onClose = { state.popPage() })
+                            Page.Update -> UpdateScreen(state, outerPadding = outer, onClose = { state.popPage() })
                             null -> HorizontalPager(
                                 state = pagerState,
                                 // miuix's own snap spring, so a swipe settles with the same feel the
