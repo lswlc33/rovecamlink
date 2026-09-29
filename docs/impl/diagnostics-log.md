@@ -132,7 +132,7 @@ media:.mp4                    1       1   0      0      16      16  HTTP 200
 | 症状 | 先看 | 再看 |
 | --- | --- | --- |
 | 连不上 | `grep ' NET '` 逐探测结论；`WIFI` 的 `onUnavailable`/`timed out` | 摘要里 `socket_errors`；`PERM` 是否 granted=false |
-| 连上后频繁掉线 | `STATE poll failed (n/3)` | 相邻 `HTTP ... -> FAIL` 的 `throw=` 因果链 |
+| 连上后频繁掉线 | `STATE no answer from <ip> for <N>ms — the camera is treated as disconnected`（另一条是 `camera Wi-Fi is gone`：整条链路都没了，不必再看请求） | 紧随其前的 `HTTP ... -> FAIL` 与 `N camera failure(s) in a row` |
 | 状态不更新 / 数值可疑 | `STATE status ...` 的变化行 | 同一时刻 `HTTP cgi:getcurallinfo -> 200` 的响应体原文 |
 | 文件列表空 | `PARSE list via json/plain` 与 `FILE list 0 files` | 该交换的续行原文（是 404？还是空数组？还是 HTML 错误页？） |
 | 下载不完整 | `DL START/DONE/FAILED` 的字节数与 `expected=` | `HTTP ... -> 206/200`，以及 `server ignored Range` |

@@ -651,7 +651,6 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
      * download started against a dead session can never write back into the UI.
      */
     private var sessionScope: CoroutineScope? = null
-    private var consecutivePollFailures = 0
     private val protocol: CameraProtocol?
         get() = session?.let { graph.registry.protocolFor(it.platform) }
 
@@ -1169,7 +1168,6 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             // protocol's event collector subscribed forever.
             sessionScope?.cancel()
             sessionScope = CoroutineScope(scope.coroutineContext + Job())
-            consecutivePollFailures = 0
             Diag.i { "session up ${s.brand.displayName}/${s.platform.displayName} model=\"${s.model}\" host=${s.host}:${s.port} extras=${s.extras}" }
             collectEvents(proto)
             // Time sync is a named connection step (TUWIN makes it one too); it's
@@ -1312,7 +1310,7 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         pollJob = owner.launch {
             val proto = protocol ?: return@launch
             val s = session ?: return@launch
-            Diag.i(LogTag.STATE) { "poll loop started (every ${POLL_INTERVAL_MS}ms, gives up after $POLL_FAILURES_BEFORE_LOST failures)" }
+            Diag.i(LogTag.STATE) { "poll loop started (every ${POLL_INTERVAL_MS}ms, gives up after ${CAMERA_SILENCE_MS}ms with no answer at all)" }
             // The camera's own rotation rides its own slow loop: it only moves when someone
             // physically turns the camera, so an extra CGI on every status tick is pure load.
             owner.launch {
@@ -1338,15 +1336,36 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                     delay(POLL_INTERVAL_MS)
                     continue
                 }
-                // Wi-Fi gone means the camera is gone, and the link knows it at once. The
-                // failure ladder below takes three rounds to say the same thing, and in
-                // between the picture is frozen and the pill still reads 已连接 — which is
+                // Wi-Fi gone means the camera is gone, and the link knows it at once — faster
+                // than anything a request can prove, so it is checked first. Between the drop and
+                // the next tick the picture is frozen while the pill still reads 已连接, which is
                 // exactly the state the 2026-09-24 report called out (「如果相机 WiFi 已经断开
                 // 了 那么就视为已断开」). Only checked for sessions that were established over
                 // the camera's own hotspot: a manual-IP session on a normal network never had
-                // one to lose.
+                // one to lose — and when it loses the camera, the silence check below is what
+                // says so.
                 if (sessionOverCameraWifi && !graph.wifi.isConnectedToCamera) {
                     Diag.at(LogLevel.WARN, LogTag.STATE, "camera Wi-Fi is gone — the camera is treated as disconnected")
+                    errorMessage = localized(Res.string.err_camera_stopped)
+                    disconnect()
+                    return@launch
+                }
+                // The other way a camera goes away: it is still on some network, but it has
+                // stopped answering. The poll below cannot see that — every plugin reports a
+                // failed read as an empty parse and still returns a `DeviceStatus`, so the ladder
+                // that used to live there counted three *exceptions* that never came, and a
+                // camera switched off mid-session kept the pill at 已连接 with a frozen picture
+                // and dashes where its battery and card had been, for as long as the user cared
+                // to watch (2026-09-29 report 「WiFi 断开（即连接被停止）时，没有任何反馈告知用户
+                // 连接已断开。此时设备可能已经关机了，但是用户没有任何知晓」). The transport is
+                // the one layer that sees every request fail, so the question goes there.
+                val silenceMs = graph.http.silenceMs(s.host, s.port)
+                if (silenceMs >= CAMERA_SILENCE_MS) {
+                    Diag.at(
+                        LogLevel.WARN,
+                        LogTag.STATE,
+                        "no answer from ${s.host} for ${silenceMs}ms — the camera is treated as disconnected",
+                    )
                     errorMessage = localized(Res.string.err_camera_stopped)
                     disconnect()
                     return@launch
@@ -1356,10 +1375,6 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                 // here" is answered promptly even while the gallery is filling in.
                 runCatching { withCameraRequest(CameraRequestClass.Status) { proto.getStatus(s) } }
                     .onSuccess {
-                        if (consecutivePollFailures > 0) {
-                            Diag.i(LogTag.STATE) { "poll recovered after $consecutivePollFailures failure(s)" }
-                        }
-                        consecutivePollFailures = 0
                         // Two reasons a poll's recording verdict is not trusted:
                         //
                         //  - It left the phone before the record button was pressed, so it
@@ -1381,19 +1396,15 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
                         }
                     }
                     .onFailure { err ->
-                        // One hiccup is normal on a congested hotspot; a run of them
-                        // means the camera is gone, and the pill must say so.
-                        consecutivePollFailures++
+                        // A plugin that throws is a plugin bug — the transports answer `null`
+                        // instead of throwing, which is why "the camera is gone" is decided by
+                        // the silence reading above and not by this. Logged so the bug is
+                        // visible, and the loop carries on.
                         Diag.at(
-                            if (consecutivePollFailures >= POLL_FAILURES_BEFORE_LOST) LogLevel.ERROR else LogLevel.WARN,
+                            LogLevel.WARN,
                             LogTag.STATE,
-                            "poll failed ($consecutivePollFailures/$POLL_FAILURES_BEFORE_LOST) after ${Diag.uptimeMillis() - t0}ms " +
-                                "${Diag.causeChain(err)}",
+                            "poll threw after ${Diag.uptimeMillis() - t0}ms ${Diag.causeChain(err)}",
                         )
-                        if (consecutivePollFailures == POLL_FAILURES_BEFORE_LOST) {
-                            errorMessage = localized(Res.string.err_camera_stopped)
-                            disconnect()
-                        }
                     }
                 delay(POLL_INTERVAL_MS)
             }
@@ -2847,7 +2858,23 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
     }
 }
 
-private const val POLL_FAILURES_BEFORE_LOST = 3
+/**
+ * How long the camera may answer **nothing at all** before the app treats it as gone.
+ *
+ * Measured by the transport ([CameraHttp.silenceMs]), not counted here: the clock starts at the
+ * first request that came back with nothing and is cleared by the first one that came back with
+ * anything, so a single hiccup — or the refusing spell the 2026-09-22 field log shows a hammered
+ * camera in — costs nothing as long as something answers inside the window. It is what replaced
+ * the old three-exceptions-in-a-row ladder, which never fired: no plugin throws, because every
+ * read reports failure as `null`/empty.
+ *
+ * 12 s is the trade: long after the point where a camera that is *busy* would have answered
+ * something (the poll asks it every 1.5 s, and a camera answering slowly still resets the clock
+ * — the clock only starts once an answer has already failed to arrive), and short enough that
+ * the user is told while they are still looking at a screen that has stopped moving. A camera
+ * switched off or carried out of range is the case this exists for.
+ */
+private const val CAMERA_SILENCE_MS = 12_000L
 
 /**
  * The charge a camera must report before this app will flash firmware into it.

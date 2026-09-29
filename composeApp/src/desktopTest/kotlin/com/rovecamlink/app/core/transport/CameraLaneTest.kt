@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -295,6 +296,42 @@ class CameraLaneTest {
         } finally {
             server.stop()
         }
+    }
+
+    /**
+     * The reading the poll loop decides "the camera is gone" with ([CameraHttp.silenceMs]).
+     *
+     * The field report behind it: with the camera switched off mid-session the app kept showing
+     * 已连接 — a frozen picture, dashes where the battery and card had been — and never said
+     * anything. Every read here reports failure as `null`/empty instead of throwing, and a plugin
+     * builds its status out of whatever parsed, so nothing above the transport could tell an
+     * answered poll from a silent one. This is the layer that can, and these are the four facts
+     * the poll relies on: nothing is reported for a camera we have never asked, an empty answer
+     * dates the start of the silence, the reading grows from there, and any answer at all clears
+     * it.
+     */
+    @Test
+    fun silenceIsDatedFromTheFirstUnansweredRequestAndClearedByAnyAnswer(): Unit = runBlocking {
+        val lanes = CameraLanes()
+        val key = "192.168.0.1:80"
+        assertEquals(0L, lanes.silenceMs(key), "a camera we never talked to is not silent")
+
+        val lane = lanes.lane(key)
+        // The shape a real failure has: the transports return null rather than throwing (the
+        // status poll against a switched-off camera is exactly this call).
+        assertNull(lane.submit<String?>(CameraRequestClass.Status) { null })
+        delay(60)
+        val grown = lanes.silenceMs(key)
+        assertTrue(grown >= 40, "an empty answer must start the clock (read ${grown}ms)")
+
+        // Still failing, and still measured from that first empty answer rather than from now.
+        assertNull(lane.submit<String?>(CameraRequestClass.Status) { null })
+        assertTrue(lanes.silenceMs(key) >= grown, "silence is dated from the first unanswered request")
+
+        // One answer is all it takes: a camera answering slowly, or after a refusing spell, is
+        // not a camera that has gone away.
+        assertEquals("Success", lane.submit(CameraRequestClass.Status) { "Success" })
+        assertEquals(0L, lanes.silenceMs(key), "an answer clears the silence")
     }
 
     @Test

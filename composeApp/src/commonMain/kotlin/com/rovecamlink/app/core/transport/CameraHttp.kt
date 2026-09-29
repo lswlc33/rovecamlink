@@ -347,6 +347,20 @@ class CameraHttp(
     private val lanes = CameraLanes()
 
     /**
+     * How long the camera at [host]:[port] has gone without answering **anything**, in ms — 0
+     * while it is answering.
+     *
+     * The honest "is it still there" reading, and the reason it lives down here rather than in
+     * the poll that asks the question: every method above reports a failure as `null`/empty
+     * instead of throwing, and a plugin builds its `DeviceStatus` out of whatever parsed — so a
+     * camera that has been switched off produces a poll that looks like any other, with null
+     * fields where its battery and card used to be. What cannot lie is the lane's own verdict on
+     * each exchange, and this is that verdict as a duration: it starts at the first unanswered
+     * request and is cleared by the first answer after it.
+     */
+    suspend fun silenceMs(host: String, port: Int): Long = lanes.silenceMs("$host:$port")
+
+    /**
      * Run one exchange, alone against its camera.
      *
      * [bulk] moves it out of the command lane into the single media slot (a download

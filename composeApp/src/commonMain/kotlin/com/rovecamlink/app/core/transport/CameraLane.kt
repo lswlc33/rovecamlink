@@ -83,10 +83,35 @@ internal class CameraLane(private val key: String) {
      */
     internal suspend fun waitingCount(): Int = lock.withLock { waiting.size }
 
+    /**
+     * How long this camera has been failing to answer, in ms — 0 while it is answering.
+     *
+     * The transport's own verdict on "is it still there", for callers that cannot get it from a
+     * reply: every read in this app reports a failure as `null`/empty rather than by throwing, so
+     * a camera that has been switched off produces a perfectly successful-looking poll and the
+     * *only* layer that sees every request fail is this one. Starts at the first unanswered
+     * request and stops at the first answer after it, so a single hiccup on a busy hotspot reads
+     * as a few hundred ms rather than as a verdict.
+     */
+    internal suspend fun silenceMs(): Long = lock.withLock {
+        if (unansweredSince == 0L) 0L else (monotonicMillis() - unansweredSince).coerceAtLeast(0L)
+    }
+
     /** Refusal streak → cooldown. Guarded by [lock], like everything above. */
     private var failures = 0
     private var refusedUntil = 0L
     private var lastCooldownLoggedAt = 0L
+
+    /**
+     * When the first unanswered request of the current run arrived, or 0 while the camera is
+     * answering.
+     *
+     * [failures] counts the same runs but cannot date them, and the date is what a caller
+     * outside the transport can act on: three instant refusals and three 20 s timeouts are the
+     * same count and a very different amount of silence. Read through [silenceMs]; cleared by
+     * the first exchange that produces anything usable.
+     */
+    private var unansweredSince = 0L
 
     /**
      * Run [block] alone against this camera.
@@ -210,9 +235,11 @@ internal class CameraLane(private val key: String) {
             }
             failures = 0
             refusedUntil = 0
+            unansweredSince = 0L
             return@withLock
         }
         failures++
+        if (unansweredSince == 0L) unansweredSince = now
         if (failures < BACKOFF_AFTER_FAILURES) return@withLock
         val pause = (BACKOFF_BASE_MS shl (failures - BACKOFF_AFTER_FAILURES).coerceAtMost(4))
             .coerceAtMost(BACKOFF_MAX_MS)
@@ -302,4 +329,12 @@ internal class CameraLanes {
 
     /** Test hook: how many distinct targets have been seen. */
     suspend fun laneCount(): Int = lock.withLock { lanes.size }
+
+    /**
+     * How long the camera at [key] has gone without answering anything, in ms — 0 while it is
+     * answering, and 0 for a camera this process has never talked to (no lane: there is nothing
+     * to report, and inventing a lane just to answer would make the caller's silence look older
+     * than the session).
+     */
+    suspend fun silenceMs(key: String): Long = lock.withLock { lanes[key] }?.silenceMs() ?: 0L
 }
