@@ -117,6 +117,7 @@
     <string name="label_newest_version">Newest available</string>
     <string name="label_package_size">Package size</string>
     <string name="label_release_notes">Release notes</string>
+    <string name="label_release_date">Published</string>
     <string name="note_release_notes_unavailable">The vendor supplied no release notes</string>
     <string name="action_download_update">Download the package</string>
     <string name="status_downloading">Downloading…%1$s (%2$s / %3$s)</string>
@@ -376,9 +377,31 @@
     <!-- Software tab rows. -->
     <string name="action_view_log">View diagnostics log</string>
     <string name="action_log_settings">Logging settings</string>
+    <string name="action_check_app_update">Check for updates</string>
+    <string name="hint_check_app_update">The channel decides what to look at: Alpha follows every build of main, Stable follows the tagged releases.</string>
     <string name="action_about">About</string>
     <string name="action_ui_test_mode">UI test mode</string>
     <string name="hint_ui_test_mode">Fills every page with a canned camera so the layout can be checked with nothing connected. Writes go nowhere.</string>
+
+    <!-- Update page. -->
+    <string name="update_title">Check for updates</string>
+    <string name="update_channel">Update channel</string>
+    <string name="update_channel_alpha">Alpha</string>
+    <string name="update_channel_alpha_summary">Every push to main, timestamped builds</string>
+    <string name="update_channel_stable">Stable</string>
+    <string name="update_channel_stable_summary">Tagged releases only</string>
+    <string name="update_installed">Installed</string>
+    <string name="update_check_now">Check now</string>
+    <string name="update_checking">Checking…</string>
+    <string name="update_channel_head">Newest on the channel</string>
+    <string name="update_none_yet">Run a check to see what the channel offers.</string>
+    <string name="update_error">The check found nothing — no network, or GitHub did not answer.</string>
+    <string name="update_error_body">Try again, or open the Releases page yourself.</string>
+    <string name="update_open_page">Open the release page</string>
+    <string name="update_open_page_fallback">Open failed — copy the address:</string>
+    <string name="update_uptodate">You are on the newest tagged release.</string>
+    <string name="update_alpha_head_note">Alpha builds are stamped, not versioned — this app cannot tell whether the one you installed is this one. The tag’s date is the guide.</string>
+    <string name="update_prerelease">Pre-release</string>
 
     <!-- About page. -->
     <string name="about_title">About</string>

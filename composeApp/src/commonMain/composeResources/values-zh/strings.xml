@@ -117,6 +117,7 @@
     <string name="label_newest_version">最新可用</string>
     <string name="label_package_size">安装包大小</string>
     <string name="label_release_notes">更新说明</string>
+    <string name="label_release_date">发布时间</string>
     <string name="note_release_notes_unavailable">厂商没有提供更新说明</string>
     <string name="action_download_update">下载固件包</string>
     <string name="status_downloading">正在下载…%1$s（%2$s / %3$s）</string>
@@ -373,9 +374,31 @@
     <!-- 软件页的行。 -->
     <string name="action_view_log">查看诊断日志</string>
     <string name="action_log_settings">日志设置</string>
+    <string name="action_check_app_update">检查更新</string>
+    <string name="hint_check_app_update">频道决定看什么：Alpha 跟踪 main 的每次构建，Stable 只看正式发布。</string>
     <string name="action_about">关于</string>
     <string name="action_ui_test_mode">UI 测试模式</string>
     <string name="hint_ui_test_mode">用一台内置假相机把每个页面填满，没连相机也能走查布局。写操作不会发出去。</string>
+
+    <!-- 更新页。 -->
+    <string name="update_title">检查更新</string>
+    <string name="update_channel">更新频道</string>
+    <string name="update_channel_alpha">Alpha</string>
+    <string name="update_channel_alpha_summary">main 的每次推送，带时间戳的构建</string>
+    <string name="update_channel_stable">正式版</string>
+    <string name="update_channel_stable_summary">只看打 tag 的正式发布</string>
+    <string name="update_installed">当前版本</string>
+    <string name="update_check_now">立即检查</string>
+    <string name="update_checking">正在检查…</string>
+    <string name="update_channel_head">频道最新</string>
+    <string name="update_none_yet">检查一次，看看频道上有什么。</string>
+    <string name="update_error">检查没有结果——可能没有网络，或 GitHub 没有应答。</string>
+    <string name="update_error_body">可以重试，或自己打开 Releases 页。</string>
+    <string name="update_open_page">打开发布页</string>
+    <string name="update_open_page_fallback">打开失败，请复制地址：</string>
+    <string name="update_uptodate">已经是最新的正式版。</string>
+    <string name="update_alpha_head_note">Alpha 构建以时间戳区分、没有版本号——本 App 无法判断你装的是不是这一个，请以 tag 里的日期为准。</string>
+    <string name="update_prerelease">预发布</string>
 
     <!-- 关于页。 -->
     <string name="about_title">关于</string>
