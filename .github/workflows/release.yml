@@ -2,12 +2,12 @@ name: Release
 
 # 正式版发布：推 `vX.Y.Z` tag 即自动构建签名 APK 并创建正式 Release。
 # 三道闸：tag 格式 / 版本号一致 / tag 在 main 历史里（确保已跑过 CI）。
-# 签名闸：APK 证书必须等于 .github/apk-signer-sha256.txt 登记的那把密钥——与 nightly 完全
-# 同一把，所以从 nightly 装的包能被正式版直接覆盖升级。
+# 签名闸：APK 证书必须等于 .github/apk-signer-sha256.txt 登记的那把密钥——与 alpha 完全
+# 同一把，所以从 alpha（及其前身 nightly）装的包能被正式版直接覆盖升级。
 #
-# 本仓库只有两条工作流：nightly.yml（推 main 就构建）和这一条。这一条没有定时、也没有
-# push 触发，只在人主动推 `v*.*.*` tag 或手动派发时才跑——日常提交一律出 nightly，
-# 正式版不会被一次推送顺手带出去。
+# 本仓库只有两条工作流：alpha.yml（推 main 就构建；2026-09-29 前叫 nightly.yml）和这一条。
+# 这一条没有定时、也没有 push 触发，只在人主动推 `v*.*.*` tag 或手动派发时才跑——
+# 日常提交一律出 alpha 包，正式版不会被一次推送顺手带出去。
 on:
   push:
     tags:
@@ -55,7 +55,7 @@ jobs:
           if [ "v$name" != "$tag" ]; then
             echo "::error::tag $tag 与 composeApp 的 versionName=$name 不一致"; exit 1
           fi
-          # 3. tag 必须打在 main 历史上：意味着这个 commit 已完整跑过 nightly CI。
+          # 3. tag 必须打在 main 历史上：意味着这个 commit 已完整跑过 alpha CI。
           git fetch --no-tags origin main
           if ! git merge-base --is-ancestor "$tag" FETCH_HEAD; then
             echo "::error::tag $tag 不在 main 历史里，发布未过 CI 的代码是禁止的"; exit 1
@@ -89,7 +89,7 @@ jobs:
           TAG: ${{ needs.verify.outputs.tag }}
         run: |
           set -eu
-          # 与 nightly 相反：正式版绝不允许未签名产物。未签名的 release APK 对已装
+          # 与 alpha 相反：正式版绝不允许未签名产物。未签名的 release APK 对已装
           # 用户的表现是覆盖安装失败，静默发出去比构建失败糟得多。
           if [ -z "${ROVECAMLINK_RELEASE_KEYSTORE_BASE64:-}" ]; then
             echo "::error::缺少 ROVECAMLINK_RELEASE_KEYSTORE_BASE64，正式版拒绝发布未签名包"; exit 1

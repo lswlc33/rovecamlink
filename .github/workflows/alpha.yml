@@ -1,22 +1,24 @@
-name: Nightly
+name: Alpha
 
-# 每日构建：定时 / 手动 / 推 main 三种触发，每次产出「一个」APK 并发成 nightly 预发布。
-# Android 出的是 release 包——和正式版同一份构建类型、同一把密钥，只是文件名仍叫 nightly。
+# alpha 频道：定时 / 手动 / 推 main 三种触发，每次产出「一个」APK 并发成 alpha 预发布。
+# Android 出的是 release 包——和正式版（Stable 频道）同一份构建类型、同一把密钥。
 # macOS 上仅编译 iOS 目标，守住「壳工程可编译」这条线（iOS 未做功能验证，不产 IPA、不跑模拟器）。
 #
-# 为什么发 release 而不是 debug：nightly 是给人下载安装的，下载量直接决定体验。AGP 对
+# 为什么发 release 而不是 debug：alpha 是给人下载安装的，下载量直接决定体验。AGP 对
 # debuggable 构建只裁剪、不做优化（构建时会警告 DEBUGGABLE_AND_MINIFIED_ENABLED），所以
 # debug 就算开了 R8 也只能压到 7.95MB（不开是 19.93MB），而 release 只有 3.64MB。代价是
 # 包不再可调试（adb set-debug-app 挂不上），但排障靠的是 App 内 Diagnostics 导出的诊断
 # TXT，其中的崩溃堆栈因为关了混淆（见 composeApp/proguard-rules.pro）保持可读，换得值。
 #
 # 为什么必须签名：Android 靠签名证书判定能否覆盖升级。release 的默认产物是未签名的，
-# 装了之后下一次升级必然报「与已安装应用签名不符」，只能先卸载。nightly 与正式版共用
+# 装了之后下一次升级必然报「与已安装应用签名不符」，只能先卸载。alpha 与正式版共用
 # ROVECAMLINK_RELEASE_* 那把密钥，并由 verify-apk-signature 核对证书指纹，
-# nightly 与正式版签名一致，装上就能一路升级。
+# alpha 与正式版签名一致，装上就能一路升级。
 #
 # 只有工作流产物这一个包：不再额外 upload-artifact，避免同一个 run 出现两份 APK。
-# push 也发布会让 Releases 页变长，所以只保留最近 KEEP_NIGHTLIES 条 nightly，更早的连 tag 一起删。
+# push 也发布会让 Releases 页变长，所以只保留最近 KEEP_ALPHAS 条 alpha，更早的连 tag 一起删。
+# （2026-09-29 前本工作流叫 nightly，产物叫 nightly-*；App 内更新频道改叫 alpha/Stable，
+# 频道与 tag 对齐后跟着改名。历史 nightly-* 发布保留原样，App 的 alpha 频道一并读取。）
 on:
   schedule:
     - cron: '0 0 * * *'
@@ -28,11 +30,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: nightly-${{ github.ref }}
+  group: alpha-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  KEEP_NIGHTLIES: '3'
+  KEEP_ALPHAS: '3'
 
 jobs:
   android:
@@ -63,13 +65,13 @@ jobs:
           set -eu
           # 与正式版同一条规矩：宁可不发布，也不发一个「下次换签名就装不上」的包。
           if [ -z "${ROVECAMLINK_RELEASE_KEYSTORE_BASE64:-}" ]; then
-            echo "::error::缺少 ROVECAMLINK_RELEASE_KEYSTORE_BASE64，nightly 拒产出未统一签名的包"
+            echo "::error::缺少 ROVECAMLINK_RELEASE_KEYSTORE_BASE64，alpha 拒产出未统一签名的包"
             exit 1
           fi
-          printf '%s' "$ROVECAMLINK_RELEASE_KEYSTORE_BASE64" | base64 -d > nightly.keystore
-          export ROVECAMLINK_RELEASE_STORE_FILE=nightly.keystore
+          printf '%s' "$ROVECAMLINK_RELEASE_KEYSTORE_BASE64" | base64 -d > alpha.keystore
+          export ROVECAMLINK_RELEASE_STORE_FILE=alpha.keystore
           ./gradlew :composeApp:assembleRelease :composeApp:testDebugUnitTest --console=plain
-          rm -f nightly.keystore
+          rm -f alpha.keystore
 
       - name: 校验产物唯一并核对签名
         id: check
@@ -84,17 +86,17 @@ jobs:
             echo "::error::$out 下期望恰好一个签名 release APK，实际 $n 个"; exit 1
           fi
           apk=$(find "$out" -maxdepth 1 -type f -name '*-release.apk' | head -1)
-          # 包名带上 versionName 和这一轮的 UTC 时间戳。以前每个 nightly 都叫
+          # 包名带上 versionName 和这一轮的 UTC 时间戳。以前每个包都叫
           # `RoveCamLink-nightly.apk`，下载目录里几个包同名，分不清手上装的是哪一次；
           # 时间戳在这里算，Release 的 tag 与文件名共用同一个值。
           ver=$(sed -nE 's/.*versionName\s*=\s*"([^"]+)".*/\1/p' composeApp/build.gradle.kts | head -1)
           [ -n "$ver" ] || ver=unknown
           stamp=$(date -u '+%Y%m%d-%H%M%S')
-          out_apk="RoveCamLink-${ver}-nightly-${stamp}.apk"
+          out_apk="RoveCamLink-${ver}-alpha-${stamp}.apk"
           cp "$apk" "$out_apk"
           {
             echo "apk=$out_apk"
-            echo "tag=nightly-$stamp"
+            echo "tag=alpha-$stamp"
             echo "version=$ver"
           } >> "$GITHUB_OUTPUT"
 
@@ -103,7 +105,7 @@ jobs:
         with:
           apk: ${{ steps.check.outputs.apk }}
 
-      - name: 发布 nightly 预发布
+      - name: 发布 alpha 预发布
         env:
           GH_TOKEN: ${{ github.token }}
           APK: ${{ steps.check.outputs.apk }}
@@ -112,20 +114,22 @@ jobs:
         run: |
           set -eu
           tag="$TAG"
-          notes="自动构建于 $GITHUB_SHA（$(date -u '+%Y-%m-%d %H:%M UTC')），版本 $VER。与正式版同一把签名密钥，可直接覆盖升级上一个 nightly。"
+          notes="自动构建于 $GITHUB_SHA（$(date -u '+%Y-%m-%d %H:%M UTC')），版本 $VER。与正式版同一把签名密钥，可直接覆盖升级上一个 alpha 包。"
           gh release create "$tag" "$APK" \
             --prerelease \
             --latest=false \
             --title "$tag" \
             --notes "$notes"
 
-          # Releases 页只留最近 $KEEP_NIGHTLIES 条 nightly（tag 是 UTC 时间戳，
+          # Releases 页只留最近 $KEEP_ALPHAS 条 alpha 包（tag 是 UTC 时间戳，
           # 字典序即时间序，所以倒序取前 N 之外的全部删掉，连 tag 一起清理）。
+          # 模式同时认 alpha- 与历史遗留的 nightly-：改名前发出的旧发布
+          # 同样按「只留最近 N 条」的规矩清理，否则它们会永远留在页面上。
           gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
               --jq '.[].tag_name' \
-            | grep -E '^nightly-[0-9]{8}-[0-9]{6}$' \
+            | grep -E '^(alpha|nightly)-[0-9]{8}-[0-9]{6}$' \
             | sort -r \
-            | tail -n +$((KEEP_NIGHTLIES + 1)) \
+            | tail -n +$((KEEP_ALPHAS + 1)) \
             | while read -r old; do
                 gh release delete "$old" --cleanup-tag --yes
               done

@@ -36,11 +36,13 @@
 
 顶部栏的 **终端图标**（任何页面都在）打开 **Diagnostics**：实时预览本进程记录的全部相机通讯，`Share TXT` / `Save TXT` 导出一份自描述的诊断文件。每一次 HTTP 交换（URL、状态码、耗时、响应头、响应体原文、异常因果链）、每一次阶段迁移与协议判断都在里面；重复轮询自动折叠成带统计的一行，口令类参数默认脱敏。格式语法与排障读法见 [诊断日志系统](docs/impl/diagnostics-log.md)。
 
-## 每日构建包
+## Alpha 频道（每日构建包）
 
-[Releases](https://github.com/lswlc33/rovecamlink/releases) 里最新的 `nightly-*` 预发布就是 main 最新提交的产物（推 main、每日定时、手动派发都会发一条，页面只保留最近 3 条）。包名带版本和这一轮的时间戳，形如 `RoveCamLink-0.1.3-nightly-20260922-150000.apk`，下载目录里几个包不会撞名。nightly 构建的就是 release 包（R8 裁剪 + 资源收缩后约 3.6MB；早期不开 R8 的包有 20MB），所以下载很快；代价是它不可调试，排障请用 App 内的 Diagnostics 导出诊断 TXT。nightly 与正式版共用同一把签名密钥，所以新包能直接覆盖升级上一个包；密钥与 `.github/apk-signer-sha256.txt` 登记不一致时 CI 会红，不会发出装了就不能再升级的包（第一次从旧的 nightly 换过来仍需先卸载一次）。
+[Releases](https://github.com/lswlc33/rovecamlink/releases) 里最新的 `alpha-*` 预发布就是 main 最新提交的产物（推 main、每日定时、手动派发都会发一条，页面只保留最近 3 条）。包名带版本和这一轮的时间戳，形如 `RoveCamLink-0.1.3-alpha-20260929-150000.apk`，下载目录里几个包不会撞名。alpha 构建的就是 release 包（R8 裁剪 + 资源收缩后约 3.6MB；早期不开 R8 的包有 20MB），所以下载很快；代价是它不可调试，排障请用 App 内的 Diagnostics 导出诊断 TXT。alpha 与正式版共用同一把签名密钥，所以新包能直接覆盖升级上一个包；密钥与 `.github/apk-signer-sha256.txt` 登记不一致时 CI 会红，不会发出装了就不能再升级的包（第一次从 2026-09-29 之前的旧 nightly 包换过来仍需先卸载一次）。
 
-CI 只有两条工作流：`Nightly`（日常构建，装测试就认它）和 `Release`（正式版，只在推 `vX.Y.Z` tag 或手动派发时跑，不会随提交出现）。
+App 内也可以检查更新：设置 → 软件 → 检查更新，更新频道选 Alpha（读 `alpha-*` 与历史 `nightly-*` 发布，跳转 Releases 页下载）或 Stable（只看打 tag 的正式发布，比较版本号）。频道选择持久保存在本机。
+
+CI 只有两条工作流：`Alpha`（日常构建，装测试就认它；2026-09-29 前叫 `Nightly`，产物 tag 也从 `nightly-*` 改成了 `alpha-*`）和 `Release`（正式版，只在推 `vX.Y.Z` tag 或手动派发时跑，不会随提交出现）。
 
 ## 首个支持的设备
 

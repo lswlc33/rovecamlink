@@ -1,7 +1,7 @@
 name: iOS
 
 # iOS 开发测试入口。Windows 端没有 Xcode，iOS 的「能不能构建、能不能启动」全靠这条
-# 工作流在 macOS runner 上验证（nightly.yml 的 ios job 只守 Kotlin 目标可编译，
+# 工作流在 macOS runner 上验证（alpha.yml 的 ios job 只守 Kotlin 目标可编译，
 # 不碰壳工程；这条线补上壳工程，一直管到「App 在模拟器里活着」）。
 #
 # 三步：
@@ -35,7 +35,7 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      # K/N 首次要拉 ~1GB 编译器，与 nightly.yml 共用同一把 ~/.konan 缓存。
+      # K/N 首次要拉 ~1GB 编译器，与 alpha.yml 共用同一把 ~/.konan 缓存。
       - uses: actions/cache@v4
         with:
           path: ~/.konan
