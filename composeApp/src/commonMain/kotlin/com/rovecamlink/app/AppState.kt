@@ -506,7 +506,13 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
             val old = updateChannelStore.channel()
             if (old == value) return
             updateChannelStore.setChannel(value)
+            // The answer — and the fact that a check happened — belong to the *channel*
+            // it was checked against. Carrying either over would show the new channel
+            // the old channel's verdict, or the failure message for a check that never
+            // ran (seen on the 2026-09-30 device pass: switching channel showed
+            // 「检查没有结果」 while the page had not yet been checked at all).
             updateResult = null
+            everCheckedUpdate = false
             Diag.info(LogTag.UPDATE, "channel ${old.id} -> ${value.id}")
         }
 
