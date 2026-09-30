@@ -158,4 +158,55 @@ class AppUpdateIndexTest {
         assertNull(AppVersion.parse("alpha"))
         assertNull(AppVersion.parse(null))
     }
+
+    // ---------- mirror fallback ----------
+
+    /**
+     * The walk: direct first, then the mirrors in order, first body wins. Every route
+     * failing (the walled-network shape the fallback exists for) is the only null.
+     */
+    @Test
+    fun `fetcher walks direct then mirrors and remembers who answered`() = kotlinx.coroutines.runBlocking {
+        val calls = mutableListOf<String>()
+        val fetcher = UpdateFetcher { url ->
+            calls.add(url)
+            // Direct and the first mirror die (TLS reset, proxy 403 — the transport
+            // reports every failure as null); the second mirror answers.
+            if (url.startsWith("https://gh-proxy.com/")) """{"tag_name":"v0.1.3"}""" else null
+        }
+        val body = fetcher.get("https://api.github.com/repos/x/y/releases/latest")
+        assertTrue(body!!.contains("v0.1.3"))
+        assertEquals("https://gh-proxy.com/", fetcher.lastRoute)
+        // Direct first, then mirrors in listed order — and the walk *stops* at the first
+        // answer: the order decides which third party sees the check when GitHub is
+        // walled, and no mirror after the winner is ever contacted.
+        assertEquals(
+            listOf(
+                "https://api.github.com/repos/x/y/releases/latest",
+                "https://gh-proxy.com/https://api.github.com/repos/x/y/releases/latest",
+            ),
+            calls,
+        )
+    }
+
+    @Test
+    fun `fetcher stops at the first answer and defaults to direct`() = kotlinx.coroutines.runBlocking {
+        val fetcher = UpdateFetcher { "[]" }
+        assertEquals("[]", fetcher.get("https://api.github.com/repos/x/y/releases"))
+        assertEquals(GitHubRoutes.DIRECT, fetcher.lastRoute)
+    }
+
+    @Test
+    fun `asset urls are mirrored but api urls are refused`() {
+        val apk = "https://github.com/lswlc33/rovecamlink/releases/download/alpha-x/RoveCamLink.apk"
+        assertEquals(
+            "https://gh-proxy.com/$apk",
+            mirrorAssetUrl("https://gh-proxy.com/", apk),
+        )
+        // Direct is a pass-through: no mirror, no change.
+        assertEquals(apk, mirrorAssetUrl(GitHubRoutes.DIRECT, apk))
+        // A download mirror cannot front the API — transforming it would hand the
+        // browser a guaranteed 403, so the honest answer is null.
+        assertNull(mirrorAssetUrl("https://gh-proxy.com/", "https://api.github.com/repos/x/y"))
+    }
 }

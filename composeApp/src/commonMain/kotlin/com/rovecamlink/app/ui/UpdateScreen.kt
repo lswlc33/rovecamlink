@@ -40,6 +40,7 @@ import com.rovecamlink.app.update_prerelease
 import com.rovecamlink.app.update_title
 import com.rovecamlink.app.update_uptodate
 import com.rovecamlink.app.update_alpha_head_note
+import com.rovecamlink.app.update_mirror_note
 import org.jetbrains.compose.resources.stringResource
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -141,7 +142,14 @@ fun UpdateScreen(state: AppState, outerPadding: PaddingValues, onClose: () -> Un
                     alphaNote = if (state.updateChannel == UpdateChannel.Alpha) alphaNote else null,
                     onOpen = {
                         haptics.tick()
-                        if (!state.openUpdatePage(result.release)) copyFallback = result.release.openUrl
+                        if (!state.openUpdatePage(result.release)) {
+                            // Same URL the app would have opened, mirror included: the
+                            // dialog's text is what the user long-presses to copy.
+                            copyFallback = com.rovecamlink.app.core.update.mirrorAssetUrl(
+                                result.release.route,
+                                result.release.openUrl,
+                            ) ?: result.release.openUrl
+                        }
                     },
                 )
                 // Not checking, nothing found: either nobody has checked yet or the last
@@ -211,6 +219,18 @@ private fun androidx.compose.foundation.layout.ColumnScope.releaseRows(
     release.publishedAt?.let { valueItem(publishedLbl, it.take(10)) }
     if (release.apkSizeBytes > 0) valueItem(sizeLbl, humanBytes(release.apkSizeBytes))
     alphaNote?.let { hintLine(it) }
+    // The check had to use a mirror: say so. A user who saw the check stall for a few
+    // seconds before answering deserves to know why, and the download link the next row
+    // opens is a mirror link too — opening that silently would look like a link to
+    // github.com that suddenly isn't.
+    if (release.route != com.rovecamlink.app.core.update.GitHubRoutes.DIRECT) {
+        hintLine(
+            stringResource(
+                Res.string.update_mirror_note,
+                com.rovecamlink.app.core.update.GitHubRoutes.describe(release.route),
+            ),
+        )
+    }
     // The library's own arrow row (the same one every pushed-page entry wears), not the
     // file-private entryRow helper — that one belongs to Screens.kt's device menus.
     ArrowPreference(title = openLbl, onClick = onOpen)

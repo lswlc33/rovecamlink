@@ -402,6 +402,8 @@
     <string name="update_uptodate">You are on the newest tagged release.</string>
     <string name="update_alpha_head_note">Alpha builds are stamped, not versioned — this app cannot tell whether the one you installed is this one. The tag’s date is the guide.</string>
     <string name="update_prerelease">Pre-release</string>
+    <string name="update_mirror_note">GitHub did not answer directly — the check and the download link below go through the mirror %1$s.</string>
+    <string name="update_copy_link">Copy the download link (mirror)</string>
 
     <!-- About page. -->
     <string name="about_title">About</string>

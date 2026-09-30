@@ -120,10 +120,20 @@ data class AppRelease(
     /** The APK asset's browser URL, when the release carries exactly one. */
     val apkUrl: String?,
     val apkSizeBytes: Long,
+    /**
+     * The route that answered the check that found this release — one of
+     * [GitHubRoutes.DIRECT] or a [GitHubRoutes.DOWNLOAD_MIRRORS] prefix. The page opens
+     * the release *through the same route*: on a network where the JSON needed a mirror,
+     * the browser needs the same mirror for the bytes.
+     */
+    val route: String = GitHubRoutes.DIRECT,
 ) {
     /** The page's own link when there is nothing to hand the browser directly. */
     val openUrl: String get() = apkUrl ?: "https://github.com/lswlc33/rovecamlink/releases/tag/$tagName"
     val assetCount: Int get() = if (apkUrl == null) 0 else 1
+
+    /** Copy carrying [route]; the parser knows nothing about routes, the caller does. */
+    fun withRoute(route: String): AppRelease = copy(route = route)
 }
 
 @Serializable

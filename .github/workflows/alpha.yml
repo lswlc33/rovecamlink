@@ -125,10 +125,14 @@ jobs:
           # 字典序即时间序，所以倒序取前 N 之外的全部删掉，连 tag 一起清理）。
           # 模式同时认 alpha- 与历史遗留的 nightly-：改名前发出的旧发布
           # 同样按「只留最近 N 条」的规矩清理，否则它们会永远留在页面上。
+          # 排序只比时间戳、不比前缀（-k2 -k3 都是倒序）：整个 tag 的字典序里
+          # "nightly-" > "alpha-"（n > a），会把刚发布的 alpha 排进删除名单——
+          # 2026-09-29 的首次 alpha 跑就是这样发布成功后立刻被自己的清理
+          # 删掉的，create 的 URL 打出来之后没有任何报错。
           gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
               --jq '.[].tag_name' \
             | grep -E '^(alpha|nightly)-[0-9]{8}-[0-9]{6}$' \
-            | sort -r \
+            | sort -t- -k2,2r -k3,3r \
             | tail -n +$((KEEP_ALPHAS + 1)) \
             | while read -r old; do
                 gh release delete "$old" --cleanup-tag --yes

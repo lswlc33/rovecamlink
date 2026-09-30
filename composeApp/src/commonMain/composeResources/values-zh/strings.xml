@@ -399,6 +399,8 @@
     <string name="update_uptodate">已经是最新的正式版。</string>
     <string name="update_alpha_head_note">Alpha 构建以时间戳区分、没有版本号——本 App 无法判断你装的是不是这一个，请以 tag 里的日期为准。</string>
     <string name="update_prerelease">预发布</string>
+    <string name="update_mirror_note">GitHub 直连没有应答——本次检查与下面的下载链接都经由镜像 %1$s。</string>
+    <string name="update_copy_link">复制下载链接（镜像）</string>
 
     <!-- 关于页。 -->
     <string name="about_title">关于</string>

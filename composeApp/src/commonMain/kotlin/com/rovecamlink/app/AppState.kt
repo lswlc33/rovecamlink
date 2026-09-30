@@ -51,8 +51,11 @@ import com.rovecamlink.app.core.storage.sanitizeFileName
 import com.rovecamlink.app.core.update.AppRelease
 import com.rovecamlink.app.core.update.AppUpdateIndex
 import com.rovecamlink.app.core.update.AppVersion
+import com.rovecamlink.app.core.update.GitHubRoutes
 import com.rovecamlink.app.core.update.UpdateChannel
+import com.rovecamlink.app.core.update.UpdateFetcher
 import com.rovecamlink.app.core.update.createUpdateChannelStore
+import com.rovecamlink.app.core.update.mirrorAssetUrl
 import com.rovecamlink.app.core.wifi.CameraNetwork
 import com.rovecamlink.app.core.wifi.WifiResult
 import com.rovecamlink.app.ui.AppInfo
@@ -576,17 +579,21 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         }
     }
 
-    /** Open the found release in the browser — the fetch/install is the OS's job, not this app's. */
+    /**
+     * Open the found release in the browser — the fetch/install is the OS's job, not this
+     * app's. The URL goes through the route that answered the check: on a network where
+     * GitHub needed a mirror for the JSON, the browser needs the same mirror for the
+     * bytes, so the page never hands out a direct link the check itself could not use.
+     */
     fun openUpdatePage(release: AppRelease): Boolean {
-        val opened = updateUrlOpener.open(release.openUrl)
-        Diag.info(LogTag.UPDATE, "open ${release.tagName} -> $opened")
+        val url = mirrorAssetUrl(release.route, release.openUrl) ?: release.openUrl
+        val opened = updateUrlOpener.open(url)
+        Diag.info(LogTag.UPDATE, "open ${release.tagName} via ${GitHubRoutes.describe(release.route)} -> $opened")
         return opened
     }
 
     private suspend fun checkStableRelease(): UpdateResult? {
-        val body = graph.wifi.withInternetRoute("update-check stable") {
-            graph.http.getText(AppUpdateIndex.LATEST_ENDPOINT)
-        }
+        val body = updateFetcher().get(AppUpdateIndex.LATEST_ENDPOINT)
         // A body that did not parse is not "up to date": those two feel identical on the
         // screen and are not, so the null falls through to the page's "could not check".
         val release = AppUpdateIndex.parseStable(body) ?: return null
@@ -595,21 +602,29 @@ class AppState(private val graph: AppGraph, private val scope: CoroutineScope) {
         return when {
             // An unreadable version is never silently "up to date" — the user gets the
             // release and its number, and decides.
-            installed == null || newest == null -> UpdateResult.Available(release)
-            newest > installed -> UpdateResult.Available(release)
-            else -> UpdateResult.UpToDate(release)
+            installed == null || newest == null -> UpdateResult.Available(release.withRoute(updateFetcher().lastRoute))
+            newest > installed -> UpdateResult.Available(release.withRoute(updateFetcher().lastRoute))
+            else -> UpdateResult.UpToDate(release.withRoute(updateFetcher().lastRoute))
         }
     }
 
     private suspend fun checkAlphaRelease(): UpdateResult? {
-        val body = graph.wifi.withInternetRoute("update-check alpha") {
-            graph.http.getText(AppUpdateIndex.LIST_ENDPOINT)
-        }
+        val body = updateFetcher().get(AppUpdateIndex.LIST_ENDPOINT)
         // Alpha builds are timestamped, not versioned — an installed alpha cannot name
         // the commit it came from, so there is no comparison to make and none is faked.
         // The page shows what main produced most recently; the user decides from the
         // tag's date whether that is worth a trip.
-        return AppUpdateIndex.parseAlpha(body)?.let { UpdateResult.Available(it) }
+        return AppUpdateIndex.parseAlpha(body)
+            ?.let { UpdateResult.Available(it.withRoute(updateFetcher().lastRoute)) }
+    }
+
+    /**
+     * The route-walking fetcher, rebuilt per check: a check is a burst of one or two
+     * requests and the route that answered is read right after, so there is nothing to
+     * keep alive between checks.
+     */
+    private fun updateFetcher(): UpdateFetcher = UpdateFetcher { url ->
+        graph.wifi.withInternetRoute("update-check") { graph.http.getText(url) }
     }
 
     /**
